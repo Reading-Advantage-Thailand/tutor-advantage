@@ -1,56 +1,64 @@
+"use client";
+
+/**
+ * Presenter for the 18-phase live lesson, shared by the live room
+ * (LobbyClient) and the tutor rehearsal (prepare/lesson/PrepareLessonClient).
+ *
+ * This file owns lesson flow state (phase changes, "can proceed", rehearsal
+ * mock students, fullscreen, keyboard shortcuts). Each phase renders through
+ * a sibling component in ./presenter, and heavy code (teaching games,
+ * recharts, canvas-confetti) is loaded on demand.
+ *
+ * Public API (props + `PhaseManager` export) is consumed by G5's rehearsal
+ * page; keep it stable. Socket events, phase ids and timer semantics are the
+ * student app's protocol: do not change them here.
+ */
 import React from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { AlertTriangle, Users } from "lucide-react";
 import { ArticleDisplay } from "./ArticleDisplay";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Check,
-  Eye,
-  EyeOff,
-  Gamepad2,
-  GraduationCap,
-  Lock,
-  Maximize2,
-  Minimize2,
-  Volume2,
-  AlertTriangle,
-} from "lucide-react";
 import { playSound } from "@/lib/sounds";
 import { t } from "@/lib/i18n";
-import confetti from "canvas-confetti";
-import {
-  Participant,
-  TutorSessionData,
-  AnswerData,
-  ArticleData,
-  GamePhaseState,
-} from "@/lib/lesson-types";
-import { getGameById, getGamesByCategory, getGameTutorial } from "@/lib/liveLessonGames";
-import { useThaiTranslations } from "@/hooks/useThaiTranslations";
-import { DragonFlightTeachingGame } from "@/components/lesson/DragonFlightTeachingGame";
-import { WizardZombieTeachingGame } from "@/components/lesson/WizardZombieTeachingGame";
-import { EnchantedLibraryTeachingGame } from "@/components/lesson/EnchantedLibraryTeachingGame";
-import { RuneMatchTeachingGame } from "@/components/lesson/RuneMatchTeachingGame";
-import { CastleDefenseTeachingGame } from "@/components/lesson/CastleDefenseTeachingGame";
-import { PotionRushTeachingGame } from "@/components/lesson/PotionRushTeachingGame";
-import { FlashcardTeachingGame } from "@/components/lesson/FlashcardTeachingGame";
+import { Chip } from "@/components/app";
+import { Button } from "@/components/ui/button";
+import type { Participant, TutorSessionData, AnswerData, ArticleData, GamePhaseState, LessonPair } from "@/lib/lesson-types";
+import { getGamesByCategory } from "@/lib/liveLessonGames";
 import {
   GAME_PHASES,
   LESSON_PHASE,
-  PHASE_GROUPS,
-  PHASE_NAMES,
   QUESTION_PHASES,
   RESULT_REVIEW_PHASES,
   TOTAL_LESSON_PHASES,
 } from "@/lib/lessonPhases";
-import { getChoiceAnswerLabel } from "@/lib/lessonAnswers";
+import { preloadTeachingGame, LazyFlashcardTeachingGame } from "@/components/lesson/teachingGameRegistry";
+import {
+  PREPARATION_GUIDE_READY_ANSWER_COUNT,
+  PREPARATION_MOCK_SCORES,
+  PREPARATION_MOCK_STUDENTS,
+  createPreparationAnswer,
+  createPreparationGameResult,
+  createPreparationGameResults,
+  createPreparationGameState,
+  createPreparationPairs,
+} from "./presenter/preparationMocks";
+import {
+  buildComprehensionQuestion,
+  buildFillBlankQuestion,
+  buildSentenceOrderQuestion,
+  buildVocabularyQuestion,
+  type QuestionModel,
+} from "./presenter/questionModels";
+import { useLessonAudio } from "./presenter/useLessonAudio";
+import { FitToViewport } from "./presenter/FitToViewport";
+import { PhaseProgress, getPhaseName } from "./presenter/PhaseProgress";
+import { StudentRosterPanel } from "./presenter/StudentRosterPanel";
+import { ChoiceQuestionStage } from "./presenter/ChoiceQuestionStage";
+import { LanguageQuestionsStage, ReflectionStage, ShortAnswerStage, WritingStage } from "./presenter/WrittenResponseStages";
+import { FinalLeaderboardStage, PairConversationStage } from "./presenter/WrapUpStages";
+import { GamePhaseStage, rankGameVotes } from "./presenter/GamePhaseStage";
+import { PresenterDock, type DevTool } from "./presenter/PresenterDock";
+import { getGamePrimaryAction } from "./presenter/gamePrimaryAction";
+import { StageEmpty } from "./presenter/primitives";
+import { fireConfetti } from "./presenter/confetti";
 
 const TOTAL_PHASES = TOTAL_LESSON_PHASES;
 const VOCAB_GAME_PHASE = LESSON_PHASE.VOCABULARY_GAME;
@@ -59,170 +67,13 @@ const FINAL_LEADERBOARD_PHASE = LESSON_PHASE.WRAP_UP;
 
 const PREPARATION_QUESTION_PHASES = QUESTION_PHASES;
 const PREPARATION_RESULT_PHASES = RESULT_REVIEW_PHASES;
-const PREPARATION_MOCK_STUDENTS: Participant[] = [
-  { studentId: "preparation-student-1", name: "น้องมิน", score: 0 },
-  { studentId: "preparation-student-2", name: "น้องต้น", score: 0 },
-  { studentId: "preparation-student-3", name: "น้องฟ้า", score: 0 },
-  { studentId: "preparation-student-4", name: "น้องภูมิ", score: 0 },
+const CONFETTI_PHASES: number[] = [
+  LESSON_PHASE.FLASHCARDS,
+  LESSON_PHASE.COMPREHENSION,
+  LESSON_PHASE.VOCABULARY_PRACTICE,
+  LESSON_PHASE.SENTENCE_PRACTICE,
+  LESSON_PHASE.SENTENCE_ORDER,
 ];
-const PREPARATION_GUIDE_READY_ANSWER_COUNT = PREPARATION_MOCK_STUDENTS.length - 1;
-
-function createPreparationPairs() {
-  return [
-    {
-      pairNumber: 1,
-      members: [
-        { studentId: "preparation-pair-1", name: "น้องมิน" },
-        { studentId: "preparation-pair-2", name: "น้องต้น" },
-      ],
-    },
-    {
-      pairNumber: 2,
-      members: [
-        { studentId: "preparation-pair-3", name: "น้องฟ้า" },
-        { studentId: "preparation-pair-4", name: "น้องภูมิ" },
-      ],
-    },
-  ];
-}
-
-function createPreparationGameState(phase: number): GamePhaseState {
-  return {
-    phase,
-    category: phase === SENTENCE_GAME_PHASE ? "sentence" : "vocabulary",
-    status: "voting",
-    votes: {},
-    results: {},
-  };
-}
-
-function createPreparationAnswer(
-  phase: number,
-  student: Participant,
-  index: number,
-): AnswerData {
-  const answer = ([
-    LESSON_PHASE.COMPREHENSION,
-    LESSON_PHASE.VOCABULARY_PRACTICE,
-    LESSON_PHASE.SENTENCE_PRACTICE,
-    LESSON_PHASE.SENTENCE_ORDER,
-  ] as number[]).includes(phase)
-    ? ["A", "B", "A", "C"][index]
-      : ([LESSON_PHASE.GUIDED_RESPONSE, LESSON_PHASE.GUIDED_WRITING] as number[]).includes(phase)
-      ? {
-          text: [
-            "The library has many interesting books.",
-            "I found a clue near the map.",
-            "The students read together.",
-            "The story teaches us to explore.",
-          ][index],
-          aiScore: [4.5, 3.5, 4, 2.5][index],
-        }
-      : phase === LESSON_PHASE.LANGUAGE_QUESTIONS
-        ? {
-            text: [
-              "Why did the students visit the library?",
-              "What was the most interesting clue?",
-              "How did the story end?",
-              "Which word would you use to describe the story?",
-            ][index],
-            languageAnswer: "ลองชวนผู้เรียนอธิบายเหตุผลจากเนื้อเรื่องด้วยประโยคเต็ม",
-          }
-        : phase === LESSON_PHASE.REFLECTION
-          ? { text: "วันนี้ฉันได้เรียนรู้คำศัพท์ใหม่และกล้าเล่าเรื่องมากขึ้น" }
-          : "completed";
-
-  return {
-    studentId: student.studentId,
-    name: student.name,
-    answer,
-  };
-}
-
-function createPreparationGameResults(
-  gameId: string,
-  category: "vocabulary" | "sentence",
-): GamePhaseState["results"] {
-  return Object.fromEntries(
-    PREPARATION_MOCK_STUDENTS.map((student, index) => [
-      student.studentId,
-      createPreparationGameResult(gameId, category, student, index),
-    ]),
-  );
-}
-
-function createPreparationGameResult(
-  gameId: string,
-  category: "vocabulary" | "sentence",
-  student: Participant,
-  index: number,
-): NonNullable<GamePhaseState["results"][string]> {
-  return {
-    studentId: student.studentId,
-    name: student.name,
-    gameId,
-    score: category === "vocabulary" ? [92, 84, 76, 68][index] : [88, 81, 73, 65][index],
-    correct: [9, 8, 7, 6][index],
-    total: 10,
-    durationMs: 42000 + index * 3500,
-    submittedAt: Date.now(),
-  };
-}
-
-function seededShuffle<T>(array: T[], seedInput: string): T[] {
-  const result = [...array];
-  if (!seedInput) return result;
-
-  let seed = 0;
-  for (let i = 0; i < seedInput.length; i++) {
-    seed += seedInput.charCodeAt(i);
-  }
-
-  for (let i = result.length - 1; i > 0; i--) {
-    // Use a stable sine-based pseudo-random generator
-    const x = Math.sin(seed + i) * 10000;
-    const rand = x - Math.floor(x);
-    const j = Math.floor(rand * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
-
-function AnswerTranslations({
-  items,
-}: {
-  items: Array<{ label: string; text: string }>;
-}) {
-  const texts = items.map((item) => item.text);
-  const { translations, loading } = useThaiTranslations(texts, {
-    enabled: texts.some(Boolean),
-  });
-
-  if (!loading && translations.every((item) => !item)) return null;
-
-  return (
-    <div className="mt-2 space-y-2">
-      <p className="text-[10px] font-black uppercase tracking-widest text-white/70 mb-1">
-        Thai Translation
-      </p>
-      {items.map((item, index) => (
-        <div
-          key={`${item.label}-${item.text}`}
-          className="rounded-2xl border border-white/20 bg-white/15 px-4 py-3 backdrop-blur"
-        >
-          {item.label && (
-            <p className="text-[10px] font-black uppercase tracking-widest text-white/60 mb-1">
-              {item.label}
-            </p>
-          )}
-          <p className="text-white text-sm font-semibold leading-relaxed">
-            {translations[index] || (loading ? "Translating answer..." : "-")}
-          </p>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 interface PhaseManagerProps {
   currentPhase: number;
@@ -251,245 +102,6 @@ interface PhaseManagerProps {
   preparationMockAnswersStarted?: boolean;
   preparationGuideMode?: boolean;
   preparationFreeExplore?: boolean;
-}
-
-// ── Live Leaderboard Sidebar (Desktop) ───────────────────────────────────────
-function LiveLeaderboard({
-  participants,
-  preparationMode = false,
-  preparationFreeExplore = false,
-  answeredStudentIds = [],
-}: {
-  participants: Participant[];
-  preparationMode?: boolean;
-  preparationFreeExplore?: boolean;
-  answeredStudentIds?: string[];
-}) {
-  const sorted = [...participants].sort(
-    (a, b) => (b.score || 0) - (a.score || 0),
-  );
-  const maxScore = Math.max(...sorted.map((p) => p.score || 0), 1);
-  const answeredIds = new Set(answeredStudentIds);
-  const answeredCount = sorted.filter((participant) => answeredIds.has(participant.studentId)).length;
-
-  return (
-    <div className="w-full lg:w-72 shrink-0 flex flex-col rounded-2xl overflow-hidden border border-border/60 bg-card/60 backdrop-blur shadow-xl">
-      {/* Header */}
-      <div className="px-5 py-3.5 bg-gradient-to-r from-slate-900 to-indigo-950 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2.5">
-          <div className="size-7 rounded-lg bg-amber-400/20 flex items-center justify-center">
-            <span className="text-base">🏆</span>
-          </div>
-          <div>
-            <p className="flex items-center gap-2 text-white font-bold text-sm leading-none">
-              <span>Leaderboard</span>
-              {preparationMode && (
-                <span className="rounded-full bg-fuchsia-500/25 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-fuchsia-200">
-                  {preparationFreeExplore ? "Preview" : "Mock"}
-                </span>
-              )}
-            </p>
-            <p className="text-slate-400 text-[10px] mt-0.5">
-              {sorted.length} นักเรียน
-              {preparationMode && (preparationFreeExplore ? " · ข้อมูลตัวอย่าง" : ` · ตอบแล้ว ${answeredCount}/${sorted.length}`)}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-2.5 py-1">
-          <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-emerald-400 text-xs font-semibold">Live</span>
-        </div>
-      </div>
-
-      {/* Rank list */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2">
-        {sorted.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
-            <span className="text-2xl">👥</span>
-            <p className="text-muted-foreground text-xs">ยังไม่มีข้อมูลคะแนน</p>
-          </div>
-        ) : (
-          sorted.map((p, i) => {
-            const rank = i + 1;
-            const scorePct =
-              maxScore > 0 ? ((p.score || 0) / maxScore) * 100 : 0;
-            const rankEmoji =
-              rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : null;
-            const cardStyle =
-              rank === 1
-                ? "bg-amber-500/10 border-amber-400/30"
-                : rank === 2
-                  ? "bg-slate-400/10 border-slate-400/20"
-                  : rank === 3
-                    ? "bg-orange-400/10 border-orange-400/20"
-                    : "bg-muted/40 border-border/40";
-            const barStyle =
-              rank === 1
-                ? "bg-amber-400"
-                : rank === 2
-                  ? "bg-slate-400"
-                  : rank === 3
-                    ? "bg-orange-400"
-                    : "bg-indigo-400";
-            const scoreStyle =
-              rank === 1
-                ? "text-amber-500"
-                : rank === 2
-                  ? "text-slate-400"
-                  : rank === 3
-                    ? "text-orange-400"
-                    : "text-foreground";
-
-            return (
-              <div
-                key={p.studentId || i}
-                className={`flex items-center gap-2.5 rounded-xl p-2.5 border transition-all duration-500 ${cardStyle}`}
-              >
-                {/* Rank */}
-                <div className="w-6 text-center shrink-0">
-                  {rankEmoji ? (
-                    <span className="text-base leading-none">{rankEmoji}</span>
-                  ) : (
-                    <span className="text-xs font-bold text-muted-foreground">
-                      #{rank}
-                    </span>
-                  )}
-                </div>
-
-                {/* Avatar */}
-                <div className="size-8 rounded-full overflow-hidden border-2 border-border/60 shrink-0 bg-muted flex items-center justify-center">
-                  {p.pictureUrl ? (
-                    <img
-                      src={p.pictureUrl}
-                      alt={p.name}
-                      className="size-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-[10px] font-bold text-muted-foreground">
-                      {(p.name || "?").slice(0, 2)}
-                    </span>
-                  )}
-                </div>
-
-                {/* Name + bar */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-foreground truncate leading-none mb-1.5">
-                    {p.name}
-                  </p>
-                  {preparationMode && (
-                    <p className={`mb-1 text-[9px] font-black ${answeredIds.has(p.studentId) ? "text-emerald-500" : "text-amber-500"}`}>
-                      {preparationFreeExplore
-                        ? "พร้อมให้สำรวจ"
-                        : answeredIds.has(p.studentId) ? "ตอบแล้ว" : "กำลังคิดคำตอบ"}
-                    </p>
-                  )}
-                  <div className="h-1 w-full rounded-full bg-muted overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-700 ${barStyle}`}
-                      style={{
-                        width: `${Math.max(scorePct, (p.score || 0) > 0 ? 3 : 0)}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {/* Score */}
-                <div className="shrink-0 text-right">
-                  <p
-                    className={`text-sm font-black tabular-nums ${scoreStyle}`}
-                  >
-                    {p.score || 0}
-                  </p>
-                  <p className="text-[9px] text-muted-foreground">pts</p>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
-    </div>
-  );
-}
-
-function FitToViewport({
-  enabled,
-  children,
-}: {
-  enabled: boolean;
-  children: React.ReactNode;
-}) {
-  const frameRef = React.useRef<HTMLDivElement>(null);
-  const contentRef = React.useRef<HTMLDivElement>(null);
-  const [scale, setScale] = React.useState(1);
-
-  React.useLayoutEffect(() => {
-    if (!enabled) {
-      setScale(1);
-      return;
-    }
-
-    let frame = 0;
-    const measure = () => {
-      frame = window.requestAnimationFrame(() => {
-        const frameEl = frameRef.current;
-        const contentEl = contentRef.current;
-        if (!frameEl || !contentEl) return;
-
-        const availableWidth = frameEl.clientWidth;
-        const availableHeight = frameEl.clientHeight;
-        const contentWidth = contentEl.scrollWidth;
-        const contentHeight = contentEl.scrollHeight;
-
-        if (
-          !availableWidth ||
-          !availableHeight ||
-          !contentWidth ||
-          !contentHeight
-        ) {
-          setScale(1);
-          return;
-        }
-
-        setScale(
-          Math.min(
-            1,
-            availableWidth / contentWidth,
-            availableHeight / contentHeight,
-          ),
-        );
-      });
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-    if (frameRef.current) observer.observe(frameRef.current);
-    if (contentRef.current) observer.observe(contentRef.current);
-    window.addEventListener("resize", measure);
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      observer.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, [enabled]);
-
-  return (
-    <div
-      ref={frameRef}
-      className={`flex h-full min-h-0 flex-1 flex-col ${enabled ? "overflow-hidden" : "overflow-visible"}`}
-    >
-      <div
-        ref={contentRef}
-        className="flex h-full min-h-0 w-full flex-1 flex-col"
-        style={{
-          transform: enabled ? `scale(${scale})` : undefined,
-          transformOrigin: "top center",
-        }}
-      >
-        {children}
-      </div>
-    </div>
-  );
 }
 
 export const PhaseManager: React.FC<PhaseManagerProps> = ({
@@ -539,181 +151,18 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const preparationGameVotesCompleteNotifiedRef = React.useRef<number | null>(null);
   const preparationGameResultsCompleteNotifiedRef = React.useRef<number | null>(null);
   // Dev-only: mock participant list to preview the wrap-up leaderboard
-  const [mockLeaderboard, setMockLeaderboard] = React.useState<any[] | null>(null);
+  const [mockLeaderboard, setMockLeaderboard] = React.useState<Participant[] | null>(null);
   // Dev-only: mock pairs to preview the Phase 17 pair-conversation layout
-  const [mockPairs, setMockPairs] = React.useState<
-    { pairNumber: number; members: { studentId: string; name: string; pictureUrl?: string }[] }[] | null
-  >(null);
+  const [mockPairs, setMockPairs] = React.useState<LessonPair[] | null>(null);
   const fullscreenRef = React.useRef<HTMLDivElement>(null);
-  const standaloneAudioRef = React.useRef<HTMLAudioElement | null>(null);
-  const [audioToastText, setAudioToastText] = React.useState<string | null>(null);
-  const [remoteAudioManifest, setRemoteAudioManifest] = React.useState<any | null>(null);
-  const inlineAudioManifest = (articleData as any)?.audio_manifest;
-  const manifestArticleId = (articleData as any)?.id || (articleData as any)?.articleId;
-  const manifestUrl = manifestArticleId
-    ? `/api/tts-manifest/${encodeURIComponent(manifestArticleId)}`
-    : null;
-  const inlineQuestions = Array.isArray(inlineAudioManifest?.questions)
-    ? inlineAudioManifest.questions
-    : [];
-  const sourceQuestions = [
-    ...(((articleData as any)?.multipleChoiceQuestions || []).map((item: any) => item?.question)),
-    ...(((articleData as any)?.shortAnswerQuestions || []).map((item: any) => item?.question)),
-  ].filter(Boolean).map((text: string) => text.trim().toLowerCase());
-  const sourceSentences = ((articleData as any)?.sentences || []).map((sentence: any) =>
-    String(typeof sentence === "object"
-      ? sentence?.sentences || sentence?.text || sentence?.sentence || ""
-      : sentence || "").trim(),
-  ).filter(Boolean);
-  const inlineSentences = Array.isArray(inlineAudioManifest?.sentences)
-    ? inlineAudioManifest.sentences
-    : [];
-  const inlineQuestionsMatch = sourceQuestions.length > 0
-    ? sourceQuestions.every((text) => inlineQuestions.some((item: any) =>
-        String(item?.text || "").trim().toLowerCase() === text,
-      ))
-    : inlineQuestions.length > 0;
-  const inlineSentencesMatch = sourceSentences.length > 0
-    ? sourceSentences.every((text: string, index: number) => String(inlineSentences[index]?.text || "").trim() === text)
-    : inlineSentences.length > 0;
-  const inlineManifestIsComplete = inlineQuestionsMatch && inlineSentencesMatch;
-  const inlineNeedsSentenceWordRefresh = sourceSentences.length > 0 && !Array.isArray(inlineAudioManifest?.sentenceWords);
+  const audio = useLessonAudio(articleData);
 
-  React.useEffect(() => {
-    if ((inlineManifestIsComplete && !inlineNeedsSentenceWordRefresh) || !manifestUrl) {
-      setRemoteAudioManifest(null);
-      return;
-    }
-
-    let cancelled = false;
-    fetch(manifestUrl, { headers: { accept: "application/json" }, cache: "no-store" })
-      .then((response) => response.ok ? response.json() : null)
-      .then((manifest) => {
-        if (!cancelled && manifest?.version === 1) setRemoteAudioManifest(manifest);
-      })
-      .catch(() => {
-        // The explicit per-question URLs remain the next source of truth.
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [articleData, inlineManifestIsComplete, inlineNeedsSentenceWordRefresh, manifestUrl]);
-
-  const audioManifest = remoteAudioManifest || (inlineManifestIsComplete
-    ? inlineAudioManifest
-    : inlineAudioManifest);
-  const presentationArticleData = React.useMemo(
-    () => audioManifest && articleData
-      ? { ...articleData, audio_manifest: audioManifest }
-      : articleData,
-    [articleData, audioManifest],
+  const handleActiveIdxChange = React.useCallback(
+    (idx: number) => {
+      if (sessionData?.activeSentenceIndex !== idx) syncActiveSentence(idx);
+    },
+    [sessionData?.activeSentenceIndex, syncActiveSentence],
   );
-  const handleActiveIdxChange = React.useCallback((idx: number) => {
-    if (sessionData?.activeSentenceIndex !== idx) {
-      syncActiveSentence(idx);
-    }
-  }, [sessionData?.activeSentenceIndex, syncActiveSentence]);
-  const manifestQuestions = Array.isArray(audioManifest?.questions)
-    ? audioManifest.questions
-    : [];
-  const getManifestQuestion = (type: "mcq" | "saq", index: number) =>
-    manifestQuestions.filter((item: any) => item?.type === type)[index] as any;
-  const getManifestQuestionByText = (text: string, type?: "mcq" | "saq") => {
-    const questionKey = String(text || "").trim().toLowerCase();
-    return manifestQuestions.find((item: any) =>
-      (!type || item?.type === type) &&
-      String(item?.text || "").trim().toLowerCase() === questionKey,
-    ) as any;
-  };
-  const getWordAudioUrl = (text: string) => {
-    const word = (articleData?.words || []).find((item: any) =>
-      String(item?.vocabulary || item?.word || item?.text || "").toLowerCase() === text.toLowerCase(),
-    ) as any;
-    if (word?.audioUrl || word?.audio_url) return word.audioUrl || word.audio_url;
-    const manifestWords = [
-      ...(Array.isArray(audioManifest?.words) ? audioManifest.words : []),
-      ...(Array.isArray(audioManifest?.sentenceWords) ? audioManifest.sentenceWords : []),
-    ];
-    const manifestWord = manifestWords.find(
-        (item: any) => String(item?.text || "").toLowerCase() === text.toLowerCase(),
-      );
-    return manifestWord?.audioUrl;
-  };
-  const normaliseOptionAudioUrls = (urls?: Record<string, string>) => {
-    if (!urls) return undefined;
-    const normalised: Record<string, string> = { ...urls };
-    ["A", "B", "C", "D"].forEach((label, index) => {
-      const legacyKey = `option${index + 1}`;
-      if (!normalised[label] && normalised[legacyKey]) {
-        normalised[label] = normalised[legacyKey];
-      }
-    });
-    return normalised;
-  };
-  const getSentenceAudioUrl = (sentence: any, index: number) => {
-    const directUrl = typeof sentence === "object"
-      ? sentence?.audioUrl || sentence?.audio_url
-      : undefined;
-    const manifestSentence = Array.isArray(audioManifest?.sentences)
-      ? audioManifest.sentences[index]
-      : undefined;
-    return directUrl || manifestSentence?.audioUrl;
-  };
-
-  const showAudioFallbackToast = (text: string) => {
-    setAudioToastText(text);
-    setTimeout(() => setAudioToastText(null), 4500);
-  };
-
-  const playMcqAudio = (url: string | null | undefined, fallbackText: string, _subpath: string) => {
-    standaloneAudioRef.current?.pause();
-    standaloneAudioRef.current = null;
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-    }
-
-    const playFallback = () => {
-      showAudioFallbackToast(fallbackText);
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        try {
-          window.speechSynthesis.cancel();
-          const u = new SpeechSynthesisUtterance(fallbackText);
-          u.lang = "en-US";
-          window.speechSynthesis.speak(u);
-        } catch {
-          // ignore
-        }
-      }
-    };
-
-    const clipUrl = url && /^https?:\/\//i.test(url) ? url : null;
-
-    if (!clipUrl) {
-      playFallback();
-      return;
-    }
-
-    const clip = new Audio();
-    standaloneAudioRef.current = clip;
-    clip.oncanplay = () => {
-      try { clip.playbackRate = 1.0; } catch {}
-    };
-    clip.onended = () => {
-      if (standaloneAudioRef.current === clip) standaloneAudioRef.current = null;
-    };
-    clip.onerror = () => {
-      if (standaloneAudioRef.current === clip) {
-        standaloneAudioRef.current = null;
-        playFallback();
-      }
-    };
-    clip.src = clipUrl;
-    clip.play().catch((err) => {
-      if (standaloneAudioRef.current !== clip) return;
-      standaloneAudioRef.current = null;
-      if (err?.name !== "AbortError") playFallback();
-    });
-  };
 
   // Reset phase-local teaching controls when the server confirms a new phase.
   // The phase-change spinner is released by the request promise instead; if
@@ -736,35 +185,30 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     preparationGameVotesCompleteNotifiedRef.current = null;
     preparationGameResultsCompleteNotifiedRef.current = null;
     setPreparationGameState(
-      preparationMode && GAME_PHASES.includes(currentPhase)
-        ? createPreparationGameState(currentPhase)
-        : null,
+      preparationMode && GAME_PHASES.includes(currentPhase) ? createPreparationGameState(currentPhase) : null,
     );
   }, [currentPhase, preparationMode]);
 
-  const requestPhaseChange = React.useCallback((phase: number) => {
-    if (phaseChangePendingRef.current) return;
+  const requestPhaseChange = React.useCallback(
+    (phase: number) => {
+      if (phaseChangePendingRef.current) return;
 
-    phaseChangePendingRef.current = true;
-    const requestId = ++phaseChangeRequestIdRef.current;
-    setIsChangingPhase(true);
-    playSound("phaseChange");
-    // The socket hook waits for the server acknowledgement and has a bounded
-    // timeout. Always release the local loading state so a lost socket packet
-    // cannot leave the tutor stuck on "processing" forever.
-    void changePhase(phase).then(
-      () => {
+      phaseChangePendingRef.current = true;
+      const requestId = ++phaseChangeRequestIdRef.current;
+      setIsChangingPhase(true);
+      playSound("phaseChange");
+      // The socket hook waits for the server acknowledgement and has a bounded
+      // timeout. Always release the local loading state so a lost socket packet
+      // cannot leave the tutor stuck on "processing" forever.
+      const release = () => {
         if (phaseChangeRequestIdRef.current !== requestId) return;
         phaseChangePendingRef.current = false;
         setIsChangingPhase(false);
-      },
-      () => {
-        if (phaseChangeRequestIdRef.current !== requestId) return;
-        phaseChangePendingRef.current = false;
-        setIsChangingPhase(false);
-      },
-    );
-  }, [changePhase]);
+      };
+      void changePhase(phase).then(release, release);
+    },
+    [changePhase],
+  );
 
   const isRewoundPhase = Boolean(sessionData?.phaseRestored);
   const liveGameState = sessionData?.gameState ?? null;
@@ -773,11 +217,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     : liveGameState;
   const gameResultsCount = Object.keys(gameState?.results || {}).length;
   const currentGameCategory =
-    currentPhase === VOCAB_GAME_PHASE
-      ? "vocabulary"
-      : currentPhase === SENTENCE_GAME_PHASE
-        ? "sentence"
-        : null;
+    currentPhase === VOCAB_GAME_PHASE ? "vocabulary" : currentPhase === SENTENCE_GAME_PHASE ? "sentence" : null;
   const hasPlayableGameForPhase = currentGameCategory
     ? getGamesByCategory(currentGameCategory).some((game) => game.enabled !== false)
     : true;
@@ -785,26 +225,16 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     ? PREPARATION_MOCK_STUDENTS.map((student, index) => ({
         ...student,
         score: preparationAnsweredData.some((answer) => answer.studentId === student.studentId)
-          ? [12, 10, 8, 6][index]
+          ? PREPARATION_MOCK_SCORES[index]
           : 0,
       }))
     : liveParticipants;
-  const allAnsweredData = preparationMode
-    ? preparationAnsweredData
-    : liveAllAnsweredData;
-  const totalAnswered = preparationMode
-    ? preparationAnsweredData.length
-    : liveTotalAnswered;
-  const questionEnded = preparationMode
-    ? preparationQuestionEnded
-    : liveQuestionEnded;
+  const allAnsweredData = preparationMode ? preparationAnsweredData : liveAllAnsweredData;
+  const totalAnswered = preparationMode ? preparationAnsweredData.length : liveTotalAnswered;
+  const questionEnded = preparationMode ? preparationQuestionEnded : liveQuestionEnded;
   const totalParticipants = participants.length;
   const preparationAnswerCountComplete =
-    preparationMode &&
-    isInteractivePhase &&
-    !isGamePhase &&
-    totalParticipants > 0 &&
-    totalAnswered >= totalParticipants;
+    preparationMode && isInteractivePhase && !isGamePhase && totalParticipants > 0 && totalAnswered >= totalParticipants;
   const preparationAnswersReadyToEnd =
     preparationMode &&
     isInteractivePhase &&
@@ -812,9 +242,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     totalParticipants > 0 &&
     (preparationGuideMode ? preparationQuestionReadyToEnd : preparationAnswerCountComplete);
   const preparationGuideResultGateActive =
-    preparationMode &&
-    Boolean(guideOverlay) &&
-    PREPARATION_RESULT_PHASES.includes(currentPhase);
+    preparationMode && Boolean(guideOverlay) && PREPARATION_RESULT_PHASES.includes(currentPhase);
   const showQuestionResults = preparationMode
     ? PREPARATION_QUESTION_PHASES.includes(currentPhase) &&
       totalParticipants > 0 &&
@@ -826,25 +254,27 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     : questionEnded || allAnsweredData.length > 0;
   const preparationAnswerStatusText = preparationMode
     ? preparationFreeExplore
-      ? "โหมดสำรวจอิสระ · ไปต่อได้ทันที ไม่ต้องรอนักเรียน"
+      ? t("lesson.live.prepFreeExploreStatus")
       : showQuestionResults
-      ? "นักเรียนตอบครบแล้ว กำลังสรุปผลให้ดู"
-      : preparationAnswerCountComplete
-        ? "นักเรียนตอบครบแล้ว กำลังเปิดหน้าสรุปผล"
-      : `รอนักเรียนตอบ... ${totalAnswered}/${totalParticipants} คน`
+        ? t("lesson.live.prepAllAnsweredSummary")
+        : preparationAnswerCountComplete
+          ? t("lesson.live.prepAllAnsweredOpening")
+          : `${t("lesson.live.prepWaitingPrefix")} ${totalAnswered}/${totalParticipants} ${t("lesson.interactive.peopleUnit")}`
     : null;
-  const leaderboardAnsweredStudentIds = isGamePhase
-    ? Object.keys(gameState?.results || {})
-    : allAnsweredData.map((answer) => answer.studentId);
+  const gameVoting = isGamePhase && gameState?.status === "voting";
+  const gameInPlay = isGamePhase && ["countdown", "playing", "results"].includes(gameState?.status || "");
+  const leaderboardAnsweredStudentIds = gameVoting
+    ? Object.keys(gameState?.votes || {})
+    : isGamePhase
+      ? Object.keys(gameState?.results || {})
+      : allAnsweredData.map((answer) => answer.studentId);
 
   // In preparation mode, let the tutor see the same waiting state as a real
   // lesson while four sample students answer one by one.
   React.useEffect(() => {
     if (preparationFreeExplore || !preparationMode || !preparationMockAnswersStarted || !isInteractivePhase || isGamePhase) return;
 
-    const targetAnswerCount = preparationGuideMode
-      ? PREPARATION_GUIDE_READY_ANSWER_COUNT
-      : PREPARATION_MOCK_STUDENTS.length;
+    const targetAnswerCount = preparationGuideMode ? PREPARATION_GUIDE_READY_ANSWER_COUNT : PREPARATION_MOCK_STUDENTS.length;
     const timer = window.setInterval(() => {
       setPreparationAnsweredData((previous) => {
         if (previous.length >= targetAnswerCount) {
@@ -900,9 +330,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   ]);
 
   React.useEffect(() => {
-    if (preparationAnswerCountComplete && !preparationGuideMode) {
-      setPreparationQuestionEnded(true);
-    }
+    if (preparationAnswerCountComplete && !preparationGuideMode) setPreparationQuestionEnded(true);
   }, [preparationAnswerCountComplete, preparationGuideMode]);
 
   // Notify the preparation Guide after the local Lesson state has committed
@@ -918,17 +346,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     ) {
       return;
     }
-
     preparationAnswersCompleteNotifiedRef.current = currentPhase;
     onPreparationAnswersComplete?.(currentPhase);
-  }, [
-    currentPhase,
-    isGamePhase,
-    isInteractivePhase,
-    onPreparationAnswersComplete,
-    preparationMode,
-    preparationQuestionEnded,
-  ]);
+  }, [currentPhase, isGamePhase, isInteractivePhase, onPreparationAnswersComplete, preparationMode, preparationQuestionEnded]);
 
   // Simulate students voting at a steady pace so the tutor can see the vote
   // count, the leader, and the voters update before locking the vote.
@@ -950,10 +370,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         if (!previous || previous.status !== "voting") return previous;
         const voteTarget = enabledGames[studentIndex === PREPARATION_MOCK_STUDENTS.length - 1 ? 1 : 0] || enabledGames[0];
         if (!voteTarget) return previous;
-        return {
-          ...previous,
-          votes: { ...previous.votes, [student.studentId]: voteTarget.id },
-        };
+        return { ...previous, votes: { ...previous.votes, [student.studentId]: voteTarget.id } };
       });
     }, 1400);
 
@@ -972,7 +389,6 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     ) {
       return;
     }
-
     preparationGameVotesCompleteNotifiedRef.current = currentPhase;
     onPreparationGameVotesComplete?.(currentPhase);
   }, [
@@ -1004,19 +420,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
       setPreparationGameState((previous) => {
         if (!previous || previous.status !== "playing") return previous;
-        const result = createPreparationGameResult(
-          previous.selectedGameId || "dragon-flight",
-          previous.category,
-          student,
-          studentIndex,
-        );
+        const result = createPreparationGameResult(previous.selectedGameId || "dragon-flight", previous.category, student, studentIndex);
         const nextResults = { ...previous.results, [student.studentId]: result };
         const isComplete = Object.keys(nextResults).length >= PREPARATION_MOCK_STUDENTS.length;
-        return {
-          ...previous,
-          status: isComplete ? "results" : "playing",
-          results: nextResults,
-        };
+        return { ...previous, status: isComplete ? "results" : "playing", results: nextResults };
       });
     }, 1400);
 
@@ -1035,7 +442,6 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     ) {
       return;
     }
-
     preparationGameResultsCompleteNotifiedRef.current = currentPhase;
     onPreparationGameResultsComplete?.(currentPhase);
   }, [
@@ -1052,8 +458,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   // Can proceed if everyone answered OR if results are already showing OR if no participants
   const canProceed = preparationFreeExplore
     ? true
-    : (preparationGuideResultGateActive &&
-      !(preparationGuideMode ? preparationQuestionEnded : preparationAnswerCountComplete))
+    : preparationGuideResultGateActive && !(preparationGuideMode ? preparationQuestionEnded : preparationAnswerCountComplete)
       ? false
       : isRewoundPhase ||
         (!isInteractivePhase && !isGamePhase) ||
@@ -1070,38 +475,31 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     if (preparationFreeExplore) {
       setCanProceedDelayed(true);
     } else if (canProceed) {
-      const timer = setTimeout(() => {
-        setCanProceedDelayed(true);
-      }, 1000); // 1 sec delay before allowing proceeding
+      const timer = setTimeout(() => setCanProceedDelayed(true), 1000); // 1 sec delay before allowing proceeding
       return () => clearTimeout(timer);
     } else {
       setCanProceedDelayed(false);
     }
   }, [canProceed, preparationFreeExplore]);
 
+  const nextPhaseTarget =
+    isRewoundPhase && sessionData?.resumePhase && sessionData.resumePhase > currentPhase
+      ? sessionData.resumePhase
+      : currentPhase < TOTAL_PHASES
+        ? currentPhase + 1
+        : 0;
+
   const handleNextPhase = React.useCallback(() => {
     if (!isChangingPhase && (preparationFreeExplore || canProceedDelayed)) {
-      const nextPhase = isRewoundPhase && sessionData?.resumePhase && sessionData.resumePhase > currentPhase
-        ? sessionData.resumePhase
-        : currentPhase < TOTAL_PHASES
-          ? currentPhase + 1
-          : 0;
-      if (nextPhase > 0) {
-        requestPhaseChange(nextPhase);
-      } else {
-        // Safely loop back to lobby (Phase 0).
-        // The Backend is now smart enough to automatically cycle a fresh DB session
-        // the moment instruction begins again, providing unbroken continuity!
-        requestPhaseChange(0);
-      }
+      // Phase 0 safely loops back to the lobby; the backend cycles a fresh DB
+      // session the moment instruction begins again.
+      requestPhaseChange(nextPhaseTarget > 0 ? nextPhaseTarget : 0);
     }
-  }, [currentPhase, isChangingPhase, canProceedDelayed, preparationFreeExplore, requestPhaseChange, isRewoundPhase, sessionData?.resumePhase]);
+  }, [isChangingPhase, canProceedDelayed, preparationFreeExplore, requestPhaseChange, nextPhaseTarget]);
 
   const handlePreviousPhase = React.useCallback(() => {
     if (currentPhase <= 1 || isChangingPhase) return;
-
-    const targetPhase = currentPhase - 1;
-    requestPhaseChange(targetPhase);
+    requestPhaseChange(currentPhase - 1);
   }, [currentPhase, isChangingPhase, requestPhaseChange]);
 
   const handleEndQuestion = React.useCallback(() => {
@@ -1122,7 +520,6 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       setMockLeaderboard(null);
       return;
     }
-
     const mock = Array.from({ length: 14 }, (_, i) => ({
       studentId: `mock-${i}`,
       name: `Student ${i + 1}`,
@@ -1137,21 +534,12 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       setMockPairs(null);
       return;
     }
-
-    const students = Array.from({ length: 7 }, (_, i) => ({
-      studentId: `mock-pair-${i}`,
-      name: `Student ${i + 1}`,
-    }));
-    const mock: { pairNumber: number; members: { studentId: string; name: string }[] }[] = [];
+    const students = Array.from({ length: 7 }, (_, i) => ({ studentId: `mock-pair-${i}`, name: `Student ${i + 1}` }));
+    const mock: LessonPair[] = [];
     for (let i = 0; i + 1 < students.length; i += 2) {
-      mock.push({
-        pairNumber: mock.length + 1,
-        members: [students[i], students[i + 1]],
-      });
+      mock.push({ pairNumber: mock.length + 1, members: [students[i], students[i + 1]] });
     }
-    if (students.length % 2 === 1) {
-      mock[mock.length - 1].members.push(students[students.length - 1]);
-    }
+    if (students.length % 2 === 1) mock[mock.length - 1].members.push(students[students.length - 1]);
     setMockPairs(mock);
     requestPhaseChange(LESSON_PHASE.PAIR_CONVERSATION);
   }, [mockPairs, requestPhaseChange]);
@@ -1162,43 +550,31 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         setIsFullscreen(false);
         return;
       }
-
+      // Don't hijack arrow keys while the tutor types or uses a control.
+      const target = e.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
       if (e.key === "ArrowRight" && (preparationFreeExplore || canProceedDelayed) && !isChangingPhase) {
         handleNextPhase();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [
-    handleNextPhase,
-    canProceedDelayed,
-    isChangingPhase,
-    preparationFreeExplore,
-    currentPhase,
-    isFullscreen,
-  ]);
+  }, [handleNextPhase, canProceedDelayed, isChangingPhase, preparationFreeExplore, currentPhase, isFullscreen]);
 
   React.useEffect(() => {
     const fullscreenElement = fullscreenRef.current;
-    const handleFullscreenChange = () => {
-      setIsFullscreen(document.fullscreenElement === fullscreenElement);
-    };
-
+    const handleFullscreenChange = () => setIsFullscreen(document.fullscreenElement === fullscreenElement);
     document.addEventListener("fullscreenchange", handleFullscreenChange);
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
-      if (document.fullscreenElement === fullscreenElement) {
-        document.exitFullscreen().catch(() => undefined);
-      }
+      if (document.fullscreenElement === fullscreenElement) document.exitFullscreen().catch(() => undefined);
     };
   }, []);
 
   React.useEffect(() => {
     if (!isFullscreen) return;
-
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = previousOverflow;
     };
@@ -1206,2520 +582,258 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   const toggleFullscreen = React.useCallback(async () => {
     const fullscreenElement = fullscreenRef.current;
-
     if (isFullscreen) {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen().catch(() => undefined);
-      }
+      if (document.fullscreenElement) await document.exitFullscreen().catch(() => undefined);
       setIsFullscreen(false);
       return;
     }
-
     setIsFullscreen(true);
-    if (fullscreenElement?.requestFullscreen) {
-      await fullscreenElement.requestFullscreen().catch(() => undefined);
-    }
+    if (fullscreenElement?.requestFullscreen) await fullscreenElement.requestFullscreen().catch(() => undefined);
   }, [isFullscreen]);
 
-  // Confetti effect when results are ready
+  // Confetti effect when results are ready (canvas-confetti loads on demand).
   React.useEffect(() => {
-    if (([
-      LESSON_PHASE.FLASHCARDS,
-      LESSON_PHASE.COMPREHENSION,
-      LESSON_PHASE.VOCABULARY_PRACTICE,
-      LESSON_PHASE.SENTENCE_PRACTICE,
-      LESSON_PHASE.SENTENCE_ORDER,
-    ] as number[]).includes(currentPhase) && showQuestionResults) {
-      confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"],
-        disableForReducedMotion: true,
-      });
-    }
+    if (CONFETTI_PHASES.includes(currentPhase) && showQuestionResults) fireConfetti();
   }, [currentPhase, showQuestionResults]);
 
-  const renderLobby = () => (
-    <div className="flex-1 flex flex-col items-center justify-center">
-      <h2 className="text-3xl font-bold mb-8 text-foreground">
-        {t("lesson.interactive.waitingStudents")}
-      </h2>
-      <div className="flex gap-4 flex-wrap justify-center max-w-2xl">
-        {participants.map((p, i) => (
-          <div
-            key={i}
-            className="bg-muted rounded-full px-6 py-3 shadow-sm font-medium text-foreground"
-          >
-            {p.name}
-          </div>
-        ))}
-      </div>
-      {participants.length === 0 && (
-        <p className="text-muted-foreground mt-4">
-          {t("lesson.interactive.noJoinedYet")}
-        </p>
-      )}
-    </div>
-  );
+  // ── Code-split preloading ────────────────────────────────────────────────
+  // Flashcards (phase 2) are next after the launch phase.
+  React.useEffect(() => {
+    if (currentPhase >= 1 && currentPhase <= LESSON_PHASE.FLASHCARDS) void preloadTeachingGame("flashcard");
+  }, [currentPhase]);
 
-  const renderPresentation = () => (
-    <ArticleDisplay
-      articleData={presentationArticleData}
-      phase={currentPhase}
-      isFullscreen={isFullscreen}
-      flagCounts={flagCounts}
-      onActiveIdxChange={handleActiveIdxChange}
+  // Download the vote leader / locked game while students vote, so the
+  // teacher demo and tutorial (and the countdown that follows) never flash a
+  // loader. The leader can change while voting; each candidate is cached.
+  const voteLeaderId = React.useMemo(() => {
+    if (!currentGameCategory || gameState?.status !== "voting") return null;
+    const { leadingGame } = rankGameVotes(currentGameCategory, gameState.votes || {}, participants);
+    return leadingGame && leadingGame.enabled !== false ? leadingGame.id : null;
+    // participants only affects voter names, not the leader
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentGameCategory, gameState?.status, gameState?.votes]);
+  React.useEffect(() => {
+    if (voteLeaderId) void preloadTeachingGame(voteLeaderId);
+  }, [voteLeaderId]);
+  React.useEffect(() => {
+    if (gameState?.selectedGameId) void preloadTeachingGame(gameState.selectedGameId);
+  }, [gameState?.selectedGameId]);
+
+  // ── Rendering ────────────────────────────────────────────────────────────
+  const tour = (target: string) => (preparationMode ? target : undefined);
+  const roster = (
+    <StudentRosterPanel
+      participants={participants}
+      answeredStudentIds={leaderboardAnsweredStudentIds}
+      showAnswerStatus={isInteractivePhase || gameVoting || gameInPlay}
+      statusLabels={
+        gameVoting
+          ? { done: t("lesson.live.statusVoted"), waiting: t("lesson.live.statusNotVoted"), count: t("lesson.live.dockVoted") }
+          : gameInPlay
+            ? { done: t("lesson.live.submittedCheck"), waiting: t("lesson.live.statusPlaying"), count: t("lesson.live.rosterSubmitted") }
+            : undefined
+      }
+      preparationMode={preparationMode}
+      preparationFreeExplore={preparationFreeExplore}
     />
   );
-
-  const renderKahootGame = (
-    question: string,
-    mappedOptions: Record<string, string>,
-    correctAnswer: string,
-    answerTranslationItems: Array<{ label: string; text: string }> = [],
-    activeQuestionIndex?: number,
-    mcqQuestionObj?: any,
-    audioOverrides?: {
-      questionAudioUrl?: string;
-      questionAudioText?: string;
-      optionAudioUrls?: Record<string, string>;
-      speakQuestion?: boolean;
-      speakOptions?: boolean;
-    },
-  ) => {
-    const qIdx = activeQuestionIndex ?? (sessionData?.questionIndex ?? 0);
-    const playMcqOptionAudio = (optionText: string, labelKey: string) => {
-      standaloneAudioRef.current?.pause();
-      standaloneAudioRef.current = null;
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
-
-      const playFallback = () => {
-        showAudioFallbackToast(optionText);
-        if (typeof window !== "undefined" && "speechSynthesis" in window) {
-          try {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(optionText);
-            u.lang = "en-US";
-            window.speechSynthesis.speak(u);
-          } catch {}
-        }
-      };
-
-      const candidateKeys: string[] = [labelKey];
-      if (mcqQuestionObj?.options) {
-        if (Array.isArray(mcqQuestionObj.options)) {
-          const idx = mcqQuestionObj.options.indexOf(optionText);
-          if (idx !== -1) {
-            candidateKeys.unshift(`option${idx + 1}`, `${idx}`);
-          }
-        } else if (typeof mcqQuestionObj.options === "object") {
-          for (const [k, v] of Object.entries(mcqQuestionObj.options)) {
-            if (v === optionText) {
-              candidateKeys.unshift(k);
-              break;
-            }
-          }
-        }
-      }
-
-      const explicitUrl = candidateKeys
-        .map((key) => audioOverrides?.optionAudioUrls?.[key] || mcqQuestionObj?.optionAudioUrls?.[key])
-        .find((value) => typeof value === "string" && /^https?:\/\//i.test(value));
-      const candidates = explicitUrl ? [explicitUrl] : [];
-
-      let candidateIndex = 0;
-      const tryNext = () => {
-        if (candidateIndex >= candidates.length) {
-          playFallback();
-          return;
-        }
-        const clip = new Audio();
-        standaloneAudioRef.current = clip;
-        clip.oncanplay = () => {
-          try { clip.playbackRate = 1.0; } catch {}
-        };
-        clip.onended = () => {
-          if (standaloneAudioRef.current === clip) standaloneAudioRef.current = null;
-        };
-        clip.onerror = () => {
-          if (standaloneAudioRef.current !== clip) return;
-          standaloneAudioRef.current = null;
-          candidateIndex++;
-          tryNext();
-        };
-        clip.src = candidates[candidateIndex];
-        clip.play().catch((err) => {
-          if (standaloneAudioRef.current !== clip) return;
-          if (err?.name !== "AbortError") {
-            standaloneAudioRef.current = null;
-            candidateIndex++;
-            tryNext();
-          }
-        });
-      };
-
-      tryNext();
-    };
-
-    if (showQuestionResults) {
-      // Show results chart — EduPop colors
-      const optionFills: Record<string, string> = {
-        A: "#f43f5e",
-        B: "#0ea5e9",
-        C: "#f59e0b",
-        D: "#10b981",
-      };
-      const normalizedAnswers = allAnsweredData.map((answer) => ({
-        ...answer,
-        choiceLabel: getChoiceAnswerLabel(answer.answer),
-      }));
-      const data = ["A", "B", "C", "D"].map((key) => ({
-        name: key,
-        count: normalizedAnswers.filter((answer) => answer.choiceLabel === key).length,
-        fill: correctAnswer === key ? "#10b981" : optionFills[key] || "#94a3b8",
-      }));
-
-      const correctCount = normalizedAnswers.filter(
-        (answer) => answer.choiceLabel === correctAnswer,
-      ).length;
-      const wrongCount = allAnsweredData.length - correctCount;
-      const accuracy =
-        allAnsweredData.length > 0
-          ? Math.round((correctCount / allAnsweredData.length) * 100)
-          : 0;
-
-      return (
-        <div data-tour-target={preparationMode ? `phase-${currentPhase}-results` : undefined} className="flex-1 flex flex-col items-center gap-5 px-2">
-          {/* Correct answer reveal banner */}
-          <div className="w-full max-w-3xl bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl p-5 text-white flex flex-col gap-4 shadow-xl shadow-emerald-500/20">
-            <div className="flex items-center gap-4 w-full">
-              <div className="size-14 rounded-2xl bg-white/20 flex items-center justify-center text-3xl shrink-0">
-                ✅
-              </div>
-              <div>
-                <p className="text-emerald-100 text-xs font-bold uppercase tracking-widest mb-1">
-                  {t("lesson.interactive.correctAnswer")}
-                </p>
-                <h3 className="text-2xl font-black leading-snug">
-                  {correctAnswer}: {mappedOptions[correctAnswer]}
-                </h3>
-              </div>
-              <div className="ml-auto text-center shrink-0 bg-white/20 rounded-2xl px-5 py-3">
-                <p className="text-5xl font-black">{accuracy}%</p>
-                <p className="text-emerald-100 text-xs font-bold">Accuracy</p>
-              </div>
-            </div>
-            {answerTranslationItems.length > 0 && (
-              <AnswerTranslations items={answerTranslationItems} />
-            )}
-          </div>
-
-          <div className="w-full max-w-3xl grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-5">
-            {/* Bar chart */}
-            <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
-              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
-                {t("lesson.interactive.answerSummary")}
-              </p>
-              <div className="h-52">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={data}
-                    margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
-                  >
-                    <XAxis
-                      dataKey="name"
-                      tick={{ fontSize: 18, fontWeight: 900 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      allowDecimals={false}
-                      tick={{ fontSize: 11 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        background: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: 12,
-                        fontSize: 13,
-                      }}
-                      cursor={{ fill: "hsl(var(--muted))", fillOpacity: 0.3 }}
-                    />
-                    <Bar
-                      dataKey="count"
-                      radius={[8, 8, 0, 0]}
-                      maxBarSize={72}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div className="flex flex-col gap-3 w-44">
-              <div className="bg-emerald-500/10 border border-emerald-500/25 rounded-2xl p-4 flex flex-col items-center text-center">
-                <span className="text-2xl mb-1">✅</span>
-                <p className="text-3xl font-black text-emerald-600 dark:text-emerald-400">
-                  {correctCount}
-                </p>
-                <p className="text-xs font-bold text-emerald-500 uppercase">
-                  {t("lesson.interactive.correctPrefix")}
-                </p>
-              </div>
-              <div className="bg-rose-500/10 border border-rose-500/25 rounded-2xl p-4 flex flex-col items-center text-center">
-                <span className="text-2xl mb-1">❌</span>
-                <p className="text-3xl font-black text-rose-500">
-                  {wrongCount}
-                </p>
-                <p className="text-xs font-bold text-rose-400 uppercase">
-                  {t("lesson.interactive.wrongPrefix")}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    const displayKeys = Object.keys(mappedOptions).sort();
-
-    // EduPop color palette per option
-    const optionStyles: Record<
-      string,
-      { bg: string; shadow: string; badge: string }
-    > = {
-      A: {
-        bg: "bg-rose-500",
-        shadow: "shadow-[0_6px_0_theme(colors.rose.700)]",
-        badge: "bg-rose-700/40",
-      },
-      B: {
-        bg: "bg-sky-500",
-        shadow: "shadow-[0_6px_0_theme(colors.sky.700)]",
-        badge: "bg-sky-700/40",
-      },
-      C: {
-        bg: "bg-amber-400",
-        shadow: "shadow-[0_6px_0_theme(colors.amber.600)]",
-        badge: "bg-amber-600/40",
-      },
-      D: {
-        bg: "bg-emerald-500",
-        shadow: "shadow-[0_6px_0_theme(colors.emerald.700)]",
-        badge: "bg-emerald-700/40",
-      },
-    };
-
-    return (
-      <div className="flex h-full min-h-0 flex-1 gap-5 overflow-hidden">
-        {/* Left: Question + Options */}
-        <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-5 min-w-0 overflow-y-auto py-1">
-          {/* Question card with indigo gradient header */}
-          <div data-tour-target={preparationMode ? `phase-${currentPhase}-question` : undefined} className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-indigo-500/20">
-            <div className="bg-gradient-to-r from-indigo-500 to-violet-600 px-8 py-5 flex items-start justify-between gap-4">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 mb-2 opacity-80">
-                  <span className="size-2 rounded-full bg-white animate-pulse" />
-                  <span className="text-white/80 text-xs font-bold uppercase tracking-widest">
-                    Multiple Choice
-                  </span>
-                </div>
-                <h2 className="text-2xl font-black text-white leading-snug break-words">
-                  {question}
-                </h2>
-              </div>
-              {audioOverrides?.speakQuestion !== false && (
-                <button
-                  type="button"
-                  onClick={() => playMcqAudio(audioOverrides?.questionAudioUrl || mcqQuestionObj?.questionAudioUrl || mcqQuestionObj?.audioUrl, audioOverrides?.questionAudioText || question, `mcq/question_${qIdx}.mp3`)}
-                  data-tour-target={preparationMode ? `phase-${currentPhase}-question-audio` : undefined}
-                  title={t("lesson.interactive.speakTitle")}
-                  className="size-10 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center shrink-0 transition-colors"
-                >
-                  <Volume2 size={20} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* 2×2 EduPop option tiles */}
-          <div data-tour-target={preparationMode ? `phase-${currentPhase}-options` : undefined} className="grid grid-cols-2 gap-4 w-full max-w-3xl">
-            {displayKeys.map((key) => {
-              const style = optionStyles[key] || {
-                bg: "bg-slate-500",
-                shadow: "shadow-[0_6px_0_theme(colors.slate.700)]",
-                badge: "bg-slate-700/40",
-              };
-              const optionText = mappedOptions[key];
-              return (
-                <div
-                  key={key}
-                  className={`${style.bg} ${style.shadow} text-white min-w-0 p-5 rounded-2xl font-bold flex items-start justify-between gap-3 transition-transform active:translate-y-1 active:shadow-none`}
-                >
-                  <div className="flex min-w-0 flex-1 items-start gap-3">
-                    <span
-                      className={`${style.badge} text-white text-lg font-black w-10 h-10 rounded-xl flex items-center justify-center shrink-0`}
-                    >
-                      {key}
-                    </span>
-                    <span className="min-w-0 flex-1 whitespace-normal break-words text-base leading-snug">
-                      {optionText}
-                    </span>
-                  </div>
-                  {audioOverrides?.speakOptions !== false && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        playMcqOptionAudio(optionText, key);
-                      }}
-                      title={t("lesson.interactive.speakTitle")}
-                      className="size-8 rounded-full bg-white/20 hover:bg-white/35 text-white flex items-center justify-center shrink-0 mt-1 transition-colors"
-                    >
-                      <Volume2 size={16} />
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Submitted counter */}
-          <div
-            data-tour-target={preparationMode ? `phase-${currentPhase}-student-status` : undefined}
-            className="flex items-center gap-2 bg-muted border border-border px-6 py-2.5 rounded-full"
-          >
-            <span className="size-2 rounded-full bg-indigo-400 animate-pulse" />
-            <span className="text-sm font-bold text-foreground">
-              {t("lesson.interactive.answersSubmitted")} {totalAnswered} /{" "}
-              {totalParticipants} {t("lesson.interactive.peopleUnit")}
-            </span>
-          </div>
-          {preparationAnswerStatusText && (
-            <p className={`text-xs font-black ${showQuestionResults ? "text-emerald-500" : "text-amber-500"}`}>
-              {preparationAnswerStatusText}
-            </p>
-          )}
-        </div>
-
-        {/* Right: Live Leaderboard */}
-        <LiveLeaderboard participants={participants} preparationMode={preparationMode} preparationFreeExplore={preparationFreeExplore} answeredStudentIds={leaderboardAnsweredStudentIds} />
-      </div>
-    );
+  const questionContext = {
+    articleData,
+    sessionId: sessionData?.sessionId,
+    phaseSelectedIndices: sessionData?.phaseSelectedIndices,
+    audio,
   };
 
-  const renderMCQ = () => {
-    const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.COMPREHENSION] || 0;
-    const mcqQuestion = articleData?.multipleChoiceQuestions?.[idx];
-    const manifestMcqQuestion =
-      getManifestQuestionByText(mcqQuestion?.question, "mcq") ||
-      getManifestQuestion("mcq", idx);
-    const rawAnswer = mcqQuestion?.answer || "";
-    const optionsData = mcqQuestion?.options || {};
-    const optionKeys = Object.keys(optionsData).sort();
-
-    // 1. Try to match raw answer string against full option text
-    let answerIdx = -1;
-    optionKeys.forEach((key, i) => {
-      if (optionsData[key] === rawAnswer) {
-        answerIdx = i;
-      }
-    });
-
-    // 2. Fallback: Check if it is an index or key like "1"
-    if (answerIdx === -1) {
-      const i = optionKeys.indexOf(rawAnswer);
-      if (i !== -1) {
-        answerIdx = i;
-      } else {
-        // Fallback 3: Is it "A", "B", "C", "D"?
-        const labelIdx = String(rawAnswer).charCodeAt(0) - 65;
-        if (labelIdx >= 0 && labelIdx < optionKeys.length) {
-          answerIdx = labelIdx;
-        }
-      }
-    }
-
-    const rawOptions = optionKeys.map((key) => optionsData[key]);
-    const correctOptionText =
-      answerIdx !== -1 ? rawOptions[answerIdx] : rawAnswer;
-
-    // Deterministic shuffle tied to session ID so frontend matches backend perfectly
-    const shuffledOptions = seededShuffle(
-      rawOptions,
-      (sessionData?.sessionId || "fallback") +
-        "_phase7_" +
-        mcqQuestion?.question,
-    );
-
-    // Now find the new index of correct text
-    const newCorrectIdx = shuffledOptions.indexOf(correctOptionText);
-    const correctAnswer =
-      newCorrectIdx !== -1
-        ? String.fromCharCode(65 + newCorrectIdx)
-        : rawAnswer;
-
-    // Map to A, B, C, D for UI
-    const mappedOptions: Record<string, string> = {};
-    shuffledOptions.forEach((val, i) => {
-      const label = String.fromCharCode(65 + i); // A, B, C, D
-      mappedOptions[label] = val;
-    });
-
-    return renderKahootGame(
-      mcqQuestion?.question || t("lesson.interactive.genericQuestion"),
-      mappedOptions,
-      correctAnswer,
-      [],
-      idx,
-      mcqQuestion,
-      {
-        // Match the published audio by the question text first. The source
-        // question list can be re-ordered independently from the manifest.
-        questionAudioUrl: manifestMcqQuestion?.questionAudioUrl || mcqQuestion?.questionAudioUrl || mcqQuestion?.audioUrl,
-        optionAudioUrls: normaliseOptionAudioUrls(
-          manifestMcqQuestion?.optionAudioUrls || mcqQuestion?.optionAudioUrls,
-        ),
-      },
-    );
-  };
-
-  const renderVocabKahoot = () => {
-    const words = articleData?.words || [];
-    if (words.length < 4)
-      return (
-        <div data-tour-target={preparationMode ? "phase-9-empty-state" : undefined} className="flex-1 flex items-center justify-center text-xl">
-          <div data-tour-target={preparationMode ? "phase-9-student-status" : undefined}>
-            {t("lesson.interactive.notEnoughVocab")}
-          </div>
-        </div>
-      );
-
-    const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.VOCABULARY_PRACTICE] || 0;
-    const targetWord = words[idx] || words[0];
-    const question = `${t("lesson.interactive.vocabQuestionPrefix")} "${targetWord.vocabulary || targetWord.word || targetWord.text}" ${t("lesson.interactive.vocabQuestionSuffix")}`;
-
-    const correctTranslation =
-      targetWord.definition?.th ||
-      targetWord.translation ||
-      t("lesson.interactive.correctMeaningFallback");
-    const distractorWords = words.filter((w: any, i: number) => i !== idx);
-
-    const usedTranslations = new Set<string>([correctTranslation]);
-    const optionsArray: string[] = [correctTranslation];
-
-    distractorWords.forEach((w: any) => {
-      const trans = w?.definition?.th || w?.translation;
-      if (trans && !usedTranslations.has(trans) && optionsArray.length < 4) {
-        usedTranslations.add(trans);
-        optionsArray.push(trans);
-      }
-    });
-
-    let fillCounter = 1;
-    while (optionsArray.length < 4) {
-      const fb = `${t("lesson.interactive.otherMeaningPrefix")} ${String.fromCharCode(65 + fillCounter)}`;
-      if (!usedTranslations.has(fb)) {
-        usedTranslations.add(fb);
-        optionsArray.push(fb);
-      }
-      fillCounter++;
-    }
-
-    const shuffledOptions = seededShuffle(
-      optionsArray,
-      (sessionData?.sessionId || "fallback") +
-        "_phase9_" +
-        targetWord?.vocabulary,
-    );
-
-    const newCorrectIdx = shuffledOptions.indexOf(correctTranslation);
-    const correctLabel = String.fromCharCode(65 + newCorrectIdx);
-
-    const mappedOptions: Record<string, string> = {};
-    shuffledOptions.forEach((val, i) => {
-      const label = String.fromCharCode(65 + i); // A, B, C, D
-      mappedOptions[label] = val;
-    });
-
-    return renderKahootGame(question, mappedOptions, correctLabel, [
-      { label: "Vocab Word", text: String(targetWord.vocabulary || targetWord.word || targetWord.text) },
-      { label: "Translation", text: correctTranslation },
-    ], undefined, undefined, {
-      // The prompt and options are Thai in this phase; do not expose an
-      // English TTS button or trigger browser fallback for them.
-      speakQuestion: false,
-      speakOptions: false,
-    });
-  };
-
-  const renderSentenceFlashcardKahoot = () => {
-    const sentences = articleData?.sentences || [];
-    if (sentences.length < 1)
-      return (
-        <div data-tour-target={preparationMode ? "phase-11-empty-state" : undefined} className="flex-1 flex items-center justify-center text-xl">
-          <div data-tour-target={preparationMode ? "phase-11-student-status" : undefined}>
-            {t("lesson.interactive.notEnoughSentences")}
-          </div>
-        </div>
-      );
-
-    const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.SENTENCE_PRACTICE] || 0;
-    const targetSentence =
-      typeof sentences[idx] === "object"
-        ? sentences[idx].sentences
-        : sentences[idx];
-    const words = String(targetSentence).split(" ");
-    if (words.length < 3)
-      return (
-        <div data-tour-target={preparationMode ? "phase-11-empty-state" : undefined} className="flex-1 flex items-center justify-center text-xl">
-          <div data-tour-target={preparationMode ? "phase-11-student-status" : undefined}>
-            {t("lesson.interactive.sentenceTooShort")}
-          </div>
-        </div>
-      );
-
-    const correctWord = words[words.length - 1].replace(/[.,!?]/g, "");
-    const displaySentence =
-      words.slice(0, words.length - 1).join(" ") + " _____";
-
-    const question = `${t("lesson.interactive.fillBlankPrefix")} ${displaySentence}`;
-
-    const vocabWords = articleData?.words?.map(
-      (w: any) => w.vocabulary || w.word || w.text,
-    ) || ["Apple", "Banana", "Cat"];
-    const distractors = vocabWords.filter(
-      (w: string) => w.toLowerCase() !== correctWord.toLowerCase(),
-    );
-
-    const optionsArray = [
-      correctWord,
-      distractors[0] || "Word A",
-      distractors[1] || "Word B",
-      distractors[2] || "Word C",
-    ];
-
-    const shuffledOptions = seededShuffle(
-      optionsArray,
-      (sessionData?.sessionId || "fallback") + "_phase11_" + targetSentence,
-    );
-
-    const newCorrectIdx = shuffledOptions.indexOf(correctWord);
-    const correctLabel = String.fromCharCode(65 + newCorrectIdx);
-
-    const mappedOptions: Record<string, string> = {};
-    shuffledOptions.forEach((val, i) => {
-      const label = String.fromCharCode(65 + i); // A, B, C, D
-      mappedOptions[label] = val;
-    });
-
-    const optionAudioUrls: Record<string, string> = {};
-    shuffledOptions.forEach((value, optionIndex) => {
-      const url = getWordAudioUrl(value);
-      if (url) optionAudioUrls[String.fromCharCode(65 + optionIndex)] = url;
-    });
-
-    return renderKahootGame(question, mappedOptions, correctLabel, [
-      { label: "Full sentence", text: String(targetSentence) },
-      { label: "Answer word", text: correctWord },
-    ], idx, undefined, {
-      questionAudioUrl: getSentenceAudioUrl(sentences[idx], idx),
-      questionAudioText: String(targetSentence),
-      optionAudioUrls,
-    });
-  };
-
-  const renderSentenceOrderingKahoot = () => {
-    const sentences = articleData?.sentences || [];
-    if (sentences.length < 1)
-      return (
-        <div data-tour-target={preparationMode ? "phase-12-empty-state" : undefined} className="flex-1 flex items-center justify-center text-xl">
-          <div data-tour-target={preparationMode ? "phase-12-student-status" : undefined}>
-            {t("lesson.interactive.notEnoughSentences")}
-          </div>
-        </div>
-      );
-
-    const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.SENTENCE_ORDER] || 0;
-    const targetSentence =
-      typeof sentences[idx] === "object"
-        ? sentences[idx].sentences
-        : sentences[idx];
-    const words = String(targetSentence)
-      .split(" ")
-      .filter((w: any) => String(w).trim().length > 0);
-    // Shuffle the sentence words deterministically based on session
-    const shuffleWords = (array: string[]) => {
-      const res = seededShuffle(
-        array,
-        (sessionData?.sessionId || "fallback") +
-        "_phase12_words_" +
-          targetSentence,
-      );
-      if (res.join(" ") === array.join(" ")) res.reverse(); // Ensure it is actually different from the original
-      return res;
-    };
-    const scrambled = shuffleWords(words).join(" / ");
-    const question = `${t("lesson.interactive.orderSentencePrefix")} ${scrambled}`;
-
-    const optA = [...words];
-    optA.push(optA.shift()!);
-    const optB = [...words];
-    optB.unshift(optB.pop()!);
-    const optC = [...words].reverse();
-
-    const optionsArray = [
-      targetSentence,
-      optA.join(" "),
-      optB.join(" "),
-      optC.join(" "),
-    ];
-
-    const shuffledOptions = seededShuffle(
-      optionsArray,
-      (sessionData?.sessionId || "fallback") + "_phase12b_" + targetSentence,
-    );
-
-    const newCorrectIdx = shuffledOptions.indexOf(targetSentence);
-    const correctLabel = String.fromCharCode(65 + newCorrectIdx);
-
-    const mappedOptions: Record<string, string> = {};
-    shuffledOptions.forEach((val, i) => {
-      const label = String.fromCharCode(65 + i); // A, B, C, D
-      mappedOptions[label] = val;
-    });
-
-    const finalQuestion =
-      scrambled === targetSentence
-        ? `${t("lesson.interactive.orderSentencePrefix")} ${[...words].reverse().join(" / ")}`
-        : question;
-    return renderKahootGame(finalQuestion, mappedOptions, correctLabel, [
-      { label: "Sentence", text: String(targetSentence) },
-    ], idx, undefined, {
-      questionAudioUrl: getSentenceAudioUrl(sentences[idx], idx),
-      questionAudioText: String(targetSentence),
-      speakOptions: false,
-    });
-  };
-
-  const renderShortAnswer = () => {
-    const idx = sessionData?.phaseSelectedIndices?.[currentPhase] || 0;
-    const shortAnswerQuestion =
-      articleData?.shortAnswerQuestions?.[idx] ||
-      articleData?.shortAnswerQuestions?.[0];
-    const shortAnswerManifestQuestion =
-      getManifestQuestionByText(shortAnswerQuestion?.question, "saq") ||
-      getManifestQuestion("saq", idx) || getManifestQuestion("saq", 0);
-    const shortAnswerAudioUrl =
-      shortAnswerManifestQuestion?.questionAudioUrl ||
-      shortAnswerQuestion?.questionAudioUrl ||
-      shortAnswerQuestion?.audioUrl;
-
-    // ── Results view (after all students answered) ──────────────────────────
-    if (showQuestionResults) {
-      const excellentCount = allAnsweredData.filter(
-        (a) => (a.answer?.aiScore || 0) >= 4,
-      ).length;
-      const goodCount = allAnsweredData.filter(
-        (a) => (a.answer?.aiScore || 0) >= 2 && (a.answer?.aiScore || 0) < 4,
-      ).length;
-      const improveCount = allAnsweredData.filter(
-        (a) => (a.answer?.aiScore || 0) < 2,
-      ).length;
-      const sumScores = allAnsweredData.reduce(
-        (acc, a) => acc + (a.answer?.aiScore || 0),
-        0,
-      );
-      const averageScore =
-        allAnsweredData.length > 0 ? sumScores / allAnsweredData.length : 0;
-      const avgPct = (averageScore / 5) * 100;
-
-      const chartData = [
-        {
-          name: t("lesson.interactive.excellentRange"),
-          count: excellentCount,
-          fill: "#10b981",
-        },
-        {
-          name: t("lesson.interactive.goodRange"),
-          count: goodCount,
-          fill: "#f59e0b",
-        },
-        {
-          name: t("lesson.interactive.improveRange"),
-          count: improveCount,
-          fill: "#f43f5e",
-        },
-      ];
-
-      const scoreColor =
-        averageScore >= 4
-          ? "text-emerald-400"
-          : averageScore >= 2
-            ? "text-amber-400"
-            : "text-rose-400";
-      const scoreRingColor =
-        averageScore >= 4
-          ? "#10b981"
-          : averageScore >= 2
-            ? "#f59e0b"
-            : "#f43f5e";
-      const circumference = 2 * Math.PI * 40;
-
-      return (
-        <div data-tour-target={preparationMode ? `phase-${currentPhase}-results` : undefined} className="flex-1 flex flex-col items-center w-full px-4 py-2">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex items-center gap-2 bg-violet-500/15 border border-violet-500/30 rounded-full px-4 py-1.5">
-              <span className="size-2 rounded-full bg-violet-400 animate-pulse" />
-              <span className="text-violet-300 text-sm font-semibold uppercase tracking-widest">
-                AI Analysis
-              </span>
-            </div>
-            <h2 className="text-2xl font-bold text-foreground">
-              {t("lesson.interactive.shortAnswerResults")}
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-[1fr_auto_1fr] gap-6 w-full max-w-5xl items-start">
-            {/* Left: Chart */}
-            <div className="bg-card/60 backdrop-blur border border-border/60 rounded-2xl p-5 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
-                {t("lesson.interactive.scoreDistributionChart")}
-              </p>
-              <div className="h-52">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={chartData}
-                    margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
-                  >
-                    <XAxis
-                      dataKey="name"
-                      tick={{ fontSize: 12, fontWeight: 700 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      allowDecimals={false}
-                      tick={{ fontSize: 11 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        background: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: 12,
-                        fontSize: 13,
-                      }}
-                      cursor={{ fill: "hsl(var(--muted))", fillOpacity: 0.3 }}
-                    />
-                    <Bar
-                      dataKey="count"
-                      radius={[8, 8, 0, 0]}
-                      maxBarSize={64}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Mini breakdown bars */}
-              <div className="mt-4 space-y-2">
-                {[
-                  {
-                    label: t("lesson.interactive.excellentRange"),
-                    count: excellentCount,
-                    color: "bg-emerald-500",
-                    total: allAnsweredData.length,
-                  },
-                  {
-                    label: t("lesson.interactive.goodRange"),
-                    count: goodCount,
-                    color: "bg-amber-400",
-                    total: allAnsweredData.length,
-                  },
-                  {
-                    label: t("lesson.interactive.improveRange"),
-                    count: improveCount,
-                    color: "bg-rose-500",
-                    total: allAnsweredData.length,
-                  },
-                ].map(({ label, count, color, total }) => (
-                  <div key={label} className="flex items-center gap-2 text-xs">
-                    <span className="w-20 text-muted-foreground truncate">
-                      {label}
-                    </span>
-                    <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${color} transition-all duration-700`}
-                        style={{
-                          width: total > 0 ? `${(count / total) * 100}%` : "0%",
-                        }}
-                      />
-                    </div>
-                    <span className="w-4 text-right font-bold text-foreground">
-                      {count}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Center: Average Score Ring */}
-            <div className="flex flex-col items-center justify-center gap-3 px-2">
-              <div className="relative">
-                <svg
-                  width="100"
-                  height="100"
-                  viewBox="0 0 100 100"
-                  className="-rotate-90"
-                >
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    fill="none"
-                    stroke="hsl(var(--muted))"
-                    strokeWidth="8"
-                  />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    fill="none"
-                    stroke={scoreRingColor}
-                    strokeWidth="8"
-                    strokeLinecap="round"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={circumference * (1 - avgPct / 100)}
-                    className="transition-all duration-1000"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className={`text-2xl font-black ${scoreColor}`}>
-                    {averageScore.toFixed(1)}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground font-medium">
-                    / 5
-                  </span>
-                </div>
-              </div>
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground uppercase tracking-widest">
-                  {t("lesson.interactive.averageScore")}
-                </p>
-              </div>
-            </div>
-
-            {/* Right: KPI cards */}
-            <div className="flex flex-col gap-3">
-              <div className="bg-blue-500/10 border border-blue-500/25 rounded-2xl p-4 flex items-center gap-4">
-                <div className="size-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl">
-                  📨
-                </div>
-                <div>
-                  <p className="text-xs text-blue-400 font-semibold uppercase tracking-wider">
-                    {t("lesson.interactive.allSubmitted")}
-                  </p>
-                  <p className="text-2xl font-black text-blue-300">
-                    {allAnsweredData.length}{" "}
-                    <span className="text-sm font-normal text-blue-400">
-                      {t("lesson.interactive.peopleUnit")}
-                    </span>
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-emerald-500/10 border border-emerald-500/25 rounded-2xl p-4 flex items-center gap-4">
-                <div className="size-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
-                  ⭐
-                </div>
-                <div>
-                  <p className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">
-                    {t("lesson.interactive.excellentRange")}
-                  </p>
-                  <p className="text-2xl font-black text-emerald-300">
-                    {excellentCount}{" "}
-                    <span className="text-sm font-normal text-emerald-400">
-                      {t("lesson.interactive.peopleUnit")}
-                    </span>
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4 flex items-center gap-4">
-                <div className="size-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
-                  📝
-                </div>
-                <div>
-                  <p className="text-xs text-amber-400 font-semibold uppercase tracking-wider">
-                    {t("lesson.interactive.goodRange")}
-                  </p>
-                  <p className="text-2xl font-black text-amber-300">
-                    {goodCount}{" "}
-                    <span className="text-sm font-normal text-amber-400">
-                      {t("lesson.interactive.peopleUnit")}
-                    </span>
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-rose-500/10 border border-rose-500/25 rounded-2xl p-4 flex items-center gap-4">
-                <div className="size-10 rounded-xl bg-rose-500/20 flex items-center justify-center text-rose-400 text-xl">
-                  💪
-                </div>
-                <div>
-                  <p className="text-xs text-rose-400 font-semibold uppercase tracking-wider">
-                    {t("lesson.interactive.improveRange")}
-                  </p>
-                  <p className="text-2xl font-black text-rose-300">
-                    {improveCount}{" "}
-                    <span className="text-sm font-normal text-rose-400">
-                      {t("lesson.interactive.peopleUnit")}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Privacy note */}
-          <div className="mt-5 flex items-center gap-2.5 bg-muted/40 border border-border/50 rounded-xl px-5 py-3 max-w-3xl">
-            <span className="text-lg">🔒</span>
-            <p className="text-muted-foreground text-xs font-medium">
-              {t("lesson.interactive.privacyNote")}
-            </p>
-          </div>
-        </div>
-      );
-    }
-
-    // ── Waiting view (waiting for student answers) ──────────────────────────
-    const submittedPct =
-      totalParticipants > 0 ? (totalAnswered / totalParticipants) * 100 : 0;
-
-    return (
-      <div className="flex h-full min-h-0 flex-1 flex-col gap-5 overflow-hidden lg:flex-row">
-        {/* Left: Question + Progress */}
-        <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-5 overflow-hidden">
-          {/* Question card with glow */}
-              <div data-tour-target={preparationMode ? "phase-8-question" : undefined} className="relative w-full max-w-2xl text-center">
-            <div className="absolute -inset-3 rounded-3xl bg-gradient-to-r from-violet-500/10 via-blue-500/10 to-violet-500/10 blur-2xl pointer-events-none" />
-            <div className="relative bg-card/60 backdrop-blur border border-border/60 rounded-3xl px-8 py-7 shadow-lg">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <span className="size-2 rounded-full bg-violet-400 animate-pulse" />
-                <span className="text-xs font-semibold uppercase tracking-widest text-violet-400">
-                  Short Answer
-                </span>
-              </div>
-              <div className="flex items-center justify-center gap-3">
-                <h2 className="text-2xl font-bold text-foreground leading-snug">
-                  {shortAnswerQuestion?.question ||
-                    t("lesson.interactive.shortAnswerPrompt")}
-                </h2>
-                {shortAnswerQuestion?.question && (
-                  <button
-                    type="button"
-                    onClick={() => playMcqAudio(shortAnswerAudioUrl, shortAnswerQuestion.question, "")}
-                    data-tour-target={preparationMode ? "phase-8-question-audio" : undefined}
-                    title={t("lesson.interactive.speakTitle")}
-                    className="size-10 rounded-full bg-violet-500/15 hover:bg-violet-500/25 text-violet-600 dark:text-violet-300 flex items-center justify-center shrink-0 transition-colors"
-                  >
-                    <Volume2 size={20} />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Progress ring + bar */}
-          <div
-            data-tour-target={preparationMode ? "phase-8-student-status" : undefined}
-            className="flex flex-col items-center gap-3 w-full max-w-xs"
-          >
-            <div className="relative">
-              <svg
-                width="80"
-                height="80"
-                viewBox="0 0 80 80"
-                className="-rotate-90"
-              >
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="32"
-                  fill="none"
-                  stroke="hsl(var(--muted))"
-                  strokeWidth="7"
-                />
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="32"
-                  fill="none"
-                  stroke="#8b5cf6"
-                  strokeWidth="7"
-                  strokeLinecap="round"
-                  strokeDasharray={`${2 * Math.PI * 32}`}
-                  strokeDashoffset={`${2 * Math.PI * 32 * (1 - submittedPct / 100)}`}
-                  className="transition-all duration-700"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xl font-black text-foreground">
-                  {totalAnswered}
-                </span>
-              </div>
-            </div>
-            <p className="text-sm font-semibold text-foreground">
-              {totalAnswered} / {totalParticipants}{" "}
-              <span className="font-normal text-muted-foreground">
-                {t("lesson.interactive.answersSubmitted")}
-              </span>
-            </p>
-            {preparationAnswerStatusText && (
-              <p className={`text-xs font-black ${showQuestionResults ? "text-emerald-500" : "text-amber-500"}`}>
-                {preparationAnswerStatusText}
-              </p>
-            )}
-            <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
-              <div
-                className="h-full rounded-full bg-violet-500 transition-all duration-700"
-                style={{ width: `${submittedPct}%` }}
-              />
-            </div>
-
-            {/* Submitted avatars */}
-            {totalAnswered > 0 && (
-              <div className="flex items-center justify-center gap-1 flex-wrap mt-1">
-                {allAnsweredData.slice(0, 9).map((a, i) => (
-                  <div
-                    key={i}
-                    className="size-8 rounded-full overflow-hidden border-2 border-emerald-500/60 bg-emerald-500/20 flex items-center justify-center"
-                  >
-                    {a.pictureUrl ? (
-                      <img
-                        src={a.pictureUrl}
-                        alt={a.name}
-                        className="size-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-[10px] font-bold text-emerald-400">
-                        {(a.name || "?").slice(0, 2)}
-                      </span>
-                    )}
-                  </div>
-                ))}
-                {allAnsweredData.length > 9 && (
-                  <div className="size-8 rounded-full bg-muted border-2 border-border flex items-center justify-center text-[10px] font-bold text-muted-foreground">
-                    +{allAnsweredData.length - 9}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Right: Live Leaderboard */}
-        <LiveLeaderboard participants={participants} preparationMode={preparationMode} preparationFreeExplore={preparationFreeExplore} answeredStudentIds={leaderboardAnsweredStudentIds} />
-      </div>
-    );
-  };
-
-  const renderLeaderboard = () => {
-    const sortedParticipants = [...(mockLeaderboard ?? participants)].sort(
-      (a, b) => (b.score || 0) - (a.score || 0),
-    );
-    const articleImgId = (articleData as any)?.id as string | undefined;
-    const articleImageUrl = articleImgId
-      ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleImgId}`
-      : null;
-
-    return (
-      <div data-tour-target={preparationMode ? "phase-18-summary" : undefined} className="flex-1 flex flex-col items-center max-w-4xl mx-auto w-full relative overflow-y-auto pb-4">
-        {/* Subtle article image watermark */}
-        {articleImageUrl && (
-          <div
-            className="absolute inset-0 rounded-2xl bg-center bg-cover opacity-[0.04] pointer-events-none"
-            style={{ backgroundImage: `url(${articleImageUrl})` }}
-          />
-        )}
-
-        {/* 🎉 Banner */}
-        <div className="relative z-10 text-center mb-6 animate-in fade-in zoom-in">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-400/20 to-amber-500/10 border border-amber-400/30 rounded-full px-5 py-2 mb-3">
-            <span className="text-xl">🎉</span>
-            <span className="text-amber-600 dark:text-amber-400 font-black text-sm uppercase tracking-wider">
-              {t("lesson.interactive.leaderboardTitle")}
-            </span>
-          </div>
-          <p className="text-muted-foreground font-medium text-sm">
-            {t("lesson.interactive.leaderboardSubtitle")}
-          </p>
-        </div>
-
-        {/* Podium — 2nd | 1st | 3rd */}
-        <div className="relative z-10 grid grid-cols-3 gap-5 w-full items-end mb-8 min-h-[240px]">
-          {/* 2nd Place */}
-          {sortedParticipants[1] ? (
-            <div className="flex flex-col items-center gap-2 animate-in slide-in-from-bottom duration-500">
-              <div className="text-3xl">🥈</div>
-              <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-slate-300 shadow-lg">
-                <img
-                  src={
-                    sortedParticipants[1].pictureUrl ||
-                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${sortedParticipants[1].name}`
-                  }
-                  alt={sortedParticipants[1].name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-black text-foreground text-sm truncate max-w-full px-1 text-center">
-                {sortedParticipants[1].name}
-              </p>
-              <p className="font-black text-slate-400 text-xl">
-                {sortedParticipants[1].score || 0}
-              </p>
-              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-t-xl h-24 flex items-center justify-center">
-                <span className="text-slate-500 dark:text-slate-300 font-black text-4xl">
-                  2
-                </span>
-              </div>
-            </div>
-          ) : (
-            <div />
-          )}
-
-          {/* 1st Place */}
-          {sortedParticipants[0] ? (
-            <div className="flex flex-col items-center gap-2 animate-in slide-in-from-bottom duration-700">
-              <div className="text-4xl animate-bounce">🥇</div>
-              <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-amber-400 shadow-xl shadow-amber-400/30">
-                <img
-                  src={
-                    sortedParticipants[0].pictureUrl ||
-                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${sortedParticipants[0].name}`
-                  }
-                  alt={sortedParticipants[0].name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-black text-amber-600 dark:text-amber-400 text-base truncate max-w-full px-1 text-center">
-                {sortedParticipants[0].name}
-              </p>
-              <p className="font-black text-amber-500 text-3xl">
-                {sortedParticipants[0].score || 0}
-              </p>
-              <div className="w-full bg-gradient-to-b from-amber-400 to-amber-500 rounded-t-xl h-36 flex items-center justify-center shadow-lg shadow-amber-500/25">
-                <span className="text-white font-black text-5xl">1</span>
-              </div>
-            </div>
-          ) : (
-            <div />
-          )}
-
-          {/* 3rd Place */}
-          {sortedParticipants[2] ? (
-            <div className="flex flex-col items-center gap-2 animate-in slide-in-from-bottom duration-300">
-              <div className="text-3xl">🥉</div>
-              <div className="w-14 h-14 rounded-full overflow-hidden border-4 border-orange-400 shadow-md">
-                <img
-                  src={
-                    sortedParticipants[2].pictureUrl ||
-                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${sortedParticipants[2].name}`
-                  }
-                  alt={sortedParticipants[2].name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="font-black text-foreground text-sm truncate max-w-full px-1 text-center">
-                {sortedParticipants[2].name}
-              </p>
-              <p className="font-black text-orange-400 text-lg">
-                {sortedParticipants[2].score || 0}
-              </p>
-              <div className="w-full bg-orange-300 dark:bg-orange-700 rounded-t-xl h-16 flex items-center justify-center">
-                <span className="text-white font-black text-3xl">3</span>
-              </div>
-            </div>
-          ) : (
-            <div />
-          )}
-        </div>
-
-        {/* All participants (4th onward) — full list in a 3-column grid */}
-        {sortedParticipants.length > 3 && (
-          <div className="relative z-10 w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            {sortedParticipants.slice(3).map((p, i) => (
-              <div
-                key={p.studentId || i}
-                className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-2.5 shadow-sm"
-              >
-                <span className="font-bold text-muted-foreground w-8 text-center text-sm shrink-0">
-                  #{i + 4}
-                </span>
-                <div className="w-8 h-8 rounded-full overflow-hidden border border-border shrink-0">
-                  <img
-                    src={
-                      p.pictureUrl ||
-                      `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.name}`
-                    }
-                    alt={p.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <span className="font-semibold text-foreground text-sm truncate flex-1 min-w-0">
-                  {p.name}
-                </span>
-                <span className="font-black text-foreground text-sm tabular-nums shrink-0">
-                  {p.score || 0}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  // Shared progress strip for the Period-4 facilitation phases
-  const renderTutorProgress = (accent: string, target?: string) => {
-    const total = participants.length;
-    const pct = total > 0 ? (totalAnswered / total) * 100 : 0;
-    return (
-      <div
-        data-tour-target={preparationMode && target ? target : undefined}
-        className="w-full max-w-md flex flex-col items-center gap-2"
-      >
-        <p className="text-sm font-semibold text-foreground">
-          {totalAnswered} / {total} {t("lesson.interactive.answersSubmitted")}
-        </p>
-        {preparationAnswerStatusText && (
-          <p className={`text-xs font-black ${showQuestionResults ? "text-emerald-500" : "text-amber-500"}`}>
-            {preparationAnswerStatusText}
-          </p>
-        )}
-        <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden">
-          <div
-            className={`h-full rounded-full ${accent} transition-all duration-700`}
-            style={{ width: `${pct}%` }}
-          />
-        </div>
-      </div>
-    );
-  };
-
-  // ── Phase 13: Guided Writing (AI-scored) ──
-  const renderWriting = () => {
-    const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.GUIDED_WRITING] || 0;
-    const writingQuestion =
-      articleData?.shortAnswerQuestions?.[idx] ||
-      articleData?.shortAnswerQuestions?.[0];
-    const writingManifestQuestion =
-      getManifestQuestionByText(writingQuestion?.question) ||
-      getManifestQuestion("saq", idx) || getManifestQuestion("saq", 0);
-    const prompt =
-      writingQuestion?.question ||
-      t("lesson.interactive.writingPromptLabel");
-    const writingAudioUrl =
-      writingManifestQuestion?.questionAudioUrl ||
-      writingQuestion?.questionAudioUrl ||
-      writingQuestion?.audioUrl;
-
-    if (showQuestionResults) {
-      const sum = allAnsweredData.reduce(
-        (acc, a) => acc + (a.answer?.aiScore || 0),
-        0,
-      );
-      const avg = allAnsweredData.length > 0 ? sum / allAnsweredData.length : 0;
-      return (
-        <div data-tour-target={preparationMode ? `phase-${currentPhase}-results` : undefined} className="flex-1 flex flex-col items-center justify-center gap-5 px-4">
-          <span className="bg-sky-500/10 text-sky-700 dark:text-sky-400 text-xs font-bold px-3 py-1 rounded-full border border-sky-500/20">
-            {t("lesson.interactive.writingResults")}
-          </span>
-          <div className="bg-card border border-border rounded-3xl shadow-xl p-10 text-center">
-            <p className="text-6xl font-black text-sky-600 dark:text-sky-400">
-              {avg.toFixed(1)}
-              <span className="text-2xl text-muted-foreground"> / 5</span>
-            </p>
-            <p className="text-muted-foreground text-sm mt-2">
-              {t("lesson.interactive.averageScore")} · {allAnsweredData.length}{" "}
-              {t("lesson.interactive.peopleUnit")}
-            </p>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className="flex h-full min-h-0 flex-1 gap-5 overflow-hidden">
-        <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-5">
-          <div data-tour-target={preparationMode ? "phase-13-writing" : undefined} className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-sky-500/20">
-            <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-8 py-5 flex flex-col gap-2">
-              <div>
-                <span className="text-white/80 text-xs font-bold uppercase tracking-widest">
-                  {t("lesson.interactive.writingTitle")}
-                </span>
-                <div className="flex items-center gap-3 mt-1">
-                  <h2 className="text-2xl font-black text-white leading-snug">
-                    {prompt}
-                  </h2>
-                  {writingQuestion?.question && (
-                    <button
-                      type="button"
-                      onClick={() => playMcqAudio(writingAudioUrl, writingQuestion.question, "")}
-                      data-tour-target={preparationMode ? "phase-13-question-audio" : undefined}
-                      title={t("lesson.interactive.speakTitle")}
-                      className="size-10 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center shrink-0 transition-colors"
-                    >
-                      <Volume2 size={20} />
-                    </button>
-                  )}
-                </div>
-              </div>
-              <AnswerTranslations items={[{ label: "", text: prompt }]} />
-            </div>
-          </div>
-          <p className="text-muted-foreground text-sm text-center max-w-xl">
-            {t("lesson.interactive.writingPlannerModel")}
-          </p>
-          {renderTutorProgress("bg-sky-500", "phase-13-student-status")}
-        </div>
-        <LiveLeaderboard participants={participants} preparationMode={preparationMode} preparationFreeExplore={preparationFreeExplore} answeredStudentIds={leaderboardAnsweredStudentIds} />
-      </div>
-    );
-  };
-
-  // ── Phase 15: Language Questions (teacher-mediated AI) ──
-  const renderLanguageQuestions = () => {
-    const questions = allAnsweredData
-      .map((a) => (typeof a.answer === "object" ? a.answer : { text: a.answer }))
-      .filter((q: any) => Boolean(q.text));
-    return (
-      <div className="flex h-full min-h-0 flex-1 gap-5 overflow-hidden">
-        <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-5">
-          <div className="text-center">
-            <span className="bg-violet-500/10 text-violet-700 dark:text-violet-400 text-xs font-bold px-3 py-1 rounded-full border border-violet-500/20">
-              {t("lesson.interactive.languageTitle")}
-            </span>
-            <p className="text-muted-foreground text-sm mt-3 max-w-xl">
-              {t("lesson.interactive.languagePrompt")}
-            </p>
-          </div>
-          <div data-tour-target={preparationMode ? "phase-15-question-list" : undefined} className="w-full max-w-2xl bg-card border border-border rounded-2xl p-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
-              {t("lesson.interactive.languageQuestionsHeading")}
-            </p>
-            {questions.length > 0 ? (
-              <ul className="space-y-3 max-h-[40vh] overflow-y-auto px-1 pb-1">
-                {questions.map((q: any, i) => (
-                  <li
-                    key={i}
-                    data-tour-target={preparationMode && i === 0 ? "phase-15-first-question" : undefined}
-                    className="relative group text-foreground text-sm bg-muted/50 rounded-xl px-4 py-3 border border-transparent hover:border-violet-500/30 transition-all cursor-help"
-                  >
-                    <div className="flex items-start gap-2">
-                      <span className="text-lg shrink-0">❓</span>
-                      <span className="mt-0.5 leading-relaxed">{q.text}</span>
-                    </div>
-                    {q.languageAnswer && (
-                      <div
-                        data-tour-target={preparationMode && i === 0 ? "phase-15-ai-answer" : undefined}
-                        className={preparationMode
-                          ? "mt-3 rounded-xl border border-violet-400/30 bg-violet-900/10 p-3 text-violet-700 dark:bg-violet-950/40 dark:text-violet-100"
-                          : "absolute left-1/2 -translate-x-1/2 bottom-[105%] mb-2 hidden group-hover:block w-[400px] max-w-[50vw] z-50 bg-violet-900/95 dark:bg-violet-950/95 text-white p-4 rounded-2xl shadow-2xl border border-violet-400/30 pointer-events-none animate-in fade-in zoom-in-95 duration-200"}
-                      >
-                        <div className="flex items-center gap-2 mb-2 border-b border-violet-700/50 pb-2">
-                          <span className="text-xl">🤖</span>
-                          <span className="text-[10px] font-black uppercase tracking-widest text-violet-200">AI คำตอบที่แนะนำ</span>
-                        </div>
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{q.languageAnswer}</p>
-                        {!preparationMode && <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-violet-900/95 dark:bg-violet-950/95 border-b border-r border-violet-400/30 rotate-45 pointer-events-none" />}
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-muted-foreground text-sm italic">
-                {t("lesson.interactive.languageNoQuestions")}
-              </p>
-            )}
-            {preparationMode && showQuestionResults && (
-              <div className="mt-4 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                สรุป: นักเรียนส่งคำถามครบแล้ว ลองเลือก 1–2 คำถามเพื่อชวนทบทวนร่วมกัน
-              </div>
-            )}
-          </div>
-          {renderTutorProgress("bg-violet-500", "phase-15-student-status")}
-        </div>
-        <LiveLeaderboard participants={participants} preparationMode={preparationMode} preparationFreeExplore={preparationFreeExplore} answeredStudentIds={leaderboardAnsweredStudentIds} />
-      </div>
-    );
-  };
-
-  // ── Phase 16: Lesson Reflection ──
-  const renderReflection = () => (
-    <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-6 px-4">
-      <span className="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/20">
-        {t("lesson.interactive.reflectionTitle")}
-      </span>
-      <div data-tour-target={preparationMode ? "phase-16-reflection" : undefined} className="bg-card border-t-4 border-amber-500 rounded-3xl shadow-xl p-12 max-w-2xl w-full text-center">
-        <div className="text-5xl mb-4">📝</div>
-        <p className="text-xl font-bold text-foreground leading-snug">
-          {t("lesson.interactive.reflectionPrompt")}
-        </p>
-        {showQuestionResults && (
-          <>
-            <p className="text-emerald-600 dark:text-emerald-400 font-semibold mt-4">
-              {allAnsweredData.length}{" "}
-              {t("lesson.interactive.reflectionSubmitted")}
-            </p>
-            {preparationMode && (
-              <div data-tour-target="phase-16-responses" className="mt-5 space-y-2 text-left">
-                {allAnsweredData.map((answer) => {
-                  const text = typeof answer.answer === "object"
-                    ? String((answer.answer as any)?.text || "")
-                    : String(answer.answer || "");
-                  return (
-                    <div key={answer.studentId} className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-amber-600/80">{answer.name}</p>
-                      <p className="mt-1 text-sm leading-relaxed text-foreground">{text || "-"}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </>
-        )}
-      </div>
-      {renderTutorProgress("bg-amber-500", "phase-16-student-status")}
-    </div>
-  );
-
-  // ── Phase 17: Pair Conversation (random pairs talk about the lesson) ──
-  const renderPairConversation = () => {
-    const pairs: {
-      pairNumber: number;
-      members: { studentId: string; name: string; pictureUrl?: string }[];
-    }[] = mockPairs ?? (preparationMode ? createPreparationPairs() : sessionData?.pairs ?? []);
-    // Mock pairs preview the layout without real students in the room
-    const showEmptyState = pairs.length === 0 || (!preparationMode && !mockPairs && pairs.every((p) => p.members.length < 2));
-    const hasTriple = pairs.some((pair) => pair.members.length > 2);
-    const starters = [
-      "What was this story about?",
-      "Which new word do you like? Why?",
-      "What is the most interesting part?",
-      "What did you learn today?",
-    ];
-
-    return (
-      <div className="flex-1 flex flex-col items-center gap-6 overflow-y-auto pb-4">
-        <div className="text-center max-w-2xl">
-          <div className="text-5xl mb-4">🗣️</div>
-          <p className="text-xl font-bold text-foreground leading-snug">
-            {t("lesson.interactive.pairTitle")}
-          </p>
-          <p className="text-muted-foreground mt-2">
-            {t("lesson.interactive.pairSubtitle")}
-          </p>
-          {hasTriple && (
-            <p className="text-amber-600 dark:text-amber-400 text-sm font-semibold mt-2">
-              {t("lesson.interactive.pairTripleNote")}
-            </p>
-          )}
-        </div>
-
-        {showEmptyState ? (
-          <div className="bg-muted border border-border rounded-2xl px-8 py-6 text-center">
-            <span className="text-3xl block mb-2">👥</span>
-            <p className="text-muted-foreground font-medium">
-              {t("lesson.interactive.pairNeedTwo")}
-            </p>
-          </div>
-        ) : (
-          <div data-tour-target={preparationMode ? "phase-17-pairs" : undefined} className="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {pairs.map((pair) => (
-              <div
-                key={pair.pairNumber}
-                className="bg-card border border-border rounded-2xl p-5 shadow-sm flex flex-col items-center gap-3"
-              >
-                <span className="text-xs font-black uppercase tracking-widest text-rose-500 bg-rose-500/10 border border-rose-500/20 rounded-full px-3 py-1">
-                  {t("lesson.interactive.pairGroupLabel")} {pair.pairNumber}
-                </span>
-                <div className="flex items-center justify-center gap-2 flex-wrap">
-                  {pair.members.map((member, i) => (
-                    <React.Fragment key={member.studentId}>
-                      {i > 0 && <span className="text-xl">🤝</span>}
-                      <div className="flex flex-col items-center gap-1.5 min-w-0">
-                        <div className="size-12 rounded-full overflow-hidden border-2 border-rose-300/60 shadow-sm bg-muted">
-                          <img
-                            src={
-                              member.pictureUrl ||
-                              `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.name}`
-                            }
-                            alt={member.name}
-                            className="size-full object-cover"
-                          />
-                        </div>
-                        <span className="text-xs font-bold text-foreground truncate max-w-[88px]">
-                          {member.name}
-                        </span>
-                      </div>
-                    </React.Fragment>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div data-tour-target={preparationMode ? "phase-17-starters" : undefined} className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-5">
-            <h4 className="text-xs font-black uppercase tracking-widest text-rose-500 mb-3">
-              {t("lesson.interactive.pairStartersTitle")}
-            </h4>
-            <ul className="space-y-2">
-              {starters.map((starter) => (
-                <li
-                  key={starter}
-                  className="text-foreground text-sm font-medium bg-card border border-border rounded-xl px-3 py-2"
-                >
-                  💬 {starter}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div data-tour-target={preparationMode ? "phase-17-tutor-actions" : undefined} className="bg-muted/60 border border-border rounded-2xl p-5">
-            <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-3">
-              Tutor Actions
-            </h4>
-            <ul className="text-muted-foreground text-sm space-y-2">
-              <li>{t("lesson.interactive.pairTutorTip1")}</li>
-              <li>{t("lesson.interactive.pairTutorTip2")}</li>
-              <li>{t("lesson.interactive.pairTutorTip3")}</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderFlashcards = () => (
-    <div data-tour-target={preparationMode ? "phase-2-flashcards" : undefined} className="w-full min-w-0">
-      <FlashcardTeachingGame
-        words={(articleData as any)?.words || []}
-        participants={participants}
-        answered={totalAnswered}
-        onSpeak={(text, audioUrl) => playMcqAudio(audioUrl || getWordAudioUrl(text), text, "")}
-        preparationMode={preparationMode}
+  const renderChoice = (model: QuestionModel, emptyPhase: number) =>
+    model.kind === "empty" ? (
+      <StageEmpty
+        message={model.message}
+        tourTarget={tour(`phase-${emptyPhase}-empty-state`)}
+        statusTarget={tour(`phase-${emptyPhase}-student-status`)}
       />
-    </div>
-  );
-
-  const renderGamePhase = (category: "vocabulary" | "sentence") => {
-    const games = getGamesByCategory(category);
-    const enabledGames = games.filter((game) => game.enabled !== false);
-    const votes = gameState?.votes || {};
-    const results = Object.values(gameState?.results || {}).sort((a, b) => b.score - a.score);
-    const selectedGame = getGameById(gameState?.selectedGameId);
-    const tutorialSteps = getGameTutorial(gameState?.selectedGameId, category);
-    const articleWords = ((articleData as any)?.words || (articleData as any)?.content?.words || []) as any[];
-    const articleSentences = ((articleData as any)?.sentences || (articleData as any)?.content?.sentences || []) as any[];
-    const demoWord = articleWords[0];
-    const dragonFlightVocabulary = articleWords.map((word, index) => ({
-      term: String(word?.vocabulary || word?.word || word?.text || `Word ${index + 1}`),
-      translation: String(word?.definition?.th || word?.translation || word?.meaning || word?.definition?.en || ""),
-    })).filter((word) => word.term && word.translation);
-    const gameSentences = articleSentences.map((sentence, index) => ({
-      term: typeof sentence === "string" ? sentence : String(sentence?.sentences || sentence?.sentence || sentence?.text || `Sentence ${index + 1}`),
-      translation: typeof sentence === "string" ? sentence : String(sentence?.translation || sentence?.meaning || sentence?.sentences || sentence?.text || ""),
-    })).filter((s) => s.term);
-    const demoPrompt = category === "vocabulary"
-      ? demoWord?.vocabulary || demoWord?.word || demoWord?.text || "example"
-      : "เรียงคำให้เป็นประโยคที่ถูกต้อง";
-    const demoCorrectAnswer = category === "vocabulary"
-      ? demoWord?.definition?.th || demoWord?.translation || demoWord?.meaning || demoPrompt
-      : String(articleSentences[0]?.sentences || articleSentences[0]?.text || articleSentences[0] || "Students read together");
-    const demoAnswers = Array.from(new Set([
-      demoCorrectAnswer,
-      ...(category === "vocabulary"
-        ? articleWords.slice(1, 3).map((word) => word?.definition?.th || word?.translation || word?.meaning || word?.vocabulary)
-        : [demoCorrectAnswer.split(" ").reverse().join(" "), "Teacher together read students"]),
-    ].filter(Boolean))).slice(0, 3);
-    const voteCounts = games.map((game) => ({
-      ...game,
-      count: Object.values(votes).filter((gameId) => gameId === game.id).length,
-      voters: participants.filter((p) => votes[p.studentId] === game.id).map((p) => p.name),
-    }));
-    const rankedGames = [...voteCounts].sort(
-      (a, b) =>
-        Number(b.enabled !== false) - Number(a.enabled !== false) ||
-        b.count - a.count ||
-        games.findIndex((game) => game.id === a.id) -
-          games.findIndex((game) => game.id === b.id),
+    ) : (
+      <ChoiceQuestionStage
+        model={model}
+        currentPhase={currentPhase}
+        showResults={showQuestionResults}
+        answers={allAnsweredData}
+        totalAnswered={totalAnswered}
+        totalParticipants={totalParticipants}
+        audio={audio}
+        roster={roster}
+        preparationMode={preparationMode}
+        preparationStatusText={preparationAnswerStatusText}
+      />
     );
-    const leadingGame = rankedGames.find((game) => game.enabled !== false) || rankedGames[0];
-    const totalVotes = Object.keys(votes).length;
-    const countdownLeft = gameState?.countdownEndsAt
-      ? Math.max(0, Math.ceil((gameState.countdownEndsAt - Date.now()) / 1000))
-      : 0;
-    const showScoreRanking = ["playing", "countdown", "in_game", "active", "results"].includes(gameState?.status || "");
-    const participantById = new Map(participants.map((participant) => [participant.studentId, participant]));
-    const liveResults = results.length > 0
-      ? results.map((result, index) => ({
-          ...result,
-          rank: index + 1,
-          pictureUrl: participantById.get(result.studentId)?.pictureUrl,
-          totalScore: participantById.get(result.studentId)?.score ?? result.score,
-          isSubmitted: true,
-        }))
-      : participants.map((participant, index) => ({
-          studentId: participant.studentId,
-          name: participant.name,
-          score: participant.score || 0,
-          correct: 0,
-          total: 10,
-          rank: index + 1,
-          pictureUrl: participant.pictureUrl,
-          totalScore: participant.score || 0,
-          durationMs: undefined,
-          isSubmitted: false,
-        }));
-    const rankedResults = liveResults;
-    const topScore = Math.max(...rankedResults.map((result) => result.score), 1);
-    const podiumResults = [rankedResults[1], rankedResults[0], rankedResults[2]].filter(Boolean);
 
-    return (
-      <div data-tour-target={preparationMode ? `phase-${currentPhase}-game` : undefined} className="flex-1 flex gap-5 overflow-hidden min-h-0">
-        <div className={`flex-1 flex min-w-0 flex-col ${isFullscreen ? "min-h-0 overflow-hidden" : "gap-5 overflow-y-auto pr-1"}`}>
-          <div className={`rounded-3xl border border-border bg-card p-6 shadow-xl ${isFullscreen ? "hidden" : ""}`}>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-black uppercase tracking-widest text-indigo-500">
-                  {category === "vocabulary" ? "Vocabulary Game" : "Sentence Game"}
-                </p>
-                <h2 className="mt-1 text-3xl font-black text-foreground">
-                  ให้นักเรียนโหวตเกม
-                </h2>
-                <p className="mt-2 text-sm font-semibold text-muted-foreground">
-                  {gameState?.status === "voting" && "กำลังเปิดโหวตบนมือถือนักเรียน"}
-                  {gameState?.status === "ready" && "ผลโหวตพร้อมแล้ว เลือกขั้นตอนก่อนเริ่มเกม"}
-                  {gameState?.status === "teacher_demo" && "กำลังสาธิตวิธีเล่นให้นักเรียนดู"}
-                  {gameState?.status === "tutorial" && "กำลังแสดง Tutorial บนหน้าจอนักเรียน"}
-                  {gameState?.status === "countdown" && `เริ่มเกมใน ${countdownLeft} วินาที`}
-                  {gameState?.status === "playing" && `กำลังเล่น ${selectedGame?.title || gameState?.selectedGameId}`}
-                  {gameState?.status === "results" && "จบเกมแล้ว ดูคะแนนด้านล่าง"}
-                </p>
-              </div>
-            </div>
-            {selectedGame && (
-              <div className="mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
-                <p className="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
-                  {t("lesson.interactive.gameSelectedFallback")}
-                </p>
-                <p className="text-lg font-black text-foreground">{selectedGame.title}</p>
-              </div>
-            )}
-          </div>
-
-          {!showScoreRanking && gameState?.status === "ready" && (
-            <div className={isFullscreen ? "flex flex-1 items-center justify-center px-6 pb-32" : ""}>
-              <div data-tour-target={preparationMode ? "game-ready-panel" : undefined} className={`overflow-hidden rounded-3xl border border-indigo-500/25 bg-card p-6 shadow-xl ${isFullscreen ? "w-full max-w-5xl" : ""}`}>
-                <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-                  <div className="max-w-xl">
-                    <p className="text-xs font-black uppercase tracking-widest text-indigo-500">ผลโหวตพร้อมแล้ว</p>
-                    <h3 className="mt-1 text-2xl font-black text-foreground">เตรียมเด็กก่อนเริ่ม {selectedGame?.title}</h3>
-                    <p className="mt-2 text-sm font-semibold leading-relaxed text-muted-foreground">เลือกได้ว่าจะสาธิตหนึ่งรอบและแสดง Tutorial หรือข้ามเพื่อเริ่มเกมทันที</p>
-                  </div>
-                  <div className="grid min-w-[340px] gap-3">
-                    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-border bg-muted/40 p-4">
-                      <span className="flex items-center gap-3">
-                        <GraduationCap className="text-amber-500" size={22} />
-                        <span><span className="block text-sm font-black text-foreground">ครูเล่นให้เด็กดูก่อน</span><span className="block text-xs font-semibold text-muted-foreground">เปิดเกมจริงบนจอครูให้เด็กดูวิธีเล่น</span></span>
-                      </span>
-                      <input data-tour-target={preparationMode ? "game-teacher-demo-toggle" : undefined} type="checkbox" checked={teacherDemoEnabled} onChange={(event) => setTeacherDemoEnabled(event.target.checked)} className="size-5 accent-indigo-600" />
-                    </label>
-                    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-border bg-muted/40 p-4">
-                      <span className="flex items-center gap-3">
-                        <Gamepad2 className="text-indigo-500" size={22} />
-                        <span><span className="block text-sm font-black text-foreground">แสดง Tutorial</span><span className="block text-xs font-semibold text-muted-foreground">เปิดอยู่เป็นค่าเริ่มต้น และปิดได้</span></span>
-                      </span>
-                      <input data-tour-target={preparationMode ? "game-tutorial-toggle" : undefined} type="checkbox" checked={tutorialEnabled} onChange={(event) => setTutorialEnabled(event.target.checked)} className="size-5 accent-indigo-600" />
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {!showScoreRanking && gameState?.status === "teacher_demo" && (
-            <div data-tour-target={preparationMode ? `phase-${currentPhase}-teacher-demo` : undefined} className="w-full">
-              {selectedGame?.id === "dragon-flight" && (
-                <DragonFlightTeachingGame vocabulary={dragonFlightVocabulary} mode="teacher" fullscreen={isFullscreen} />
-              )}
-
-          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "wizard-vs-zombie" && (
-            <WizardZombieTeachingGame vocabulary={dragonFlightVocabulary} mode="teacher" fullscreen={isFullscreen} />
-          )}
-
-          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "enchanted-library" && (
-            <EnchantedLibraryTeachingGame vocabulary={dragonFlightVocabulary} mode="teacher" fullscreen={isFullscreen} />
-          )}
-
-          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "rune-match" && (
-            <RuneMatchTeachingGame vocabulary={dragonFlightVocabulary} mode="teacher" fullscreen={isFullscreen} />
-          )}
-
-          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "castle-defense" && (
-            <CastleDefenseTeachingGame vocabulary={gameSentences} mode="teacher" fullscreen={isFullscreen} />
-          )}
-
-          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "potion-rush" && (
-            <PotionRushTeachingGame
-              vocabulary={gameSentences}
-              mode="teacher"
-              fullscreen={isFullscreen}
-              teacherDemoCompleted={potionRushTeacherDemoCompleted}
-              onTeacherDemoComplete={() => setPotionRushTeacherDemoCompleted(true)}
-            />
-          )}
-
-          {!showScoreRanking && gameState?.status === "teacher_demo" && !["dragon-flight", "wizard-vs-zombie", "enchanted-library", "rune-match", "castle-defense", "potion-rush"].includes(selectedGame?.id || "") && (
-            <div className="overflow-hidden rounded-[32px] border border-amber-400/30 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 p-7 text-white shadow-2xl">
-              <div className="grid gap-7 xl:grid-cols-[0.8fr_1.2fr] xl:items-center">
-                <div>
-                  <div className="inline-flex items-center gap-2 rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-slate-950"><GraduationCap size={14} /> TEACHER DEMO</div>
-                  <h3 className="mt-4 text-3xl font-black">ลองเล่นให้เด็กดู 1 ข้อ</h3>
-                  <p className="mt-2 text-sm font-semibold leading-relaxed text-white/60">หน้าจอเด็กกำลังแสดงโหมดดูครู เลือกคำตอบแล้วอธิบายวิธีคิดก่อนกดจบการสาธิต</p>
-                </div>
-                <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-white/50">ตัวอย่าง</p>
-                  <p className="mt-2 text-xl font-black">{demoPrompt}</p>
-                  <div className="mt-4 grid gap-2 sm:grid-cols-3">
-                    {demoAnswers.map((answer) => {
-                      const selected = teacherDemoAnswer === answer;
-                      const correct = answer === demoCorrectAnswer;
-                      return <button key={answer} type="button" onClick={() => setTeacherDemoAnswer(answer)} className={`rounded-2xl border px-4 py-3 text-left text-sm font-black transition-all ${selected ? (correct ? "border-emerald-300 bg-emerald-400 text-emerald-950" : "border-rose-300 bg-rose-500 text-white") : "border-white/15 bg-white/10 text-white hover:bg-white/20"}`}>{answer}</button>;
-                    })}
-                  </div>
-                  {teacherDemoAnswer && <p className={`mt-4 text-sm font-black ${teacherDemoAnswer === demoCorrectAnswer ? "text-emerald-300" : "text-rose-300"}`}>{teacherDemoAnswer === demoCorrectAnswer ? "✓ ถูกต้อง — อธิบายเหตุผลให้เด็กฟังได้เลย" : "ลองใหม่ แล้วชี้ให้เด็กเห็นว่าคำตอบนี้ยังไม่ตรงเป้าหมาย"}</p>}
-                </div>
-              </div>
-            </div>
-          )}
-            </div>
-          )}
-
-          {!showScoreRanking && gameState?.status === "tutorial" && (
-            <div data-tour-target={preparationMode ? `phase-${currentPhase}-tutorial` : undefined} className="w-full">
-              {selectedGame?.id === "dragon-flight" && (
-                <DragonFlightTeachingGame vocabulary={dragonFlightVocabulary} mode="tutorial" fullscreen={isFullscreen} />
-              )}
-
-          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id === "wizard-vs-zombie" && (
-            <WizardZombieTeachingGame vocabulary={dragonFlightVocabulary} mode="tutorial" fullscreen={isFullscreen} />
-          )}
-
-          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id === "enchanted-library" && (
-            <EnchantedLibraryTeachingGame vocabulary={dragonFlightVocabulary} mode="tutorial" fullscreen={isFullscreen} />
-          )}
-
-          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id === "rune-match" && (
-            <RuneMatchTeachingGame vocabulary={dragonFlightVocabulary} mode="tutorial" fullscreen={isFullscreen} />
-          )}
-
-          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id === "castle-defense" && (
-            <CastleDefenseTeachingGame vocabulary={gameSentences} mode="tutorial" fullscreen={isFullscreen} />
-          )}
-
-          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id === "potion-rush" && (
-            <PotionRushTeachingGame vocabulary={gameSentences} mode="tutorial" fullscreen={isFullscreen} />
-          )}
-
-          {!showScoreRanking && gameState?.status === "tutorial" && !["dragon-flight", "wizard-vs-zombie", "enchanted-library", "rune-match", "castle-defense", "potion-rush"].includes(selectedGame?.id || "") && (
-            <div className="overflow-hidden rounded-[32px] border border-indigo-400/25 bg-gradient-to-br from-indigo-950 via-slate-950 to-violet-950 p-7 text-white shadow-2xl">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-indigo-300">Tutorial</p>
-              <h3 className="mt-2 text-3xl font-black">วิธีเล่น {selectedGame?.title}</h3>
-              <div className="mt-6 grid gap-3 lg:grid-cols-3">
-                {tutorialSteps.map((step, index) => <div key={step} className="rounded-3xl border border-white/15 bg-white/10 p-5"><div className="flex size-10 items-center justify-center rounded-2xl bg-indigo-300 text-lg font-black text-indigo-950">{index + 1}</div><p className="mt-4 text-sm font-bold leading-relaxed text-white">{step}</p></div>)}
-              </div>
-              <p className="mt-5 text-sm font-semibold text-white/55">Tutorial นี้แสดงพร้อมกันบนมือถือของนักเรียนทุกคน</p>
-            </div>
-          )}
-            </div>
-          )}
-
-          {showScoreRanking ? (
-            <div data-tour-target={preparationMode ? "game-results-summary" : undefined} className="overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-xl">
-              <div className="mb-5 flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-emerald-500">
-                    {gameState?.status === "results" ? t("lesson.interactive.gameRankingTitle") : "🎮 LIVE MONITORING"}
-                  </p>
-                  <h3 className="mt-1 text-3xl font-black text-foreground">
-                    {gameState?.status === "results"
-                      ? t("lesson.interactive.gameRankingHeading")
-                      : `นักเรียนกำลังเล่นเกม ${selectedGame?.title || ""}`}
-                  </h3>
-                  <p className="mt-1 text-sm font-semibold text-muted-foreground">
-                    {selectedGame?.title || t("lesson.interactive.gameSelectedFallback")} · {results.length} / {totalParticipants} {t("lesson.interactive.studentsSubmittedSuffix")}
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-emerald-500/10 px-4 py-3 text-center">
-                  <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-                    {results.length > 0 ? topScore : "-"}
-                  </p>
-                  <p className="text-[10px] font-black uppercase text-muted-foreground">
-                    {t("lesson.interactive.topScore")}
-                  </p>
-                </div>
-              </div>
-
-              <div className={`grid gap-4 ${isFullscreen ? "grid-cols-[minmax(420px,1fr)_minmax(420px,1.05fr)] min-h-[calc(100dvh-220px)]" : "grid-cols-1 xl:grid-cols-[0.95fr_1.05fr]"}`}>
-                <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-emerald-950 to-indigo-950 p-6 text-white shadow-2xl">
-                  {selectedGame?.cover && (
-                    <img
-                      src={selectedGame.cover}
-                      alt={selectedGame.title}
-                      className="absolute inset-0 size-full object-cover opacity-35"
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/20" />
-                  <div className="absolute inset-x-10 top-8 h-24 rounded-full bg-emerald-300/20 blur-3xl" />
-                  <div className="relative z-10 flex h-full min-h-[420px] flex-col">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="inline-flex w-fit rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-slate-950">
-                        {t("lesson.interactive.topPodium")}
-                      </div>
-                      <div className="rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-right backdrop-blur">
-                        <p className="text-[10px] font-black uppercase text-white/50">{t("lesson.interactive.submitted")}</p>
-                        <p className="text-lg font-black">{rankedResults.length}/{totalParticipants}</p>
-                      </div>
-                    </div>
-
-                    <div className="mt-auto grid grid-cols-3 items-end gap-3 pt-8">
-                      {podiumResults.map((result) => {
-                        const isChampion = result.rank === 1;
-                        const heightClass = result.rank === 1 ? "h-44" : result.rank === 2 ? "h-32" : "h-24";
-                        return (
-                          <div
-                            key={result.studentId}
-                            className={`game-rank-card flex flex-col items-center ${isChampion ? "order-2" : result.rank === 2 ? "order-1" : "order-3"}`}
-                          >
-                            <div className={`relative rounded-full p-1 ${isChampion ? "bg-amber-300" : "bg-white/25"}`}>
-                              <div className={`${isChampion ? "size-24" : "size-20"} overflow-hidden rounded-full border-4 border-slate-950 bg-slate-800`}>
-                                {result.pictureUrl ? (
-                                  <img src={result.pictureUrl} alt={result.name} className="size-full object-cover" />
-                                ) : (
-                                  <div className="flex size-full items-center justify-center text-xl font-black text-white">
-                                    {result.name.slice(0, 1).toUpperCase()}
-                                  </div>
-                                )}
-                              </div>
-                              <div className="absolute -bottom-2 left-1/2 flex size-8 -translate-x-1/2 items-center justify-center rounded-full bg-white text-sm font-black text-slate-950 shadow-lg">
-                                #{result.rank}
-                              </div>
-                            </div>
-                            <p className="mt-5 max-w-full truncate text-center text-sm font-black text-white">
-                              {result.name}
-                            </p>
-                            <p className={`mt-1 font-black tabular-nums ${isChampion ? "text-5xl text-amber-300" : "text-3xl text-emerald-200"}`}>
-                              {(result as any).isSubmitted ? result.score : "-"}
-                            </p>
-                            <div className={`mt-3 flex w-full items-end justify-center rounded-t-3xl border border-white/15 bg-white/12 backdrop-blur ${heightClass}`}>
-                              <p className="pb-4 text-3xl font-black text-white/30">#{result.rank}</p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="min-h-0 overflow-hidden rounded-[28px] border border-border bg-muted/30 p-4">
-                  <div className="grid max-h-full gap-3 overflow-y-auto pr-1">
-                    {rankedResults.map((result, index) => {
-                      const pct = Math.max(8, Math.round((result.score / topScore) * 100));
-                      const isWinner = index === 0;
-                      return (
-                        <div
-                          key={result.studentId}
-                          className={`game-rank-card flex items-center gap-4 rounded-2xl border px-4 py-3 shadow-sm ${
-                            isWinner
-                              ? "border-amber-300 bg-amber-50 shadow-amber-500/15 dark:bg-amber-500/10"
-                              : "border-border bg-card"
-                          }`}
-                          style={{ animationDelay: `${index * 50}ms` }}
-                        >
-                          <div className={`flex size-12 shrink-0 items-center justify-center rounded-2xl text-lg font-black ${
-                            isWinner
-                              ? "bg-amber-400 text-slate-950"
-                              : "bg-slate-950 text-white dark:bg-white dark:text-slate-950"
-                          }`}>
-                            #{index + 1}
-                          </div>
-                          <div className="size-14 shrink-0 overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
-                            {result.pictureUrl ? (
-                              <img src={result.pictureUrl} alt={result.name} className="size-full object-cover" />
-                            ) : (
-                              <div className="flex size-full items-center justify-center bg-gradient-to-br from-indigo-500 to-emerald-500 text-lg font-black text-white">
-                                {result.name.slice(0, 1).toUpperCase()}
-                              </div>
-                            )}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-baseline justify-between gap-3">
-                              <p className="truncate text-base font-black text-foreground">
-                                {result.name}
-                              </p>
-                              <p className="text-2xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">
-                                {(result as any).isSubmitted ? result.score : "🎮"}
-                              </p>
-                            </div>
-                            <div className="mt-2 h-2 overflow-hidden rounded-full bg-border">
-                              <div
-                                className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 transition-all duration-700"
-                                style={{ width: `${pct}%` }}
-                              />
-                            </div>
-                            <p className="mt-1 text-xs font-bold text-muted-foreground">
-                              {(result as any).isSubmitted ? (
-                                <>
-                                  <span className="text-emerald-500 font-extrabold">ส่งคำตอบแล้ว ✓</span>
-                                  {` · ${result.correct}/${result.total} ${t("lesson.interactive.correctUnit")}`}
-                                  {typeof result.durationMs === "number" && ` · ${(result.durationMs / 1000).toFixed(1)}s`}
-                                </>
-                              ) : (
-                                <span className="inline-flex items-center gap-1.5 text-indigo-400 font-extrabold animate-pulse">
-                                  <span className="size-2 rounded-full bg-emerald-400 animate-ping" />
-                                  🎮 กำลังเล่นอยู่บนมือถือ...
-                                </span>
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : gameState?.status === "voting" ? (
-          <>
-          <div className="overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-xl">
-            <div className="mb-5 flex items-center justify-between gap-3">
-              <div>
-                <h3 className="text-xl font-black text-foreground">{t("lesson.interactive.gameVoteStageTitle")}</h3>
-                <p className="text-sm font-semibold text-muted-foreground">
-                  {enabledGames.length
-                    ? t("lesson.interactive.gameVoteStageHelp")
-                    : t("lesson.interactive.gamesComingSoon")}
-                </p>
-              </div>
-              <div className="rounded-2xl bg-indigo-500/10 px-4 py-3 text-center">
-                <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{totalVotes}</p>
-                <p className="text-[10px] font-black uppercase text-muted-foreground">{t("lesson.interactive.votes")}</p>
-              </div>
-            </div>
-
-              <div data-tour-target={preparationMode ? "game-vote-options" : undefined} className={`relative overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 px-6 py-8 ${isFullscreen ? "flex min-h-0 flex-1 flex-col" : "min-h-[520px]"}`}>
-              <div className="absolute inset-x-10 top-1/2 h-32 -translate-y-1/2 rounded-full bg-indigo-500/20 blur-3xl" />
-              <div className="absolute inset-x-16 bottom-8 h-8 rounded-full bg-black/35 blur-xl" />
-              <div className={`relative z-10 grid min-h-0 flex-1 grid-cols-[1fr_minmax(300px,390px)_1fr] items-center gap-5 ${isFullscreen ? "" : "min-h-[460px]"}`}>
-                <div className="flex flex-col items-end gap-3">
-                  {rankedGames.slice(1, 4).map((game, index) => {
-                    const pct = participants.length ? Math.round((game.count / participants.length) * 100) : 0;
-                    return (
-                      <div
-                        key={game.id}
-                        className={`game-rank-card group flex w-full max-w-[300px] items-center gap-3 rounded-2xl border border-white/15 p-3 text-white shadow-xl backdrop-blur transition-all duration-500 hover:-translate-y-1 ${
-                          game.enabled === false ? "bg-white/5 opacity-60 grayscale" : "bg-white/10"
-                        }`}
-                        style={{ animationDelay: `${index * 55}ms` }}
-                      >
-                        <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-xl bg-black/30">
-                          <img src={game.cover} alt={game.title} className="size-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                          {game.enabled === false && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/55">
-                              <Lock size={20} />
-                            </div>
-                          )}
-                          {game.enabled === false && (
-                            <div className="absolute right-1 top-1 flex items-center gap-1 rounded-full bg-rose-500 px-1.5 py-0.5 text-[8px] font-black uppercase text-white shadow-lg">
-                              <Lock size={8} />
-                              {t("lesson.interactive.locked")}
-                            </div>
-                          )}
-                          <div className="absolute left-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] font-black text-white">
-                            #{index + 2}
-                          </div>
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h4 className="truncate text-sm font-black">{game.title}</h4>
-                          {game.enabled === false && (
-                            <div className="mt-1 inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-black text-white">
-                              <Lock size={10} />
-                              {t("lesson.interactive.comingSoon")}
-                            </div>
-                          )}
-                          <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/15">
-                            <div className="h-full rounded-full bg-cyan-300 transition-all duration-700" style={{ width: `${pct}%` }} />
-                          </div>
-                          <p className="mt-2 text-xs font-black text-white/75">{game.count} votes</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className={`game-rank-winner relative mx-auto w-full max-w-[390px] overflow-hidden rounded-[34px] bg-slate-950 text-white shadow-2xl ring-4 ring-amber-300/30 ${isFullscreen ? "h-[min(58dvh,560px)] max-h-full" : "h-[470px]"}`}>
-                  {leadingGame?.cover && (
-                    <img src={leadingGame.cover} alt={leadingGame.title} className="absolute inset-0 size-full object-cover" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/10" />
-                  {leadingGame?.enabled === false && (
-                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-black/55 text-white backdrop-blur-[2px]">
-                      <div className="flex size-16 items-center justify-center rounded-full border border-white/25 bg-white/15">
-                        <Lock size={30} />
-                      </div>
-                      <div className="text-center">
-                        <p className="text-2xl font-black">{t("lesson.interactive.locked")}</p>
-                        <p className="mt-1 text-sm font-black text-white/75">{t("lesson.interactive.comingSoon")}</p>
-                      </div>
-                    </div>
-                  )}
-                  <div className="absolute left-5 top-5 rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-slate-950 shadow-lg">
-                    {leadingGame?.enabled === false ? t("lesson.interactive.locked") : `#1 ${t("lesson.interactive.mostVoted")}`}
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <p className="text-xs font-black uppercase tracking-[0.24em] text-white/60">
-                      {totalVotes} {t("lesson.interactive.totalVotes")}
-                    </p>
-                    <h3 className="mt-2 text-3xl font-black leading-tight text-white">
-                      {leadingGame?.title || t("lesson.interactive.waitingVotes")}
-                    </h3>
-                    <p className="mt-2 line-clamp-2 text-sm font-semibold text-white/75">
-                      {leadingGame?.enabled === false
-                        ? t("lesson.interactive.gamesComingSoon")
-                        : leadingGame?.description || t("lesson.interactive.gameVoteStageHelp")}
-                    </p>
-                    <div className="mt-5 flex items-end justify-between gap-3">
-                      <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-white/50">{t("lesson.interactive.votes")}</p>
-                        <p className="text-6xl font-black tabular-nums text-white">{leadingGame?.count || 0}</p>
-                      </div>
-                      <div className="rounded-2xl border border-white/20 bg-white/15 px-4 py-3 text-right backdrop-blur">
-                        <p className="text-[10px] font-black uppercase text-white/55">{t("lesson.interactive.voters")}</p>
-                        <p className="max-w-[150px] truncate text-sm font-black text-white">
-                          {leadingGame?.voters.length ? leadingGame.voters.join(", ") : t("lesson.interactive.noVotesYet")}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col items-start gap-3">
-                  {rankedGames.slice(4, 7).map((game, index) => {
-                    const pct = participants.length ? Math.round((game.count / participants.length) * 100) : 0;
-                    return (
-                      <div
-                        key={game.id}
-                        className={`game-rank-card group flex w-full max-w-[300px] items-center gap-3 rounded-2xl border border-white/15 p-3 text-white shadow-xl backdrop-blur transition-all duration-500 hover:-translate-y-1 ${
-                          game.enabled === false ? "bg-white/5 opacity-60 grayscale" : "bg-white/10"
-                        }`}
-                        style={{ animationDelay: `${(index + 3) * 55}ms` }}
-                      >
-                        <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-xl bg-black/30">
-                          <img src={game.cover} alt={game.title} className="size-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                          {game.enabled === false && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/55">
-                              <Lock size={20} />
-                            </div>
-                          )}
-                          {game.enabled === false && (
-                            <div className="absolute right-1 top-1 flex items-center gap-1 rounded-full bg-rose-500 px-1.5 py-0.5 text-[8px] font-black uppercase text-white shadow-lg">
-                              <Lock size={8} />
-                              {t("lesson.interactive.locked")}
-                            </div>
-                          )}
-                          <div className="absolute left-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] font-black text-white">
-                            #{index + 5}
-                          </div>
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h4 className="truncate text-sm font-black">{game.title}</h4>
-                          {game.enabled === false && (
-                            <div className="mt-1 inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-black text-white">
-                              <Lock size={10} />
-                              {t("lesson.interactive.comingSoon")}
-                            </div>
-                          )}
-                          <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/15">
-                            <div className="h-full rounded-full bg-fuchsia-300 transition-all duration-700" style={{ width: `${pct}%` }} />
-                          </div>
-                          <p className="mt-2 text-xs font-black text-white/75">{game.count} votes</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {rankedGames.length > 7 && (
-                <div className="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-2">
-                  {rankedGames.slice(7).map((game, index) => (
-                    <div
-                      key={game.id}
-                      className="game-rank-card relative h-16 w-12 overflow-hidden rounded-xl border border-white/20 bg-white/10 shadow-lg"
-                      style={{ animationDelay: `${(index + 6) * 45}ms` }}
-                      title={`${game.title}: ${game.count} votes`}
-                    >
-                      <img src={game.cover} alt={game.title} className="size-full object-cover" />
-                      {game.enabled === false && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white">
-                          <Lock size={14} />
-                        </div>
-                      )}
-                      <div className="absolute inset-x-0 bottom-0 bg-black/70 py-0.5 text-center text-[9px] font-black text-white">
-                        {game.enabled === false ? t("lesson.interactive.locked") : game.count}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-          </>
-          ) : null}
-
-          <div className="hidden overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-xl">
-            <div className="grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-5 items-stretch">
-              <div className="game-rank-winner relative min-h-[420px] overflow-hidden rounded-[28px] bg-slate-950 text-white shadow-2xl">
-                {leadingGame?.cover && (
-                  <img src={leadingGame.cover} alt={leadingGame.title} className="absolute inset-0 size-full object-cover" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/10" />
-                <div className="absolute left-5 top-5 rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-slate-950 shadow-lg">
-                  #1 {t("lesson.interactive.mostVoted")}
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <p className="text-xs font-black uppercase tracking-[0.24em] text-white/60">
-                    {totalVotes} {t("lesson.interactive.totalVotes")}
-                  </p>
-                  <h3 className="mt-2 text-3xl font-black leading-tight text-white">
-                    {leadingGame?.title || t("lesson.interactive.waitingVotes")}
-                  </h3>
-                  <p className="mt-2 line-clamp-2 text-sm font-semibold text-white/75">
-                    {leadingGame?.description || t("lesson.interactive.gameVoteStageHelp")}
-                  </p>
-                  <div className="mt-5 flex items-end justify-between gap-3">
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-white/50">{t("lesson.interactive.votes")}</p>
-                      <p className="text-6xl font-black tabular-nums text-white">{leadingGame?.count || 0}</p>
-                    </div>
-                    <div className="rounded-2xl border border-white/20 bg-white/15 px-4 py-3 text-right backdrop-blur">
-                      <p className="text-[10px] font-black uppercase text-white/55">{t("lesson.interactive.voters")}</p>
-                      <p className="max-w-[150px] truncate text-sm font-black text-white">
-                        {leadingGame?.voters.length ? leadingGame.voters.join(", ") : t("lesson.interactive.noVotesYet")}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="min-w-0">
-                <div className="mb-4 flex items-center justify-between gap-3">
-                  <div>
-                    <h3 className="text-xl font-black text-foreground">{t("lesson.interactive.gameVoteStageTitle")}</h3>
-                    <p className="text-sm font-semibold text-muted-foreground">
-                      เกมที่นักเรียนเลือกมากที่สุดจะเด่นที่กลางกระดาน
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-indigo-500/10 px-4 py-3 text-center">
-                    <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{totalVotes}</p>
-                    <p className="text-[10px] font-black uppercase text-muted-foreground">votes</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-3">
-                  {rankedGames.map((game, index) => {
-                    const pct = participants.length ? Math.round((game.count / participants.length) * 100) : 0;
-                    const isLeader = game.id === leadingGame?.id && game.count > 0;
-                    return (
-                      <div
-                        key={game.id}
-                        className={`game-rank-card group relative overflow-hidden rounded-2xl border bg-card shadow-sm transition-all duration-500 ${
-                          isLeader
-                            ? "border-amber-300 shadow-amber-500/20 ring-2 ring-amber-300/40"
-                            : "border-border"
-                        }`}
-                        style={{ animationDelay: `${index * 45}ms` }}
-                      >
-                        <div className="flex gap-3 p-3">
-                          <div className="relative h-28 w-20 shrink-0 overflow-hidden rounded-xl bg-muted shadow-md">
-                            <img src={game.cover} alt={game.title} className="size-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                            <div className="absolute left-1.5 top-1.5 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-black text-white">
-                              #{index + 1}
-                            </div>
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="min-w-0">
-                                <h4 className="truncate text-sm font-black text-foreground">{game.title}</h4>
-                                <p className="mt-1 line-clamp-2 text-[11px] font-semibold leading-snug text-muted-foreground">
-                                  {game.description}
-                                </p>
-                              </div>
-                              <div className="rounded-xl bg-indigo-500/10 px-3 py-2 text-center">
-                                <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{game.count}</p>
-                                <p className="text-[8px] font-black uppercase text-muted-foreground">votes</p>
-                              </div>
-                            </div>
-                            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-                              <div
-                                className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 transition-all duration-700"
-                                style={{ width: `${pct}%` }}
-                              />
-                            </div>
-                            <p className="mt-2 min-h-4 truncate text-[11px] font-bold text-muted-foreground">
-                              {game.voters.length ? game.voters.join(", ") : "ยังไม่มีโหวต"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="hidden grid-cols-1 lg:grid-cols-3 gap-3">
-            {voteCounts.map((game) => (
-              <div key={game.id} className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="font-black text-foreground">{game.title}</h3>
-                    <p className="mt-1 text-xs font-semibold text-muted-foreground">{game.description}</p>
-                  </div>
-                  <div className="rounded-xl bg-indigo-500/10 px-3 py-2 text-center">
-                    <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{game.count}</p>
-                    <p className="text-[9px] font-bold uppercase text-muted-foreground">votes</p>
-                  </div>
-                </div>
-                <p className="mt-3 min-h-5 text-xs font-semibold text-muted-foreground">
-                  {game.voters.length ? game.voters.join(", ") : "ยังไม่มีโหวต"}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className={`rounded-3xl border border-border bg-card p-5 shadow-sm ${isFullscreen || showScoreRanking || gameState?.status !== "voting" ? "hidden" : ""}`}>
-            <h3 className="text-lg font-black text-foreground">{t("lesson.interactive.gameScoreboard")}</h3>
-            {results.length === 0 ? (
-              <p className="mt-3 text-sm font-semibold text-muted-foreground">{t("lesson.interactive.waitingGameScores")}</p>
-            ) : (
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">
-                {results.map((result, index) => (
-                  <div key={result.studentId} className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3">
-                    <span className="w-8 text-center text-sm font-black text-muted-foreground">#{index + 1}</span>
-                    <span className="flex-1 truncate text-sm font-bold text-foreground">{result.name}</span>
-                    <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{result.score}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-        {!isFullscreen && <LiveLeaderboard participants={participants} preparationMode={preparationMode} preparationFreeExplore={preparationFreeExplore} answeredStudentIds={leaderboardAnsweredStudentIds} />}
-      </div>
-    );
+  const writtenCommon = {
+    currentPhase,
+    showResults: showQuestionResults,
+    answers: allAnsweredData,
+    totalAnswered,
+    totalParticipants,
+    roster,
+    preparationMode,
+    preparationStatusText: preparationAnswerStatusText,
   };
 
   const renderPhaseContent = () => {
-    if (currentPhase === 0 && participants.length === 0) return renderLobby();
-    if (currentPhase === LESSON_PHASE.FLASHCARDS) return renderFlashcards();
-    if (currentPhase === LESSON_PHASE.COMPREHENSION) return renderMCQ();
-    if (currentPhase === LESSON_PHASE.GUIDED_RESPONSE) return renderShortAnswer();
-    if (currentPhase === LESSON_PHASE.VOCABULARY_PRACTICE) return renderVocabKahoot();
-    if (currentPhase === VOCAB_GAME_PHASE) return renderGamePhase("vocabulary");
-    if (currentPhase === LESSON_PHASE.SENTENCE_PRACTICE) return renderSentenceFlashcardKahoot();
-    if (currentPhase === LESSON_PHASE.SENTENCE_ORDER) return renderSentenceOrderingKahoot();
-    if (currentPhase === LESSON_PHASE.GUIDED_WRITING) return renderWriting();
-    if (currentPhase === SENTENCE_GAME_PHASE) return renderGamePhase("sentence");
-    if (currentPhase === LESSON_PHASE.LANGUAGE_QUESTIONS) return renderLanguageQuestions();
-    if (currentPhase === LESSON_PHASE.REFLECTION) return renderReflection();
-    if (currentPhase === LESSON_PHASE.PAIR_CONVERSATION) return renderPairConversation();
-    if (currentPhase === FINAL_LEADERBOARD_PHASE) return renderLeaderboard();
-
-    // Presentation phases: Launch, Read, Vocabulary Context, Deep Reading, and Key Sentences.
-    return renderPresentation();
-  };
-
-  const phaseGroupStyles = [
-    { label: t("lesson.interactive.period1"), color: "bg-indigo-500", lightColor: "bg-indigo-100", textColor: "text-indigo-700" },
-    { label: t("lesson.interactive.period2"), color: "bg-blue-500", lightColor: "bg-blue-100", textColor: "text-blue-700" },
-    { label: t("lesson.interactive.period3"), color: "bg-purple-500", lightColor: "bg-purple-100", textColor: "text-purple-700" },
-    { label: t("lesson.interactive.period4"), color: "bg-amber-500", lightColor: "bg-amber-100", textColor: "text-amber-700" },
-    { label: t("lesson.interactive.wrapUp"), color: "bg-emerald-500", lightColor: "bg-emerald-100", textColor: "text-emerald-700" },
-  ];
-  const phaseGroups = PHASE_GROUPS.map((group, index) => ({ ...group, ...phaseGroupStyles[index] }));
-
-  const phaseNames: Record<number, string> = {
-    0: "Lobby",
-    ...Object.fromEntries(Object.entries(PHASE_NAMES).map(([phase, name]) => [phase, `Phase ${phase} · ${name}`])),
-  };
-
-  const renderPhaseProgressBar = () => {
-    if (currentPhase === 0) return null;
-    const currentGroup = phaseGroups.find((g) =>
-      g.phases.includes(currentPhase),
-    );
-
-    return (
-      <div className="mb-6 bg-muted border border-border rounded-2xl p-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <span
-              className={`text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-full ${currentGroup?.lightColor || "bg-muted"} ${currentGroup?.textColor || "text-muted-foreground"}`}
-            >
-              {currentGroup?.label || `Phase ${currentPhase}`}
-            </span>
-            <span className="font-bold text-foreground text-sm">
-              {phaseNames[currentPhase] || `Phase ${currentPhase}`}
-            </span>
+    if (currentPhase === 0 && participants.length === 0) {
+      return (
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
+          <Users aria-hidden="true" className="size-10 text-fg-subtle" />
+          <p className="text-2xl font-semibold text-fg">{t("lesson.interactive.waitingStudents")}</p>
+          <p className="text-base text-fg-muted">{t("lesson.interactive.noJoinedYet")}</p>
+        </div>
+      );
+    }
+    switch (currentPhase) {
+      case LESSON_PHASE.FLASHCARDS:
+        return (
+          <div data-tour-target={tour("phase-2-flashcards")} className="w-full min-w-0">
+            <LazyFlashcardTeachingGame
+              words={(articleData as any)?.words || []}
+              participants={participants}
+              answered={totalAnswered}
+              onSpeak={(text, audioUrl) => audio.playClip(audioUrl || audio.getWordAudioUrl(text), text)}
+              preparationMode={preparationMode}
+            />
           </div>
-          <span className="text-xs text-muted-foreground font-medium">
-            {preparationFreeExplore ? "เลือก Phase ได้อิสระ" : `${currentPhase} / ${TOTAL_PHASES}`}
-          </span>
-        </div>
-
-        {/* Phase dots */}
-        <div className="flex items-center gap-1">
-          {Array.from({ length: TOTAL_PHASES }, (_, i) => i + 1).map((p) => {
-            const group = phaseGroups.find((g) => g.phases.includes(p));
-            const isPast = p < currentPhase;
-            const isCurrent = p === currentPhase;
-            return (
-              <div key={p} className="flex-1 flex flex-col items-center gap-1">
-                {preparationFreeExplore ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!isCurrent && !isChangingPhase) requestPhaseChange(p);
-                    }}
-                    disabled={isCurrent || isChangingPhase}
-                    aria-label={`ไป Phase ${p}${phaseNames[p] ? ` · ${phaseNames[p]}` : ""}`}
-                    aria-current={isCurrent ? "step" : undefined}
-                    className={`h-3 w-full rounded-full transition-all duration-300 disabled:cursor-default ${
-                      isCurrent
-                        ? `${group?.color || "bg-muted-foreground"} shadow-md scale-y-125 phase-active-glow`
-                        : isPast
-                          ? (group?.color || "bg-muted-foreground") +
-                            " opacity-60 hover:scale-y-150 hover:opacity-100"
-                          : "bg-border hover:scale-y-150 hover:bg-sky-300 dark:hover:bg-sky-700"
-                    }`}
-                  />
-                ) : (
-                  <div
-                    className={`h-2 w-full rounded-full transition-all duration-500 ${
-                      isCurrent
-                        ? `${group?.color || "bg-muted-foreground"} shadow-md scale-y-150 phase-active-glow`
-                        : isPast
-                          ? (group?.color || "bg-muted-foreground") +
-                            " opacity-60"
-                          : "bg-border"
-                    }`}
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Group labels */}
-        <div className="flex mt-2 text-[10px] text-muted-foreground font-medium">
-          {phaseGroups.map((g) => (
-            <div
-              key={g.label}
-              style={{ flex: g.phases.length }}
-              className="text-center"
-            >
-              {g.label}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+        );
+      case LESSON_PHASE.COMPREHENSION:
+        return renderChoice(buildComprehensionQuestion(questionContext), LESSON_PHASE.COMPREHENSION);
+      case LESSON_PHASE.VOCABULARY_PRACTICE:
+        return renderChoice(buildVocabularyQuestion(questionContext), LESSON_PHASE.VOCABULARY_PRACTICE);
+      case LESSON_PHASE.SENTENCE_PRACTICE:
+        return renderChoice(buildFillBlankQuestion(questionContext), LESSON_PHASE.SENTENCE_PRACTICE);
+      case LESSON_PHASE.SENTENCE_ORDER:
+        return renderChoice(buildSentenceOrderQuestion(questionContext), LESSON_PHASE.SENTENCE_ORDER);
+      case LESSON_PHASE.GUIDED_RESPONSE: {
+        const idx = sessionData?.phaseSelectedIndices?.[currentPhase] || 0;
+        const question = articleData?.shortAnswerQuestions?.[idx] || articleData?.shortAnswerQuestions?.[0];
+        const manifestQuestion =
+          audio.getManifestQuestionByText(question?.question, "saq") ||
+          audio.getManifestQuestion("saq", idx) ||
+          audio.getManifestQuestion("saq", 0);
+        const audioUrl = manifestQuestion?.questionAudioUrl || question?.questionAudioUrl || question?.audioUrl;
+        return (
+          <ShortAnswerStage
+            {...writtenCommon}
+            question={question?.question}
+            onSpeak={() => audio.playClip(audioUrl, question?.question)}
+          />
+        );
+      }
+      case LESSON_PHASE.GUIDED_WRITING: {
+        const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.GUIDED_WRITING] || 0;
+        const question = articleData?.shortAnswerQuestions?.[idx] || articleData?.shortAnswerQuestions?.[0];
+        const manifestQuestion =
+          audio.getManifestQuestionByText(question?.question) ||
+          audio.getManifestQuestion("saq", idx) ||
+          audio.getManifestQuestion("saq", 0);
+        const prompt = question?.question || t("lesson.interactive.writingPromptLabel");
+        const audioUrl = manifestQuestion?.questionAudioUrl || question?.questionAudioUrl || question?.audioUrl;
+        return (
+          <WritingStage
+            {...writtenCommon}
+            prompt={prompt}
+            hasQuestion={Boolean(question?.question)}
+            onSpeak={() => audio.playClip(audioUrl, question?.question)}
+          />
+        );
+      }
+      case VOCAB_GAME_PHASE:
+      case SENTENCE_GAME_PHASE:
+        return (
+          <GamePhaseStage
+            category={currentPhase === VOCAB_GAME_PHASE ? "vocabulary" : "sentence"}
+            currentPhase={currentPhase}
+            gameState={gameState}
+            participants={participants}
+            totalParticipants={totalParticipants}
+            articleData={articleData}
+            isFullscreen={isFullscreen}
+            preparationMode={preparationMode}
+            teacherDemoEnabled={teacherDemoEnabled}
+            onTeacherDemoEnabledChange={setTeacherDemoEnabled}
+            tutorialEnabled={tutorialEnabled}
+            onTutorialEnabledChange={setTutorialEnabled}
+            teacherDemoAnswer={teacherDemoAnswer}
+            onTeacherDemoAnswer={setTeacherDemoAnswer}
+            potionRushTeacherDemoCompleted={potionRushTeacherDemoCompleted}
+            onPotionRushTeacherDemoComplete={() => setPotionRushTeacherDemoCompleted(true)}
+            roster={roster}
+          />
+        );
+      case LESSON_PHASE.LANGUAGE_QUESTIONS:
+        return <LanguageQuestionsStage {...writtenCommon} />;
+      case LESSON_PHASE.REFLECTION:
+        return <ReflectionStage {...writtenCommon} />;
+      case LESSON_PHASE.PAIR_CONVERSATION: {
+        const pairs: LessonPair[] = mockPairs ?? (preparationMode ? createPreparationPairs() : sessionData?.pairs ?? []);
+        // Mock pairs preview the layout without real students in the room
+        const showEmptyState =
+          pairs.length === 0 || (!preparationMode && !mockPairs && pairs.every((p) => p.members.length < 2));
+        return <PairConversationStage pairs={pairs} showEmptyState={showEmptyState} preparationMode={preparationMode} />;
+      }
+      case FINAL_LEADERBOARD_PHASE:
+        return <FinalLeaderboardStage participants={mockLeaderboard ?? participants} preparationMode={preparationMode} />;
+      default:
+        // Presentation phases: Launch, Read, Vocabulary Context, Deep Reading, and Key Sentences.
+        return (
+          <ArticleDisplay
+            articleData={audio.presentationArticleData}
+            phase={currentPhase}
+            isFullscreen={isFullscreen}
+            flagCounts={flagCounts}
+            onActiveIdxChange={handleActiveIdxChange}
+          />
+        );
+    }
   };
 
-  const renderControlToolbar = () => {
-    const isNextDisabled = (preparationFreeExplore ? false : !canProceedDelayed) || isChangingPhase;
-    const gameStatus = gameState?.status;
-    const hasGameResults = isGamePhase && gameResultsCount > 0;
-    const canEndQuestion =
-      isInteractivePhase &&
-      !isRewoundPhase &&
-      !questionEnded &&
-      totalParticipants > 0 &&
-      totalAnswered < totalParticipants &&
-      (!preparationMode || preparationFreeExplore || preparationAnswersReadyToEnd);
-    const useGamePrimaryAction = isGamePhase && !isRewoundPhase && !hasGameResults && hasPlayableGameForPhase;
-    const gamePrimaryLabel =
-      gameStatus === "voting" && !hasPlayableGameForPhase
-        ? t("lesson.interactive.gamesComingSoon")
-        : !gameStatus
-          ? t("lesson.interactive.openGameVote")
-        : gameStatus === "voting"
-          ? "ปิดโหวตและดูผล"
-        : gameStatus === "ready"
-          ? teacherDemoEnabled
-            ? "เริ่มให้ครูสาธิต"
-            : tutorialEnabled
-              ? "แสดง Tutorial"
-              : "เริ่มเกมทันที"
-        : gameStatus === "teacher_demo"
-          ? gameState?.tutorialEnabled ? "จบการสาธิต ไป Tutorial" : "จบการสาธิตและเริ่มเกม"
-        : gameStatus === "tutorial"
-          ? "เริ่มเกม"
-        : gameStatus === "playing" && preparationFreeExplore
-          ? "ดูผลตัวอย่างทันที"
-        : gameStatus === "countdown"
-          ? t("lesson.interactive.countdownInProgress")
-          : t("lesson.interactive.gamePlaying");
-    const isGamePrimaryDisabled =
-      gameStatus === "countdown" ||
-      (gameStatus === "playing" && !preparationFreeExplore) ||
-      (gameStatus === "voting" && !hasPlayableGameForPhase) ||
-      (!preparationFreeExplore && preparationMode &&
-        gameStatus === "voting" &&
-        Object.keys(gameState?.votes || {}).length < totalParticipants);
-    const handleGamePrimaryAction = () => {
-      if (!gameStatus) {
-        if (preparationMode) {
-          setPreparationGameState(createPreparationGameState(currentPhase));
-        } else {
-          startGameVote(currentPhase);
-        }
-        return;
-      }
-      if (gameStatus === "voting") {
-        if (preparationMode) {
-          const enabledGames = currentGameCategory
-            ? getGamesByCategory(currentGameCategory).filter((game) => game.enabled !== false)
-            : [];
-          const voteCounts = enabledGames.map((game) => ({
-            game,
-            count: Object.values(gameState?.votes || {}).filter((vote) => vote === game.id).length,
-          }));
-          const winningGame = [...voteCounts].sort((a, b) => b.count - a.count)[0]?.game || enabledGames[0];
-          setPreparationGameState((previous) => previous
+  // ── Dock ─────────────────────────────────────────────────────────────────
+  const isNextDisabled = (preparationFreeExplore ? false : !canProceedDelayed) || isChangingPhase;
+  const gameStatus = gameState?.status;
+  const hasGameResults = isGamePhase && gameResultsCount > 0;
+  const canEndQuestion =
+    isInteractivePhase &&
+    !isRewoundPhase &&
+    !questionEnded &&
+    totalParticipants > 0 &&
+    totalAnswered < totalParticipants &&
+    (!preparationMode || preparationFreeExplore || preparationAnswersReadyToEnd);
+  const useGamePrimaryAction = isGamePhase && !isRewoundPhase && !hasGameResults && hasPlayableGameForPhase;
+  const gameAction = getGamePrimaryAction({
+    status: gameStatus,
+    hasPlayableGame: hasPlayableGameForPhase,
+    teacherDemoEnabled,
+    tutorialEnabled,
+    stateTutorialEnabled: Boolean(gameState?.tutorialEnabled),
+    preparationMode,
+    preparationFreeExplore,
+    votesCount: Object.keys(gameState?.votes || {}).length,
+    totalParticipants,
+  });
+
+  const handleGamePrimaryAction = () => {
+    if (!gameStatus) {
+      if (preparationMode) setPreparationGameState(createPreparationGameState(currentPhase));
+      else startGameVote(currentPhase);
+      return;
+    }
+    if (gameStatus === "voting") {
+      if (preparationMode) {
+        const enabledGames = currentGameCategory
+          ? getGamesByCategory(currentGameCategory).filter((game) => game.enabled !== false)
+          : [];
+        const voteCounts = enabledGames.map((game) => ({
+          game,
+          count: Object.values(gameState?.votes || {}).filter((vote) => vote === game.id).length,
+        }));
+        const winningGame = [...voteCounts].sort((a, b) => b.count - a.count)[0]?.game || enabledGames[0];
+        setPreparationGameState((previous) =>
+          previous
             ? {
                 ...previous,
                 // Keep the same preparation sequence as a live lesson:
@@ -3728,15 +842,17 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 selectedGameId: winningGame?.id,
                 results: {},
               }
-            : previous);
-        } else {
-          lockGameVote();
-        }
-        return;
+            : previous,
+        );
+      } else {
+        lockGameVote();
       }
-      if (gameStatus === "ready") {
-        if (preparationMode) {
-          setPreparationGameState((previous) => previous
+      return;
+    }
+    if (gameStatus === "ready") {
+      if (preparationMode) {
+        setPreparationGameState((previous) =>
+          previous
             ? {
                 ...previous,
                 status: teacherDemoEnabled ? "teacher_demo" : tutorialEnabled ? "tutorial" : "playing",
@@ -3744,375 +860,223 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 teacherDemoEnabled,
                 results: {},
               }
-            : previous);
-        } else {
-          startGameIntro({ tutorialEnabled, teacherDemoEnabled });
-        }
-        return;
+            : previous,
+        );
+      } else {
+        startGameIntro({ tutorialEnabled, teacherDemoEnabled });
       }
-      if (gameStatus === "playing" && preparationFreeExplore) {
-        setPreparationGameState((previous) => previous
+      return;
+    }
+    if (gameStatus === "playing" && preparationFreeExplore) {
+      setPreparationGameState((previous) =>
+        previous
           ? {
               ...previous,
               status: "results",
-              results: createPreparationGameResults(
-                previous.selectedGameId || "dragon-flight",
-                previous.category,
-              ),
+              results: createPreparationGameResults(previous.selectedGameId || "dragon-flight", previous.category),
             }
-          : previous);
-        return;
-      }
-      if (gameStatus === "teacher_demo") {
-        if (preparationMode) {
-          setPreparationGameState((previous) => previous
-            ? {
-                ...previous,
-                status: previous.tutorialEnabled ? "tutorial" : "playing",
-                results: {},
-              }
-            : previous);
-        } else {
-          advanceGameIntro(5000);
-        }
-      } else if (gameStatus === "tutorial") {
-        if (preparationMode) {
-          setPreparationGameState((previous) => previous
-            ? { ...previous, status: "playing", results: {} }
-            : previous);
-        } else {
-          advanceGameIntro(5000);
-        }
-      }
-    };
-    const toolbarShellClass = isFullscreen
-      ? "absolute bottom-5 left-1/2 z-[120] w-[min(1180px,calc(100vw-40px))] -translate-x-1/2"
-      : "mt-auto shrink-0 border-t border-border pt-5";
-    const toolbarClass = isFullscreen
-      ? "border-white/15 bg-slate-950/78 text-white shadow-2xl backdrop-blur-xl"
-      : "border-border bg-slate-950 text-white shadow-xl";
-    const quietButtonClass =
-      "inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-white/10 px-3 text-xs font-black text-white transition-colors hover:bg-white/20";
-    const isDevelopmentMode = process.env.NODE_ENV === "development" && !preparationMode;
-
-    if (isToolbarHidden) {
-      return (
-        <div
-          className={
-            isFullscreen
-              ? "absolute bottom-5 right-5 z-[120]"
-              : "mt-auto flex shrink-0 justify-end border-t border-border pt-5"
-          }
-        >
-          <button
-            onClick={() => setIsToolbarHidden(false)}
-            data-tour-target={preparationMode ? "show-toolbar-button" : undefined}
-            className="flex items-center gap-2 rounded-2xl border border-white/15 bg-slate-950/80 px-4 py-3 text-sm font-black text-white shadow-2xl backdrop-blur-xl transition-colors hover:bg-slate-900"
-          >
-            <Eye size={16} />
-            {t("lesson.interactive.showToolbar")}
-          </button>
-        </div>
+          : previous,
       );
+      return;
     }
-
-    return (
-      <div className={toolbarShellClass}>
-        <div
-          data-tour-target={preparationMode ? "lesson-control-panel" : undefined}
-          className={`flex flex-col gap-3 rounded-2xl border px-4 py-3 ${toolbarClass}`}
-        >
-          <div className="grid items-center gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
-          <div className="grid min-w-0 items-center gap-3 sm:grid-cols-[auto_minmax(0,1fr)]">
-            <div className="flex shrink-0 items-center gap-3">
-              <div className="rounded-xl bg-white/10 px-3 py-2">
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/50">
-                {t("lesson.interactive.phaseLabel")}
-              </p>
-              <p className="text-sm font-black text-white">
-                {currentPhase} / {TOTAL_PHASES}
-              </p>
-              </div>
-              {preparationMode ? (
-                <div className="hidden rounded-xl bg-violet-500/20 px-3 py-2 sm:block">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-violet-200/70">
-                    โหมด
-                  </p>
-                  <p className="text-sm font-black text-violet-100">
-                    {preparationFreeExplore ? "สำรวจอิสระ" : "เตรียมสอน"}
-                  </p>
-                </div>
-              ) : <div className="hidden rounded-xl bg-white/10 px-3 py-2 sm:block">
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/50">
-                {t("lesson.interactive.studentsLabel")}
-              </p>
-              <p className="text-sm font-black text-white">
-                {totalParticipants}
-              </p>
-              </div>}
-            </div>
-
-            <div className="flex min-w-0 flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={toggleFullscreen}
-              data-tour-target={preparationMode ? "fullscreen-button" : undefined}
-              title={
-                isFullscreen
-                  ? t("lesson.interactive.exitFullscreen")
-                  : t("lesson.interactive.enterFullscreen")
-              }
-              className={`${quietButtonClass} shrink-0 flex items-center gap-1.5`}
-            >
-              {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-              <span className="hidden sm:inline">
-                {isFullscreen
-                  ? t("lesson.interactive.exitFullscreen")
-                  : t("lesson.interactive.enterFullscreen")}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setIsToolbarHidden(true)}
-              data-tour-target={preparationMode ? "hide-toolbar-button" : undefined}
-              className={`${quietButtonClass} shrink-0 flex items-center gap-1.5`}
-            >
-              <EyeOff size={14} />
-              <span className="hidden sm:inline">{t("lesson.interactive.hideToolbar")}</span>
-            </button>
-
-            {!preparationMode && (
-              <button
-                onClick={() => requestPhaseChange(0)}
-                disabled={isChangingPhase}
-                className="inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-rose-500/15 px-3 text-xs font-black text-rose-100 transition-colors hover:bg-rose-500/25"
-              >
-                {t("lesson.interactive.returnLobby")}
-              </button>
-            )}
-            </div>
-
-          </div>
-
-          <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 lg:border-l lg:border-white/10 lg:pl-3">
-            <button
-              onClick={handlePreviousPhase}
-              disabled={currentPhase <= 1 || isChangingPhase}
-              data-tour-target={preparationMode ? "previous-phase-button" : undefined}
-              className={`${quietButtonClass} disabled:cursor-not-allowed disabled:opacity-45`}
-            >
-              <ChevronLeft size={16} />
-              {t("lesson.interactive.previous")}
-            </button>
-            {canEndQuestion && (
-            <button
-                onClick={handleEndQuestion}
-                disabled={!preparationMode && !endQuestion}
-                data-tour-target={preparationMode ? "preparation-end-question-button" : undefined}
-                title={`แสดงผลจากคำตอบ ${totalAnswered}/${totalParticipants} คน`}
-                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-amber-500 px-4 text-sm font-black text-slate-950 shadow-lg transition-all hover:bg-amber-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
-              >
-                จบคำถาม
-              </button>
-            )}
-            <button
-              onClick={useGamePrimaryAction ? handleGamePrimaryAction : handleNextPhase}
-              disabled={useGamePrimaryAction ? isGamePrimaryDisabled : isNextDisabled}
-              data-tour-target={preparationMode ? (useGamePrimaryAction ? "game-primary-button" : "phase-next-button") : undefined}
-              className={`inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-5 text-sm font-black transition-all ${
-                (useGamePrimaryAction ? isGamePrimaryDisabled : isNextDisabled)
-                  ? "cursor-not-allowed bg-white/10 text-white/45"
-                  : useGamePrimaryAction
-                    ? "bg-emerald-500 text-white shadow-lg hover:bg-emerald-400 active:scale-95"
-                    : "bg-primary text-primary-foreground shadow-lg hover:opacity-90 active:scale-95"
-              }`}
-            >
-              {useGamePrimaryAction ? (
-                <>
-                  <span>{gamePrimaryLabel}</span>
-                  {gameStatus === "voting" && <ChevronRight size={18} />}
-                </>
-              ) : isChangingPhase ? (
-                <>
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                  {t("lesson.interactive.processing")}
-                </>
-              ) : !preparationFreeExplore && !canProceedDelayed ? (
-                t("lesson.interactive.waitingAnswers")
-              ) : currentPhase === FINAL_LEADERBOARD_PHASE ? (
-                <>
-                  <span className="hidden sm:inline">
-                    {t("lesson.interactive.startNewRound")}
-                  </span>
-                  <ChevronRight size={18} />
-                </>
-              ) : isRewoundPhase ? (
-                <>
-                  <span className="hidden sm:inline">
-                    กลับไป Phase {sessionData?.resumePhase ?? currentPhase + 1}
-                  </span>
-                  <ChevronRight size={18} />
-                </>
-              ) : (
-                <>
-                  <span className="hidden sm:inline">
-                    {t("lesson.interactive.nextPhase")}
-                  </span>
-                  <ChevronRight size={18} />
-                </>
-              )}
-            </button>
-            {!isDevelopmentMode && (
-              <button
-                onClick={onFinishSession}
-                disabled={!onFinishSession}
-                data-tour-target={preparationMode ? "preparation-exit-button" : undefined}
-                className="inline-flex h-11 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-xl bg-white/10 px-3 text-xs font-black text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-45"
-              >
-                <Check size={14} />
-                {t("lesson.interactive.finishLesson")}
-              </button>
-            )}
-          </div>
-          </div>
-
-          {isDevelopmentMode && (
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
-              <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-                <div className="flex min-w-0 flex-wrap items-center gap-2">
-                  <span className="rounded-lg bg-orange-400/15 px-2.5 py-2 text-[10px] font-black text-orange-200">
-                    DEV
-                  </span>
-                  <button
-                    onClick={() => requestPhaseChange(Math.max(1, currentPhase - 1))}
-                    disabled={isChangingPhase}
-                    className={quietButtonClass}
-                  >
-                    Prev
-                  </button>
-                  <button
-                    onClick={() => requestPhaseChange(Math.min(TOTAL_PHASES, currentPhase + 1))}
-                    disabled={isChangingPhase}
-                    className={quietButtonClass}
-                  >
-                    Skip
-                  </button>
-                  {isGamePhase && (
-                    <button
-                    onClick={() => {
-                        requestPhaseChange(currentPhase);
-                      }}
-                      disabled={isChangingPhase}
-                      className="inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-amber-400/20 px-3 text-xs font-black text-amber-100 transition-colors hover:bg-amber-400/30"
-                      title="Reset the current game phase as a fresh live phase"
-                    >
-                      Reopen Phase ใหม่
-                    </button>
-                  )}
-                  <button
-                    onClick={toggleMockLeaderboard}
-                    className={`inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-3 text-xs font-black transition-colors ${
-                      mockLeaderboard
-                        ? "bg-orange-500 text-white"
-                        : "bg-white/10 text-white hover:bg-white/20"
-                    }`}
-                  >
-                    {mockLeaderboard ? "Mock ON" : "Mock LB"}
-                  </button>
-                  <button
-                    onClick={toggleMockPairs}
-                    className={`inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-3 text-xs font-black transition-colors ${
-                      mockPairs
-                        ? "bg-orange-500 text-white"
-                        : "bg-white/10 text-white hover:bg-white/20"
-                    }`}
-                  >
-                    {mockPairs ? "Pairs ON" : "Mock Pairs"}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                onClick={onFinishSession}
-                disabled={!onFinishSession}
-                data-tour-target={preparationMode ? "preparation-exit-button" : undefined}
-                className="inline-flex h-11 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-xl bg-white/10 px-3 text-xs font-black text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-45"
-              >
-                <Check size={14} />
-                {t("lesson.interactive.finishLesson")}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    );
+    if (gameStatus === "teacher_demo") {
+      if (preparationMode) {
+        setPreparationGameState((previous) =>
+          previous ? { ...previous, status: previous.tutorialEnabled ? "tutorial" : "playing", results: {} } : previous,
+        );
+      } else {
+        advanceGameIntro(5000);
+      }
+    } else if (gameStatus === "tutorial") {
+      if (preparationMode) {
+        setPreparationGameState((previous) => (previous ? { ...previous, status: "playing", results: {} } : previous));
+      } else {
+        advanceGameIntro(5000);
+      }
+    }
   };
+
+  const nextLabel = isChangingPhase
+    ? t("lesson.interactive.processing")
+    : !preparationFreeExplore && !canProceedDelayed
+      ? t("lesson.interactive.waitingAnswers")
+      : currentPhase === FINAL_LEADERBOARD_PHASE
+        ? t("lesson.interactive.startNewRound")
+        : isRewoundPhase
+          ? `${t("lesson.live.backToPhase")} ${sessionData?.resumePhase ?? currentPhase + 1}`
+          : t("lesson.live.next");
+  const nextHint =
+    nextPhaseTarget > 0 && !isChangingPhase ? `${t("lesson.live.nextUp")} ${getPhaseName(nextPhaseTarget)}` : undefined;
+  const showNextChevron = !isChangingPhase && (preparationFreeExplore || canProceedDelayed);
+
+  const isDevelopmentMode = process.env.NODE_ENV === "development" && !preparationMode;
+  const devTools: DevTool[] | undefined = isDevelopmentMode
+    ? [
+        { label: "Prev", onClick: () => requestPhaseChange(Math.max(1, currentPhase - 1)), disabled: isChangingPhase },
+        { label: "Skip", onClick: () => requestPhaseChange(Math.min(TOTAL_PHASES, currentPhase + 1)), disabled: isChangingPhase },
+        ...(isGamePhase
+          ? [
+              {
+                label: "Reopen phase",
+                onClick: () => requestPhaseChange(currentPhase),
+                disabled: isChangingPhase,
+                title: "Reset the current game phase as a fresh live phase",
+              },
+            ]
+          : []),
+        { label: mockLeaderboard ? "Mock LB on" : "Mock LB", onClick: toggleMockLeaderboard, active: Boolean(mockLeaderboard) },
+        { label: mockPairs ? "Mock pairs on" : "Mock pairs", onClick: toggleMockPairs, active: Boolean(mockPairs) },
+      ]
+    : undefined;
+
+  const dockStatus = isInteractivePhase ? (
+    <span>
+      {t("lesson.live.dockAnswered")}{" "}
+      <span className="text-base font-semibold tabular-nums text-fg">
+        {totalAnswered}/{totalParticipants}
+      </span>
+    </span>
+  ) : isGamePhase && gameStatus && gameStatus !== "voting" ? (
+    <span>
+      {t("lesson.live.dockSubmitted")}{" "}
+      <span className="text-base font-semibold tabular-nums text-fg">
+        {gameResultsCount}/{totalParticipants}
+      </span>
+    </span>
+  ) : isGamePhase && gameStatus === "voting" ? (
+    <span>
+      {t("lesson.live.dockVoted")}{" "}
+      <span className="text-base font-semibold tabular-nums text-fg">
+        {Object.keys(gameState?.votes || {}).length}/{totalParticipants}
+      </span>
+    </span>
+  ) : (
+    <span>
+      {t("lesson.interactive.studentsLabel")}{" "}
+      <span className="text-base font-semibold tabular-nums text-fg">{totalParticipants}</span>{" "}
+      {t("lesson.interactive.peopleUnit")}
+    </span>
+  );
 
   return (
     <div
       ref={fullscreenRef}
-      className={`flex flex-col relative bg-background ${
+      data-current-phase={currentPhase}
+      // Vocabulary / active-sentence marker used by ArticleDisplay.
+      style={{ "--highlight-bg": "var(--warning-bg)", "--highlight-text": "var(--warning-fg)" } as React.CSSProperties}
+      className={
         isFullscreen
-          ? "fixed inset-0 z-[100] h-dvh w-screen overflow-hidden px-0 pb-28 pt-0"
-          : "flex-1"
-      }`}
+          ? "fixed inset-0 z-[100] flex h-dvh w-screen flex-col overflow-hidden bg-app pb-28"
+          : "relative flex min-h-[var(--lesson-viewport-h,100dvh)] flex-1 flex-col bg-app"
+      }
     >
-      {/* Warning Overlay when everyone left */}
-      {currentPhase > 0 && participants.length === 0 && !bypassEmptyStudentGuard && (
-        <div className="absolute inset-0 z-50 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl animate-in fade-in">
-          <div className="bg-card p-8 rounded-2xl shadow-2xl border border-destructive/20 flex flex-col items-center max-w-md text-center">
-            <div className="w-16 h-16 bg-destructive/10 text-destructive rounded-full flex items-center justify-center mb-6 text-3xl">
-              !
-            </div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">
+      {/* Warning overlay when everyone left */}
+      {currentPhase > 0 && participants.length === 0 && !bypassEmptyStudentGuard ? (
+        <div role="alertdialog" aria-labelledby="students-left-title" className="absolute inset-0 z-50 flex items-center justify-center bg-app/85 p-4">
+          <div className="flex w-full max-w-md flex-col items-center rounded-xl border border-danger-border bg-surface p-8 text-center shadow-popover">
+            <AlertTriangle aria-hidden="true" className="size-10 text-danger-fg" />
+            <h3 id="students-left-title" className="mt-4 text-2xl font-semibold text-fg">
               {t("lesson.interactive.studentsLeftTitle")}
             </h3>
-            <p className="text-muted-foreground mb-8">
-              {t("lesson.interactive.studentsLeftDescription")}
-            </p>
-            <button
-              onClick={() => requestPhaseChange(0)}
-              disabled={isChangingPhase}
-              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold py-3 px-8 rounded-xl shadow-lg transition-all active:scale-95 w-full"
-            >
+            <p className="mt-2 text-base text-fg-muted">{t("lesson.interactive.studentsLeftDescription")}</p>
+            <Button variant="danger" size="lg" className="mt-6 w-full" onClick={() => requestPhaseChange(0)} disabled={isChangingPhase}>
               {t("lesson.interactive.returnLobbyNow")}
-            </button>
+            </Button>
           </div>
         </div>
-      )}
+      ) : null}
 
       <div
-        data-tour-target={preparationMode ? "phase-progress" : undefined}
-        className={
-          isFullscreen && !preparationMode
-            ? "hidden"
-            : "shrink-0"
-        }
+        data-tour-target={tour("phase-progress")}
+        className={isFullscreen && !preparationMode ? "hidden" : "shrink-0 px-4 pb-2 pt-3 lg:px-6"}
       >
-        {renderPhaseProgressBar()}
+        <PhaseProgress
+          currentPhase={currentPhase}
+          interactive={preparationFreeExplore}
+          disabled={isChangingPhase}
+          onSelectPhase={(phase) => {
+            if (phase !== currentPhase && !isChangingPhase) requestPhaseChange(phase);
+          }}
+        />
       </div>
-      {isRewoundPhase && (
-        <div className="mb-4 flex items-center justify-center rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-center text-sm font-bold text-amber-700 dark:text-amber-300">
-          กำลังดู Phase ย้อนหลัง — กดถัดไปเพื่อกลับไปสอนต่อที่ Phase {sessionData?.resumePhase ?? currentPhase + 1}
+      {isRewoundPhase ? (
+        <div className="mx-4 mb-2 rounded-lg border border-warning-border bg-warning-bg px-4 py-2.5 text-center text-sm font-semibold text-warning-fg lg:mx-6">
+          {t("lesson.live.rewoundNotice")} {sessionData?.resumePhase ?? currentPhase + 1}
         </div>
-      )}
+      ) : null}
       <div
-        data-tour-target={preparationMode ? "phase-content" : undefined}
-        className="flex h-full min-h-0 min-w-0 flex-1 flex-col"
+        data-tour-target={tour("phase-content")}
+        className={isFullscreen ? "flex h-full min-h-0 min-w-0 flex-1 flex-col px-6 pt-5" : "flex min-h-0 min-w-0 flex-1 flex-col px-4 pb-4 pt-2 lg:px-6"}
       >
-        <FitToViewport enabled={isFullscreen}>
-          {renderPhaseContent()}
-        </FitToViewport>
+        <FitToViewport enabled={isFullscreen}>{renderPhaseContent()}</FitToViewport>
       </div>
-      {renderControlToolbar()}
-      {audioToastText && (
-        <div className="fixed bottom-6 right-6 z-[200] flex items-center gap-3 bg-amber-500 text-amber-950 font-bold px-4 py-3 rounded-2xl shadow-2xl border border-amber-300 animate-in fade-in slide-in-from-bottom-5 duration-300">
-          <AlertTriangle className="size-5 shrink-0 text-amber-950" />
-          <div className="text-xs">
-            <p className="font-bold uppercase tracking-wider">⚠️ Web Speech Fallback Active</p>
-            <p className="opacity-90 font-normal mt-0.5">Playing via browser TTS: &quot;{audioToastText}&quot;</p>
+
+      <PresenterDock
+        isFullscreen={isFullscreen}
+        hidden={isToolbarHidden}
+        onShow={() => setIsToolbarHidden(false)}
+        onHide={() => setIsToolbarHidden(true)}
+        onToggleFullscreen={() => void toggleFullscreen()}
+        status={dockStatus}
+        modeBadge={
+          preparationMode ? (
+            <Chip tone="info" size="sm">
+              {preparationFreeExplore ? t("lesson.live.modeFreeExplore") : t("lesson.live.modeRehearsal")}
+            </Chip>
+          ) : undefined
+        }
+        onReturnLobby={preparationMode ? undefined : () => requestPhaseChange(0)}
+        returnLobbyDisabled={isChangingPhase}
+        onPrevious={handlePreviousPhase}
+        previousDisabled={currentPhase <= 1 || isChangingPhase}
+        endQuestion={
+          canEndQuestion
+            ? {
+                onClick: handleEndQuestion,
+                disabled: !preparationMode && !endQuestion,
+                title: `${t("lesson.live.endQuestionTitle")} ${totalAnswered}/${totalParticipants} ${t("lesson.interactive.peopleUnit")}`,
+              }
+            : null
+        }
+        primary={
+          useGamePrimaryAction
+            ? {
+                label: gameAction.label,
+                onClick: handleGamePrimaryAction,
+                disabled: gameAction.disabled,
+                tone: "game",
+                showChevron: gameStatus === "voting",
+                tourTarget: tour("game-primary-button"),
+              }
+            : {
+                label: nextLabel,
+                onClick: handleNextPhase,
+                disabled: isNextDisabled,
+                loading: isChangingPhase,
+                tone: "next",
+                showChevron: showNextChevron,
+                tourTarget: tour("phase-next-button"),
+                hint: nextHint,
+              }
+        }
+        onFinish={onFinishSession}
+        finishEmphasis={currentPhase === FINAL_LEADERBOARD_PHASE}
+        devTools={devTools}
+        tour={tour}
+      />
+
+      {audio.fallbackText ? (
+        <div
+          role="status"
+          className="fixed bottom-24 right-6 z-[200] flex max-w-sm items-start gap-3 rounded-xl border border-warning-border bg-warning-bg px-4 py-3 text-warning-fg shadow-popover"
+        >
+          <AlertTriangle aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
+          <div className="text-sm">
+            <p className="font-semibold">{t("lesson.live.speechFallbackTitle")}</p>
+            <p className="mt-0.5 text-fg-muted">&ldquo;{audio.fallbackText}&rdquo;</p>
           </div>
         </div>
-      )}
+      ) : null}
       {guideOverlay}
     </div>
   );

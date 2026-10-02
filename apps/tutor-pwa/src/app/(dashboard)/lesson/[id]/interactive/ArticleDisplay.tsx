@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import { t } from "@/lib/i18n";
-import { BookOpen, Volume2, AlertTriangle } from "lucide-react";
+import { AlertTriangle, BookOpen, ChevronLeft, ChevronRight, Lightbulb, ListChecks, MessageCircle, Pause, Play, Sparkles, Target, Volume2 } from "lucide-react";
+import { Chip, IconTile } from "@/components/app";
 import { useThaiTranslations } from "@/hooks/useThaiTranslations";
 import { LESSON_PHASE } from "@/lib/lessonPhases";
 
@@ -119,9 +120,9 @@ function GuideQuestionCard({
   const thaiQuestion = translations[0];
 
   return (
-    <div data-tour-target={dataTourTarget} className={`bg-card rounded-xl border border-border p-3 ${className}`}>
+    <div data-tour-target={dataTourTarget} className={`rounded-lg border border-hairline bg-surface p-3 ${className}`}>
       <div className="flex items-start gap-2">
-        <p className={`flex-1 font-semibold text-foreground ${large ? "text-[clamp(16px,1.12vw,21px)] leading-snug" : "text-xs leading-relaxed"}`}>
+        <p className={`flex-1 font-semibold text-fg ${large ? "text-[clamp(16px,1.12vw,21px)] leading-snug" : "text-base leading-snug"}`}>
           {label}. {question}
         </p>
         {onSpeak && (
@@ -130,15 +131,16 @@ function GuideQuestionCard({
             onClick={onSpeak}
             data-tour-target={dataTourTarget ? `${dataTourTarget}-audio` : undefined}
             title={t("lesson.interactive.speakTitle")}
-            className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-teal-500/10 text-teal-700 transition-colors hover:bg-teal-500/20 dark:text-teal-300"
+            aria-label={t("lesson.interactive.speakTitle")}
+            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-fg transition-colors hover:bg-brand-soft/70"
           >
             <Volume2 size={16} />
           </button>
         )}
       </div>
       {(thaiQuestion || loading) && (
-        <p className={`mt-2 font-medium text-teal-700 dark:text-teal-300 ${large ? "text-[clamp(14px,0.92vw,18px)] leading-snug" : "text-[11px] leading-relaxed"}`}>
-          {thaiQuestion || "Translating question..."}
+        <p className={`mt-1.5 text-fg-muted ${large ? "text-[clamp(14px,0.92vw,18px)] leading-snug" : "text-sm leading-relaxed"}`}>
+          {thaiQuestion || t("lesson.live.translating")}
         </p>
       )}
     </div>
@@ -311,6 +313,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   })();
 
   const [audioToastText, setAudioToastText] = useState<string | null>(null);
+  const [launchImageFailed, setLaunchImageFailed] = useState(false);
 
   const stopSpeechFallback = () => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -958,7 +961,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   if (!articleData) {
     return (
-      <div className="flex-1 flex items-center justify-center text-muted-foreground">
+      <div className="flex flex-1 items-center justify-center text-base text-fg-muted">
         {t("lesson.interactive.articleLoading")}
       </div>
     );
@@ -966,19 +969,19 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   const renderThaiPassageCard = (
     className = "",
-    textClassName = "text-foreground/90 text-sm leading-relaxed",
-    titleClassName = "text-emerald-700 dark:text-emerald-300",
+    textClassName = "text-fg text-base leading-relaxed",
+    titleClassName = "text-fg-muted",
   ) => {
     if (!thaiPassage && !translatingArticle) return null;
 
     return (
       <div
-        className={`rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 ${className}`}
+        className={`rounded-lg border border-hairline bg-surface-muted p-4 ${className}`}
       >
         <p
-          className={`text-[11px] font-black uppercase tracking-widest mb-2 ${titleClassName}`}
+          className={`mb-1.5 text-sm font-medium ${titleClassName}`}
         >
-          Thai Translation
+          {t("lesson.live.thaiTranslation")}
         </p>
         {thaiPassage ? (
           <p className={textClassName}>
@@ -986,7 +989,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           </p>
         ) : (
           <p className={`${textClassName} italic opacity-80`}>
-            Translating article...
+            {t("lesson.live.translating")}
           </p>
         )}
       </div>
@@ -995,135 +998,65 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   /* ─── Phase 1: Introduction ──────────────────────────────── */
   if (phase === LESSON_PHASE.LAUNCH) {
+    const checklist = [
+      { icon: MessageCircle, tone: "blue" as const, title: t("lesson.interactive.introChecklistIntroduceTitle"), desc: t("lesson.interactive.introChecklistIntroduceDesc") },
+      { icon: Target, tone: "amber" as const, title: t("lesson.interactive.introChecklistGoalTitle"), desc: t("lesson.interactive.introChecklistGoalDesc") },
+      { icon: Sparkles, tone: "purple" as const, title: t("lesson.interactive.introChecklistSparkTitle"), desc: t("lesson.interactive.introChecklistSparkDesc") },
+    ];
     return (
-      <div className="flex-1 flex flex-col lg:flex-row gap-6 items-stretch py-6 px-4 w-full max-w-6xl mx-auto animate-in fade-in duration-500">
-        {/* Left: Article Image Panel */}
-        <div className="w-full lg:w-[45%] shrink-0 rounded-3xl overflow-hidden shadow-2xl relative">
-          {articleImageUrl ? (
-            <img
-              src={articleImageUrl}
-              alt={articleData.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-                (
-                  (e.target as HTMLImageElement).parentElement as HTMLElement
-                ).classList.add(
-                  "bg-gradient-to-br",
-                  "from-indigo-600",
-                  "via-purple-600",
-                  "to-fuchsia-600",
-                );
-              }}
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 flex items-center justify-center">
-              <span className="text-8xl">📖</span>
-            </div>
-          )}
-          {/* Gradient overlay at bottom */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-          {/* Genre / CEFR badge overlaid */}
-          <div className="absolute top-4 left-4 flex items-center gap-2 flex-wrap">
-            {articleData.genre && (
-              <span className="bg-white/20 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full">
-                {articleData.genre}
-              </span>
-            )}
-            {articleData?.content_provider !== "PRIMARY_ADVANTAGE" && displayCefr && (
-              <span className="bg-indigo-500/80 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full">
-                CEFR {displayCefr}
-              </span>
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-stretch gap-6 py-2 lg:flex-row lg:items-center">
+        {/* Left: article cover */}
+        <div className="relative w-full shrink-0 overflow-hidden rounded-xl border border-hairline bg-tile-brand lg:w-[44%]">
+          <div className="aspect-[4/3] w-full">
+            {articleImageUrl && !launchImageFailed ? (
+              <img
+                src={articleImageUrl}
+                alt={articleData.title}
+                className="size-full object-cover"
+                onError={() => setLaunchImageFailed(true)}
+              />
+            ) : (
+              <div className="flex size-full items-center justify-center">
+                <BookOpen aria-hidden="true" className="size-20 text-icon-brand" />
+              </div>
             )}
           </div>
-          {/* Stat chips at bottom of image */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center gap-3">
-            <div className="bg-black/40 backdrop-blur rounded-xl px-3 py-2 text-center">
-              <p className="text-white/60 text-[10px] uppercase tracking-wider">
-                {t("lesson.interactive.vocabulary")}
-              </p>
-              <p className="text-white font-black text-xl">{words.length}</p>
+          <div className="grid grid-cols-2 divide-x divide-hairline border-t border-hairline bg-surface">
+            <div className="px-4 py-3 text-center">
+              <p className="text-sm text-fg-muted">{t("lesson.interactive.vocabulary")}</p>
+              <p className="text-2xl font-bold tabular-nums text-fg">{words.length}</p>
             </div>
-            <div className="bg-black/40 backdrop-blur rounded-xl px-3 py-2 text-center">
-              <p className="text-white/60 text-[10px] uppercase tracking-wider">
-                {t("lesson.interactive.keySentences")}
-              </p>
-              <p className="text-white font-black text-xl">
-                {sentences.length}
-              </p>
-            </div>
-            <div className="bg-black/40 backdrop-blur rounded-xl px-3 py-2 text-center">
-              <p className="text-white/60 text-[10px] uppercase tracking-wider">
-                Phase
-              </p>
-              <p className="text-white font-black text-xl">Phase 1 / 18</p>
+            <div className="px-4 py-3 text-center">
+              <p className="text-sm text-fg-muted">{t("lesson.interactive.keySentences")}</p>
+              <p className="text-2xl font-bold tabular-nums text-fg">{sentences.length}</p>
             </div>
           </div>
         </div>
 
-        {/* Right 55%: Title + Checklist */}
-        <div data-tour-target="phase-1-overview" className="flex-1 flex flex-col justify-center gap-5">
-          {/* Badge row */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="bg-indigo-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
-              Phase 1
-            </span>
-            <span className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-3 py-1 rounded-full border border-indigo-500/20">
-              {t("lesson.interactive.period1")}
-            </span>
+        {/* Right: title + tutor checklist */}
+        <div data-tour-target="phase-1-overview" className="flex flex-1 flex-col justify-center gap-4">
+          <div className="flex flex-wrap items-center gap-2">
+            {articleData.genre ? <Chip>{String(articleData.genre)}</Chip> : null}
+            {articleData?.content_provider !== "PRIMARY_ADVANTAGE" && displayCefr ? <Chip tone="brand">CEFR {displayCefr}</Chip> : null}
           </div>
-
-          {/* Title */}
-          <h1 className="text-4xl font-black text-foreground leading-tight">
-            {articleData.title}
-          </h1>
-          <p className="text-muted-foreground text-base leading-relaxed line-clamp-3">
+          <h1 className="text-3xl font-bold leading-tight text-fg xl:text-4xl">{articleData.title}</h1>
+          <p className="line-clamp-3 text-lg leading-relaxed text-fg-muted">
             {articleData.translated_summary?.th?.[0] ||
               articleData.summary ||
               t("lesson.interactive.articleFallbackSummary")}
           </p>
 
-          {/* Tutor Checklist */}
-          <div data-tour-target="phase-1-checklist" className="space-y-3 mt-2">
-            {[
-              {
-                num: "1",
-                emoji: "💬",
-                title: t("lesson.interactive.introChecklistIntroduceTitle"),
-                desc: t("lesson.interactive.introChecklistIntroduceDesc"),
-              },
-              {
-                num: "2",
-                emoji: "🎯",
-                title: t("lesson.interactive.introChecklistGoalTitle"),
-                desc: t("lesson.interactive.introChecklistGoalDesc"),
-              },
-              {
-                num: "3",
-                emoji: "✨",
-                title: t("lesson.interactive.introChecklistSparkTitle"),
-                desc: t("lesson.interactive.introChecklistSparkDesc"),
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-4 bg-indigo-500/5 border border-indigo-500/15 rounded-2xl p-4 hover:border-indigo-400/40 hover:bg-indigo-500/10 transition-all"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <div className="size-11 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-black text-lg shrink-0 shadow-md">
-                  {item.emoji}
+          <ol data-tour-target="phase-1-checklist" className="mt-1 flex flex-col gap-2.5">
+            {checklist.map((item) => (
+              <li key={item.title} className="flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">
+                <IconTile icon={item.icon} tone={item.tone} size="lg" />
+                <div className="min-w-0">
+                  <p className="text-lg font-semibold text-fg">{item.title}</p>
+                  <p className="text-base text-fg-muted">{item.desc}</p>
                 </div>
-                <div>
-                  <p className="font-bold text-foreground text-sm">
-                    {item.title}
-                  </p>
-                  <p className="text-indigo-600 dark:text-indigo-400 text-xs mt-0.5">
-                    {item.desc}
-                  </p>
-                </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </div>
     );
@@ -1161,23 +1094,15 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
     return (
       <div
-        className={`flex h-full min-h-0 w-full flex-1 flex-col items-center animate-in fade-in duration-500 ${
+        className={`flex h-full min-h-0 w-full flex-1 flex-col items-center ${
           isFullscreen ? "px-5 py-4 pb-32" : "px-2 py-4 sm:px-3"
         }`}
       >
-        <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
-          <span className="rounded-full bg-amber-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-            Phase 4
-          </span>
-          <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-400">
-            Vocabulary Focus
-          </span>
-          <p className={`text-sm text-muted-foreground sm:ml-1 ${isFullscreen ? "hidden xl:block" : ""}`}>
-            {t("lesson.interactive.wordPrefix")}{" "}
-            <span className="font-semibold text-foreground">highlight</span>{" "}
-            {t("lesson.interactive.vocabInLessonSuffix")}
-          </p>
-        </div>
+        <p className={`w-full text-base text-fg-muted ${isFullscreen ? "mb-2 hidden xl:block" : "mb-3"}`}>
+          {t("lesson.interactive.wordPrefix")}{" "}
+          <mark className="rounded bg-[var(--highlight-bg)] px-1 font-semibold text-[var(--highlight-text)]">highlight</mark>{" "}
+          {t("lesson.interactive.vocabInLessonSuffix")}
+        </p>
 
         <div
           className={`grid w-full min-h-0 flex-1 grid-cols-1 items-stretch gap-4 ${
@@ -1190,31 +1115,27 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <div
             ref={phase5PassageRef}
             data-tour-target="phase-4-passage"
-            className={`flex min-h-0 flex-col rounded-2xl border border-border border-t-2 border-t-amber-400 bg-card shadow-lg shadow-slate-900/5 ${
+            className={`flex min-h-0 flex-col rounded-xl border border-hairline bg-surface shadow-card ${
               isFullscreen ? "h-full overflow-hidden p-4" : "overflow-y-auto p-5 sm:p-6"
             }`}
           >
-            <h3 className={`flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-amber-600 ${isFullscreen ? "mb-2" : "mb-4"}`}>
-              <span className="inline-flex size-9 items-center justify-center rounded-full bg-amber-500 text-white">
-                <BookOpen size={18} />
-              </span>
-              Reading Passage
+            <h3 className={`flex items-center gap-2 text-base font-semibold text-fg ${isFullscreen ? "mb-2" : "mb-3"}`}>
+              <BookOpen aria-hidden="true" className="size-5 text-brand-fg" />
+              {t("lesson.live.readingPassage")}
             </h3>
             <p
               className={isFullscreen
-                ? "flex-1 text-[clamp(15px,1.15vw,21px)] font-medium leading-[1.82] text-foreground"
-                : "text-[15px] font-medium leading-[2] text-foreground sm:text-base sm:leading-[2.05]"}
+                ? "flex-1 text-[clamp(15px,1.15vw,21px)] font-medium leading-[1.82] text-fg"
+                : "text-lg font-medium leading-[1.9] text-fg xl:text-xl"}
               style={{ fontFamily: "Georgia, serif" }}
             >
               {highlightPassage(articleData.passage)}
             </p>
             <div className={isFullscreen ? "pt-3" : "pt-5"}>
               {renderThaiPassageCard(
+                isFullscreen ? "p-3" : "",
                 isFullscreen
-                  ? "bg-emerald-50/80 p-3 dark:bg-emerald-950/25"
-                  : "bg-emerald-50/80 dark:bg-emerald-950/25",
-                isFullscreen
-                  ? "text-[clamp(12px,0.85vw,15px)] leading-[1.72] text-foreground/90"
+                  ? "text-[clamp(12px,0.85vw,15px)] leading-[1.72] text-fg"
                   : undefined,
               )}
             </div>
@@ -1224,13 +1145,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <div
             ref={phase5VocabRef}
             data-tour-target="phase-4-vocabulary"
-            className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-purple-500/20 bg-purple-500/[0.06] p-4 shadow-lg shadow-purple-900/5 sm:p-5"
+            className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-hairline bg-surface p-4 shadow-card sm:p-5"
           >
-            <h3 className={`flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 ${isFullscreen ? "mb-2" : "mb-4"}`}>
-              <span className="inline-flex size-8 items-center justify-center rounded-full bg-purple-500/10 text-purple-600">
-                <BookOpen size={17} />
-              </span>
-              Vocabulary List
+            <h3 className={`flex items-center gap-2 text-base font-semibold text-fg ${isFullscreen ? "mb-2" : "mb-3"}`}>
+              <ListChecks aria-hidden="true" className="size-5 text-brand-fg" />
+              {t("lesson.live.vocabularyList")} <span className="font-normal text-fg-muted">({words.length})</span>
             </h3>
             <div
               className={isFullscreen
@@ -1257,7 +1176,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 return (
                   <div
                     key={i}
-                    className={`relative grid min-h-[96px] gap-x-3 rounded-xl border border-purple-500/15 bg-card px-3 py-3 shadow-sm ${
+                    className={`relative grid min-h-[88px] gap-x-3 rounded-lg border border-hairline bg-surface-muted px-3 py-3 ${
                       isFullscreen
                         ? "h-full min-h-0 grid-cols-[auto_minmax(0,1fr)_auto] content-center"
                         : "shrink-0 grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_minmax(0,1fr)_minmax(180px,.9fr)_auto] sm:items-center sm:px-4"
@@ -1265,40 +1184,40 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   >
                     <span
                       className={isFullscreen
-                        ? "absolute left-3 top-3 inline-flex size-5 items-center justify-center rounded-full bg-purple-600 text-[10px] font-bold text-white"
-                        : "mt-0.5 inline-flex size-5 items-center justify-center rounded-full bg-purple-600 text-[10px] font-bold text-white sm:mt-0"}
+                        ? "absolute left-3 top-3 inline-flex size-6 items-center justify-center rounded-full bg-brand-solid text-xs font-semibold text-on-brand"
+                        : "mt-0.5 inline-flex size-6 items-center justify-center rounded-full bg-brand-solid text-xs font-semibold text-on-brand sm:mt-0"}
                     >
                       {i + 1}
                     </span>
                     <div className={`min-w-0 ${isFullscreen ? "col-span-2 col-start-1 pl-8 pr-2" : "sm:pr-4"}`}>
                       <div className="flex flex-wrap items-baseline gap-2">
-                        <p className="break-words font-black text-purple-700 dark:text-purple-200">
+                        <p className="break-words text-lg font-bold text-fg">
                           {String(wordText)}
                         </p>
                         {partOfSpeech && (
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-sm text-fg-muted">
                             ({String(partOfSpeech)})
                           </span>
                         )}
                       </div>
                       {defEn && (
-                        <p className={`mt-1 break-words text-xs text-muted-foreground ${isFullscreen ? "leading-snug" : "leading-relaxed sm:text-[13px]"}`}>
+                        <p className={`mt-1 break-words text-sm text-fg-muted ${isFullscreen ? "leading-snug" : "leading-relaxed"}`}>
                           {defEn}
                         </p>
                       )}
                     </div>
                     <div
                       className={isFullscreen
-                        ? "col-span-2 col-start-1 mt-1 min-w-0 border-t border-purple-500/10 pl-8 pt-1.5 pr-2"
-                        : "col-start-2 mt-2 min-w-0 border-t border-purple-500/10 pt-2 sm:col-start-auto sm:mt-0 sm:border-l sm:border-t-0 sm:py-1 sm:pl-5"}
+                        ? "col-span-2 col-start-1 mt-1 min-w-0 border-t border-hairline pl-8 pt-1.5 pr-2"
+                        : "col-start-2 mt-2 min-w-0 border-t border-hairline pt-2 sm:col-start-auto sm:mt-0 sm:border-l sm:border-t-0 sm:py-1 sm:pl-5"}
                     >
                       {defTh && (
-                        <p className="break-words text-sm font-bold text-purple-600 dark:text-purple-300">
+                        <p className="break-words text-base font-semibold text-brand-fg">
                           {defTh}
                         </p>
                       )}
                       {autoVocabEnTh[i] && (
-                        <p className={`mt-1 break-words text-xs text-muted-foreground ${isFullscreen ? "leading-snug" : "leading-relaxed sm:text-[13px]"}`}>
+                        <p className={`mt-1 break-words text-sm text-fg-muted ${isFullscreen ? "leading-snug" : "leading-relaxed"}`}>
                           {autoVocabEnTh[i]}
                         </p>
                       )}
@@ -1308,9 +1227,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       onClick={() => playWord(i)}
                       data-tour-target={i === 0 ? "phase-4-first-audio" : undefined}
                       title={t("lesson.interactive.speakTitle")}
+                      aria-label={`${t("lesson.interactive.speakTitle")} ${String(wordText)}`}
                       className={isFullscreen
-                        ? "absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-full bg-purple-500/10 text-purple-600 transition-all hover:bg-purple-500/20 active:scale-95"
-                        : "col-start-3 row-start-1 inline-flex size-9 items-center justify-center self-center rounded-full bg-purple-500/10 text-purple-600 transition-all hover:bg-purple-500/20 active:scale-95 sm:col-start-auto sm:row-start-auto"}
+                        ? "absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-full bg-brand-soft text-brand-fg transition-colors hover:bg-brand-soft/70"
+                        : "col-start-3 row-start-1 inline-flex size-10 items-center justify-center self-center rounded-full bg-brand-soft text-brand-fg transition-colors hover:bg-brand-soft/70 sm:col-start-auto sm:row-start-auto"}
                     >
                       <Volume2 size={16} />
                     </button>
@@ -1340,56 +1260,42 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
     return (
       <div
-        className={`flex h-full min-h-0 w-full flex-1 flex-col items-center animate-in fade-in duration-500 ${
+        className={`flex h-full min-h-0 w-full flex-1 flex-col items-center ${
           isFullscreen ? "px-5 py-4 pb-32" : "px-2 py-4 sm:px-3"
         }`}
       >
-        <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
-          <span className="rounded-full bg-teal-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-            Phase 5
-          </span>
-          <span className="rounded-full border border-teal-500/20 bg-teal-500/10 px-4 py-1.5 text-xs font-bold text-teal-700 dark:text-teal-400">
-            Deep Reading
-          </span>
-          <span className={`rounded-full bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground ${isFullscreen ? "hidden xl:inline-flex" : ""}`}>
-            Analytical Mode
-          </span>
-        </div>
 
-        <div className="grid w-full min-h-0 flex-1 grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(390px,.85fr)]">
-          {/* Passage - high contrast indigo-950 deep */}
+        <div className="grid w-full min-h-0 flex-1 grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(340px,.85fr)]">
+          {/* Passage */}
           <div className="min-h-0 min-w-0">
-            <div data-tour-target="phase-5-passage" className={`flex h-full min-h-0 flex-col rounded-2xl border-t-4 border-teal-400 bg-indigo-950 shadow-2xl ${isFullscreen ? "overflow-hidden p-5" : "p-5 sm:p-7"}`}>
-              <h3 className={`text-xs font-bold uppercase tracking-widest text-teal-400 ${isFullscreen ? "mb-2" : "mb-4"}`}>
+            <div data-tour-target="phase-5-passage" className={`flex h-full min-h-0 flex-col rounded-xl border border-hairline bg-surface shadow-card ${isFullscreen ? "overflow-hidden p-5" : "p-5 sm:p-6"}`}>
+              <h3 className={`flex items-center gap-2 text-base font-semibold text-fg ${isFullscreen ? "mb-2" : "mb-3"}`}>
+                <BookOpen aria-hidden="true" className="size-5 text-brand-fg" />
                 {articleData.title}
               </h3>
               <p
                 className={isFullscreen
-                  ? "flex-1 text-[clamp(15px,1.06vw,20px)] font-medium leading-[1.82] text-indigo-100"
-                  : "text-base font-medium leading-[2] text-indigo-100 sm:text-lg sm:leading-[2.05]"}
+                  ? "flex-1 text-[clamp(15px,1.06vw,20px)] font-medium leading-[1.82] text-fg"
+                  : "text-lg font-medium leading-[1.9] text-fg xl:text-xl"}
                 style={{ fontFamily: "Georgia, serif" }}
               >
                 {articleData.passage}
               </p>
               {renderThaiPassageCard(
-                isFullscreen
-                  ? "mt-3 border-teal-400/30 bg-teal-500/10 p-3"
-                  : "mt-5 bg-teal-500/10 border-teal-400/30",
-                isFullscreen
-                  ? "text-[clamp(12px,0.82vw,15px)] leading-[1.7] text-teal-50"
-                  : "text-teal-50 text-sm leading-relaxed",
-                "text-teal-400",
+                isFullscreen ? "mt-3 p-3" : "mt-5",
+                isFullscreen ? "text-[clamp(12px,0.82vw,15px)] leading-[1.7] text-fg" : undefined,
               )}
             </div>
           </div>
 
           {/* Comprehension Guide */}
           <div className={`flex min-h-0 min-w-0 flex-col ${isFullscreen ? "gap-3" : "space-y-4"}`}>
-            <div data-tour-target="phase-5-questions" className={`flex min-h-0 flex-1 flex-col rounded-2xl border-2 border-border bg-muted ${isFullscreen ? "p-4" : "p-5"}`}>
-              <h4 className={`mb-2 flex items-center gap-2 font-bold text-foreground ${isFullscreen ? "text-lg" : "text-sm"}`}>
-                <span>Guide</span> Comprehension Guide
+            <div data-tour-target="phase-5-questions" className={`flex min-h-0 flex-1 flex-col rounded-xl border border-hairline bg-surface-muted ${isFullscreen ? "p-4" : "p-4"}`}>
+              <h4 className="mb-1 flex items-center gap-2 text-base font-semibold text-fg">
+                <ListChecks aria-hidden="true" className="size-5 text-brand-fg" />
+                {t("lesson.live.comprehensionGuide")}
               </h4>
-              <p className={`text-muted-foreground ${isFullscreen ? "mb-3 text-sm" : "mb-4 text-xs"}`}>
+              <p className={`text-fg-muted ${isFullscreen ? "mb-3 text-sm" : "mb-3 text-sm"}`}>
                 {t("lesson.interactive.comprehensionGuideHelp")}
               </p>
               {comprehensionQuestions.length > 0 ? (
@@ -1407,17 +1313,18 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground text-xs italic">
+                <p className="text-sm italic text-fg-muted">
                   {t("lesson.interactive.comprehensionFallback")}
                 </p>
               )}
             </div>
 
-            <div className={`rounded-2xl border border-border bg-card ${isFullscreen ? "p-4" : "p-5"}`}>
-              <h4 className="mb-2 text-sm font-bold text-foreground">
-                Tutor Actions
+            <div className={`rounded-xl border border-hairline bg-surface ${isFullscreen ? "p-4" : "p-4"}`}>
+              <h4 className="mb-2 flex items-center gap-2 text-base font-semibold text-fg">
+                <Lightbulb aria-hidden="true" className="size-5 text-icon-amber" />
+                {t("lesson.live.tutorActions")}
               </h4>
-              <ul className="text-muted-foreground text-xs space-y-2">
+              <ul className="list-disc space-y-1.5 pl-5 text-sm text-fg-muted marker:text-fg-subtle">
                 <li>{t("lesson.interactive.tutorActionReadAloud")}</li>
                 <li>{t("lesson.interactive.tutorActionExplainContext")}</li>
                 <li>{t("lesson.interactive.tutorActionUnderline")}</li>
@@ -1431,20 +1338,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   /* ─── Phase 6: Key Sentences ─────────────────────────────── */
   if (phase === LESSON_PHASE.KEY_SENTENCES) {
-    const sentenceColors = [
-      "border-green-500/40 bg-green-500/10",
-      "border-emerald-500/40 bg-emerald-500/10",
-      "border-teal-500/40 bg-teal-500/10",
-      "border-cyan-500/40 bg-cyan-500/10",
-      "border-lime-500/40 bg-lime-500/10",
-    ];
-    const dotColors = [
-      "bg-green-500",
-      "bg-emerald-500",
-      "bg-teal-500",
-      "bg-cyan-500",
-      "bg-lime-500",
-    ];
+    const sentenceColors = ["border-l-brand-vivid bg-surface"];
+    const dotColors = ["bg-brand-solid"];
 
     const getSentenceText = (item: any) =>
       String(typeof item === "object" ? item.sentences || "" : item || "");
@@ -1539,7 +1434,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
     return (
       <div
-        className={`flex h-full min-h-0 w-full flex-1 flex-col items-center animate-in fade-in duration-500 ${
+        className={`flex h-full min-h-0 w-full flex-1 flex-col items-center ${
           isFullscreen ? "px-5 py-4 pb-32" : "px-2 py-4 sm:px-3"
         }`}
       >
@@ -1551,24 +1446,16 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             onEnded={() => setIsPlaying(false)}
           />
         )}
-        <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
-          <span className="rounded-full bg-green-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-            Phase 6
-          </span>
-          <span className="rounded-full border border-green-500/20 bg-green-500/10 px-4 py-1.5 text-xs font-bold text-green-700 dark:text-green-400">
-            Key Sentences
-          </span>
-          <p className="text-xs text-muted-foreground sm:ml-1">
-            {keySentences.length}{" "}
-            {t("lesson.interactive.keySentenceCountSuffix")}
-          </p>
-        </div>
 
         <div className="grid w-full min-h-0 flex-1 grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
           {/* Timeline */}
           <div data-tour-target="phase-6-sentences" className={`min-h-0 min-w-0 ${isFullscreen ? "flex h-full flex-col" : ""}`}>
-            <h3 className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-green-800 dark:text-green-300 ${isFullscreen ? "mb-2" : "mb-4"}`}>
-              <span>List</span> Key Sentences Timeline
+            <h3 className={`flex items-center gap-2 text-base font-semibold text-fg ${isFullscreen ? "mb-2" : "mb-3"}`}>
+              <ListChecks aria-hidden="true" className="size-5 text-brand-fg" />
+              {t("lesson.interactive.keySentences")}
+              <span className="font-normal text-fg-muted">
+                · {keySentences.length} {t("lesson.interactive.keySentenceCountSuffix")}
+              </span>
             </h3>
             <div className={`relative min-h-0 ${isFullscreen ? "flex-1 overflow-hidden" : "lg:max-h-[68vh] lg:overflow-y-auto lg:pr-2"}`}>
               <div
@@ -1585,22 +1472,22 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     return (
                       <div
                         key={index}
-                        className={`relative flex gap-4 animate-in slide-in-from-left duration-500 ${isFullscreen ? "min-h-0 items-stretch" : "items-start"}`}
+                        className={`relative flex gap-4 ${isFullscreen ? "min-h-0 items-stretch" : "items-start"}`}
                         style={{ animationDelay: `${index * 80}ms` }}
                       >
                         {index < keySentences.length - 1 && (
-                          <div className="absolute left-4 top-8 bottom-[-0.75rem] w-0.5 bg-green-500/30" />
+                          <div className="absolute left-4 top-8 bottom-[-0.75rem] w-0.5 bg-hairline-strong" />
                         )}
                         <div
-                          className={`relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full ${d} text-xs font-black text-white shadow-md`}
+                          className={`relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full ${d} text-sm font-semibold text-on-brand`}
                         >
                           {index + 1}
                         </div>
                         <div
-                          className={`flex-1 border-l-4 rounded-xl p-4 shadow-sm ${c} ${isFullscreen ? "min-h-0" : ""}`}
+                          className={`flex-1 rounded-lg border border-hairline border-l-4 p-4 shadow-xs ${c} ${isFullscreen ? "min-h-0" : ""}`}
                         >
                           <div className="flex items-start gap-2">
-                            <p className={`min-w-0 flex-1 font-semibold text-foreground ${isFullscreen ? "text-[clamp(15px,1vw,19px)] leading-snug" : "text-base leading-relaxed"}`}>
+                            <p className={`min-w-0 flex-1 font-semibold text-fg ${isFullscreen ? "text-[clamp(15px,1vw,19px)] leading-snug" : "text-lg leading-relaxed"}`}>
                             {highlightVocab(String(sentenceText))}
                             </p>
                             <button
@@ -1611,13 +1498,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                               }}
                               title={t("lesson.interactive.speakTitle")}
                               data-tour-target={index === 0 ? "phase-6-first-audio" : undefined}
-                              className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-green-500/15 text-green-700 transition-colors hover:bg-green-500/25 dark:text-green-300"
+                              aria-label={t("lesson.interactive.speakTitle")}
+                              className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-fg transition-colors hover:bg-brand-soft/70"
                             >
                               <Volume2 size={15} />
                             </button>
                           </div>
                           {thaiText && (
-                            <p className={`mt-2 font-medium text-emerald-700 dark:text-emerald-300 ${isFullscreen ? "text-[clamp(13px,0.84vw,16px)] leading-snug" : "text-sm leading-relaxed"}`}>
+                            <p className={`mt-1.5 text-fg-muted ${isFullscreen ? "text-[clamp(13px,0.84vw,16px)] leading-snug" : "text-base leading-relaxed"}`}>
                               {thaiText}
                             </p>
                           )}
@@ -1627,7 +1515,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   },
                 )}
                 {keySentences.length === 0 && (
-                  <p className="text-muted-foreground text-sm pl-10">
+                  <p className="pl-10 text-base text-fg-muted">
                     {t("lesson.interactive.noKeySentences")}
                   </p>
                 )}
@@ -1637,25 +1525,24 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
           {/* Passage with context */}
           <div data-tour-target="phase-6-article" className={`min-h-0 min-w-0 ${isFullscreen ? "flex h-full flex-col" : ""}`}>
-            <h3 className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-green-800 dark:text-green-300 ${isFullscreen ? "mb-2" : "mb-4"}`}>
-              <span>Article</span> Passage Reference
+            <h3 className={`flex items-center gap-2 text-base font-semibold text-fg ${isFullscreen ? "mb-2" : "mb-3"}`}>
+              <BookOpen aria-hidden="true" className="size-5 text-brand-fg" />
+              {t("lesson.live.passageReference")}
             </h3>
-            <div className={`rounded-2xl border-t-4 border-green-400 bg-card shadow-xl ${isFullscreen ? "flex min-h-0 flex-1 flex-col overflow-hidden p-5" : "p-5 sm:p-6 lg:max-h-[62vh] lg:overflow-y-auto"}`}>
-              <p className={isFullscreen ? "flex-1 text-[clamp(15px,1vw,19px)] leading-[1.8] text-foreground" : "text-base leading-[2] text-foreground sm:text-lg sm:leading-[2.05]"}>
+            <div className={`rounded-xl border border-hairline bg-surface shadow-card ${isFullscreen ? "flex min-h-0 flex-1 flex-col overflow-hidden p-5" : "p-5 sm:p-6 lg:max-h-[62vh] lg:overflow-y-auto"}`}>
+              <p className={isFullscreen ? "flex-1 text-[clamp(15px,1vw,19px)] leading-[1.8] text-fg" : "text-lg leading-[1.9] text-fg"}>
                 {articleData.passage}
               </p>
               {renderThaiPassageCard(
                 isFullscreen ? "mt-3 p-3" : "mt-5",
                 isFullscreen
-                  ? "text-[clamp(12px,0.78vw,15px)] leading-[1.65] text-foreground/90"
+                  ? "text-[clamp(12px,0.78vw,15px)] leading-[1.65] text-fg"
                   : undefined,
               )}
             </div>
-            <div className={`mt-3 rounded-xl border border-green-500/20 bg-green-500/10 ${isFullscreen ? "p-3" : "mt-4 p-4"}`}>
-              <p className="text-green-800 dark:text-green-300 text-xs font-bold mb-1">
-                Tutor Tip
-              </p>
-              <p className="text-green-700 dark:text-green-400 text-xs">
+            <div className={`mt-3 flex gap-2.5 rounded-lg border border-hairline bg-surface-muted ${isFullscreen ? "p-3" : "p-4"}`}>
+              <Lightbulb aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-icon-amber" />
+              <p className="text-sm text-fg-muted">
                 {t("lesson.interactive.keySentenceTip")}
               </p>
             </div>
@@ -1748,7 +1635,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               isWord
                 ? `rounded transition-colors duration-150 ${
                     isCurrentWord && isPlaying
-                      ? "bg-orange-600 text-white px-0.5"
+                      ? "bg-brand-solid text-on-brand px-0.5"
                       : ""
                   }`
                 : undefined
@@ -1773,17 +1660,17 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           onClick={canSelectSentence ? () => seekToSentence(idx) : undefined}
           className={`${canSelectSentence ? "cursor-pointer" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
             isActive
-              ? "bg-orange-400 text-white font-bold px-2 py-0.5 rounded-xl shadow-md"
+              ? "bg-[var(--highlight-bg)] text-[var(--highlight-text)] font-semibold px-1.5 py-0.5 rounded-md ring-2 ring-brand-vivid"
               : isFlagged
-                ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 font-semibold rounded-lg px-1 ring-1 ring-rose-400/50"
+                ? "bg-danger-bg text-danger-fg font-semibold rounded-md px-1 ring-1 ring-danger-border"
                 : canSelectSentence
-                  ? "text-foreground hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400"
-                  : "text-foreground"
+                  ? "text-fg hover:bg-brand-soft"
+                  : "text-fg"
           }`}
         >
           {renderReadAlongText(idx, text)}
           {isFlagged && (
-            <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 align-super not-italic">
+            <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-danger-solid px-1.5 py-0.5 align-super text-xs font-semibold text-white not-italic">
               🚩{flagCount}
             </sup>
           )}{" "}
@@ -1845,7 +1732,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     };
 
     return (
-      <div className="flex-1 flex flex-col w-full bg-muted relative">
+      <div className="relative flex w-full flex-1 flex-col">
         {/* Hidden audio */}
         {phase4AudioUrl && (
           <audio
@@ -1904,23 +1791,15 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         )}
 
         {/* Scrollable article area */}
-        <div data-tour-target="phase-3-reading-passage" className="flex-1 overflow-y-auto px-2 py-5 pb-40 sm:px-3">
+        <div data-tour-target="phase-3-reading-passage" className={isFullscreen ? "flex-1 overflow-y-auto pb-36" : "flex-1"}>
           {/* Header */}
-          <div className="mx-auto mb-5 w-full max-w-[1500px]">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="bg-orange-500 text-white text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow">
-                Phase 3
-              </span>
-              <span className="bg-card text-orange-600 dark:text-orange-400 text-sm font-bold px-4 py-1.5 rounded-full border-2 border-orange-500/30">
-                {t("lesson.interactive.period1")}
-              </span>
-            </div>
-            <h2 className="text-3xl font-black text-foreground mb-1">
+          <div className="mx-auto mb-4 w-full max-w-[1500px]">
+            <h2 className="mb-1 text-3xl font-bold text-fg">
               {articleData.title}
             </h2>
             {articleData.genre && articleData?.content_provider !== "PRIMARY_ADVANTAGE" && (
-              <p className="text-muted-foreground text-sm">
-                {articleData.genre} / CEFR {displayCefr}
+              <p className="text-base text-fg-muted">
+                {articleData.genre} · CEFR {displayCefr}
               </p>
             )}
           </div>
@@ -1928,41 +1807,43 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           {isPrimaryContent ? (
             <div
               key={`primary-reading-page-${primaryReadingPageIndex}`}
-              className="mx-auto flex w-full max-w-5xl animate-in fade-in slide-in-from-right-8 duration-500 flex-col items-center"
+              className="mx-auto flex w-full max-w-5xl flex-col items-center"
               style={{ fontFamily: "Georgia, serif" }}
             >
               {primaryReadingImageUrl && (
                 <img
                   src={primaryReadingImageUrl}
                   alt={`${articleData.title} — part ${primaryReadingPageIndex + 1}`}
-                  className="h-[clamp(260px,48vh,560px)] w-full rounded-3xl border border-border bg-card object-cover shadow-xl"
+                  className="h-[clamp(240px,44vh,520px)] w-full rounded-xl border border-hairline bg-surface object-cover"
                 />
               )}
-              <div className="mt-5 w-full rounded-3xl border border-border bg-card p-6 shadow-xl sm:p-8">
-                <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-orange-600 dark:text-orange-400">
+              <div className="mt-4 w-full rounded-xl border border-hairline bg-surface p-6 shadow-card sm:p-8">
+                <div className="mb-4 flex items-center gap-2 text-sm font-medium text-fg-muted" style={{ fontFamily: "var(--font-sans, inherit)" }}>
                   <button
                     type="button"
                     onClick={() => goToPrimaryPart(-1)}
                     disabled={primaryReadingPageIndex <= 0}
                     data-tour-target="phase-3-previous-part"
-                    className="rounded-full border border-orange-500/30 px-3 py-1.5 transition-colors hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-30"
+                    className="inline-flex items-center gap-1 rounded-lg border border-hairline px-3 py-1.5 text-fg transition-colors hover:bg-press disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    ← Previous Part
+                    <ChevronLeft aria-hidden="true" className="size-4" />
+                    {t("lesson.live.previousPart")}
                   </button>
-                  <span className="h-px flex-1 bg-orange-500/20" />
-                  <span className="whitespace-nowrap">Part {primaryReadingPageIndex + 1} / {primaryReadingGroups.length}</span>
-                  <span className="h-px flex-1 bg-orange-500/20" />
+                  <span className="h-px flex-1 bg-hairline" />
+                  <span className="whitespace-nowrap">{t("lesson.live.partLabel")} {primaryReadingPageIndex + 1} / {primaryReadingGroups.length}</span>
+                  <span className="h-px flex-1 bg-hairline" />
                   <button
                     type="button"
                     onClick={() => goToPrimaryPart(1)}
                     disabled={primaryReadingPageIndex >= primaryReadingGroups.length - 1}
                     data-tour-target="phase-3-next-part"
-                    className="rounded-full border border-orange-500/30 px-3 py-1.5 transition-colors hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-30"
+                    className="inline-flex items-center gap-1 rounded-lg border border-hairline px-3 py-1.5 text-fg transition-colors hover:bg-press disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    Next Part →
+                    {t("lesson.live.nextPart")}
+                    <ChevronRight aria-hidden="true" className="size-4" />
                   </button>
                 </div>
-                <p className="text-base leading-[2] sm:text-lg sm:leading-[2.05]">
+                <p className="text-xl leading-[1.9] xl:text-2xl xl:leading-[1.85]">
                   {primaryReadingGroup.length > 0
                     ? primaryReadingGroup.map(({ idx, text }) => renderSentence(idx, text))
                     : rawParagraphs[primaryReadingPageIndex]}
@@ -1971,13 +1852,13 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             </div>
           ) : (
             <div
-            className="mx-auto w-full max-w-[1500px] rounded-3xl border border-border bg-card p-6 shadow-xl sm:p-8"
+            className="mx-auto w-full max-w-[1500px] rounded-xl border border-hairline bg-surface p-6 shadow-card sm:p-8"
             style={{ fontFamily: "Georgia, serif" }}
           >
             {readableParagraphGroups.map((group, pIdx) => (
               <p
                 key={pIdx}
-                className="mb-5 text-base leading-[2] last:mb-0 sm:text-lg sm:leading-[2.05]"
+                className="mb-5 text-xl leading-[1.9] last:mb-0 xl:text-2xl xl:leading-[1.85]"
               >
                 {group.length > 0 ? (
                   group.map(({ idx, text, ts }) => {
@@ -1993,17 +1874,17 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                         onClick={canSelectSentence ? () => seekToSentence(idx) : undefined}
                         className={`${canSelectSentence ? "cursor-pointer" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
                           isActive
-                            ? "bg-orange-400 text-white font-bold px-2 py-0.5 rounded-xl shadow-md"
+                            ? "bg-[var(--highlight-bg)] text-[var(--highlight-text)] font-semibold px-1.5 py-0.5 rounded-md ring-2 ring-brand-vivid"
                             : isFlagged
-                              ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 font-semibold rounded-lg px-1 ring-1 ring-rose-400/50"
+                              ? "bg-danger-bg text-danger-fg font-semibold rounded-md px-1 ring-1 ring-danger-border"
                               : canSelectSentence
-                                ? "text-foreground hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400"
-                                : "text-foreground"
+                                ? "text-fg hover:bg-brand-soft"
+                                : "text-fg"
                         }`}
                       >
                         {renderReadAlongText(idx, text)}
                         {isFlagged && (
-                          <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 align-super not-italic">
+                          <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-danger-solid px-1.5 py-0.5 align-super text-xs font-semibold text-white not-italic">
                             🚩{flagCount}
                           </sup>
                         )}{" "}
@@ -2012,7 +1893,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   })
                 ) : (
                   // Fallback for unmatched paragraph text
-                  <span className="text-foreground">
+                  <span className="text-fg">
                     {rawParagraphs[pIdx]}{" "}
                   </span>
                 )}
@@ -2024,22 +1905,22 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
         {/* Floating mini audio player - bottom-center */}
         {phase4AudioUrl && (
-          <div className={`absolute ${isFullscreen ? "bottom-28" : "bottom-6"} left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2`}>
+          <div className={`${isFullscreen ? "absolute bottom-28 left-1/2 -translate-x-1/2" : "sticky bottom-[calc(var(--lesson-dock-h,76px)+12px)] mx-auto mt-4"} z-[var(--z-sticky)] flex w-fit max-w-full flex-col items-center gap-2`}>
             {/* Translation tooltip above player */}
             {activeEnText && (
               <div
-                className="bg-card border border-orange-200 rounded-2xl shadow-xl px-4 py-3 max-w-xs animate-in slide-in-from-bottom duration-200"
+                className="max-w-md rounded-xl border border-hairline bg-surface-elevated px-4 py-3 shadow-popover"
                 style={{ fontFamily: "Georgia, serif" }}
               >
-                <p className="text-foreground font-semibold text-sm leading-snug">
+                <p className="text-base font-semibold leading-snug text-fg">
                   {activeEnText}
                 </p>
                 {activeThText ? (
-                  <p className="text-orange-600 text-xs mt-1 leading-snug">
+                  <p className="mt-1 text-sm leading-snug text-brand-fg">
                     {activeThText}
                   </p>
                 ) : (
-                  <p className="text-slate-300 text-xs mt-1 italic">
+                  <p className="mt-1 text-sm italic text-fg-subtle">
                     {t("lesson.interactive.translateSentencePrompt")}
                   </p>
                 )}
@@ -2047,7 +1928,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             )}
 
             {/* Player pill */}
-            <div data-tour-target="phase-3-audio-player" className="bg-card border-2 border-orange-500/40 rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-4 w-[560px]">
+            <div data-tour-target="phase-3-audio-player" className="flex w-[min(560px,calc(100vw-48px))] items-center gap-3 rounded-xl border border-hairline bg-surface-elevated px-4 py-3 shadow-popover">
               {/* Skip prev */}
               <button
                 onClick={() => {
@@ -2055,26 +1936,30 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 }}
                 disabled={activeIdx <= 0}
                 data-tour-target="phase-3-previous-sentence"
-                className="w-11 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all disabled:opacity-30 text-xl shrink-0"
+                aria-label={t("lesson.live.previousSentence")}
+                title={t("lesson.live.previousSentence")}
+                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-fill-muted text-fg transition-colors hover:bg-press disabled:opacity-35"
               >
-                ⏮
+                <ChevronLeft aria-hidden="true" className="size-5" />
               </button>
 
               {/* Play/Pause */}
               <button
                 onClick={togglePlay}
                 data-tour-target="phase-3-play-button"
-                className="w-14 h-14 rounded-full bg-orange-500 text-white flex items-center justify-center text-2xl shadow-lg hover:bg-orange-600 active:scale-90 transition-all shrink-0"
+                aria-label={isPlaying ? t("lesson.live.pauseAudio") : t("lesson.live.playAudio")}
+                className="flex size-14 shrink-0 items-center justify-center rounded-full bg-brand-solid text-on-brand transition-colors hover:bg-brand-solid/90"
               >
-                {isPlaying ? "⏸" : "▶"}
+                {isPlaying ? <Pause aria-hidden="true" className="size-6" fill="currentColor" /> : <Play aria-hidden="true" className="ml-0.5 size-6" fill="currentColor" />}
               </button>
 
               {/* Reading speed */}
               <button
                 onClick={cycleSpeechRate}
-                title="Reading speed"
+                title={t("lesson.live.readingSpeed")}
+                aria-label={`${t("lesson.live.readingSpeed")} ${speechRate}x`}
                 data-tour-target="phase-3-speed"
-                className="w-14 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all active:scale-95 text-sm font-black shrink-0"
+                className="flex h-11 w-14 shrink-0 items-center justify-center rounded-full bg-fill-muted text-sm font-semibold tabular-nums text-fg transition-colors hover:bg-press"
               >
                 {speechRate}x
               </button>
@@ -2087,15 +1972,17 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 }}
                 disabled={activeIdx >= sentences.length - 1}
                 data-tour-target="phase-3-next-sentence"
-                className="w-11 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all disabled:opacity-30 text-xl shrink-0"
+                aria-label={t("lesson.live.nextSentence")}
+                title={t("lesson.live.nextSentence")}
+                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-fill-muted text-fg transition-colors hover:bg-press disabled:opacity-35"
               >
-                ⏭
+                <ChevronRight aria-hidden="true" className="size-5" />
               </button>
 
               {/* Progress + time */}
               <div className="flex-1 min-w-0">
                 <div
-                  className="w-full bg-orange-500/20 rounded-full h-2.5 cursor-pointer mb-1.5"
+                  className="mb-1.5 h-2.5 w-full cursor-pointer rounded-full bg-fill-muted"
                   onClick={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
                     const ratio = (e.clientX - rect.left) / rect.width;
@@ -2119,13 +2006,13 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   }}
                 >
                   <div
-                    className="bg-orange-500 h-2.5 rounded-full transition-all duration-100"
+                    className="h-2.5 rounded-full bg-brand-vivid transition-[width] duration-100"
                     style={{ width: `${progressPct}%` }}
                   />
                 </div>
-                <div className="flex justify-between text-sm text-muted-foreground">
+                <div className="flex justify-between text-sm tabular-nums text-fg-muted">
                   <span>{fmtTime(currentTime)}</span>
-                  <span className="text-orange-500 font-bold truncate mx-1">
+                  <span className="mx-1 truncate font-semibold text-fg">
                     {activeIdx >= 0
                       ? `${t("lesson.interactive.sentencePrefix")} ${activeIdx + 1} / ${sentences.length}`
                       : "-"}
@@ -2144,19 +2031,19 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   return (
     <div className="flex-1 flex flex-col items-center py-8 px-6 w-full">
       {articleData.passage && (
-        <div className="bg-card rounded-2xl p-10 max-w-4xl w-full shadow-xl border-t-4 border-slate-300">
-          <p className="text-foreground leading-[2.4] text-xl font-medium">
+        <div className="w-full max-w-4xl rounded-xl border border-hairline bg-surface p-8 shadow-card">
+          <p className="text-xl font-medium leading-[2] text-fg">
             {articleData.passage}
           </p>
           {renderThaiPassageCard("mt-6")}
         </div>
       )}
       {audioToastText && (
-        <div className="fixed bottom-6 right-6 z-[200] flex items-center gap-3 bg-amber-500 text-amber-950 font-bold px-4 py-3 rounded-2xl shadow-2xl border border-amber-300 animate-in fade-in slide-in-from-bottom-5 duration-300">
-          <AlertTriangle className="size-5 shrink-0 text-amber-950" />
-          <div className="text-xs">
-            <p className="font-bold uppercase tracking-wider">⚠️ Web Speech Fallback Active</p>
-            <p className="opacity-90 font-normal mt-0.5">Playing via browser TTS: &quot;{audioToastText}&quot;</p>
+        <div role="status" className="fixed bottom-24 right-6 z-[200] flex max-w-sm items-start gap-3 rounded-xl border border-warning-border bg-warning-bg px-4 py-3 text-warning-fg shadow-popover">
+          <AlertTriangle aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
+          <div className="text-sm">
+            <p className="font-semibold">{t("lesson.live.speechFallbackTitle")}</p>
+            <p className="mt-0.5 text-fg-muted">&ldquo;{audioToastText}&rdquo;</p>
           </div>
         </div>
       )}

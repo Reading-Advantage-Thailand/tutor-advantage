@@ -13,6 +13,10 @@
 
 /* ─── Design tokens (light) ────────────────────────────────────────────── */
 :root {
+  /* Vocabulary/sentence highlight in lesson text (warning tones keep contrast in both themes). */
+  --highlight-bg: var(--warning-bg);
+  --highlight-text: var(--warning-fg);
+
   color-scheme: light;
 
   --font-system: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai",
