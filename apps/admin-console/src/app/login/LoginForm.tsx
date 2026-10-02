@@ -37,7 +37,7 @@ export function LoginForm({ next, hasNext, error, devLogin }: LoginFormProps) {
 
   const googleLogin = () => {
     setGoogleLoading(true);
-    // `next` is forwarded so the OAuth callback can return here (see report: the callback currently lands on "/").
+    // `next` rides a short-lived httpOnly cookie through Google; the callback re-validates it and returns here.
     window.location.href = `/api/auth/google${hasNext ? `?next=${encodeURIComponent(next)}` : ""}`;
   };
 

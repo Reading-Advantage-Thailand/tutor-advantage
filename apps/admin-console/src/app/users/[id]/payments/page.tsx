@@ -116,6 +116,7 @@ export default function UserPaymentsTab() {
             rows={data?.payouts ?? []}
             loading={isLoading}
             getRowKey={(row) => row.id}
+            rowHref={(row) => `/settlements/${encodeURIComponent(row.settlementRunId)}`}
             empty={<EmptyState icon={Banknote} title={t("userDetail.payoutsEmpty")} compact />}
           />
         </Section>

@@ -95,6 +95,11 @@ describe("admin API helpers", () => {
     expect(error.message).toContain("ฉบับร่าง");
   });
 
+  it("distinguishes an invalid tutor id from a tutor that does not exist", () => {
+    expect(messageFor(400, "INVALID_TUTOR_ID", "tutorId must be a UUID")).toBe("รหัสครูไม่ถูกต้อง กรุณาเลือกครูจากรายการ");
+    expect(messageFor(404, "TUTOR_NOT_FOUND", "Tutor not found")).toBe("ไม่พบครูตามรหัสที่ระบุ");
+  });
+
   it("falls back to Thai status messages for generic server errors", () => {
     expect(messageFor(500, null, "Internal Server Error")).toBe("ระบบขัดข้องชั่วคราว กรุณาลองใหม่ภายหลัง");
     expect(messageFor(403, null, null)).toBe("คุณไม่มีสิทธิ์ทำรายการนี้");

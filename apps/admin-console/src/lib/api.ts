@@ -70,7 +70,7 @@ export const ERROR_MESSAGES: Record<string, string> = {
   SETTLEMENT_NOT_STALE: "รอบนี้ยังตรงกับข้อมูลล่าสุดและรอผู้ตรวจสอบอยู่ ไม่ต้องคำนวณใหม่",
   // Adjustments / coupons / users
   INVALID_AMOUNT: "จำนวนเงินไม่ถูกต้อง",
-  INVALID_TUTOR_ID: "ไม่พบครูตามรหัสที่ระบุ",
+  INVALID_TUTOR_ID: "รหัสครูไม่ถูกต้อง กรุณาเลือกครูจากรายการ",
   TUTOR_NOT_FOUND: "ไม่พบครูตามรหัสที่ระบุ",
   INVALID_HOURS: "จำนวนชั่วโมงไม่ถูกต้อง",
   INVALID_EXPIRY: "วันหมดอายุไม่ถูกต้อง",

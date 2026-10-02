@@ -51,7 +51,10 @@ export async function middleware(request: NextRequest) {
   }
 
   const loginUrl = new URL("/login", request.url);
-  if (pathname !== "/") loginUrl.searchParams.set("next", pathname);
+  // Keep the query string so filtered views survive the login round-trip
+  // (e.g. /coupons?status=VOID). Relative path only — never the origin.
+  const next = `${pathname}${request.nextUrl.search}`;
+  if (next !== "/") loginUrl.searchParams.set("next", next);
   const response = NextResponse.redirect(loginUrl);
   if (token) clearAdminCookies(response);
   return response;

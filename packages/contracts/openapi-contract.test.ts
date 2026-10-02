@@ -202,3 +202,96 @@ describe("finance audit-log OpenAPI contract (admin G1)", () => {
     expect(response.body.error.code).toBe("OPENAPI_REQUEST_VALIDATION_FAILED");
   });
 });
+
+describe("finance admin endpoints OpenAPI contract (admin G2–G5)", () => {
+  const ok = (_req: unknown, res: { status: (code: number) => { json: (body: unknown) => void } }) => {
+    res.status(200).json({ ok: true });
+  };
+  const app = contractApp("finance-mlm.v1.yaml", (server) => {
+    server.get("/v1/settlements", ok);
+    server.get("/v1/operations/exceptions", ok);
+    server.post("/v1/operations/exceptions/:id/:action", ok);
+    server.get("/v1/fraud-flags", ok);
+    server.post("/v1/fraud-flags/:id/action", ok);
+    server.post("/v1/reconciliation/payments/:id/activate", ok);
+    server.post("/v1/reconciliation/payments/:id/verify", ok);
+    server.get("/v1/reconciliation/orphan-events", ok);
+    server.post("/v1/reconciliation/orphan-events/:id/link", ok);
+    server.post("/v1/reconciliation/orphan-events/:id/dismiss", ok);
+    server.get("/v1/reconciliation/active-without-payment", ok);
+    server.get("/v1/users", ok);
+    server.get("/v1/users/:id", ok);
+    server.get("/v1/users/:id/payments", ok);
+    server.get("/v1/users/:id/audit", ok);
+    server.get("/v1/coupons", ok);
+    server.get("/v1/coupons/tutors", ok);
+    server.patch("/v1/coupons/:couponId", ok);
+    server.post("/v1/coupons/:couponId/void", ok);
+  });
+  const id = "11111111-2222-4333-8444-555555555555";
+
+  it("accepts the queries the admin console sends", async () => {
+    const cases: Array<[string, Record<string, string | number>]> = [
+      ["/v1/settlements", { page: 1, pageSize: 20, status: "SUBMITTED", periodMonth: "2026-09" }],
+      ["/v1/operations/exceptions", { status: "UNRESOLVED", type: "PAYMENT", q: "x", page: 1, pageSize: 20, order: "asc" }],
+      ["/v1/fraud-flags", { status: "ACTIVE", severity: "HIGH", q: "x", page: 2, pageSize: 50, order: "desc" }],
+      ["/v1/reconciliation/orphan-events", { state: "DISMISSED", page: 1, pageSize: 20, q: "chrg", order: "asc" }],
+      ["/v1/reconciliation/active-without-payment", { days: 30, page: 1, pageSize: 20, q: "x", order: "desc" }],
+      ["/v1/users", { page: 1, pageSize: 20, sort: "name", order: "asc", q: "a", role: "TUTOR", status: "ACTIVE", verification: "REVIEW" }],
+      ["/v1/users", { role: "TUTOR", q: "a", pageSize: 8 }],
+      ["/v1/users", { limit: 50 }],
+      [`/v1/users/${id}/payments`, {}],
+      [`/v1/users/${id}/audit`, { page: 1, pageSize: 20 }],
+      ["/v1/coupons", { page: 1, pageSize: 50, sort: "expiresAt", order: "asc", q: "TA-", status: "VOID" }],
+      ["/v1/coupons/tutors", { q: "ann" }],
+    ];
+    for (const [url, query] of cases) {
+      const response = await request(app).get(url).query(query);
+      expect(response.status, `${url} ${JSON.stringify(query)} ${JSON.stringify(response.body)}`).toBe(200);
+    }
+    // Undocumented routes stay unvalidated.
+    await request(app).get(`/v1/users/${id}`).query({ anything: 1 }).expect(200);
+  });
+
+  it("accepts the bodies the admin console sends", async () => {
+    await request(app).post(`/v1/operations/exceptions/${id}/resolve`).send({ resolution: "MARK_RESOLVED", note: "fixed it" }).expect(200);
+    await request(app).post(`/v1/fraud-flags/${id}/action`).send({ action: "FREEZE", reason: "suspicious" }).expect(200);
+    await request(app).post(`/v1/reconciliation/payments/${id}/activate`).send({ reason: "paid ok" }).expect(200);
+    await request(app).post(`/v1/reconciliation/payments/${id}/verify`).send({}).expect(200);
+    await request(app).post(`/v1/reconciliation/orphan-events/${id}/link`).send({ paymentIntentId: id, reason: "same charge" }).expect(200);
+    await request(app).post(`/v1/reconciliation/orphan-events/${id}/dismiss`).send({ reason: "test event" }).expect(200);
+    await request(app).patch(`/v1/coupons/${id}`).send({ note: null, expiresAt: null, assignedTutorId: id }).expect(200);
+    await request(app).post(`/v1/coupons/${id}/void`).send({ reason: "issued by mistake" }).expect(200);
+    await request(app).post(`/v1/coupons/${id}/void`).send({}).expect(200);
+  });
+
+  it.each([
+    ["/v1/users", { verification: "pending-ish" }],
+    ["/v1/users", { pageSize: 500 }],
+    ["/v1/users", { filter: "pending" }],
+    ["/v1/coupons", { status: "DELETED" }],
+    ["/v1/coupons", { sort: "amount" }],
+    ["/v1/settlements", { periodMonth: "2026-13" }],
+    ["/v1/fraud-flags", { severity: "EXTREME" }],
+    ["/v1/reconciliation/orphan-events", { state: "LINKED" }],
+    [`/v1/users/${"x".repeat(5)}/audit`, { page: 0 }],
+  ])("rejects GET %s %o", async (url, query) => {
+    const response = await request(app).get(url).query(query);
+    expect(response.status).toBe(400);
+    expect(response.body.error.code).toBe("OPENAPI_REQUEST_VALIDATION_FAILED");
+  });
+
+  it("rejects malformed bodies", async () => {
+    for (const [url, body] of [
+      [`/v1/coupons/${id}`, {}],
+      [`/v1/coupons/${id}`, { hours: 5 }],
+      [`/v1/coupons/${id}/void`, { reason: 42 }],
+      [`/v1/fraud-flags/${id}/action`, { reason: "no action" }],
+      [`/v1/reconciliation/orphan-events/${id}/link`, { reason: "missing intent" }],
+    ] as const) {
+      const method = url.endsWith(id) ? "patch" : "post";
+      const response = await request(app)[method](url).send(body);
+      expect(response.status, `${url} ${JSON.stringify(body)}`).toBe(400);
+    }
+  });
+});

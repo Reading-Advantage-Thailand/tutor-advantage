@@ -42,6 +42,17 @@ describe("admin middleware", () => {
     }
   });
 
+  it("keeps the path and query string (relative only) in ?next", async () => {
+    const response = await middleware(request("/coupons?status=VOID&page=2"));
+    const url = new URL(response.headers.get("location")!);
+    expect(url.pathname).toBe("/login");
+    expect(url.searchParams.get("next")).toBe("/coupons?status=VOID&page=2");
+    const root = new URL((await middleware(request("/"))).headers.get("location")!);
+    expect(root.searchParams.has("next")).toBe(false);
+    const rootWithQuery = new URL((await middleware(request("/?x=1"))).headers.get("location")!);
+    expect(rootWithQuery.searchParams.get("next")).toBe("/?x=1");
+  });
+
   it("lets anonymous users reach /login and /unauthorized", async () => {
     expect((await middleware(request("/login"))).headers.get("location")).toBeNull();
     expect((await middleware(request("/unauthorized"))).headers.get("location")).toBeNull();

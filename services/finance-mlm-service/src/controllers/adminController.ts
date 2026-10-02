@@ -2,6 +2,7 @@ import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { tutorVerificationReviewWhere } from "./userController";
 
 /** Fraud statuses that still need a decision (CLEARED is closed). */
 export const ACTIVE_FRAUD_STATUSES = ["OPEN", "INVESTIGATING", "MONITORING", "FROZEN"];
@@ -28,7 +29,8 @@ function iso(value: Date | null | undefined): string | null {
  * Queue definitions (keep the linked admin lists filtering the same way):
  *  - settlements:   settlement runs with status SUBMITTED (awaiting checker approval)
  *  - adjustments:   adjustments with status PENDING
- *  - verifications: TUTOR users with verificationStatus PENDING
+ *  - verifications: TUTOR users with any verification field PENDING
+ *                   (= /users?role=TUTOR&verification=REVIEW, tutorVerificationReviewWhere)
  *  - exceptions:    exceptions with status UNRESOLVED
  *  - fraudFlags:    fraud flags with status OPEN/INVESTIGATING/MONITORING/FROZEN
  */
@@ -36,7 +38,7 @@ export async function getAdminOverview(req: AuthenticatedRequest, res: Response)
   try {
     const now = Date.now();
     const thirtyDaysAgo = new Date(now - 30 * DAY_MS);
-    const verificationWhere = { role: "TUTOR", verificationStatus: "PENDING" } as const;
+    const verificationWhere = tutorVerificationReviewWhere();
     const fraudWhere = { status: { in: ACTIVE_FRAUD_STATUSES } };
 
     const [

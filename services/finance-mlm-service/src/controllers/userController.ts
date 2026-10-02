@@ -206,6 +206,15 @@ export function buildUserListWhere(query: Record<string, unknown>): Prisma.UserW
   return { AND: and };
 }
 
+/**
+ * The admin verification queue: tutors with any verification field PENDING.
+ * Same rule as GET /v1/users?role=TUTOR&verification=REVIEW (the list the
+ * overview queue and the sidebar badge link to), so the count always matches.
+ */
+export function tutorVerificationReviewWhere(): Prisma.UserWhereInput {
+  return buildUserListWhere({ role: "TUTOR", verification: "REVIEW" });
+}
+
 export const getUsers = async (req: AuthenticatedRequest, res: Response) => {
   if (req.user?.role !== "ADMIN" && req.user?.role !== "FINANCE_CHECKER") {
     return sendError(res, 403, "FORBIDDEN", "Requires Admin privileges");

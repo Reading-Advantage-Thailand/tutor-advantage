@@ -13,6 +13,7 @@ const prismaMock = vi.hoisted(() => ({
 vi.mock("@tutor-advantage/database", () => ({ prisma: prismaMock }));
 
 import { getAdminOverview } from "./adminController";
+import { buildUserListWhere } from "./userController";
 
 function createResponse() {
   const res = {
@@ -65,7 +66,12 @@ describe("getAdminOverview", () => {
       queueOldest: { settlements: "2026-09-01T00:00:00.000Z", adjustments: null },
       recentActivity: [{ actionType: "SUBMIT", actorName: "Finance Admin", periodMonth: "2026-08" }],
     });
-    // Verification queue counts tutors only.
-    expect(prismaMock.user.count).toHaveBeenCalledWith({ where: { role: "TUTOR", verificationStatus: "PENDING" } });
+    // Verification queue = tutors with any field PENDING, the same rule as the
+    // /users?role=TUTOR&verification=REVIEW list the queue links to.
+    const reviewWhere = buildUserListWhere({ role: "TUTOR", verification: "REVIEW" });
+    expect(prismaMock.user.count).toHaveBeenCalledWith({ where: reviewWhere });
+    expect(prismaMock.user.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: reviewWhere }));
+    expect(JSON.stringify(reviewWhere)).toContain('"role":"TUTOR"');
+    expect(JSON.stringify(reviewWhere)).toContain('"path":["verification","idCard","status"],"equals":"PENDING"');
   });
 });

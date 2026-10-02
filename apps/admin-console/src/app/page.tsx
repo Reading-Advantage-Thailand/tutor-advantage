@@ -75,7 +75,7 @@ const QUEUES: QueueDef[] = [
     key: "verifications",
     title: t("dashboard.queueVerificationsTitle"),
     hint: t("dashboard.queueVerificationsHint"),
-    href: "/users?role=TUTOR&verification=PENDING",
+    href: "/users?role=TUTOR&verification=REVIEW",
     icon: UserCheck,
     tone: "teal",
     adminOnly: true,

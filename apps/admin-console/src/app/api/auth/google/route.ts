@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { setOAuthNextCookie } from "../../../../lib/nextPath";
 
 export async function GET(request: Request) {
   const reqUrl = new URL(request.url);
@@ -60,6 +61,9 @@ export async function GET(request: Request) {
     maxAge: 60 * 10,
     path: "/",
   });
+
+  // Carry the post-login target through Google (validated again on callback).
+  setOAuthNextCookie(response, reqUrl.searchParams.get("next"));
 
   return response;
 }

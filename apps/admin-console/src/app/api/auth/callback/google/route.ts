@@ -1,11 +1,19 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@tutor-advantage/database";
-import { isAdminRole } from "@/lib/routes";
-import { setAdminSessionCookies } from "@/lib/security";
+import { isAdminRole } from "../../../../../lib/routes";
+import { setAdminSessionCookies } from "../../../../../lib/security";
+import { clearOAuthNextCookie, OAUTH_NEXT_COOKIE, safeNextPath } from "../../../../../lib/nextPath";
 
 
 export async function GET(request: Request) {
+  const response = await handleCallback(request);
+  // The `next` cookie is single-use: drop it whatever the outcome.
+  clearOAuthNextCookie(response);
+  return response;
+}
+
+async function handleCallback(request: Request): Promise<NextResponse> {
   const url = new URL(request.url);
   const host =
     request.headers.get("x-forwarded-host") ||
@@ -128,7 +136,9 @@ export async function GET(request: Request) {
     const { role, userId } = dbUser;
 
     // 4. Issue the admin-console session (httpOnly token + display cookies).
-    const response = NextResponse.redirect(new URL("/", publicBase));
+    // Re-validate: the cookie is only a hint, never trusted as a redirect target.
+    const next = safeNextPath(cookieStore.get(OAUTH_NEXT_COOKIE)?.value);
+    const response = NextResponse.redirect(new URL(next, publicBase));
     await setAdminSessionCookies(response, {
       userId,
       role,
