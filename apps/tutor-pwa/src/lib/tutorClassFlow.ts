@@ -38,9 +38,42 @@ export const MAX_CLASS_HOURS = 22;
 // Using `new Date("yyyy-MM-dd")` parses as UTC, which then shifts the day when
 // formatted/compared in local time. This keeps schedule dates stable across
 // save/load round-trips in any timezone.
-export function parseLocalDate(dateStr: string): Date {
-  const [y, m, d] = dateStr.split("-").map(Number);
-  return new Date(y, (m || 1) - 1, d || 1);
+//
+// Tolerant: anything that is not a "yyyy-MM-dd…" string (e.g. `undefined` from a
+// weekly-template entry `{ day, start, end }`) yields an Invalid Date instead of
+// throwing. Use `tryParseLocalDate` when you need to branch on validity.
+export function parseLocalDate(dateStr: string | null | undefined): Date {
+  return tryParseLocalDate(dateStr) ?? new Date(Number.NaN);
+}
+
+const LOCAL_DATE_RE = /^(\d{4})-(\d{2})-(\d{2})/;
+
+/** Like `parseLocalDate` but returns `null` for missing/malformed input. */
+export function tryParseLocalDate(value: unknown): Date | null {
+  if (typeof value !== "string") return null;
+  const match = LOCAL_DATE_RE.exec(value.trim());
+  if (!match) return null;
+  const [, y, m, d] = match.map(Number);
+  if (m < 1 || m > 12 || d < 1 || d > 31) return null;
+  const date = new Date(y, m - 1, d);
+  // Reject roll-overs such as 2026-02-31.
+  if (date.getMonth() !== m - 1) return null;
+  return date;
+}
+
+/** Local calendar key "yyyy-MM-dd" (same as date-fns `format(d, "yyyy-MM-dd")`). */
+export function toLocalDateKey(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+/** Local midnight of `date` (a copy). */
+export function startOfLocalDay(date: Date = new Date()): Date {
+  const copy = new Date(date);
+  copy.setHours(0, 0, 0, 0);
+  return copy;
 }
 
 export type WeeklyTemplate = {
@@ -216,4 +249,206 @@ export function getClassActionErrorMessage(
   }
 
   return fallback;
+}
+
+/* ─── Schedule data (class.scheduleData) ─────────────────────────────── */
+
+export type TimeSlot = { start: string; end: string };
+/** One dated teaching session: { date: "2026-10-05", start: "18:00", end: "20:00" }. */
+export type DatedScheduleEntry = TimeSlot & { date: string };
+/** Weekly template entry (older classes / seed data): { day: "MON", start, end }. */
+export type WeeklyScheduleEntry = TimeSlot & { day: string };
+export type ScheduleTimes = Record<string, TimeSlot>;
+
+const WEEKDAY_CODES = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] as const;
+
+/**
+ * Splits raw `scheduleData` into dated sessions and weekly template entries.
+ * Accepts both shapes (and ignores junk), so callers never call
+ * `parseLocalDate(undefined)` on a template entry.
+ */
+export function normalizeScheduleData(raw: unknown): {
+  dated: DatedScheduleEntry[];
+  weekly: WeeklyScheduleEntry[];
+} {
+  const dated: DatedScheduleEntry[] = [];
+  const weekly: WeeklyScheduleEntry[] = [];
+  if (!Array.isArray(raw)) return { dated, weekly };
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const entry = item as Record<string, unknown>;
+    const start = typeof entry.start === "string" ? entry.start : "";
+    const end = typeof entry.end === "string" ? entry.end : "";
+    const date = tryParseLocalDate(entry.date);
+    if (date) {
+      dated.push({ date: toLocalDateKey(date), start, end });
+      continue;
+    }
+    const day = typeof entry.day === "string" ? entry.day.trim().toUpperCase().slice(0, 3) : "";
+    if ((WEEKDAY_CODES as readonly string[]).includes(day)) {
+      weekly.push({ day, start, end });
+    }
+  }
+  return { dated, weekly };
+}
+
+/** Sum of session lengths in hours for raw scheduleData (either shape). */
+export function sumScheduledHours(raw: unknown): number {
+  if (!Array.isArray(raw)) return 0;
+  const total = raw.reduce<number>((sum, item) => {
+    if (!item || typeof item !== "object") return sum;
+    const { start, end } = item as Record<string, unknown>;
+    return sum + diffHours(typeof start === "string" ? start : "", typeof end === "string" ? end : "");
+  }, 0);
+  return Math.round(total * 100) / 100;
+}
+
+/** Weekday code → time slot, from a quick-pick template. */
+export function templateToSlots(template: Pick<WeeklyTemplate, "days" | "startTime" | "endTime">): Record<string, TimeSlot> {
+  const slots: Record<string, TimeSlot> = {};
+  for (const day of template.days) slots[day] = { start: template.startTime, end: template.endTime };
+  return slots;
+}
+
+/** Weekday code → time slot, from weekly-template schedule entries. */
+export function weeklyEntriesToSlots(entries: WeeklyScheduleEntry[]): Record<string, TimeSlot> {
+  const slots: Record<string, TimeSlot> = {};
+  for (const entry of entries) {
+    if (diffHours(entry.start, entry.end) > 0) slots[entry.day] = { start: entry.start, end: entry.end };
+  }
+  return slots;
+}
+
+function addMinutes(time: string, minutes: number): string {
+  const [h, m] = time.split(":").map(Number);
+  const total = h * 60 + m + minutes;
+  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(Math.round(total % 60)).padStart(2, "0")}`;
+}
+
+/**
+ * Generates teaching dates from `startDate` onward on the slot weekdays until
+ * `maxHours` is reached; the last session is shortened to land exactly on it.
+ * `keep` (e.g. past sessions that can no longer change) is kept and counts
+ * towards the hours. Returns sorted dates + a time slot per date key.
+ */
+export function generateSchedule({
+  startDate,
+  slots,
+  maxHours,
+  keep,
+}: {
+  startDate: string;
+  slots: Record<string, TimeSlot>;
+  maxHours: number;
+  keep?: { dates: Date[]; times: ScheduleTimes };
+}): { dates: Date[]; times: ScheduleTimes } {
+  const dates: Date[] = [...(keep?.dates ?? [])];
+  const times: ScheduleTimes = { ...(keep?.times ?? {}) };
+  const start = tryParseLocalDate(startDate);
+  const hasHours = Object.values(slots).some((slot) => diffHours(slot.start, slot.end) > 0);
+  if (!start || !hasHours) return { dates, times };
+
+  let accumulated = 0;
+  for (const d of dates) {
+    const slot = times[toLocalDateKey(d)];
+    if (slot) accumulated += diffHours(slot.start, slot.end);
+  }
+
+  const cur = startOfLocalDay(start);
+  let guard = 0;
+  while (accumulated < maxHours && guard < 3660) {
+    const slot = slots[WEEKDAY_CODES[cur.getDay()]];
+    const slotHours = slot ? diffHours(slot.start, slot.end) : 0;
+    if (slot && slotHours > 0) {
+      const d = new Date(cur);
+      const key = toLocalDateKey(d);
+      const needed = maxHours - accumulated;
+      if (!times[key]) {
+        dates.push(d);
+        if (needed >= slotHours) {
+          times[key] = { start: slot.start, end: slot.end };
+          accumulated += slotHours;
+        } else {
+          times[key] = { start: slot.start, end: addMinutes(slot.start, needed * 60) };
+          accumulated += needed;
+        }
+      }
+    }
+    cur.setDate(cur.getDate() + 1);
+    guard++;
+  }
+  dates.sort((a, b) => a.getTime() - b.getTime());
+  return { dates, times };
+}
+
+/** Total hours of the selected dates (rounded to 2 decimals). */
+export function totalScheduleHours(dates: Date[], times: ScheduleTimes): number {
+  let sum = 0;
+  for (const d of dates) {
+    const slot = times[toLocalDateKey(d)];
+    if (slot) sum += diffHours(slot.start, slot.end);
+  }
+  return Math.round(sum * 100) / 100;
+}
+
+/** Sorted dated entries for the API payload. */
+export function buildScheduleEntries(dates: Date[], times: ScheduleTimes): DatedScheduleEntry[] {
+  return [...dates]
+    .sort((a, b) => a.getTime() - b.getTime())
+    .map((d) => {
+      const key = toLocalDateKey(d);
+      return { date: key, start: times[key]?.start || "", end: times[key]?.end || "" };
+    });
+}
+
+const THAI_MONTHS_SHORT = [
+  "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
+  "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค.",
+];
+
+/** Local calendar date as "5 ต.ค. 69" (Buddhist-era 2-digit year). */
+export function formatShortThaiLocalDate(date: Date, withYear = true): string {
+  const base = `${date.getDate()} ${THAI_MONTHS_SHORT[date.getMonth()]}`;
+  if (!withYear) return base;
+  return `${base} ${String((date.getFullYear() + 543) % 100).padStart(2, "0")}`;
+}
+
+/**
+ * Human schedule summary stored as `scheduleDescription` and shown to
+ * students, e.g. "5 ต.ค. 69 - 30 พ.ย. 69 (รวม 12 วัน)" or
+ * "5 ต.ค. 69 (18:00-20:00)" for a single session.
+ */
+export function buildScheduleDescription(dates: Date[], times: ScheduleTimes): string {
+  if (dates.length === 0) return "";
+  const sorted = [...dates].sort((a, b) => a.getTime() - b.getTime());
+  const first = sorted[0];
+  const last = sorted[sorted.length - 1];
+  const startStr = formatShortThaiLocalDate(first);
+  if (sorted.length === 1) {
+    const slot = times[toLocalDateKey(first)];
+    return `${startStr} (${slot?.start || ""}-${slot?.end || ""})`;
+  }
+  return `${startStr} - ${formatShortThaiLocalDate(last)} (${t("tutorClass.schedule.totalDaysPrefix")} ${sorted.length} ${t("tutorClass.schedule.daysUnit")})`;
+}
+
+/** Sessions before `today` (locked in the reschedule editor; they still count towards the hours). */
+export function splitPastSchedule(
+  entries: DatedScheduleEntry[],
+  today: Date = startOfLocalDay(),
+): { dates: Date[]; times: ScheduleTimes } {
+  const dates: Date[] = [];
+  const times: ScheduleTimes = {};
+  for (const entry of entries) {
+    const d = tryParseLocalDate(entry.date);
+    if (d && d < today) {
+      dates.push(d);
+      times[entry.date] = { start: entry.start, end: entry.end };
+    }
+  }
+  return { dates, times };
+}
+
+/** Converts a local calendar date into a Bangkok-noon ISO string so lib/format shows the same day in any timezone. */
+export function localDateToBangkokNoon(date: Date): string {
+  return `${toLocalDateKey(date)}T12:00:00+07:00`;
 }

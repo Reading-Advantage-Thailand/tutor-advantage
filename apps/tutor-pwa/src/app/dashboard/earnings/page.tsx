@@ -1,71 +1,52 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Download, AlertCircle, Wallet, Star } from "lucide-react";
+import type { ReactNode } from "react";
 import { cookies } from "next/headers";
+import { BadgePercent, Coins, Network, Wallet } from "lucide-react";
+import {
+  CardHeader,
+  Chip,
+  DataTable,
+  EmptyState,
+  Grid,
+  Page,
+  PageHeader,
+  ProgressBar,
+  Section,
+  StatCard,
+  StatusChip,
+  Surface,
+  type DataTableColumn,
+  type Tone,
+} from "@/components/app";
 import VerificationBanner from "@/components/dashboard/verification-banner";
+import { formatNumber, formatTHB } from "@/lib/format";
 import { t } from "@/lib/i18n";
-import { PageTransition } from "@/components/ui/page-transition";
-import { AnimatedCurrencyCounter, AnimatedCounter } from "@/components/ui/animated-counter";
-import { IDENTITY_URL } from "@/lib/service-urls";
-import { Tawi50DownloadButton } from "./tawi50-download-button";
-import { TransferStatusBadge } from "./transfer-status-badge";
+import { getActiveTutorSession } from "@/lib/tutor-session";
+import { cn } from "@/lib/utils";
+import {
+  EMPTY_PROJECTION,
+  EMPTY_RATE_INFO,
+  adjustmentLines,
+  canOfferTawi50,
+  commissionPercent,
+  formatPeriodMonth,
+  historyGross,
+  historyNetTotal,
+  projectWithholding,
+  rateProgressPercent,
+  type EarningsHistoryItem,
+  type EarningsResponse,
+} from "./lib/earnings";
 import { SalesCsvDownloadButton } from "./sales-csv-download-button";
+import { Tawi50DownloadButton } from "./tawi50-download-button";
+import { TransferStatusBadge, TransferStatusProvider } from "./transfer-status-badge";
 
-type EarningsHistoryItem = {
-  date: string;
-  payoutLineId?: string;
-  direct: number;
-  network: number;
-  badgeBonus?: number;
-  clawback: number;
-  adjustments?: { amount: number; reason: string }[];
-  withholdingTax?: number;
-  netPayout?: number;
-  payoutDocument?: {
-    payoutDocumentId: string;
-    documentNumber: string;
-    documentType: string;
-    status: string;
-    issuedAt: string;
-    transferStatus?: string;
-    transferredAt?: string | null;
-  } | null;
-  status: string;
-};
-
-type ClawbackItem = {
-  date: string;
-  amount: number;
-  reason: string;
-};
-
-type EarningsResponse = {
-  periodMonth: string;
-  currentProjection: {
-    directSales: number;
-    networkBonus: number;
-    badgeBonus?: number;
-    clawback: number;
-    adjustments?: { amount: number; reason: string }[];
-    total: number;
-  };
-  history: EarningsHistoryItem[];
-  clawbacks: ClawbackItem[];
-  rateInfo: {
-    rate: number;
-    volume: number;
-    nextTarget: number;
-  };
-};
-
-type UserProfileResponse = {
-  user?: {
-    verificationStatus?: string;
-    settings?: {
-      taxName?: string;
-      nationalId?: string;
-      address?: string;
-    };
+type TutorProfile = {
+  verificationStatus?: string;
+  settings?: {
+    taxName?: string;
+    nationalId?: string;
+    address?: string;
+    verification?: Record<string, { status?: string; comment?: string }>;
   };
 };
 
@@ -82,415 +63,328 @@ async function getEarningsHistoryData(token: string): Promise<EarningsResponse |
   return res.json();
 }
 
-async function getUserProfile(token: string): Promise<UserProfileResponse["user"] | null> {
-  if (!token) return null;
+const payoutStatus: Record<string, { label: string; tone: Tone }> = {
+  draft: { label: t("dashboardEarnings.statuses.draft"), tone: "neutral" },
+  pending: { label: t("dashboardEarnings.statuses.pending"), tone: "warning" },
+  approved: { label: t("dashboardEarnings.statuses.approved"), tone: "success" },
+  rejected: { label: t("dashboardEarnings.statuses.rejected"), tone: "danger" },
+};
 
-  const res = await fetch(`${IDENTITY_URL}/v1/users/me`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
+const money = (value: number, signed = false) => formatTHB(value, { fractionDigits: 2, signed });
 
-  if (!res.ok) return null;
-  const data = (await res.json()) as UserProfileResponse;
-  return data.user ?? null;
+/** One label/amount line of a breakdown. */
+function AmountRow({
+  label,
+  value,
+  tone = "default",
+  strong,
+}: {
+  label: ReactNode;
+  value: string;
+  tone?: "default" | "positive" | "negative" | "muted";
+  strong?: boolean;
+}) {
+  return (
+    <div className={cn("flex items-baseline justify-between gap-4 py-2", strong && "py-2.5")}>
+      <dt className={cn("min-w-0 text-sm", strong ? "font-semibold text-fg" : "text-fg-muted")}>{label}</dt>
+      <dd
+        className={cn(
+          "shrink-0 tabular",
+          strong ? "text-base font-bold" : "text-sm font-medium",
+          tone === "positive" && "text-success-fg",
+          tone === "negative" && "text-danger-fg",
+          tone === "muted" && "text-fg-muted",
+          tone === "default" && "text-fg",
+        )}
+      >
+        {value}
+      </dd>
+    </div>
+  );
 }
 
-const statusMap: Record<string, { label: string; className: string }> = {
-  draft: {
-    label: t("dashboardEarnings.statuses.draft"),
-    className: "bg-muted text-muted-foreground border-border",
-  },
-  pending: {
-    label: t("dashboardEarnings.statuses.pending"),
-    className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
-  },
-  approved: {
-    label: t("dashboardEarnings.statuses.approved"),
-    className: "bg-brand-500/10 text-brand-600 dark:text-brand-400 border-brand-500/20",
-  },
-  rejected: {
-    label: t("dashboardEarnings.statuses.rejected"),
-    className: "bg-destructive/10 text-destructive border-destructive/20",
-  },
-};
+function AdjustmentList({ item }: { item: EarningsHistoryItem }) {
+  const lines = adjustmentLines(item, t("dashboardEarnings.clawback"));
+  if (lines.length === 0) return <span className="text-fg-subtle">–</span>;
+  return (
+    <ul className="flex flex-col gap-0.5">
+      {lines.map((adj, i) => (
+        <li key={i} className="min-w-0">
+          <span className={cn("font-medium tabular", adj.amount < 0 ? "text-danger-fg" : "text-success-fg")}>
+            {money(adj.amount, true)}
+          </span>
+          <span className="block truncate text-xs text-fg-muted" title={adj.reason}>
+            {adj.reason}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
-const emptyEarnings: EarningsResponse["currentProjection"] = {
-  directSales: 0,
-  networkBonus: 0,
-  badgeBonus: 0,
-  clawback: 0,
-  total: 0,
-};
-
-const emptyRateInfo: EarningsResponse["rateInfo"] = {
-  rate: 0,
-  volume: 0,
-  nextTarget: 0,
-};
-
-function formatCurrencyTHB(value: number) {
-  return value.toLocaleString("th-TH", {
-    style: "currency",
-    currency: "THB",
-    maximumFractionDigits: 0,
-  });
+function BonusCell({ item }: { item: EarningsHistoryItem }) {
+  const badge = item.badgeBonus ?? 0;
+  if (item.network === 0 && badge === 0) return <span className="text-fg-subtle">–</span>;
+  return (
+    <div className="flex flex-col items-start gap-0.5 whitespace-nowrap lg:items-end">
+      {item.network !== 0 ? <span className="text-success-fg">{money(item.network, true)}</span> : null}
+      {badge !== 0 ? (
+        <span className="text-xs text-fg-muted">
+          Badge <span className="text-success-fg">{money(badge, true)}</span>
+        </span>
+      ) : null}
+    </div>
+  );
 }
 
 export default async function EarningsPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value || "";
 
-  const [response, user] = await Promise.all([
-    getEarningsHistoryData(token),
-    getUserProfile(token),
-  ]);
+  // The session (identity /users/me) is memoised per request: the layout already loaded it.
+  const [response, session] = await Promise.all([getEarningsHistoryData(token), getActiveTutorSession()]);
+  const user = (session?.user ?? null) as TutorProfile | null;
 
-  const earnings = response?.currentProjection || emptyEarnings;
+  const earnings = response?.currentProjection || EMPTY_PROJECTION;
   const history = response?.history || [];
-  const clawbacks = response?.clawbacks || [];
-  const rateInfo = response?.rateInfo || emptyRateInfo;
-  // Display rate to 1 decimal to match the actual backend payout rate
-  // (admin console renders payoutRate with the same precision).
-  const commissionPercent = Number((rateInfo.rate * 100).toFixed(2));
+  const rateInfo = response?.rateInfo || EMPTY_RATE_INFO;
+  const periodMonth = response?.periodMonth || "";
+  const periodLabel = formatPeriodMonth(periodMonth) || "–";
 
-  // WHT for current projection — satang-precise to mirror backend calculateWithholdingTax:
-  // (grossMinor * 3 + 50) / 100 with integer (floor) division, matching BigInt arithmetic.
-  const projectionGross = earnings.total;
-  const projectionGrossMinor = Math.round(projectionGross * 100);
-  const projectionWHTMinor =
-    projectionGrossMinor > 0 ? Math.floor((projectionGrossMinor * 3 + 50) / 100) : 0;
-  const projectionEstimatedWHT = projectionWHTMinor / 100;
-  const projectionEstimatedNet = (projectionGrossMinor - projectionWHTMinor) / 100;
+  const projection = projectWithholding(earnings.total);
+  const ratePercent = commissionPercent(rateInfo.rate);
+  const progressPercent = rateProgressPercent(rateInfo);
+  const projectionAdjustments = adjustmentLines(earnings, t("dashboardEarnings.clawback"));
+  const badgeBonus = earnings.badgeBonus ?? 0;
 
-  const progressPercent = Math.min(
-    100,
-    rateInfo.nextTarget > 0
-      ? Math.round((rateInfo.volume / rateInfo.nextTarget) * 100)
-      : 100,
-  );
+  const isVerified = user?.verificationStatus === "VERIFIED";
+  const transferRows = history
+    .filter((item) => item.payoutLineId && item.payoutDocument?.transferStatus)
+    .map((item) => ({
+      payoutLineId: item.payoutLineId as string,
+      status: item.payoutDocument?.transferStatus as string,
+      transferredAt: item.payoutDocument?.transferredAt ?? null,
+    }));
+
+  const columns: DataTableColumn<EarningsHistoryItem>[] = [
+    {
+      key: "period",
+      header: t("dashboardEarnings.columns.period"),
+      mobile: "primary",
+      cell: (item) => (
+        <span className="flex flex-col">
+          <span className="font-medium whitespace-nowrap text-fg">{formatPeriodMonth(item.date)}</span>
+          {item.payoutDocument ? (
+            <span
+              className="text-xs font-normal whitespace-nowrap text-fg-muted"
+              title={`${t("dashboardEarnings.documentPrefix")} ${item.payoutDocument.documentNumber}`}
+            >
+              {item.payoutDocument.documentNumber}
+            </span>
+          ) : null}
+        </span>
+      ),
+    },
+    {
+      key: "commission",
+      header: t("dashboardEarnings.columns.commission"),
+      align: "right",
+      cell: (item) => <span className="whitespace-nowrap">{money(item.direct)}</span>,
+    },
+    {
+      key: "bonus",
+      header: t("dashboardEarnings.columns.bonus"),
+      align: "right",
+      cell: (item) => <BonusCell item={item} />,
+    },
+    {
+      key: "adjustments",
+      header: t("dashboardEarnings.columns.adjustments"),
+      className: "max-w-40",
+      cell: (item) => <AdjustmentList item={item} />,
+    },
+    {
+      key: "gross",
+      header: t("dashboardEarnings.columns.gross"),
+      align: "right",
+      cell: (item) => <span className="whitespace-nowrap">{money(historyGross(item))}</span>,
+    },
+    {
+      key: "net",
+      header: t("dashboardEarnings.columns.net"),
+      align: "right",
+      mobile: "trailing",
+      cell: (item) => (
+        <span className="flex flex-col items-end whitespace-nowrap">
+          <span className="font-semibold text-fg">{money(historyNetTotal(item))}</span>
+          {item.withholdingTax !== undefined && item.withholdingTax > 0 ? (
+            <span className="text-xs font-normal text-fg-muted">
+              {t("dashboardEarnings.columns.wht")} <span className="text-danger-fg">{money(-item.withholdingTax)}</span>
+            </span>
+          ) : null}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      header: t("dashboardEarnings.columns.status"),
+      mobile: "trailing",
+      cell: (item) => {
+        const status = payoutStatus[item.status];
+        return (
+          <div className="flex flex-col items-end gap-1 lg:items-start">
+            <StatusChip status={item.status} tone={status?.tone ?? "neutral"} label={status?.label ?? item.status} size="sm" />
+            {item.payoutLineId && item.payoutDocument?.transferStatus ? (
+              <TransferStatusBadge payoutLineId={item.payoutLineId} />
+            ) : null}
+          </div>
+        );
+      },
+    },
+    {
+      key: "download",
+      header: t("dashboardEarnings.columns.document"),
+      cell: (item) =>
+        item.payoutDocument && canOfferTawi50(item) ? (
+          <Tawi50DownloadButton
+            href={`/api/documents/tawi50?payoutDocumentId=${encodeURIComponent(item.payoutDocument.payoutDocumentId)}`}
+            filename={`tawi50-${item.payoutDocument.documentNumber}.pdf`}
+            settings={user?.settings ?? null}
+            isVerified={isVerified}
+          />
+        ) : (
+          <span className="text-fg-subtle">–</span>
+        ),
+    },
+  ];
 
   return (
-    <PageTransition variant="slide-up" stagger className="max-w-3xl mx-auto space-y-6 lg:space-y-8 pb-24 sm:pb-12">
-      <VerificationBanner />
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 animate-fade-in">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-foreground">{t("dashboardEarnings.title")}</h1>
-          <p className="text-sm font-medium text-muted-foreground mt-1">
-            {t("dashboardEarnings.subtitle")}
-          </p>
-        </div>
-        <SalesCsvDownloadButton
-          periodMonth={response?.periodMonth || ""}
-          label={t("dashboardEarnings.downloadCsv")}
-          className="h-10 px-5 rounded-xl font-bold hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-600 hover:border-brand-500/30 shadow-sm transition-all gap-2 shrink-0 hidden sm:flex hover-lift press-scale"
-          variant="outline"
+    <Page>
+      <VerificationBanner user={user ?? undefined} />
+      <PageHeader
+        title={t("dashboardEarnings.title")}
+        description={t("dashboardEarnings.pageDescription")}
+        actions={<SalesCsvDownloadButton periodMonth={periodMonth} label={t("dashboardEarnings.downloadCsv")} />}
+      />
+
+      <Grid cols={4} className="grid-cols-2">
+        <StatCard
+          label={t("dashboardEarnings.stats.netEstimate")}
+          value={money(projection.net)}
+          icon={Wallet}
+          tone="brand"
+          hint={t("dashboardEarnings.stats.afterWHT")}
         />
-      </div>
+        <StatCard
+          label={t("dashboardEarnings.stats.direct")}
+          value={money(earnings.directSales)}
+          icon={Coins}
+          tone="brand"
+          hint={periodLabel}
+        />
+        <StatCard
+          label={t("dashboardEarnings.stats.network")}
+          value={money(earnings.networkBonus, true)}
+          icon={Network}
+          tone="teal"
+          hint={badgeBonus > 0 ? `${t("dashboardEarnings.stats.badgeBonusHint")} ${money(badgeBonus, true)}` : periodLabel}
+        />
+        <StatCard
+          label={t("dashboardEarnings.stats.rate")}
+          value={`${formatNumber(ratePercent, Number.isInteger(ratePercent) ? 0 : 2)}%`}
+          icon={BadgePercent}
+          tone="orange"
+          hint={
+            rateInfo.nextTarget > 0
+              ? `${t("dashboardEarnings.rateTargetPrefix")} ${formatTHB(rateInfo.nextTarget, { fractionDigits: 0 })}`
+              : t("dashboardEarnings.maxRate")
+          }
+        />
+      </Grid>
 
-      <div className="grid gap-6 lg:gap-8 md:grid-cols-12 stagger">
-        {/* Left column */}
-        <div className="md:col-span-7 animate-slide-up h-full" style={{ animationDelay: '50ms' }}>
-          <Card className="h-full border border-border/40 hover:shadow-lg rounded-3xl shadow-sm bg-card bg-gradient-to-br from-card via-card to-brand-500/2 dark:to-brand-500/5 transition-all duration-300 overflow-hidden relative group">
-            <div className="absolute top-0 right-0 w-44 h-44 bg-brand-500/10 dark:bg-brand-500/5 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none" />
-            <CardContent className="p-5 sm:p-6 relative z-10">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-2xl bg-brand-500/10 border border-brand-500/10 flex items-center justify-center">
-                  <Wallet className="h-5 w-5 text-brand-600 dark:text-brand-400" />
-                </div>
-                <h2 className="text-sm font-bold text-foreground">
-                  {t("dashboardEarnings.projectedIncomePrefix")} ({response?.periodMonth || "N/A"})
-                </h2>
-              </div>
-              
-              <div className="flex items-baseline gap-2 mb-1">
-                <AnimatedCurrencyCounter
-                  value={projectionEstimatedNet}
-                  fractionDigits={2}
-                  className="text-4xl lg:text-5xl font-black tracking-tight text-foreground"
-                />
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-muted px-2 py-0.5 rounded-md">THB</span>
-              </div>
-              <p className="text-[10px] font-semibold text-muted-foreground mb-5">
-                {t("dashboardEarnings.estimatedNetPayout")} · {t("dashboardEarnings.projectionWHTNote")}
-              </p>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-border/40 bg-background/50 backdrop-blur-sm p-3 sm:p-4">
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">{t("dashboardEarnings.directCommission")}</p>
-                  <AnimatedCurrencyCounter
-                    value={earnings.directSales}
-                    fractionDigits={2}
-                    className="text-lg sm:text-xl font-black text-foreground"
-                  />
-                </div>
-                <div className="rounded-2xl border border-brand-500/20 bg-brand-500/5 backdrop-blur-sm p-3 sm:p-4">
-                  <p className="text-[10px] font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider mb-1.5">{t("dashboardEarnings.networkBonus")}</p>
-                  <div className="flex items-center text-lg sm:text-xl font-black text-brand-600 dark:text-brand-400">
-                    <span>+</span>
-                    <AnimatedCurrencyCounter value={earnings.networkBonus} fractionDigits={2} />
-                  </div>
-                </div>
-              </div>
-
-              {(earnings.badgeBonus ?? 0) > 0 && (
-                <div className="mt-4 flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-500/5 backdrop-blur-sm px-4 py-3 animate-scale-in">
-                  <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-500" />
-                    {t("dashboardEarnings.badgeBonus")}
-                  </span>
-                  <div className="flex items-center text-lg font-black text-amber-600 dark:text-amber-400">
-                    <span>+</span>
-                    <AnimatedCurrencyCounter value={earnings.badgeBonus ?? 0} fractionDigits={2} />
-                  </div>
-                </div>
-              )}
-
-              {(!earnings.adjustments || earnings.adjustments.length === 0) && earnings.clawback !== 0 && (
-                <div className="mt-4 flex items-center justify-between rounded-2xl bg-destructive/5 border border-destructive/15 px-4 py-3 text-sm animate-scale-in">
-                  <span className="text-destructive/90 flex items-center gap-2 font-semibold">
-                    <AlertCircle className="h-4 w-4" />
-                    {t("dashboardEarnings.clawback")}
-                  </span>
-                  <AnimatedCurrencyCounter
-                    value={earnings.clawback}
-                    fractionDigits={2}
-                    className="font-bold text-destructive"
-                  />
-                </div>
-              )}
-
-              {earnings.adjustments && earnings.adjustments.length > 0 && earnings.adjustments.map((adj, i) => (
-                <div key={`proj-adj-${i}`} className={`mt-4 flex items-center justify-between rounded-2xl ${adj.amount < 0 ? 'bg-destructive/5 border-destructive/15' : 'bg-brand-500/5 border-brand-500/20'} border px-4 py-3 text-sm animate-scale-in`}>
-                  <span className={`${adj.amount < 0 ? 'text-destructive/90' : 'text-brand-600 dark:text-brand-400'} flex items-center gap-2 font-semibold`}>
-                    {adj.amount < 0 ? <AlertCircle className="h-4 w-4" /> : <Star className="h-4 w-4" />}
-                    {adj.reason || t("dashboardEarnings.clawback")}
-                  </span>
-                  <div className={`flex items-center font-bold ${adj.amount < 0 ? 'text-destructive' : 'text-brand-600 dark:text-brand-400'}`}>
-                    {adj.amount > 0 ? "+" : ""}
-                    <AnimatedCurrencyCounter
-                      value={adj.amount}
-                      fractionDigits={2}
-                    />
-                  </div>
-                </div>
-              ))}
-
-              {/* WHT breakdown strip */}
-              <div className="mt-4 rounded-2xl border border-border/30 bg-muted/30 divide-y divide-border/30 overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-2.5 text-xs text-muted-foreground">
-                  <span className="font-medium">{t("dashboardEarnings.grossBeforeWHT")}</span>
-                  <AnimatedCurrencyCounter value={projectionGross} fractionDigits={2} className="font-semibold text-foreground" />
-                </div>
-                {projectionEstimatedWHT > 0 && (
-                  <div className="flex items-center justify-between px-4 py-2.5 text-xs text-destructive/80">
-                    <span className="font-medium">{t("dashboardEarnings.withholdingTaxEstimated")}</span>
-                    <span className="font-semibold flex items-center gap-0.5">
-                      <span>−</span>
-                      <AnimatedCurrencyCounter value={projectionEstimatedWHT} fractionDigits={2} />
-                    </span>
-                  </div>
-                )}
-                <div className="flex items-center justify-between px-4 py-3 bg-brand-500/5">
-                  <span className="text-xs font-bold text-foreground">{t("dashboardEarnings.estimatedNetPayout")}</span>
-                  <AnimatedCurrencyCounter value={projectionEstimatedNet} fractionDigits={2} className="text-sm font-black text-brand-600 dark:text-brand-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right column */}
-        <div className="md:col-span-5 animate-slide-up h-full" style={{ animationDelay: '100ms' }}>
-          <Card className="h-full border border-border/40 hover:shadow-md rounded-3xl shadow-sm bg-card overflow-hidden transition-all duration-300 flex flex-col">
-            <CardHeader className="py-4 px-5 flex flex-row items-center justify-between border-b border-border/40 shrink-0">
-              <CardTitle className="text-sm font-bold text-foreground">
-                {t("dashboardEarnings.payoutHistory")}
-              </CardTitle>
-              <SalesCsvDownloadButton
-                periodMonth={response?.periodMonth || ""}
-                label="CSV"
-                className="h-8 gap-1 text-brand-500 hover:text-brand-600 hover:bg-brand-500/5 sm:hidden px-2 -mr-2 font-bold"
-                variant="ghost"
-                size="sm"
+      <Grid cols={2} className="items-start">
+        <Surface padding="lg">
+          <CardHeader
+            title={t("dashboardEarnings.projectionTitle")}
+            description={t("dashboardEarnings.projectionWHTNote")}
+            action={<Chip tone="neutral">{periodLabel}</Chip>}
+          />
+          <dl className="mt-3 divide-y divide-hairline">
+            <AmountRow label={t("dashboardEarnings.directCommission")} value={money(earnings.directSales)} />
+            <AmountRow label={t("dashboardEarnings.networkBonus")} value={money(earnings.networkBonus, true)} tone="positive" />
+            {badgeBonus > 0 ? (
+              <AmountRow label={t("dashboardEarnings.badgeBonus")} value={money(badgeBonus, true)} tone="positive" />
+            ) : null}
+            {projectionAdjustments.map((adj, i) => (
+              <AmountRow
+                key={`adj-${i}`}
+                label={adj.reason}
+                value={money(adj.amount, true)}
+                tone={adj.amount < 0 ? "negative" : "positive"}
               />
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="divide-y divide-border/30">
-                {history.length === 0 && (
-                  <div className="p-6 text-center text-sm font-semibold text-muted-foreground">
-                    {t("dashboardEarnings.emptyPayoutHistory")}
-                  </div>
-                )}
-                {history.map((item, idx) => {
-                  // Use netPayout (post-WHT, includes all adjustments) when available.
-                  // Fallback to gross sum only for legacy records without netPayout.
-                  const total = item.netPayout !== undefined ? item.netPayout : item.direct + item.network + item.clawback;
-                  const status = statusMap[item.status] || {
-                    label: item.status,
-                    className: "bg-muted",
-                  };
-                  return (
-                    <div key={`${item.date}-${item.status}`} className="p-4 sm:p-5 hover:bg-brand-500/2 dark:hover:bg-brand-500/4 transition-colors relative group">
-                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-brand-500 transition-all duration-300" />
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm font-bold text-foreground">{item.date}</p>
-                        <span
-                          className={`px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${status.className}`}
-                        >
-                          {status.label}
-                        </span>
-                      </div>
+            ))}
+            <AmountRow label={t("dashboardEarnings.grossBeforeWHT")} value={money(projection.gross)} />
+            {projection.wht > 0 ? (
+              <AmountRow
+                label={t("dashboardEarnings.withholdingTaxEstimated")}
+                value={money(-projection.wht)}
+                tone="negative"
+              />
+            ) : null}
+            <AmountRow label={t("dashboardEarnings.estimatedNetPayout")} value={money(projection.net)} strong />
+          </dl>
+        </Surface>
 
-                      <AnimatedCurrencyCounter
-                        value={total}
-                        fractionDigits={2}
-                        className="text-xl font-black text-foreground block mb-3"
-                      />
+        <Surface padding="lg">
+          <CardHeader
+            title={t("dashboardEarnings.rateTitle")}
+            description={t("dashboardEarnings.currentCommission")}
+            action={
+              <span className="text-2xl font-bold text-brand-fg tabular">
+                {formatNumber(ratePercent, Number.isInteger(ratePercent) ? 0 : 2)}%
+              </span>
+            }
+          />
+          <div className="mt-5 flex flex-col gap-2">
+            <ProgressBar value={progressPercent} label={t("dashboardEarnings.rateTitle")} />
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-[0.8125rem] text-fg-muted">
+              <span>
+                {t("dashboardEarnings.rateVolume")}{" "}
+                <span className="font-semibold text-fg tabular">{formatTHB(rateInfo.volume, { fractionDigits: 0 })}</span>
+              </span>
+              <span>
+                {rateInfo.nextTarget > 0
+                  ? `${t("dashboardEarnings.rateTargetPrefix")} ${formatTHB(rateInfo.nextTarget, { fractionDigits: 0 })} ${t("dashboardEarnings.rateTargetSuffix")}`
+                  : t("dashboardEarnings.maxRate")}
+              </span>
+            </div>
+          </div>
+        </Surface>
+      </Grid>
 
-                      {/* Breakdown: accounting-style formula */}
-                      <div className="rounded-xl border border-border/30 bg-muted/20 overflow-hidden text-xs">
-                        {/* Components */}
-                        <div className="divide-y divide-border/20">
-                          <div className="flex justify-between px-3 py-2 text-muted-foreground">
-                            <span className="font-medium">{t("dashboardEarnings.settlementPayout")}</span>
-                            <AnimatedCurrencyCounter value={item.direct} fractionDigits={2} className="font-semibold text-foreground" />
-                          </div>
-                          {item.network !== 0 && (
-                            <div className="flex justify-between px-3 py-2 text-muted-foreground">
-                              <span className="font-medium">{t("dashboardEarnings.networkBonus")}</span>
-                              <span className="font-bold text-brand-600 dark:text-brand-400 flex items-center gap-0.5">
-                                +<AnimatedCurrencyCounter value={item.network} fractionDigits={2} />
-                              </span>
-                            </div>
-                          )}
-                          {(item.badgeBonus ?? 0) !== 0 && (
-                            <div className="flex justify-between px-3 py-2 text-muted-foreground">
-                              <span className="font-medium flex items-center gap-1">
-                                <Star className="h-3 w-3 text-amber-500 fill-amber-400" />
-                                {t("dashboardEarnings.badgeBonus")}
-                              </span>
-                              <span className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-0.5">
-                                +<AnimatedCurrencyCounter value={item.badgeBonus ?? 0} fractionDigits={2} />
-                              </span>
-                            </div>
-                          )}
-                          {(!item.adjustments || item.adjustments.length === 0) && item.clawback !== 0 && (
-                            <div className="flex justify-between px-3 py-2 text-destructive/80">
-                              <span className="font-medium flex items-center gap-1">
-                                <AlertCircle className="h-3 w-3" />
-                                {t("dashboardEarnings.clawback")}
-                              </span>
-                              <AnimatedCurrencyCounter value={item.clawback} fractionDigits={2} className="font-bold text-destructive" />
-                            </div>
-                          )}
-                          {item.adjustments && item.adjustments.length > 0 && item.adjustments.map((adj, i) => (
-                            <div key={`adj-${i}`} className={`flex justify-between px-3 py-2 ${adj.amount < 0 ? 'text-destructive/80' : 'text-brand-600/80 dark:text-brand-400/80'}`}>
-                              <span className="font-medium flex items-center gap-1">
-                                {adj.amount < 0 ? <AlertCircle className="h-3 w-3" /> : <Star className="h-3 w-3" />}
-                                {adj.reason || t("dashboardEarnings.clawback")}
-                              </span>
-                              <span className={`font-bold flex items-center gap-0.5 ${adj.amount < 0 ? 'text-destructive' : 'text-brand-600 dark:text-brand-400'}`}>
-                                {adj.amount > 0 ? "+" : ""}
-                                <AnimatedCurrencyCounter value={adj.amount} fractionDigits={2} />
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                        {/* Gross subtotal */}
-                        <div className="flex justify-between px-3 py-2 bg-muted/40 border-t border-border/40 text-muted-foreground">
-                          <span className="font-semibold">{t("dashboardEarnings.grossBeforeWHT")}</span>
-                          <AnimatedCurrencyCounter
-                            value={item.direct + item.network + (item.badgeBonus ?? 0) + item.clawback}
-                            fractionDigits={2}
-                            className="font-bold text-foreground"
-                          />
-                        </div>
-                        {/* WHT */}
-                        {item.withholdingTax !== undefined && item.withholdingTax > 0 && (
-                          <div className="flex justify-between px-3 py-2 border-t border-border/40 text-destructive/80">
-                            <span className="font-medium">{t("dashboardEarnings.withholdingTax")}</span>
-                            <span className="font-semibold flex items-center gap-0.5">
-                              −<AnimatedCurrencyCounter value={item.withholdingTax} fractionDigits={2} />
-                            </span>
-                          </div>
-                        )}
-                        {/* Net payout — highlighted */}
-                        {item.netPayout !== undefined && (
-                          <div className="flex justify-between px-3 py-2.5 bg-brand-500/5 border-t-2 border-brand-500/20">
-                            <span className="font-black text-foreground">{t("dashboardEarnings.netPayout")}</span>
-                            <AnimatedCurrencyCounter value={item.netPayout} fractionDigits={2} className="font-black text-brand-600 dark:text-brand-400" />
-                          </div>
-                        )}
-                      </div>
-                      {item.payoutDocument?.transferStatus && item.payoutLineId && (
-                        <TransferStatusBadge
-                          payoutLineId={item.payoutLineId}
-                          initialStatus={item.payoutDocument.transferStatus}
-                          initialTransferredAt={item.payoutDocument.transferredAt}
-                        />
-                      )}
-                      {item.payoutDocument && (
-                        <div className="mt-2 flex items-center justify-between flex-wrap gap-2">
-                          <div className="text-[10px] font-bold text-muted-foreground/60 tracking-wider">
-                            {t("dashboardEarnings.documentPrefix")} {item.payoutDocument.documentNumber}
-                          </div>
-                          {item.status === "approved" && (item.withholdingTax ?? 0) > 0 && (
-                            <Tawi50DownloadButton
-                              href={`/api/documents/tawi50?payoutDocumentId=${encodeURIComponent(item.payoutDocument.payoutDocumentId)}`}
-                              filename={`tawi50-${item.payoutDocument.documentNumber}.pdf`}
-                              settings={user?.settings ?? null}
-                              isVerified={user?.verificationStatus === "VERIFIED"}
-                            />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Bottom row: Current Commission */}
-        <div className="md:col-span-12 animate-slide-up" style={{ animationDelay: '150ms' }}>
-          <Card className="border border-brand-500/20 bg-gradient-to-br from-brand-500/5 via-card to-card hover:shadow-lg rounded-3xl shadow-sm transition-all duration-300 overflow-hidden relative">
-            <CardHeader className="pb-3 pt-5 px-5 sm:px-6">
-              <CardTitle className="text-sm font-bold text-foreground flex items-center justify-between">
-                <span className="flex items-center gap-2">
-                  <Star className="h-4 w-4 text-amber-500 fill-amber-500 animate-float" />
-                  {t("dashboardEarnings.currentCommission")}
-                </span>
-                <span className="text-xl font-black text-brand-500">
-                  <AnimatedCounter value={commissionPercent} fractionDigits={2} />%
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 pb-5 sm:pb-6 px-5 sm:px-6">
-              <div className="space-y-2.5">
-                <div className="flex justify-between text-xs font-bold text-muted-foreground">
-                  <AnimatedCurrencyCounter value={rateInfo.volume} className="text-foreground" />
-                  <span>
-                    {rateInfo.nextTarget > 0
-                      ? `${t("dashboardEarnings.rateTargetPrefix")} ${formatCurrencyTHB(rateInfo.nextTarget)} ${t("dashboardEarnings.rateTargetSuffix")}`
-                      : t("dashboardEarnings.maxRate")}
-                  </span>
-                </div>
-                <div className="w-full bg-brand-500/10 rounded-full h-3 overflow-hidden border border-brand-500/5 p-[1px]">
-                  <div
-                    className="bg-gradient-to-r from-brand-400 to-brand-600 h-2 rounded-full transition-all duration-1000 ease-out relative shadow-[0_0_8px_rgba(6,199,85,0.4)]"
-                    style={{ width: `${progressPercent}%` }}
-                  >
-                    <div className="absolute inset-0 bg-white/20 w-full animate-pulse" />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-
-    </PageTransition>
+      <Section
+        title={t("dashboardEarnings.payoutHistory")}
+        description={history.length > 0 ? t("dashboardEarnings.historyDescription") : undefined}
+      >
+        <TransferStatusProvider initial={transferRows}>
+          <DataTable
+            caption={t("dashboardEarnings.payoutHistory")}
+            columns={columns}
+            rows={history}
+            breakpoint="lg"
+            dense
+            getRowKey={(item) => `${item.date}-${item.status}-${item.payoutLineId ?? ""}`}
+            empty={
+              <EmptyState
+                icon={Wallet}
+                tone="brand"
+                title={t("dashboardEarnings.emptyPayoutHistory")}
+                description={t("dashboardEarnings.emptyPayoutHistoryDescription")}
+              />
+            }
+          />
+        </TransferStatusProvider>
+      </Section>
+    </Page>
   );
 }

@@ -1,45 +1,77 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Copy, ExternalLink } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, Copy, ExternalLink, Link2, Share2 } from "lucide-react";
+import { IconTile, Surface, toast } from "@/components/app";
+import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { shortInviteLabel } from "./network-data";
 
 export function InviteLinkCard({ inviteUrl }: { inviteUrl: string }) {
   const [copied, setCopied] = useState(false);
+  const [canShare, setCanShare] = useState(false);
+
+  useEffect(() => {
+    setCanShare(typeof navigator !== "undefined" && typeof navigator.share === "function");
+  }, []);
+
+  useEffect(() => {
+    if (!copied) return;
+    const id = window.setTimeout(() => setCopied(false), 1800);
+    return () => window.clearTimeout(id);
+  }, [copied]);
 
   const copyInviteLink = async () => {
-    await navigator.clipboard.writeText(inviteUrl);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      setCopied(true);
+      toast.success(t("dashboardNetwork.copied"));
+    } catch {
+      toast.error(t("dashboardNetwork.copyFailed"));
+    }
+  };
+
+  const shareInviteLink = async () => {
+    try {
+      await navigator.share({ title: t("dashboardNetwork.inviteTitle"), url: inviteUrl });
+    } catch {
+      // user cancelled the share sheet
+    }
   };
 
   return (
-    <div className="flex flex-col gap-2.5 rounded-2xl border border-border/40 bg-card/65 backdrop-blur-sm p-4 shadow-sm hover:shadow-md transition-all duration-300">
-      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("dashboardNetwork.inviteLinkTitle")}</p>
-      <div className="flex flex-col gap-2.5 sm:flex-row">
-        <code className="min-w-0 flex-1 truncate rounded-xl bg-muted/60 dark:bg-muted/30 border border-border/30 px-3.5 py-2.5 text-xs text-muted-foreground font-semibold">
-          {inviteUrl}
-        </code>
-        <div className="flex gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={copyInviteLink}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-brand-500/25 bg-brand-500/5 hover:bg-brand-500 hover:text-white px-4 text-xs font-bold text-brand-600 dark:text-brand-400 hover:shadow-md hover:shadow-brand-500/10 hover:-translate-y-0.5 transition-all duration-200 press-scale"
-          >
-            {copied ? <Check className="h-4 w-4 shrink-0" /> : <Copy className="h-4 w-4 shrink-0 animate-pulse" />}
-            {copied ? t("dashboardNetwork.copied") : t("dashboardNetwork.copy")}
-          </button>
-          <a
-            href={inviteUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border/40 bg-card hover:bg-muted/10 text-muted-foreground hover:text-foreground transition-all duration-200 press-scale"
-            aria-label={t("dashboardNetwork.openInviteAria")}
-          >
-            <ExternalLink className="h-4 w-4" />
-          </a>
+    <Surface padding="md" className="flex flex-col gap-4 md:flex-row md:items-center">
+      <div className="flex min-w-0 flex-1 items-start gap-3">
+        <IconTile icon={Link2} tone="brand" size="sm" />
+        <div className="min-w-0">
+          <h2 className="text-[0.9375rem] font-semibold text-fg">{t("dashboardNetwork.inviteTitle")}</h2>
+          <p className="mt-0.5 text-sm text-fg-muted">{t("dashboardNetwork.inviteLinkHint")}</p>
+          <p className="mt-1 truncate text-[0.8125rem] text-fg-subtle" title={inviteUrl}>
+            {shortInviteLabel(inviteUrl, 48)}
+          </p>
         </div>
       </div>
-    </div>
+      <div className="flex shrink-0 items-center gap-2">
+        <Button variant="soft" onClick={copyInviteLink} className="flex-1 md:flex-none">
+          {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
+          {copied ? t("dashboardNetwork.copied") : t("dashboardNetwork.copyInvite")}
+        </Button>
+        {canShare ? (
+          <Button variant="outline" onClick={shareInviteLink} className="flex-1 md:flex-none">
+            <Share2 aria-hidden="true" />
+            {t("dashboardNetwork.shareInvite")}
+          </Button>
+        ) : null}
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label={t("dashboardNetwork.openInviteAria")}
+          render={<a href={inviteUrl} target="_blank" rel="noreferrer" />}
+          nativeButton={false}
+        >
+          <ExternalLink aria-hidden="true" />
+        </Button>
+      </div>
+    </Surface>
   );
 }

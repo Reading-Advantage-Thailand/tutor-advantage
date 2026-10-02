@@ -1,11 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, GraduationCap, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { Chip } from "@/components/app/Atoms";
+import { LessonBarActions } from "@/components/app/LessonShell";
+import { useShellTitle } from "@/components/app/ShellContext";
 import { Button } from "@/components/ui/button";
-import { PhaseManager } from "../../interactive/PhaseManager";
+import { t } from "@/lib/i18n";
+import { fill } from "../../_lib/articles";
+import { LoadingAnnouncement, Skeleton } from "@/components/app/Skeletons";
 import { getGamesByCategory } from "@/lib/liveLessonGames";
 import {
   AnswerData,
@@ -18,9 +23,40 @@ import TutorGuideOverlay from "./TutorGuideOverlay";
 import { buildTutorGuideSteps } from "./TutorGuidePlan";
 import { GAME_PHASES, LESSON_PHASE, TOTAL_LESSON_PHASES } from "@/lib/lessonPhases";
 
+/**
+ * The live presenter (PhaseManager + charts + teaching games) is by far the
+ * heaviest part of this route. Load it as a separate client-only chunk so the
+ * rehearsal page shell, title and guide controls arrive first; the stage
+ * shows a skeleton until it is ready. PhaseManager itself is owned by the
+ * live lesson (interactive/) and is consumed here unchanged.
+ */
+const PhaseManager = dynamic(
+  () => import("../../interactive/PhaseManager").then((mod) => mod.PhaseManager),
+  { ssr: false, loading: () => <StageSkeleton /> },
+);
+
+function StageSkeleton() {
+  return (
+    <div className="flex flex-1 flex-col gap-4">
+      <LoadingAnnouncement />
+      <Skeleton className="h-20 rounded-xl" />
+      <div aria-hidden="true" className="mx-auto grid w-full max-w-6xl flex-1 gap-6 py-4 lg:grid-cols-[45%_1fr]">
+        <Skeleton className="h-64 rounded-xl lg:h-full" />
+        <div className="flex flex-col gap-3">
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-9 w-4/5" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-16 rounded-xl" />
+          <Skeleton className="h-16 rounded-xl" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 type PreparationMode = "explore" | "guided";
 
-type PreparationArticle = ArticleData & {
+export type PreparationArticle = ArticleData & {
   passage?: string;
   words?: any[];
   sentences?: any[];
@@ -205,6 +241,8 @@ export default function PrepareLessonClient({
     });
   }, []);
 
+  useShellTitle(fill(t("lesson.preflow.rehearsal.barTitle"), { title: articleData.title }));
+
   const guideSteps = useMemo(() => buildTutorGuideSteps(articleData), [articleData]);
 
   useEffect(() => {
@@ -346,7 +384,6 @@ export default function PrepareLessonClient({
     }
     moveGuide(1);
   }, [
-    currentGuidePhase,
     currentGuideStep?.waitForGameResults,
     currentGuideStep?.waitForMockAnswers,
     currentGuideStep?.waitForMockVotes,
@@ -354,91 +391,65 @@ export default function PrepareLessonClient({
     guideSteps.length,
     moveGuide,
     preparationGuideMockReady,
-    preparationAnswersCompletePhase,
-    preparationAnswersReadyToEndPhase,
   ]);
 
   return (
-    <div className="min-h-screen w-full bg-background pb-24">
-      <header className="sticky top-0 z-30 border-b border-border bg-card/95 px-4 py-4 backdrop-blur sm:px-6">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <Link href={`/dashboard/classes/${classId}`}>
-              <Button variant="ghost" size="icon" className="size-9 shrink-0 rounded-xl">
-                <ArrowLeft className="size-4" />
-              </Button>
-            </Link>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <GraduationCap className="size-5 shrink-0 text-violet-500" />
-                <h1 className="truncate text-base font-black text-foreground sm:text-lg">เตรียมสอน</h1>
-                <span className="hidden rounded-full bg-violet-500/10 px-2.5 py-1 text-[10px] font-black text-violet-600 dark:text-violet-300 sm:inline-flex">
-                  {mode === "guided" ? "Demo แบบมีไกด์" : "สำรวจอิสระ"}
-                </span>
-              </div>
-              <p className="truncate text-xs text-muted-foreground">{articleData.title}</p>
-            </div>
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={guideOpen ? () => setGuideOpen(false) : openGuide}
-              className="gap-1.5"
-            >
-              <Sparkles className="size-3.5" />
-              <span className="hidden sm:inline">{guideOpen ? "ปิด Guide" : "เปิด Guide"}</span>
-            </Button>
-            <Button type="button" variant="ghost" size="sm" onClick={closePreparation} className="hidden sm:inline-flex">
-              ออก
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-[1600px] p-4 sm:p-6">
-        <div className="min-h-[calc(100vh-150px)] rounded-3xl border border-border/60 bg-card p-3 shadow-sm sm:p-5">
-          <PhaseManager
-            currentPhase={currentPhase}
-            participants={participants}
-            totalAnswered={0}
-            allAnsweredData={allAnsweredData}
-            questionEnded={false}
-            articleData={articleData}
-            flagCounts={{}}
-            sessionData={sessionData}
-            changePhase={changePhase}
-            syncActiveSentence={syncActiveSentence}
-            endQuestion={() => undefined}
-            startGameVote={startGameVote}
-            lockGameVote={lockGameVote}
-            startGameIntro={startGameIntro}
-            advanceGameIntro={advanceGameIntro}
-            bypassEmptyStudentGuard
-            preparationMode
-            preparationGuideMode={guideOpen}
-            onPreparationAnswersReadyToEnd={handlePreparationAnswersReadyToEnd}
-            onPreparationAnswersComplete={handlePreparationAnswersComplete}
-            onPreparationGameVotesComplete={handlePreparationGameVotesComplete}
-            onPreparationGameResultsComplete={handlePreparationGameResultsComplete}
-            preparationMockAnswersStarted={mode === "guided" && (!guideOpen || Boolean(currentGuideStep?.waitForMockAnswers))}
-            preparationFreeExplore={mode === "explore"}
-            onFinishSession={closePreparation}
-            guideOverlay={guideOpen && currentGuideStep ? (
-              <TutorGuideOverlay
-                step={currentGuideStep}
-                stepIndex={guideIndex}
-                totalSteps={guideSteps.length}
-                onPrevious={() => moveGuide(-1)}
-                canAdvance={!waitingForPreparationMock}
-                onNext={handleGuideNext}
-              />
-            ) : null}
+    <div className="flex min-h-[var(--lesson-viewport-h)] w-full flex-1 flex-col px-2 pt-2 sm:px-4 sm:pt-3 lg:px-6">
+      <LessonBarActions>
+        <Chip tone="brand" className="max-sm:hidden">
+          {mode === "guided" ? t("lesson.preflow.rehearsal.modeGuided") : t("lesson.preflow.rehearsal.modeExplore")}
+        </Chip>
+        <Button
+          type="button"
+          variant={guideOpen ? "soft" : "outline"}
+          size="sm"
+          onClick={guideOpen ? () => setGuideOpen(false) : openGuide}
+          aria-pressed={guideOpen}
+          aria-label={guideOpen ? t("lesson.preflow.rehearsal.closeGuide") : t("lesson.preflow.rehearsal.openGuide")}
+        >
+          <Sparkles aria-hidden="true" />
+          <span className="max-sm:hidden">
+            {guideOpen ? t("lesson.preflow.rehearsal.closeGuide") : t("lesson.preflow.rehearsal.openGuide")}
+          </span>
+        </Button>
+      </LessonBarActions>
+      <PhaseManager
+        currentPhase={currentPhase}
+        participants={participants}
+        totalAnswered={0}
+        allAnsweredData={allAnsweredData}
+        questionEnded={false}
+        articleData={articleData}
+        flagCounts={{}}
+        sessionData={sessionData}
+        changePhase={changePhase}
+        syncActiveSentence={syncActiveSentence}
+        endQuestion={() => undefined}
+        startGameVote={startGameVote}
+        lockGameVote={lockGameVote}
+        startGameIntro={startGameIntro}
+        advanceGameIntro={advanceGameIntro}
+        bypassEmptyStudentGuard
+        preparationMode
+        preparationGuideMode={guideOpen}
+        onPreparationAnswersReadyToEnd={handlePreparationAnswersReadyToEnd}
+        onPreparationAnswersComplete={handlePreparationAnswersComplete}
+        onPreparationGameVotesComplete={handlePreparationGameVotesComplete}
+        onPreparationGameResultsComplete={handlePreparationGameResultsComplete}
+        preparationMockAnswersStarted={mode === "guided" && (!guideOpen || Boolean(currentGuideStep?.waitForMockAnswers))}
+        preparationFreeExplore={mode === "explore"}
+        onFinishSession={closePreparation}
+        guideOverlay={guideOpen && currentGuideStep ? (
+          <TutorGuideOverlay
+            step={currentGuideStep}
+            stepIndex={guideIndex}
+            totalSteps={guideSteps.length}
+            onPrevious={() => moveGuide(-1)}
+            canAdvance={!waitingForPreparationMock}
+            onNext={handleGuideNext}
           />
-        </div>
-      </main>
-
+        ) : null}
+      />
     </div>
   );
 }

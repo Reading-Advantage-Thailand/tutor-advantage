@@ -8,13 +8,13 @@ export function SalesCsvDownloadButton({
   label,
   className,
   variant = "outline",
-  size = "default"
+  size = "default",
 }: {
   periodMonth: string;
   label: string;
   className?: string;
-  variant?: "outline" | "ghost" | "default" | "secondary" | "destructive" | "link";
-  size?: "default" | "sm" | "lg" | "icon" | "xs";
+  variant?: "outline" | "ghost" | "default" | "secondary" | "soft" | "link";
+  size?: "default" | "sm" | "lg" | "xs";
 }) {
   return (
     <Button
@@ -22,13 +22,10 @@ export function SalesCsvDownloadButton({
       size={size}
       className={className}
       onClick={() => {
-        window.open(
-          `/api/earnings/sales-csv?periodMonth=${encodeURIComponent(periodMonth)}`,
-          "_blank"
-        );
+        window.open(`/api/earnings/sales-csv?periodMonth=${encodeURIComponent(periodMonth)}`, "_blank");
       }}
     >
-      <Download className="h-4 w-4" />
+      <Download aria-hidden="true" />
       {label}
     </Button>
   );

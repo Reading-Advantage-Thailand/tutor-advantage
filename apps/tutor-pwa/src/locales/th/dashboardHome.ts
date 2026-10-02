@@ -19,4 +19,16 @@ export const dashboardHome = {
   recentClasses: "คลาสเรียนล่าสุด",
   viewAll: "ดูทั้งหมด",
   emptyClasses: "ไม่มีคลาสเรียนในขณะนี้",
+  // G1 redesign (2026-10)
+  rateHint: "เรทคอมมิชชั่น",
+  teachingThisWeek: "มีคลาสสอนสัปดาห์นี้",
+  noClassesThisWeek: "ยังไม่มีคลาสสัปดาห์นี้",
+  studentsUnit: "คน",
+  grossVolumeLabel: "ยอดสะสมเดือนนี้",
+  targetLabel: "เป้าหมาย",
+  progressLabel: "ความคืบหน้าสู่เรทถัดไป",
+  remainingSuffix: "เพื่อขึ้นเรทถัดไป",
+  estimatedNet: "รายได้ประมาณการเดือนนี้",
+  emptyClassesHint: "สร้างคลาสแรกเพื่อเริ่มรับนักเรียน",
+  dataUnavailable: "โหลดข้อมูลบางส่วนไม่สำเร็จ ตัวเลขที่แสดงอาจยังไม่ครบ",
 } as const;

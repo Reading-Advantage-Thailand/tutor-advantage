@@ -1,120 +1,76 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { t } from "@/lib/i18n";
-import { QrCode, Copy, CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Copy, QrCode, Share2 } from "lucide-react";
+import { Card, CardHeader, IconTile, Sheet, Skeleton } from "@/components/app";
 import { Button } from "@/components/ui/button";
-import { QRCodeSVG } from "qrcode.react";
-import { cn } from "@/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { t } from "@/lib/i18n";
+import { useCopy } from "./useCopy";
 
-export function ReferralLink({
-  referralLink,
-  className,
-}: {
-  referralLink: string;
-  className?: string;
-}) {
-  const [copied, setCopied] = useState(false);
+const ReferralQr = dynamic(() => import("./ReferralQr"), {
+  ssr: false,
+  loading: () => <Skeleton className="size-[232px] rounded-lg" />,
+});
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(referralLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+/** Shortens "https://liff.line.me/…/enroll?classId=…" for display; the full link is copied. */
+function displayLink(url: string) {
+  try {
+    const parsed = new URL(url);
+    return `${parsed.host}${parsed.pathname}`;
+  } catch {
+    return url;
+  }
+}
+
+/** Invite link card: copy + QR (qrcode.react is loaded only when the QR sheet opens). */
+export function ReferralLink({ referralLink }: { referralLink: string }) {
+  const { copied, copy } = useCopy();
+  const [qrOpen, setQrOpen] = useState(false);
 
   return (
-    <Card
-      className={cn(
-        "h-full min-h-[184px] rounded-2xl border-border/60 bg-card/95 shadow-sm",
-        className,
-      )}
-    >
-      <CardContent className="flex h-full flex-col p-4 sm:p-5">
-        <div className="flex h-full flex-col">
-          <div className="flex items-start gap-3 min-w-0">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-              <QrCode className="h-5 w-5" />
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-bold text-foreground">
-                {t("tutorClass.detail.referralTitle")}
-              </p>
-              <p className="mt-0.5 whitespace-normal text-xs leading-relaxed text-muted-foreground">
-                {t("tutorClass.detail.referralHelp")}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-auto flex w-full flex-col gap-2 border-t border-border/50 pt-4">
-            <div className="flex w-full items-center gap-2">
-              <input
-                readOnly
-                value={referralLink}
-                className="h-9 flex-1 truncate rounded-lg border border-input bg-muted px-3 font-mono text-xs text-foreground"
-              />
-              <button
-                onClick={handleCopy}
-                id="btn-copy-referral"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-input transition-colors hover:bg-muted"
-              >
-                {copied ? (
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                ) : (
-                  <Copy className="h-4 w-4 text-muted-foreground" />
-                )}
-              </button>
-              <Dialog>
-                <DialogTrigger
-                  render={
-                    <button
-                      type="button"
-                      title="แสดง QR Code"
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-input text-emerald-600 transition-colors hover:bg-emerald-50"
-                    >
-                      <QrCode className="h-4 w-4" />
-                    </button>
-                  }
-                />
-                <DialogContent className="max-w-sm">
-                  <DialogHeader>
-                    <DialogTitle>{t("tutorClass.detail.referralTitle")}</DialogTitle>
-                    <DialogDescription>
-                      ให้นักเรียนสแกน QR Code นี้เพื่อสมัครเข้าคลาส
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="flex justify-center rounded-xl border border-emerald-500/20 bg-white p-5">
-                    <QRCodeSVG value={referralLink} size={230} level="M" includeMargin />
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9 w-full gap-2 border-emerald-600 bg-background text-xs font-medium text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
-              onClick={handleCopy}
-            >
-              {copied ? (
-                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-              {copied
-                ? t("tutorClass.detail.copied")
-                : t("tutorClass.detail.copy")}
+    <Card as="section" aria-labelledby="class-share-title">
+      <CardHeader
+        icon={<IconTile icon={Share2} size="sm" />}
+        title={<span id="class-share-title">{t("tutorClass.ui.shareTitle")}</span>}
+        description={t("tutorClass.detail.referralHelp")}
+      />
+      {referralLink ? (
+        <>
+          <p className="truncate rounded-lg bg-surface-muted px-3 py-2 font-mono text-xs text-fg-muted" title={referralLink}>
+            {displayLink(referralLink)}
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <Button id="btn-copy-referral" variant="soft" onClick={() => copy(referralLink)}>
+              {copied ? <CheckCircle2 aria-hidden="true" /> : <Copy aria-hidden="true" />}
+              <span aria-live="polite">{copied ? t("tutorClass.detail.copied") : t("tutorClass.detail.copy")}</span>
+            </Button>
+            <Button variant="outline" onClick={() => setQrOpen(true)}>
+              <QrCode aria-hidden="true" />
+              {t("tutorClass.ui.showQr")}
             </Button>
           </div>
-        </div>
-      </CardContent>
+          <Sheet
+            open={qrOpen}
+            onOpenChange={setQrOpen}
+            title={t("tutorClass.detail.referralTitle")}
+            description={t("tutorClass.ui.qrDescription")}
+            width={400}
+            footer={
+              <Button variant="outline" size="lg" className="w-full" onClick={() => copy(referralLink)}>
+                {copied ? <CheckCircle2 aria-hidden="true" /> : <Copy aria-hidden="true" />}
+                {copied ? t("tutorClass.detail.copied") : t("tutorClass.detail.copy")}
+              </Button>
+            }
+          >
+            <div className="flex justify-center rounded-xl border border-hairline bg-white p-4">
+              {qrOpen ? <ReferralQr value={referralLink} /> : null}
+            </div>
+          </Sheet>
+        </>
+      ) : (
+        <p className="text-sm text-fg-muted">{t("tutorClass.classes.notSet")}</p>
+      )}
     </Card>
   );
 }

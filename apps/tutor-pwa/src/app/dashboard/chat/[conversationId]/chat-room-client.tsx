@@ -1,36 +1,38 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import "./chat-room.css";
 import Link from "next/link";
-import { ArrowLeft, Send, MoreVertical, ImageIcon, CheckCircle2 } from "lucide-react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { ArrowDown, Check, ChevronLeft, Clock3, Lock, MessageSquareText, SendHorizontal, Users } from "lucide-react";
+import {
+  EmptyState,
+  ErrorState,
+  IconTile,
+  Skeleton,
+  UserAvatar,
+  toast,
+  useNotifications,
+  useShellTitle,
+  useTutor,
+} from "@/components/app";
 import { Button } from "@/components/ui/button";
-import { sendMessage, getConversationMessages } from "../actions";
+import { mutateResource, peekResource } from "@/lib/cachedResource";
+import { formatThaiTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { sendMessage } from "../actions";
+import type { ChatConversation, ChatMessage, ChatRoomData } from "../lib/chat-types";
+import { buildTimeline, chatKeys, newIncomingMessages } from "../lib/chat-utils";
+import { useChatRoom, useConversations } from "../lib/use-chat";
+import { useInitialConversations } from "../components/ChatInitialData";
 
-type Message = {
-  id: string;
-  text: string;
-  senderId: string;
-  senderName: string;
-  senderImage?: string | null;
-  time: string;
-  isOwn: boolean;
-};
-
-type Metadata = {
-  id: string;
-  title: string;
-  image: string | null;
-  fallbackIcon: string;
-  status: string;
-};
+/** Distance from the bottom (px) that still counts as "reading the latest". */
+const NEAR_BOTTOM_PX = 120;
 
 const playNotificationSound = () => {
   try {
     if (typeof window !== "undefined" && localStorage.getItem("app-notif-muted") === "true") return;
-    const win = window as any;
-    const ctx = win.__globalAudioCtx;
+    const ctx = (window as unknown as { __globalAudioCtx?: AudioContext }).__globalAudioCtx;
     if (!ctx || ctx.state !== "running") {
       if (ctx) ctx.resume().catch(() => {});
       if (!ctx || ctx.state !== "running") return;
@@ -38,8 +40,8 @@ const playNotificationSound = () => {
     const osc1 = ctx.createOscillator();
     const osc2 = ctx.createOscillator();
     const gain = ctx.createGain();
-    osc1.type = 'sine';
-    osc2.type = 'sine';
+    osc1.type = "sine";
+    osc2.type = "sine";
     osc1.frequency.setValueAtTime(880, ctx.currentTime);
     osc2.frequency.setValueAtTime(1108.73, ctx.currentTime + 0.1);
     gain.gain.setValueAtTime(0, ctx.currentTime);
@@ -52,281 +54,444 @@ const playNotificationSound = () => {
     osc2.start(ctx.currentTime + 0.1);
     osc1.stop(ctx.currentTime + 0.6);
     osc2.stop(ctx.currentTime + 0.6);
-  } catch (err) {
+  } catch {
     // Silent
   }
 };
 
-const MessageAvatar = ({ src, name }: { src?: string | null, name: string }) => {
-  const [error, setError] = useState(false);
-  if (src && !error) {
-    return <img src={src} onError={() => setError(true)} alt="" referrerPolicy="no-referrer" className="w-8 h-8 rounded-full object-cover shrink-0 shadow-sm border border-border/50" />;
+/**
+ * The element that actually scrolls the messages: the message pane on
+ * tablet/desktop (fixed-height card), the document on phones.
+ */
+function getScroller(pane: HTMLElement | null): HTMLElement {
+  if (pane) {
+    const overflowY = getComputedStyle(pane).overflowY;
+    if ((overflowY === "auto" || overflowY === "scroll") && pane.scrollHeight > pane.clientHeight) return pane;
   }
-  return (
-    <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400 flex items-center justify-center text-xs font-bold shrink-0 shadow-sm border border-border/50">
-      {name?.charAt(0) || "?"}
-    </div>
-  );
-};
+  return (document.scrollingElement as HTMLElement | null) ?? document.documentElement;
+}
+
+function distanceFromBottom(el: HTMLElement): number {
+  return el.scrollHeight - el.scrollTop - el.clientHeight;
+}
+
+/**
+ * Height of the on-screen keyboard covering the layout viewport (iOS Safari
+ * and Android Chrome keep the layout viewport and shrink only the visual
+ * viewport), so the sticky composer can sit above it.
+ */
+function useKeyboardInset(): number {
+  const [inset, setInset] = useState(0);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => {
+      const covered = window.innerHeight - vv.height - vv.offsetTop;
+      setInset(covered > 80 ? Math.round(covered) : 0);
+    };
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+    };
+  }, []);
+  return inset;
+}
 
 export default function ChatRoomClient({
   conversationId,
-  initialMessages,
-  metadata
+  initial,
 }: {
   conversationId: string;
-  initialMessages: Message[];
-  metadata: Metadata;
+  initial: ChatRoomData | undefined;
 }) {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [inputText, setInputText] = useState("");
+  const tutor = useTutor();
+  const { refresh: refreshNotifications } = useNotifications();
+  const { data, error, isLoading, refetch, mutate, runNow } = useChatRoom(conversationId, initial);
+  // Read-only view of the shared list cache (title/type of this room); the list itself polls.
+  const { data: conversations } = useConversations({ initial: useInitialConversations(), poll: false });
+  const conversation = conversations?.find((c) => c.id === conversationId);
+
+  const meta = data?.metadata ?? null;
+  const messages = useMemo(() => data?.messages ?? [], [data?.messages]);
+  const title = conversation?.title || meta?.title || t("dashboardChat.title");
+  const isGroup =
+    conversation?.type === "GROUP" || new Set(messages.filter((m) => !m.isOwn).map((m) => m.senderId)).size > 1;
+  useShellTitle(title, "/dashboard/chat");
+
+  const paneRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const atBottomRef = useRef(true);
+  const [showJump, setShowJump] = useState(false);
+  const [unseen, setUnseen] = useState(0);
+  const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const prevLengthRef = useRef<number>(initialMessages.length);
+  const keyboardInset = useKeyboardInset();
 
-  // Auto-scroll to bottom and play sound when new messages come
-  useEffect(() => {
-    if (messages.length > prevLengthRef.current && prevLengthRef.current > 0) {
-      const lastMsg = messages[messages.length - 1];
-      if (lastMsg && !lastMsg.isOwn && !/^\d{13}$/.test(lastMsg.id)) {
-        playNotificationSound();
-      }
-    }
-    prevLengthRef.current = messages.length;
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  // Initial scroll to bottom
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView();
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+    const scroller = getScroller(paneRef.current);
+    scroller.scrollTo({ top: scroller.scrollHeight, behavior });
+    atBottomRef.current = true;
+    setShowJump(false);
+    setUnseen(0);
   }, []);
 
-  // Poll for updates every 4 seconds, pausing when page is hidden
+  // Track whether the reader is at the latest message (document or pane scroll).
   useEffect(() => {
-    let isMounted = true;
-    let timer: ReturnType<typeof setInterval> | null = null;
-
-    const pollMessages = async () => {
-      if (document.hidden) return;
-      try {
-        const res = await getConversationMessages(conversationId);
-        if (!isMounted) return;
-
-        if (res && res.messages) {
-          setMessages(prev => {
-            const newMsgs = res.messages || [];
-            const tempMsgs = prev.filter(m => /^\d{13}$/.test(m.id));
-            return [...newMsgs, ...tempMsgs];
-          });
-        }
-      } catch (err) {
-        console.error("Poll fail:", err);
-      }
+    const pane = paneRef.current;
+    const onScroll = () => {
+      const atBottom = distanceFromBottom(getScroller(pane)) < NEAR_BOTTOM_PX;
+      atBottomRef.current = atBottom;
+      setShowJump(!atBottom);
+      if (atBottom) setUnseen(0);
     };
-
-    const startPolling = () => {
-      if (timer === null) {
-        timer = setInterval(pollMessages, 4000);
-      }
-    };
-
-    const stopPolling = () => {
-      if (timer !== null) {
-        clearInterval(timer);
-        timer = null;
-      }
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        stopPolling();
-      } else {
-        pollMessages(); // poll immediately on visibility resume
-        startPolling();
-      }
-    };
-
-    startPolling();
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
+    window.addEventListener("scroll", onScroll, { passive: true });
+    pane?.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      isMounted = false;
-      stopPolling();
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("scroll", onScroll);
+      pane?.removeEventListener("scroll", onScroll);
     };
-  }, [conversationId]);
+  }, []);
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputText.trim() || sending) return;
-    
+  // Open at the latest message (again after route scroll restoration settles).
+  const hasMessages = messages.length > 0;
+  useLayoutEffect(() => {
+    if (!hasMessages) return;
+    scrollToBottom("instant");
+    const id = window.setTimeout(() => scrollToBottom("instant"), 60);
+    return () => window.clearTimeout(id);
+  }, [hasMessages, scrollToBottom]);
+
+  // Keep the latest message visible when the keyboard opens.
+  useEffect(() => {
+    if (keyboardInset > 0 && atBottomRef.current) scrollToBottom("instant");
+  }, [keyboardInset, scrollToBottom]);
+
+  // New messages: follow them when at the bottom (or own), otherwise offer a jump button.
+  const previousRef = useRef<ChatMessage[] | undefined>(undefined);
+  useEffect(() => {
+    const previous = previousRef.current;
+    previousRef.current = messages;
+    if (!previous) return;
+    const incoming = newIncomingMessages(previous, messages);
+    const last = messages[messages.length - 1];
+    const lastIsNewOwn = last?.isOwn && !previous.some((m) => m.id === last.id);
+    if (incoming.length > 0) {
+      playNotificationSound();
+      // Polling the room marks it read on the server; update the shell badges.
+      void refreshNotifications();
+    }
+    if (incoming.length === 0 && !lastIsNewOwn) return;
+    if (atBottomRef.current || lastIsNewOwn) {
+      requestAnimationFrame(() => scrollToBottom("smooth"));
+    } else {
+      setUnseen((n) => n + incoming.length);
+      setShowJump(true);
+    }
+  }, [messages, refreshNotifications, scrollToBottom]);
+
+  // Opening the room marks it read: refresh the shell badges once.
+  useEffect(() => {
+    void refreshNotifications();
+  }, [conversationId, refreshNotifications]);
+
+  // Mirror this room into the cached conversation list (read state + last message),
+  // so the desktop list pane is right without waiting for its next poll.
+  const tutorId = tutor?.tutorId;
+  const lastMessage = messages[messages.length - 1];
+  useEffect(() => {
+    if (!tutorId) return;
+    const listKey = chatKeys.conversations(tutorId);
+    const list = peekResource<ChatConversation[]>(listKey);
+    const entry = list?.find((c) => c.id === conversationId);
+    if (!list || !entry) return;
+    const nextContent = lastMessage?.text ?? entry.lastMessage?.content;
+    if (entry.unreadCount === 0 && entry.lastMessage?.content === nextContent) return;
+    mutateResource<ChatConversation[]>(listKey, (current) =>
+      (current ?? list).map((c) =>
+        c.id !== conversationId
+          ? c
+          : {
+              ...c,
+              unreadCount: 0,
+              lastMessage: lastMessage
+                ? {
+                    content: lastMessage.text,
+                    sender: lastMessage.isOwn ? t("dashboardChat.you") : lastMessage.senderName,
+                    createdAt: lastMessage.time,
+                  }
+                : c.lastMessage,
+            },
+      ),
+    );
+  }, [tutorId, conversationId, lastMessage]);
+
+  const resizeTextarea = () => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 128)}px`;
+  };
+  useLayoutEffect(resizeTextarea, [draft]);
+
+  const handleSend = async (event?: FormEvent) => {
+    event?.preventDefault();
+    const text = draft.trim();
+    if (!text || sending || !data) return;
+
     setSending(true);
-    const textToSend = inputText;
-    setInputText("");
-
-    // Optimistic update
-    const tempId = Date.now().toString();
-    const optimisticMsg: Message = {
+    setDraft("");
+    const tempId = `pending-${Date.now()}`;
+    const optimistic: ChatMessage = {
       id: tempId,
-      text: textToSend,
+      text,
       senderId: "me",
       senderName: t("dashboardChat.you"),
       time: new Date().toISOString(),
       isOwn: true,
+      pending: true,
     };
-    
-    setMessages(prev => [...prev, optimisticMsg]);
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 50);
+    mutate((current) => ({
+      metadata: current?.metadata ?? meta,
+      messages: [...(current?.messages ?? []), optimistic],
+    }));
 
     try {
-      const response = await sendMessage(conversationId, textToSend);
-      setMessages(prev => prev.map(m => m.id === tempId ? {
-        ...m,
-        id: response.id,
-        time: response.time
-      } : m));
-    } catch (error) {
-      console.error("Failed to send message", error);
-      setMessages(prev => prev.filter(m => m.id !== tempId));
-      setInputText(textToSend);
+      const response = await sendMessage(conversationId, text);
+      mutate((current) => ({
+        metadata: current?.metadata ?? meta,
+        messages: (current?.messages ?? []).map((m) =>
+          m.id === tempId ? { ...m, ...response, isOwn: true, pending: false } : m,
+        ),
+      }));
+      void runNow();
+    } catch (sendError) {
+      console.error("Failed to send message", sendError);
+      mutate((current) => ({
+        metadata: current?.metadata ?? meta,
+        messages: (current?.messages ?? []).filter((m) => m.id !== tempId),
+      }));
+      setDraft((current) => current || text);
+      toast.error(t("dashboardChat.sendFailed"), { description: t("dashboardChat.sendFailedDescription") });
     } finally {
       setSending(false);
+      textareaRef.current?.focus();
     }
   };
 
-  const getInitials = (name: string) => {
-    if (!name) return "?";
-    return name.charAt(0);
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;
+    // Hardware keyboards send with Enter; on touch keyboards Enter adds a new line.
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    event.preventDefault();
+    void handleSend();
   };
 
-  // Modern chat layout specifically for mobile PWA
+  const timeline = useMemo(() => buildTimeline(messages), [messages]);
+  const canSend = draft.trim().length > 0 && !sending && Boolean(data);
+
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col bg-background lg:relative lg:inset-auto lg:z-auto lg:h-[calc(100vh-6rem)] lg:max-w-none lg:mx-0 lg:border lg:rounded-xl lg:shadow-md lg:overflow-hidden sm:static sm:h-[calc(100vh-6rem)] sm:max-w-none sm:mx-0 sm:border sm:rounded-xl sm:shadow-md sm:my-0 sm:overflow-hidden">
-      
-      {/* Header - Fixed at top on mobile */}
-      <div className="flex items-center justify-between px-4 py-3 sm:py-4 border-b bg-background/95 backdrop-blur-md shrink-0 safe-top">
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard/chat">
-            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full shrink-0 -ml-2 text-foreground hover:bg-muted">
-              <ArrowLeft className="h-6 w-6" />
-            </Button>
-          </Link>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold overflow-hidden border border-border/50">
-              {metadata.image ? (
-                <img src={metadata.image} alt={metadata.title} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
-              ) : (
-                getInitials(metadata.title)
-              )}
-            </div>
-            <div className="flex flex-col">
-              <h2 className="font-bold text-base sm:text-lg leading-tight text-foreground truncate max-w-[180px] sm:max-w-[300px]">{metadata.title}</h2>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{metadata.status || t("dashboardChat.online")}</p>
-              </div>
-            </div>
-          </div>
+    <section
+      data-chat-room=""
+      aria-label={title}
+      className={cn(
+        "relative flex flex-col bg-app",
+        // Phones: edge to edge under the app bar, document scrolls, composer sticks to the bottom.
+        "max-md:-mx-[max(var(--gutter),var(--safe-left))] max-md:-mt-4 max-md:-mb-6 max-md:min-h-[calc(100dvh-var(--appbar-h)-var(--safe-top))]",
+        // Tablet/desktop: a fixed-height card; the message pane scrolls inside it.
+        "md:h-[calc(100dvh-64px)] md:overflow-hidden md:rounded-xl md:border md:border-hairline md:bg-surface md:shadow-card xl:h-[calc(100dvh-76px)]",
+      )}
+    >
+      <header className="max-md:sr-only flex shrink-0 items-center gap-3 border-b border-hairline bg-surface px-4 py-3">
+        <Link
+          href="/dashboard/chat"
+          aria-label={t("dashboardChat.backToList")}
+          className="-ml-2 inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-fg hover:bg-press lg:hidden"
+        >
+          <ChevronLeft aria-hidden="true" className="size-6" />
+        </Link>
+        {isGroup ? (
+          <IconTile icon={Users} tone="teal" className="size-10 rounded-full" />
+        ) : (
+          <UserAvatar name={title} src={meta?.image ?? conversation?.image} />
+        )}
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate text-base font-semibold text-fg">{title}</h1>
+          <p className="truncate text-[0.8125rem] text-fg-muted">
+            {isGroup ? t("dashboardChat.group") : t("dashboardChat.direct")}
+          </p>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 text-muted-foreground hover:bg-muted">
-          <MoreVertical className="h-5 w-5" />
-        </Button>
-      </div>
+      </header>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 bg-[#f0f4f8] dark:bg-black/20">
-        <div className="text-center my-6">
-          <span className="text-[10px] font-bold uppercase tracking-widest bg-white dark:bg-muted px-4 py-1.5 rounded-full text-muted-foreground shadow-sm border border-border/50 inline-flex items-center gap-1.5">
-            <CheckCircle2 className="h-3 w-3" />
-            {t("dashboardChat.encrypted")}
-          </span>
-        </div>
-        
-        {(() => {
-          let lastOtherIdx = -1;
-          for (let i = messages.length - 1; i >= 0; i--) {
-            if (!messages[i].isOwn) {
-              lastOtherIdx = i;
-              break;
-            }
-          }
+      <div
+        ref={paneRef}
+        role="log"
+        aria-live="polite"
+        aria-label={t("dashboardChat.messagesLabel").replace("{name}", title)}
+        className="flex flex-1 flex-col px-3 pt-4 pb-3 md:min-h-0 md:overflow-y-auto md:overscroll-contain md:bg-app md:px-5"
+      >
+        <p className="mx-auto mb-4 inline-flex items-center gap-1.5 rounded-full bg-surface-muted px-3 py-1 text-xs text-fg-muted">
+          <Lock aria-hidden="true" className="size-3" />
+          {t("dashboardChat.encrypted")}
+        </p>
 
-          return messages.map((msg, idx) => {
-            const isMe = msg.isOwn;
-            const displayTime = new Date(msg.time).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
-            const isAbsoluteLastForOther = idx === lastOtherIdx;
-            // Check if previous message was from the same sender to group them
-            const showAvatar = !isMe && (idx === 0 || messages[idx - 1].senderId !== msg.senderId);
-            
-            return (
-              <div key={msg.id} className={`flex items-end gap-2.5 ${isMe ? "justify-end" : "justify-start"}`}>
-                {!isMe && (
-                  <div className="w-8 flex justify-center flex-shrink-0 mb-5">
-                    {showAvatar ? (
-                      <MessageAvatar src={msg.senderImage} name={msg.senderName} />
-                    ) : (
-                      <div className="w-8" />
-                    )}
-                  </div>
-                )}
-                
-                <div className={`flex flex-col max-w-[75%] sm:max-w-[70%] ${isMe ? "items-end" : "items-start"}`}>
-                  {!isMe && showAvatar && (
-                    <span className="text-[10px] font-bold text-muted-foreground ml-1 mb-1">{msg.senderName}</span>
-                  )}
-                  <div 
-                    className={`px-4 py-3 shadow-sm border ${
-                      isMe 
-                        ? "bg-brand-500 border-brand-600 text-white rounded-[24px] rounded-br-[4px]" 
-                        : "bg-white dark:bg-card border-border/50 text-foreground rounded-[24px] rounded-bl-[4px]"
-                    }`}
-                  >
-                    <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words">{msg.text}</p>
-                  </div>
-                  <div className="flex items-center gap-1 mt-1 px-1">
-                    <span className="text-[10px] font-bold text-muted-foreground/70">
-                      {displayTime}
-                    </span>
-                    {isMe && (
-                      <CheckCircle2 className={`h-3 w-3 ${/^\d{13}$/.test(msg.id) ? "text-muted-foreground/30" : "text-brand-500"}`} />
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          });
-        })()}
-        <div ref={messagesEndRef} className="h-2" />
-      </div>
-
-      {/* Input Area - Fixed at bottom on mobile */}
-      <div className="p-3 sm:p-4 bg-background border-t border-border shrink-0 safe-bottom">
-        <form onSubmit={handleSend} className="flex items-end gap-2">
-          <div className="flex-1 bg-muted/50 rounded-[24px] border-2 border-border/50 focus-within:border-brand-500 focus-within:bg-background transition-all flex items-center pr-1 min-h-[48px]">
-            <input
-              type="text"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder={t("dashboardChat.messagePlaceholder")}
-              className="w-full bg-transparent border-none focus:outline-none px-4 py-3 text-[15px] font-medium"
-              disabled={sending}
+        {isLoading && !data ? (
+          <RoomSkeleton />
+        ) : error && !data ? (
+          <div className="my-auto">
+            <ErrorState
+              compact
+              title={t("dashboardChat.loadErrorTitle")}
+              description={t("dashboardChat.roomLoadErrorDescription")}
+              onRetry={refetch}
             />
+          </div>
+        ) : messages.length === 0 ? (
+          <div className="my-auto">
+            <EmptyState
+              icon={MessageSquareText}
+              title={t("dashboardChat.roomEmptyTitle")}
+              description={t("dashboardChat.roomEmptyDescription").replace("{name}", title)}
+              compact
+            />
+          </div>
+        ) : (
+          <ol className="mt-auto flex flex-col">
+            {timeline.map((item) =>
+              item.kind === "day" ? (
+                <li key={item.key} className="my-3 flex justify-center first:mt-0">
+                  <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-medium text-fg-muted">
+                    {item.label}
+                  </span>
+                </li>
+              ) : (
+                <MessageBubble
+                  key={item.key}
+                  message={item.message}
+                  startsGroup={item.startsGroup}
+                  endsGroup={item.endsGroup}
+                  showName={isGroup}
+                />
+              ),
+            )}
+          </ol>
+        )}
+      </div>
+
+      <div
+        style={keyboardInset > 0 ? { bottom: keyboardInset } : undefined}
+        className="sticky bottom-0 z-(--z-sticky) shrink-0 md:relative md:bottom-auto"
+      >
+        {showJump && hasMessages ? (
+          <div className="pointer-events-none absolute inset-x-0 bottom-full flex justify-center pb-3">
             <Button
-              type="submit"
-              size="icon"
-              aria-label="ส่งข้อความ"
-              disabled={!inputText.trim() || sending}
-              className={`h-10 w-10 rounded-full shrink-0 transition-all shadow-sm mr-1 ${
-                inputText.trim() ? "bg-brand-500 hover:bg-brand-600 text-white" : "bg-muted-foreground/20 text-muted-foreground"
-              }`}
+              size="sm"
+              variant={unseen > 0 ? "default" : "outline"}
+              className="pointer-events-auto rounded-full shadow-popover"
+              onClick={() => scrollToBottom("smooth")}
             >
-              <Send className="h-5 w-5 ml-1" />
+              <ArrowDown aria-hidden="true" />
+              {unseen > 0 ? `${t("dashboardChat.newMessages")} (${unseen})` : t("dashboardChat.jumpToLatest")}
             </Button>
           </div>
-        </form>
+        ) : null}
+      <form
+        onSubmit={handleSend}
+        style={keyboardInset > 0 ? { paddingBottom: 8 } : undefined}
+        className="flex items-end gap-2 border-t border-hairline bg-surface-nav px-3 pt-2 pb-[calc(8px+var(--safe-bottom))] md:bg-surface md:px-4 md:py-3"
+      >
+        <label htmlFor={`composer-${conversationId}`} className="sr-only">
+          {t("dashboardChat.composerLabel").replace("{name}", title)}
+        </label>
+        <textarea
+          id={`composer-${conversationId}`}
+          ref={textareaRef}
+          rows={1}
+          value={draft}
+          onChange={(event) => setDraft(event.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={t("dashboardChat.messagePlaceholder")}
+          enterKeyHint="send"
+          autoComplete="off"
+          className="max-h-32 min-h-11 flex-1 resize-none rounded-[22px] border border-field-border bg-surface px-4 py-2.5 text-base leading-6 text-fg placeholder:text-fg-subtle focus:border-brand-500 focus:ring-2 focus:ring-ring/30 focus:outline-none md:min-h-10 md:py-2 md:text-sm md:leading-6"
+        />
+        <Button
+          type="submit"
+          size="icon-lg"
+          disabled={!canSend}
+          loading={sending}
+          aria-label={t("dashboardChat.send")}
+          className="size-11 shrink-0 rounded-full md:size-10"
+        >
+          {sending ? null : <SendHorizontal aria-hidden="true" />}
+        </Button>
+      </form>
       </div>
+    </section>
+  );
+}
+
+function MessageBubble({
+  message,
+  startsGroup,
+  endsGroup,
+  showName,
+}: {
+  message: ChatMessage;
+  startsGroup: boolean;
+  endsGroup: boolean;
+  showName: boolean;
+}) {
+  const own = message.isOwn;
+  const time = formatThaiTime(message.time);
+  return (
+    <li className={cn("flex items-end gap-2", own ? "justify-end" : "justify-start", endsGroup ? "mb-3" : "mb-0.5")}>
+      {!own ? (
+        <span className={cn("w-8 shrink-0", endsGroup && "mb-[1.375rem]")}>
+          {endsGroup ? <UserAvatar name={message.senderName} src={message.senderImage} size="sm" /> : null}
+        </span>
+      ) : null}
+      <div className={cn("flex max-w-[78%] min-w-0 flex-col md:max-w-[65%]", own ? "items-end" : "items-start")}>
+        {!own && showName && startsGroup ? (
+          <span className="mb-1 px-1 text-xs font-medium text-fg-muted">{message.senderName}</span>
+        ) : null}
+        <div
+          className={cn(
+            "rounded-[20px] px-3.5 py-2 text-[0.9375rem] leading-relaxed break-words whitespace-pre-wrap",
+            own ? "bg-brand-solid text-on-brand" : "border border-hairline bg-surface text-fg",
+            own && endsGroup && "rounded-br-md",
+            !own && endsGroup && "rounded-bl-md",
+            message.pending && "opacity-70",
+          )}
+        >
+          {message.text}
+        </div>
+        {endsGroup ? (
+          <span className="mt-1 flex items-center gap-1 px-1 text-xs text-fg-subtle tabular">
+            {time}
+            {own ? (
+              message.pending ? (
+                <Clock3 aria-label={t("dashboardChat.sending")} className="size-3" />
+              ) : (
+                <Check aria-label={t("dashboardChat.sent")} className="size-3.5 text-brand-fg" />
+              )
+            ) : null}
+          </span>
+        ) : null}
+      </div>
+    </li>
+  );
+}
+
+function RoomSkeleton() {
+  return (
+    <div aria-hidden="true" className="mt-auto flex flex-col gap-3">
+      <Skeleton className="h-10 w-2/3 rounded-[20px]" />
+      <Skeleton className="ml-auto h-10 w-1/2 rounded-[20px]" />
+      <Skeleton className="h-14 w-3/5 rounded-[20px]" />
+      <Skeleton className="ml-auto h-10 w-2/5 rounded-[20px]" />
     </div>
   );
 }

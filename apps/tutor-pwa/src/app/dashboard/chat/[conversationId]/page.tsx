@@ -1,51 +1,44 @@
-import { cookies } from "next/headers";
-import { LEARNING_URL } from "@/lib/service-urls";
-import ChatRoomClient from "./chat-room-client";
+import Link from "next/link";
+import { MessageSquareOff } from "lucide-react";
+import { EmptyState, ShellTitle } from "@/components/app";
+import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
-
-async function getChatData(id: string) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("tutor_session")?.value;
-  
-  if (!token) return { metadata: null, messages: [] };
-
-  try {
-    const res = await fetch(`${LEARNING_URL}/v1/chat/conversations/${id}/messages`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      next: { tags: ['chat', `chat-${id}`] }
-    });
-    
-    if (!res.ok) return { metadata: null, messages: [] };
-    
-    return await res.json();
-  } catch (error) {
-    console.error(error);
-    return { metadata: null, messages: [] };
-  }
-}
+import { fetchRoom, getTutorToken } from "../lib/chat-server";
+import ChatRoomClient from "./chat-room-client";
 
 export default async function ChatRoomPage({ params }: { params: Promise<{ conversationId: string }> }) {
-  const unwrappedParams = await params;
-  const conversationId = unwrappedParams.conversationId;
-  
-  const chatData = await getChatData(conversationId);
+  const { conversationId } = await params;
+  const token = await getTutorToken();
+  const result = token ? await fetchRoom(token, conversationId) : null;
 
-  // If chat not found or unauthorized
-  if (!chatData || !chatData.metadata) {
+  // Not a participant / unknown room / signed out: same "not found" screen as before.
+  if (!result || (!result.ok && result.status < 500) || (result.ok && !result.data.metadata)) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 gap-4 h-[calc(100vh-140px)]">
-        <p className="text-muted-foreground">{t("dashboardChat.roomNotFound")}</p>
+      <div className="flex min-h-[60dvh] items-center justify-center rounded-xl md:h-[calc(100dvh-64px)] md:border md:border-hairline md:bg-surface md:shadow-card xl:h-[calc(100dvh-76px)]">
+        <ShellTitle title={t("dashboardChat.title")} backHref="/dashboard/chat" />
+        <h1 className="sr-only">{t("dashboardChat.roomNotFound")}</h1>
+        <EmptyState
+          icon={MessageSquareOff}
+          tone="neutral"
+          title={t("dashboardChat.roomNotFound")}
+          description={t("dashboardChat.roomNotFoundDescription")}
+          action={
+            <Button variant="outline" render={<Link href="/dashboard/chat" />} nativeButton={false}>
+              {t("dashboardChat.backToList")}
+            </Button>
+          }
+          compact
+        />
       </div>
     );
   }
 
+  // A server error (5xx) renders the room without data: the client fetch shows retry.
   return (
-    <ChatRoomClient 
-      conversationId={conversationId} 
-      initialMessages={chatData.messages || []} 
-      metadata={chatData.metadata} 
+    <ChatRoomClient
+      key={conversationId}
+      conversationId={conversationId}
+      initial={result.ok ? result.data : undefined}
     />
   );
 }
