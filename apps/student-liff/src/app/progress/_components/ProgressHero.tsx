@@ -22,10 +22,10 @@ export function ProgressHero({ stats, currentArticle }: { stats: ProgressStats; 
   return (
     <section
       aria-labelledby="progress-book-title"
-      className="rounded-[var(--radius-card)] bg-[image:linear-gradient(160deg,var(--brand-700)_0%,var(--brand-800)_100%)] p-5 text-white shadow-[var(--shadow-card)]"
+      className="rounded-[var(--radius-card)] bg-hero p-5 text-hero-fg shadow-[var(--shadow-card)]"
     >
       <div className="flex items-center justify-between gap-3">
-        <span className="flex min-w-0 items-center gap-1.5 text-[13px] leading-[1.5] font-medium text-white/90">
+        <span className="flex min-w-0 items-center gap-1.5 text-[13px] leading-[1.5] font-medium text-hero-fg-muted">
           <BookOpen aria-hidden="true" className="size-4 shrink-0" />
           {t("progress.currentBook")}
         </span>
@@ -34,7 +34,7 @@ export function ProgressHero({ stats, currentArticle }: { stats: ProgressStats; 
       <h2 id="progress-book-title" className="mt-1 line-clamp-2 text-xl leading-[1.4] font-extrabold">
         {stats.level}
       </h2>
-      <div className="mt-4 flex items-center justify-between gap-3 text-[13px] leading-[1.5] text-white/90">
+      <div className="mt-4 flex items-center justify-between gap-3 text-[13px] leading-[1.5] text-hero-fg-muted">
         <span>
           {t("progress.readPrefix")} {stats.articlesRead} {t("progress.from")} {stats.totalArticles} {unit}
         </span>
@@ -43,8 +43,8 @@ export function ProgressHero({ stats, currentArticle }: { stats: ProgressStats; 
         </span>
       </div>
       <ProgressBar value={percent} tone="onBrand" className="mt-2" label={t("progress.currentBook")} />
-      <div className="mt-4 flex items-center gap-3 border-t border-white/15 pt-4">
-        <span className="flex min-w-0 flex-1 items-center gap-2 text-[13px] leading-[1.5] text-white/90">
+      <div className="mt-4 flex items-center gap-3 border-t border-hero-ring pt-4">
+        <span className="flex min-w-0 flex-1 items-center gap-2 text-[13px] leading-[1.5] text-hero-fg-muted">
           <Target aria-hidden="true" className="size-4 shrink-0" />
           <span className="line-clamp-2">
             {stats.isBookComplete ? t("progress.bookComplete") : `${t("progress.nextGoal")} · ${stats.nextMilestone.reward}`}
@@ -53,7 +53,7 @@ export function ProgressHero({ stats, currentArticle }: { stats: ProgressStats; 
         {currentArticle ? (
           <Link
             href={buildReadHref(currentArticle.id)}
-            className="pressable inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-white px-4 text-[15px] leading-[1.4] font-bold text-brand-700 active:bg-white/85"
+            className="pressable inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-brand-solid px-4 text-[15px] leading-[1.4] font-bold text-white shadow-[0_3px_0_var(--brand-solid-edge)] active:bg-brand-solid-pressed"
           >
             {stats.isBookComplete ? t("progress.review") : t("progress.continue")}
             <ArrowRight aria-hidden="true" className="size-4" />

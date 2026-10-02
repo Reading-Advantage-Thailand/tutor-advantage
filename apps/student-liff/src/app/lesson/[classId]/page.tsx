@@ -278,10 +278,10 @@ function LessonLobby({ classId, onReconnect }: { classId: string; onReconnect: (
 
       <div className="flex flex-col gap-5 px-4 pt-3 pb-6">
         {/* Class hero */}
-        <section className="rounded-[var(--radius-card)] bg-gradient-brand p-5 text-white shadow-[var(--shadow-card)]">
+        <section className="rounded-[var(--radius-card)] bg-hero p-5 text-hero-fg shadow-[var(--shadow-card)]">
           <Chip tone="onBrand" icon={Radio}>{t("lessonLobby.liveBadge")}</Chip>
-          <h2 className="mt-3 text-xl leading-[1.4] font-extrabold text-white">{classInfo.name}</h2>
-          <p className="mt-1 text-sm leading-[1.5] text-white/85">
+          <h2 className="mt-3 text-xl leading-[1.4] font-extrabold">{classInfo.name}</h2>
+          <p className="mt-1 text-sm leading-[1.5] text-hero-fg-muted">
             {t("lessonLobby.tutorPrefix")} {classInfo.tutor?.name || t("lessonLobby.defaultTutor")}
           </p>
         </section>

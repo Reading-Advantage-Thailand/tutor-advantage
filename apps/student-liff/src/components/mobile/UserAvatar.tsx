@@ -30,7 +30,7 @@ const sizeClass: Record<UserAvatarSize, { box: string; text: string }> = {
 const ringClass = {
   none: "",
   surface: "ring-2 ring-surface",
-  onBrand: "ring-2 ring-white/60",
+  onBrand: "ring-2 ring-white/80",
 } as const;
 
 /**

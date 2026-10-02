@@ -14,7 +14,7 @@ import { IDENTITY_URL } from "@/lib/service-urls";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#06c755",
+  themeColor: "#dcfce7",
   viewportFit: "cover",
   // Android: the on-screen keyboard resizes the layout so sticky bottom
   // composers/CTAs stay above it instead of being covered.

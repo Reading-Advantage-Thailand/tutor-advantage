@@ -28,10 +28,10 @@ export function LessonWrapUpPhase({ participants, studentId, classBookCycleId, a
   return (
     <PhaseColumn>
       {/* Rank hero */}
-      <section className="rounded-[var(--radius-card)] bg-gradient-brand px-5 py-7 text-center text-white shadow-[var(--shadow-card)]">
+      <section className="rounded-[var(--radius-card)] bg-hero px-5 py-7 text-center text-hero-fg shadow-[var(--shadow-card)]">
         <p aria-hidden="true" className="text-[64px] leading-[1.15]">{rankMeta.emoji ?? '🎖️'}</p>
         <h2 className="mt-2 text-2xl leading-[1.35] font-extrabold">{rankMeta.title}</h2>
-        <p className="mt-1 text-[15px] leading-[1.5] text-white/90">
+        <p className="mt-1 text-[15px] leading-[1.5] text-hero-fg-muted">
           {t("interactivePlay.rankPrefix")} {rank > 0 ? rank : '-'} {t("interactivePlay.rankFrom")} {participants.length} {t("interactivePlay.personUnit")}
         </p>
       </section>

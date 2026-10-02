@@ -22,7 +22,7 @@ const toneClass: Record<ChipTone, string> = {
   danger: "border-danger-border bg-danger-bg text-danger-fg",
   info: "border-info-border bg-info-bg text-info-fg",
   neutral: "border-transparent bg-fill-muted text-fg-muted",
-  onBrand: "border-white/25 bg-white/15 text-white",
+  onBrand: "border-hero-ring bg-hero-chip text-hero-fg",
 };
 
 /** Status / label pill (non-interactive). Text never goes below 12px. Server-compatible. */

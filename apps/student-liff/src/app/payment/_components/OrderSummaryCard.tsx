@@ -70,12 +70,12 @@ export function OrderSummaryCard({ status, display, onRetry }: OrderSummaryCardP
 
   return (
     <section className={cardClass} aria-labelledby="payment-order-title">
-      <div className="bg-gradient-brand px-5 py-[18px] text-white">
-        <p className="text-[13px] leading-[1.5] font-semibold text-white/85">{t("payment.select.orderSummary")}</p>
+      <div className="bg-hero px-5 py-[18px] text-hero-fg">
+        <p className="text-[13px] leading-[1.5] font-semibold text-hero-fg-muted">{t("payment.select.orderSummary")}</p>
         <h2 id="payment-order-title" className="mt-0.5 text-[17px] leading-[1.45] font-bold break-words">
           {display.name}
         </h2>
-        <p className="mt-0.5 text-[13px] leading-[1.5] text-white/85">
+        <p className="mt-0.5 text-[13px] leading-[1.5] text-hero-fg-muted">
           {display.tutor} · {display.cefr}
         </p>
       </div>

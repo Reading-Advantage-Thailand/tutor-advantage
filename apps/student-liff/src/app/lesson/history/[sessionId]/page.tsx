@@ -188,24 +188,24 @@ export default function LessonHistoryDetailPage() {
       {appBar}
       <div className="flex flex-col gap-5 px-4 pt-3 pb-8">
         {/* Result hero */}
-        <section className="rounded-[var(--radius-card)] bg-gradient-brand p-5 text-white shadow-[var(--shadow-card)]">
-          <h2 lang="en" className="text-xl leading-[1.4] font-extrabold text-white">{session.articleTitle}</h2>
-          <p className="mt-1 text-sm leading-[1.5] text-white/85">
+        <section className="rounded-[var(--radius-card)] bg-hero p-5 text-hero-fg shadow-[var(--shadow-card)]">
+          <h2 lang="en" className="text-xl leading-[1.4] font-extrabold">{session.articleTitle}</h2>
+          <p className="mt-1 text-sm leading-[1.5] text-hero-fg-muted">
             {t("lessonHistory.tutorPrefix")} {session.tutorName} · {formatThaiDate(session.date, "long")}
           </p>
           <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl bg-white/15 px-3 py-2.5">
-              <p className="text-xs leading-[1.5] text-white/85">{t("lessonHistory.scoreStat")}</p>
+            <div className="rounded-2xl bg-hero-chip px-3 py-2.5">
+              <p className="text-xs leading-[1.5] text-hero-fg-muted">{t("lessonHistory.scoreStat")}</p>
               <p className="text-[26px] leading-[1.3] font-extrabold tabular-nums">
                 {session.totalScore}
-                <span className="ml-1 text-sm font-semibold text-white/85">{t("lessonHistory.pointsUnit")}</span>
+                <span className="ml-1 text-sm font-semibold text-hero-fg-muted">{t("lessonHistory.pointsUnit")}</span>
               </p>
             </div>
-            <div className="flex items-center gap-2.5 rounded-2xl bg-white/15 px-3 py-2.5">
+            <div className="flex items-center gap-2.5 rounded-2xl bg-hero-chip px-3 py-2.5">
               {/* Fixed light tile on the brand hero: dark text so "#5" stays readable in dark mode too. */}
               {rankMeta.hasRank ? <RankBadge rank={rankMeta.rank} size="md" className="bg-white/90 text-slate-700" /> : null}
               <div className="min-w-0">
-                <p className="text-xs leading-[1.5] text-white/85">{t("lessonHistory.rankLabel")}</p>
+                <p className="text-xs leading-[1.5] text-hero-fg-muted">{t("lessonHistory.rankLabel")}</p>
                 <p className="text-[26px] leading-[1.3] font-extrabold tabular-nums">
                   {rankMeta.hasRank ? formatRankOf(rankMeta.rank, session.totalParticipants) : "–"}
                 </p>

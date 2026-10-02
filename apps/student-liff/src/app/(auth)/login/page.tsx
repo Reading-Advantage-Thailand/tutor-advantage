@@ -81,12 +81,12 @@ export default function LoginPage() {
   };
 
   return (
-    <Screen className={cn(ENTRY_HERO_BG, "text-white")}>
+    <Screen className={cn(ENTRY_HERO_BG, "text-hero-fg")}>
       {/* Brand */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 pt-[calc(var(--safe-top)+40px)] pb-10 text-center">
         <BrandMark size="xl" tone="onBrand" />
         <p className="mt-5 text-[28px] leading-[1.3] font-extrabold tracking-tight">{t("entry.brandName")}</p>
-        <p className="mt-1 text-[15px] leading-[1.6] font-medium text-white/90">{t("app.studentPortal")}</p>
+        <p className="mt-1 text-[15px] leading-[1.6] font-medium text-hero-fg-muted">{t("app.studentPortal")}</p>
       </div>
 
       {/* Login sheet */}

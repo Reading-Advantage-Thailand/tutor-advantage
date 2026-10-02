@@ -21,7 +21,7 @@ const sizeClass = {
 
 const toneClass = {
   onBrand: "bg-white text-brand-700 shadow-[0_10px_30px_-10px_rgb(0_0_0/0.45)]",
-  brand: "bg-gradient-brand text-white shadow-[0_6px_16px_-6px_rgb(4_125_54/0.5)]",
+  brand: "bg-gradient-brand text-white shadow-[0_6px_16px_-6px_rgb(22_163_74/0.45)]",
 } as const;
 
 /** "TA" app-icon monogram used on the splash, login and landing screens. Decorative; server-compatible. */

@@ -13,7 +13,7 @@ export interface IconButtonProps {
   /** Renders a next/link when set; otherwise a <button type="button">. */
   href?: string;
   onClick?: MouseEventHandler<HTMLElement>;
-  /** ghost (default, transparent) · tonal (soft grey fill) · onBrand (white on green). */
+  /** ghost (default, transparent) · tonal (soft grey fill) · onBrand (on hero surfaces). */
   variant?: IconButtonVariant;
   /** Red count (number) or dot (true) at the top-right corner. */
   badge?: number | boolean;
@@ -26,7 +26,7 @@ export interface IconButtonProps {
 const variantClass: Record<IconButtonVariant, string> = {
   ghost: "text-fg active:bg-press",
   tonal: "bg-fill-muted text-fg active:bg-press",
-  onBrand: "text-white active:bg-white/15",
+  onBrand: "text-hero-fg active:bg-hero-chip",
 };
 
 /**

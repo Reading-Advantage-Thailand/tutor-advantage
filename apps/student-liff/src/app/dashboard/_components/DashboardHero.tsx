@@ -4,11 +4,11 @@ import { t } from "@/lib/i18n";
 import { getGreetingKey } from "./dashboardModel";
 
 /**
- * Brand hero shell shared with the skeleton. brand-700 → brand-800 keeps white
- * text ≥ 5:1 everywhere (the lighter LINE green is only ~3:1).
+ * Light-mint hero shell shared with the skeleton; dark-green text keeps ≥ 7:1
+ * (tokens flip to a deep green with light text in dark mode).
  */
 export const HERO_CLASS =
-  "rounded-b-[28px] bg-[image:linear-gradient(160deg,var(--brand-700)_0%,var(--brand-800)_100%)] px-4 pt-[calc(var(--safe-top)+20px)] pb-6 text-white";
+  "rounded-b-[28px] bg-hero px-4 pt-[calc(var(--safe-top)+20px)] pb-6 text-hero-fg";
 
 export interface DashboardHeroProps {
   name: string;
@@ -24,8 +24,8 @@ export interface DashboardHeroProps {
 export function HeroChipsPlaceholder() {
   return (
     <div className="mt-4 flex gap-2" aria-hidden="true">
-      <div className="h-[30px] w-40 rounded-full bg-white/15" />
-      <div className="h-[30px] w-28 rounded-full bg-white/15" />
+      <div className="h-[30px] w-40 rounded-full bg-hero-chip" />
+      <div className="h-[30px] w-28 rounded-full bg-hero-chip" />
     </div>
   );
 }
@@ -43,7 +43,7 @@ export function DashboardHero({ name, pictureUrl, levelLabel, weekStreak, chipsL
     <header className={HERO_CLASS}>
       <div className="flex items-center gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-sm leading-[1.5] font-medium text-white/90">{greeting}</p>
+          <p className="text-sm leading-[1.5] font-medium text-hero-fg-muted">{greeting}</p>
           <h1 className="truncate text-2xl leading-[1.35] font-extrabold">{name}</h1>
         </div>
         <UserAvatar src={pictureUrl} name={name} size="lg" ring="onBrand" decorative />

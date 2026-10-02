@@ -39,18 +39,33 @@
   --skeleton-shine: rgba(255, 255, 255, 0.65);
 
   /* ── Brand roles (contrast-safe on white) ── */
-  --brand-fg: #047d36;            /* brand text/icons on surfaces (5.2:1 on white) */
-  --brand-vivid: #05a847;         /* progress fills, switches, indicators */
-  --brand-solid: #047d36;         /* filled buttons with white text (5.2:1) */
-  --brand-solid-pressed: #036a2d;
-  --brand-soft: #e5f6ec;          /* tonal backgrounds, active tab pill */
-  --brand-soft-border: #b9e7cb;
-  --gradient-brand: linear-gradient(135deg, var(--brand-600) 0%, var(--brand-700) 100%);
+  /* Fresh light-green palette (kid-friendly): bright fills and soft mint
+     surfaces, while text and white-on-green stay ≥4.5:1. */
+  --brand-fg: #15803d;            /* brand text/icons on surfaces (5.0:1 on white) */
+  --brand-vivid: #22c55e;         /* progress fills, switches, indicators */
+  --brand-solid: #14883b;         /* filled buttons with white text (4.5:1) */
+  --brand-solid-pressed: #117333;
+  --brand-solid-edge: #0f6b2e;    /* 3D bottom edge under solid buttons */
+  --brand-soft: #dcfce7;          /* tonal backgrounds, active tab pill */
+  --brand-soft-border: #bbf7d0;
+  --gradient-brand: linear-gradient(135deg, var(--brand-500) 0%, var(--brand-700) 100%);
+
+  /* Hero blocks (home header, class/lesson/progress heroes): light mint with
+     dark-green text (≥7:1). Lime/sky glows keep them playful. */
+  --hero-bg:
+    radial-gradient(circle at 92% 8%, rgb(253 224 71 / 0.45), transparent 34%),
+    radial-gradient(circle at 4% 110%, rgb(125 211 252 / 0.35), transparent 42%),
+    linear-gradient(150deg, #ecfccb 0%, #d1fae5 45%, #bbf7d0 100%);
+  --hero-fg: #14532d;
+  --hero-fg-muted: #166534;
+  --hero-chip: rgb(255 255 255 / 0.65);
+  --hero-ring: rgb(20 83 45 / 0.12);
+  --hero-progress-track: rgb(20 83 45 / 0.14);
 
   /* ── Semantic tones (fg is ≥4.5:1 on its bg in both themes) ── */
-  --success-fg: #047d36;
-  --success-bg: #e5f6ec;
-  --success-border: #b9e7cb;
+  --success-fg: #15803d;
+  --success-bg: #dcfce7;
+  --success-border: #bbf7d0;
   --warning-fg: #92400e;
   --warning-bg: #fef3c7;
   --warning-border: #fcd98a;
@@ -72,13 +87,18 @@
   --tile-pink: #fce7f3;
   --tile-red: #fee2e2;
   --tile-neutral: #eceff3;
-  --icon-brand: #05a847;
+  --icon-brand: #16a34a;
   --icon-amber: #d97706;
   --icon-blue: #2563eb;
   --icon-purple: #7c3aed;
   --icon-pink: #db2777;
   --icon-red: #dc2626;
   --icon-neutral: #475569;
+  /* Extra kid-friendly tones (CEFR level colours, misc. icons) */
+  --tile-teal: #ccfbf1;
+  --tile-orange: #ffedd5;
+  --icon-teal: #0f766e;
+  --icon-orange: #c2410c;
 
   /* LINE brand green-to-teal */
   --line-green: #06c755;
@@ -86,16 +106,16 @@
   --line-green-light: #e6f9ed;
 
   /* Brand palette */
-  --brand-50: #f0fdf6;
-  --brand-100: #dcfce8;
-  --brand-200: #bbf7d2;
-  --brand-300: #86efb0;
+  --brand-50: #f0fdf4;
+  --brand-100: #dcfce7;
+  --brand-200: #bbf7d0;
+  --brand-300: #86efac;
   --brand-400: #4ade80;
-  --brand-500: #06c755;
-  --brand-600: #05a847;
-  --brand-700: #047d36;
-  --brand-800: #065f28;
-  --brand-900: #064e22;
+  --brand-500: #22c55e;
+  --brand-600: #16a34a;
+  --brand-700: #14883b;
+  --brand-800: #166534;
+  --brand-900: #14532d;
 
   /* Neutral */
   --neutral-50: #f8fafc;
@@ -161,13 +181,13 @@
   /* Floating nav */
   --nav-glass-bg: rgba(255, 255, 255, 0.82);
   --nav-glass-border: rgba(255, 255, 255, 0.5);
-  --nav-active-bg: rgba(6, 199, 85, 0.1);
+  --nav-active-bg: rgba(34, 197, 94, 0.14);
 
   /* Responsive max-width — tablet up to 768px */
   --max-mobile: 768px;
 
-  /* Custom surface tokens (Light) — light grey app background, white cards */
-  --surface-bg: #f3f5f8;
+  /* Custom surface tokens (Light) — soft mint app background, white cards */
+  --surface-bg: #f1f9f3;
   --surface-card: #ffffff;
   --surface-elevated: #ffffff;
   --surface-nav: rgba(255, 255, 255, 0.97);
@@ -898,6 +918,12 @@ body::-webkit-scrollbar {
   --color-info-bg: var(--info-bg);
   --color-info-border: var(--info-border);
   --color-app: var(--surface-bg);
+  --color-hero-fg: var(--hero-fg);
+  --color-hero-fg-muted: var(--hero-fg-muted);
+  --color-hero-chip: var(--hero-chip);
+  --color-hero-ring: var(--hero-ring);
+  --color-hero-track: var(--hero-progress-track);
+  --color-brand-solid-edge: var(--brand-solid-edge);
   --color-surface: var(--surface-card);
   --color-surface-elevated: var(--surface-elevated);
   --color-hairline: var(--hairline);
@@ -921,6 +947,10 @@ body::-webkit-scrollbar {
   --color-icon-pink: var(--icon-pink);
   --color-icon-red: var(--icon-red);
   --color-icon-neutral: var(--icon-neutral);
+  --color-tile-teal: var(--tile-teal);
+  --color-tile-orange: var(--tile-orange);
+  --color-icon-teal: var(--icon-teal);
+  --color-icon-orange: var(--icon-orange);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -988,11 +1018,22 @@ body::-webkit-scrollbar {
   --skeleton-shine: rgba(255, 255, 255, 0.06);
 
   --brand-fg: #4ade80;
-  --brand-vivid: #22c55e;
-  --brand-solid: #047d36;
-  --brand-solid-pressed: #05923f;
+  --brand-vivid: #4ade80;
+  --brand-solid: #15803d;
+  --brand-solid-pressed: #16a34a;
+  --brand-solid-edge: #0e5a27;
   --brand-soft: #12301d;
   --brand-soft-border: #1d4d2c;
+
+  --hero-bg:
+    radial-gradient(circle at 92% 8%, rgb(250 204 21 / 0.18), transparent 34%),
+    radial-gradient(circle at 4% 110%, rgb(56 189 248 / 0.16), transparent 42%),
+    linear-gradient(150deg, #14532d 0%, #166534 55%, #15803d 100%);
+  --hero-fg: #f0fdf4;
+  --hero-fg-muted: #bbf7d0;
+  --hero-chip: rgb(255 255 255 / 0.14);
+  --hero-ring: rgb(255 255 255 / 0.18);
+  --hero-progress-track: rgb(255 255 255 / 0.2);
 
   --success-fg: #4ade80;
   --success-bg: #0f2a19;
@@ -1023,6 +1064,10 @@ body::-webkit-scrollbar {
   --icon-pink: #f472b6;
   --icon-red: #f87171;
   --icon-neutral: #b1bac4;
+  --tile-teal: #0b2a27;
+  --tile-orange: #2d1806;
+  --icon-teal: #2dd4bf;
+  --icon-orange: #fb923c;
 
   /* Shadcn base tokens */
   --background: oklch(0.145 0 0);
@@ -1197,6 +1242,12 @@ body::-webkit-scrollbar {
   background-image: var(--gradient-brand);
 }
 
+/* `bg-hero`: light-mint hero surface; pair with text-hero-fg (dark in light
+   theme, light in dark theme). */
+@utility bg-hero {
+  background-image: var(--hero-bg);
+}
+
 /* `pressable`: native press feedback (scale ~0.97) without hover effects. */
 @utility pressable {
   -webkit-tap-highlight-color: transparent;
@@ -1248,8 +1299,11 @@ body::-webkit-scrollbar {
     box-shadow: var(--shadow-bar);
   }
   .appbar[data-variant="brand"] {
-    background-color: var(--brand-700);
-    color: #fff;
+    background-color: var(--brand-100);
+    color: var(--hero-fg);
+  }
+  .dark .appbar[data-variant="brand"] {
+    background-color: #14532d;
   }
   .appbar[data-variant="brand"][data-scrolled] {
     box-shadow: 0 1px 0 rgb(0 0 0 / 0.14);

@@ -86,7 +86,7 @@ const heroPrimaryCta = cn(
 /** Outlined 52px CTA on the green hero. */
 const heroSecondaryCta = cn(
   buttonVariants({ size: "cta" }),
-  "w-full border-white/40 bg-white/10 font-semibold text-white active:scale-[0.97] active:bg-white/20",
+  "w-full border-hero-ring bg-hero-chip font-semibold text-hero-fg active:scale-[0.97] active:bg-white/80",
 );
 
 export interface LandingMarketingProps {
@@ -108,7 +108,7 @@ export function LandingMarketing({ isLoggedIn }: LandingMarketingProps) {
       <section
         className={cn(
           ENTRY_HERO_BG,
-          "rounded-b-[28px] px-5 pt-[calc(var(--safe-top)+20px)] pb-8 text-white",
+          "rounded-b-[28px] px-5 pt-[calc(var(--safe-top)+20px)] pb-8 text-hero-fg",
         )}
       >
         <div className="mx-auto w-full max-w-xl">
@@ -131,7 +131,7 @@ export function LandingMarketing({ isLoggedIn }: LandingMarketingProps) {
             {t("app.heroTitleLine3")}
           </h1>
 
-          <p className="mt-3 text-[15px] leading-[1.7] text-white/90">
+          <p className="mt-3 text-[15px] leading-[1.7] text-hero-fg-muted">
             {t("app.heroSubtitleLine1")}
             <br />
             {t("app.heroSubtitleLine2")}
@@ -208,14 +208,14 @@ export function LandingMarketing({ isLoggedIn }: LandingMarketingProps) {
                 className={cn(
                   "flex w-[150px] shrink-0 snap-start flex-col rounded-[var(--radius-card)] border p-4",
                   course.open
-                    ? cn(ENTRY_HERO_BG, "border-transparent text-white")
+                    ? cn(ENTRY_HERO_BG, "border-transparent text-hero-fg")
                     : "border-hairline bg-surface text-fg shadow-[var(--shadow-card)]",
                 )}
               >
                 <span
                   className={cn(
                     "text-xs leading-[1.5] font-bold",
-                    course.open ? "text-white/90" : "text-fg-muted",
+                    course.open ? "text-hero-fg-muted" : "text-fg-muted",
                   )}
                 >
                   {course.cefr} · {t("entry.courseLevel")} {course.levels}

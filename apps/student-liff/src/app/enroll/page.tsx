@@ -176,8 +176,8 @@ function EnrollContent() {
       <EnrollAppBar />
 
       <div className="flex flex-col gap-4 px-4 pt-2 pb-6">
-        <section className="relative overflow-hidden rounded-[var(--radius-card)] bg-gradient-brand p-5 text-white shadow-[var(--shadow-card)]">
-          <span aria-hidden="true" className="pointer-events-none absolute -top-12 -right-10 size-36 rounded-full bg-white/10" />
+        <section className="relative overflow-hidden rounded-[var(--radius-card)] bg-hero p-5 text-hero-fg shadow-[var(--shadow-card)]">
+          <span aria-hidden="true" className="pointer-events-none absolute -top-12 -right-10 size-36 rounded-full bg-hero-chip" />
           <Chip tone="onBrand" size="md" icon={CheckCircle2} className="relative">
             {t("enroll.confirmClass")}
           </Chip>

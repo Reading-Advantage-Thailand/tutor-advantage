@@ -35,7 +35,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         // ── Mobile design-system variants ──
         brand:
-          "bg-brand-solid font-semibold text-white shadow-[0_2px_8px_-2px_rgb(4_125_54/0.45)] focus-visible:ring-brand-500/40 hover:bg-brand-solid-pressed active:scale-[0.97] active:bg-brand-solid-pressed",
+          "bg-brand-solid font-bold text-white shadow-[0_4px_0_var(--brand-solid-edge)] focus-visible:ring-brand-500/40 hover:bg-brand-solid-pressed active:translate-y-[3px] active:bg-brand-solid-pressed active:shadow-[0_1px_0_var(--brand-solid-edge)] disabled:shadow-none",
         brandSoft:
           "bg-brand-soft font-semibold text-brand-fg focus-visible:ring-brand-500/40 hover:bg-brand-soft-border/60 active:scale-[0.97] active:bg-brand-soft-border/70",
         warning:

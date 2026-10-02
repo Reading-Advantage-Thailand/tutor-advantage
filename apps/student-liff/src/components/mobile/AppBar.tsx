@@ -98,7 +98,7 @@ export function AppBar({
               <p
                 className={cn(
                   "-mt-0.5 truncate text-xs leading-[1.5]",
-                  onBrand ? "text-white/80" : "text-fg-muted",
+                  onBrand ? "text-hero-fg-muted" : "text-fg-muted",
                 )}
               >
                 {subtitle}

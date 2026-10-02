@@ -6,7 +6,7 @@ export type ProgressBarTone = "brand" | "onBrand" | "warning";
 export interface ProgressBarProps {
   /** 0–100 (clamped; NaN → 0). */
   value: number;
-  /** brand (default) · onBrand (white on green heroes) · warning (amber). */
+  /** brand (default) · onBrand (on hero surfaces) · warning (amber). */
   tone?: ProgressBarTone;
   /** sm 6px · md 8px (default) · lg 12px */
   size?: "sm" | "md" | "lg";
@@ -17,7 +17,7 @@ export interface ProgressBarProps {
 
 const toneClass: Record<ProgressBarTone, { track: string; fill: string }> = {
   brand: { track: "bg-[var(--neutral-200)]", fill: "bg-brand-vivid" },
-  onBrand: { track: "bg-white/25", fill: "bg-white" },
+  onBrand: { track: "bg-hero-track", fill: "bg-brand-vivid" },
   warning: { track: "bg-warning-bg", fill: "bg-warning-solid" },
 };
 
