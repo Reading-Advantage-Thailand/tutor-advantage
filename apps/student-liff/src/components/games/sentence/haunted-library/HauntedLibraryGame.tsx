@@ -20,6 +20,7 @@ import { VirtualDPad } from '@/lib/games-runtime'
 import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { Book, DoorOpen, Sparkles, Zap, AlertTriangle } from 'lucide-react'
+import { tx } from '@/lib/games/gameText'
 
 /**
  * Host-injectable navigation contract (Phase 5 Decision 5.1, D-09).
@@ -245,35 +246,35 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
     return (
       <div className="absolute inset-0 z-50 bg-slate-950" ref={containerRef}>
         <GameStartScreen
-          gameTitle="The Haunted Library"
-          gameSubtitle="A Spooky Word Adventure"
+          gameTitle={tx("The Haunted Library")}
+          gameSubtitle={tx("A Spooky Word Adventure")}
           vocabulary={sentences}
           onStart={startGame}
           icon={Book}
           instructions={[
-            { step: 1, text: "Explore the library floors using the DPad or Arrow Keys.", icon: Sparkles },
-            { step: 2, text: "Bounce on the orange trampolines at the edges to reach higher floors.", icon: Zap },
-            { step: 3, text: "Open doors by pressing UP when nearby to collect the next word.", icon: DoorOpen },
-            { step: 4, text: "Avoid ghosts and bats! Slamming a door on a ghost will stun it.", icon: AlertTriangle }
+            { step: 1, text: tx("Explore the library floors using the DPad or Arrow Keys."), icon: Sparkles },
+            { step: 2, text: tx("Bounce on the orange trampolines at the edges to reach higher floors."), icon: Zap },
+            { step: 3, text: tx("Open doors by pressing UP when nearby to collect the next word."), icon: DoorOpen },
+            { step: 4, text: tx("Avoid ghosts and bats! Slamming a door on a ghost will stun it."), icon: AlertTriangle }
           ]}
-          proTip="Collecting words in the correct order is key to purifying the library!"
+          proTip={tx("Collecting words in the correct order is key to purifying the library!")}
           controls={[
-            { label: "Move", keys: "Arrow Keys / WASD", color: "bg-blue-500" },
-            { label: "Open Door", keys: "Up Arrow / W", color: "bg-green-500" },
-            { label: "Bounce", keys: "Move to Edges", color: "bg-orange-500" }
+            { label: tx("Move"), keys: tx("Arrow Keys / WASD"), color: "bg-blue-500" },
+            { label: tx("Open Door"), keys: tx("Up Arrow / W"), color: "bg-green-500" },
+            { label: tx("Bounce"), keys: tx("Move to Edges"), color: "bg-orange-500" }
           ]}
         >
           <div className="flex items-center gap-2">
-            <span className="text-sm uppercase tracking-wider text-white/50" style={{ fontSize: getEffectiveTextSize(16) }}>Difficulty:</span>
+            <span className="text-sm uppercase tracking-wider text-white/50" style={{ fontSize: getEffectiveTextSize(16) }}>{tx("Difficulty:")}</span>
             <select
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value as 'easy' | 'medium' | 'hard')}
               className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
               style={{ fontSize: getEffectiveTextSize(16) }}
             >
-              <option value="easy">Novice Scholarly</option>
-              <option value="medium">Master Archivist</option>
-              <option value="hard">Forbidden Knowledge</option>
+              <option value="easy">{tx("Novice Scholarly")}</option>
+              <option value="medium">{tx("Master Archivist")}</option>
+              <option value="hard">{tx("Forbidden Knowledge")}</option>
             </select>
           </div>
         </GameStartScreen>
@@ -292,7 +293,7 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
           accuracy={gameState.totalAttempts > 0 ? gameState.correctAnswers / gameState.totalAttempts : 0}
           onRestart={handleRestart}
           onExit={handleExit}
-          title="The Haunted Library"
+          title={tx("The Haunted Library")}
         />
       </div>
     )
@@ -376,7 +377,7 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
               />
               {ghost.state === 'stunned' && (
                 <Text
-                  text="ZZZ"
+                  text={tx("ZZZ")}
                   fontSize={getEffectiveTextSize(16)}
                   fill="white"
                   x={10}
@@ -423,7 +424,7 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
             <span className="flex items-center gap-1 font-bold">
               <Book className="w-4 h-4 text-blue-400" /> {gameState.lives}
             </span>
-            <span className="font-bold">Score: {gameState.score}</span>
+            <span className="font-bold">{tx("Score:")} {gameState.score}</span>
           </div>
           <div className="flex gap-1">
             {gameState.words.map((_, i) => (

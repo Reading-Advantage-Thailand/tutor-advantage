@@ -57,6 +57,7 @@ import {
   type Word,
 } from "@/lib/games/castleDefense";
 import { BackgroundLayer } from "./BackgroundLayer";
+import { tx } from "@/lib/games/gameText";
 
 const buildSpriteGrid = (width: number, height: number) => {
   const fw = width / 3;
@@ -861,7 +862,7 @@ export function CastleDefenseGame({
             <button
               onClick={() => setShowRanking(true)}
               className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-amber-400 transition-colors border border-white/10"
-              title="Leaderboard"
+              title={tx("Leaderboard")}
               style={{ minHeight: getEffectiveTextSize(44), minWidth: getEffectiveTextSize(44) }}
             >
               <Trophy className="w-5 h-5" />

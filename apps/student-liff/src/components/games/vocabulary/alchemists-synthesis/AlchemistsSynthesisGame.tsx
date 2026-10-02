@@ -17,6 +17,7 @@ import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { GameStartScreen } from "@/components/games/game/GameStartScreen";
 import { GameEndScreen } from "@/components/games/game/GameEndScreen";
 import { useScopedI18n } from "@/locales/client";
+import { fitText } from "@/lib/games/textFit";
 
 export type AlchemistsSynthesisGameResult = {
   xp: number;
@@ -215,7 +216,11 @@ export function AlchemistsSynthesisGame({
           margin: "0 auto",
         }}
       >
-        <Layer scaleX={scale} scaleY={scale}>
+        <Layer
+          scaleX={scale}
+          scaleY={scale}
+          x={Math.max(0, ((dimensions.width || GAME_WIDTH) - GAME_WIDTH * scale) / 2)}
+        >
           <Rect
             x={0}
             y={0}
@@ -260,8 +265,20 @@ export function AlchemistsSynthesisGame({
               {gameState.options.map((option, index) => {
                 const row = Math.floor(index / 2);
                 const col = index % 2;
+                // Two wide cards per row so whole words fit (they used to be
+                // touch-target squares that split "crystal" into "crysta/l").
+                const cardWidth = 155;
+                const cardHeight = Math.max(touchTargetSize, 56);
                 const x = 30 + col * 175;
-                const y = 250 + row * (touchTargetSize + 20);
+                const y = 250 + row * (cardHeight + 20);
+                const label = fitText(option.term, {
+                  width: cardWidth - 16,
+                  height: cardHeight - 8,
+                  maxFontSize: textSize,
+                  minFontSize: 11,
+                  fontFamily: "Arial",
+                  fontStyle: "normal",
+                });
 
                 return (
                   <Group
@@ -272,20 +289,25 @@ export function AlchemistsSynthesisGame({
                     onTap={() => handleSelectOption(option)}
                   >
                     <Rect
-                      width={touchTargetSize}
-                      height={touchTargetSize}
+                      width={cardWidth}
+                      height={cardHeight}
                       fill="#16213e"
                       stroke="#0f3460"
                       strokeWidth={2}
                       cornerRadius={8}
                     />
                     <Text
-                      x={0}
-                      y={touchTargetSize / 2 - textSize / 2}
-                      width={touchTargetSize}
+                      x={8}
+                      y={4}
+                      width={cardWidth - 16}
+                      height={cardHeight - 8}
                       align="center"
-                      text={option.term}
-                      fontSize={textSize}
+                      verticalAlign="middle"
+                      text={label.text}
+                      fontSize={label.fontSize}
+                      lineHeight={label.lineHeight}
+                      fontFamily="Arial"
+                      wrap="none"
                       fill="#ffffff"
                     />
                   </Group>

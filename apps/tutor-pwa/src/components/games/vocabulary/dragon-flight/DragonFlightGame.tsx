@@ -33,6 +33,7 @@ import { useSound } from "@/hooks/useSound";
 import { useAdaptiveDifficulty } from "@/hooks/useAdaptiveDifficulty";
 import { registerDifficultyParams } from "@/lib/adaptive-difficulty/registerDifficultyParams";
 import { t as appT } from "@/lib/i18n";
+import { tx } from "@/lib/games/gameText";
 
 type DragonFlightAssets = {
   gates: HTMLImageElement;
@@ -1276,7 +1277,7 @@ export function DragonFlightGame({
                 {feedback.outcome === "correct"
                   ? appT("interactivePlay.plusDragon")
                   : DIFFICULTY_SETTINGS[difficulty].gameOverOnMiss
-                    ? "GAME OVER"
+                    ? tx("GAME OVER")
                     : DIFFICULTY_SETTINGS[difficulty].penalty === 1
                       ? appT("interactivePlay.minusDragon")
                       : `-${DIFFICULTY_SETTINGS[difficulty].penalty} ${appT("interactivePlay.dragons")}`}
@@ -1288,7 +1289,7 @@ export function DragonFlightGame({
             <div className="pointer-events-none absolute inset-x-3 bottom-3 z-30 mx-auto flex max-w-xl items-center gap-3 rounded-3xl border border-amber-300/35 bg-slate-950/90 p-4 text-white shadow-2xl backdrop-blur sm:bottom-5">
               <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-amber-300 text-lg font-black text-slate-950">{tutorialStep + 1}</div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black uppercase tracking-widest text-amber-300">Dragon Flight Tutorial</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-amber-300">{tx("Dragon Flight Tutorial")}</p>
                 <p className="mt-0.5 text-sm font-black sm:text-base">{[
                   "อ่านคำศัพท์เป้าหมายด้านบน",
                   "เปรียบเทียบความหมายของประตูทั้งสองฝั่ง",
@@ -1469,7 +1470,7 @@ export function DragonFlightGame({
           {/* Header Section */}
           <div className="px-4 py-4 sm:px-6 sm:py-5">
             <div className="text-xs uppercase tracking-[0.3em] text-white/60 mb-1">
-              Dragon Flight
+              {tx("Dragon Flight")}
             </div>
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
@@ -1484,12 +1485,12 @@ export function DragonFlightGame({
                 <button
                   onClick={() => setShowRanking(true)}
                   className="rounded-full border border-white/20 bg-white/10 p-2 text-white/80 backdrop-blur-sm transition-all hover:bg-white/20 hover:text-yellow-400"
-                  title="Leaderboard"
+                  title={tx("Leaderboard")}
                 >
                   <Trophy className="h-5 w-5" />
                 </button>
                 <div className="rounded-md border border-white/20 bg-white/10 px-2 py-1.5 sm:px-4 sm:py-2 text-xs uppercase tracking-[0.2em] text-white/80 backdrop-blur-sm">
-                  {isLoading ? "Loading Assets" : "Ready"}
+                  {isLoading ? tx("Loading Assets") : tx("Ready")}
                 </div>
               </div>
             </div>

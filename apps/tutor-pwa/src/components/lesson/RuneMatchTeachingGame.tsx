@@ -46,7 +46,7 @@ const TUTORIAL_STEPS = [
   {
     step: 4,
     title: "4. ใช้สกิลช่วยเหลือพิเศษ",
-    detail: "ใช้ปุ่ม Shuffle (สับกระดาน), Freeze (แช่แข็งมอนสเตอร์) หรือ Hint เมื่อหาคู่ไม่เจอ",
+    detail: "ใช้ปุ่มสลับ (สับกระดาน), แช่แข็ง (หยุดมอนสเตอร์) หรือคำใบ้ เมื่อหาคู่ไม่เจอ",
     icon: Zap,
   },
 ];
@@ -80,7 +80,7 @@ export function RuneMatchTeachingGame({ vocabulary, mode, fullscreen = false }: 
     <div
       key={key}
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${
-        fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none pb-28 sm:pb-28" : "min-h-[520px] rounded-[32px] shadow-2xl"
+        fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none pb-28 sm:pb-28" : "h-[max(520px,calc(100dvh-13rem))] rounded-[32px] shadow-2xl"
       }`}
       data-testid={`rune-match-${mode}`}
     >
@@ -94,10 +94,11 @@ export function RuneMatchTeachingGame({ vocabulary, mode, fullscreen = false }: 
       />
 
       {mode === "teacher" && (
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 w-full max-w-lg px-4 pointer-events-none">
+        // Sits in the 90px strip the game reserves under the board, so it never covers the top row of runes.
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 w-full max-w-lg px-4 pointer-events-none">
           <div className="flex items-center gap-3 rounded-2xl border border-amber-300/40 bg-slate-950/90 p-3 shadow-2xl backdrop-blur-md text-amber-200 text-xs font-black">
             <span className="flex size-7 items-center justify-center rounded-xl bg-amber-400 text-slate-950 font-black text-sm">👀</span>
-            <span>Teacher Demo Mode: คุณครูกำลังกดจับคู่เล่นสาธิตให้ดูสดบนหน้าจอ</span>
+            <span>โหมดสาธิต: คุณครูกำลังกดจับคู่เล่นสาธิตให้ดูสดบนหน้าจอ</span>
           </div>
         </div>
       )}

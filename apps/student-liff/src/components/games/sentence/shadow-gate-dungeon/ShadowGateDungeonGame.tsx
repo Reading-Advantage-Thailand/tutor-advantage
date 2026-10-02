@@ -19,6 +19,7 @@ import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { VirtualDPad } from '@/components/games/ui/VirtualDPad'
 import { Castle, BookOpen, AlertTriangle, Heart, Clock, Eye } from 'lucide-react'
+import { tx } from '@/lib/games/gameText'
 
 export type ShadowGateDungeonGameResult = {
   xp: number
@@ -201,20 +202,20 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
         className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
       >
         <GameStartScreen
-          gameTitle="Shadow Gate Dungeon"
-          gameSubtitle="Escape the Darkness"
+          gameTitle={tx("Shadow Gate Dungeon")}
+          gameSubtitle={tx("Escape the Darkness")}
           vocabulary={vocabulary}
           instructions={[
-            { step: 1, text: 'Collect word crystals in the correct order to unlock the exit gate.', icon: BookOpen },
-            { step: 2, text: 'The creature patrols a circular path — stay outside its detection ring to avoid being chased.', icon: Eye },
-            { step: 3, text: 'Avoid the shadow creature! Wrong words and collisions drain your health.', icon: AlertTriangle },
+            { step: 1, text: tx("Collect word crystals in the correct order to unlock the exit gate."), icon: BookOpen },
+            { step: 2, text: tx("The creature patrols a circular path — stay outside its detection ring to avoid being chased."), icon: Eye },
+            { step: 3, text: tx("Avoid the shadow creature! Wrong words and collisions drain your health."), icon: AlertTriangle },
           ]}
-          proTip="The creature turns RED when it spots you. Grab crystals while it patrols away!"
+          proTip={tx("The creature turns RED when it spots you. Grab crystals while it patrols away!")}
           controls={[
-            { label: 'Move', keys: 'Arrow Keys / WASD', color: 'bg-purple-500' },
-            { label: 'DPad', keys: 'Touch & Drag', color: 'bg-indigo-500' },
+            { label: tx("Move"), keys: tx("Arrow Keys / WASD"), color: 'bg-purple-500' },
+            { label: tx("DPad"), keys: tx("Touch & Drag"), color: 'bg-indigo-500' },
           ]}
-          startButtonText="Enter the Dungeon"
+          startButtonText={tx("Enter the Dungeon")}
           icon={Castle}
           onStart={() => {
             resetGame()
@@ -223,30 +224,30 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
         >
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-white/50">Difficulty:</span>
+              <span className="text-xs uppercase tracking-wider text-white/50">{tx("Difficulty:")}</span>
               <select
-                aria-label="Difficulty"
+                aria-label={tx("Difficulty")}
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value as Difficulty)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
               >
-                <option value="easy">Dark Cell</option>
-                <option value="normal">Forgotten Crypt</option>
-                <option value="hard">Abyssal Chamber</option>
-                <option value="extreme">Abyssal Depths</option>
+                <option value="easy">{tx("Dark Cell")}</option>
+                <option value="normal">{tx("Forgotten Crypt")}</option>
+                <option value="hard">{tx("Abyssal Chamber")}</option>
+                <option value="extreme">{tx("Abyssal Depths")}</option>
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-white/50">Opponent:</span>
+              <span className="text-xs uppercase tracking-wider text-white/50">{tx("Opponent:")}</span>
               <select
-                aria-label="Opponent"
+                aria-label={tx("Opponent")}
                 value={selectedCreature}
                 onChange={(e) => setSelectedCreature(e.target.value as CreatureType)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
               >
-                <option value="goblin-scout">Goblin Scout (Slow)</option>
-                <option value="orc-hunter">Orc Hunter (Medium)</option>
-                <option value="shadow-dragon">Shadow Dragon (Fast)</option>
+                <option value="goblin-scout">{tx("Goblin Scout (Slow)")}</option>
+                <option value="orc-hunter">{tx("Orc Hunter (Medium)")}</option>
+                <option value="shadow-dragon">{tx("Shadow Dragon (Fast)")}</option>
               </select>
             </div>
           </div>
@@ -400,7 +401,7 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
                   <Text
                     x={GAME_WIDTH / 2 - 30}
                     y={4}
-                    text={`HP: ${gameState.player.health}`}
+                    text={tx("HP: {health}", { health: gameState.player.health })}
                     fontSize={getEffectiveTextSize(16)}
                     fill="white"
                     fontStyle="bold"
@@ -410,7 +411,7 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
                 <Text
                   x={10}
                   y={GAME_HEIGHT - 55}
-                  text={`Words: ${gameState.collectedWords.length}/${gameState.words.length}`}
+                  text={tx("Words: {length}/{length1}", { length: gameState.collectedWords.length, length1: gameState.words.length })}
                   fontSize={getEffectiveTextSize(16)}
                   fill="white"
                   fontStyle="bold"
@@ -429,7 +430,7 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
                 <Text
                   x={GAME_WIDTH - 80}
                   y={GAME_HEIGHT - 55}
-                  text={`Time: ${Math.floor(gameState.gameTime / 1000)}s`}
+                  text={tx("Time: {gameTime}s", { gameTime: Math.floor(gameState.gameTime / 1000) })}
                   fontSize={getEffectiveTextSize(16)}
                   fill="white"
                 />
@@ -438,7 +439,7 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
                 <Text
                   x={10}
                   y={GAME_HEIGHT - 95}
-                  text={gameState.creature.mode === 'chase' ? '⚠ DETECTED!' : '👁 Undetected'}
+                  text={gameState.creature.mode === 'chase' ? tx("⚠ DETECTED!") : tx("👁 Undetected")}
                   fontSize={getEffectiveTextSize(16)}
                   fill={gameState.creature.mode === 'chase' ? '#ef4444' : '#a5b4fc'}
                   fontStyle="bold"
@@ -456,15 +457,15 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
       {gamePhase === 'ended' && gameState && results && (
         <GameEndScreen
           status={gameState.status === 'victory' ? 'victory' : 'defeat'}
-          title={gameState.status === 'victory' ? 'Escaped!' : 'Captured!'}
-          subtitle={gameState.status === 'victory' ? 'You found the way out!' : 'The shadows consumed you...'}
+          title={gameState.status === 'victory' ? tx("Escaped!") : tx("Captured!")}
+          subtitle={gameState.status === 'victory' ? tx("You found the way out!") : tx("The shadows consumed you...")}
           score={gameState.correctAnswers * 10}
           xp={results.xp}
           accuracy={results.accuracy}
           customStats={[
-            { label: 'Words Collected', value: gameState.correctAnswers, icon: BookOpen },
-            { label: 'Time', value: `${Math.floor(gameState.gameTime / 1000)}s`, icon: Clock },
-            { label: 'Health Left', value: gameState.player.health, icon: Heart },
+            { label: tx("Words Collected"), value: gameState.correctAnswers, icon: BookOpen },
+            { label: tx("Time"), value: `${Math.floor(gameState.gameTime / 1000)}s`, icon: Clock },
+            { label: tx("Health Left"), value: gameState.player.health, icon: Heart },
           ]}
           onRestart={() => {
             resetGame()

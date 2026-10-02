@@ -42,6 +42,7 @@ import { VocabularyProgress } from "./VocabularyProgress";
 import { GameEndScreen } from "@/components/games/game/GameEndScreen";
 import { GameStartScreen } from "@/components/games/game/GameStartScreen";
 import { RankingDisplay } from "./RankingDisplay";
+import { tx } from "@/lib/games/gameText";
 
 export type EnchantedLibraryGameResult = {
   xp: number;
@@ -780,7 +781,7 @@ export function EnchantedLibraryGame({
               onClick={() => setShowGrimoire(true)}
               disabled={tutorialMode}
               className="bg-white/90 p-2 sm:p-3 rounded-full text-amber-900 shadow-lg border-2 border-amber-300 hover:scale-110 transition-transform active:scale-95 min-w-[44px] min-h-[44px] flex items-center justify-center disabled:cursor-default disabled:opacity-70"
-              title="My Grimoire"
+              title={tx("My Grimoire")}
             >
               <Book className="w-6 h-6" />
             </button>
@@ -880,7 +881,7 @@ export function EnchantedLibraryGame({
             </div>
             {tutorialMode && (tutorialStep === 1 || tutorialStep === 2 || tutorialStep === 3) && (
               <span className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-cyan-300 px-3.5 py-1 text-xs font-black text-slate-950 shadow-xl animate-bounce">
-                🎮 {inputRef.current.dx === 1 ? "กดขวา ►" : inputRef.current.dx === -1 ? "กดซ้าย ◄" : inputRef.current.dy === 1 ? "กดลง ▼" : inputRef.current.dy === -1 ? "กดขึ้น ▲" : "ปุ่มทิศทาง D-Pad"}
+                🎮 {inputRef.current.dx === 1 ? "กดขวา ►" : inputRef.current.dx === -1 ? "กดซ้าย ◄" : inputRef.current.dy === 1 ? "กดลง ▼" : inputRef.current.dy === -1 ? "กดขึ้น ▲" : "ปุ่มทิศทาง"}
               </span>
             )}
           </div>
@@ -1053,7 +1054,7 @@ export function EnchantedLibraryGame({
               },
               { label: t("messages.correctBooks"), value: correctAnswers },
               {
-                label: "Difficulty",
+                label: tx("Difficulty"),
                 value: difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
               },
             ]}

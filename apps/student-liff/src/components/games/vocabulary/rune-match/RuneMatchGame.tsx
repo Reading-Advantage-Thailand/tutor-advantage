@@ -42,10 +42,10 @@ import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { calculateXP } from "@/lib/games/xp";
 import {
-  formatRuneLabel,
-  getRuneLabelMetrics,
+  fitRuneLabel,
   getTimePresentation,
 } from "@/lib/games/runeMatchPresentation";
+import { tx } from "@/lib/games/gameText";
 
 export type RuneMatchGameResult = {
   xp: number;
@@ -83,12 +83,14 @@ const RUNE_MATCH_TUTORIAL_STEPS = [
   },
   {
     title: "4. ใช้สกิลสลับกระดาน / แช่แข็งมอนสเตอร์",
-    detail: "แตะปุ่ม Skill ด้านข้าง เช่น Freeze ❄️ เพื่อหยุดมอนสเตอร์ หรือ Shuffle 🔀 เพื่อสลับกระดาน",
+    detail: "แตะปุ่มสกิลด้านข้าง เช่น แช่แข็ง ❄️ เพื่อหยุดมอนสเตอร์ หรือ สลับ 🔀 เพื่อสลับกระดาน",
   },
 ];
 
 const MOBILE_GAME_CONTAINER_CLASS =
-  "relative h-dvh min-h-[520px] w-full overflow-hidden rounded-none border border-sky-200/30 bg-slate-800 shadow-2xl backdrop-blur-sm sm:h-[80vh] sm:rounded-2xl md:h-[80vh] md:max-h-[860px]";
+  // Fill the frame the runtime/presenter gives us (h-dvh arcade root, presenter
+  // stage); a fixed 80vh box left a band below the board or cut its bottom off.
+  "relative h-full min-h-[420px] w-full overflow-hidden rounded-none border border-sky-200/30 bg-slate-800 shadow-2xl backdrop-blur-sm sm:rounded-2xl";
 
 const getRuneMatchScore = (state: RuneMatchState) => {
   return Math.min(10, state.correctAnswers);
@@ -180,7 +182,10 @@ export function RuneMatchGame({
     } else {
       const sidebarWidth = Math.min(220, dimensions.width * 0.27);
       const gridAreaWidth = dimensions.width - sidebarWidth - padding * 2;
-      const availableHeight = dimensions.height - bottomOffset - padding * 2;
+      // Reserve the 28px strip above the board (labels) inside the height so
+      // the last row is never pushed below the frame.
+      const topReserve = 28;
+      const availableHeight = dimensions.height - bottomOffset - padding - topReserve;
       const cellSize = Math.min(
         gridAreaWidth / RUNE_MATCH_CONFIG.grid.columns,
         availableHeight / RUNE_MATCH_CONFIG.grid.rows,
@@ -188,7 +193,7 @@ export function RuneMatchGame({
       const gridWidth = cellSize * RUNE_MATCH_CONFIG.grid.columns;
       const gridHeight = cellSize * RUNE_MATCH_CONFIG.grid.rows;
       const gridX = sidebarWidth + (gridAreaWidth - gridWidth) / 2 + padding;
-      const gridY = Math.max(28, (availableHeight - gridHeight) / 2 + padding / 2);
+      const gridY = topReserve + Math.max(0, (availableHeight - gridHeight) / 2);
       return {
         cellSize,
         gridX,
@@ -358,7 +363,7 @@ export function RuneMatchGame({
             ...newState.floatingTexts,
             {
               id: Math.random().toString(36).substring(2, 9),
-              text: "RESHUFFLE!",
+              text: tx("RESHUFFLE!"),
               x: -1,
               y: -1,
               offsetX: 0,
@@ -396,7 +401,7 @@ export function RuneMatchGame({
           ...prev.floatingTexts,
           {
             id: Math.random().toString(36).substring(2, 9),
-            text: "WRONG PAIR",
+            text: tx("WRONG PAIR"),
             x: col,
             y: row,
             offsetX: 0,
@@ -444,7 +449,7 @@ export function RuneMatchGame({
             ...prev.floatingTexts,
             {
               id: Math.random().toString(36).substring(2, 9),
-              text: "💡 HINT!",
+              text: tx("💡 HINT!"),
               x: -1,
               y: -1,
               offsetX: 0,
@@ -462,6 +467,7 @@ export function RuneMatchGame({
     });
   }, []);
 
+  const hasGameView = Boolean(assets && gameState) && dimensions.width > 0;
   useEffect(() => {
     if (!containerRef.current) return;
     const updateDimensions = () => {
@@ -487,7 +493,9 @@ export function RuneMatchGame({
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, []);
+    // The loading box and the game root are different elements: re-observe
+    // when the game view mounts, or the stage keeps the loading box's size.
+  }, [hasGameView]);
 
   useEffect(() => {
     if (!gameState) return;
@@ -624,15 +632,10 @@ export function RuneMatchGame({
     for (const row of grid) {
       for (const rune of row) {
         if (rune.type !== "vocabulary") continue;
-        const metrics = getRuneLabelMetrics(
-          rune.text,
-          layout.cellSize,
-          settings.textSizeMultiplier,
+        presentation.set(
+          rune.id,
+          fitRuneLabel(rune.text, layout.cellSize, settings.textSizeMultiplier),
         );
-        presentation.set(rune.id, {
-          text: formatRuneLabel(rune.text),
-          ...metrics,
-        });
       }
     }
     return presentation;
@@ -643,7 +646,7 @@ export function RuneMatchGame({
       <div
         ref={mergedRef}
         data-testid="rune-match-container"
-        className="relative flex h-dvh min-h-[420px] w-full items-center justify-center overflow-hidden rounded-none border border-white/10 bg-slate-950 sm:h-[60vh] sm:rounded-2xl md:aspect-video md:h-auto"
+        className="relative flex h-full min-h-[420px] w-full items-center justify-center overflow-hidden rounded-none border border-white/10 bg-slate-950 sm:rounded-2xl"
       >
         <div className="flex flex-col items-center gap-4 text-center p-4">
           {loadError ? (
@@ -657,13 +660,13 @@ export function RuneMatchGame({
                 className="mt-2 text-white border-white/20 hover:bg-white/10"
               >
                 <RefreshCcw className="mr-2 h-4 w-4" />
-                Retry Loading
+                {tx("Retry Loading")}
               </Button>
             </>
           ) : (
             <>
               <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-white"></div>
-              <p className="text-sm text-white/60">Loading assets...</p>
+              <p className="text-sm text-white/60">{tx("Loading assets...")}</p>
             </>
           )}
         </div>
@@ -684,8 +687,11 @@ export function RuneMatchGame({
     const progress = Math.max(0, Math.min(1, current / max));
     const displayValue =
       label === "TIME"
-        ? `${Math.ceil(current / 1000)}s`
+        ? tx("{seconds}s", { seconds: Math.ceil(current / 1000) })
         : `${Math.ceil(current)}/${max}`;
+    // "TIME" is a mode flag; monster bars pass the monster type (e.g. "goblin").
+    const displayLabel =
+      label === "TIME" ? tx("Time") : tx(label.charAt(0).toUpperCase() + label.slice(1).toLowerCase());
     return (
       <Group x={x} y={y}>
         <Rect
@@ -703,7 +709,7 @@ export function RuneMatchGame({
           cornerRadius={height / 2}
         />
         <Text
-          text={`${label}: ${displayValue}`}
+          text={`${displayLabel}: ${displayValue}`}
           width={width}
           height={height}
           fontSize={getEffectiveTextSize(16)}
@@ -849,12 +855,12 @@ export function RuneMatchGame({
                           gameState.monster.hp,
                           gameState.monster.maxHp,
                           "#ef4444",
-                          gameState.monster.type.toUpperCase(),
+                          gameState.monster.type,
                         )}
                       </Group>
                     )}
                     <Text
-                      text={selectedRuneText ? "SELECTED RUNE" : "POWER WORD"}
+                      text={selectedRuneText ? tx("SELECTED RUNE") : tx("POWER WORD")}
                       x={10}
                       y={160}
                       width={layout.sidebarWidth - 20}
@@ -885,7 +891,7 @@ export function RuneMatchGame({
                       "TIME",
                     )}
                     <Text
-                      text={`MATCHES ${gameState.correctAnswers}/${RUNE_MATCH_CONFIG.game.targetMatches}`}
+                      text={tx("MATCHES {correctAnswers}/{targetMatches}", { correctAnswers: gameState.correctAnswers, targetMatches: RUNE_MATCH_CONFIG.game.targetMatches })}
                       x={10}
                       y={238}
                       width={layout.sidebarWidth - 20}
@@ -896,7 +902,7 @@ export function RuneMatchGame({
                     />
                     {gameState.player.hasShield && (
                       <Text
-                        text="🛡️ SHIELD"
+                        text={tx("🛡️ SHIELD")}
                         x={10}
                         y={240}
                         width={layout.sidebarWidth - 20}
@@ -908,7 +914,7 @@ export function RuneMatchGame({
                     )}
                     {gameState.currentStreak > 0 && (
                       <Text
-                        text={`🔥 COMBO x${gameState.currentStreak}`}
+                        text={tx("🔥 COMBO x{currentStreak}", { currentStreak: gameState.currentStreak })}
                         x={10}
                         y={260}
                         width={layout.sidebarWidth - 20}
@@ -919,7 +925,7 @@ export function RuneMatchGame({
                       />
                     )}
                     <Text
-                      text="SKILLS"
+                      text={tx("SKILLS")}
                       x={10}
                       y={290}
                       width={layout.sidebarWidth - 20}
@@ -1012,7 +1018,7 @@ export function RuneMatchGame({
                         <Group>
                           {renderButton(
                             0,
-                            "Shuffle",
+                            tx("Shuffle"),
                             "🔀",
                             gameState.specialMoves.shuffle,
                             "#22c55e",
@@ -1020,14 +1026,14 @@ export function RuneMatchGame({
                           )}
                           {renderButton(
                             1,
-                            "Bomb",
+                            tx("Bomb"),
                             "💣",
                             gameState.specialMoves.bomb,
                             "#f59e0b",
                           )}
                           {renderButton(
                             2,
-                            "Freeze",
+                            tx("Freeze"),
                             "❄️",
                             gameState.specialMoves.freeze,
                             "#60a5fa",
@@ -1037,7 +1043,7 @@ export function RuneMatchGame({
                             gameState.selectedMonster === "skeleton") &&
                             renderButton(
                               3,
-                              "Hint",
+                              tx("Hint"),
                               "💡",
                               gameState.hintsRemaining,
                               "#facc15",
@@ -1102,7 +1108,7 @@ export function RuneMatchGame({
                           gameState.monster.hp,
                           gameState.monster.maxHp,
                           "#ef4444",
-                          gameState.monster.type.toUpperCase(),
+                          gameState.monster.type,
                         )}
                       </Group>
                     )}
@@ -1342,7 +1348,7 @@ export function RuneMatchGame({
                         <Group>
                           {renderButton(
                             0,
-                            "Shuffle",
+                            tx("Shuffle"),
                             "🔀",
                             gameState.specialMoves.shuffle,
                             "#22c55e",
@@ -1350,14 +1356,14 @@ export function RuneMatchGame({
                           )}
                           {renderButton(
                             1,
-                            "Bomb",
+                            tx("Bomb"),
                             "💣",
                             gameState.specialMoves.bomb,
                             "#f59e0b",
                           )}
                           {renderButton(
                             2,
-                            "Freeze",
+                            tx("Freeze"),
                             "❄️",
                             gameState.specialMoves.freeze,
                             "#60a5fa",
@@ -1367,7 +1373,7 @@ export function RuneMatchGame({
                             gameState.selectedMonster === "skeleton") &&
                             renderButton(
                               3,
-                              "Hint",
+                              tx("Hint"),
                               "💡",
                               gameState.hintsRemaining,
                               "#facc15",
@@ -1474,7 +1480,7 @@ export function RuneMatchGame({
                           shadowBlur={14}
                         />
                         <Text
-                          text="💥 ATTACK! -100 HP"
+                          text={tx("💥 ATTACK! -100 HP")}
                           x={dimensions.width / 2 - 100}
                           y={layout.isMobile ? 75 : 115}
                           width={200}
@@ -1545,7 +1551,7 @@ export function RuneMatchGame({
               return (
                 <Text
                   key={ft.id}
-                  text={ft.text}
+                  text={tx(ft.text)}
                   x={screenX + ft.offsetX}
                   y={screenY + ft.offsetY - 20}
                   fontSize={28}
@@ -1567,7 +1573,7 @@ export function RuneMatchGame({
         </Layer>
       </Stage>
       <p id={instructionsId} className="sr-only">
-        Rune Match: เลือกรูนสองแผ่นที่อยู่ติดกันเพื่อจับคู่คำศัพท์กับคำแปล
+        จับคู่รูน: เลือกรูนสองแผ่นที่อยู่ติดกันเพื่อจับคู่คำศัพท์กับคำแปล
         ดูเวลา จำนวนคู่ และคำเป้าหมายได้จากแถบสถานะด้านบน
         ปุ่มสกิลที่จางลงคือสกิลที่ยังใช้ไม่ได้หรือใช้หมดแล้ว
       </p>
@@ -1586,7 +1592,7 @@ export function RuneMatchGame({
             <div className="min-w-0 flex-1 text-white">
               <div className="flex items-center gap-2">
                 <span className="rounded-full bg-indigo-500/20 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-indigo-300 border border-indigo-500/30">
-                  Rune Match Tutorial · ขั้นตอน {(tutorialStep % 4) + 1} / 4
+                  สอนเล่นจับคู่รูน · ขั้นตอน {(tutorialStep % 4) + 1} / 4
                 </span>
               </div>
               <p className="mt-0.5 text-base font-black leading-tight text-white">

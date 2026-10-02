@@ -11,6 +11,7 @@ import {
   ARENA_WIDTH,
   ARENA_HEIGHT,
   computeSlimeCamera,
+  isSlimeInvulnerable,
 } from '@/lib/games/devourerSlime'
 import type { VocabularyItem } from '@/store/useGameStore'
 import { useInterval } from '@/hooks/useInterval'
@@ -19,9 +20,32 @@ import { useSound } from '@/hooks/useSound'
 import { useGameFullscreen } from '@/hooks/useGameFullscreen'
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { useScopedI18n } from '@/hooks/useScopedI18n'
+import { fitText } from '@/lib/games/textFit'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { Move, Zap, Target, Shield } from 'lucide-react'
+import { tx } from '@/lib/games/gameText'
+
+const orbLabelCache = new Map<string, ReturnType<typeof fitText>>()
+/** Word label sized to the orb (a circle: use the inscribed square, a bit wider). */
+function fitOrbLabel(word: string, radius: number) {
+  const key = `${word}|${radius}`
+  let label = orbLabelCache.get(key)
+  if (!label) {
+    label = fitText(word, {
+      width: radius * 1.7,
+      height: radius * 1.5,
+      maxFontSize: 16,
+      minFontSize: 9,
+      lineHeight: 1,
+      fontFamily: 'Arial',
+      fontStyle: 'bold',
+    })
+    if (orbLabelCache.size > 500) orbLabelCache.clear()
+    orbLabelCache.set(key, label)
+  }
+  return label
+}
 
 interface DevourerSlimeGameProps {
   sentences: VocabularyItem[]
@@ -156,20 +180,20 @@ export function DevourerSlimeGame({ sentences, difficulty = 'medium', onComplete
     return (
       <div ref={containerRef} className="relative h-full min-h-0 w-full overflow-hidden bg-emerald-950">
         <GameStartScreen
-          gameTitle="Devourer Slime"
-          gameSubtitle="Eat words, grow big, devour knights!"
+          gameTitle={tx("Devourer Slime")}
+          gameSubtitle={tx("Eat words, grow big, devour knights!")}
           icon={Zap}
           vocabulary={sentences}
           instructions={[
-            { step: 1, text: "Move with WASD / Arrow Keys or Virtual D-Pad", icon: Move },
-            { step: 2, text: "Eat word orbs in the correct sentence order", icon: Target },
-            { step: 3, text: "Grow bigger to devour enemy knights", icon: Shield }
+            { step: 1, text: tx("Move with WASD / Arrow Keys or Virtual D-Pad"), icon: Move },
+            { step: 2, text: tx("Eat word orbs in the correct sentence order"), icon: Target },
+            { step: 3, text: tx("Grow bigger to devour enemy knights"), icon: Shield }
           ]}
           controls={[
-            { label: "Move", keys: "WASD / Arrows", color: "bg-emerald-500" },
-            { label: "Dash", keys: "Shift", color: "bg-blue-500" }
+            { label: tx("Move"), keys: tx("WASD / Arrows"), color: "bg-emerald-500" },
+            { label: tx("Dash"), keys: tx("Shift"), color: "bg-blue-500" }
           ]}
-          startButtonText="START DEVOURING"
+          startButtonText={tx("START DEVOURING")}
           onStart={handleStart}
         />
       </div>
@@ -297,20 +321,28 @@ export function DevourerSlimeGame({ sentences, difficulty = 'medium', onComplete
                 shadowBlur={15}
                 shadowColor="#eab308"
               />
-              <Text 
-                text={orb.word} 
-                fill="white" 
-                fontSize={16} 
-                fontStyle="bold"
-                align="center" 
-                verticalAlign="middle"
-                width={orb.radius * 2} 
-                height={orb.radius * 2}
-                x={-orb.radius} 
-                y={-orb.radius}
-                shadowBlur={5}
-                shadowColor="black"
-              />
+              {(() => {
+                // Shrink to fit inside the orb; never break a word mid-way.
+                const label = fitOrbLabel(orb.word, orb.radius)
+                return (
+                  <Text
+                    text={label.text}
+                    fill="white"
+                    fontSize={label.fontSize}
+                    lineHeight={label.lineHeight}
+                    fontStyle="bold"
+                    align="center"
+                    verticalAlign="middle"
+                    wrap="none"
+                    width={orb.radius * 2}
+                    height={orb.radius * 2}
+                    x={-orb.radius}
+                    y={-orb.radius}
+                    shadowBlur={5}
+                    shadowColor="black"
+                  />
+                )
+              })()}
             </Group>
           ))}
 
@@ -348,7 +380,12 @@ export function DevourerSlimeGame({ sentences, difficulty = 'medium', onComplete
           ))}
 
           {/* Slime */}
-          <Group x={gameState.slime.pos.x} y={gameState.slime.pos.y}>
+          {/* Blinks while knights can't hurt it (start of a sentence / after a hit). */}
+          <Group
+            x={gameState.slime.pos.x}
+            y={gameState.slime.pos.y}
+            opacity={isSlimeInvulnerable(gameState) && Math.floor(gameState.gameTime / 150) % 2 === 1 ? 0.45 : 1}
+          >
             {/* Slime body - wobbly circle */}
             <Circle 
               radius={gameState.slime.radius} 

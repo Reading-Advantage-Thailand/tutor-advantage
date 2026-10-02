@@ -1,32 +1,44 @@
 import { describe, expect, it } from "vitest";
-import {
-  formatRuneLabel,
-  getRuneLabelMetrics,
-  getTimePresentation,
-} from "./runeMatchPresentation";
+import { fitRuneLabel, getTimePresentation } from "./runeMatchPresentation";
+import { estimateTextWidth } from "./textFit";
 
 describe("Rune Match presentation helpers", () => {
-  it("wraps long unbroken English and Thai labels instead of hiding them", () => {
-    expect(formatRuneLabel("discover")).toBe("disc\nover");
-    expect(formatRuneLabel("การเดินทาง").replaceAll("\n", "")).toBe("การเดินทาง");
-    expect(formatRuneLabel("forest")).toBe("forest");
+  const words = ["forest", "shield", "dragon", "crystal", "ancient", "journey", "discover", "การเดินทาง", "คริสตัล", "โบราณ"];
+
+  it("never splits a word across lines and keeps every letter", () => {
+    for (const cell of [44, 56, 72, 89]) {
+      for (const word of words) {
+        const label = fitRuneLabel(word, cell, 1, estimateTextWidth);
+        // Every letter is kept; Latin words stay on one line. Thai may only
+        // break between dictionary words (Intl.Segmenter), never inside one.
+        expect(label.text.replaceAll("\n", ""), `${word} @${cell}`).toBe(word);
+        if (/^[a-z]+$/.test(word)) expect(label.text, `${word} @${cell}`).toBe(word);
+      }
+    }
   });
 
-  it("uses a larger label for short words and keeps long labels inside the rune", () => {
-    const shortLabel = getRuneLabelMetrics("cat", 72);
-    const longLabel = getRuneLabelMetrics("การเดินทางผจญภัย", 72);
-
-    expect(shortLabel.fontSize).toBeGreaterThan(longLabel.fontSize);
-    expect(longLabel.fontSize).toBeGreaterThanOrEqual(12);
-    expect(shortLabel.fontSize).toBeLessThanOrEqual(24);
+  it("shrinks long words so they fit inside the stone", () => {
+    for (const cell of [56, 72]) {
+      for (const word of words) {
+        const label = fitRuneLabel(word, cell, 1, estimateTextWidth);
+        const widest = Math.max(...label.text.split("\n").map((line) => estimateTextWidth(line, label.fontSize)));
+        expect(widest, `${word} @${cell}`).toBeLessThanOrEqual(cell - 4 - 14);
+      }
+    }
   });
 
-  it("respects the accessibility text multiplier within the safe cell limit", () => {
-    const normal = getRuneLabelMetrics("forest", 64, 1);
-    const enlarged = getRuneLabelMetrics("forest", 64, 1.25);
+  it("wraps multi-word labels at spaces only", () => {
+    const label = fitRuneLabel("look after", 56, 1, estimateTextWidth);
+    expect(label.text.split("\n").every((line) => ["look", "after", "look after"].includes(line))).toBe(true);
+  });
 
-    expect(enlarged.fontSize).toBeGreaterThanOrEqual(normal.fontSize);
-    expect(enlarged.fontSize).toBeLessThanOrEqual(Math.round(64 * 0.34));
+  it("uses a larger font for short words and respects the text-size setting", () => {
+    expect(fitRuneLabel("cat", 72, 1, estimateTextWidth).fontSize).toBeGreaterThan(
+      fitRuneLabel("discover", 72, 1, estimateTextWidth).fontSize,
+    );
+    expect(fitRuneLabel("cat", 72, 1.25, estimateTextWidth).fontSize).toBeGreaterThanOrEqual(
+      fitRuneLabel("cat", 72, 1, estimateTextWidth).fontSize,
+    );
   });
 
   it("makes the final fifth of the timer visually urgent", () => {

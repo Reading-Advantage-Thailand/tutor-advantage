@@ -6,6 +6,7 @@ import { BookOpen, Gamepad2, Play, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { VocabularyItem } from "@/store/useGameStore";
 import { Button } from "@/components/ui/button";
+import { tx } from "@/lib/games/gameText";
 
 export interface Instruction {
   step: number;
@@ -40,7 +41,7 @@ export function GameStartScreen({
   instructions,
   proTip,
   controls,
-  startButtonText = "Start Game",
+  startButtonText = tx("Start Game"),
   icon: TitleIcon = Gamepad2,
   children,
 }: GameStartScreenProps) {
@@ -77,7 +78,7 @@ export function GameStartScreen({
           <div className="space-y-6">
             <div className="rounded-xl border border-border bg-secondary/50 p-6 space-y-4">
               <h3 className="flex items-center gap-2 font-semibold text-lg text-foreground">
-                <Sparkles className="w-5 h-5" /> How to Play
+                <Sparkles className="w-5 h-5" /> {tx("How to Play")}
               </h3>
               {hasInstructions ? (
                 <ul className="space-y-3 text-sm text-muted-foreground">
@@ -97,7 +98,7 @@ export function GameStartScreen({
                 </ul>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  Follow the on-screen prompts to complete the challenge.
+                  {tx("Follow the on-screen prompts to complete the challenge.")}
                 </p>
               )}
             </div>
@@ -106,7 +107,7 @@ export function GameStartScreen({
               <div className="flex items-center gap-4 rounded-xl border border-border p-4 text-sm text-muted-foreground bg-secondary/30">
                 <Sparkles className="w-5 h-5 shrink-0 text-foreground" />
                 <p>
-                  <span className="font-semibold text-foreground">Pro Tip:</span> {proTip}
+                  <span className="font-semibold text-foreground">{tx("Pro Tip:")}</span> {proTip}
                 </p>
               </div>
             ) : null}
@@ -115,16 +116,16 @@ export function GameStartScreen({
           <div className="space-y-4 min-w-0">
             <div className="flex items-center justify-between">
               <h3 className="flex items-center gap-2 font-semibold text-lg text-foreground">
-                <BookOpen className="w-5 h-5" /> Vocabulary
+                <BookOpen className="w-5 h-5" /> {tx("Vocabulary")}
               </h3>
               <span className="text-xs text-muted-foreground">
-                {vocabulary.length} Items
+                {vocabulary.length} {tx("Items")}
               </span>
             </div>
             <div className="max-h-[260px] overflow-y-auto rounded-xl border border-border bg-background scrollbar-thin scrollbar-thumb-border">
               {vocabulary.length === 0 ? (
                 <div className="p-8 text-center text-muted-foreground italic">
-                  No items loaded...
+                  {tx("No items loaded...")}
                 </div>
               ) : (
                 <div className="divide-y divide-border">
@@ -161,7 +162,7 @@ export function GameStartScreen({
         ) : (
           !children && (
             <span className="hidden sm:block text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              Awaiting Command
+              {tx("Awaiting Command")}
             </span>
           )
         )}
@@ -171,6 +172,8 @@ export function GameStartScreen({
 
           <Button
             onClick={onStart}
+            // Lets the arcade runtime auto-start the game whatever the label's language.
+            data-game-start="true"
             size="lg"
             className="w-full rounded-full px-8 sm:w-auto sm:px-12"
           >

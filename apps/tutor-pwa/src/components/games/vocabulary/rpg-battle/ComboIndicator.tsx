@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame } from "lucide-react";
+import { tx } from "@/lib/games/gameText";
 
 interface ComboIndicatorProps {
   streak: number;
@@ -23,7 +24,7 @@ export function ComboIndicator({ streak }: ComboIndicatorProps) {
           <div className="relative flex items-center gap-1 bg-gradient-to-r from-orange-600 to-red-600 text-white px-4 py-2 rounded-full border-2 border-orange-400 shadow-[0_0_15px_rgba(234,88,12,0.5)] transform -rotate-2">
             <Flame className="w-5 h-5 text-yellow-300 fill-yellow-300 animate-[bounce_1s_infinite]" />
             <span className="font-black italic text-lg tracking-wider">
-              COMBO
+              {tx("COMBO")}
             </span>
             <span className="font-black text-2xl text-yellow-300 drop-shadow-md">
               x{streak}

@@ -18,6 +18,7 @@ import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings';
 import { GameStartScreen } from '@/components/games/game/GameStartScreen';
 import { GameEndScreen } from '@/components/games/game/GameEndScreen';
 import { Bird, Shield, Target } from 'lucide-react';
+import { tx } from '@/lib/games/gameText';
 
 export interface GryphonPatrolGameProps {
   vocabList: VocabularyItem[];
@@ -129,20 +130,20 @@ const GryphonPatrolGame: React.FC<GryphonPatrolGameProps> = ({ vocabList, diffic
     <div ref={containerRef} className="w-full h-full relative overflow-hidden bg-slate-950">
       {gameState.status === 'start' && (
         <GameStartScreen
-          gameTitle="Gryphon Patrol"
-          gameSubtitle="Patrol the skies and hunt down the sentence!"
+          gameTitle={tx("Gryphon Patrol")}
+          gameSubtitle={tx("Patrol the skies and hunt down the sentence!")}
           icon={Bird}
           vocabulary={vocabList}
           instructions={[
-            { step: 1, text: "Fly using Arrow Keys or WASD", icon: Bird },
-            { step: 2, text: "Shoot using Space to reveal words from enemies", icon: Shield },
-            { step: 3, text: "Collect word orbs in the correct sentence order", icon: Target }
+            { step: 1, text: tx("Fly using Arrow Keys or WASD"), icon: Bird },
+            { step: 2, text: tx("Shoot using Space to reveal words from enemies"), icon: Shield },
+            { step: 3, text: tx("Collect word orbs in the correct sentence order"), icon: Target }
           ]}
           controls={[
-            { label: "Move", keys: "WASD / Arrows", color: "bg-blue-500" },
-            { label: "Shoot", keys: "Space", color: "bg-red-500" }
+            { label: tx("Move"), keys: tx("WASD / Arrows"), color: "bg-blue-500" },
+            { label: tx("Shoot"), keys: tx("Space"), color: "bg-red-500" }
           ]}
-          startButtonText="START PATROL"
+          startButtonText={tx("START PATROL")}
           onStart={handleStart}
         />
       )}
@@ -306,7 +307,7 @@ const GryphonPatrolGame: React.FC<GryphonPatrolGameProps> = ({ vocabList, diffic
               ))}
               {/* Target Indicator */}
               <Text 
-                text="MINI-MAP"
+                text={tx("MINI-MAP")}
                 x={0} y={-15} fontSize={getEffectiveTextSize(16)} fill="white" opacity={0.5}
               />
             </Group>
@@ -330,8 +331,8 @@ const GryphonPatrolGame: React.FC<GryphonPatrolGameProps> = ({ vocabList, diffic
       {gameState.status === 'won' && (
         <GameEndScreen
           status="victory"
-          title="Mission Accomplished!"
-          subtitle="You've successfully patrolled the skies and decoded the message."
+          title={tx("Mission Accomplished!")}
+          subtitle={tx("You've successfully patrolled the skies and decoded the message.")}
           score={gameState.score}
           xp={gameState.xp}
           accuracy={gameState.collectedWords.length / gameState.sentence.length}
@@ -343,8 +344,8 @@ const GryphonPatrolGame: React.FC<GryphonPatrolGameProps> = ({ vocabList, diffic
       {gameState.status === 'lost' && (
         <GameEndScreen
           status="defeat"
-          title="Gryphon Down!"
-          subtitle="The skies were too dangerous today. Retreat and recover."
+          title={tx("Gryphon Down!")}
+          subtitle={tx("The skies were too dangerous today. Retreat and recover.")}
           score={gameState.score}
           xp={gameState.xp}
           accuracy={gameState.collectedWords.length / gameState.sentence.length}

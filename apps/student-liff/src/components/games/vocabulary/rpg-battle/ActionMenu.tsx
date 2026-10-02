@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { tx } from "@/lib/games/gameText";
 
 export type ActionPower = "basic" | "power";
 
@@ -49,8 +50,8 @@ export function ActionMenu({
       className="space-y-3 rounded-xl border border-slate-700/50 bg-slate-900/80 backdrop-blur-sm p-4 shadow-lg"
     >
       <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-slate-100">Actions</span>
-        <span className="text-xs text-slate-400">Type the translation</span>
+        <span className="text-sm font-semibold text-slate-100">{tx("Actions")}</span>
+        <span className="text-xs text-slate-400">{tx("Type the translation")}</span>
       </div>
 
       <div className="grid gap-2 md:grid-cols-2">
@@ -67,7 +68,7 @@ export function ActionMenu({
                   : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
               }`}
             >
-              {action.power === "power" ? "Power" : "Basic"}
+              {action.power === "power" ? tx("Power") : tx("Basic")}
             </span>
           </div>
         ))}
@@ -75,8 +76,8 @@ export function ActionMenu({
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <Input
-          aria-label="Action input"
-          placeholder="Type translation..."
+          aria-label={tx("Action input")}
+          placeholder={tx("Type translation...")}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           disabled={disabled}
@@ -89,7 +90,7 @@ export function ActionMenu({
           disabled={disabled || !isReady}
           className="sm:w-28"
         >
-          Cast
+          {tx("Cast")}
         </Button>
       </div>
     </form>

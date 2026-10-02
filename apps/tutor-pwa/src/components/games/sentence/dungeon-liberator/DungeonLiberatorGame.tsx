@@ -25,6 +25,7 @@ import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { Shield, Sword, Users, AlertTriangle } from 'lucide-react'
 import { withBasePath } from '@/lib/basePath'
+import { tx } from '@/lib/games/gameText'
 
 const SPRITE_SIZE = {
   player: 48,
@@ -270,19 +271,19 @@ export function DungeonLiberatorGame({ vocabulary, onComplete }: DungeonLiberato
         className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
       >
         <GameStartScreen
-          gameTitle="Dungeon Liberator"
-          gameSubtitle="Rescue the Prisoners"
+          gameTitle={tx("Dungeon Liberator")}
+          gameSubtitle={tx("Rescue the Prisoners")}
           vocabulary={vocabulary}
           instructions={[
-            { step: 1, text: 'Collect prisoners in the correct word order to build your rescue party.', icon: Users },
-            { step: 2, text: 'Wrong prisoner? They panic and flee. Monster hits your trail? The tail gets cut off!', icon: AlertTriangle },
-            { step: 3, text: 'Guide everyone to the exit portal to complete the sentence and escape!', icon: Shield },
+            { step: 1, text: tx("Collect prisoners in the correct word order to build your rescue party."), icon: Users },
+            { step: 2, text: tx("Wrong prisoner? They panic and flee. Monster hits your trail? The tail gets cut off!"), icon: AlertTriangle },
+            { step: 3, text: tx("Guide everyone to the exit portal to complete the sentence and escape!"), icon: Shield },
           ]}
-          proTip="Read the Thai translation at the top to figure out which word comes next. Monsters get faster each level!"
+          proTip={tx("Read the Thai translation at the top to figure out which word comes next. Monsters get faster each level!")}
           controls={[
-            { label: 'Move', keys: 'Arrows / WASD', color: 'bg-amber-500' },
+            { label: tx("Move"), keys: tx("Arrows / WASD"), color: 'bg-amber-500' },
           ]}
-          startButtonText="Enter the Dungeon"
+          startButtonText={tx("Enter the Dungeon")}
           icon={Sword}
           onStart={() => {
             resetGame()
@@ -322,15 +323,15 @@ export function DungeonLiberatorGame({ vocabulary, onComplete }: DungeonLiberato
           {/* HUD — Lives, Rescued, Level */}
           <div className="absolute top-4 left-4 z-10 flex flex-col gap-1 text-white font-bold text-lg pointer-events-none drop-shadow-md">
             <div className="flex items-center gap-2">
-              Lives: {Array(gameState.player.maxLives).fill(0).map((_, i) => (
+              {tx("Lives:")} {Array(gameState.player.maxLives).fill(0).map((_, i) => (
                 <span key={i} className={i < gameState.player.lives ? "text-red-400" : "text-white/30"}>❤️</span>
               ))}
             </div>
             <div className="text-sm text-amber-400">
-              Rescued: {gameState.trail.length} / {gameState.words.length}
+              {tx("Rescued:")} {gameState.trail.length} / {gameState.words.length}
             </div>
             <div className="text-sm text-purple-400">
-              Level: {gameState.level}
+              {tx("Level:")} {gameState.level}
             </div>
           </div>
 
@@ -418,7 +419,7 @@ export function DungeonLiberatorGame({ vocabulary, onComplete }: DungeonLiberato
                     opacity={0.2}
                   />
                    <Text
-                    text="EXIT"
+                    text={tx("EXIT")}
                     fontSize={getEffectiveTextSize(16)}
                     fill="white"
                     fontStyle="bold"
@@ -602,14 +603,14 @@ export function DungeonLiberatorGame({ vocabulary, onComplete }: DungeonLiberato
       {gamePhase === 'ended' && gameState && results && (
         <GameEndScreen
           status="defeat"
-          title="Overwhelmed!"
-          subtitle="The dungeon claimed another hero..."
+          title={tx("Overwhelmed!")}
+          subtitle={tx("The dungeon claimed another hero...")}
           score={totalCorrect * 10}
           xp={results.xp}
           accuracy={results.accuracy}
           customStats={[
-            { label: 'Words Rescued', value: totalCorrect, icon: Users },
-            { label: 'Level Reached', value: gameState.level },
+            { label: tx("Words Rescued"), value: totalCorrect, icon: Users },
+            { label: tx("Level Reached"), value: gameState.level },
           ]}
           onRestart={() => {
             resetGame()

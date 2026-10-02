@@ -21,6 +21,7 @@ import { useGameFullscreen } from '@/hooks/useGameFullscreen'
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { calculateXP } from '@/lib/games/xp'
 import { Shield, BookOpen, AlertTriangle, Target, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react'
+import { tx } from '@/lib/games/gameText'
 
 export type StormCastleTowerGameResult = {
   xp: number
@@ -207,20 +208,20 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
         className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
       >
         <GameStartScreen
-          gameTitle="Storm the Castle Tower"
-          gameSubtitle="Scale the Walls"
+          gameTitle={tx("Storm the Castle Tower")}
+          gameSubtitle={tx("Scale the Walls")}
           vocabulary={vocabulary}
           instructions={[
-            { step: 1, text: 'Windows on the tower show words from the sentence.', icon: BookOpen },
-            { step: 2, text: 'Move to windows and tap to collect words in the correct order!', icon: Target },
-            { step: 3, text: 'Dodge boiling oil and falling rocks!', icon: AlertTriangle },
+            { step: 1, text: tx("Windows on the tower show words from the sentence."), icon: BookOpen },
+            { step: 2, text: tx("Move to windows and tap to collect words in the correct order!"), icon: Target },
+            { step: 3, text: tx("Dodge boiling oil and falling rocks!"), icon: AlertTriangle },
           ]}
-          proTip="Move quickly but carefully. Wrong words slam the window shut and cost a life!"
+          proTip={tx("Move quickly but carefully. Wrong words slam the window shut and cost a life!")}
           controls={[
-            { label: 'Move', keys: 'Arrow Keys / WASD', color: 'bg-cyan-500' },
-            { label: 'Collect', keys: 'Space / Tap Window', color: 'bg-purple-500' },
+            { label: tx("Move"), keys: tx("Arrow Keys / WASD"), color: 'bg-cyan-500' },
+            { label: tx("Collect"), keys: tx("Space / Tap Window"), color: 'bg-purple-500' },
           ]}
-          startButtonText="Storm the Tower"
+          startButtonText={tx("Storm the Tower")}
           icon={Shield}
           onStart={() => {
             resetGame()
@@ -231,27 +232,27 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
         >
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-white/50">Tower Height:</span>
+              <span className="text-xs uppercase tracking-wider text-white/50">{tx("Tower Height:")}</span>
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value as Difficulty)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
               >
-                <option value="easy">Squire&apos;s Tower (4 words)</option>
-                <option value="medium">Knight&apos;s Keep (5 words)</option>
-                <option value="hard">Lord&apos;s Citadel (6 words)</option>
+                <option value="easy">{tx("Squire's Tower (4 words)")}</option>
+                <option value="medium">{tx("Knight's Keep (5 words)")}</option>
+                <option value="hard">{tx("Lord's Citadel (6 words)")}</option>
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-white/50">Guard Type:</span>
+              <span className="text-xs uppercase tracking-wider text-white/50">{tx("Guard Type:")}</span>
               <select
                 value={selectedGuard}
                 onChange={(e) => setSelectedGuard(e.target.value as GuardType)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
               >
-                <option value="lazy-guard">Lazy Guard (Slow)</option>
-                <option value="alert-sentry">Alert Sentry (Medium)</option>
-                <option value="elite-watchman">Elite Watchman (Fast)</option>
+                <option value="lazy-guard">{tx("Lazy Guard (Slow)")}</option>
+                <option value="alert-sentry">{tx("Alert Sentry (Medium)")}</option>
+                <option value="elite-watchman">{tx("Elite Watchman (Fast)")}</option>
               </select>
             </div>
           </div>
@@ -276,8 +277,8 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
             setGamePhase('start')
           }}
           customStats={[
-            { label: 'Words Collected', value: gameState?.correctWords ?? 0 },
-            { label: 'Lives Left', value: gameState?.player.lives ?? 0 },
+            { label: tx("Words Collected"), value: gameState?.correctWords ?? 0 },
+            { label: tx("Lives Left"), value: gameState?.player.lives ?? 0 },
           ]}
         />
       </div>
@@ -327,7 +328,7 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
             <Text
               x={10}
               y={70}
-              text={`Target: ${targetWord}`}
+              text={tx("Target: {targetWord}", { targetWord })}
               fontSize={getEffectiveTextSize(18)}
               fill="#fbbf24"
               width={STORM_CASTLE_TOWER_CONFIG.gameWidth - 20}
@@ -346,7 +347,7 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
               <Text
                 x={15}
                 y={15}
-                text={`Lives: ${gameState.player.lives}`}
+                text={tx("Lives: {lives}", { lives: gameState.player.lives })}
                 fontSize={getEffectiveTextSize(16)}
                 fill="#f87171"
               />
@@ -440,8 +441,8 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
       )}
       
       <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4 text-xs text-white/50">
-        <span>Arrows/WASD = Move</span>
-        <span>Space = Collect</span>
+        <span>{tx("Arrows/WASD = Move")}</span>
+        <span>{tx("Space = Collect")}</span>
       </div>
       
       <div className="absolute bottom-20 left-0 right-0 flex justify-center gap-2">
@@ -475,7 +476,7 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
           onTouchStart={handleCollect}
           className="w-16 h-12 bg-purple-500/50 rounded-lg flex items-center justify-center text-white active:bg-purple-500/70 ml-4"
         >
-          Collect
+          {tx("Collect")}
         </button>
       </div>
     </div>

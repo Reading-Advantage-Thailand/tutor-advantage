@@ -15,6 +15,7 @@ import CustomerQueue from "./CustomerQueue";
 import TrashPortal from "./TrashPortal";
 import PotionRushEffectsLayer from "./PotionRushEffectsLayer";
 import PotionRushSoundController from "./PotionRushSoundController";
+import { tx } from "@/lib/games/gameText";
 
 export interface PotionRushGameResult {
   xp: number;
@@ -382,7 +383,7 @@ export default function PotionRushGame({
                       dash={[6, 4]}
                     />
                     <Text
-                      text="HOLD"
+                      text={tx("HOLD")}
                       fontSize={11}
                       fontStyle="bold"
                       fill="rgba(255, 255, 255, 0.35)"

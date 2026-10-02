@@ -15,6 +15,7 @@ import {
   BattleLocationOption,
 } from "@/lib/games/rpgBattleSelection";
 import { BattleSelectionStep } from "@/store/useRPGBattleStore";
+import { tx } from "@/lib/games/gameText";
 
 interface BattleSelectionModalProps {
   step: BattleSelectionStep;
@@ -89,26 +90,26 @@ export function BattleSelectionModal({
           {step === "hero" ? (
             <>
               <h2 className="text-lg font-semibold text-slate-100">
-                Choose your hero
+                {tx("Choose your hero")}
               </h2>
-              <p className="text-sm text-slate-400">Cosmetic choice only.</p>
+              <p className="text-sm text-slate-400">{tx("Cosmetic choice only.")}</p>
             </>
           ) : null}
           {step === "location" ? (
             <>
               <h2 className="text-lg font-semibold text-slate-100">
-                Choose a location
+                {tx("Choose a location")}
               </h2>
-              <p className="text-sm text-slate-400">Background only.</p>
+              <p className="text-sm text-slate-400">{tx("Background only.")}</p>
             </>
           ) : null}
           {step === "enemy" ? (
             <>
               <h2 className="text-lg font-semibold text-slate-100">
-                Choose an enemy
+                {tx("Choose an enemy")}
               </h2>
               <p className="text-sm text-slate-400">
-                Stronger foes grant more XP.
+                {tx("Stronger foes grant more XP.")}
               </p>
             </>
           ) : null}
@@ -119,12 +120,12 @@ export function BattleSelectionModal({
               {heroes.map((hero) => (
                 <SelectionOptionButton
                   key={hero.id}
-                  label={hero.label}
+                  label={tx(hero.label)}
                   preview={
                     <Sprite
                       src={hero.sprite}
                       pose="idle"
-                      alt={`${hero.label} hero`}
+                      alt={tx("{label} hero", { label: tx(hero.label) })}
                       size={72}
                     />
                   }
@@ -139,11 +140,11 @@ export function BattleSelectionModal({
               {locations.map((location) => (
                 <SelectionOptionButton
                   key={location.id}
-                  label={location.label}
+                  label={tx(location.label)}
                   preview={
                     <div
                       role="img"
-                      aria-label={location.label}
+                      aria-label={tx(location.label)}
                       className="h-16 w-full rounded-md bg-cover bg-center border border-slate-700/30"
                       style={{ backgroundImage: `url(${location.background})` }}
                     />
@@ -159,13 +160,13 @@ export function BattleSelectionModal({
               {enemies.map((enemy) => (
                 <SelectionOptionButton
                   key={enemy.id}
-                  label={enemy.label}
+                  label={tx(enemy.label)}
                   description={formatEnemyStats(enemy.multiplier)}
                   preview={
                     <Sprite
                       src={enemy.sprite}
                       pose="idle"
-                      alt={`${enemy.label} enemy`}
+                      alt={tx("{label} enemy", { label: tx(enemy.label) })}
                       size={72}
                     />
                   }

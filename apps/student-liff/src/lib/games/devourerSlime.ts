@@ -44,6 +44,8 @@ export type SlimeState = {
   correctAnswers: number
   totalAttempts: number
   difficulty: Difficulty
+  /** gameTime (ms) until which knights cannot hurt the slime (start / after a hit). */
+  invulnerableUntil?: number
   lastEvent?: 'correct' | 'incorrect' | 'hit' | 'eat_enemy' | 'victory' | 'defeat'
 }
 
@@ -53,6 +55,12 @@ export const INITIAL_SLIME_RADIUS = 25
 export const ORB_RADIUS = 20
 export const KNIGHT_RADIUS = 35
 export const MAX_LIVES = 3
+/** Knights never spawn closer than this (centre to centre) to the slime. */
+export const SPAWN_SAFE_RADIUS = 220
+/** Grace period at the start of each sentence before knights can hurt. */
+export const SPAWN_GRACE_MS = 2000
+/** Grace period after being hit, so one touch costs one life (not one per frame). */
+export const HIT_GRACE_MS = 1200
 
 export type SlimeConfig = {
   rng?: () => number
@@ -88,7 +96,8 @@ export function createSlimeState(
     gameTime: 0,
     correctAnswers: 0,
     totalAttempts: 0,
-    difficulty: config.difficulty || 'medium'
+    difficulty: config.difficulty || 'medium',
+    invulnerableUntil: SPAWN_GRACE_MS,
   }
 
   return spawnLevel(state, config.rng ?? Math.random)
@@ -113,10 +122,7 @@ function spawnLevel(state: SlimeState, rng: () => number): SlimeState {
   const enemyCount = state.difficulty === 'easy' ? 2 : state.difficulty === 'hard' ? 6 : 4
   const enemies: KnightEnemy[] = Array.from({ length: enemyCount }).map((_, i) => ({
     id: `knight-${i}-${Date.now()}-${rng()}`,
-    pos: {
-      x: rng() * ARENA_WIDTH,
-      y: rng() * ARENA_HEIGHT,
-    },
+    pos: pickSafeSpawn(rng, state.slime.pos, SPAWN_SAFE_RADIUS + state.slime.radius - INITIAL_SLIME_RADIUS),
     vel: {
       x: (rng() - 0.5) * 2,
       y: (rng() - 0.5) * 2,
@@ -126,7 +132,53 @@ function spawnLevel(state: SlimeState, rng: () => number): SlimeState {
     currentPatrolIndex: 0
   }))
 
-  return { ...state, orbs, enemies, targetWordIndex: 0 }
+  return {
+    ...state,
+    orbs,
+    enemies,
+    targetWordIndex: 0,
+    invulnerableUntil: Math.max(state.invulnerableUntil ?? 0, state.gameTime + SPAWN_GRACE_MS),
+  }
+}
+
+/**
+ * Random knight position inside the arena that is at least `minDistance` from
+ * `avoid` (the slime). Retries a few random points, then pushes the last one
+ * straight away from the slime (wrapping to the far side if the edge is hit).
+ */
+export function pickSafeSpawn(rng: () => number, avoid: Point, minDistance: number): Point {
+  const margin = KNIGHT_RADIUS
+  const randomPoint = () => ({
+    x: margin + rng() * (ARENA_WIDTH - margin * 2),
+    y: margin + rng() * (ARENA_HEIGHT - margin * 2),
+  })
+  const far = (p: Point) => Math.hypot(p.x - avoid.x, p.y - avoid.y) >= minDistance
+  let point = randomPoint()
+  for (let attempt = 0; attempt < 12 && !far(point); attempt += 1) point = randomPoint()
+  if (far(point)) return point
+
+  // Push away from the slime along the same direction; flip if it leaves the arena.
+  const dx = point.x - avoid.x
+  const dy = point.y - avoid.y
+  const length = Math.hypot(dx, dy) || 1
+  const clampX = (x: number) => Math.max(margin, Math.min(ARENA_WIDTH - margin, x))
+  const clampY = (y: number) => Math.max(margin, Math.min(ARENA_HEIGHT - margin, y))
+  for (const sign of [1, -1]) {
+    const candidate = {
+      x: clampX(avoid.x + (sign * dx * minDistance) / length),
+      y: clampY(avoid.y + (sign * dy * minDistance) / length),
+    }
+    if (far(candidate)) return candidate
+  }
+  // Last resort: the arena corner farthest from the slime.
+  return {
+    x: avoid.x < ARENA_WIDTH / 2 ? ARENA_WIDTH - margin : margin,
+    y: avoid.y < ARENA_HEIGHT / 2 ? ARENA_HEIGHT - margin : margin,
+  }
+}
+
+export function isSlimeInvulnerable(state: SlimeState): boolean {
+  return state.gameTime < (state.invulnerableUntil ?? 0)
 }
 
 export function moveSlime(state: SlimeState, dx: number, dy: number, dt: number): SlimeState {
@@ -200,8 +252,12 @@ function handleCollisions(state: SlimeState, rng: () => number): SlimeState {
         nextState.enemies = newEnemies
         nextState.score += 500
         nextState.lastEvent = 'eat_enemy'
+      } else if (isSlimeInvulnerable(nextState)) {
+        // Spawn / post-hit grace: knights pass through harmlessly.
+        continue
       } else {
         // Get hit
+        nextState.invulnerableUntil = nextState.gameTime + HIT_GRACE_MS
         nextState.lives -= 1
         nextState.lastEvent = 'hit'
         // Shrink

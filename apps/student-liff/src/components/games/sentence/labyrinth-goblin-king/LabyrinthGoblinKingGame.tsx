@@ -21,6 +21,7 @@ import { VirtualDPad } from '@/components/games/ui/VirtualDPad'
 import { Skull, Heart, BookOpen, AlertTriangle, Zap, Target } from 'lucide-react'
 import { useGameFullscreen } from '@/hooks/useGameFullscreen'
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
+import { tx } from '@/lib/games/gameText'
 
 export type LabyrinthGoblinKingGameResult = {
   xp: number
@@ -187,21 +188,21 @@ export function LabyrinthGoblinKingGame({ sentences, onComplete }: LabyrinthGobl
         className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
       >
         <GameStartScreen
-          gameTitle="Labyrinth of the Goblin King"
-          gameSubtitle="Navigate the Maze"
+          gameTitle={tx("Labyrinth of the Goblin King")}
+          gameSubtitle={tx("Navigate the Maze")}
           vocabulary={sentences}
           instructions={[
-            { step: 1, text: 'Navigate the maze and collect word orbs in the correct order.', icon: BookOpen },
-            { step: 2, text: 'The translation is shown at the top - find the words!', icon: Target },
-            { step: 3, text: 'Avoid goblins! Collisions cost lives. Wrong words cost a life.', icon: AlertTriangle },
-            { step: 4, text: 'Collect all words to become a Paladin and defeat the goblins!', icon: Zap },
+            { step: 1, text: tx("Navigate the maze and collect word orbs in the correct order."), icon: BookOpen },
+            { step: 2, text: tx("The translation is shown at the top - find the words!"), icon: Target },
+            { step: 3, text: tx("Avoid goblins! Collisions cost lives. Wrong words cost a life."), icon: AlertTriangle },
+            { step: 4, text: tx("Collect all words to become a Paladin and defeat the goblins!"), icon: Zap },
           ]}
-          proTip="The target orb glows gold! During Heroic Aura, goblins flee and you can eat them for bonus XP!"
+          proTip={tx("The target orb glows gold! During Heroic Aura, goblins flee and you can eat them for bonus XP!")}
           controls={[
-            { label: 'Move', keys: 'Arrow Keys / WASD', color: 'bg-green-500' },
-            { label: 'DPad', keys: 'Touch & Drag', color: 'bg-emerald-500' },
+            { label: tx("Move"), keys: tx("Arrow Keys / WASD"), color: 'bg-green-500' },
+            { label: tx("DPad"), keys: tx("Touch & Drag"), color: 'bg-emerald-500' },
           ]}
-          startButtonText="Enter the Labyrinth"
+          startButtonText={tx("Enter the Labyrinth")}
           icon={Skull}
           onStart={() => {
             resetGame()
@@ -211,28 +212,28 @@ export function LabyrinthGoblinKingGame({ sentences, onComplete }: LabyrinthGobl
         >
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-white/50">Difficulty:</span>
+              <span className="text-xs uppercase tracking-wider text-white/50">{tx("Difficulty:")}</span>
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value as Difficulty)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-green-400"
               >
-                <option value="easy">Small Dungeon</option>
-                <option value="normal">Medium Dungeon</option>
-                <option value="hard">Large Dungeon</option>
-                <option value="extreme">Abyss</option>
+                <option value="easy">{tx("Small Dungeon")}</option>
+                <option value="normal">{tx("Medium Dungeon")}</option>
+                <option value="hard">{tx("Large Dungeon")}</option>
+                <option value="extreme">{tx("Abyss")}</option>
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-white/50">Goblin:</span>
+              <span className="text-xs uppercase tracking-wider text-white/50">{tx("Goblin:")}</span>
               <select
                 value={selectedGoblinType}
                 onChange={(e) => setSelectedGoblinType(e.target.value as GoblinType)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-green-400"
               >
-                <option value="scout">Scout (Patrol)</option>
-                <option value="warrior">Warrior (Chase)</option>
-                <option value="elite">Elite (Hunt)</option>
+                <option value="scout">{tx("Scout (Patrol)")}</option>
+                <option value="warrior">{tx("Warrior (Chase)")}</option>
+                <option value="elite">{tx("Elite (Hunt)")}</option>
               </select>
             </div>
           </div>
@@ -361,7 +362,7 @@ export function LabyrinthGoblinKingGame({ sentences, onComplete }: LabyrinthGobl
                 <Text
                   x={10}
                   y={GAME_HEIGHT - 30}
-                  text={`Words: ${gameState.collectedWords.length}/${gameState.wordOrbs.length} | Goblins Eaten: ${gameState.goblinsEaten}`}
+                  text={tx("Words: {length}/{length1} | Goblins Eaten: {goblinsEaten}", { length: gameState.collectedWords.length, length1: gameState.wordOrbs.length, goblinsEaten: gameState.goblinsEaten })}
                   fontSize={getEffectiveTextSize(16)}
                   fill="white"
                 />
@@ -378,15 +379,15 @@ export function LabyrinthGoblinKingGame({ sentences, onComplete }: LabyrinthGobl
       {gamePhase === 'ended' && gameState && results && (
         <GameEndScreen
           status={gameState.status === 'victory' ? 'victory' : 'defeat'}
-          title={gameState.status === 'victory' ? 'Labyrinth Conquered!' : 'Lost in the Maze!'}
-          subtitle={gameState.status === 'victory' ? 'You defeated the Goblin King!' : 'The goblins were too strong...'}
+          title={gameState.status === 'victory' ? tx("Labyrinth Conquered!") : tx("Lost in the Maze!")}
+          subtitle={gameState.status === 'victory' ? tx("You defeated the Goblin King!") : tx("The goblins were too strong...")}
           score={gameState.correctAnswers * 10}
           xp={results.xp}
           accuracy={results.accuracy}
           customStats={[
-            { label: 'Words Collected', value: gameState.correctAnswers, icon: BookOpen },
-            { label: 'Goblins Eaten', value: gameState.goblinsEaten, icon: Skull },
-            { label: 'Lives Left', value: gameState.player.lives, icon: Heart },
+            { label: tx("Words Collected"), value: gameState.correctAnswers, icon: BookOpen },
+            { label: tx("Goblins Eaten"), value: gameState.goblinsEaten, icon: Skull },
+            { label: tx("Lives Left"), value: gameState.player.lives, icon: Heart },
           ]}
           onRestart={() => {
             resetGame()

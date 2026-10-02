@@ -19,6 +19,7 @@ import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { Gem, BookOpen, AlertTriangle, Heart } from 'lucide-react'
+import { tx } from '@/lib/games/gameText'
 
 export type RuneForgeChamberGameResult = {
   xp: number
@@ -192,19 +193,19 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
         className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
       >
         <GameStartScreen
-          gameTitle="Rune Forge Chamber"
-          gameSubtitle="Forge the Ancient Runes"
+          gameTitle={tx("Rune Forge Chamber")}
+          gameSubtitle={tx("Forge the Ancient Runes")}
           vocabulary={vocabulary}
           instructions={[
-            { step: 1, text: 'Tap the word circles in the correct order to forge the rune.', icon: BookOpen },
-            { step: 2, text: 'The translation is shown on the central rune stone - find the words!', icon: BookOpen },
-            { step: 3, text: 'Complete the sentence before the forge cools down. Wrong taps damage the rune!', icon: AlertTriangle },
+            { step: 1, text: tx("Tap the word circles in the correct order to forge the rune."), icon: BookOpen },
+            { step: 2, text: tx("The translation is shown on the central rune stone - find the words!"), icon: BookOpen },
+            { step: 3, text: tx("Complete the sentence before the forge cools down. Wrong taps damage the rune!"), icon: AlertTriangle },
           ]}
-          proTip="The target circle glows gold - tap it first! Watch the timer!"
+          proTip={tx("The target circle glows gold - tap it first! Watch the timer!")}
           controls={[
-            { label: 'Select', keys: 'Tap / Click', color: 'bg-amber-500' },
+            { label: tx("Select"), keys: tx("Tap / Click"), color: 'bg-amber-500' },
           ]}
-          startButtonText="Enter the Forge"
+          startButtonText={tx("Enter the Forge")}
           icon={Gem}
           onStart={() => {
             resetGame()
@@ -213,30 +214,30 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
         >
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <label htmlFor="difficulty-select" className="text-xs uppercase tracking-wider text-white/50">Difficulty:</label>
+              <label htmlFor="difficulty-select" className="text-xs uppercase tracking-wider text-white/50">{tx("Difficulty:")}</label>
               <select
                 id="difficulty-select"
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value as Difficulty)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
               >
-                <option value="easy">Easy</option>
-                <option value="normal">Medium</option>
-                <option value="hard">Hard</option>
-                <option value="extreme">Extreme</option>
+                <option value="easy">{tx("Easy")}</option>
+                <option value="normal">{tx("Medium")}</option>
+                <option value="hard">{tx("Hard")}</option>
+                <option value="extreme">{tx("Extreme")}</option>
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <label htmlFor="rune-type-select" className="text-xs uppercase tracking-wider text-white/50">Rune Type:</label>
+              <label htmlFor="rune-type-select" className="text-xs uppercase tracking-wider text-white/50">{tx("Rune Type:")}</label>
               <select
                 id="rune-type-select"
                 value={selectedRuneType}
                 onChange={(e) => setSelectedRuneType(e.target.value as RuneType)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
               >
-                <option value="common-stone">Common Stone</option>
-                <option value="rare-crystal">Rare Crystal</option>
-                <option value="void-essence">Void Essence</option>
+                <option value="common-stone">{tx("Common Stone")}</option>
+                <option value="rare-crystal">{tx("Rare Crystal")}</option>
+                <option value="void-essence">{tx("Void Essence")}</option>
               </select>
             </div>
           </div>
@@ -370,7 +371,7 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
                 <Text
                   x={GAME_WIDTH / 2 - 30}
                   y={2}
-                  text={`Forge: ${Math.ceil(gameState.timer / 1000)}s`}
+                  text={tx("Forge: {timer}s", { timer: Math.ceil(gameState.timer / 1000) })}
                   fontSize={getEffectiveTextSize(16)}
                   fill="white"
                   fontStyle="bold"
@@ -397,7 +398,7 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
                 <Text
                   x={GAME_WIDTH / 2 - 30}
                   y={2}
-                  text={`Rune: ${gameState.player.health}%`}
+                  text={tx("Rune: {health}%", { health: gameState.player.health })}
                   fontSize={getEffectiveTextSize(16)}
                   fill="white"
                   fontStyle="bold"
@@ -407,7 +408,7 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
               <Text
                 x={10}
                 y={GAME_HEIGHT - 60}
-                text={`Words: ${gameState.collectedWords.length}/${gameState.words.length}`}
+                text={tx("Words: {length}/{length1}", { length: gameState.collectedWords.length, length1: gameState.words.length })}
                 fontSize={getEffectiveTextSize(16)}
                 fill="white"
                 fontStyle="bold"
@@ -416,7 +417,7 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
               <Text
                 x={GAME_WIDTH / 2 - 30}
                 y={GAME_HEIGHT - 60}
-                text={`Level ${gameState.level}`}
+                text={tx("Level {level}", { level: gameState.level })}
                 fontSize={getEffectiveTextSize(16)}
                 fill="#fbbf24"
                 fontStyle="bold"
@@ -429,15 +430,15 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
       {gamePhase === 'ended' && gameState && results && (
         <GameEndScreen
           status="defeat"
-          title="Rune Shattered!"
-          subtitle={`The forge grew too cold... You reached level ${gameState.level}.`}
+          title={tx("Rune Shattered!")}
+          subtitle={tx("The forge grew too cold... You reached level {level}.", { level: gameState.level })}
           score={gameState.correctAnswers * 10}
           xp={results.xp}
           accuracy={results.accuracy}
           customStats={[
-            { label: 'Levels Forged', value: gameState.level, icon: Gem },
-            { label: 'Words Forged', value: gameState.correctAnswers, icon: BookOpen },
-            { label: 'Rune Integrity', value: gameState.player.health, icon: Heart },
+            { label: tx("Levels Forged"), value: gameState.level, icon: Gem },
+            { label: tx("Words Forged"), value: gameState.correctAnswers, icon: BookOpen },
+            { label: tx("Rune Integrity"), value: gameState.player.health, icon: Heart },
           ]}
           onRestart={() => {
             resetGame()

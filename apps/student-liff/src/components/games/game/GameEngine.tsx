@@ -98,6 +98,7 @@ const getHealthPercent = (hp: number) =>
   `${(Math.max(hp, 0) / MAX_CASTLE_HP) * 100}%`;
 
 import { Difficulty } from "@/store/useGameStore";
+import { tx } from "@/lib/games/gameText";
 
 interface GameEngineProps {
   difficulty?: Difficulty;
@@ -668,7 +669,7 @@ export function GameEngine({ difficulty = "normal" }: GameEngineProps) {
               }}
               className="absolute bottom-[56px] right-3 z-30 flex items-center gap-1.5 rounded-xl border border-cyan-400/40 bg-cyan-950/90 px-3 py-2 text-cyan-300 text-xs font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(34,211,238,0.4)] animate-pulse pointer-events-auto"
             >
-              ✨ Ultimate!
+              {tx("✨ Ultimate!")}
             </motion.button>
           )}
         </AnimatePresence>

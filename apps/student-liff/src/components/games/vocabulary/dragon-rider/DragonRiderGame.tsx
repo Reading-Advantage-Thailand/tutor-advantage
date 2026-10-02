@@ -42,6 +42,7 @@ import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { GameEndScreen } from "@/components/games/game/GameEndScreen";
 import { GameStartScreen } from "@/components/games/game/GameStartScreen";
 import { RankingDialog } from "@/components/games/vocabulary/dragon-flight/RankingDialog";
+import { tx } from "@/lib/games/gameText";
 
 type DragonRiderAssets = {
   gates: HTMLImageElement;
@@ -1016,7 +1017,7 @@ export function DragonRiderGame({
             <div
               className="h-2 w-full overflow-hidden bg-white/10"
               role="progressbar"
-              aria-label="Run timer"
+              aria-label={tx("Run timer")}
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={Math.round(remainingRatio * 100)}
@@ -1158,7 +1159,7 @@ export function DragonRiderGame({
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.4, type: "spring" }}
                 >
-                  ⚔️ Big Boss Battle! ⚔️
+                  {tx("⚔️ Big Boss Battle! ⚔️")}
                 </motion.div>
                 <motion.div
                   className="absolute inset-x-0 top-24 sm:top-36 mx-auto w-40 sm:w-64 md:w-80 px-2 sm:px-0"
@@ -1221,7 +1222,7 @@ export function DragonRiderGame({
               keys: t("instructionsScreen.controls.moveKeys"),
               color: "bg-amber-500",
             },
-            { label: "Select", keys: "Tap Gate", color: "bg-emerald-500" },
+            { label: tx("Select"), keys: tx("Tap Gate"), color: "bg-emerald-500" },
           ]}
           startButtonText={
             isLoading ? t("startScreen.loading") : t("startScreen.startButton")

@@ -198,12 +198,21 @@ export function AdvantageArcadeRuntime({
       /storm/i,
       /enter/i,
       /run/i,
+      /เริ่ม/,
     ]
-    const blockedPatterns = [/again/i, /restart/i, /ranking/i, /leaderboard/i, /back/i, /home/i]
+    const blockedPatterns = [/again/i, /restart/i, /ranking/i, /leaderboard/i, /back/i, /home/i, /อีกครั้ง/, /อันดับ/]
 
     const clickStartButton = () => {
       const root = rootRef.current
       if (!root) return false
+
+      // Start screens mark their start button; labels are Thai now, so the
+      // text patterns below are only a fallback for custom start buttons.
+      const marked = root.querySelector<HTMLButtonElement>("button[data-game-start]:not(:disabled)")
+      if (marked) {
+        marked.click()
+        return true
+      }
 
       const buttons = Array.from(root.querySelectorAll("button")) as HTMLButtonElement[]
       const startButton = buttons.find((button) => {
