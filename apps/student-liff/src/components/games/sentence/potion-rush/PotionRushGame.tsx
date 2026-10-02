@@ -210,13 +210,13 @@ export default function PotionRushGame({
   }, [autoStart, tutorialMode, assetsLoaded, hasStarted, vocabList, difficulty, enterFullscreen, startGame]);
 
   if (dimensions.width === 0)
-    return <div ref={containerRef} className="w-screen h-dvh bg-slate-950" />;
+    return <div ref={containerRef} className="h-full min-h-0 w-full bg-slate-950" />;
 
   return (
     <div ref={(node) => {
       (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
       (fsContainerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-    }} className="w-screen h-dvh relative font-sans overflow-hidden bg-slate-950 rounded-none touch-none select-none">
+    }} className="h-full min-h-0 w-full relative font-sans overflow-hidden bg-slate-950 rounded-none touch-none select-none">
       <PotionRushSoundController />
 
       <AnimatePresence>

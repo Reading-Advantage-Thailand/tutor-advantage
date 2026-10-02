@@ -255,8 +255,12 @@ export function PotionRushTeachingGame({
 
   return (
     <div
+      // PotionRushGame fills this frame (not the viewport), so the frame needs a
+      // definite height: capped to the screen inline, the stage in fullscreen.
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${
-        fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none" : "min-h-[520px] rounded-[32px] shadow-2xl"
+        fullscreen
+          ? "h-full min-h-[360px] flex-1 rounded-none shadow-none"
+          : "h-[max(480px,calc(100dvh-13rem))] rounded-[32px] shadow-2xl"
       }`}
       data-testid={`potion-rush-${mode}`}
     >

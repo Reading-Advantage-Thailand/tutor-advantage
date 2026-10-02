@@ -1,5 +1,5 @@
+import { useScopedI18n as useScopedI18nImpl } from '@/locales/client'
+
 export function useScopedI18n(scope: string) {
-  return (key: string, params?: Record<string, any>) => {
-    return key;
-  };
+  return useScopedI18nImpl(scope)
 }

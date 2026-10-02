@@ -226,7 +226,7 @@ export default function PotionRushGame({
     return (
       <div
         ref={setFullscreenContainerRef}
-        className="flex h-dvh w-screen overflow-hidden bg-slate-950"
+        className="flex h-full min-h-0 w-full overflow-hidden bg-slate-950"
       >
         {showControls && <PotionRushControlPanel variant="sidebar" />}
         <div ref={containerRef} className="h-full min-w-0 flex-1 bg-slate-950" />
@@ -237,7 +237,7 @@ export default function PotionRushGame({
   return (
     <div
       ref={setFullscreenContainerRef}
-      className="relative flex h-dvh w-screen overflow-hidden bg-slate-950 font-sans touch-none select-none"
+      className="relative flex h-full min-h-0 w-full overflow-hidden bg-slate-950 font-sans touch-none select-none"
     >
       <PotionRushSoundController />
       {showControls && <PotionRushControlPanel variant="sidebar" />}
