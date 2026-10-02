@@ -12,6 +12,11 @@ function canCheckAdjustment(role?: string) {
   return role === "ADMIN" || role === "FINANCE_CHECKER";
 }
 
+function noteFrom(body: unknown) {
+  const raw = (body as { reason?: unknown } | undefined)?.reason;
+  return typeof raw === "string" ? raw.trim().slice(0, 1000) : "";
+}
+
 function normalizeAmountSatang(value: unknown) {
   if (typeof value === "bigint") return value;
   if (typeof value === "number" && Number.isSafeInteger(value)) return BigInt(value);
@@ -19,23 +24,45 @@ function normalizeAmountSatang(value: unknown) {
   throw new Error("INVALID_AMOUNT");
 }
 
-async function refreshSettlementAfterAdjustment(settlementRunId: string) {
-  const sourceRun = await prisma.settlementRun.findUnique({
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * After an adjustment decision, keep an already-calculated DRAFT run in sync.
+ * Holders (ADJUSTMENT_PENDING), never-calculated drafts, rejected runs and
+ * SUBMITTED runs are left alone: they are recalculated by an explicit preview,
+ * and a SUBMITTED run now reports itself as stale until it is recalculated
+ * (submit/approve refuse stale runs).
+ */
+async function refreshSettlementAfterAdjustment(settlementRunId: string, actorId: string) {
+  const run = await prisma.settlementRun.findUnique({
     where: { settlementRunId },
-    select: { settlementRunId: true, periodMonth: true, status: true },
+    select: { settlementRunId: true, periodMonth: true, status: true, previewPayload: true },
   });
+  if (!run) return { refreshed: false, status: null, stale: false };
 
-  let targetRunId = settlementRunId;
-  if (sourceRun?.status === "ADJUSTMENT_PENDING") {
-    const activeRun = await prisma.settlementRun.findFirst({
-      where: { periodMonth: sourceRun.periodMonth, status: "DRAFT" },
-      orderBy: { createdAt: "desc" },
-      select: { settlementRunId: true },
-    });
-    targetRunId = activeRun?.settlementRunId ?? settlementRunId;
+  const previewed =
+    !!run.previewPayload &&
+    typeof run.previewPayload === "object" &&
+    Object.keys(run.previewPayload as object).length > 0;
+
+  if (run.status === "DRAFT" && previewed) {
+    try {
+      const refreshed = await SettlementService.refreshSettlementRun(settlementRunId, { actorId });
+      return { ...refreshed, stale: false };
+    } catch (error) {
+      // The decision itself is already committed; the draft simply stays
+      // stale (submit refuses it) until someone recalculates it.
+      logger.error("Adjustment follow-up refresh failed:", error);
+      return { refreshed: false, status: run.status, stale: true };
+    }
   }
-
-  return SettlementService.refreshSettlementRun(targetRunId);
+  return {
+    refreshed: false,
+    status: run.status,
+    // Lines of a submitted run no longer include this decision.
+    stale: run.status === "SUBMITTED",
+  };
 }
 
 /**
@@ -45,10 +72,18 @@ export async function getAdjustments(req: AuthenticatedRequest, res: Response) {
   try {
     const {
       status,
+      periodMonth,
+      tutorUserId,
       page = "1",
       pageSize = "50",
     } = req.query as Record<string, string>;
-    const filter = status ? { status } : {};
+    const filter = {
+      ...(status && /^[A-Z_]{2,30}$/.test(status) ? { status } : {}),
+      ...(tutorUserId && UUID_RE.test(tutorUserId) ? { tutorUserId } : {}),
+      ...(periodMonth && /^\d{4}-\d{2}$/.test(periodMonth)
+        ? { settlementRun: { periodMonth } }
+        : {}),
+    };
 
     const pageNum = Math.max(1, parseInt(page, 10) || 1);
     const limit = Math.max(1, Math.min(100, parseInt(pageSize, 10) || 50));
@@ -64,8 +99,6 @@ export async function getAdjustments(req: AuthenticatedRequest, res: Response) {
     ]);
 
     // ดึง displayName ของ tutors และ creators (กรอง UUID เท่านั้น)
-    const UUID_RE =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const userIds = [
       ...new Set([
         ...adjustments.map((a) => a.tutorUserId),
@@ -89,9 +122,10 @@ export async function getAdjustments(req: AuthenticatedRequest, res: Response) {
     const runIds = [...new Set(adjustments.map((a) => a.settlementRunId))];
     const runs = await prisma.settlementRun.findMany({
       where: { settlementRunId: { in: runIds } },
-      select: { settlementRunId: true, periodMonth: true },
+      select: { settlementRunId: true, periodMonth: true, status: true },
     });
     const runMap = new Map(runs.map((r) => [r.settlementRunId, r.periodMonth]));
+    const runStatusMap = new Map(runs.map((r) => [r.settlementRunId, r.status]));
 
     const getName = (id: string) =>
       userMap.get(id) ?? (id.includes("-") ? `User …${id.slice(-4)}` : id);
@@ -101,6 +135,8 @@ export async function getAdjustments(req: AuthenticatedRequest, res: Response) {
       tutorUserId: adj.tutorUserId,
       tutorName: getName(adj.tutorUserId),
       periodMonth: runMap.get(adj.settlementRunId) ?? "",
+      settlementRunId: adj.settlementRunId,
+      settlementRunStatus: runStatusMap.get(adj.settlementRunId) ?? null,
       amountSatang: Number(adj.amountMinor),
       reason: adj.reason,
       status: adj.status,
@@ -189,21 +225,75 @@ export async function createAdjustment(
       });
     }
 
-    // หา SettlementRun ของ period นั้น (หรือสร้างใหม่ถ้าไม่มี)
+    if (typeof periodMonth !== "string" || !/^\d{4}-(0[1-9]|1[0-2])$/.test(periodMonth)) {
+      return res.status(400).json({
+        error: {
+          code: "INVALID_PERIOD_MONTH",
+          message: "รูปแบบเดือนไม่ถูกต้อง (YYYY-MM)",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const trimmedReason = typeof reason === "string" ? reason.trim() : "";
+    if (!trimmedReason) {
+      return res.status(400).json({
+        error: {
+          code: "BAD_REQUEST",
+          message: "กรุณาระบุเหตุผลของการปรับปรุงยอด",
+          requestId: req.id,
+        },
+      });
+    }
+
+    // A malformed id used to reach Postgres' uuid cast and surface as a 500.
+    if (typeof tutorUserId !== "string" || !UUID_RE.test(tutorUserId.trim())) {
+      return res.status(400).json({
+        error: {
+          code: "INVALID_TUTOR_ID",
+          message: "รหัสครูไม่ถูกต้อง กรุณาเลือกครูจากรายการ",
+          requestId: req.id,
+        },
+      });
+    }
+    const normalizedTutorId = tutorUserId.trim();
+    const tutor = await prisma.user.findUnique({
+      where: { userId: normalizedTutorId },
+      select: { userId: true, role: true },
+    });
+    if (!tutor || tutor.role !== "TUTOR") {
+      return res.status(404).json({
+        error: {
+          code: "TUTOR_NOT_FOUND",
+          message: "ไม่พบครูตามรหัสที่ระบุ",
+          requestId: req.id,
+        },
+      });
+    }
+
+    // หา SettlementRun ของ period นั้น. ถ้ายังไม่มี ให้สร้าง "holder" สถานะ
+    // ADJUSTMENT_PENDING (ไม่ใช่ DRAFT) — การคำนวณรอบจริงจะ refresh holder นี้
+    // แทนการชน DRAFT_EXISTS และ holder ส่งตรวจ/อนุมัติไม่ได้ (F-2)
     let run = await prisma.settlementRun.findFirst({
       where: { periodMonth },
       orderBy: { createdAt: "desc" },
     });
 
     if (!run) {
-      run = await prisma.settlementRun.create({
-        data: {
-          periodMonth,
-          status: "DRAFT",
-          createdBy: userId,
-          previewPayload: {},
-        },
-      });
+      try {
+        run = await prisma.settlementRun.create({
+          data: {
+            periodMonth,
+            status: "ADJUSTMENT_PENDING",
+            createdBy: userId,
+            previewPayload: {},
+          },
+        });
+      } catch (createError) {
+        if ((createError as { code?: string }).code !== "P2002") throw createError;
+        run = await prisma.settlementRun.findFirst({ where: { periodMonth } });
+        if (!run) throw createError;
+      }
     }
 
     if (!["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"].includes(run.status)) {
@@ -219,9 +309,9 @@ export async function createAdjustment(
     const adj = await prisma.adjustment.create({
       data: {
         settlementRunId: run.settlementRunId,
-        tutorUserId,
+        tutorUserId: normalizedTutorId,
         amountMinor: normalizedAmount,
-        reason,
+        reason: trimmedReason,
         createdBy: userId,
       },
     });
@@ -233,13 +323,21 @@ export async function createAdjustment(
         action: "ADJUST_CREATE",
         entityType: "Adjustment",
         entityId: adj.adjustmentId,
-        payload: { amountSatang: normalizedAmount.toString(), reason, periodMonth },
+        payload: {
+          amountSatang: normalizedAmount.toString(),
+          reason: trimmedReason,
+          periodMonth,
+          tutorUserId: normalizedTutorId,
+          settlementRunId: run.settlementRunId,
+        },
       },
     });
 
     return res.status(201).json({
       message: "Adjustment created",
       adjustmentId: adj.adjustmentId,
+      settlementRunId: run.settlementRunId,
+      settlementRunStatus: run.status,
     });
   } catch (error_err) {
     const error = error_err as Error & { code?: string; details?: string; };
@@ -298,6 +396,23 @@ export async function approveAdjustment(
       });
     }
 
+    // An approved (or approving) run is final: approving a late adjustment
+    // would silently never be paid. It must go to the next period instead.
+    const targetRun = await prisma.settlementRun.findUnique({
+      where: { settlementRunId: adj.settlementRunId },
+      select: { status: true },
+    });
+    if (targetRun && ["APPROVING", "APPROVED", "PAID"].includes(targetRun.status)) {
+      return res.status(409).json({
+        error: {
+          code: "SETTLEMENT_IMMUTABLE",
+          message: "รอบจ่ายเงินของรายการนี้อนุมัติแล้ว จึงอนุมัติการปรับยอดเพิ่มไม่ได้",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const note = noteFrom(req.body);
     const now = new Date();
     const decision = await prisma.adjustment.updateMany({
       where: { adjustmentId, status: "PENDING" },
@@ -314,6 +429,7 @@ export async function approveAdjustment(
     }
     const settlementRefresh = await refreshSettlementAfterAdjustment(
       adj.settlementRunId,
+      userId,
     );
 
     await prisma.auditEvent.create({
@@ -326,6 +442,8 @@ export async function approveAdjustment(
           createdBy: adj.createdBy,
           approvedBy: userId,
           amountSatang: adj.amountMinor.toString(),
+          ...(note ? { reason: note } : {}),
+          settlementStale: settlementRefresh.stale,
         },
       },
     });
@@ -390,6 +508,7 @@ export async function rejectAdjustment(
       });
     }
 
+    const note = noteFrom(req.body);
     const now = new Date();
     const decision = await prisma.adjustment.updateMany({
       where: { adjustmentId, status: "PENDING" },
@@ -406,6 +525,7 @@ export async function rejectAdjustment(
     }
     const settlementRefresh = await refreshSettlementAfterAdjustment(
       adj.settlementRunId,
+      userId,
     );
 
     await prisma.auditEvent.create({
@@ -418,6 +538,7 @@ export async function rejectAdjustment(
           createdBy: adj.createdBy,
           rejectedBy: userId,
           amountSatang: adj.amountMinor.toString(),
+          ...(note ? { reason: note } : {}),
         },
       },
     });

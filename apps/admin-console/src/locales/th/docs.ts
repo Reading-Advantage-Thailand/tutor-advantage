@@ -6,4 +6,9 @@ export const docs = {
   helpDescription: "หากคุณไม่พบข้อมูลที่ต้องการ กรุณาติดต่อทีมงาน Support โดยตรงผ่านช่องทาง LINE",
   support: "ติดต่อเจ้าหน้าที่",
   adminGuide: "คู่มือสำหรับแอดมิน Tutor Advantage",
+  pageTitle: "คู่มือระบบ",
+  pageDescription: "ขั้นตอนการทำงานมาตรฐาน กฎความเสี่ยง และภาพรวมระบบสำหรับผู้ดูแล",
+  contents: "สารบัญ",
+  backToTop: "กลับด้านบน",
+  supportCta: "ติดต่อทีมงานทาง LINE",
 } as const;

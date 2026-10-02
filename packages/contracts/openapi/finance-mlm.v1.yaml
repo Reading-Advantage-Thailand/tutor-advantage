@@ -116,6 +116,46 @@ paths:
             type: integer
             minimum: 1
             maximum: 180
+        # ── G3 (payments operations) additions: server paging + filters ──
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [ALL, PENDING, PROCESSING, SUCCESS, FAILED, EXPIRED, CANCELLED, REFUNDED, CHARGEBACKED]
+        - name: issue
+          in: query
+          required: false
+          description: ALL, ISSUES (any non-OK), OK, or one issue type.
+          schema:
+            type: string
+            enum: [ALL, ISSUES, OK, ENROLLMENT_TARGET_NOT_FOUND, SUCCESS_NOT_ACTIVE, FAILED_ACTIVE, STALE_PENDING, MISSING_PAYMENT_REF]
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [createdAt, amount]
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+        # ── end G3 additions ──
       responses:
         "200":
           description: Reconciliation summary and queues.
@@ -166,14 +206,72 @@ paths:
           description: Run approved by checker
         "403":
           $ref: "#/components/responses/ForbiddenError"
+  # ── Audit trail (owner: admin G1) ─────────────────────────────────────
   /v1/audit-logs:
     get:
-      summary: Settlement Audit Trail
+      summary: Admin audit trail (paged)
+      description: >
+        All audit events (settlements, adjustments, users, roles, fraud, exceptions, coupons),
+        newest first. Filters combine with AND. `periodMonth`, `from` and `to` filter on the
+        event time (created_at) in Asia/Bangkok, so events without a settlement period are
+        never hidden by a month filter. ADMIN and FINANCE_CHECKER.
       security:
         - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuditPage"
+        - $ref: "#/components/parameters/AuditPageSize"
+        - $ref: "#/components/parameters/AuditSort"
+        - $ref: "#/components/parameters/AuditOrder"
+        - $ref: "#/components/parameters/AuditPeriodMonth"
+        - $ref: "#/components/parameters/AuditFrom"
+        - $ref: "#/components/parameters/AuditTo"
+        - $ref: "#/components/parameters/AuditActionType"
+        - $ref: "#/components/parameters/AuditEntityType"
+        - $ref: "#/components/parameters/AuditEntityId"
+        - $ref: "#/components/parameters/AuditActor"
       responses:
         "200":
-          description: Audit events
+          description: One page of audit events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogPage"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+  /v1/audit-logs/export:
+    get:
+      summary: Export the filtered audit trail as CSV
+      description: >
+        Same filters as GET /v1/audit-logs (page/pageSize ignored), at most 10,000 rows
+        (header X-Export-Truncated: true when cut). UTF-8 with BOM. The export itself is
+        audited (action AUDIT_EXPORT).
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuditSort"
+        - $ref: "#/components/parameters/AuditOrder"
+        - $ref: "#/components/parameters/AuditPeriodMonth"
+        - $ref: "#/components/parameters/AuditFrom"
+        - $ref: "#/components/parameters/AuditTo"
+        - $ref: "#/components/parameters/AuditActionType"
+        - $ref: "#/components/parameters/AuditEntityType"
+        - $ref: "#/components/parameters/AuditEntityId"
+        - $ref: "#/components/parameters/AuditActor"
+      responses:
+        "200":
+          description: CSV file
+          content:
+            text/csv:
+              schema:
+                type: string
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
   /v1/adjustments:
     post:
       summary: Create a settlement adjustment
@@ -208,7 +306,154 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  parameters:
+    # ── Audit trail query params (owner: admin G1) ──
+    AuditPage:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100000
+        default: 1
+    AuditPageSize:
+      name: pageSize
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 50
+    AuditSort:
+      name: sort
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [createdAt]
+    AuditOrder:
+      name: order
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+    AuditPeriodMonth:
+      name: periodMonth
+      in: query
+      required: false
+      description: Bangkok calendar month of the event time (created_at), YYYY-MM.
+      schema:
+        type: string
+        pattern: '^\d{4}-(0[1-9]|1[0-2])$'
+    AuditFrom:
+      name: from
+      in: query
+      required: false
+      description: First Bangkok calendar day (inclusive), YYYY-MM-DD.
+      schema:
+        type: string
+        format: date
+    AuditTo:
+      name: to
+      in: query
+      required: false
+      description: Last Bangkok calendar day (inclusive), YYYY-MM-DD.
+      schema:
+        type: string
+        format: date
+    AuditActionType:
+      name: actionType
+      in: query
+      required: false
+      description: One action or a comma-separated list, e.g. APPROVE,APPROVE_SETTLEMENT.
+      schema:
+        type: string
+        pattern: '^[A-Z0-9_]{1,64}(,[A-Z0-9_]{1,64}){0,29}$'
+    AuditEntityType:
+      name: entityType
+      in: query
+      required: false
+      description: e.g. SettlementRun, Adjustment, User, FraudFlag, Exception, Coupon.
+      schema:
+        type: string
+        pattern: '^[A-Za-z0-9_]{1,64}$'
+    AuditEntityId:
+      name: entityId
+      in: query
+      required: false
+      description: Exact id of the affected record (e.g. a user id for that user's history).
+      schema:
+        type: string
+        maxLength: 128
+    AuditActor:
+      name: actor
+      in: query
+      required: false
+      description: Actor user id (uuid), SYSTEM, or text matched against the actor's email / display name.
+      schema:
+        type: string
+        maxLength: 120
   schemas:
+    AuditLogEntry:
+      type: object
+      required: [auditId, actionType, actorUserId, displayName, entityType, targetId, createdAt]
+      properties:
+        auditId:
+          type: string
+        actionType:
+          type: string
+        actorUserId:
+          type: string
+        displayName:
+          type: string
+        actorEmail:
+          type: [string, "null"]
+        actorRole:
+          type: [string, "null"]
+        entityType:
+          type: string
+        targetId:
+          type: string
+        periodMonth:
+          type: string
+        previousStatus:
+          type: string
+        newStatus:
+          type: string
+        reason:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        metadata: {}
+    AuditLogPage:
+      type: object
+      required: [logs, pagination]
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLogEntry"
+        pagination:
+          type: object
+          required: [total, page, pageSize, totalPages]
+          properties:
+            total:
+              type: integer
+              minimum: 0
+            page:
+              type: integer
+              minimum: 1
+            pageSize:
+              type: integer
+              minimum: 1
+            totalPages:
+              type: integer
+              minimum: 1
     PositiveSatang:
       type: integer
       minimum: 1

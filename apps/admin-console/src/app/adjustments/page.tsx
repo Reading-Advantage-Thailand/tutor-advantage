@@ -1,448 +1,547 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { fetchWithAuth, getAdminRole, getAdminUserId } from "../../lib/api";
-import { CopyableId } from "@/components/ui/copyable-id";
+import { Suspense, useMemo, useState } from "react";
+import Link from "next/link";
+import { CheckCircle2, Plus, XCircle } from "lucide-react";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  FilePenLine,
-  RefreshCw,
-  ShieldAlert,
-  Scale,
-  PlusCircle,
-  MinusCircle,
-  X,
-  CheckCircle2,
-  XCircle,
-} from "lucide-react";
+  AdminStatusChip,
+  ConfirmDialog,
+  DataTable,
+  DescriptionList,
+  ErrorState,
+  FilterBar,
+  IdCell,
+  Notice,
+  Page,
+  PageHeader,
+  Pagination,
+  SegmentedControl,
+  SelectField,
+  Sheet,
+  TextAreaField,
+  TextField,
+  useAdminSession,
+  type DataTableColumn,
+} from "@/components/app";
+import { Money } from "@/components/app/Money";
 import { toast } from "@/components/app/Toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useRefreshAdminSummary } from "@/components/app/AdminSummary";
+import { Button } from "@/components/ui/button";
+import { useTableState } from "@/hooks/useTableState";
+import { api, newIdempotencyKey } from "@/lib/api";
+import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
+import { currentBangkokMonth, formatPeriodMonth, formatSatang, formatThaiDateTime, shiftPeriodMonth } from "@/lib/format";
+import { statusLabel, statusOptions } from "@/lib/status";
 import { t } from "@/lib/i18n";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { TutorPicker, type PickedTutor } from "./TutorPicker";
+import { parseBahtToSatang } from "./money";
 
 interface Adjustment {
   adjustmentId: string;
   tutorUserId: string;
   tutorName: string;
   periodMonth: string;
+  settlementRunId: string;
+  settlementRunStatus: string | null;
   amountSatang: number;
   reason: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
   createdByUserId: string;
   createdByName: string;
   createdAt: string;
+  approvedByUserId: string | null;
+  approvedByName: string | null;
+  approvedAt: string | null;
+}
+
+interface AdjustmentPage {
+  adjustments: Adjustment[];
+  pagination: { total: number; page: number; pageSize: number; totalPages: number };
+}
+
+interface DecisionResponse {
+  settlementRefresh?: { refreshed?: boolean; status?: string | null; stale?: boolean };
+}
+
+/** Runs that no longer accept adjustments (backend: SETTLEMENT_IMMUTABLE). */
+const LOCKED_RUN_STATUSES = ["SUBMITTED", "APPROVING", "APPROVED", "PAID", "REFRESHING"];
+
+function periodChoices(): string[] {
+  const current = currentBangkokMonth();
+  return Array.from({ length: 13 }, (_, index) => shiftPeriodMonth(current, 1 - index));
 }
 
 export default function AdjustmentsPage() {
-  const [tutorUserId, setTutorUserId] = useState("");
-  const [periodMonth, setPeriodMonth] = useState(
-    new Date().toISOString().slice(0, 7),
+  return (
+    <Suspense>
+      <AdjustmentsView />
+    </Suspense>
   );
-  const [amountBaht, setAmountBaht] = useState("");
-  const [reason, setReason] = useState("");
-  const [submitLoading, setSubmitLoading] = useState(false);
+}
 
-  const [pendingList, setPendingList] = useState<Adjustment[]>([]);
-  const [listLoading, setListLoading] = useState(false);
-  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
-  const [userRole, setUserRole] = useState<string>("");
-  const [currentUserId, setCurrentUserId] = useState<string>("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<string>("PENDING");
-  const [confirmAction, setConfirmAction] = useState<{
-    id: string;
-    action: "approve" | "reject";
-  } | null>(null);
+function AdjustmentsView() {
+  const me = useAdminSession();
+  const refreshSummary = useRefreshAdminSummary();
+  const canCreate = me?.role === "ADMIN";
+  const canCheck = me?.role === "ADMIN" || me?.role === "FINANCE_CHECKER";
+  const table = useTableState({
+    filterKeys: ["status", "period"],
+    defaultFilters: { status: "PENDING" },
+    defaultPageSize: 20,
+  });
 
-  useEffect(() => {
-    setUserRole(getAdminRole());
-    setCurrentUserId(getAdminUserId());
-  }, []);
+  const key = me ? `${me.userId}:adjustments:${table.queryKey}` : null;
+  const { data, error, isLoading, isValidating, refetch } = useCachedResource(
+    key,
+    () =>
+      api.get<AdjustmentPage>("/v1/adjustments", {
+        query: {
+          page: table.page,
+          pageSize: table.pageSize,
+          status: table.filters.status || undefined,
+          periodMonth: table.filters.period || undefined,
+        },
+      }),
+    { keepPreviousData: true },
+  );
 
-  const loadPending = useCallback(async () => {
-    setListLoading(true);
-    try {
-      const params = new URLSearchParams({ page: page.toString(), pageSize: "50" });
-      if (statusFilter !== "ALL") params.set("status", statusFilter);
-      const data = await fetchWithAuth(`/v1/adjustments?${params.toString()}`);
-      setPendingList(data.adjustments ?? []);
-      setTotalPages(data.pagination?.totalPages ?? 1);
-    } catch (err) {
-      const error = err as Error;
-      toast.error(error.message);
-    } finally {
-      setListLoading(false);
+  const [decision, setDecision] = useState<{ row: Adjustment; kind: "approve" | "reject"; key: string } | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+
+  const afterChange = async () => {
+    if (me) {
+      invalidateResource(`${me.userId}:adjustments:`);
+      invalidateResource(`${me.userId}:settlements:`);
     }
-  }, [page, statusFilter]);
-
-  useEffect(() => {
-    loadPending();
-  }, [loadPending]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const bahtValue = parseFloat(amountBaht);
-    if (isNaN(bahtValue) || bahtValue === 0) {
-      toast.error(t("adjustments.validation.amountRequired"));
-      return;
-    }
-    setSubmitLoading(true);
-    try {
-      await fetchWithAuth("/v1/adjustments", {
-        method: "POST",
-        body: JSON.stringify({
-          tutorUserId,
-          periodMonth,
-          amountSatang: Math.round(bahtValue * 100),
-          reason,
-        }),
-      });
-      toast.success(t("adjustments.submitSuccess"));
-      setTutorUserId("");
-      setAmountBaht("");
-      setReason("");
-      loadPending();
-    } catch (err) {
-      const error = err as Error;
-      toast.error(error.message);
-    } finally {
-      setSubmitLoading(false);
-    }
+    await refetch();
+    void refreshSummary();
   };
 
-  const executeAction = async (id: string, action: "approve" | "reject") => {
-    setActionLoadingId(id);
-    try {
-      await fetchWithAuth(`/v1/adjustments/${id}/${action}`, {
-        method: "POST",
-      });
-      loadPending();
-      toast.success(action === "approve" ? "Approved" : "Rejected");
-    } catch (err) {
-      const error = err as Error;
-      toast.error(error.message);
-    } finally {
-      setActionLoadingId(null);
-    }
-  };
+  const periods = useMemo(() => periodChoices(), []);
 
-  const formatTHB = (satang: number) =>
-    (satang / 100).toLocaleString("th-TH", {
-      style: "currency",
-      currency: "THB",
-    });
+  const columns: DataTableColumn<Adjustment>[] = [
+    {
+      key: "tutor",
+      header: t("adjustments.colTutor"),
+      label: t("adjustments.colTutor"),
+      mobile: "primary",
+      alwaysVisible: true,
+      cell: (row) => (
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate font-medium text-fg">{row.tutorName}</span>
+          <IdCell id={row.tutorUserId} />
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      header: t("adjustments.colStatus"),
+      label: t("adjustments.colStatus"),
+      mobile: "secondary",
+      cell: (row) => <AdminStatusChip domain="adjustment" status={row.status} />,
+    },
+    {
+      key: "amount",
+      header: t("adjustments.colAmount"),
+      label: t("adjustments.colAmount"),
+      align: "right",
+      mobile: "trailing",
+      cell: (row) => <Money satang={row.amountSatang} signed className="font-semibold" />,
+    },
+    {
+      key: "period",
+      header: t("adjustments.colPeriod"),
+      label: t("adjustments.colPeriod"),
+      mobile: "field",
+      cell: (row) => (
+        <span className="flex flex-col items-start gap-1">
+          <Link href={`/settlements/${row.settlementRunId}`} className="text-brand-fg hover:underline">
+            {formatPeriodMonth(row.periodMonth)}
+          </Link>
+          {row.settlementRunStatus ? <AdminStatusChip domain="settlementRun" status={row.settlementRunStatus} /> : null}
+        </span>
+      ),
+    },
+    {
+      key: "reason",
+      header: t("adjustments.colReason"),
+      label: t("adjustments.colReason"),
+      mobile: "field",
+      cell: (row) => <span className="line-clamp-3 max-w-72 text-[0.8125rem]">{row.reason}</span>,
+    },
+    {
+      key: "maker",
+      header: t("adjustments.colMaker"),
+      label: t("adjustments.colMaker"),
+      mobile: "field",
+      cell: (row) => (
+        <span className="flex flex-col text-[0.8125rem] leading-snug">
+          <span>{row.createdByName}</span>
+          <span className="text-fg-muted">{formatThaiDateTime(row.createdAt, "short")}</span>
+        </span>
+      ),
+    },
+    {
+      key: "checker",
+      header: t("adjustments.colChecker"),
+      label: t("adjustments.colChecker"),
+      mobile: "field",
+      cell: (row) =>
+        row.approvedAt ? (
+          <span className="flex flex-col text-[0.8125rem] leading-snug">
+            <span>{row.approvedByName}</span>
+            <span className="text-fg-muted">{formatThaiDateTime(row.approvedAt, "short")}</span>
+          </span>
+        ) : (
+          <span className="text-fg-subtle">–</span>
+        ),
+    },
+    {
+      key: "actions",
+      header: <span className="sr-only">{t("adjustments.colActions")}</span>,
+      label: t("adjustments.colActions"),
+      mobile: "field",
+      alwaysVisible: true,
+      cell: (row) => {
+        if (row.status !== "PENDING" || !canCheck) return null;
+        if (row.createdByUserId === me?.userId) {
+          return <span className="text-[0.8125rem] text-fg-muted">{t("adjustments.selfBlockedShort")}</span>;
+        }
+        return (
+          <span className="flex flex-wrap gap-1.5">
+            <Button size="sm" onClick={() => setDecision({ row, kind: "approve", key: newIdempotencyKey() })}>
+              <CheckCircle2 aria-hidden="true" />
+              {t("adjustments.approve")}
+            </Button>
+            <Button size="sm" variant="destructive" onClick={() => setDecision({ row, kind: "reject", key: newIdempotencyKey() })}>
+              <XCircle aria-hidden="true" />
+              {t("adjustments.rejectVoid")}
+            </Button>
+          </span>
+        );
+      },
+    },
+  ];
 
-  const parsedBaht = parseFloat(amountBaht);
-  const isPositive = !isNaN(parsedBaht) && parsedBaht > 0;
+  const decisionRow = decision?.row;
+  const decisionDetails = decisionRow ? (
+    <DescriptionList
+      columns={1}
+      items={[
+        { label: t("adjustments.colTutor"), value: decisionRow.tutorName },
+        { label: t("adjustments.colAmount"), value: <Money satang={decisionRow.amountSatang} signed className="text-base font-semibold" /> },
+        {
+          label: t("adjustments.colPeriod"),
+          value: `${formatPeriodMonth(decisionRow.periodMonth)}${
+            decisionRow.settlementRunStatus ? ` · ${statusLabel("settlementRun", decisionRow.settlementRunStatus)}` : ""
+          }`,
+        },
+        { label: t("adjustments.colReason"), value: decisionRow.reason, wide: true },
+        { label: t("adjustments.colMaker"), value: decisionRow.createdByName },
+      ]}
+    />
+  ) : null;
 
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
-      <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-black tracking-tight text-foreground">{t("adjustments.title")}</h2>
-        <p className="text-muted-foreground font-medium">{t("adjustments.description")}</p>
-      </div>
+    <Page>
+      <PageHeader
+        title={t("adjustments.pageTitle")}
+        description={t("adjustments.pageDescription")}
+        actions={
+          canCreate ? (
+            <Button onClick={() => setCreateOpen(true)}>
+              <Plus aria-hidden="true" />
+              {t("adjustments.createButton")}
+            </Button>
+          ) : null
+        }
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Maker Form */}
-        <div className="lg:col-span-1 space-y-6">
-          {userRole !== "FINANCE_CHECKER" && (
-            <Card className="border-none shadow-lg rounded-3xl overflow-hidden bg-card">
-              <CardHeader className="bg-gradient-to-br from-brand-50 to-brand-100/50 dark:from-brand-900/20 dark:to-brand-800/10 pb-6 border-b border-brand-100 dark:border-brand-800/50">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-brand-500 rounded-xl text-white shadow-sm">
-                    <Scale className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg font-bold">{t("adjustments.addNew")}</CardTitle>
-                    <CardDescription className="font-medium text-brand-700/80 dark:text-brand-400/80">
-                      {t("adjustments.addDescription")}
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-6">
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="tutorUserId" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("adjustments.tutorUserId")}</Label>
-                    <Input
-                      id="tutorUserId"
-                      placeholder="usr_xxxxxxxxxxxxxxxx"
-                      value={tutorUserId}
-                      onChange={(e) => setTutorUserId(e.target.value)}
-                      required
-                      className="rounded-xl border-2 focus-visible:ring-brand-500 h-12"
-                    />
-                  </div>
-                  
-                  <div className="space-y-1.5">
-                    <Label htmlFor="adjPeriod" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("adjustments.targetPeriod")}</Label>
-                    <Input
-                      id="adjPeriod"
-                      type="month"
-                      value={periodMonth}
-                      onChange={(e) => setPeriodMonth(e.target.value)}
-                      required
-                      className="rounded-xl border-2 focus-visible:ring-brand-500 h-12"
-                    />
-                  </div>
-                  
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="amountBaht" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("adjustments.amountBaht")}</Label>
-                      {amountBaht && !isNaN(parsedBaht) && parsedBaht !== 0 && (
-                        <Badge variant="outline" className={`font-bold border-none px-2 py-0.5 ${isPositive ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}>
-                          {isPositive ? <PlusCircle className="h-3 w-3 mr-1" /> : <MinusCircle className="h-3 w-3 mr-1" />}
-                          {formatTHB(Math.round(Math.abs(parsedBaht) * 100))}
-                        </Badge>
-                      )}
-                    </div>
-                    <Input
-                      id="amountBaht"
-                      type="number"
-                      step="0.01"
-                      placeholder={t("adjustments.amountBahtPlaceholder")}
-                      value={amountBaht}
-                      onChange={(e) => setAmountBaht(e.target.value)}
-                      required
-                      className="rounded-xl border-2 focus-visible:ring-brand-500 h-12"
-                    />
-                  </div>
+      <Notice tone="info">{t("adjustments.makerCheckerNote")}</Notice>
 
-                  <div className="space-y-1.5">
-                    <Label htmlFor="reason" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("adjustments.reason")}</Label>
-                    <Textarea
-                      id="reason"
-                      placeholder={t("adjustments.reasonPlaceholder")}
-                      value={reason}
-                      onChange={(e) => setReason(e.target.value)}
-                      required
-                      rows={4}
-                      className="rounded-xl border-2 focus-visible:ring-brand-500 resize-none"
-                    />
-                  </div>
+      <FilterBar isFiltered={table.isFiltered} onReset={table.reset}>
+        <SelectField
+          aria-label={t("adjustments.colStatus")}
+          containerClassName="w-full sm:w-44"
+          value={table.filters.status ?? ""}
+          onChange={(event) => table.setFilter("status", event.target.value)}
+          options={statusOptions("adjustment", { all: t("adjustments.allStatus") })}
+        />
+        <SelectField
+          aria-label={t("adjustments.colPeriod")}
+          containerClassName="w-full sm:w-48"
+          value={table.filters.period ?? ""}
+          onChange={(event) => table.setFilter("period", event.target.value)}
+          options={[
+            { value: "", label: t("adjustments.allPeriods") },
+            ...periods.map((value) => ({ value, label: formatPeriodMonth(value) })),
+          ]}
+        />
+      </FilterBar>
 
-                  <Button
-                    type="submit"
-                    disabled={submitLoading}
-                    className="w-full h-12 rounded-xl font-bold bg-brand-600 hover:bg-brand-700 shadow-md shadow-brand-500/20"
-                  >
-                    {submitLoading ? (
-                      <span className="flex items-center gap-2">
-                        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        {t("adjustments.submitting")}
-                      </span>
-                    ) : (
-                      <>
-                        <FilePenLine className="h-5 w-5 mr-2" />
-                        {t("adjustments.submit")}
-                      </>
-                    )}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          )}
-
-          {userRole === "FINANCE_CHECKER" && (
-            <Card className="border-none shadow-sm rounded-3xl bg-muted/50">
-              <CardContent className="p-8 text-center">
-                <ShieldAlert className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                <h3 className="font-bold text-lg mb-2">{t("adjustments.checkerMode")}</h3>
-                <p className="text-muted-foreground text-sm font-medium">
-                  {t("adjustments.checkerDescription")}
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Checker Panel */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-2">
-            <div>
-              <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-                <ShieldAlert className="h-5 w-5 text-amber-500" />
-                {t("adjustments.pendingApproval")}
-              </h3>
-              <p className="text-sm font-medium text-muted-foreground mt-1">
-                {t("adjustments.pendingDescription")}
-              </p>
+      {error && !data ? (
+        <ErrorState onRetry={() => void refetch()} />
+      ) : (
+        <DataTable
+          caption={t("adjustments.tableCaption")}
+          columns={columns}
+          rows={data?.adjustments ?? []}
+          getRowKey={(row) => row.adjustmentId}
+          loading={isLoading || (isValidating && !data)}
+          empty={
+            <div className="flex flex-col items-center gap-1 py-10 text-center">
+              <p className="font-medium text-fg">{t("adjustments.emptyTitle")}</p>
+              <p className="text-sm text-fg-muted">{t("adjustments.emptyFiltered")}</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-                <SelectTrigger className="w-[140px] rounded-full font-bold h-9">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL">{t("adjustments.allStatus")}</SelectItem>
-                  <SelectItem value="PENDING">{t("adjustments.pending")}</SelectItem>
-                  <SelectItem value="APPROVED">{t("adjustments.statusApproved")}</SelectItem>
-                  <SelectItem value="REJECTED">{t("adjustments.statusRejected")}</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={loadPending}
-                disabled={listLoading}
-                className="rounded-full font-bold shadow-sm"
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${listLoading ? "animate-spin" : ""}`} />
-                {t("adjustments.refresh")}
-              </Button>
-            </div>
-          </div>
+          }
+          footer={
+            <Pagination
+              page={table.page}
+              pageSize={table.pageSize}
+              total={data?.pagination.total ?? 0}
+              onPageChange={table.setPage}
+              onPageSizeChange={table.setPageSize}
+            />
+          }
+        />
+      )}
 
-          {!listLoading && pendingList.length === 0 && (
-            <Card className="border-none shadow-sm rounded-3xl bg-muted/20 border-2 border-dashed">
-              <CardContent className="flex flex-col items-center justify-center py-20 text-center">
-                <Scale className="h-12 w-12 text-muted-foreground/30 mb-4" />
-                <p className="font-bold text-muted-foreground">{t("adjustments.emptyTitle")}</p>
-                <p className="text-sm text-muted-foreground/60 mt-1">{t("adjustments.emptyDescription")}</p>
-              </CardContent>
-            </Card>
-          )}
-
-          <div className="grid grid-cols-1 gap-4">
-            {pendingList.map((adj) => (
-              <Card key={adj.adjustmentId} className="group overflow-hidden border-none shadow-sm rounded-3xl transition-all hover:shadow-md bg-card ring-1 ring-border hover:ring-amber-500/30">
-                <div className="h-1.5 w-full bg-gradient-to-r from-amber-400 to-amber-600 opacity-80" />
-                <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row gap-6">
-                    <div className="flex-1 space-y-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CopyableId name={adj.tutorName} id={adj.tutorUserId} variant="name" />
-                        </div>
-                        <Badge variant="outline" className={`rounded-full px-3 py-0.5 font-bold uppercase tracking-wider ${
-                          adj.status === "APPROVED"
-                            ? "border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30"
-                            : adj.status === "REJECTED"
-                            ? "border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30"
-                            : "border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30"
-                        }`}>
-                          {adj.status === "APPROVED" ? t("adjustments.statusApproved") : adj.status === "REJECTED" ? t("adjustments.statusRejected") : t("adjustments.pending")}
-                        </Badge>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-muted/30 p-3 rounded-2xl border border-border/50">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("adjustments.period")}</p>
-                          <p className="font-bold text-foreground">{adj.periodMonth}</p>
-                        </div>
-                        <div className={`p-3 rounded-2xl border ${adj.amountSatang >= 0 ? "bg-emerald-50/50 border-emerald-100 dark:bg-emerald-950/20 dark:border-emerald-900" : "bg-red-50/50 border-red-100 dark:bg-red-950/20 dark:border-red-900"}`}>
-                          <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${adj.amountSatang >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"}`}>{t("adjustments.amount")}</p>
-                          <p className={`font-black text-lg tabular-nums ${adj.amountSatang >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"}`}>
-                            {formatTHB(Math.abs(adj.amountSatang))} {adj.amountSatang >= 0 ? t("adjustments.addAmount") : t("adjustments.deductAmount")}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("adjustments.reason")}</p>
-                        <p className="text-sm font-medium text-foreground bg-muted/30 p-3 rounded-2xl border border-border/50">{adj.reason}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col justify-between border-t md:border-t-0 md:border-l border-border/50 pt-4 md:pt-0 md:pl-6 min-w-[200px]">
-                      <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("adjustments.requestor")}</p>
-                        <CopyableId name={adj.createdByName} id={adj.createdByUserId} variant="name" />
-                      </div>
-                      
-                      {adj.status === "PENDING" && (
-                        <div className="flex flex-col gap-2 mt-4">
-                          {adj.createdByUserId === currentUserId && (
-                            <p className="text-xs font-medium text-muted-foreground text-center bg-muted/50 rounded-xl p-2">
-                              {t("adjustments.selfApproveBlocked")}
-                            </p>
-                          )}
-                          <Button
-                            disabled={actionLoadingId === adj.adjustmentId || adj.createdByUserId === currentUserId}
-                            onClick={() => setConfirmAction({ id: adj.adjustmentId, action: "approve" })}
-                            className="w-full rounded-xl font-bold bg-foreground text-background hover:bg-foreground/90 h-10"
-                          >
-                            {actionLoadingId === adj.adjustmentId ? (
-                              <span className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-                            ) : (
-                              <CheckCircle2 className="h-4 w-4 mr-2" />
-                            )}
-                            {t("adjustments.approve")}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            disabled={actionLoadingId === adj.adjustmentId || adj.createdByUserId === currentUserId}
-                            onClick={() => setConfirmAction({ id: adj.adjustmentId, action: "reject" })}
-                            className="w-full rounded-xl font-bold border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-700 h-10"
-                          >
-                            <XCircle className="h-4 w-4 mr-2" />
-                            {t("adjustments.reject")}
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-4">
-              <Button
-                variant="outline"
-                className="rounded-xl font-bold"
-                disabled={page === 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-              >
-                {t("adjustments.previous")}
-              </Button>
-              <span className="text-sm font-bold text-muted-foreground bg-muted/50 px-4 py-2 rounded-xl">
-                {t("adjustments.pagePrefix")} {page} {t("adjustments.pageMiddle")} {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                className="rounded-xl font-bold"
-                disabled={page === totalPages}
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              >
-                {t("adjustments.next")}
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
       <ConfirmDialog
-        open={!!confirmAction}
-        onOpenChange={(open) => { if (!open) setConfirmAction(null); }}
-        title={confirmAction?.action === "approve" ? t("adjustments.confirmApproveTitle") : t("adjustments.confirmRejectTitle")}
-        description={confirmAction?.action === "approve" ? t("adjustments.confirmApproveDescription") : t("adjustments.confirmRejectDescription")}
-        variant={confirmAction?.action === "reject" ? "destructive" : "default"}
-        confirmLabel={confirmAction?.action === "approve" ? t("adjustments.approve") : t("adjustments.reject")}
-        cancelLabel={t("confirm.cancelLabel")}
-        onConfirm={async () => {
-          if (confirmAction) await executeAction(confirmAction.id, confirmAction.action);
+        open={decision?.kind === "approve"}
+        onOpenChange={(open) => !open && setDecision(null)}
+        title={t("adjustments.confirmApproveTitle2")}
+        description={t("adjustments.confirmApproveBody2")}
+        confirmLabel={t("adjustments.approve")}
+        details={decisionDetails}
+        reason={{ label: t("adjustments.noteLabel"), placeholder: t("adjustments.notePlaceholder"), required: false }}
+        onConfirm={async ({ reason }) => {
+          if (!decision) return;
+          const result = await api.post<DecisionResponse>(
+            `/v1/adjustments/${decision.row.adjustmentId}/approve`,
+            reason ? { reason } : undefined,
+            { idempotencyKey: decision.key },
+          );
+          if (result.settlementRefresh?.stale) {
+            toast.success(t("adjustments.approvedStale"), {
+              description: t("adjustments.approvedStaleHint", { period: formatPeriodMonth(decision.row.periodMonth) }),
+            });
+          } else {
+            toast.success(t("adjustments.approvedDone"));
+          }
+          await afterChange();
+        }}
+      >
+        {decisionRow?.settlementRunStatus === "SUBMITTED" ? (
+          <Notice tone="warning">{t("adjustments.approveOnSubmittedWarning")}</Notice>
+        ) : decisionRow?.settlementRunStatus === "DRAFT" ? (
+          <Notice tone="info">{t("adjustments.approveOnDraftNote")}</Notice>
+        ) : null}
+      </ConfirmDialog>
+      <ConfirmDialog
+        open={decision?.kind === "reject"}
+        onOpenChange={(open) => !open && setDecision(null)}
+        tone="danger"
+        title={t("adjustments.confirmRejectTitle2")}
+        description={t("adjustments.confirmRejectBody2")}
+        confirmLabel={t("adjustments.rejectVoid")}
+        details={decisionDetails}
+        reason={{ label: t("adjustments.rejectReasonLabel"), placeholder: t("adjustments.rejectReasonPlaceholder") }}
+        onConfirm={async ({ reason }) => {
+          if (!decision) return;
+          await api.post(`/v1/adjustments/${decision.row.adjustmentId}/reject`, { reason }, { idempotencyKey: decision.key });
+          toast.success(t("adjustments.rejectedDone"));
+          await afterChange();
         }}
       />
-    </div>
+
+      {canCreate ? (
+        <CreateAdjustmentSheet
+          open={createOpen}
+          onOpenChange={setCreateOpen}
+          periods={periods}
+          userId={me?.userId ?? ""}
+          onCreated={afterChange}
+        />
+      ) : null}
+    </Page>
+  );
+}
+
+function CreateAdjustmentSheet({
+  open,
+  onOpenChange,
+  periods,
+  userId,
+  onCreated,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  periods: string[];
+  userId: string;
+  onCreated: () => Promise<void>;
+}) {
+  const [tutor, setTutor] = useState<PickedTutor | null>(null);
+  const [period, setPeriod] = useState(() => shiftPeriodMonth(currentBangkokMonth(), -1));
+  const [direction, setDirection] = useState<"add" | "deduct">("add");
+  const [amount, setAmount] = useState("");
+  const [reason, setReason] = useState("");
+  const [touched, setTouched] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [requestKey, setRequestKey] = useState("");
+
+  // What happens to the target month: locked runs refuse new adjustments.
+  const runKey = open && userId ? `${userId}:settlements:period:${period}` : null;
+  const runLookup = useCachedResource(
+    runKey,
+    () =>
+      api.get<{ settlements: Array<{ snapshotId: string; status: string }> }>("/v1/settlements", {
+        query: { periodMonth: period, pageSize: 1 },
+      }),
+    { staleTime: 0 },
+  );
+  const targetRun = runLookup.data?.settlements[0] ?? null;
+  const locked = Boolean(targetRun && LOCKED_RUN_STATUSES.includes(targetRun.status));
+
+  const satang = parseBahtToSatang(amount);
+  const signedSatang = satang === null ? null : direction === "deduct" ? -satang : satang;
+  const errors = {
+    tutor: !tutor ? t("adjustments.errorTutor") : undefined,
+    amount: satang === null ? t("adjustments.errorAmount") : undefined,
+    reason: reason.trim().length < 5 ? t("adjustments.errorReason") : undefined,
+  };
+  const valid = !errors.tutor && !errors.amount && !errors.reason && !locked;
+
+  const reset = () => {
+    setTutor(null);
+    setAmount("");
+    setReason("");
+    setDirection("add");
+    setTouched(false);
+  };
+
+  return (
+    <>
+      <Sheet
+        open={open}
+        onOpenChange={onOpenChange}
+        onClosed={() => {
+          if (!confirmOpen) reset();
+        }}
+        title={t("adjustments.createTitle")}
+        description={t("adjustments.createDescription")}
+        footer={
+          <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
+            <Button variant="ghost" size="lg" className="md:h-9" onClick={() => onOpenChange(false)}>
+              {t("adjustments.cancel")}
+            </Button>
+            <Button
+              size="lg"
+              className="md:h-9"
+              onClick={() => {
+                setTouched(true);
+                if (!valid) return;
+                setRequestKey(newIdempotencyKey());
+                setConfirmOpen(true);
+              }}
+            >
+              {t("adjustments.reviewAndCreate")}
+            </Button>
+          </div>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <TutorPicker value={tutor} onChange={setTutor} error={touched ? errors.tutor : undefined} />
+          {tutor && tutor.verificationStatus && tutor.verificationStatus !== "VERIFIED" ? (
+            <Notice tone="warning">{t("adjustments.unverifiedTutorWarning")}</Notice>
+          ) : null}
+          <SelectField
+            label={t("adjustments.fieldPeriod")}
+            value={period}
+            onChange={(event) => setPeriod(event.target.value)}
+            options={periods.map((value) => ({ value, label: formatPeriodMonth(value) }))}
+            required
+          />
+          {locked ? (
+            <Notice tone="danger">{t("adjustments.periodLocked", { status: statusLabel("settlementRun", targetRun!.status) })}</Notice>
+          ) : targetRun ? (
+            <Notice tone="info">{t("adjustments.periodHasRun", { status: statusLabel("settlementRun", targetRun.status) })}</Notice>
+          ) : runLookup.data ? (
+            <Notice tone="info">{t("adjustments.periodNoRun")}</Notice>
+          ) : null}
+          <div className="flex flex-col gap-1.5">
+            <span className="text-sm font-medium text-fg">{t("adjustments.fieldDirection")}</span>
+            <SegmentedControl
+              aria-label={t("adjustments.fieldDirection")}
+              value={direction}
+              onValueChange={setDirection}
+              fullWidth
+              items={[
+                { value: "add", label: t("adjustments.directionAdd") },
+                { value: "deduct", label: t("adjustments.directionDeduct") },
+              ]}
+            />
+          </div>
+          <TextField
+            label={t("adjustments.fieldAmount")}
+            inputMode="decimal"
+            autoComplete="off"
+            placeholder="1,500.00"
+            value={amount}
+            onChange={(event) => setAmount(event.target.value)}
+            required
+            hint={
+              signedSatang !== null
+                ? t("adjustments.amountPreview", { amount: formatSatang(signedSatang, { signed: true }) })
+                : t("adjustments.amountHint")
+            }
+            error={touched ? errors.amount : undefined}
+          />
+          {direction === "deduct" ? <Notice tone="warning">{t("adjustments.deductNote")}</Notice> : null}
+          <TextAreaField
+            label={t("adjustments.fieldReason")}
+            placeholder={t("adjustments.reasonPlaceholder")}
+            rows={3}
+            maxLength={1000}
+            value={reason}
+            onChange={(event) => setReason(event.target.value)}
+            required
+            error={touched ? errors.reason : undefined}
+          />
+        </div>
+      </Sheet>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t("adjustments.confirmCreateTitle")}
+        description={t("adjustments.confirmCreateBody")}
+        confirmLabel={t("adjustments.submit")}
+        details={
+          tutor && signedSatang !== null ? (
+            <DescriptionList
+              columns={1}
+              items={[
+                { label: t("adjustments.colTutor"), value: tutor.name ?? tutor.email ?? tutor.id },
+                { label: t("adjustments.colPeriod"), value: formatPeriodMonth(period) },
+                { label: t("adjustments.colAmount"), value: <Money satang={signedSatang} signed className="text-base font-semibold" /> },
+                { label: t("adjustments.colReason"), value: reason.trim(), wide: true },
+              ]}
+            />
+          ) : null
+        }
+        onConfirm={async () => {
+          if (!tutor || signedSatang === null) return;
+          await api.post(
+            "/v1/adjustments",
+            { tutorUserId: tutor.id, periodMonth: period, amountSatang: signedSatang, reason: reason.trim() },
+            { idempotencyKey: requestKey },
+          );
+          toast.success(t("adjustments.submitSuccess"));
+          onOpenChange(false);
+          reset();
+          await onCreated();
+        }}
+      />
+    </>
   );
 }

@@ -1,249 +1,426 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { CheckCircle2, CircleCheck, CircleSlash, ReceiptText, Zap } from "lucide-react";
 import {
-  AlertTriangle,
-  CheckCircle2,
-  RefreshCw,
-  Search,
-  XCircle,
-  Activity,
-  X,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+  AdminStatusChip,
+  DataTable,
+  DescriptionList,
+  EmptyState,
+  ErrorState,
+  FilterBar,
+  Money,
+  Notice,
+  Page,
+  PageHeader,
+  Pagination,
+  SegmentedControl,
+  SelectField,
+  useAdminSession,
+  type DataTableColumn,
+} from "@/components/app";
+import { useRefreshAdminSummary } from "@/components/app/AdminSummary";
 import { toast } from "@/components/app/Toast";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { fetchWithAuth } from "@/lib/api";
-import { t } from "@/lib/i18n";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/app/ConfirmDialog";
+import { useTableState } from "@/hooks/useTableState";
+import { api, newIdempotencyKey } from "@/lib/api";
+import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
+import { formatThaiDateTime } from "@/lib/format";
+import { t, type I18nKey } from "@/lib/i18n";
+import { statusLabel, statusOptions } from "@/lib/status";
 
-interface ExceptionEvent {
+type Resolution = "ACTIVATE_ENROLLMENT" | "MARK_RESOLVED" | "DISMISS";
+
+interface ExceptionRow {
   id: string;
   type: string;
-  studentName: string;
-  classId: string;
-  provider: string;
-  amount: string;
-  status: string;
+  studentUserId: string | null;
+  studentName: string | null;
+  classId: string | null;
+  provider: string | null;
+  amountMinor: number | null;
+  status: "UNRESOLVED" | "RESOLVED" | "VOIDED" | string;
   createdAt: string;
+  updatedAt: string;
   errorDetail: string;
+  context: {
+    enrollmentId: string | null;
+    enrollmentStatus: string | null;
+    classTitle: string | null;
+    successfulPaymentId: string | null;
+    payment: { paymentIntentId: string; status: string; amountMinor: number; providerRef: string | null } | null;
+  } | null;
+  canActivateEnrollment: boolean;
+  lastAction: {
+    action: string;
+    resolution: string | null;
+    note: string | null;
+    actorId: string;
+    actorName: string | null;
+    at: string;
+  } | null;
+}
+
+interface ExceptionsResponse {
+  exceptions: ExceptionRow[];
+  total: number;
+  page: number;
+  pageSize: number;
+  counts: Record<string, number>;
+  typeCounts: Record<string, number>;
+}
+
+type StatusTab = "UNRESOLVED" | "RESOLVED" | "VOIDED" | "ALL";
+
+const RESOLUTION_COPY: Record<Resolution, { title: I18nKey; description: I18nKey; confirm: I18nKey; toast: I18nKey }> = {
+  ACTIVATE_ENROLLMENT: {
+    title: "operations.confirm.activateTitle",
+    description: "operations.confirm.activateDescription",
+    confirm: "operations.confirm.activateConfirm",
+    toast: "operations.toast.activated",
+  },
+  MARK_RESOLVED: {
+    title: "operations.confirm.resolveTitle",
+    description: "operations.confirm.resolveDescription",
+    confirm: "operations.confirm.resolveConfirm",
+    toast: "operations.toast.resolved",
+  },
+  DISMISS: {
+    title: "operations.confirm.dismissTitle",
+    description: "operations.confirm.dismissDescription",
+    confirm: "operations.confirm.dismissConfirm",
+    toast: "operations.toast.dismissed",
+  },
+};
+
+function resolutionLabel(row: ExceptionRow) {
+  const r = row.lastAction?.resolution;
+  if (r === "ACTIVATE_ENROLLMENT" || r === "MARK_RESOLVED" || r === "DISMISS") return t(`operations.resolutions.${r}`);
+  return t("operations.resolutions.LEGACY");
 }
 
 export default function ExceptionsPage() {
-  const [data, setData] = useState<ExceptionEvent[]>([]);
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [resolvingId, setResolvingId] = useState<string | null>(null);
-  const [confirmAction, setConfirmAction] = useState<{ id: string; action: string } | null>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const me = useAdminSession();
+  const refreshSummary = useRefreshAdminSummary();
+  const table = useTableState({
+    defaultSort: { key: "createdAt", dir: "desc" },
+    sortKeys: ["createdAt"],
+    filterKeys: ["status", "type"],
+    defaultFilters: { status: "UNRESOLVED" },
+  });
+  const [pending, setPending] = useState<{ row: ExceptionRow; resolution: Resolution; key: string } | null>(null);
+  const status = (["UNRESOLVED", "RESOLVED", "VOIDED", "ALL"].includes(table.filters.status) ? table.filters.status : "ALL") as StatusTab;
 
-  useEffect(() => {
-    debounceRef.current = setTimeout(() => setDebouncedSearch(search), 400);
-    return () => clearTimeout(debounceRef.current);
-  }, [search]);
+  const query = {
+    status,
+    type: table.filters.type || undefined,
+    q: table.q || undefined,
+    page: table.page,
+    pageSize: table.pageSize,
+    order: table.sort?.dir,
+  };
+  const { data, error, isLoading, isValidating, isPreviousData, refetch } = useCachedResource(
+    me ? `${me.userId}:exceptions:${JSON.stringify(query)}` : null,
+    () => api.get<ExceptionsResponse>("/v1/operations/exceptions", { query }),
+    { keepPreviousData: true },
+  );
+  const counts = data?.counts ?? {};
+  const totalAll = Object.values(counts).reduce((sum, n) => sum + n, 0);
+  const statusItems = (["UNRESOLVED", "RESOLVED", "VOIDED", "ALL"] as const).map((value) => ({
+    value,
+    label: t(`operations.statusTabs.${value}`),
+    count: data ? (value === "ALL" ? totalAll : (counts[value] ?? 0)) : undefined,
+  }));
 
-  const loadData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (debouncedSearch.trim()) params.set("q", debouncedSearch.trim());
-      params.set("status", "UNRESOLVED");
-      const resp = await fetchWithAuth(
-        `/v1/operations/exceptions?${params.toString()}`,
-      );
-      setData(resp.exceptions || []);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : t("operations.loadExceptionsFailed"));
-    } finally {
-      setLoading(false);
+  const columns: DataTableColumn<ExceptionRow>[] = useMemo(
+    () => [
+      {
+        key: "type",
+        header: t("operations.columns.type"),
+        label: t("operations.columns.type"),
+        alwaysVisible: true,
+        mobile: "primary",
+        cell: (row) => (
+          <div className="flex min-w-0 flex-col items-start gap-1">
+            <AdminStatusChip domain="exceptionType" status={row.type} />
+            <span className="line-clamp-2 text-[0.8125rem] text-fg-muted" title={row.errorDetail}>
+              {row.errorDetail || "–"}
+            </span>
+          </div>
+        ),
+      },
+      {
+        key: "createdAt",
+        header: t("operations.columns.createdAt"),
+        sortable: true,
+        mobile: "secondary",
+        cell: (row) => <span className="whitespace-nowrap">{formatThaiDateTime(row.createdAt)}</span>,
+      },
+      {
+        key: "student",
+        header: t("operations.columns.student"),
+        label: t("operations.columns.student"),
+        cell: (row) => (
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate text-fg">{row.studentName ?? t("operations.noStudent")}</span>
+            {row.context?.classTitle ? (
+              <span className="truncate text-[0.8125rem] text-fg-muted">{row.context.classTitle}</span>
+            ) : null}
+          </div>
+        ),
+      },
+      {
+        key: "amount",
+        header: t("operations.columns.amount"),
+        align: "right",
+        cell: (row) => (row.amountMinor != null ? <Money satang={row.amountMinor} /> : <span className="text-fg-subtle">–</span>),
+      },
+      {
+        key: "payment",
+        header: t("operations.columns.payment"),
+        label: t("operations.columns.payment"),
+        cell: (row) => {
+          if (!row.context) return <span className="text-fg-subtle">–</span>;
+          return (
+            <div className="flex flex-wrap items-center gap-1">
+              {row.context.payment ? (
+                <AdminStatusChip domain="payment" status={row.context.payment.status} />
+              ) : (
+                <span className="text-[0.8125rem] text-fg-muted">{t("operations.noPayment")}</span>
+              )}
+              {row.context.enrollmentStatus ? (
+                <AdminStatusChip domain="enrollment" status={row.context.enrollmentStatus} />
+              ) : (
+                <span className="text-[0.8125rem] text-fg-muted">{t("operations.noEnrollment")}</span>
+              )}
+            </div>
+          );
+        },
+      },
+      {
+        key: "status",
+        header: t("operations.columns.status"),
+        label: t("operations.columns.status"),
+        mobile: "trailing",
+        cell: (row) => <AdminStatusChip domain="exception" status={row.status} />,
+      },
+      {
+        key: "outcome",
+        header: t("operations.columns.outcome"),
+        label: t("operations.columns.outcome"),
+        cell: (row) =>
+          row.status !== "UNRESOLVED" ? (
+            <div className="flex min-w-0 flex-col">
+              <span className="text-fg">{resolutionLabel(row)}</span>
+              {row.lastAction?.note ? (
+                <span className="line-clamp-2 text-[0.8125rem] text-fg-muted">{row.lastAction.note}</span>
+              ) : null}
+              {row.lastAction ? (
+                <span className="text-[0.8125rem] text-fg-subtle">
+                  {t("operations.closedBy", {
+                    name: row.lastAction.actorName ?? t("operations.unknownActor"),
+                    date: formatThaiDateTime(row.lastAction.at),
+                  })}
+                </span>
+              ) : null}
+            </div>
+          ) : (
+            <span className="text-fg-subtle">–</span>
+          ),
+      },
+      {
+        key: "actions",
+        header: <span className="sr-only">{t("operations.columns.actions")}</span>,
+        label: t("operations.columns.actions"),
+        alwaysVisible: true,
+        align: "right",
+        cell: (row) => (
+          <div className="flex flex-wrap justify-start gap-1.5 md:justify-end lg:flex-nowrap">
+            {row.status === "UNRESOLVED" && row.canActivateEnrollment ? (
+              <Button size="sm" onClick={() => setPending({ row, resolution: "ACTIVATE_ENROLLMENT", key: newIdempotencyKey() })}>
+                <Zap aria-hidden="true" />
+                {t("operations.actions.activate")}
+              </Button>
+            ) : null}
+            {row.status === "UNRESOLVED" ? (
+              <>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setPending({ row, resolution: "MARK_RESOLVED", key: newIdempotencyKey() })}
+                >
+                  <CircleCheck aria-hidden="true" />
+                  {t("operations.actions.resolve")}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setPending({ row, resolution: "DISMISS", key: newIdempotencyKey() })}>
+                  <CircleSlash aria-hidden="true" />
+                  {t("operations.actions.dismiss")}
+                </Button>
+              </>
+            ) : null}
+            {row.studentUserId || row.type === "ORPHAN_PAYMENT_EVENT" ? (
+              <Link
+                href={
+                  row.studentUserId
+                    ? `/reconciliation?q=${encodeURIComponent(row.studentUserId)}&issue=ALL&days=180`
+                    : "/reconciliation?view=orphans"
+                }
+                className={buttonVariants({ size: "icon-sm", variant: "ghost" })}
+                aria-label={t("operations.actions.viewPayments")}
+                title={t("operations.actions.viewPayments")}
+              >
+                <ReceiptText aria-hidden="true" />
+              </Link>
+            ) : null}
+          </div>
+        ),
+      },
+    ],
+    [],
+  );
+
+  const onConfirm = async ({ reason }: { reason: string }) => {
+    if (!pending) return;
+    const result = await api.post<{ changed: boolean }>(
+      `/v1/operations/exceptions/${pending.row.id}/resolve`,
+      { resolution: pending.resolution, note: reason },
+      { idempotencyKey: pending.key },
+    );
+    toast.success(result.changed ? t(RESOLUTION_COPY[pending.resolution].toast) : t("operations.toast.unchanged"));
+    if (me) {
+      invalidateResource(`${me.userId}:exceptions:`);
+      if (pending.resolution === "ACTIVATE_ENROLLMENT") invalidateResource(`${me.userId}:recon:`);
     }
-  }, [debouncedSearch]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const totalCount = useMemo(() => data.length, [data]);
-
-  const handleResolve = async (id: string, action: string) => {
-    setResolvingId(id);
-    try {
-      await fetchWithAuth(
-        `/v1/operations/exceptions/${id}/${action.replace(/\s+/g, "_").toUpperCase()}`,
-        { method: "POST" },
-      );
-      toast.success(`${t("operations.updateExceptionSuccessPrefix")} ${id.slice(0, 8)} ${t("operations.successSuffix")}`);
-      await loadData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : t("operations.updateExceptionFailed"));
-    } finally {
-      setResolvingId(null);
-    }
+    void refreshSummary();
   };
 
+  const target = pending?.row;
+  const copy = pending ? RESOLUTION_COPY[pending.resolution] : null;
+  const typeOptions = [
+    { value: "", label: t("operations.filters.typeAll") },
+    ...statusOptions("exceptionType"),
+    ...Object.keys(data?.typeCounts ?? {})
+      .filter((type) => !statusOptions("exceptionType").some((o) => o.value === type))
+      .map((type) => ({ value: type, label: statusLabel("exceptionType", type) })),
+  ];
+  const isFiltered = table.q !== "" || Boolean(table.filters.type) || status !== "UNRESOLVED";
+
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-3xl font-black tracking-tight text-foreground">
-            {t("operations.exceptionsTitle")}
-          </h2>
-          <p className="text-muted-foreground font-medium">
-            {t("operations.exceptionsDescription")}
-          </p>
-        </div>
-        <Button variant="outline" onClick={loadData} disabled={loading} className="rounded-full font-bold shadow-sm h-12 px-6">
-          <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          {t("operations.refresh")}
-        </Button>
-      </div>
-
-      <Card className="border-none shadow-md rounded-3xl bg-card overflow-hidden">
-        <CardHeader className="bg-muted/20 border-b px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-amber-50 dark:bg-amber-900/20 rounded-xl text-amber-600 dark:text-amber-400">
-                <AlertTriangle className="h-5 w-5" />
-              </div>
-              <div>
-                <CardTitle className="text-lg font-bold flex items-center gap-2">
-                  {t("operations.pendingResolution")}
-                  <Badge variant="secondary" className="bg-amber-500 text-white border-none">{totalCount}</Badge>
-                </CardTitle>
-                <CardDescription className="font-medium text-xs">
-                  {t("operations.exceptionsQueueDescription")}
-                </CardDescription>
-              </div>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-8 space-y-6">
-          <div className="relative w-full max-w-md group">
-            <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground group-focus-within:text-brand-600 transition-colors" />
-            <Input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") loadData();
-              }}
-              placeholder={t("operations.searchExceptions")}
-              className="pl-11 h-12 rounded-2xl border-2 focus-visible:ring-brand-500 font-medium bg-muted/30"
-            />
-          </div>
-
-          {loading && (
-            <div className="space-y-4">
-              <Skeleton className="h-32 w-full rounded-2xl" />
-              <Skeleton className="h-32 w-full rounded-2xl" />
-            </div>
-          )}
-          
-          {!loading && data.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
-              <Activity className="h-12 w-12 text-emerald-500/50 mb-4" />
-              <p className="font-bold text-muted-foreground">{t("operations.noExceptionsTitle")}</p>
-              <p className="text-sm text-muted-foreground/60 mt-1">{t("operations.noExceptionsDescription")}</p>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 gap-4">
-            {data.map((item) => (
-              <div key={item.id} className="rounded-2xl border border-border/60 bg-card p-6 transition-all hover:shadow-md hover:border-amber-500/30 group">
-                <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="flex-1 min-w-0 space-y-4">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge
-                        variant="outline"
-                        className="font-bold px-3 py-1 uppercase tracking-wider text-[10px] rounded-full border-none bg-red-500/10 text-red-700 dark:text-red-400"
-                      >
-                        {item.type}
-                      </Badge>
-                      <Badge variant="secondary" className="px-2 py-1 rounded-md text-[10px] font-bold border-none bg-amber-500/10 text-amber-700 dark:text-amber-400">
-                        {item.status}
-                      </Badge>
-                      <span className="font-mono text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
-                        ID: {item.id.slice(0, 12)}...
-                      </span>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4 bg-muted/30 p-4 rounded-xl border border-border/50">
-                      <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("operations.student")}</p>
-                        <p className="font-bold text-foreground truncate">{item.studentName}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("operations.class")}</p>
-                        <p className="font-mono text-xs font-bold truncate">{item.classId}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("operations.provider")}</p>
-                        <p className="font-bold text-foreground truncate">{item.provider}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("operations.amount")}</p>
-                        <p className="font-black text-foreground">{item.amount}</p>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("operations.errorDetail")}</p>
-                      <p className="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 p-3 font-mono text-xs text-red-800 dark:text-red-400 break-words">
-                        {item.errorDetail || t("operations.noErrorDetail")}
-                      </p>
-                    </div>
-                    
-                    <p className="text-[10px] font-bold text-muted-foreground">
-                      {t("operations.occurredAtPrefix")} {new Date(item.createdAt).toLocaleString("th-TH")}
-                    </p>
-                  </div>
-                  
-                  <div className="flex w-full flex-col gap-2 lg:w-48 border-t lg:border-t-0 lg:border-l border-border/50 pt-4 lg:pt-0 lg:pl-6">
-                    <Button
-                      variant="outline"
-                      disabled={resolvingId === item.id}
-                      onClick={() => setConfirmAction({ id: item.id, action: "Void Cancel" })}
-                      className="w-full rounded-xl font-bold border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/30 h-11"
-                    >
-                      <XCircle className="mr-2 h-4 w-4" />
-                      {t("operations.voidCancel")}
-                    </Button>
-                    <Button
-                      disabled={resolvingId === item.id}
-                      onClick={() => setConfirmAction({ id: item.id, action: "Force Active" })}
-                      className="w-full rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-500/20 h-11"
-                    >
-                      <CheckCircle2 className="mr-2 h-4 w-4" />
-                      {t("operations.forceActive")}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-      <ConfirmDialog
-        open={!!confirmAction}
-        onOpenChange={(open) => { if (!open) setConfirmAction(null); }}
-        title={confirmAction?.action === "Force Active" ? t("operations.confirmForceActiveTitle") : t("operations.confirmVoidTitle")}
-        description={confirmAction?.action === "Force Active" ? t("operations.confirmForceActiveDescription") : t("operations.confirmVoidDescription")}
-        variant={confirmAction?.action === "Void Cancel" ? "destructive" : "default"}
-        confirmLabel={confirmAction?.action === "Force Active" ? t("operations.forceActive") : t("operations.voidCancel")}
-        cancelLabel={t("confirm.cancelLabel")}
-        onConfirm={async () => {
-          if (confirmAction) await handleResolve(confirmAction.id, confirmAction.action);
-        }}
+    <Page>
+      <PageHeader
+        title={t("operations.page.title")}
+        description={t("operations.page.description")}
+        actions={
+          <Link href="/reconciliation" className={buttonVariants({ variant: "outline" })}>
+            <ReceiptText aria-hidden="true" />
+            {t("operations.page.openReconciliation")}
+          </Link>
+        }
       />
-    </div>
+
+      <SegmentedControl
+        aria-label={t("operations.statusTabs.label")}
+        className="hidden sm:inline-flex sm:w-auto"
+        value={status}
+        onValueChange={(next) => table.setFilter("status", next)}
+        items={statusItems}
+      />
+      <SelectField
+        aria-label={t("operations.statusTabs.label")}
+        containerClassName="w-full sm:hidden"
+        value={status}
+        onChange={(event) => table.setFilter("status", event.target.value)}
+        options={statusItems.map((item) => ({
+          value: item.value,
+          label: item.count === undefined ? item.label : `${item.label} (${item.count})`,
+        }))}
+      />
+
+      <FilterBar
+        search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("operations.filters.search") }}
+        isFiltered={isFiltered}
+        onReset={table.reset}
+      >
+        <SelectField
+          aria-label={t("operations.filters.type")}
+          containerClassName="w-full sm:w-56"
+          value={table.filters.type ?? ""}
+          onChange={(event) => table.setFilter("type", event.target.value)}
+          options={typeOptions}
+        />
+      </FilterBar>
+
+      {error && !data ? (
+        <ErrorState onRetry={refetch} />
+      ) : (
+        <DataTable
+          caption={t("operations.page.title")}
+          rows={data?.exceptions ?? []}
+          columns={columns}
+          getRowKey={(row) => row.id}
+          loading={isLoading || (isValidating && isPreviousData)}
+          sort={table.sort}
+          onSortChange={table.toggleSort}
+          empty={
+            <EmptyState
+              compact
+              icon={CheckCircle2}
+              tone="teal"
+              title={isFiltered ? t("operations.empty.filteredTitle") : t("operations.empty.unresolvedTitle")}
+              description={isFiltered ? t("operations.empty.filteredDescription") : t("operations.empty.unresolvedDescription")}
+            />
+          }
+          footer={
+            <Pagination
+              page={table.page}
+              pageSize={table.pageSize}
+              total={data?.total ?? 0}
+              onPageChange={table.setPage}
+              onPageSizeChange={table.setPageSize}
+            />
+          }
+        />
+      )}
+
+      <ConfirmDialog
+        open={pending !== null}
+        onOpenChange={(open) => !open && setPending(null)}
+        tone={pending?.resolution === "DISMISS" ? "danger" : "brand"}
+        title={copy ? t(copy.title) : ""}
+        description={copy ? t(copy.description) : undefined}
+        confirmLabel={copy ? t(copy.confirm) : ""}
+        reason={{ label: t("operations.confirm.noteLabel"), placeholder: t("operations.confirm.notePlaceholder") }}
+        details={
+          target ? (
+            <DescriptionList
+              columns={2}
+              items={[
+                { label: t("operations.columns.type"), value: statusLabel("exceptionType", target.type) },
+                { label: t("operations.columns.student"), value: target.studentName ?? t("operations.noStudent") },
+                {
+                  label: t("operations.columns.amount"),
+                  value: target.amountMinor != null ? <Money satang={target.amountMinor} /> : "–",
+                },
+                {
+                  label: t("operations.columns.payment"),
+                  value: target.context?.payment ? statusLabel("payment", target.context.payment.status) : t("operations.noPayment"),
+                },
+                { label: t("operations.columns.detail"), value: target.errorDetail || "–", wide: true },
+              ]}
+            />
+          ) : null
+        }
+        onConfirm={onConfirm}
+      >
+        {target?.type === "REFUND_REQUESTED" && pending?.resolution === "MARK_RESOLVED" ? (
+          <Notice tone="warning">{t("operations.confirm.refundNotice")}</Notice>
+        ) : null}
+        {pending?.resolution !== "ACTIVATE_ENROLLMENT" && target?.context && !target.context.successfulPaymentId ? (
+          <Notice tone="info">{t("operations.confirm.noPaymentNotice")}</Notice>
+        ) : null}
+      </ConfirmDialog>
+    </Page>
   );
 }

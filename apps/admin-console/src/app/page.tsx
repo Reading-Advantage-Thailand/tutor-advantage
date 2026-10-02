@@ -1,388 +1,304 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
-  Activity,
   AlertTriangle,
-  ArrowRight,
+  BookOpen,
+  CheckCircle2,
   FilePenLine,
+  History,
   ReceiptText,
+  SearchCheck,
   ShieldAlert,
-  ShieldCheck,
-  Users,
-  TrendingUp,
-  Clock,
-  ExternalLink,
-  X,
-  RefreshCw,
+  UserCheck,
+  Wallet,
+  type LucideIcon,
 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { errorMessage, getAdminRole } from "@/lib/api";
+  Chip,
+  ErrorState,
+  Grid,
+  IconTile,
+  ListGroup,
+  ListRow,
+  Page,
+  PageHeader,
+  Section,
+  StatCard,
+  StatGridSkeleton,
+  ListSkeleton,
+  useAdminSession,
+  type AdminOverview,
+  type TileTone,
+} from "@/components/app";
 import { useAdminOverview } from "@/components/app/AdminSummary";
+import { errorMessage } from "@/lib/api";
+import { formatListTimestamp, formatMinor, formatNumber, formatPeriodMonth, formatRelativeDay, formatThaiTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import type { NavBadgeKey } from "@/lib/routes";
+import { auditActionLabel, auditActionTone, auditEntityLabel } from "./audit/auditLabels";
 
-const ACTION_TYPE_LABELS: Record<string, string> = {
-  PREVIEW: t("audit.actionLabelPreview"),
-  APPROVE: t("audit.actionLabelApprove"),
-  REJECT: t("audit.actionLabelReject"),
-  ADJUST_CREATE: t("audit.actionLabelAdjustCreate"),
-  ADJUST_APPROVE: t("audit.actionLabelAdjustApprove"),
-  ADJUST_REJECT: t("audit.actionLabelAdjustReject"),
-  EXPORT: t("audit.actionLabelExport"),
-  SETTLEMENT_REFRESH: t("audit.actionLabelSettlementRefresh"),
-  SUBMIT: t("audit.actionLabelSubmit"),
-  SUBMIT_SETTLEMENT: t("audit.actionLabelSubmitSettlement"),
-  APPROVE_SETTLEMENT: t("audit.actionLabelApproveSettlement"),
-};
-
-interface Overview {
-  stats: {
-    totalSettlementsLast30Days: number;
-    pendingApprovals: number;
-    pendingAdjustments: number;
-    pendingVerificationUsers: number;
-    unresolvedExceptions: number;
-    activeFraudFlags: number;
+/** Fields added to /v1/admin/overview by G1 (older responses simply lack them). */
+interface OverviewExtras {
+  queueOldest?: Partial<Record<NavBadgeKey, string | null>>;
+  kpis?: {
+    paymentsLast30Days: { count: number; amountSatang: number };
+    awaitingApproval: { runs: number; oldestPeriodMonth: string | null; payoutLines: number; netPayoutSatang: number };
+    settlementsLast30Days: number;
+    highSeverityFraudFlags: number;
   };
-  workQueues: Record<string, number>;
-  recentActivity: {
-    auditId: string;
-    actionType: string;
-    entityType: string;
-    targetId: string;
-    createdAt: string;
-  }[];
-  health: {
-    api: string;
-    database: string;
-  };
+  generatedAt?: string;
+  recentActivity: (AdminOverview["recentActivity"][number] & { actorName?: string | null })[];
 }
 
-const QUEUES = [
+interface QueueDef {
+  key: NavBadgeKey;
+  title: string;
+  hint: string;
+  /** Pre-filtered list (the owning page reads these URL params). */
+  href: string;
+  icon: LucideIcon;
+  tone: TileTone;
+  adminOnly?: boolean;
+}
+
+const QUEUES: QueueDef[] = [
   {
     key: "settlements",
-    title: t("dashboard.queueSettlementsTitle"),
-    description: t("dashboard.queueSettlementsDescription"),
-    href: "/settlements",
+    title: t("dashboard.queueApprovalsTitle"),
+    hint: t("dashboard.queueApprovalsHint"),
+    href: "/settlements?status=SUBMITTED",
     icon: ReceiptText,
-    color: "text-amber-500",
-    bgColor: "bg-amber-500/10",
-  },
-  {
-    key: "adjustments",
-    title: t("dashboard.queueAdjustmentsTitle"),
-    description: t("dashboard.queueAdjustmentsDescription"),
-    href: "/adjustments",
-    icon: FilePenLine,
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
+    tone: "brand",
   },
   {
     key: "verifications",
     title: t("dashboard.queueVerificationsTitle"),
-    description: t("dashboard.queueVerificationsDescription"),
-    href: "/users",
-    icon: Users,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
+    hint: t("dashboard.queueVerificationsHint"),
+    href: "/users?role=TUTOR&verification=PENDING",
+    icon: UserCheck,
+    tone: "teal",
+    adminOnly: true,
   },
   {
     key: "exceptions",
-    title: t("dashboard.queueExceptionsTitle"),
-    description: t("dashboard.queueExceptionsDescription"),
-    href: "/operations/exceptions",
+    title: t("shell.navExceptions"),
+    hint: t("dashboard.queueExceptionsHint"),
+    href: "/operations/exceptions?status=UNRESOLVED",
     icon: AlertTriangle,
-    color: "text-red-500",
-    bgColor: "bg-red-500/10",
+    tone: "orange",
   },
   {
     key: "fraudFlags",
-    title: t("dashboard.queueFraudFlagsTitle"),
-    description: t("dashboard.queueFraudFlagsDescription"),
-    href: "/fraud",
+    title: t("shell.navFraud"),
+    hint: t("dashboard.queueFraudHint"),
+    href: "/fraud?status=ACTIVE",
     icon: ShieldAlert,
-    color: "text-purple-500",
-    bgColor: "bg-purple-500/10",
+    tone: "red",
+  },
+  {
+    key: "adjustments",
+    title: t("dashboard.queueAdjustmentsTitle"),
+    hint: t("dashboard.queueAdjustmentsHint"),
+    href: "/adjustments?status=PENDING",
+    icon: FilePenLine,
+    tone: "blue",
   },
 ];
 
-function StatSkeleton() {
+function waitingSince(iso: string | null | undefined) {
+  if (!iso) return null;
+  return t("dashboard.waitingSince", { when: formatRelativeDay(iso) });
+}
+
+function OverviewSkeleton() {
   return (
-    <Card className="overflow-hidden border-none bg-card shadow-sm">
-      <div className="h-2 w-full bg-muted animate-pulse" />
-      <CardHeader className="pb-2">
-        <Skeleton className="h-4 w-24" />
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="h-10 w-16" />
-      </CardContent>
-    </Card>
+    <>
+      <StatGridSkeleton count={4} />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <ListSkeleton rows={5} />
+        <ListSkeleton rows={6} />
+      </div>
+    </>
   );
 }
 
-export default function DashboardPage() {
-  // G0: read the shell's shared overview resource (one deduped, visibility-aware
-  // poller app-wide) instead of fetching /v1/admin/overview a second time.
-  const overviewResource = useAdminOverview();
-  const overview = (overviewResource.data as unknown as Overview | undefined) ?? null;
-  const loading = overviewResource.isLoading;
-  const [errorDismissed, setErrorDismissed] = useState(false);
-  const error = overviewResource.error && !errorDismissed ? errorMessage(overviewResource.error) : "";
-  const setError = (_value: string) => setErrorDismissed(true);
-  const [role, setRole] = useState<string | null>(null);
+export default function OverviewPage() {
+  const me = useAdminSession();
+  const isAdmin = me?.role === "ADMIN";
+  // One shared, visibility-aware poller lives in the shell; this only reads it.
+  const overview = useAdminOverview();
+  const data = overview.data as (Pick<AdminOverview, "stats" | "workQueues"> & OverviewExtras) | undefined;
 
-  useEffect(() => {
-    const r = getAdminRole();
-    setRole(r || null);
-  }, []);
-
-  const { refetch } = overviewResource;
-  const loadOverview = useCallback(async () => {
-    setErrorDismissed(false);
-    await refetch();
-  }, [refetch]);
+  const queues = QUEUES.filter((q) => isAdmin || !q.adminOnly).map((q) => ({
+    ...q,
+    count: data?.workQueues?.[q.key] ?? 0,
+    oldest: data?.queueOldest?.[q.key] ?? null,
+  }));
+  const openQueues = queues.filter((q) => q.count > 0);
+  const kpis = data?.kpis;
+  const awaiting = kpis?.awaitingApproval;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 to-brand-800 p-8 text-white shadow-2xl shadow-brand-500/20">
-        <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              {t("dashboard.welcomePrefix")} {role === "ADMIN" ? t("layout.roleAdmin") : role === "FINANCE_CHECKER" ? t("layout.roleFinanceChecker") : role || t("layout.defaultRole")}{t("dashboard.welcomeSuffix")}
-            </h2>
-            <p className="mt-2 text-brand-100/90 font-medium">
-              {t("dashboard.welcomeBase")} {loading ? t("dashboard.loadingSummary") : t("dashboard.systemNormal")}
-            </p>
-          </div>
-          {!loading && overview && (
-            <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-md border border-white/10 text-center min-w-[120px]">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-brand-200">{t("dashboard.systemStatus")}</p>
-              {overview.health.api === "ok" && overview.health.database === "ok" ? (
-                <div className="mt-1 flex items-center justify-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-                  <span className="text-xl font-bold">OK</span>
-                </div>
-              ) : (
-                <div className="mt-1 flex items-center justify-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-                  <span className="text-xl font-bold text-amber-300">Degraded</span>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-        {/* Background Decorations */}
-        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5 blur-3xl" />
-        <div className="absolute -bottom-20 left-10 h-64 w-64 rounded-full bg-brand-400/10 blur-3xl" />
-      </div>
+    <Page>
+      <PageHeader
+        title={t("dashboard.pageTitle")}
+        description={isAdmin ? t("dashboard.pageDescriptionAdmin") : t("dashboard.pageDescriptionChecker")}
+        meta={
+          data?.generatedAt ? (
+            <span className="text-[0.8125rem] text-fg-muted">
+              {t("dashboard.updatedAt", { time: formatThaiTime(data.generatedAt, { suffix: true }) })}
+            </span>
+          ) : null
+        }
+      />
 
-      {error && (
-        <Alert variant="destructive" className="rounded-2xl border-2 shadow-lg animate-in slide-in-from-top-4 duration-300 relative">
-          <AlertTriangle className="h-5 w-5" />
-          <AlertTitle className="font-bold">{t("dashboard.connectionError")}</AlertTitle>
-          <AlertDescription className="font-medium flex items-center justify-between gap-4">
-            <span>{error}</span>
-            <Button size="sm" variant="outline" className="shrink-0 rounded-xl font-bold border-red-300 text-red-700 hover:bg-red-50" onClick={loadOverview}>
-              <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
-              ลองใหม่
-            </Button>
-          </AlertDescription>
-          <button onClick={() => setError("")} className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
-            <X className="h-4 w-4" />
-          </button>
-        </Alert>
-      )}
+      {overview.error && !data ? (
+        <ErrorState title={t("dashboard.loadError")} description={errorMessage(overview.error)} onRetry={overview.refetch} />
+      ) : !data ? (
+        <OverviewSkeleton />
+      ) : (
+        <>
+          <Section title={t("dashboard.kpiTitle")}>
+            <Grid cols={4} className="grid-cols-2">
+              <StatCard
+                label={t("dashboard.kpiAwaiting")}
+                value={awaiting ? formatMinor(awaiting.netPayoutSatang) : "–"}
+                icon={Wallet}
+                tone="brand"
+                href="/settlements?status=SUBMITTED"
+                hint={
+                  awaiting && awaiting.runs > 0
+                    ? t("dashboard.kpiAwaitingHint", { runs: formatNumber(awaiting.runs), lines: formatNumber(awaiting.payoutLines) })
+                    : t("dashboard.kpiAwaitingNone")
+                }
+              />
+              <StatCard
+                label={t("dashboard.kpiPayments")}
+                value={kpis ? formatMinor(kpis.paymentsLast30Days.amountSatang) : "–"}
+                icon={CheckCircle2}
+                tone="teal"
+                href="/reconciliation"
+                hint={kpis ? t("dashboard.kpiPaymentsHint", { count: formatNumber(kpis.paymentsLast30Days.count) }) : undefined}
+              />
+              <StatCard
+                label={t("dashboard.kpiFraudHigh")}
+                value={formatNumber(kpis?.highSeverityFraudFlags ?? 0)}
+                icon={ShieldAlert}
+                tone={kpis && kpis.highSeverityFraudFlags > 0 ? "red" : "neutral"}
+                href="/fraud?status=ACTIVE"
+                hint={t("dashboard.kpiFraudHint", { count: formatNumber(data.workQueues.fraudFlags ?? 0) })}
+              />
+              <StatCard
+                label={t("dashboard.kpiRuns")}
+                value={formatNumber(kpis?.settlementsLast30Days ?? data.stats.totalSettlementsLast30Days)}
+                icon={ReceiptText}
+                tone="blue"
+                href="/settlements"
+                hint={t("dashboard.kpiRunsHint")}
+              />
+            </Grid>
+          </Section>
 
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
-        {loading
-          ? QUEUES.filter((q) => role !== "FINANCE_CHECKER" || !["verifications", "fraudFlags"].includes(q.key)).map((queue) => <StatSkeleton key={queue.key} />)
-          : QUEUES.filter((q) => role !== "FINANCE_CHECKER" || !["verifications", "fraudFlags"].includes(q.key)).map((queue) => {
-              const Icon = queue.icon;
-              const count = overview?.workQueues?.[queue.key] ?? 0;
-              return (
-                <Card key={queue.key} className="group overflow-hidden border-none bg-card shadow-sm transition-all hover:shadow-xl hover:-translate-y-1">
-                  <div className={`h-1.5 w-full ${queue.bgColor} group-hover:opacity-100 transition-opacity`} />
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <div className={`rounded-xl ${queue.bgColor} p-2 ${queue.color} dark:opacity-80`}>
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    {count > 0 && (
-                      <Badge variant="secondary" className="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 border-none font-bold">
-                        {t("dashboard.pending")}
-                      </Badge>
-                    )}
-                  </CardHeader>
-                  <CardContent className="pt-2">
-                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-tight">{queue.title}</p>
-                    <div className="mt-1 flex items-baseline gap-2">
-                      <p className="text-4xl font-extrabold tracking-tight tabular-nums text-foreground">
-                        {count}
-                      </p>
-                      <span className="text-xs font-medium text-muted-foreground">{t("dashboard.itemUnit")}</span>
-                    </div>
-                    <Button
-                      asChild
-                      variant="ghost"
-                      size="sm"
-                      className="mt-4 h-9 w-full justify-between rounded-xl px-2 font-semibold group-hover:bg-brand-50 dark:group-hover:bg-brand-900/20 group-hover:text-brand-700 dark:group-hover:text-brand-400 transition-colors"
-                    >
-                      <Link href={queue.href}>
-                        {t("dashboard.reviewItems")}
-                        <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-      </div>
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2 lg:gap-8">
+            <ListGroup
+              header={t("dashboard.queuesTitle")}
+              footer={openQueues.length > 0 ? t("dashboard.queuesDescription") : undefined}
+            >
+              {queues.map((q) => (
+                <ListRow
+                  key={q.key}
+                  href={q.href}
+                  leading={<IconTile icon={q.icon} tone={q.count > 0 ? q.tone : "neutral"} size="sm" />}
+                  title={q.title}
+                  subtitle={q.count > 0 ? (waitingSince(q.oldest) ?? q.hint) : q.hint}
+                  lines={1}
+                  trailing={
+                    q.count > 0 ? (
+                      <Chip tone="warning" size="md">
+                        {t("dashboard.countUnit", { count: formatNumber(q.count) })}
+                      </Chip>
+                    ) : (
+                      <Chip tone="success" size="md" icon={CheckCircle2}>
+                        {t("dashboard.queuesClear")}
+                      </Chip>
+                    )
+                  }
+                />
+              ))}
+            </ListGroup>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Recent Activity */}
-        <Card className="lg:col-span-2 overflow-hidden border-none shadow-sm rounded-3xl">
-          <CardHeader className="bg-muted/30 pb-6 pt-8 px-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2 text-xl font-bold">
-                  <Clock className="h-5 w-5 text-brand-600 dark:text-brand-400" />
-                  {t("dashboard.activityTitle")}
-                </CardTitle>
-                <CardDescription className="text-sm font-medium">
-                  {t("dashboard.activityDescription")}
-                </CardDescription>
-              </div>
-              <Button variant="outline" size="sm" className="rounded-xl font-bold" asChild>
-                <Link href="/audit">{t("dashboard.viewAll")}</Link>
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            {loading ? (
-              <div className="p-8 space-y-4">
-                <Skeleton className="h-16 w-full rounded-2xl" />
-                <Skeleton className="h-16 w-full rounded-2xl" />
-                <Skeleton className="h-16 w-full rounded-2xl" />
-              </div>
-            ) : !overview?.recentActivity || overview.recentActivity.length === 0 ? (
-              <div className="flex flex-col items-center justify-center p-12 text-center">
-                <div className="rounded-full bg-muted p-4 mb-4">
-                  <ShieldCheck className="h-10 w-10 text-muted-foreground/40" />
-                </div>
-                <p className="font-bold text-muted-foreground">{t("dashboard.noActivity")}</p>
-                <p className="text-sm text-muted-foreground/60">{t("dashboard.noActivityDescription")}</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-border">
-                {overview.recentActivity.map((event) => (
-                  <div
-                    key={event.auditId}
-                    className="flex items-center justify-between gap-4 p-6 hover:bg-muted/30 transition-colors group"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-full bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold text-xs shadow-sm">
-                        {event.actionType.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-foreground">
-                          {ACTION_TYPE_LABELS[event.actionType] ?? event.actionType}
-                        </p>
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                          {event.entityType} • {event.targetId.slice(0, 8)}...
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="text-xs font-bold text-muted-foreground tabular-nums">
-                        {new Date(event.createdAt).toLocaleTimeString("th-TH", { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                      <span className="text-[10px] font-medium text-muted-foreground/60">
-                        {new Date(event.createdAt).toLocaleDateString("th-TH")}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Finance Insights */}
-        <div className="space-y-6">
-          <Card className="overflow-hidden border-none shadow-sm rounded-3xl bg-gradient-to-b from-card to-muted/20 dark:from-card dark:to-muted/5">
-            <CardHeader className="pb-4 pt-8 px-8">
-              <CardTitle className="flex items-center gap-2 text-xl font-bold">
-                <TrendingUp className="h-5 w-5 text-emerald-500" />
-                {t("dashboard.financeSummary")}
-              </CardTitle>
-              <CardDescription className="text-sm font-medium">{t("dashboard.financeDescription")}</CardDescription>
-            </CardHeader>
-            <CardContent className="px-8 pb-8 space-y-6">
-              <div className="p-6 rounded-2xl bg-brand-50/50 border border-brand-100/50 dark:bg-brand-900/10 dark:border-brand-800/50">
-                <p className="text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-widest">
-                  {t("dashboard.createdPayments")}
-                </p>
-                <div className="mt-2 flex items-end justify-between">
-                  <p className="text-4xl font-black text-brand-900 dark:text-brand-50 tabular-nums">
-                    {overview?.stats.totalSettlementsLast30Days ?? "--"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-amber-50/50 border border-amber-100/50 dark:bg-amber-900/10 dark:border-amber-800/50">
-                <p className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest">
-                  {t("dashboard.pendingApproval")}
-                </p>
-                <div className="mt-2 flex items-end justify-between">
-                  <p className="text-4xl font-black text-amber-900 dark:text-amber-50 tabular-nums">
-                    {(overview?.stats.pendingApprovals ?? 0) +
-                      (overview?.stats.pendingAdjustments ?? 0)}
-                  </p>
-                  <Badge variant="outline" className="mb-1 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 font-bold bg-white dark:bg-amber-950/20">
-                    {t("dashboard.actionNeeded")}
-                  </Badge>
-                </div>
-              </div>
-
-              <Button className="w-full rounded-2xl h-12 font-bold bg-foreground text-background hover:bg-foreground/90 group transition-all" asChild>
-                <Link href="/settlements">
-                  {t("dashboard.manageFinance")}
-                  <ExternalLink className="ml-2 h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            <ListGroup
+              header={t("dashboard.activityTitleShort")}
+              headerAction={
+                <Link href="/audit" className="text-sm font-medium text-brand-fg hover:underline">
+                  {t("dashboard.viewAll")}
                 </Link>
-              </Button>
-            </CardContent>
-          </Card>
+              }
+            >
+              {data.recentActivity.length === 0 ? (
+                <ListRow leading={<IconTile icon={History} tone="neutral" size="sm" />} title={t("dashboard.activityEmpty")} />
+              ) : (
+                data.recentActivity.map((event) => {
+                  const actor =
+                    event.actorUserId === "SYSTEM" ? t("audit.systemActor") : (event.actorName ?? t("audit.unknownActor"));
+                  const period = event.periodMonth ? ` · ${formatPeriodMonth(event.periodMonth, { short: true })}` : "";
+                  const href =
+                    event.entityType && event.targetId
+                      ? `/audit?entityType=${encodeURIComponent(event.entityType)}&entityId=${encodeURIComponent(event.targetId)}`
+                      : "/audit";
+                  return (
+                    <ListRow
+                      key={event.auditId}
+                      href={href}
+                      chevron={false}
+                      lines={1}
+                      leading={
+                        <span
+                          aria-hidden="true"
+                          className={`size-2 rounded-full ${
+                            {
+                              success: "bg-success-solid",
+                              danger: "bg-danger-solid",
+                              warning: "bg-warning-solid",
+                              info: "bg-info-solid",
+                              brand: "bg-brand-solid",
+                              neutral: "bg-fg-subtle",
+                            }[auditActionTone(event.actionType)]
+                          }`}
+                        />
+                      }
+                      title={auditActionLabel(event.actionType)}
+                      subtitle={`${auditEntityLabel(event.entityType)}${period} · ${actor}`}
+                      trailing={<span className="text-xs whitespace-nowrap text-fg-muted tabular">{formatListTimestamp(event.createdAt)}</span>}
+                    />
+                  );
+                })
+              )}
+            </ListGroup>
+          </div>
 
-          {/* Quick Support / Links */}
-          <Card className="border-none shadow-sm rounded-3xl p-6 bg-brand-900 dark:bg-brand-900/20 text-white dark:text-foreground relative overflow-hidden group">
-            <div className="relative z-10">
-              <h3 className="font-bold text-lg mb-2">{t("dashboard.helpTitle")}</h3>
-              <p className="text-brand-200 dark:text-muted-foreground text-sm mb-4">{t("dashboard.helpDescription")}</p>
-              <div className="flex flex-wrap gap-2">
-                <Button variant="secondary" size="sm" className="rounded-xl font-bold bg-white text-brand-900 hover:bg-brand-50 dark:bg-brand-600 dark:text-white dark:hover:bg-brand-700" asChild>
-                  <Link href="/docs">{t("dashboard.docs")}</Link>
-                </Button>
-                <Button variant="outline" size="sm" className="rounded-xl font-bold bg-transparent border-white/20 hover:bg-white/10 text-white dark:border-border dark:text-foreground dark:hover:bg-muted" asChild>
-                  <Link href="https://lin.ee/R7Dccj9" target="_blank">{t("dashboard.support")}</Link>
-                </Button>
-              </div>
+          <Section title={t("dashboard.linksTitle")}>
+            <div className="flex flex-wrap gap-2">
+              <QuickLink href="/reconciliation" icon={SearchCheck} label={t("dashboard.linkReconciliation")} />
+              <QuickLink href="/audit" icon={History} label={t("dashboard.linkAudit")} />
+              <QuickLink href="/docs" icon={BookOpen} label={t("dashboard.linkDocs")} />
             </div>
-            <ShieldCheck className="absolute -right-4 -bottom-4 h-24 w-24 text-white/5 dark:text-brand-500/10 -rotate-12 group-hover:rotate-0 transition-transform duration-500" />
-          </Card>
-        </div>
-      </div>
-    </div>
+          </Section>
+        </>
+      )}
+    </Page>
+  );
+}
+
+function QuickLink({ href, icon: Icon, label }: { href: string; icon: LucideIcon; label: string }) {
+  return (
+    <Link
+      href={href}
+      className="pressable inline-flex h-9 items-center gap-2 rounded-lg border border-hairline bg-surface px-3 text-sm font-medium text-fg shadow-card hover:border-hairline-strong"
+    >
+      <Icon aria-hidden="true" className="size-4 text-fg-muted" />
+      {label}
+    </Link>
   );
 }

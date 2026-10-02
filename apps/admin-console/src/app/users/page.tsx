@@ -1,336 +1,220 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { fetchWithAuth } from "@/lib/api";
-import { t } from "@/lib/i18n";
+import { FileSearch, GraduationCap, UserRound, Users } from "lucide-react";
 import {
-  Users,
-  Search,
-  ShieldCheck,
-  GraduationCap,
-  Bell,
-  ArrowRight,
-  ShieldAlert,
-  User,
-  Mail,
-  CalendarDays,
-  BookOpen,
-  ChevronRight,
-  AlertCircle,
-  CheckCircle2,
-  Clock,
-  XCircle,
-} from "lucide-react";
+  AdminStatusChip,
+  Chip,
+  DataTable,
+  EmptyState,
+  ErrorState,
+  FilterBar,
+  Grid,
+  Page,
+  PageHeader,
+  Pagination,
+  SelectField,
+  StatCard,
+  UserAvatar,
+  useAdminSession,
+  type DataTableColumn,
+} from "@/components/app";
+import { useTableState } from "@/hooks/useTableState";
+import { api } from "@/lib/api";
+import { useCachedResource } from "@/lib/cachedResource";
+import { formatNumber, formatThaiDate } from "@/lib/format";
+import { t } from "@/lib/i18n";
+import { statusLabel } from "@/lib/status";
+import type { UserListItem, UserListResponse } from "./types";
 
-interface UserInfo {
-  id: string;
-  name: string;
-  role: string;
-  email: string;
-  profilePictureUrl?: string | null;
-  activeClasses: number;
-  status: string;
-  joined: string;
-  guardianSetup?: boolean;
-  verificationStatus?: string;
-  pendingVerificationCount?: number;
+const ROLE_OPTIONS = [
+  { value: "", label: t("users.roleAll") },
+  { value: "TUTOR", label: statusLabel("userRole", "TUTOR") },
+  { value: "STUDENT", label: statusLabel("userRole", "STUDENT") },
+];
+const ACCOUNT_OPTIONS = [
+  { value: "", label: t("users.accountAll") },
+  { value: "ACTIVE", label: statusLabel("account", "ACTIVE") },
+  { value: "SUSPENDED", label: statusLabel("account", "SUSPENDED") },
+  { value: "ANONYMIZED", label: statusLabel("account", "ANONYMIZED") },
+];
+const VERIFICATION_OPTIONS = [
+  { value: "", label: t("users.verificationAll") },
+  { value: "REVIEW", label: t("users.verificationReview") },
+  { value: "UNVERIFIED", label: statusLabel("verification", "UNVERIFIED") },
+  { value: "PENDING", label: statusLabel("verification", "PENDING") },
+  { value: "VERIFIED", label: statusLabel("verification", "VERIFIED") },
+  { value: "REJECTED", label: statusLabel("verification", "REJECTED") },
+];
+
+function VerificationCell({ user }: { user: UserListItem }) {
+  if (user.role !== "TUTOR") {
+    return user.guardianSetup ? (
+      <span className="text-fg-subtle">{t("users.notApplicable")}</span>
+    ) : (
+      <Chip tone="warning" size="sm" dot>
+        {t("users.guardianMissing")}
+      </Chip>
+    );
+  }
+  return (
+    <span className="flex flex-wrap items-center gap-1.5">
+      <AdminStatusChip domain="verification" status={user.verificationStatus} />
+      {user.pendingVerificationCount > 0 ? (
+        <Chip tone="warning" size="sm">
+          {t("users.pendingFields", { count: user.pendingVerificationCount })}
+        </Chip>
+      ) : null}
+    </span>
+  );
 }
 
-const VERIFICATION_CONFIG: Record<string, { label: string; className: string; icon: React.ElementType }> = {
-  VERIFIED:   { label: "ยืนยันแล้ว",      className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20", icon: CheckCircle2 },
-  PENDING:    { label: "รอตรวจสอบ",       className: "bg-amber-500/10 text-amber-600 border-amber-500/20",   icon: Clock },
-  REJECTED:   { label: "ถูกปฏิเสธ",       className: "bg-red-500/10 text-red-600 border-red-500/20",         icon: XCircle },
-  UNVERIFIED: { label: "ยังไม่ยืนยันตัวตน", className: "bg-muted text-muted-foreground border-transparent",    icon: AlertCircle },
-};
-
-type FilterTab = "all" | "TUTOR" | "STUDENT" | "pending";
-
-const LIMIT = 20;
+const columns: DataTableColumn<UserListItem>[] = [
+  {
+    key: "name",
+    header: t("users.colUser"),
+    sortable: true,
+    mobile: "primary",
+    alwaysVisible: true,
+    cell: (user) => (
+      <span className="flex min-w-0 items-center gap-3">
+        <UserAvatar name={user.name ?? ""} src={user.profilePictureUrl} size="sm" className="hidden md:inline-flex" />
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate font-medium text-fg">{user.displayName || t("users.unnamed")}</span>
+          <span className="truncate text-[0.8125rem] text-fg-muted">{user.email ?? t("users.noEmail")}</span>
+        </span>
+      </span>
+    ),
+  },
+  {
+    key: "role",
+    header: t("users.colRole"),
+    mobile: "secondary",
+    width: "120px",
+    cell: (user) => <AdminStatusChip domain="userRole" status={user.role} />,
+  },
+  {
+    key: "verification",
+    header: t("users.colVerification"),
+    cell: (user) => <VerificationCell user={user} />,
+  },
+  {
+    key: "account",
+    header: t("users.colAccount"),
+    mobile: "trailing",
+    width: "130px",
+    cell: (user) => <AdminStatusChip domain="account" status={user.accountStatus} />,
+  },
+  {
+    key: "classes",
+    header: t("users.colClasses"),
+    align: "right",
+    width: "90px",
+    cell: (user) => formatNumber(user.activeClasses),
+  },
+  {
+    key: "createdAt",
+    header: t("users.colJoined"),
+    sortable: true,
+    width: "140px",
+    cell: (user) => formatThaiDate(user.createdAt),
+  },
+];
 
 export default function UsersPage() {
-  const [search, setSearch] = useState("");
-  const [users, setUsers] = useState<UserInfo[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<FilterTab>("all");
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-
-  const loadData = useCallback(async (currentPage: number) => {
-    setLoading(true);
-    try {
-      const resp = await fetchWithAuth(`/v1/users?page=${currentPage}&limit=${LIMIT}`);
-      setUsers(resp.users || []);
-      setTotal(resp.total ?? (resp.users?.length ?? 0));
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadData(page);
-    // Handle ?filter=pending from URL (e.g. from dashboard CTA)
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("filter") === "pending") setActiveTab("pending");
-  }, [loadData, page]);
-
-  // Reset to page 1 when searchQuery changes
-  useEffect(() => {
-    setPage(1);
-  }, [search]);
-
-  const searchFiltered = users.filter((u) => {
-    const q = search.toLowerCase();
-    return (
-      u.name.toLowerCase().includes(q) ||
-      u.email.toLowerCase().includes(q) ||
-      u.id.toLowerCase().includes(q)
-    );
+  const me = useAdminSession();
+  const table = useTableState({
+    defaultSort: { key: "createdAt", dir: "desc" },
+    sortKeys: ["createdAt", "name"],
+    filterKeys: ["role", "status", "verification"],
   });
 
-  const filtered = searchFiltered.filter((u) => {
-    if (activeTab === "TUTOR") return u.role === "TUTOR";
-    if (activeTab === "STUDENT") return u.role === "STUDENT";
-    if (activeTab === "pending") return u.role === "TUTOR" && (u.pendingVerificationCount || 0) > 0;
-    return true;
-  });
+  const { data, error, isLoading, isValidating, refetch } = useCachedResource(
+    me ? `${me.userId}:users:list:${table.queryKey}` : null,
+    () => api.get<UserListResponse>("/v1/users", { query: table.apiQuery }),
+    { keepPreviousData: true },
+  );
 
-  const totalTutors   = users.filter((u) => u.role === "TUTOR").length;
-  const totalStudents = users.filter((u) => u.role === "STUDENT").length;
-  const pendingCount  = users.filter((u) => u.role === "TUTOR" && (u.pendingVerificationCount || 0) > 0).length;
-
-  const tabs: { id: FilterTab; label: string; count: number }[] = [
-    { id: "all",     label: t("users.tabAll"),     count: users.length },
-    { id: "TUTOR",   label: t("users.tabTutor"),   count: totalTutors },
-    { id: "STUDENT", label: t("users.tabStudent"), count: totalStudents },
-    { id: "pending", label: t("users.tabPending"), count: pendingCount },
-  ];
+  const counts = data?.counts;
+  const reviewHref = "/users?role=TUTOR&verification=REVIEW";
 
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
-      {/* Header */}
-      <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-black tracking-tight text-foreground">{t("users.title")}</h2>
-        <p className="text-muted-foreground font-medium">{t("users.description")}</p>
-      </div>
+    <Page>
+      <PageHeader title={t("users.pageTitle")} description={t("users.pageDescription")} />
 
-      {/* Stat row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: t("users.statTotal"),      value: users.length,   icon: Users,        color: "text-brand-600" },
-          { label: t("users.statTutors"),     value: totalTutors,    icon: User,         color: "text-purple-600" },
-          { label: t("users.statStudents"),   value: totalStudents,  icon: GraduationCap,color: "text-blue-600" },
-          { label: t("users.statPendingDocs"),value: pendingCount,   icon: ShieldAlert,  color: "text-amber-600" },
-        ].map(({ label, value, icon: Icon, color }) => (
-          <Card key={label} className="border-none shadow-sm rounded-2xl bg-card">
-            <CardContent className="p-5 flex items-center gap-4">
-              <div className={`p-2.5 rounded-xl bg-muted/60 ${color}`}>
-                <Icon className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-2xl font-black text-foreground tabular-nums">{value}</p>
-                <p className="text-xs font-medium text-muted-foreground mt-0.5">{label}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <Grid cols={4} className="grid-cols-2">
+        <StatCard label={t("users.statTotal")} value={counts ? formatNumber(counts.all) : "–"} icon={Users} tone="brand" />
+        <StatCard label={t("users.statTutors")} value={counts ? formatNumber(counts.tutors) : "–"} icon={UserRound} tone="purple" href="/users?role=TUTOR" />
+        <StatCard label={t("users.statStudents")} value={counts ? formatNumber(counts.students) : "–"} icon={GraduationCap} tone="teal" href="/users?role=STUDENT" />
+        <StatCard
+          label={t("users.statReview")}
+          value={counts ? formatNumber(counts.pendingReview) : "–"}
+          icon={FileSearch}
+          tone="amber"
+          hint={t("users.statReviewHint")}
+          href={reviewHref}
+        />
+      </Grid>
 
-      {/* Search + Tabs */}
-      <div className="space-y-4">
-        <div className="relative max-w-lg group">
-          <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground group-focus-within:text-brand-600 transition-colors" />
-          <Input
-            type="text"
-            placeholder={t("users.searchPlaceholder")}
-            className="pl-11 h-12 rounded-xl border-2 focus-visible:ring-brand-500 font-medium bg-muted/30"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+      <FilterBar
+        search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("users.searchHint") }}
+        isFiltered={table.isFiltered}
+        onReset={table.reset}
+      >
+        <SelectField
+          aria-label={t("users.filterRole")}
+          containerClassName="w-full sm:w-40"
+          value={table.filters.role ?? ""}
+          onChange={(event) => table.setFilter("role", event.target.value)}
+          options={ROLE_OPTIONS}
+        />
+        <SelectField
+          aria-label={t("users.filterVerification")}
+          containerClassName="w-full sm:w-48"
+          value={table.filters.verification ?? ""}
+          onChange={(event) => table.setFilter("verification", event.target.value)}
+          options={VERIFICATION_OPTIONS}
+        />
+        <SelectField
+          aria-label={t("users.filterAccount")}
+          containerClassName="w-full sm:w-44"
+          value={table.filters.status ?? ""}
+          onChange={(event) => table.setFilter("status", event.target.value)}
+          options={ACCOUNT_OPTIONS}
+        />
+      </FilterBar>
 
-        <div className="flex gap-2 flex-wrap">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`
-                inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all
-                focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500 outline-none
-                ${activeTab === tab.id
-                  ? tab.id === "pending"
-                    ? "bg-amber-500 text-white shadow-md shadow-amber-500/20"
-                    : "bg-brand-600 text-white shadow-md shadow-brand-500/20"
-                  : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
-                }
-              `}
-            >
-              {tab.label}
-              <span className={`
-                text-[10px] font-black px-1.5 py-0.5 rounded-full
-                ${activeTab === tab.id ? "bg-white/20" : "bg-muted-foreground/10"}
-              `}>
-                {tab.count}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Pending verification banner */}
-      {activeTab === "pending" && pendingCount > 0 && (
-        <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-sm font-semibold text-amber-700 dark:text-amber-400">
-          <Bell className="h-4 w-4 shrink-0 animate-pulse" />
-          {t("users.pendingBanner")} {pendingCount} {t("users.pendingBannerSuffix")}
-        </div>
-      )}
-
-      {/* User grid */}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
-          <div className="animate-spin h-10 w-10 border-4 border-muted-foreground/20 border-t-brand-500 rounded-full mb-4" />
-          <p className="font-bold text-muted-foreground">{t("users.loading")}</p>
-        </div>
+      {error && !data ? (
+        <ErrorState onRetry={refetch} />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map((user) => {
-            const vCfg = user.verificationStatus ? VERIFICATION_CONFIG[user.verificationStatus] : null;
-            const VIcon = vCfg?.icon;
-            const initials = user.name
-              .split(" ")
-              .map((w) => w[0])
-              .slice(0, 2)
-              .join("")
-              .toUpperCase();
-
-            return (
-              <Link href={`/users/${user.id}`} key={user.id} className="block group">
-                <Card className="h-full overflow-hidden border-none shadow-sm rounded-2xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 bg-card group-hover:ring-2 group-hover:ring-brand-500/20">
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-3">
-                      <Avatar className="h-12 w-12 shrink-0 border-2 border-background shadow-sm ring-1 ring-border/50">
-                        {user.profilePictureUrl && (
-                          <AvatarImage src={user.profilePictureUrl} alt={user.name} className="object-cover" />
-                        )}
-                        <AvatarFallback className={`text-sm font-bold ${user.role === "TUTOR" ? "bg-gradient-to-br from-purple-400 to-brand-600 text-white" : "bg-gradient-to-br from-blue-400 to-blue-600 text-white"}`}>
-                          {initials || user.name[0]}
-                        </AvatarFallback>
-                      </Avatar>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2 mb-1.5">
-                          <div className="min-w-0">
-                            <p className="font-bold text-sm truncate text-foreground group-hover:text-brand-600 transition-colors">
-                              {user.name}
-                            </p>
-                          </div>
-                          <div className="flex gap-1 shrink-0">
-                            {user.status === "INACTIVE" && (
-                              <Badge variant="outline" className="text-[9px] font-bold px-1.5 py-0 border-red-300 text-red-500 bg-red-50 dark:bg-red-950/20">
-                                ระงับ
-                              </Badge>
-                            )}
-                            <Badge
-                              variant="outline"
-                              className={`text-[9px] font-bold px-1.5 py-0 ${
-                                user.role === "TUTOR"
-                                  ? "border-purple-200 text-purple-700 bg-purple-50 dark:bg-purple-950/20 dark:text-purple-400"
-                                  : "border-blue-200 text-blue-700 bg-blue-50 dark:bg-blue-950/20 dark:text-blue-400"
-                              }`}
-                            >
-                              {user.role === "TUTOR" ? "ติวเตอร์" : "นักเรียน"}
-                            </Badge>
-                          </div>
-                        </div>
-
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                            <Mail className="h-3 w-3 shrink-0" />
-                            <span className="truncate">{user.email}</span>
-                          </div>
-                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <BookOpen className="h-3 w-3" />
-                              {user.activeClasses} คลาส
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <CalendarDays className="h-3 w-3" />
-                              {new Date(user.joined).toLocaleDateString("th-TH", { year: "numeric", month: "short", day: "numeric" })}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-3 pt-3 border-t border-border/50 flex items-center justify-between">
-                      <div className="flex flex-wrap gap-1.5">
-                        {user.role === "TUTOR" && vCfg && VIcon && (
-                          <Badge variant="outline" className={`text-[10px] font-semibold px-2 py-0.5 border ${vCfg.className}`}>
-                            <VIcon className="h-3 w-3 mr-1" />
-                            {vCfg.label}
-                          </Badge>
-                        )}
-                        {user.role === "TUTOR" && (user.pendingVerificationCount || 0) > 0 && (
-                          <Badge className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 shadow-sm border-none">
-                            <Bell className="h-3 w-3 mr-1" />
-                            {user.pendingVerificationCount} รายการรอตรวจ
-                          </Badge>
-                        )}
-                        {user.role === "STUDENT" && (
-                          <Badge variant="outline" className={`text-[10px] font-semibold px-2 py-0.5 ${user.guardianSetup ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" : "bg-amber-500/10 text-amber-700 border-amber-500/20"}`}>
-                            <ShieldCheck className="h-3 w-3 mr-1" />
-                            {user.guardianSetup ? "ผู้ปกครองยืนยันแล้ว" : "รอผู้ปกครองยืนยัน"}
-                          </Badge>
-                        )}
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-brand-500 transition-colors shrink-0" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
-
-          {!loading && filtered.length === 0 && (
-            <div className="col-span-full flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
-              <Users className="h-12 w-12 text-muted-foreground/30 mb-4" />
-              <p className="font-bold text-muted-foreground">{t("users.emptySearch")}</p>
-            </div>
-          )}
-        </div>
+        <DataTable
+          caption={t("users.tableCaption")}
+          columns={columns}
+          rows={data?.items ?? []}
+          getRowKey={(user) => user.id}
+          rowHref={(user) => `/users/${user.id}`}
+          loading={isLoading || isValidating}
+          sort={table.sort}
+          onSortChange={table.toggleSort}
+          empty={
+            <EmptyState
+              icon={Users}
+              title={t("users.emptyTitle")}
+              description={table.isFiltered ? t("users.emptyFiltered") : undefined}
+            />
+          }
+          footer={
+            data && data.total > 0 ? (
+              <Pagination
+                page={table.page}
+                pageSize={table.pageSize}
+                total={data.total}
+                onPageChange={table.setPage}
+                onPageSizeChange={table.setPageSize}
+              />
+            ) : null
+          }
+        />
       )}
-
-      {/* Pagination */}
-      {!loading && total > LIMIT && (
-        <div className="flex items-center justify-between pt-4">
-          <Button
-            variant="outline"
-            className="rounded-xl font-bold"
-            disabled={page === 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-          >
-            {t("users.pagePrevious")}
-          </Button>
-          <span className="text-sm font-bold text-muted-foreground bg-muted/50 px-4 py-2 rounded-xl">
-            {t("users.pageLabel")} {page} {t("users.pageFrom")} {Math.ceil(total / LIMIT)}
-          </span>
-          <Button
-            variant="outline"
-            className="rounded-xl font-bold"
-            disabled={page >= Math.ceil(total / LIMIT)}
-            onClick={() => setPage((p) => Math.min(Math.ceil(total / LIMIT), p + 1))}
-          >
-            {t("users.pageNext")}
-          </Button>
-        </div>
-      )}
-    </div>
+    </Page>
   );
 }

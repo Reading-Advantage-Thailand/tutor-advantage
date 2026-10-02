@@ -25,7 +25,7 @@ const { prisma } = require("@tutor-advantage/database") as typeof import("@tutor
 
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { authMiddleware } from "./middlewares/authMiddleware";
+import { authMiddleware, requireRoles } from "./middlewares/authMiddleware";
 import {
   createClass,
   closeClass,
@@ -206,7 +206,8 @@ app.post("/v1/voice-sessions/:sessionId/connected", authMiddleware, connectVoice
 app.post("/v1/voice-sessions/:sessionId/end", authMiddleware, endVoiceSession);
 app.post("/v1/voice-sessions/:sessionId/reading-intent", authMiddleware, submitReadingIntent);
 app.get("/v1/classes/:classId/voice-practice-summary", authMiddleware, getClassVoiceSummary);
-app.get("/v1/admin/voice-operations", authMiddleware, getVoiceOperationsMetrics);
+// Route-level role guard (defence in depth; the controller re-checks ADMIN).
+app.get("/v1/admin/voice-operations", authMiddleware, requireRoles("ADMIN"), getVoiceOperationsMetrics);
 
 // Protected Chat Routes
 app.get("/v1/chat/conversations", authMiddleware, getConversations);

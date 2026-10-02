@@ -9,13 +9,21 @@ describe("proxy allowlist", () => {
   it("allows the endpoints the console uses, routed to the right service", () => {
     const cases: [string, string, string][] = [
       ["GET", "/v1/admin/overview", "finance"],
+      ["GET", "/v1/audit-logs", "finance"],
+      ["GET", "/v1/audit-logs/export", "finance"],
       ["GET", "/v1/settlements", "finance"],
       ["POST", "/v1/settlements/preview", "finance"],
       ["POST", "/v1/settlements/5eed0000-0000-4000-8000-000000000a01/approve", "finance"],
       ["GET", "/v1/settlements/5eed0000-0000-4000-8000-000000000a01/export", "finance"],
       ["POST", "/v1/settlements/abc/lines/def/sync-transfer", "finance"],
       ["POST", "/v1/adjustments/abc/reject", "finance"],
-      ["POST", "/v1/operations/exceptions/abc/FORCE_ACTIVE", "finance"],
+      ["POST", "/v1/operations/exceptions/abc/resolve", "finance"],
+      ["POST", "/v1/reconciliation/payments/abc/activate", "finance"],
+      ["POST", "/v1/reconciliation/payments/abc/verify", "finance"],
+      ["GET", "/v1/reconciliation/orphan-events", "finance"],
+      ["GET", "/v1/reconciliation/active-without-payment", "finance"],
+      ["POST", "/v1/reconciliation/orphan-events/abc/dismiss", "finance"],
+      ["POST", "/v1/fraud-flags/abc/action", "finance"],
       ["PATCH", "/v1/users/abc/omise-recipient", "finance"],
       ["GET", "/v1/admin/roles", "identity"],
       ["POST", "/v1/admin/roles", "identity"],
@@ -41,6 +49,8 @@ describe("proxy allowlist", () => {
       "/v1/internal/settlement/auto-run",
       "/v1/settlements/abc/delete",
       "/v1/operations/exceptions/abc/ANYTHING",
+      "/v1/operations/exceptions/abc/FORCE_ACTIVE",
+      "/v1/reconciliation/payments/abc/refund",
       "/v1/admin",
       "/health",
     ]) {
@@ -69,6 +79,15 @@ describe("proxy allowlist", () => {
     expect(matchProxyRequest(seg("/v1/settlements/abc/approve"), "POST", checker).ok).toBe(true);
   });
 
+  it("allows the coupon endpoints (G5) for ADMIN only", () => {
+    expect(matchProxyRequest(seg("/v1/coupons/tutors"), "GET", admin).ok).toBe(true);
+    expect(matchProxyRequest(seg("/v1/coupons/5eed0000-0000-4000-8000-000000000c01"), "PATCH", admin).ok).toBe(true);
+    expect(matchProxyRequest(seg("/v1/coupons/abc/void"), "POST", admin).ok).toBe(true);
+    expect(matchProxyRequest(seg("/v1/coupons/abc"), "DELETE", admin)).toMatchObject({ ok: false, status: 405 });
+    expect(matchProxyRequest(seg("/v1/coupons/tutors"), "GET", checker)).toMatchObject({ ok: false, code: "PROXY_ROLE_NOT_ALLOWED" });
+    expect(matchProxyRequest(seg("/v1/coupons/abc"), "PATCH", checker)).toMatchObject({ ok: false, code: "PROXY_ROLE_NOT_ALLOWED" });
+  });
+
   it("exposes dev endpoints only when dev routes are enabled", () => {
     expect(matchProxyRequest(seg("/v1/dev/actions/purge"), "POST", admin).ok).toBe(false);
     expect(matchProxyRequest(seg("/v1/dev/actions/purge"), "POST", { ...admin, devRoutes: true }).ok).toBe(true);
@@ -80,5 +99,15 @@ describe("proxy allowlist", () => {
     expect(sanitizeIdempotencyKey("short")).toBeNull();
     expect(sanitizeIdempotencyKey("bad key with spaces!!")).toBeNull();
     expect(sanitizeIdempotencyKey(null)).toBeNull();
+  });
+});
+
+describe("proxy allowlist: users (G4)", () => {
+  it("routes user payments/audit to finance; audit is ADMIN only", () => {
+    const payments = matchProxyRequest(seg("/v1/users/abc/payments"), "GET", admin);
+    expect(payments.ok && payments.rule.service).toBe("finance");
+    expect(matchProxyRequest(seg("/v1/users/abc/audit"), "GET", admin).ok).toBe(true);
+    expect(matchProxyRequest(seg("/v1/users/abc/audit"), "GET", checker)).toMatchObject({ ok: false, code: "PROXY_ROLE_NOT_ALLOWED" });
+    expect(matchProxyRequest(seg("/v1/users/abc/audit"), "POST", admin).ok).toBe(false);
   });
 });

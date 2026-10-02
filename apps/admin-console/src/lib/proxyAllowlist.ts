@@ -34,6 +34,7 @@ export const PROXY_RULES: readonly ProxyRule[] = [
   // ── Shell / overview (G0, G1) ──
   { methods: ["GET"], path: "/v1/admin/overview", service: "finance" },
   { methods: ["GET"], path: "/v1/audit-logs", service: "finance" },
+  { methods: ["GET"], path: "/v1/audit-logs/export", service: "finance" }, // G1: CSV export (audited)
   { methods: ["GET"], path: "/v1/admin/voice-operations", service: "learning", roles: ADMIN },
 
   // ── Settlements & adjustments (G2) ──
@@ -49,21 +50,29 @@ export const PROXY_RULES: readonly ProxyRule[] = [
   // ── Payment operations (G3) ──
   { methods: ["GET"], path: "/v1/reconciliation/payments", service: "finance" },
   { methods: ["GET"], path: "/v1/operations/exceptions", service: "finance" },
-  { methods: ["POST"], path: "/v1/operations/exceptions/:id/(FORCE_ACTIVE|VOID_CANCEL)", service: "finance" },
+  // Exceptions: typed resolutions only (FORCE_ACTIVE/VOID_CANCEL retired, F-8).
+  { methods: ["POST"], path: "/v1/operations/exceptions/:id/resolve", service: "finance" },
   { methods: ["GET"], path: "/v1/fraud-flags", service: "finance" },
   { methods: ["POST"], path: "/v1/fraud-flags/:id/action", service: "finance" },
+  { methods: ["POST"], path: "/v1/reconciliation/payments/:id/(activate|verify)", service: "finance" },
+  { methods: ["GET"], path: "/v1/reconciliation/(orphan-events|active-without-payment)", service: "finance" },
+  { methods: ["POST"], path: "/v1/reconciliation/orphan-events/:id/(link|dismiss)", service: "finance" },
 
   // ── Users & roles (G4) ──
   { methods: ["GET"], path: "/v1/users", service: "finance" },
   { methods: ["GET"], path: "/v1/users/:id", service: "finance" },
-  { methods: ["POST"], path: "/v1/users/:id/verify", service: "finance" },
+  { methods: ["POST"], path: "/v1/users/:id/verify", service: "finance", roles: ADMIN },
   { methods: ["POST"], path: "/v1/users/:id/(suspend|anonymize)", service: "finance", roles: ADMIN },
   { methods: ["PATCH"], path: "/v1/users/:id/omise-recipient", service: "finance", roles: ADMIN },
   { methods: ["GET", "POST"], path: "/v1/admin/roles", service: "identity", roles: ADMIN },
+  { methods: ["GET"], path: "/v1/users/:id/payments", service: "finance" },
+  { methods: ["GET"], path: "/v1/users/:id/audit", service: "finance", roles: ADMIN },
 
   // ── Coupons (G5) ──
   { methods: ["GET", "POST"], path: "/v1/coupons", service: "finance", roles: ADMIN },
   { methods: ["POST"], path: "/v1/coupons/:id/void", service: "finance", roles: ADMIN },
+  { methods: ["GET"], path: "/v1/coupons/tutors", service: "finance", roles: ADMIN },
+  { methods: ["PATCH"], path: "/v1/coupons/:id", service: "finance", roles: ADMIN },
 
   // ── Dev tools (G5 / DevToolbar), only with ENABLE_DEV_ROUTES=true ──
   { methods: ["GET", "POST"], path: "/v1/dev/users", service: "finance", roles: ADMIN, devOnly: true },

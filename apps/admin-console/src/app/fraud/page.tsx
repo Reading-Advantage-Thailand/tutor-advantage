@@ -1,302 +1,401 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { Eye, Lock, LockOpen, RotateCcw, ShieldAlert, ShieldCheck, ShieldX, TriangleAlert, UserRound } from "lucide-react";
 import {
-  Activity,
-  AlertTriangle,
-  CheckCircle2,
-  Lock,
-  RefreshCw,
-  Search,
-  ShieldAlert,
-  ShieldCheck,
-  Zap,
-  X,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+  AdminStatusChip,
+  Chip,
+  DataTable,
+  DescriptionList,
+  EmptyState,
+  ErrorState,
+  FilterBar,
+  Grid,
+  Page,
+  PageHeader,
+  Pagination,
+  SelectField,
+  StatCard,
+  useAdminSession,
+  useHasRole,
+  type DataTableColumn,
+} from "@/components/app";
+import { useRefreshAdminSummary } from "@/components/app/AdminSummary";
+import { ConfirmDialog } from "@/components/app/ConfirmDialog";
 import { toast } from "@/components/app/Toast";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { fetchWithAuth } from "@/lib/api";
-import { t } from "@/lib/i18n";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { useTableState } from "@/hooks/useTableState";
+import { api, newIdempotencyKey } from "@/lib/api";
+import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
+import { formatNumber, formatThaiDateTime } from "@/lib/format";
+import { t, type I18nKey } from "@/lib/i18n";
+import { statusLabel, statusOptions } from "@/lib/status";
+
+type FraudAction = "INVESTIGATE" | "MONITOR" | "FREEZE" | "UNFREEZE" | "CLEAR";
 
 interface FraudFlag {
   id: string;
   type: string;
   severity: string;
   targetId: string;
-  targetName: string;
+  targetName: string | null;
   description: string;
   status: string;
   createdAt: string;
+  updatedAt: string;
+  target: { userId: string; role: string; isActive: boolean; displayName: string | null; email: string | null } | null;
 }
 
-interface FraudStats {
-  activeCount: number;
-  velocityStatus: string;
-  autoSuspensions: number;
+interface FraudResponse {
+  flags: FraudFlag[];
+  total: number;
+  page: number;
+  pageSize: number;
+  stats: {
+    activeCount: number;
+    highRiskCount: number;
+    frozenCount: number;
+    suspendedTargetCount: number;
+    frozenButActiveCount: number;
+  };
+}
+
+interface ActionResult {
+  flag: { id: string; status: string };
+  user: { userId: string; isActive: boolean } | null;
+  userChanged: boolean;
+  userNote: string;
+}
+
+const COPY: Record<FraudAction, { title: I18nKey; confirm: I18nKey; danger?: boolean }> = {
+  FREEZE: { title: "fraud.confirm.freezeTitle", confirm: "fraud.confirm.freezeConfirm", danger: true },
+  UNFREEZE: { title: "fraud.confirm.unfreezeTitle", confirm: "fraud.confirm.unfreezeConfirm" },
+  CLEAR: { title: "fraud.confirm.clearTitle", confirm: "fraud.confirm.clearConfirm" },
+  MONITOR: { title: "fraud.confirm.monitorTitle", confirm: "fraud.confirm.monitorConfirm" },
+  INVESTIGATE: { title: "fraud.confirm.investigateTitle", confirm: "fraud.confirm.investigateConfirm" },
+};
+
+function describe(action: FraudAction, flag: FraudFlag): string {
+  const frozen = flag.status === "FROZEN";
+  switch (action) {
+    case "FREEZE":
+      return t("fraud.confirm.freezeDescription");
+    case "UNFREEZE":
+      return t("fraud.confirm.unfreezeDescription");
+    case "CLEAR":
+      return frozen ? t("fraud.confirm.clearFrozenDescription") : t("fraud.confirm.clearDescription");
+    case "MONITOR":
+      return frozen ? t("fraud.confirm.monitorFrozenDescription") : t("fraud.confirm.monitorDescription");
+    default:
+      return t("fraud.confirm.investigateDescription");
+  }
+}
+
+function resultMessage(action: FraudAction, result: ActionResult): string {
+  if (action === "FREEZE") return result.userChanged ? t("fraud.toast.frozen") : t("fraud.toast.frozenAlready");
+  if (result.userNote === "RELEASED" && result.userChanged) return t("fraud.toast.released");
+  if (result.userNote === "OTHER_FROZEN_FLAGS") return t("fraud.toast.releasedKeptOther");
+  if (result.userNote === "SUSPENDED_ELSEWHERE") return t("fraud.toast.releasedKeptElsewhere");
+  return t("fraud.toast.updated");
+}
+
+function targetLabel(flag: FraudFlag) {
+  return flag.targetName ?? flag.target?.displayName ?? flag.target?.email ?? t("fraud.unknownTarget");
+}
+
+function AccountState({ flag }: { flag: FraudFlag }) {
+  if (!flag.target) return <span className="text-[0.8125rem] text-fg-muted">{t("fraud.notUser")}</span>;
+  const suspended = !flag.target.isActive;
+  return (
+    <div className="flex flex-wrap items-center gap-1">
+      <AdminStatusChip domain="account" status={suspended ? "SUSPENDED" : "ACTIVE"} />
+      {flag.status === "FROZEN" && !suspended ? (
+        <Chip size="sm" tone="warning" icon={TriangleAlert}>
+          {t("fraud.frozenButActiveChip")}
+        </Chip>
+      ) : null}
+    </div>
+  );
 }
 
 export default function FraudFlagsPage() {
-  const [flags, setFlags] = useState<FraudFlag[]>([]);
-  const [stats, setStats] = useState<FraudStats>({
-    activeCount: 0,
-    velocityStatus: "-",
-    autoSuspensions: 0,
+  const me = useAdminSession();
+  const isAdmin = useHasRole("ADMIN");
+  const refreshSummary = useRefreshAdminSummary();
+  const table = useTableState({
+    defaultSort: { key: "createdAt", dir: "desc" },
+    sortKeys: ["createdAt"],
+    filterKeys: ["status", "severity"],
+    defaultFilters: { status: "ACTIVE" },
   });
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [loadingAction, setLoadingAction] = useState<string | null>(null);
-  const [confirmFreeze, setConfirmFreeze] = useState<{ id: string; targetName: string } | null>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [pending, setPending] = useState<{ flag: FraudFlag; action: FraudAction; key: string } | null>(null);
+  const status = table.filters.status || "ALL";
+  const severity = table.filters.severity ?? "";
 
-  useEffect(() => {
-    debounceRef.current = setTimeout(() => setDebouncedSearch(search), 400);
-    return () => clearTimeout(debounceRef.current);
-  }, [search]);
-
-  const loadData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (debouncedSearch.trim()) params.set("q", debouncedSearch.trim());
-      const resp = await fetchWithAuth(`/v1/fraud-flags?${params.toString()}`);
-      setFlags(resp.flags ?? []);
-      setStats(
-        resp.stats ?? {
-          activeCount: 0,
-          velocityStatus: "-",
-          autoSuspensions: 0,
-        },
-      );
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not load flags");
-    } finally {
-      setLoading(false);
-    }
-  }, [debouncedSearch]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const activeFlags = useMemo(
-    () => flags.filter((flag) => flag.status !== "CLEARED"),
-    [flags],
+  const query = {
+    status,
+    severity: severity || undefined,
+    q: table.q || undefined,
+    page: table.page,
+    pageSize: table.pageSize,
+    order: table.sort?.dir,
+  };
+  const { data, error, isLoading, isValidating, isPreviousData, refetch } = useCachedResource(
+    me ? `${me.userId}:fraud:${JSON.stringify(query)}` : null,
+    () => api.get<FraudResponse>("/v1/fraud-flags", { query }),
+    { keepPreviousData: true },
   );
+  const stats = data?.stats;
 
-  const handleAction = async (id: string, actionName: string) => {
-    setLoadingAction(id + actionName);
-    try {
-      await fetchWithAuth(`/v1/fraud-flags/${id}/action`, {
-        method: "POST",
-        body: JSON.stringify({ action: actionName }),
-      });
-      toast.success(t("fraud.actionSuccess"));
-      await loadData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not update flag");
-    } finally {
-      setLoadingAction(null);
-    }
+  const columns: DataTableColumn<FraudFlag>[] = useMemo(() => {
+    const open = (flag: FraudFlag, action: FraudAction) => setPending({ flag, action, key: newIdempotencyKey() });
+    return [
+      {
+        key: "target",
+        header: t("fraud.columns.target"),
+        label: t("fraud.columns.target"),
+        alwaysVisible: true,
+        mobile: "primary",
+        cell: (flag) => (
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate font-medium text-fg">{targetLabel(flag)}</span>
+            <span className="truncate text-[0.8125rem] text-fg-muted">
+              {flag.target ? statusLabel("userRole", flag.target.role) : t("fraud.notUser")}
+            </span>
+          </div>
+        ),
+      },
+      {
+        key: "createdAt",
+        header: t("fraud.columns.createdAt"),
+        sortable: true,
+        mobile: "secondary",
+        cell: (flag) => <span className="whitespace-nowrap">{formatThaiDateTime(flag.createdAt)}</span>,
+      },
+      {
+        key: "type",
+        header: t("fraud.columns.type"),
+        label: t("fraud.columns.type"),
+        width: "220px",
+        cell: (flag) => (
+          <div className="flex min-w-0 flex-col items-start gap-1">
+            <span className="text-fg">{statusLabel("fraudType", flag.type)}</span>
+            <span className="line-clamp-2 text-[0.8125rem] text-fg-muted" title={flag.description}>
+              {flag.description || t("fraud.noDescription")}
+            </span>
+          </div>
+        ),
+      },
+      {
+        key: "severity",
+        header: t("fraud.columns.severity"),
+        label: t("fraud.columns.severity"),
+        cell: (flag) => <AdminStatusChip domain="fraudSeverity" status={flag.severity} />,
+      },
+      {
+        key: "status",
+        header: t("fraud.columns.status"),
+        label: t("fraud.columns.status"),
+        mobile: "trailing",
+        cell: (flag) => <AdminStatusChip domain="fraudFlag" status={flag.status} />,
+      },
+      {
+        key: "account",
+        header: t("fraud.columns.account"),
+        label: t("fraud.columns.account"),
+        cell: (flag) => <AccountState flag={flag} />,
+      },
+      {
+        key: "actions",
+        width: "260px",
+        header: <span className="sr-only">{t("fraud.columns.actions")}</span>,
+        label: t("fraud.columns.actions"),
+        alwaysVisible: true,
+        align: "right",
+        cell: (flag) => {
+          const frozen = flag.status === "FROZEN";
+          const canTouchFrozen = isAdmin || !frozen;
+          return (
+            <div className="flex flex-wrap justify-start gap-1.5 md:justify-end">
+              {isAdmin && flag.target && (!frozen || flag.target.isActive) ? (
+                <Button size="sm" variant="danger" onClick={() => open(flag, "FREEZE")}>
+                  <Lock aria-hidden="true" />
+                  {frozen ? t("fraud.actions.enforceFreeze") : t("fraud.actions.freeze")}
+                </Button>
+              ) : null}
+              {isAdmin && frozen ? (
+                <Button size="sm" variant="outline" onClick={() => open(flag, "UNFREEZE")}>
+                  <LockOpen aria-hidden="true" />
+                  {t("fraud.actions.unfreeze")}
+                </Button>
+              ) : null}
+              {canTouchFrozen && flag.status !== "MONITORING" && flag.status !== "CLEARED" && !frozen ? (
+                <Button size="sm" variant="outline" onClick={() => open(flag, "MONITOR")}>
+                  <Eye aria-hidden="true" />
+                  {t("fraud.actions.monitor")}
+                </Button>
+              ) : null}
+              {canTouchFrozen && flag.status !== "CLEARED" ? (
+                <Button size="sm" variant="ghost" onClick={() => open(flag, "CLEAR")}>
+                  <ShieldCheck aria-hidden="true" />
+                  {t("fraud.actions.clear")}
+                </Button>
+              ) : null}
+              {flag.status === "CLEARED" ? (
+                <Button size="sm" variant="ghost" onClick={() => open(flag, "INVESTIGATE")}>
+                  <RotateCcw aria-hidden="true" />
+                  {t("fraud.actions.investigate")}
+                </Button>
+              ) : null}
+              {isAdmin && flag.target ? (
+                <Link
+                  href={`/users/${flag.target.userId}`}
+                  className={buttonVariants({ size: "icon-sm", variant: "ghost" })}
+                  aria-label={`${t("fraud.actions.openUser")} ${targetLabel(flag)}`}
+                  title={t("fraud.actions.openUser")}
+                >
+                  <UserRound aria-hidden="true" />
+                </Link>
+              ) : null}
+            </div>
+          );
+        },
+      },
+    ];
+  }, [isAdmin]);
+
+  const onConfirm = async ({ reason }: { reason: string }) => {
+    if (!pending) return;
+    const result = await api.post<ActionResult>(
+      `/v1/fraud-flags/${pending.flag.id}/action`,
+      { action: pending.action, reason },
+      { idempotencyKey: pending.key },
+    );
+    toast.success(resultMessage(pending.action, result));
+    if (me) invalidateResource(`${me.userId}:fraud:`);
+    void refreshSummary();
   };
 
+  const target = pending?.flag;
+  const copy = pending ? COPY[pending.action] : null;
+  const isFiltered = table.q !== "" || status !== "ACTIVE" || severity !== "";
+
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-3xl font-black tracking-tight text-foreground">{t("fraud.title")}</h2>
-          <p className="text-muted-foreground font-medium">{t("fraud.description")}</p>
-        </div>
-        <Button variant="outline" onClick={loadData} disabled={loading} className="rounded-full font-bold shadow-sm h-12 px-6">
-          <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          {t("fraud.refresh")}
-        </Button>
-      </div>
+    <Page>
+      <PageHeader title={t("fraud.page.title")} description={t("fraud.page.description")} />
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        <Card className="border-none shadow-sm rounded-3xl bg-amber-500/10 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-            <AlertTriangle className="h-24 w-24 text-amber-600" />
-          </div>
-          <CardContent className="p-8 relative z-10">
-            <p className="flex items-center gap-2 text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest">
-              <AlertTriangle className="h-4 w-4" />
-              {t("fraud.activeAlerts")}
-            </p>
-            <p className="mt-4 text-5xl font-black text-amber-900 dark:text-amber-50">{stats.activeCount}</p>
-          </CardContent>
-        </Card>
-        
-        <Card className="border-none shadow-sm rounded-3xl bg-blue-500/10 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Activity className="h-24 w-24 text-blue-600" />
-          </div>
-          <CardContent className="p-8 relative z-10">
-            <p className="flex items-center gap-2 text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-widest">
-              <Activity className="h-4 w-4" />
-              {t("fraud.velocityStatus")}
-            </p>
-            <p className="mt-4 text-5xl font-black text-blue-900 dark:text-blue-50">{stats.velocityStatus}</p>
-          </CardContent>
-        </Card>
+      <Grid cols={4} className="grid-cols-2">
+        <StatCard
+          icon={ShieldAlert}
+          tone="amber"
+          label={t("fraud.stats.active")}
+          value={stats ? formatNumber(stats.activeCount) : "…"}
+          hint={t("fraud.stats.activeHint")}
+        />
+        <StatCard
+          icon={TriangleAlert}
+          tone="red"
+          label={t("fraud.stats.highRisk")}
+          value={stats ? formatNumber(stats.highRiskCount) : "…"}
+          hint={t("fraud.stats.highRiskHint")}
+        />
+        <StatCard
+          icon={Lock}
+          tone="neutral"
+          label={t("fraud.stats.suspended")}
+          value={stats ? formatNumber(stats.suspendedTargetCount) : "…"}
+          hint={t("fraud.stats.suspendedHint", { count: formatNumber(stats?.frozenCount ?? 0) })}
+        />
+        <StatCard
+          icon={ShieldX}
+          tone={stats && stats.frozenButActiveCount > 0 ? "red" : "teal"}
+          label={t("fraud.stats.frozenButActive")}
+          value={stats ? formatNumber(stats.frozenButActiveCount) : "…"}
+          hint={t("fraud.stats.frozenButActiveHint")}
+        />
+      </Grid>
 
-        <Card className="border-none shadow-sm rounded-3xl bg-red-500/10 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-            <Lock className="h-24 w-24 text-red-600" />
-          </div>
-          <CardContent className="p-8 relative z-10">
-            <p className="flex items-center gap-2 text-xs font-bold text-red-700 dark:text-red-400 uppercase tracking-widest">
-              <Lock className="h-4 w-4" />
-              {t("fraud.suspendedAccounts")}
-            </p>
-            <p className="mt-4 text-5xl font-black text-red-900 dark:text-red-50">{stats.autoSuspensions}</p>
-          </CardContent>
-        </Card>
-      </div>
+      <FilterBar
+        search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("fraud.filters.search") }}
+        isFiltered={isFiltered}
+        onReset={table.reset}
+      >
+        <SelectField
+          aria-label={t("fraud.filters.status")}
+          containerClassName="w-full sm:w-48"
+          value={status}
+          onChange={(event) => table.setFilter("status", event.target.value)}
+          options={[
+            { value: "ACTIVE", label: t("fraud.filters.statusActive") },
+            { value: "ALL", label: t("fraud.filters.statusAll") },
+            ...statusOptions("fraudFlag"),
+          ]}
+        />
+        <SelectField
+          aria-label={t("fraud.filters.severity")}
+          containerClassName="w-full sm:w-40"
+          value={severity}
+          onChange={(event) => table.setFilter("severity", event.target.value)}
+          options={statusOptions("fraudSeverity", { all: t("fraud.filters.severityAll") })}
+        />
+      </FilterBar>
 
-      <Card className="border-none shadow-md rounded-3xl bg-card overflow-hidden">
-        <CardHeader className="bg-muted/20 border-b px-8 py-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-red-50 dark:bg-red-900/20 rounded-xl text-red-600 dark:text-red-400">
-              <ShieldAlert className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle className="text-lg font-bold">{t("fraud.reviewQueue")}</CardTitle>
-              <CardDescription className="font-medium text-xs">{t("fraud.reviewQueueDescription")}</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-8 space-y-6">
-          <div className="relative w-full max-w-md group">
-            <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground group-focus-within:text-brand-600 transition-colors" />
-            <Input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") loadData();
-              }}
-              placeholder={t("fraud.searchPlaceholder")}
-              className="pl-11 h-12 rounded-2xl border-2 focus-visible:ring-brand-500 font-medium bg-muted/30"
+      {error && !data ? (
+        <ErrorState onRetry={refetch} />
+      ) : (
+        <DataTable
+          caption={t("fraud.page.title")}
+          rows={data?.flags ?? []}
+          columns={columns}
+          getRowKey={(flag) => flag.id}
+          loading={isLoading || (isValidating && isPreviousData)}
+          sort={table.sort}
+          onSortChange={table.toggleSort}
+          empty={<EmptyState compact icon={ShieldCheck} tone="teal" title={t("fraud.empty.title")} description={t("fraud.empty.description")} />}
+          footer={
+            <Pagination
+              page={table.page}
+              pageSize={table.pageSize}
+              total={data?.total ?? 0}
+              onPageChange={table.setPage}
+              onPageSizeChange={table.setPageSize}
             />
-          </div>
+          }
+        />
+      )}
 
-          {loading ? (
-            <div className="space-y-4">
-              <Skeleton className="h-32 w-full rounded-2xl" />
-              <Skeleton className="h-32 w-full rounded-2xl" />
-            </div>
-          ) : (
-            <>
-          {activeFlags.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
-              <ShieldCheck className="h-12 w-12 text-emerald-500/50 mb-4" />
-              <p className="font-bold text-muted-foreground">{t("fraud.safeTitle")}</p>
-              <p className="text-sm text-muted-foreground/60 mt-1">{t("fraud.safeDescription")}</p>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 gap-4">
-            {activeFlags.map((flag) => (
-              <div key={flag.id} className="rounded-2xl border border-border/60 bg-card p-6 transition-all hover:shadow-md hover:border-red-500/30 group">
-                <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-                  <div className="flex-1 space-y-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge
-                        variant="outline"
-                        className={`font-bold px-3 py-1 uppercase tracking-wider text-[10px] rounded-full border-none ${
-                          flag.severity === "HIGH" || flag.severity === "CRITICAL"
-                            ? "bg-red-500/10 text-red-700 dark:text-red-400"
-                            : "bg-amber-500/10 text-amber-700 dark:text-amber-400"
-                        }`}
-                      >
-                        {flag.severity}
-                      </Badge>
-                      <Badge variant="outline" className="font-mono text-[10px] px-2 py-1 rounded-md bg-muted/50 border-border/50">
-                        {flag.type}
-                      </Badge>
-                      <Badge variant="secondary" className="px-2 py-1 rounded-md text-[10px] font-bold">
-                        {flag.status}
-                      </Badge>
-                      <span className="text-xs font-medium text-muted-foreground ml-auto">
-                        {new Date(flag.createdAt).toLocaleString("th-TH")}
-                      </span>
-                    </div>
-                    
-                    <div>
-                      <p className="text-lg font-bold text-foreground">
-                        {flag.targetName}
-                      </p>
-                      <p className="font-mono text-xs text-muted-foreground bg-muted w-fit px-2 py-0.5 rounded mt-1">
-                        {flag.targetId}
-                      </p>
-                    </div>
-                    
-                    <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
-                      <p className="text-sm font-medium text-foreground">
-                        {flag.description || t("fraud.noDescription")}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-2 w-full md:w-48 border-t md:border-t-0 md:border-l border-border/50 pt-4 md:pt-0 md:pl-6">
-                    <Button
-                      className="w-full rounded-xl font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/40 border-none shadow-sm"
-                      disabled={loadingAction !== null}
-                      onClick={() => handleAction(flag.id, "CLEAR")}
-                    >
-                      <CheckCircle2 className="mr-2 h-4 w-4" />
-                      {t("fraud.clear")}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full rounded-xl font-bold border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-900 dark:text-blue-400 dark:hover:bg-blue-950/30"
-                      disabled={loadingAction !== null}
-                      onClick={() => handleAction(flag.id, "MONITOR")}
-                    >
-                      <Activity className="mr-2 h-4 w-4" />
-                      {t("fraud.monitor")}
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      className="w-full rounded-xl font-bold border-none shadow-sm"
-                      disabled={loadingAction !== null}
-                      onClick={() => setConfirmFreeze({ id: flag.id, targetName: flag.targetName })}
-                    >
-                      <Lock className="mr-2 h-4 w-4" />
-                      {t("fraud.freeze")}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
       <ConfirmDialog
-        open={!!confirmFreeze}
-        onOpenChange={(open) => { if (!open) setConfirmFreeze(null); }}
-        title={t("fraud.confirmFreezeTitle")}
-        description={`${t("fraud.confirmFreezeDescription")} (${confirmFreeze?.targetName ?? ""})`}
-        variant="destructive"
-        confirmLabel={t("fraud.freeze")}
-        cancelLabel={t("confirm.cancelLabel")}
-        onConfirm={async () => {
-          if (confirmFreeze) await handleAction(confirmFreeze.id, "FREEZE");
-        }}
+        open={pending !== null}
+        onOpenChange={(open) => !open && setPending(null)}
+        tone={copy?.danger ? "danger" : "brand"}
+        title={copy && target ? t(copy.title, { name: targetLabel(target) }) : ""}
+        description={pending ? describe(pending.action, pending.flag) : undefined}
+        confirmLabel={copy ? t(copy.confirm) : ""}
+        reason={{ label: t("fraud.confirm.reasonLabel"), placeholder: t("fraud.confirm.reasonPlaceholder") }}
+        details={
+          target ? (
+            <DescriptionList
+              columns={2}
+              items={[
+                { label: t("fraud.confirm.target"), value: targetLabel(target) },
+                {
+                  label: t("fraud.confirm.currentAccount"),
+                  value: target.target
+                    ? statusLabel("account", target.target.isActive ? "ACTIVE" : "SUSPENDED")
+                    : t("fraud.notUser"),
+                },
+                {
+                  label: t("fraud.confirm.flag"),
+                  value: `${statusLabel("fraudType", target.type)} · ${statusLabel("fraudSeverity", target.severity)}`,
+                },
+                { label: t("fraud.columns.status"), value: statusLabel("fraudFlag", target.status) },
+              ]}
+            />
+          ) : null
+        }
+        onConfirm={onConfirm}
       />
-    </div>
+    </Page>
   );
 }

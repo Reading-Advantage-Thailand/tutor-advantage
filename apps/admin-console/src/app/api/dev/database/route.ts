@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { jwtVerify } from "jose/jwt/verify";
 import { prisma, type Prisma } from "@tutor-advantage/database";
-import { devRoutesEnabled, getJwtSecret } from "@/lib/security";
+import { ADMIN_TOKEN_COOKIE, devRoutesEnabled, verifyAdminToken } from "@/lib/security";
+import { cascadeClosure, databaseNameFromUrl, type FkEdge } from "./guards";
 
-const jwtSecret = () => new TextEncoder().encode(getJwtSecret());
+/**
+ * Dev-only database inspector + TRUNCATE (local QA resets).
+ * Defence in depth on top of the middleware gate (dev routes opt-in + ADMIN):
+ *  - re-checks devRoutesEnabled() and the admin session with verifyAdminToken
+ *    (signature, iss, aud, role) — never a bare jwtVerify;
+ *  - destructive actions require `confirm` === the database name (type-to-confirm);
+ *  - refuses when CASCADE would reach a preserved table.
+ */
 
 const TARGET_SCHEMAS = ["identity", "learning", "finance_mlm", "public"];
 const RESET_SCHEMAS = ["identity", "learning", "finance_mlm"];
@@ -30,30 +37,30 @@ function tableKey(schemaName: string, tableName: string) {
   return `${schemaName}.${tableName}`;
 }
 
+function errorResponse(status: number, code: string, message: string) {
+  return NextResponse.json({ error: { code, message } }, { status, headers: { "Cache-Control": "no-store" } });
+}
+
 async function requireDevAdmin() {
-  if (process.env.NODE_ENV === "production") {
-    return NextResponse.json(
-      { error: "Database dev tools are disabled in production." },
-      { status: 403 },
-    );
-  }
-
-  const cookieStore = await cookies();
-  const token = cookieStore.get("admin_token")?.value;
-  if (!token) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
-    const { payload } = await jwtVerify(token, jwtSecret());
-    if (payload.role !== "ADMIN") {
-      return NextResponse.json({ error: "Admin role required" }, { status: 403 });
-    }
-  } catch {
-    return NextResponse.json({ error: "Invalid admin session" }, { status: 401 });
-  }
-
+  if (!devRoutesEnabled()) return errorResponse(404, "NOT_FOUND", "Not found");
+  const session = await verifyAdminToken((await cookies()).get(ADMIN_TOKEN_COOKIE)?.value);
+  if (!session) return errorResponse(401, "UNAUTHORIZED", "Admin session required");
+  if (session.role !== "ADMIN") return errorResponse(403, "FORBIDDEN", "Admin role required");
   return null;
+}
+
+async function loadForeignKeyEdges(): Promise<FkEdge[]> {
+  return prisma.$queryRaw<FkEdge[]>`
+    SELECT
+      child_ns.nspname || '.' || child.relname AS "child",
+      parent_ns.nspname || '.' || parent.relname AS "parent"
+    FROM pg_constraint con
+    JOIN pg_class child ON child.oid = con.conrelid
+    JOIN pg_namespace child_ns ON child_ns.oid = child.relnamespace
+    JOIN pg_class parent ON parent.oid = con.confrelid
+    JOIN pg_namespace parent_ns ON parent_ns.oid = parent.relnamespace
+    WHERE con.contype = 'f'
+  `;
 }
 
 async function loadTables(): Promise<DbTable[]> {
@@ -65,27 +72,22 @@ async function loadTables(): Promise<DbTable[]> {
     ORDER BY table_schema, table_name
   `;
 
-  const tables: DbTable[] = [];
-  for (const row of rows) {
-    const countRows = await prisma.$queryRawUnsafe<Array<{ count: bigint }>>(
-      `SELECT COUNT(*)::bigint AS count FROM ${qualifiedName(row.schema_name, row.table_name)}`,
-    );
-    const key = tableKey(row.schema_name, row.table_name);
-    tables.push({
-      schemaName: row.schema_name,
-      tableName: row.table_name,
-      rowCount: Number(countRows[0]?.count ?? 0),
-      isPreserved: PRESERVED_TABLES.has(key),
-    });
-  }
-
-  return tables;
+  return Promise.all(
+    rows.map(async (row) => {
+      const countRows = await prisma.$queryRawUnsafe<Array<{ count: bigint }>>(
+        `SELECT COUNT(*)::bigint AS count FROM ${qualifiedName(row.schema_name, row.table_name)}`,
+      );
+      return {
+        schemaName: row.schema_name,
+        tableName: row.table_name,
+        rowCount: Number(countRows[0]?.count ?? 0),
+        isPreserved: PRESERVED_TABLES.has(tableKey(row.schema_name, row.table_name)),
+      };
+    }),
+  );
 }
 
 export async function GET() {
-  if (!devRoutesEnabled()) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
   const guard = await requireDevAdmin();
   if (guard) return guard;
 
@@ -160,7 +162,7 @@ export async function GET() {
       ? {
           host: databaseUrl.hostname,
           port: databaseUrl.port || "5432",
-          name: databaseUrl.pathname.replace(/^\//, ""),
+          name: databaseNameFromUrl(process.env.DATABASE_URL),
         }
       : null,
     preservedTables: Array.from(PRESERVED_TABLES),
@@ -174,14 +176,21 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  if (!devRoutesEnabled()) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
   const guard = await requireDevAdmin();
   if (guard) return guard;
 
   const body = await request.json().catch(() => ({}));
   const action = body.action;
+
+  // Type-to-confirm: the exact database name, so a stray click/script can't wipe the shared QA DB.
+  const databaseName = databaseNameFromUrl(process.env.DATABASE_URL);
+  if (!databaseName) {
+    return errorResponse(500, "DATABASE_URL_MISSING", "DATABASE_URL is not configured");
+  }
+  if (typeof body.confirm !== "string" || body.confirm !== databaseName) {
+    return errorResponse(400, "CONFIRMATION_MISMATCH", `Type the database name "${databaseName}" to confirm`);
+  }
+
   const allTables = await loadTables();
   let targets: DbTable[] = [];
 
@@ -198,21 +207,36 @@ export async function POST(request: NextRequest) {
       requestedSet.has(tableKey(table.schemaName, table.tableName)),
     );
   } else {
-    return NextResponse.json({ error: "Unsupported database action" }, { status: 400 });
+    return errorResponse(400, "UNSUPPORTED_ACTION", "Unsupported database action");
   }
 
   const invalid = targets.filter((table) =>
     PRESERVED_TABLES.has(tableKey(table.schemaName, table.tableName)),
   );
   if (invalid.length > 0) {
-    return NextResponse.json(
-      { error: `Cannot truncate preserved tables: ${invalid.map((t) => tableKey(t.schemaName, t.tableName)).join(", ")}` },
-      { status: 400 },
+    return errorResponse(
+      400,
+      "PRESERVED_TABLE",
+      `Cannot truncate preserved tables: ${invalid.map((t) => tableKey(t.schemaName, t.tableName)).join(", ")}`,
     );
   }
 
   if (targets.length === 0) {
-    return NextResponse.json({ error: "No tables selected" }, { status: 400 });
+    return errorResponse(400, "NO_TABLES", "No tables selected");
+  }
+
+  // TRUNCATE … CASCADE also empties every table that references a target. Refuse if that reaches a preserved table.
+  const cascaded = cascadeClosure(
+    targets.map((table) => tableKey(table.schemaName, table.tableName)),
+    await loadForeignKeyEdges(),
+  );
+  const cascadedPreserved = cascaded.filter((key) => PRESERVED_TABLES.has(key));
+  if (cascadedPreserved.length > 0) {
+    return errorResponse(
+      400,
+      "CASCADE_REACHES_PRESERVED",
+      `CASCADE would also truncate preserved tables: ${cascadedPreserved.join(", ")}`,
+    );
   }
 
   const beforeCounts = Object.fromEntries(
@@ -229,6 +253,9 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     ok: true,
     truncatedTables: targets.map((table) => tableKey(table.schemaName, table.tableName)),
+    cascadedTables: cascaded.filter(
+      (key) => !targets.some((table) => tableKey(table.schemaName, table.tableName) === key),
+    ),
     estimatedRowsRemoved: Object.values(beforeCounts).reduce((sum, count) => sum + count, 0),
     beforeCounts,
   });

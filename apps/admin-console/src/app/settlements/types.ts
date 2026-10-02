@@ -1,20 +1,116 @@
-import { ClockIcon, ShieldCheck, CheckCircle2, XCircle } from "lucide-react";
-import { t } from "@/lib/i18n";
+/** API shapes for /v1/settlements (finance-mlm-service settlementController). */
+
+export interface SettlementRunRow {
+  snapshotId: string;
+  periodMonth: string;
+  status: string;
+  createdBy: string | null;
+  createdByName: string | null;
+  createdAt: string;
+  approvedBy: string | null;
+  approvedByName: string | null;
+  approvedAt: string | null;
+  previewedAt: string | null;
+  payoutLineCount: number;
+  totalPayoutSatang: number;
+  totalWithholdingSatang: number;
+  totalNetPayoutSatang: number;
+  pendingAdjustmentCount: number;
+  /** null for runs that can no longer change (approved, rejected, holders). */
+  stale: boolean | null;
+  staleReasons: StaleReason[];
+}
+
+export interface SettlementListResponse {
+  settlements: SettlementRunRow[];
+  pagination: { total: number; page: number; pageSize: number; totalPages: number };
+  statusCounts: Array<{ status: string; count: number }>;
+  omiseConfigured: boolean;
+  devMakerCheckerOverride: boolean;
+}
+
+export interface SettlementPreviewResult {
+  snapshotId: string;
+  periodMonth: string;
+  totalPayoutSatang: number;
+  totalNetPayoutSatang: number;
+  payoutLineCount: number;
+  status: string;
+}
+
+export type StaleReason = "NOT_PREVIEWED" | "LINES_CHANGED" | "ADJUSTMENTS_CHANGED";
+
+export interface RunFreshness {
+  previewed: boolean;
+  lineCount: number;
+  stale: boolean;
+  reasons: StaleReason[];
+  changedTutorUserIds: string[];
+  changedTutors: Array<{ userId: string; name: string | null }>;
+  checkedAt: string;
+}
+
+export interface TimelineEntry {
+  action: string;
+  actorId: string | null;
+  actorName: string | null;
+  at: string;
+  note: string | null;
+  devOverride: boolean;
+}
+
+export interface TransferPlan {
+  automatic: boolean;
+  count: number;
+  totalNetSatang: string;
+  missingRecipientCount: number;
+  missingRecipientTotalSatang: string;
+}
+
+export interface RunDetail {
+  snapshotId: string;
+  periodMonth: string;
+  status: string;
+  createdBy: string | null;
+  createdByName: string | null;
+  createdAt: string;
+  approvedBy: string | null;
+  approvedByName: string | null;
+  approvedAt: string | null;
+  previewedAt: string | null;
+  previewedBy: string | null;
+  previewedByName: string | null;
+  paymentCount: number | null;
+  payoutLineCount: number;
+  totalPayoutSatang: string;
+  totalWithholdingSatang: string;
+  totalNetPayoutSatang: string;
+  pendingAdjustmentCount: number;
+  approvedAdjustmentCount: number;
+  transferPlan: TransferPlan;
+  pendingTransferCount: number;
+  freshness: RunFreshness | null;
+  timeline: TimelineEntry[];
+}
 
 export interface PayoutLineRow {
   payoutLineId: string;
   tutorUserId: string;
   tutorName: string | null;
   tutorEmail: string | null;
-  grossVolumeTHB: number;
   payoutRate: number;
-  basePayoutTHB: number;
-  adjustmentTHB: number;
-  grossPayoutTHB: number;
-  badgeBonusTHB: number;
-  whtTHB: number;
-  netPayoutTHB: number;
+  grossVolumeSatang: string;
+  basePayoutSatang: string;
+  adjustmentSatang: string;
+  grossPayoutSatang: string;
+  badgeBonusSatang: string;
+  whtSatang: string;
+  netPayoutSatang: string;
   eligibilityStatus: string;
+  hasRecipientSnapshot: boolean;
+  bankBrand: string | null;
+  bankAccountLast4: string | null;
+  bankAccountName: string | null;
   documentNumber: string | null;
   documentStatus: string | null;
   transferProvider: string | null;
@@ -27,112 +123,45 @@ export interface PayoutLineRow {
   transferBlockedReason?: string | null;
 }
 
-export interface LinesData {
+export interface SettlementDetailResponse {
   snapshotId: string;
   periodMonth: string;
   status: string;
-  totalNetPayoutTHB: number;
   lines: PayoutLineRow[];
+  run: RunDetail;
+  omiseConfigured: boolean;
+  devMakerCheckerOverride: boolean;
 }
 
-export interface SettlementPreview {
-  snapshotId: string;
-  periodMonth: string;
-  totalPayoutSatang?: number;    // gross before WHT
-  totalNetPayoutSatang?: number; // net after WHT — shown in result card
-  status: string;
-  createdBy?: string;
-  createdAt?: string;
-  approvedBy?: string;
-  approvedAt?: string;
-  payoutLineCount?: number;
-  pendingAdjustmentCount?: number;
+/** Transfer states that are still moving at Omise (poll these). */
+export const ACTIVE_TRANSFER_STATUSES = ["PENDING_TRANSFER", "CREATED", "SENT_PENDING", "SENT"];
+
+/** Thai bank names for Omise bank brand codes (display only). */
+export const BANK_NAMES: Record<string, string> = {
+  bbl: "ธนาคารกรุงเทพ",
+  kbank: "ธนาคารกสิกรไทย",
+  ktb: "ธนาคารกรุงไทย",
+  scb: "ธนาคารไทยพาณิชย์",
+  bay: "ธนาคารกรุงศรีอยุธยา",
+  tmb: "ธนาคารทหารไทยธนชาต",
+  ttb: "ธนาคารทหารไทยธนชาต",
+  gsb: "ธนาคารออมสิน",
+  baac: "ธ.ก.ส.",
+  uob: "ธนาคารยูโอบี",
+  cimb: "ธนาคารซีไอเอ็มบี ไทย",
+  lhb: "ธนาคารแลนด์ แอนด์ เฮ้าส์",
+  kk: "ธนาคารเกียรตินาคินภัทร",
+  tisco: "ธนาคารทิสโก้",
+};
+
+export function bankLabel(line: Pick<PayoutLineRow, "bankBrand" | "bankAccountLast4">): string | null {
+  if (!line.bankBrand && !line.bankAccountLast4) return null;
+  const bank = line.bankBrand ? (BANK_NAMES[line.bankBrand.toLowerCase()] ?? line.bankBrand.toUpperCase()) : "";
+  return [bank, line.bankAccountLast4 ? `•••• ${line.bankAccountLast4}` : ""].filter(Boolean).join(" ");
 }
 
-export const ELIGIBILITY_CONFIG: Record<string, { label: string; className: string }> = {
-  ELIGIBLE:                  { label: "ผ่านเกณฑ์",               className: "bg-emerald-500/10 text-emerald-600 border border-emerald-500/30" },
-  ELIGIBLE_ADJUSTED:         { label: "ผ่าน + ปรับยอด",          className: "bg-teal-500/10 text-teal-600 border border-teal-500/30" },
-  ELIGIBLE_BASE:             { label: "ผ่าน (ค่าฐาน)",           className: "bg-emerald-500/10 text-emerald-600 border border-emerald-500/30" },
-  ELIGIBLE_BASE_ADJUSTED:    { label: "ผ่าน (ค่าฐาน+ปรับยอด)", className: "bg-teal-500/10 text-teal-600 border border-teal-500/30" },
-  INELIGIBLE_NO_PV:          { label: "ไม่ผ่าน (ไม่มียอดขาย)",  className: "bg-red-500/10 text-red-500 border border-red-500/30" },
-  INELIGIBLE_NOT_VERIFIED:          { label: "ไม่ผ่าน (ยังไม่ยืนยันตัวตน)",           className: "bg-orange-500/10 text-orange-600 border border-orange-500/30" },
-  INELIGIBLE_NOT_VERIFIED_ADJUSTED: { label: "ไม่ผ่าน (ยังไม่ยืนยัน — ปรับยอดถูกระงับ)", className: "bg-orange-500/10 text-orange-600 border border-orange-500/30" },
-  ADJUSTMENT_ONLY:                  { label: "ปรับยอดเท่านั้น",                          className: "bg-amber-500/10 text-amber-600 border border-amber-500/30" },
-};
-
-export const TRANSFER_STATUS_CONFIG: Record<string, { label: string; className: string }> = {
-  NOT_SENT: {
-    label: "ยังไม่ได้โอน",
-    className: "bg-muted text-muted-foreground border border-border",
-  },
-  PENDING_TRANSFER: {
-    label: "รอส่งโอน",
-    className: "bg-amber-500/10 text-amber-600 border border-amber-500/30",
-  },
-  CREATED: {
-    label: "สร้างรายการโอนแล้ว",
-    className: "bg-blue-500/10 text-blue-600 border border-blue-500/30",
-  },
-  SENT_PENDING: {
-    label: "ส่งรายการโอนแล้ว",
-    className: "bg-blue-500/10 text-blue-600 border border-blue-500/30",
-  },
-  SENT: {
-    label: "ส่งโอนแล้ว",
-    className: "bg-blue-500/10 text-blue-600 border border-blue-500/30",
-  },
-  PAID: {
-    label: "โอนสำเร็จ",
-    className: "bg-emerald-500/10 text-emerald-600 border border-emerald-500/30",
-  },
-  TRANSFER_FAILED: {
-    label: "โอนไม่สำเร็จ",
-    className: "bg-red-500/10 text-red-500 border border-red-500/30",
-  },
-  NO_TRANSFER_REQUIRED: {
-    label: "ไม่ต้องโอน",
-    className: "bg-muted text-muted-foreground border border-border",
-  },
-};
-
-export const DOCUMENT_STATUS_CONFIG: Record<string, string> = {
-  ISSUED: "ออกเอกสารแล้ว",
-};
-
-export const STATUS_CONFIG: Record<
-  string,
-  {
-    label: string;
-    variant: "default" | "secondary" | "destructive" | "outline";
-    className: string;
-    icon: any;
-  }
-> = {
-  DRAFT: {
-    label: t("settlements.draft"),
-    variant: "outline",
-    icon: ClockIcon,
-    className:
-      "border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10",
-  },
-  SUBMITTED: {
-    label: t("settlements.submitted"),
-    variant: "outline",
-    icon: ShieldCheck,
-    className:
-      "border-blue-500/40 text-blue-600 dark:text-blue-400 bg-blue-500/10",
-  },
-  APPROVED: {
-    label: t("settlements.approved"),
-    variant: "outline",
-    icon: CheckCircle2,
-    className:
-      "border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
-  },
-  REJECTED: {
-    label: t("settlements.rejected"),
-    variant: "outline",
-    icon: XCircle,
-    className: "border-red-500/40 text-red-600 dark:text-red-400 bg-red-500/10",
-  },
-};
+/** Sum of satang strings/numbers as a number (safe below 2^53 satang). */
+export function satangNumber(value: string | number | null | undefined): number {
+  const n = typeof value === "string" ? Number(value) : (value ?? 0);
+  return Number.isFinite(n) ? n : 0;
+}

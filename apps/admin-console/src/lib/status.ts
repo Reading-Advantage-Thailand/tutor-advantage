@@ -59,6 +59,11 @@ export const ADMIN_STATUS = {
     PAID: { label: "โอนสำเร็จ", tone: "success" },
     TRANSFER_FAILED: { label: "โอนไม่สำเร็จ", tone: "danger" },
     PROVIDER_FAILED: { label: "ผู้ให้บริการขัดข้อง", tone: "danger" },
+    // G2 additions
+    CREATED: { label: "สร้างคำสั่งโอนแล้ว", tone: "info" },
+    SENT_PENDING: { label: "รอธนาคารยืนยัน", tone: "info" },
+    NO_TRANSFER_REQUIRED: { label: "ไม่ต้องโอน", tone: "neutral" },
+    FAILED: { label: "โอนไม่สำเร็จ", tone: "danger" },
   },
   /** payout_lines.eligibility_status */
   payoutEligibility: {
@@ -69,6 +74,10 @@ export const ADMIN_STATUS = {
     INELIGIBLE_NOT_VERIFIED: { label: "ยังไม่ยืนยันตัวตน", tone: "warning" },
     INELIGIBLE_NO_PV: { label: "ไม่มียอดขาย", tone: "neutral" },
     INELIGIBLE_SPONSOR_CYCLE: { label: "สายงานวนซ้ำ", tone: "danger" },
+    // G2 additions
+    ELIGIBLE_ADJUSTED: { label: "มีสิทธิ์รับเงิน (มีปรับยอด)", tone: "success" },
+    INELIGIBLE_NO_PV_ADJUSTED: { label: "ไม่มียอดขาย (มีปรับยอด)", tone: "neutral" },
+    INELIGIBLE_SPONSOR_CYCLE_ADJUSTED: { label: "สายงานวนซ้ำ (มีปรับยอด)", tone: "danger" },
   },
   /** finance_mlm.adjustments.status */
   adjustment: {
@@ -89,9 +98,13 @@ export const ADMIN_STATUS = {
     ENROLLMENT_ACTIVATION_FAILED: { label: "เปิดสิทธิ์เรียนไม่สำเร็จ", tone: "danger" },
     REFUND_REQUESTED: { label: "ขอคืนเงิน", tone: "info" },
     PAYMENT_TIMEOUT: { label: "ชำระเงินหมดเวลา", tone: "neutral" },
+    // G3: legacy seed / older producers
+    WEBHOOK_FAILED: { label: "ประมวลผล webhook ไม่สำเร็จ", tone: "danger" },
+    ENROLLMENT_MISMATCH: { label: "สถานะการลงเรียนไม่ตรงกับการชำระ", tone: "warning" },
   },
   /** finance_mlm.fraud_flags.status */
   fraudFlag: {
+    OPEN: { label: "รอตรวจสอบ", tone: "warning" },
     INVESTIGATING: { label: "กำลังตรวจสอบ", tone: "warning" },
     MONITORING: { label: "เฝ้าระวัง", tone: "info" },
     FROZEN: { label: "ระงับไว้", tone: "danger" },
@@ -139,6 +152,17 @@ export const ADMIN_STATUS = {
     ACTIVE: { label: "ใช้งานอยู่", tone: "success" },
     SUSPENDED: { label: "ถูกระงับ", tone: "danger" },
     ANONYMIZED: { label: "ลบข้อมูลแล้ว", tone: "neutral" },
+  },
+  /** learning.classes.status (G4 addition) */
+  classStatus: {
+    DRAFT: { label: "ฉบับร่าง", tone: "neutral" },
+    OPEN: { label: "เปิดรับสมัคร", tone: "info" },
+    PUBLISHED: { label: "เผยแพร่แล้ว", tone: "info" },
+    FULL: { label: "เต็มแล้ว", tone: "warning" },
+    ACTIVE: { label: "กำลังสอน", tone: "success" },
+    IN_PROGRESS: { label: "กำลังสอน", tone: "success" },
+    COMPLETED: { label: "จบแล้ว", tone: "neutral" },
+    CANCELLED: { label: "ยกเลิก", tone: "neutral" },
   },
 } as const satisfies Record<string, Record<string, StatusMeta>>;
 

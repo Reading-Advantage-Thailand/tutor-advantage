@@ -1,67 +1,258 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { RefreshCw } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { fetchWithAuth } from "@/lib/api";
+import { AudioLines, PlugZap, Unplug, FileX2, Mic } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  Chip,
+  DataTable,
+  DescriptionList,
+  EmptyState,
+  ErrorState,
+  Grid,
+  IdCell,
+  Page,
+  PageHeader,
+  Section,
+  SegmentedControl,
+  StatCard,
+  StatGridSkeleton,
+  useAdminSession,
+  type DataTableColumn,
+  type Tone,
+} from "@/components/app";
+import { useTableState } from "@/hooks/useTableState";
+import { api, errorMessage } from "@/lib/api";
+import { useCachedResource } from "@/lib/cachedResource";
+import { formatNumber, formatPercent, formatThaiDate, formatThaiTime } from "@/lib/format";
+import { t, th } from "@/lib/i18n";
 
 type Metrics = {
-  attempts: number; started: number; failedStarts: number; failedStartRate: number;
-  finished: number; disconnected: number; disconnectRate: number;
-  summaryFailures: number; summaryFailureRate: number;
-  measuredCostSessions: number; missingCostSessions: number; missingTranscriptionCostSessions: number;
-  totalMeasuredCostUsd: number; totalMeasuredRealtimeCostUsd: number; totalMeasuredTranscriptionCostUsd: number;
+  attempts: number;
+  started: number;
+  failedStarts: number;
+  failedStartRate: number;
+  finished: number;
+  disconnected: number;
+  disconnectRate: number;
+  summaryFailures: number;
+  summaryFailureRate: number;
+  measuredCostSessions: number;
+  missingCostSessions: number;
+  missingTranscriptionCostSessions: number;
+  totalMeasuredCostUsd: number;
+  totalMeasuredRealtimeCostUsd: number;
+  totalMeasuredTranscriptionCostUsd: number;
   averageMeasuredCostUsd: number | null;
-  recentSessions: Array<{ sessionId: string; createdAt: string; status: string; endReason: string | null;
-    consumedSeconds: number; summaryAvailable: boolean; measuredRealtimeCostUsd: number | null;
-    measuredTranscriptionCostUsd: number | null; measuredCostUsd: number | null }>;
+  recentSessions: Session[];
 };
 
-const percent = (value: number) => `${(value * 100).toFixed(1)}%`;
-const usd = (value: number | null) => value === null ? "ไม่มีข้อมูล" : `$${value.toFixed(4)}`;
+type Session = {
+  sessionId: string;
+  createdAt: string;
+  status: string;
+  endReason: string | null;
+  consumedSeconds: number;
+  summaryAvailable: boolean;
+  measuredRealtimeCostUsd: number | null;
+  measuredTranscriptionCostUsd: number | null;
+  measuredCostUsd: number | null;
+};
+
+const DAYS = ["7", "30", "90"] as const;
+type Days = (typeof DAYS)[number];
+const STATUS_LABELS: Record<string, string> = th.voice.status;
+const SAFETY_REASONS = new Set(["HARASSMENT_OR_HATE", "ILLICIT", "PERSONAL_DATA", "PROMPT_INJECTION", "SELF_HARM", "SEXUAL_CONTENT", "VIOLENCE"]);
+
+/** USD with 4 decimals (provider costs are fractions of a cent per session). */
+function usd(value: number | null | undefined): string {
+  return typeof value === "number" && Number.isFinite(value) ? `US$${formatNumber(value, 4)}` : t("voice.noData");
+}
+
+function duration(seconds: number): string {
+  const s = Math.max(0, Math.round(seconds || 0));
+  const m = Math.floor(s / 60);
+  const rest = s % 60;
+  return m > 0 ? t("voice.durationMinSec", { m, s: rest }) : t("voice.durationSec", { s: rest });
+}
+
+function sessionLabel(session: Session): { label: string; tone: Tone } {
+  const code = session.endReason || session.status;
+  if (session.endReason && SAFETY_REASONS.has(session.endReason)) return { label: STATUS_LABELS.SAFETY_STOP, tone: "danger" };
+  const label = STATUS_LABELS[code] ?? STATUS_LABELS[session.status] ?? code;
+  const tone: Tone =
+    code === "PROVIDER_FAILED" || code === "CONNECTION_LOST" || code === "UNEXPECTED_ERROR" || code === "CONNECTION_TIMEOUT"
+      ? "danger"
+      : code === "ACTIVE"
+        ? "info"
+        : code === "LEASE_EXPIRED" || code === "NO_SPEECH" || code === "QUOTA_REACHED"
+          ? "warning"
+          : "success";
+  return { label, tone };
+}
+
+/** Rate badge: <5% normal, <15% watch, otherwise high. */
+function rateBadge(rate: number, total: number) {
+  if (!total) return undefined;
+  const tone: Tone = rate < 0.05 ? "success" : rate < 0.15 ? "warning" : "danger";
+  const label = rate < 0.05 ? t("voice.rateGood") : rate < 0.15 ? t("voice.rateWatch") : t("voice.rateBad");
+  return (
+    <Chip tone={tone} size="sm" dot>
+      {label}
+    </Chip>
+  );
+}
 
 export default function VoiceOperationsPage() {
-  const [days, setDays] = useState<7 | 30 | 90>(30);
-  const [metrics, setMetrics] = useState<Metrics | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const me = useAdminSession();
+  const table = useTableState({ filterKeys: ["days"], defaultFilters: { days: "30" } });
+  const days: Days = (DAYS as readonly string[]).includes(table.filters.days ?? "") ? (table.filters.days as Days) : "30";
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      setMetrics(await fetchWithAuth(`/v1/admin/voice-operations?days=${days}`) as Metrics);
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "โหลดข้อมูลการฝึกเสียงไม่สำเร็จ");
-    } finally {
-      setLoading(false);
-    }
-  }, [days]);
+  const { data, error, isLoading, isValidating, refetch } = useCachedResource(
+    me ? `${me.userId}:voice-ops:${days}` : null,
+    () => api.get<Metrics>("/v1/admin/voice-operations", { query: { days } }),
+    { keepPreviousData: true },
+  );
 
-  useEffect(() => { void load(); }, [load]);
+  const columns: DataTableColumn<Session>[] = [
+    {
+      key: "createdAt",
+      header: t("voice.colTime"),
+      mobile: "secondary",
+      cell: (s) => `${formatThaiDate(s.createdAt, "short")} ${formatThaiTime(s.createdAt, { suffix: true })}`,
+    },
+    { key: "session", header: t("voice.colSession"), mobile: "primary", cell: (s) => <IdCell id={s.sessionId} /> },
+    {
+      key: "status",
+      header: t("voice.colStatus"),
+      mobile: "trailing",
+      cell: (s) => {
+        const meta = sessionLabel(s);
+        return (
+          <Chip tone={meta.tone} size="sm" dot>
+            {meta.label}
+          </Chip>
+        );
+      },
+    },
+    { key: "duration", header: t("voice.colDuration"), align: "right", cell: (s) => duration(s.consumedSeconds) },
+    {
+      key: "summary",
+      header: t("voice.colSummary"),
+      cell: (s) => (s.summaryAvailable ? t("voice.summaryYes") : <span className="text-fg-muted">{t("voice.summaryNo")}</span>),
+    },
+    {
+      key: "cost",
+      header: t("voice.colCost"),
+      align: "right",
+      cell: (s) => (
+        <span
+          title={t("voice.costTooltip", { realtime: usd(s.measuredRealtimeCostUsd), transcription: usd(s.measuredTranscriptionCostUsd) })}
+        >
+          {usd(s.measuredCostUsd)}
+        </span>
+      ),
+    },
+  ];
 
-  const cards = metrics ? [
-    { label: "เริ่มไม่สำเร็จ", count: metrics.failedStarts, rate: percent(metrics.failedStartRate), detail: `จาก ${metrics.attempts} ครั้งที่สร้างรอบฝึก` },
-    { label: "การเชื่อมต่อหลุด", count: metrics.disconnected, rate: percent(metrics.disconnectRate), detail: `จาก ${metrics.finished} รอบที่จบแล้ว` },
-    { label: "ไม่มีสรุปผล", count: metrics.summaryFailures, rate: percent(metrics.summaryFailureRate), detail: `จาก ${metrics.finished} รอบที่จบแล้ว` },
-  ] : [];
+  return (
+    <Page>
+      <PageHeader
+        title={t("voice.title")}
+        description={t("voice.description")}
+        actions={
+          <SegmentedControl
+            aria-label={t("voice.range")}
+            items={[
+              { value: "7", label: t("voice.days7") },
+              { value: "30", label: t("voice.days30") },
+              { value: "90", label: t("voice.days90") },
+            ]}
+            value={days}
+            onValueChange={(value) => table.setFilter("days", value)}
+          />
+        }
+      />
 
-  return <div className="mx-auto max-w-6xl space-y-6">
-    <header className="flex flex-wrap items-center justify-between gap-3">
-      <div><h1 className="text-3xl font-bold">การฝึกเสียงกับรีดี้</h1><p className="text-sm text-muted-foreground">สถานะการเริ่มรอบ คุณภาพการเชื่อมต่อ และต้นทุนตาม usage ที่ provider รายงาน</p></div>
-      <div className="flex items-center gap-2">
-        <select aria-label="ช่วงเวลา" value={days} onChange={(event) => setDays(Number(event.target.value) as 7 | 30 | 90)} className="rounded-lg border bg-background px-3 py-2 text-sm">
-          <option value={7}>7 วัน</option><option value={30}>30 วัน</option><option value={90}>90 วัน</option>
-        </select>
-        <Button variant="outline" onClick={() => void load()} disabled={loading}><RefreshCw className={`mr-2 size-4 ${loading ? "animate-spin" : ""}`} />รีเฟรช</Button>
-      </div>
-    </header>
-    {error && <p role="alert" className="rounded-lg border border-red-300 p-3 text-red-600">{error}</p>}
-    <div className="grid gap-4 md:grid-cols-3">{cards.map((card) => <Card key={card.label}><CardHeader><CardTitle className="text-base">{card.label}</CardTitle></CardHeader><CardContent><strong className="text-3xl">{card.rate}</strong><p className="mt-2 text-sm">{card.count} รอบ</p><p className="text-xs text-muted-foreground">{card.detail}</p></CardContent></Card>)}</div>
-    {metrics && <>
-      <Card><CardHeader><CardTitle>ต้นทุนตาม usage ที่ provider รายงาน</CardTitle></CardHeader><CardContent className="space-y-2"><p className="text-2xl font-semibold">รวม {usd(metrics.totalMeasuredCostUsd)} <span className="text-base font-normal text-muted-foreground">· เฉลี่ย {usd(metrics.averageMeasuredCostUsd)} ต่อรอบ</span></p><p className="text-sm">Realtime (token) {usd(metrics.totalMeasuredRealtimeCostUsd)} · ถอดเสียงนักเรียน {usd(metrics.totalMeasuredTranscriptionCostUsd)}</p><p className="text-sm text-muted-foreground">มีข้อมูล {metrics.measuredCostSessions} รอบ · ขาดข้อมูล {metrics.missingCostSessions} รอบ{metrics.missingTranscriptionCostSessions ? ` · ไม่มีค่าถอดเสียง ${metrics.missingTranscriptionCostSessions} รอบ (บันทึกก่อนเริ่มวัด)` : ""} คำนวณด้วยราคาที่บันทึกไว้ในระบบ จึงควรเทียบกับยอดใน billing ของ provider เป็นระยะ</p></CardContent></Card>
-      <Card><CardHeader><CardTitle>รอบล่าสุด</CardTitle></CardHeader><CardContent><div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr className="border-b"><th className="p-2">เวลา</th><th className="p-2">รอบ</th><th className="p-2">สถานะ</th><th className="p-2">ใช้เวลา</th><th className="p-2">สรุป</th><th className="p-2">ต้นทุน</th></tr></thead><tbody>{metrics.recentSessions.map((session) => <tr key={session.sessionId} className="border-b"><td className="p-2">{new Date(session.createdAt).toLocaleString("th-TH")}</td><td className="p-2 font-mono">{session.sessionId.slice(0, 8)}</td><td className="p-2">{session.endReason || session.status}</td><td className="p-2">{session.consumedSeconds} วินาที</td><td className="p-2">{session.summaryAvailable ? "มี" : "ไม่มี"}</td><td className="p-2" title={`Realtime ${usd(session.measuredRealtimeCostUsd)} · ถอดเสียง ${usd(session.measuredTranscriptionCostUsd)}`}>{usd(session.measuredCostUsd)}</td></tr>)}</tbody></table></div></CardContent></Card>
-    </>}
-  </div>;
+      {error && !data ? (
+        <ErrorState description={errorMessage(error)} onRetry={refetch} />
+      ) : !data ? (
+        <StatGridSkeleton count={3} />
+      ) : (
+        <>
+          <Grid cols={4} className="grid-cols-2">
+            <StatCard
+              label={t("voice.failedStarts")}
+              value={formatPercent(data.failedStartRate, { fractionDigits: 1 })}
+              icon={PlugZap}
+              tone="orange"
+              badge={rateBadge(data.failedStartRate, data.attempts)}
+              hint={t("voice.failedStartsHint", { count: formatNumber(data.failedStarts), total: formatNumber(data.attempts) })}
+            />
+            <StatCard
+              label={t("voice.disconnects")}
+              value={formatPercent(data.disconnectRate, { fractionDigits: 1 })}
+              icon={Unplug}
+              tone="red"
+              badge={rateBadge(data.disconnectRate, data.finished)}
+              hint={t("voice.disconnectsHint", { count: formatNumber(data.disconnected), total: formatNumber(data.finished) })}
+            />
+            <StatCard
+              label={t("voice.summaryFailures")}
+              value={formatPercent(data.summaryFailureRate, { fractionDigits: 1 })}
+              icon={FileX2}
+              tone="amber"
+              badge={rateBadge(data.summaryFailureRate, data.finished)}
+              hint={t("voice.summaryFailuresHint", { count: formatNumber(data.summaryFailures), total: formatNumber(data.finished) })}
+            />
+            <StatCard
+              label={t("voice.costTotal")}
+              value={usd(data.totalMeasuredCostUsd)}
+              icon={AudioLines}
+              tone="brand"
+              hint={`${t("voice.costAverage")} ${usd(data.averageMeasuredCostUsd)}`}
+            />
+          </Grid>
+
+          <Card padding="lg">
+            <CardHeader title={t("voice.costTitle")} description={t("voice.costNote")} />
+            <DescriptionList
+              columns={3}
+              items={[
+                { label: t("voice.costRealtime"), value: usd(data.totalMeasuredRealtimeCostUsd) },
+                { label: t("voice.costTranscription"), value: usd(data.totalMeasuredTranscriptionCostUsd) },
+                { label: t("voice.costAverage"), value: usd(data.averageMeasuredCostUsd) },
+                {
+                  label: t("voice.costCoverageLabel"),
+                  value: [
+                    t("voice.costCoverage", {
+                      measured: formatNumber(data.measuredCostSessions),
+                      missing: formatNumber(data.missingCostSessions),
+                    }),
+                    data.missingTranscriptionCostSessions
+                      ? t("voice.costMissingTranscription", { count: formatNumber(data.missingTranscriptionCostSessions) })
+                      : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · "),
+                  wide: true,
+                },
+              ]}
+            />
+          </Card>
+
+          <Section title={t("voice.recentTitle")}>
+            <DataTable
+              caption={t("voice.recentTitle")}
+              columns={columns}
+              rows={data.recentSessions}
+              getRowKey={(s) => s.sessionId}
+              loading={isLoading || isValidating}
+              empty={<EmptyState icon={Mic} title={t("voice.emptyTitle")} description={t("voice.emptyHint")} />}
+            />
+          </Section>
+        </>
+      )}
+    </Page>
+  );
 }
