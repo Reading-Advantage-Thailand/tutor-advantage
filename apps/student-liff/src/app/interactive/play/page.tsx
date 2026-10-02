@@ -1,49 +1,67 @@
 "use client";
 
 import React, { useState, useEffect, useRef, Suspense } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { Bot, DoorOpen, Hourglass, MessageCircleQuestion, PenLine, SearchX, WifiOff } from 'lucide-react';
+import { toast } from 'sonner';
 import { useLessonSocket } from '@/hooks/useLessonSocket';
 import { useLiff } from '@/components/providers/LiffProvider';
 import { playSound } from '@/lib/sounds';
 import { studentApi } from '@/lib/api';
 import { t } from '@/lib/i18n';
-import Image from 'next/image';
+import { cn } from '@/lib/utils';
 import { MobileLeaderboard } from '@/components/lesson/MobileLeaderboard';
 import { LessonReflectionPhase } from '@/components/lesson/phases/LessonReflectionPhase';
 import { LessonPairPhase } from '@/components/lesson/phases/LessonPairPhase';
 import { LessonWrapUpPhase } from '@/components/lesson/phases/LessonWrapUpPhase';
-import { AdvantageArcadeRuntime } from '@/components/lesson/AdvantageArcadeRuntime';
-import { toast } from 'sonner';
-import { getGameById, getGamesByCategory, getGameTutorial } from '@/lib/liveLessonGames';
+// next/dynamic (ssr:false) runtime: the arcade and each game are separate chunks, warmed by preloadGame().
+import { LazyArcadeRuntime as AdvantageArcadeRuntime, preloadGame } from '@/components/lesson/gameRegistry';
+import { getLessonConnectionState, getLessonErrorKind } from '@/components/lesson/lessonConnection';
+import { buildLobbyUrl } from '@/components/lesson/lessonRoutes';
+import { PaymentRequiredScreen } from '@/components/lesson/PaymentRequiredScreen';
+import { getPhaseMeta } from '@/components/lesson/phaseMeta';
+import { getGameById, getGameTutorial } from '@/lib/liveLessonGames';
 import { preloadGameAssets } from '@/lib/games/gameAssetPreloader';
-import { Lock } from 'lucide-react';
 import { VocabularyFlashcardPhase } from '@/components/lesson/VocabularyFlashcardPhase';
 import { GAME_PHASES, LESSON_PHASE, TOTAL_LESSON_PHASES } from '@/lib/lessonPhases';
+import { AppBar, Chip, ErrorState, HScroll, Screen, StatusScreen, TextArea } from '@/components/mobile';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { LessonTopBar } from './_components/LessonTopBar';
+import { PlaySkeleton } from './_components/PlaySkeleton';
+import {
+  AiFeedbackText,
+  AiPendingCard,
+  AiScore,
+  AnswerEcho,
+  LookAtScreenRow,
+  PhaseCard,
+  PhaseColumn,
+  PhaseIntroCard,
+  StatusCard,
+  WaitingNextLine,
+} from '@/components/lesson/PhaseBlocks';
+import { getScoreStars } from '@/components/lesson/aiScore';
+import { getVotingDeck, isLookAtScreenPhase, MCQ_PHASES } from './_components/playModel';
 
 const FINAL_LEADERBOARD_PHASE = TOTAL_LESSON_PHASES;
 
-// ── Phase Config (Look at Screen) ────────────────────────────────────────────
-const PHASE_CONFIG: Record<number, {
-  emoji: string; label: string;
-  color: string; bg: string; border: string;
-  gradientFrom: string; gradientTo: string; tip: string
-}> = {
-  1: { emoji: '📖', label: 'แนะนำบทเรียน',   color: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-500/10',  border: 'border-indigo-500/30',  gradientFrom: 'from-indigo-500',  gradientTo: 'to-violet-600',  tip: 'คุณครูกำลังแนะนำบทเรียนวันนี้' },
-  2: { emoji: '🃏', label: 'บัตรคำศัพท์',    color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-500/10',  border: 'border-violet-500/30',  gradientFrom: 'from-violet-500',  gradientTo: 'to-purple-600',  tip: 'ทบทวนคำศัพท์ด้วย Flashcard บนมือถือ' },
-  3: { emoji: '👀', label: 'อ่านบทความ',      color: 'text-sky-600 dark:text-sky-400',       bg: 'bg-sky-500/10',     border: 'border-sky-500/30',     gradientFrom: 'from-sky-500',     gradientTo: 'to-blue-600',    tip: 'อ่านบทความพร้อมคุณครู' },
-  4: { emoji: '🔍', label: 'โฟกัสคำศัพท์',   color: 'text-amber-600 dark:text-amber-400',   bg: 'bg-amber-500/10',   border: 'border-amber-500/30',   gradientFrom: 'from-amber-400',   gradientTo: 'to-orange-500',  tip: 'สังเกตคำศัพท์ที่ไฮไลต์บนจอ' },
-  5: { emoji: '🧠', label: 'อ่านเชิงลึก',     color: 'text-emerald-600 dark:text-emerald-400',bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', gradientFrom: 'from-emerald-500', gradientTo: 'to-teal-600',    tip: 'ฟังคุณครูอธิบายความหมาย' },
-  6: { emoji: '⭐', label: 'ประโยคสำคัญ',     color: 'text-rose-600 dark:text-rose-400',     bg: 'bg-rose-500/10',    border: 'border-rose-500/30',    gradientFrom: 'from-rose-500',    gradientTo: 'to-pink-600',    tip: 'จดจำประโยคสำคัญเหล่านี้' },
-};
-
-
+const cardClass = 'rounded-[var(--radius-card)] border border-hairline bg-surface shadow-[var(--shadow-card)]';
 
 // ── Main Component ────────────────────────────────────────────────────────────
 function PlayLessonContent() {
+  // "Try again" after a fatal connection error remounts the lesson, which
+  // reopens the socket (fresh token + join) exactly like a first visit.
+  const [attempt, setAttempt] = useState(0);
+  return <PlayLesson key={attempt} onReconnect={() => setAttempt((value) => value + 1)} />;
+}
+
+function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const classId = searchParams.get('classId');
-  const { profile, isReady: liffReady } = useLiff();
+  const { profile, isReady: liffReady, error: liffError, errorCode: liffErrorCode, retry: retryLiff } = useLiff();
 
   // Do not open a lesson socket with the placeholder identity while LIFF is
   // still resolving the real student profile. That creates a second join on
@@ -157,6 +175,7 @@ function PlayLessonContent() {
     if (!gameIdForPreload) return;
     if (!["voting", "ready", "teacher_demo", "tutorial", "countdown", "playing", "results"].includes(gameStatusForPreload)) return;
     void preloadGameAssets(gameIdForPreload);
+    void preloadGame(gameIdForPreload);
   }, [gameIdForPreload, gameStatusForPreload]);
 
   useEffect(() => {
@@ -175,9 +194,11 @@ function PlayLessonContent() {
     }
   }, [gameState, currentPhase, gameStartedAt]);
 
+  // Back to the lobby while the session is in phase 0. replace, not push:
+  // otherwise Android back from the lobby re-opens this page (history ping-pong).
   useEffect(() => {
     if (sessionData && sessionData.currentPhase === 0 && classId) {
-      router.push(`/lesson/${classId}`);
+      router.replace(buildLobbyUrl(classId));
     }
   }, [sessionData, classId, router]);
 
@@ -199,7 +220,7 @@ function PlayLessonContent() {
 
   const submitTutorReview = async () => {
     if (!classId || reviewRating === 0) {
-      toast.error('กรุณาเลือกจำนวนดาวก่อนส่งรีวิว');
+      toast.error(t("interactivePlay.reviewNeedStars"));
       return;
     }
 
@@ -208,9 +229,9 @@ function PlayLessonContent() {
         rating: reviewRating,
         comment: reviewComment.trim() || undefined,
       });
-      toast.success('บันทึกรีวิวเรียบร้อยแล้ว');
+      toast.success(t("interactivePlay.reviewSaved"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'บันทึกรีวิวไม่สำเร็จ');
+      toast.error(err instanceof Error ? err.message : t("interactivePlay.reviewSaveFailed"));
     } finally {
     }
   };
@@ -219,107 +240,86 @@ function PlayLessonContent() {
     if (!hasAnswered && !isSubmitting) setSelectedChoice(null);
   }, [hasAnswered, isSubmitting]);
 
-  const paymentAmountText =
-    paymentRequired?.packagePriceSatang != null
-      ? new Intl.NumberFormat("th-TH", {
-          style: "currency",
-          currency: "THB",
-          maximumFractionDigits: 0,
-        }).format(paymentRequired.packagePriceSatang / 100)
-      : null;
-  const paymentUrl =
-    paymentRequired?.paymentUrl ||
-    (classId ? `/payment?classId=${classId}${paymentRequired?.cycleId ? `&cycleId=${paymentRequired.cycleId}` : ""}` : "/payment");
-
   // ─── Loading / Error States ────────────────────────────────────────────────
 
   if (!liffReady) {
+    return <PlaySkeleton />;
+  }
+
+  if (liffError || !profile) {
     return (
-      <div className="min-h-[100dvh] bg-background flex items-center justify-center p-6">
-        <div className="bg-card rounded-3xl border border-border shadow-xl p-8 text-center max-w-[280px] w-full">
-          <div className="size-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <span className="text-2xl">📚</span>
-          </div>
-          <div className="flex gap-1.5 justify-center mt-2">
-            {[0, 1, 2].map(i => <div key={i} className="size-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: `${i * 0.2}s` }} />)}
-          </div>
-          <p className="font-black text-foreground text-sm mt-3">{t("interactivePlay.openingLesson")}</p>
-        </div>
-      </div>
+      <Screen>
+        <AppBar title={t("interactivePlay.topBarTitle")} back fallbackHref="/dashboard" />
+        <ErrorState
+          kind={liffErrorCode === "network" ? "offline" : "error"}
+          onRetry={retryLiff}
+          className="flex-1 justify-center"
+        />
+      </Screen>
     );
   }
 
+  const homeLink = (
+    <Link href="/dashboard" className={cn(buttonVariants({ variant: "brand", size: "cta" }), "w-full")}>
+      {t("interactivePlay.backHome")}
+    </Link>
+  );
+
   if (kicked) {
     return (
-      <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-center p-6 text-center">
-        <div className="text-6xl mb-4">😢</div>
-        <h2 className="text-xl font-black text-foreground mb-2">{kicked}</h2>
-        <p className="text-muted-foreground mb-8 text-sm leading-relaxed">{t("interactivePlay.lessonEnded")}</p>
-        <button onClick={() => router.push('/dashboard')} className="bg-gradient-to-r from-indigo-500 to-violet-600 text-white font-black py-4 px-10 rounded-2xl shadow-lg active:scale-95 transition-all">
-          {t("interactivePlay.backHome")}
-        </button>
-      </div>
+      <Screen>
+        <AppBar title={t("interactivePlay.topBarTitle")} back fallbackHref="/dashboard" />
+        <StatusScreen
+          icon={DoorOpen}
+          tone="neutral"
+          title={kicked}
+          description={t("interactivePlay.lessonEnded")}
+          primaryAction={homeLink}
+        />
+      </Screen>
     );
   }
 
   if (paymentRequired) {
-    const bookLabel = [paymentRequired.bookCode, paymentRequired.bookTitle].filter(Boolean).join(": ") || "เล่มนี้";
-
-    return (
-      <div className="min-h-[100dvh] bg-background flex items-center justify-center p-5">
-        <div className="fixed inset-0 bg-black/45" aria-hidden="true" />
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="relative z-10 w-full max-w-sm rounded-3xl border border-amber-400/40 bg-card p-6 text-center shadow-2xl"
-        >
-          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-amber-500/15 text-3xl">
-            ฿
-          </div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
-            Payment required
-          </p>
-          <h2 className="mt-2 text-xl font-black text-foreground">
-            ต้องชำระเงินก่อนเข้าเล่มนี้
-          </h2>
-          <p className="mt-3 text-sm font-semibold leading-relaxed text-muted-foreground">
-            คุณครูเปิดสอน {bookLabel} แล้ว แต่บัญชีของคุณยังไม่มีสิทธิ์เข้าเล่มนี้
-          </p>
-          {paymentAmountText && (
-            <div className="mt-4 rounded-2xl border border-border bg-muted/50 px-4 py-3">
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">ยอดชำระ</p>
-              <p className="mt-1 text-2xl font-black text-foreground">{paymentAmountText}</p>
-            </div>
-          )}
-          <div className="mt-5 grid gap-2">
-            <button
-              type="button"
-              onClick={() => router.push(paymentUrl)}
-              className="w-full rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-600 py-4 text-sm font-black text-white shadow-lg active:scale-95 transition-all"
-            >
-              ไปชำระเงิน
-            </button>
-            <button
-              type="button"
-              onClick={() => router.push(classId ? `/classes/${classId}` : "/dashboard")}
-              className="w-full rounded-2xl border border-border bg-background py-3.5 text-sm font-black text-foreground active:scale-95 transition-all"
-            >
-              กลับไปดูเล่มที่เรียนได้
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    return <PaymentRequiredScreen data={paymentRequired} classId={classId} title={t("interactivePlay.topBarTitle")} />;
   }
 
-  if (error) {
+  // A socket error after joining is usually a network blip: socket.io
+  // reconnects on its own and `connect` clears the error, so the current phase
+  // stays on screen with a sticky "reconnecting" strip. Only an error before
+  // the student has joined (e.g. no socket token) or the server's "no open
+  // session" reply (reconnecting cannot fix it) blocks the screen.
+  const connection = getLessonConnectionState(error, Boolean(sessionData));
+
+  if (connection === "fatal") {
+    // "No open session" is not a network problem: say so instead of "check your internet".
+    const errorKind = getLessonErrorKind(error);
     return (
-      <div className="min-h-[100dvh] bg-background flex items-center justify-center p-6">
-        <div className="bg-card rounded-3xl border border-rose-500/20 shadow-xl p-8 text-center max-w-sm w-full">
-          <div className="text-4xl mb-3">⚠️</div>
-          <p className="font-black text-rose-500 text-sm">{error}</p>
-        </div>
-      </div>
+      <Screen>
+        <AppBar title={t("interactivePlay.topBarTitle")} back fallbackHref="/dashboard" />
+        <StatusScreen
+          icon={errorKind === "notStarted" ? Hourglass : WifiOff}
+          tone={errorKind === "notStarted" ? "brand" : "amber"}
+          title={errorKind === "notStarted" ? t("interactivePlay.notStartedTitle") : t("interactivePlay.connectFailedTitle")}
+          description={
+            errorKind === "notStarted"
+              ? t("interactivePlay.notStartedDescription")
+              : errorKind === "server" && error
+                ? error
+                : t("interactivePlay.connectFailedDescription")
+          }
+          primaryAction={
+            <Button variant="brand" size="cta" className="w-full" onClick={onReconnect}>
+              {t("common.retry")}
+            </Button>
+          }
+          secondaryAction={
+            <Link href="/dashboard" className={cn(buttonVariants({ variant: "ghost", size: "cta" }), "w-full text-fg-muted")}>
+              {t("interactivePlay.backHome")}
+            </Link>
+          }
+        />
+      </Screen>
     );
   }
 
@@ -337,21 +337,36 @@ function PlayLessonContent() {
     </button>
   );
 
+  // Without a classId no socket is ever opened: explain it instead of an endless "connecting".
+  if (!classId && !devPairPreview) {
+    return (
+      <Screen>
+        <AppBar title={t("interactivePlay.topBarTitle")} back fallbackHref="/dashboard" />
+        <StatusScreen
+          icon={SearchX}
+          tone="neutral"
+          title={t("interactivePlay.missingClassTitle")}
+          description={t("interactivePlay.missingClassDescription")}
+          primaryAction={homeLink}
+        />
+        {devPairButton}
+      </Screen>
+    );
+  }
+
   if (!sessionData && !devPairPreview) {
     return (
-      <div className="min-h-[100dvh] bg-background flex items-center justify-center p-6">
-        <div className="bg-card rounded-3xl border border-border shadow-xl p-8 text-center max-w-[280px] w-full">
-          <div className="size-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <span className="text-2xl">📚</span>
-          </div>
-          <p className="font-black text-foreground text-sm">{t("interactivePlay.connectingLesson")}</p>
-          <div className="flex gap-1.5 justify-center mt-3">
-            {[0, 1, 2].map(i => <div key={i} className="size-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: `${i * 0.2}s` }} />)}
-          </div>
-        </div>
+      <>
+        <PlaySkeleton status={t("interactivePlay.connectingLesson")} />
         {devPairButton}
-      </div>
+      </>
     );
+  }
+
+  // Phase 0 = the lesson has not started: the effect above sends the student
+  // back to the lobby; show a short placeholder meanwhile.
+  if (currentPhase === 0) {
+    return <PlaySkeleton status={t("interactivePlay.returningToLobby")} />;
   }
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
@@ -456,20 +471,10 @@ function PlayLessonContent() {
     submitAnswer(`ความเข้าใจ: ${understanding} · ความพยายาม: ${effort}`, 'Lesson reflection', '');
   };
 
-  // Reading has its own tap-to-flag UI, so it is not a passive look-at-screen phase.
-  const isLookAtScreenPhase = ([
-    LESSON_PHASE.LAUNCH,
-    LESSON_PHASE.VOCABULARY_CONTEXT,
-    LESSON_PHASE.DEEP_READING,
-    LESSON_PHASE.KEY_SENTENCES,
-  ] as number[]).includes(currentPhase);
-  const articleId = articleData?.id;
+  const phaseMeta = getPhaseMeta(currentPhase);
   const articleTitle = articleData?.title;
-  const articleImageUrl = articleId
-    ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleId}`
-    : null;
 
-  // MCQ option configs (EduPop colors)
+  // MCQ option configs (answer colours are part of the game: A red, B blue, C yellow, D green)
   const mcqOptions = [
     { label: 'A', bg: 'bg-rose-500',    shadow: 'shadow-[0_6px_0_rgb(190,18,60)]',  activeShadow: 'active:shadow-[0_0px_0_rgb(190,18,60)]' },
     { label: 'B', bg: 'bg-sky-500',     shadow: 'shadow-[0_6px_0_rgb(3,105,161)]',  activeShadow: 'active:shadow-[0_0px_0_rgb(3,105,161)]' },
@@ -477,60 +482,17 @@ function PlayLessonContent() {
     { label: 'D', bg: 'bg-emerald-500', shadow: 'shadow-[0_6px_0_rgb(4,120,87)]',   activeShadow: 'active:shadow-[0_0px_0_rgb(4,120,87)]' },
   ];
 
-  const getScoreColor = (s: number) => s >= 4 ? 'text-emerald-500' : s >= 2 ? 'text-amber-500' : 'text-rose-500';
-  const getScoreStroke = (s: number) => s >= 4 ? '#10b981' : s >= 2 ? '#f59e0b' : '#f43f5e';
-  const getScoreStars = (s: number) => '⭐'.repeat(Math.max(0, Math.round(s)));
-
-  // Shared "waiting for AI" skeleton — matches the Short Answer loading state across steps
-  const renderAiSkeleton = (accent: 'sky' | 'violet') => {
-    const ping = accent === 'sky' ? 'bg-sky-400' : 'bg-violet-400';
-    const dot = accent === 'sky' ? 'bg-sky-500' : 'bg-violet-500';
-    const label = accent === 'sky' ? 'text-sky-600 dark:text-sky-400' : 'text-violet-600 dark:text-violet-400';
-    const avatar = accent === 'sky' ? 'bg-sky-500/10 border-sky-500/20' : 'bg-violet-500/10 border-violet-500/20';
-    return (
-      <div className="bg-card rounded-2xl border border-border shadow-sm p-4 shrink-0">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="relative flex size-2">
-            <span className={`animate-ping absolute size-full rounded-full opacity-75 ${ping}`} />
-            <span className={`relative size-2 rounded-full ${dot}`} />
-          </span>
-          <span className={`text-[10px] font-black uppercase tracking-wider ${label}`}>{t("interactivePlay.sendingAi")}</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className={`size-12 rounded-xl border overflow-hidden relative shrink-0 ${avatar}`}>
-            <div className="absolute inset-0 skeleton opacity-40" />
-          </div>
-          <div className="flex-1 space-y-2">
-            <div className="h-2.5 rounded-full skeleton opacity-40" />
-            <div className="h-2.5 w-5/6 rounded-full skeleton opacity-40" />
-            <div className="h-2.5 w-2/3 rounded-full skeleton opacity-40" />
-          </div>
-        </div>
-        <p className="text-xs text-muted-foreground font-bold animate-pulse mt-3">{t("interactivePlay.aiChecking")}</p>
-      </div>
-    );
-  };
-
   const renderMissedQuestionSummary = () => (
-    <div className="flex flex-col items-stretch gap-3 w-full h-full overflow-y-auto pb-2">
-      <div className="bg-card rounded-3xl border-2 border-amber-400/40 shadow-xl overflow-hidden shrink-0">
-        <div className="bg-gradient-to-r from-amber-400 to-orange-500 px-5 py-3 text-center">
-          <span className="text-white text-xs font-black uppercase tracking-wider">
-            จบคำถามแล้ว
-          </span>
-        </div>
-        <div className="p-6 text-center">
-          <div className="text-4xl mb-2">⏰</div>
-          <h2 className="text-xl font-black text-foreground">
-            แย่จัง กดตอบคำถามไม่ทัน
-          </h2>
-          <p className="mt-2 text-sm font-semibold leading-relaxed text-muted-foreground">
-            คุณครูจบการถามแล้ว รอบนี้ระบบจะรอไปคำถามหรือกิจกรรมถัดไปนะ
-          </p>
-        </div>
-      </div>
+    <>
+      <StatusCard
+        tone="warning"
+        eyebrow={t("interactivePlay.missedEyebrow")}
+        emoji="⏰"
+        title={t("interactivePlay.missedTitle")}
+        description={t("interactivePlay.missedDescription")}
+      />
       <MobileLeaderboard participants={participants} studentId={studentId} />
-    </div>
+    </>
   );
 
   // ─── Compact lesson content shown on the student's phone per phase (static, follows phase only) ──
@@ -556,7 +518,7 @@ function PlayLessonContent() {
           const clean = part.replace(/[.,!?;:"'()]/g, '').toLowerCase();
           if (vocabWords.some((v) => v.toLowerCase() === clean)) {
             return (
-              <mark key={i} className="bg-amber-300/60 dark:bg-amber-500/30 text-foreground rounded px-0.5 font-semibold not-italic">
+              <mark key={i} className="rounded bg-tile-amber px-0.5 font-semibold text-fg not-italic">
                 {part}
               </mark>
             );
@@ -565,8 +527,8 @@ function PlayLessonContent() {
         });
       }
       return (
-        <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
-          <p className="text-foreground text-sm leading-relaxed" style={{ fontFamily: 'Georgia, serif' }}>{body}</p>
+        <div className={cn(cardClass, 'p-4')}>
+          <p lang="en" className="text-base leading-[1.8] whitespace-pre-line text-fg">{body}</p>
         </div>
       );
     };
@@ -576,8 +538,8 @@ function PlayLessonContent() {
         const summary = ad?.translated_summary?.th?.[0] || (typeof ad?.summary === 'string' ? ad.summary : ad?.summary?.th?.[0]);
         if (!summary) return null;
         return (
-          <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
-            <p className="text-foreground text-sm leading-relaxed">{summary}</p>
+          <div className={cn(cardClass, 'p-4')}>
+            <p className="text-[15px] leading-[1.7] text-fg">{summary}</p>
           </div>
         );
       }
@@ -613,18 +575,20 @@ function PlayLessonContent() {
           .map(({ item }) => item);
         const display = keySentences.length ? keySentences : sentences.slice(0, limit);
         return (
-          <div className="bg-card rounded-2xl border border-border shadow-sm p-4 space-y-2">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">ประโยคสำคัญ</p>
-            {display.map((s, i) => {
-              const text = typeof s === 'object' ? s.sentences : s;
-              return (
-                <div key={i} className="flex gap-2 items-start">
-                  <span className="text-emerald-500 font-black text-xs shrink-0 mt-0.5">{i + 1}</span>
-                  <span className="text-foreground text-sm leading-relaxed">{text}</span>
-                </div>
-              );
-            })}
-          </div>
+          <section className={cn(cardClass, 'p-4')}>
+            <h3 className="mb-2 text-[13px] leading-[1.5] font-bold text-fg-muted">{t("interactivePlay.phaseName6")}</h3>
+            <ol className="flex flex-col gap-2.5">
+              {display.map((s, i) => {
+                const text = typeof s === 'object' ? s.sentences : s;
+                return (
+                  <li key={i} className="flex items-start gap-2.5">
+                    <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-brand-soft text-xs font-bold text-brand-fg tabular-nums">{i + 1}</span>
+                    <span lang="en" className="text-[15px] leading-[1.7] text-fg">{text}</span>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
         );
       }
       default:
@@ -715,27 +679,33 @@ function PlayLessonContent() {
 
   const renderGamePhaseMobile = () => {
     if (!gameState) {
-      return <div className="phase-enter w-full max-w-sm rounded-3xl border border-border bg-card p-6 text-center shadow-xl"><p className="text-sm font-bold text-muted-foreground">{t("interactivePlay.gamePreparing")}</p></div>;
+      return (
+        <PhaseColumn>
+          <StatusCard emoji="🎮" title={t("interactivePlay.gamePreparing")} />
+        </PhaseColumn>
+      );
     }
-    const games = getGamesByCategory(gameState.category);
     const selected = getGameById(gameState.selectedGameId);
+    const selectedTitle = selected?.title || t("interactivePlay.gameFallbackTitle");
     const myVote = gameState.votes?.[gameActorId] || gameState.votes?.[studentId];
     const myResult = gameState.results?.[gameActorId] || gameState.results?.[studentId];
     const currentResultKey = `${gameState.phase}:${gameState.selectedGameId || ""}`;
     const pendingResult = pendingGameResult?.key === currentResultKey ? pendingGameResult : null;
     const countdownLeft = gameState.countdownEndsAt ? Math.max(0, Math.ceil((gameState.countdownEndsAt - Date.now()) / 1000)) : 0;
+    const categoryLabel = gameState.category === "vocabulary" ? t("interactivePlay.gameCategoryVocab") : t("interactivePlay.gameCategorySentence");
 
     if (myResult || pendingResult) {
       const displayedScore = myResult?.score ?? pendingResult?.score ?? 0;
       return (
-        <div className="phase-enter flex w-full max-w-sm flex-1 min-h-0 flex-col gap-4 overflow-hidden">
-          <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center shadow-xl">
-            <p className="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">{t("interactivePlay.gameComplete")}</p>
-            <p className="mt-3 text-6xl font-black text-emerald-600 dark:text-emerald-400">{displayedScore}</p>
-            <p className="mt-2 text-sm font-bold text-muted-foreground">{t("interactivePlay.gameWaitTeacher")}</p>
-          </div>
+        <PhaseColumn>
+          <section role="status" className="rounded-[var(--radius-card)] border border-success-border bg-success-bg px-5 py-6 text-center">
+            <p className="text-[13px] leading-[1.5] font-bold text-success-fg">{t("interactivePlay.gameComplete")}</p>
+            <p className="mt-1 text-[56px] leading-[1.15] font-black text-success-fg tabular-nums">{displayedScore}</p>
+            <p className="text-[13px] leading-[1.5] text-fg-muted">{t("interactivePlay.score")}</p>
+            <p className="mt-3 text-[15px] leading-[1.5] font-semibold text-fg">{t("interactivePlay.gameWaitTeacher")}</p>
+          </section>
           <MobileLeaderboard participants={participants} studentId={studentId} />
-        </div>
+        </PhaseColumn>
       );
     }
 
@@ -744,137 +714,115 @@ function PlayLessonContent() {
     // legacy quick-game fallback with no way to submit the selected game.
     if (gameState.status === "results") {
       return (
-        <div className="phase-enter flex w-full max-w-sm flex-1 min-h-0 flex-col gap-4 overflow-hidden">
-          <div className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-6 text-center shadow-xl">
-            <p className="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">{t("interactivePlay.gameComplete")}</p>
-            <p className="mt-3 text-lg font-black text-foreground">{t("interactivePlay.gameWaitTeacher")}</p>
-          </div>
+        <PhaseColumn>
+          <StatusCard tone="warning" emoji="🎮" eyebrow={t("interactivePlay.gameComplete")} title={t("interactivePlay.gameWaitTeacher")} />
           <MobileLeaderboard participants={participants} studentId={studentId} />
-        </div>
+        </PhaseColumn>
       );
     }
 
     if (gameState.status === "voting") {
+      const deck = getVotingDeck(gameState.category);
       return (
-        <div className="phase-enter flex w-full max-w-sm flex-1 min-h-0 flex-col gap-4 overflow-hidden">
-          <div className="shrink-0 text-center">
-            <p className="text-xs font-black uppercase tracking-widest text-indigo-500">{gameState.category === "vocabulary" ? t("interactivePlay.vocabularyGame") : t("interactivePlay.sentenceGame")}</p>
-            <h2 className="mt-1 text-2xl font-black text-foreground">{t("interactivePlay.gameVoteTitle")}</h2>
+        <PhaseColumn>
+          <div className="text-center">
+            <p className="text-[13px] leading-[1.5] font-bold text-brand-fg">{gameState.category === "vocabulary" ? t("interactivePlay.vocabularyGame") : t("interactivePlay.sentenceGame")}</p>
+            <h2 className="mt-0.5 text-[22px] leading-[1.4] font-extrabold text-fg">{t("interactivePlay.gameVoteTitle")}</h2>
           </div>
-          <div className="mobile-game-deck -mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-5 pt-1">
-          {games.map((game, index) => {
-            const isLocked = game.enabled === false;
-            return (
-            <button
-              key={game.id}
-              onClick={() => {
-                if (!isLocked) submitGameVote(game.id);
-              }}
-              disabled={isLocked}
-              aria-disabled={isLocked}
-              className={`mobile-game-card group relative flex h-[430px] w-[282px] shrink-0 snap-center flex-col overflow-hidden rounded-[30px] border text-left shadow-2xl transition-all duration-300 ${
-                isLocked
-                  ? "cursor-not-allowed border-white/20 opacity-65 grayscale"
-                  : `active:scale-[0.98] ${myVote === game.id ? "border-indigo-300 ring-4 ring-indigo-400/35" : "border-white/40"}`
-              }`}
-              style={{ animationDelay: `${index * 55}ms` }}
-            >
-              <Image src={game.cover} alt={game.title} fill sizes="282px" className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/5" />
-              {isLocked && (
-                <div className="absolute inset-0 z-10 bg-black/58 text-white backdrop-blur-[2px]">
-                  <div className="absolute left-1/2 top-[28%] flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2">
-                  <div className="flex size-16 items-center justify-center rounded-full border border-white/25 bg-white/15">
-                    <Lock size={30} />
+          <HScroll snap gap={16} className="pt-1 pb-3" aria-label={t("interactivePlay.gameVoteTitle")}>
+            {deck.games.map((game) => {
+              const isMine = myVote === game.id;
+              return (
+                <button
+                  key={game.id}
+                  type="button"
+                  onClick={() => submitGameVote(game.id)}
+                  aria-pressed={isMine}
+                  className={cn(
+                    "pressable relative flex h-[400px] w-[272px] shrink-0 flex-col overflow-hidden rounded-[28px] border-2 text-left shadow-[var(--shadow-card)]",
+                    isMine ? "border-brand-vivid" : "border-transparent",
+                  )}
+                >
+                  <Image src={game.cover} alt="" fill sizes="272px" className="object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/0" />
+                  <span className="absolute top-4 left-4 rounded-full bg-black/55 px-3 py-1 text-xs leading-[1.5] font-semibold text-white">
+                    {categoryLabel}
+                  </span>
+                  {isMine ? (
+                    <span className="absolute top-4 right-4 rounded-full bg-brand-solid px-3 py-1 text-xs leading-[1.5] font-bold text-white">
+                      {t("interactivePlay.selected")}
+                    </span>
+                  ) : null}
+                  <div className="relative z-10 mt-auto p-5 text-white">
+                    <h3 lang="en" className="text-[22px] leading-[1.3] font-extrabold text-white">{game.title}</h3>
+                    <p className="mt-1.5 line-clamp-3 text-sm leading-[1.6] text-white/85">{game.description}</p>
+                    <span
+                      className={cn(
+                        "mt-4 flex h-12 items-center justify-center rounded-2xl text-[15px] font-bold",
+                        isMine ? "bg-brand-solid text-white" : "bg-white text-slate-950",
+                      )}
+                    >
+                      {isMine ? t("interactivePlay.voteDone") : t("interactivePlay.chooseThisGame")}
+                    </span>
                   </div>
-                  <p className="text-lg font-black">{t("interactivePlay.comingSoon")}</p>
-                  </div>
-                </div>
-              )}
-              <div className="absolute left-4 top-4 rounded-full border border-white/25 bg-black/35 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur">
-                {gameState.category === "vocabulary" ? t("interactivePlay.gameCategoryVocab") : t("interactivePlay.gameCategorySentence")}
+                </button>
+              );
+            })}
+            {deck.hasMore ? (
+              <div className="flex h-[400px] w-[200px] shrink-0 flex-col items-center justify-center gap-2 rounded-[28px] border-2 border-dashed border-hairline bg-surface px-5 text-center">
+                <span aria-hidden="true" className="text-[40px] leading-[1.2]">🎁</span>
+                <p className="text-[15px] leading-[1.5] font-bold text-fg">{t("interactivePlay.moreGamesSoonTitle")}</p>
+                <p className="text-[13px] leading-[1.6] text-fg-muted">{t("interactivePlay.moreGamesSoonDescription")}</p>
               </div>
-              {myVote === game.id && (
-                <div className="absolute right-4 top-4 rounded-full bg-emerald-400 px-3 py-1 text-[10px] font-black uppercase text-emerald-950 shadow-lg">
-                  {t("interactivePlay.selected")}
-                </div>
-              )}
-              <div className="relative z-10 mt-auto p-5 text-white">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">
-                  {t("interactivePlay.gameCard")}
-                </p>
-                <h3 className="mt-2 text-2xl font-black leading-tight text-white">
-                  {game.title}
-                </h3>
-                <p className="mt-2 line-clamp-3 text-sm font-semibold leading-relaxed text-white/75">
-                  {game.description}
-                </p>
-                <div className={`mt-5 flex items-center justify-center gap-2 rounded-2xl py-3 text-sm font-black shadow-lg transition-colors ${
-                  isLocked
-                    ? "bg-white/15 text-white"
-                    : myVote === game.id
-                      ? "bg-emerald-400 text-emerald-950"
-                      : "bg-white text-slate-950 group-active:bg-indigo-100"
-                }`}>
-                  {isLocked && <Lock size={16} />}
-                  {isLocked
-                    ? t("interactivePlay.comingSoon")
-                    : myVote === game.id
-                      ? t("interactivePlay.voteDone")
-                      : t("interactivePlay.chooseThisGame")}
-                </div>
-              </div>
-            </button>
-            );
-          })}
-          </div>
-          <div className="shrink-0 rounded-3xl border border-border bg-card p-4 text-center shadow-lg">
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-              {t("interactivePlay.yourVote")}
-            </p>
-            <p className="mt-1 text-sm font-black text-foreground">
+            ) : null}
+          </HScroll>
+          <div role="status" className={cn(cardClass, 'p-4 text-center')}>
+            <p className="text-[13px] leading-[1.5] font-semibold text-fg-muted">{t("interactivePlay.yourVote")}</p>
+            <p className="mt-0.5 text-[15px] leading-[1.5] font-bold text-fg">
               {myVote ? getGameById(myVote)?.title || myVote : t("interactivePlay.noGameSelected")}
             </p>
           </div>
-        </div>
+        </PhaseColumn>
       );
     }
 
     if (gameState.status === "ready") {
       return (
-        <div className="phase-enter w-full max-w-sm overflow-hidden rounded-[32px] border border-border bg-card shadow-2xl">
-          {selected?.cover && (
-            <div className="relative h-56 w-full">
-              <Image src={selected.cover} alt={selected.title} fill sizes="384px" className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-              <div className="absolute inset-x-5 bottom-5 text-white">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">ผลโหวต</p>
-                <h2 className="mt-1 text-3xl font-black">{selected.title}</h2>
+        <PhaseColumn>
+          <div className={cn(cardClass, 'overflow-hidden')}>
+            {selected?.cover && (
+              <div className="relative h-52 w-full">
+                <Image src={selected.cover} alt="" fill sizes="448px" className="object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                <div className="absolute inset-x-5 bottom-4 text-white">
+                  <p className="text-[13px] leading-[1.5] font-semibold text-white/85">{t("interactivePlay.gameReadyEyebrow")}</p>
+                  <h2 lang="en" className="text-[26px] leading-[1.3] font-extrabold">{selected.title}</h2>
+                </div>
               </div>
+            )}
+            <div className="p-6 text-center">
+              <p aria-hidden="true" className="text-[32px] leading-[1.2]">🎮</p>
+              <h3 className="mt-2 text-[19px] leading-[1.45] font-bold text-fg">{t("interactivePlay.gameReadyTitle")}</h3>
+              <p className="mt-1 text-sm leading-[1.6] text-fg-muted">{t("interactivePlay.gameReadyDescription")}</p>
             </div>
-          )}
-          <div className="p-6 text-center">
-            <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-indigo-500/10 text-2xl">🎮</div>
-            <h3 className="mt-4 text-xl font-black text-foreground">รอคุณครูเตรียมเกม</h3>
-            <p className="mt-2 text-sm font-semibold text-muted-foreground">คุณครูกำลังเลือกว่าจะสาธิตและเปิด Tutorial ก่อนเล่นหรือไม่</p>
           </div>
-        </div>
+        </PhaseColumn>
       );
     }
 
     if (gameState.status === "teacher_demo") {
       return (
         <div className="phase-enter fixed inset-0 z-50 flex h-dvh w-screen items-center justify-center overflow-hidden bg-slate-950 p-6 text-center text-white">
-          {selected?.cover && <Image src={selected.cover} alt={selected.title} fill sizes="100vw" className="absolute inset-0 size-full object-cover opacity-25" />}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-slate-950/80 to-indigo-950/70" />
+          {selected?.cover && <Image src={selected.cover} alt="" fill sizes="100vw" className="absolute inset-0 size-full object-cover opacity-25" />}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-slate-950/80 to-slate-950/60" />
           <div className="relative z-10 w-full max-w-sm">
-            <div className="mx-auto flex size-20 items-center justify-center rounded-[28px] border border-white/20 bg-white/10 text-4xl backdrop-blur">👀</div>
-            <p className="mt-6 text-xs font-black uppercase tracking-[0.24em] text-amber-300">Teacher Demo</p>
-            <h2 className="mt-2 text-3xl font-black">ดูคุณครูเล่นก่อน</h2>
-            <p className="mt-3 text-base font-bold text-white/65">มองที่หน้าจอคุณครู แล้วสังเกตวิธีเล่น {selected?.title || "เกมนี้"}</p>
-            <div className="mt-8 rounded-3xl border border-white/15 bg-white/10 p-5 text-left backdrop-blur">
-              <p className="text-sm font-black text-white">ระหว่างดู ให้สังเกต</p>
-              <p className="mt-2 text-sm font-semibold leading-relaxed text-white/65">เป้าหมายของเกม · วิธีบังคับ · วิธีเลือกคำตอบที่ถูกต้อง</p>
+            <div aria-hidden="true" className="mx-auto flex size-20 items-center justify-center rounded-[28px] border border-white/20 bg-white/10 text-4xl">👀</div>
+            <p className="mt-6 text-sm leading-[1.5] font-bold text-amber-300">{t("interactivePlay.teacherDemoEyebrow")}</p>
+            <h2 className="mt-1 text-[28px] leading-[1.3] font-extrabold">{t("interactivePlay.teacherDemoTitle")}</h2>
+            <p className="mt-3 text-base leading-[1.6] font-semibold text-white/80">{t("interactivePlay.teacherDemoDescription")} {selected?.title || t("interactivePlay.thisGame")}</p>
+            <div className="mt-8 rounded-3xl border border-white/15 bg-white/10 p-5 text-left">
+              <p className="text-[15px] leading-[1.5] font-bold text-white">{t("interactivePlay.teacherDemoWatchTitle")}</p>
+              <p className="mt-2 text-sm leading-[1.6] text-white/80">{t("interactivePlay.teacherDemoWatchList")}</p>
             </div>
           </div>
         </div>
@@ -884,25 +832,24 @@ function PlayLessonContent() {
     if (gameState.status === "tutorial") {
       const tutorialSteps = getGameTutorial(gameState.selectedGameId, gameState.category);
       return (
-        <div className="phase-enter fixed inset-0 z-50 h-dvh w-screen overflow-y-auto bg-slate-950 p-5 text-white">
-          {selected?.cover && <Image src={selected.cover} alt={selected.title} fill sizes="100vw" className="fixed inset-0 size-full object-cover opacity-20" />}
-          <div className="fixed inset-0 bg-gradient-to-b from-indigo-950/85 via-slate-950/95 to-black" />
-          <div className="relative z-10 mx-auto flex min-h-full w-full max-w-sm flex-col justify-center py-6">
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-indigo-300">Tutorial</p>
-            <h2 className="mt-2 text-3xl font-black">วิธีเล่น {selected?.title || "เกม"}</h2>
-            <p className="mt-2 text-sm font-semibold text-white/60">อ่านให้ครบก่อนเริ่มเกมจริง</p>
-            <div className="mt-7 grid gap-3">
+        <div className="phase-enter fixed inset-0 z-50 h-dvh w-screen overflow-y-auto overscroll-contain bg-slate-950 p-5 text-white">
+          {selected?.cover && <Image src={selected.cover} alt="" fill sizes="100vw" className="fixed inset-0 size-full object-cover opacity-20" />}
+          <div className="fixed inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/95 to-black" />
+          <div className="relative z-10 mx-auto flex min-h-full w-full max-w-sm flex-col justify-center pt-[var(--safe-top)] pb-[calc(24px+var(--safe-bottom))]">
+            <h2 className="text-[28px] leading-[1.3] font-extrabold">{t("interactivePlay.tutorialEyebrow")} {selectedTitle}</h2>
+            <p className="mt-2 text-sm leading-[1.6] text-white/75">{t("interactivePlay.tutorialHint")}</p>
+            <ol className="mt-7 grid gap-3">
               {tutorialSteps.map((step, index) => (
-                <div key={step} className="flex gap-4 rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-400 text-lg font-black text-indigo-950">{index + 1}</div>
-                  <p className="self-center text-sm font-bold leading-relaxed text-white">{step}</p>
-                </div>
+                <li key={step} className="flex gap-4 rounded-3xl border border-white/15 bg-white/10 p-5">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-300 text-lg font-black text-emerald-950">{index + 1}</span>
+                  <p className="self-center text-[15px] leading-[1.6] font-semibold text-white">{step}</p>
+                </li>
               ))}
-            </div>
-            <div className="mt-7 flex items-center justify-center gap-2 rounded-2xl bg-amber-400/10 px-4 py-3 text-sm font-black text-amber-200">
-              <span className="size-2 animate-pulse rounded-full bg-amber-300" />
-              รอคุณครูเริ่มเกม
-            </div>
+            </ol>
+            <p role="status" className="mt-7 flex items-center justify-center gap-2 rounded-2xl bg-amber-400/15 px-4 py-3 text-[15px] leading-[1.5] font-bold text-amber-200">
+              <span aria-hidden="true" className="size-2 rounded-full bg-amber-300" />
+              {t("interactivePlay.tutorialWaiting")}
+            </p>
           </div>
         </div>
       );
@@ -914,7 +861,7 @@ function PlayLessonContent() {
           {selected?.cover && (
             <Image
               src={selected.cover}
-              alt={selected.title}
+              alt=""
               fill
               sizes="100vw"
               className="absolute inset-0 size-full object-cover opacity-35"
@@ -922,16 +869,16 @@ function PlayLessonContent() {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-slate-950/70 to-slate-950/50" />
           <div className="relative z-10 flex w-full max-w-sm flex-col items-center">
-            <p className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-white/70 backdrop-blur">
+            <p className="rounded-full border border-white/20 bg-black/30 px-4 py-2 text-sm leading-[1.5] font-bold text-white/85">
               {t("interactivePlay.getReady")}
             </p>
-            <p className="mt-8 text-[clamp(6rem,34vw,12rem)] font-black leading-none text-white drop-shadow-2xl">
+            <p aria-live="assertive" className="mt-8 text-[clamp(6rem,34vw,12rem)] leading-none font-black text-white tabular-nums">
               {countdownLeft}
             </p>
-            <p className="mt-5 text-2xl font-black leading-tight text-white">
-              {selected?.title || "Game"}
+            <p lang="en" className="mt-5 text-2xl leading-[1.3] font-extrabold text-white">
+              {selectedTitle}
             </p>
-            <p className="mt-2 text-sm font-bold text-white/60">
+            <p className="mt-2 text-sm leading-[1.5] font-semibold text-white/75">
               {t("interactivePlay.gameStartsAutomatically")}
             </p>
           </div>
@@ -941,7 +888,9 @@ function PlayLessonContent() {
 
     if (gameState.status === "playing") {
       return (
-        <div className="phase-enter fixed inset-0 z-50 h-dvh w-screen overflow-hidden bg-background">
+        // data-motion="full": game sprites/feedback animations must keep running
+        // even when the device asks for reduced motion (global CSS rule).
+        <div data-motion="full" className="phase-enter fixed inset-0 z-50 h-dvh w-screen overflow-hidden bg-background">
           <AdvantageArcadeRuntime
             key={`${gameState.phase}-${gameState.selectedGameId}`}
             gameId={gameState.selectedGameId || ""}
@@ -963,6 +912,7 @@ function PlayLessonContent() {
       );
     }
 
+    // Legacy quick-game fallback (only for an unknown game status).
     const questions = buildGameQuestions();
     const answeredCount = questions.filter((_question, index) => gameSelections[index]).length;
     const liveCorrect = questions.filter((question, index) => gameSelections[index] === question.answer).length;
@@ -971,57 +921,47 @@ function PlayLessonContent() {
     const theme = getArcadeTheme(gameState.selectedGameId, gameState.category);
     const progressPct = questions.length ? (answeredCount / questions.length) * 100 : 0;
     return (
-      <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
-        <div className={`relative overflow-hidden rounded-[28px] border border-white/20 bg-gradient-to-br ${theme.arena} p-5 text-white shadow-2xl`}>
-          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 18% 24%, white 2px, transparent 2px)", backgroundSize: "28px 28px" }} />
-          <div className="absolute -right-10 top-8 size-32 rounded-full bg-white/10 blur-sm" />
+      <PhaseColumn>
+        <div className={`relative overflow-hidden rounded-[28px] bg-gradient-to-br ${theme.arena} p-5 text-white shadow-[var(--shadow-card)]`}>
           <div className="relative z-10 flex items-start justify-between gap-3">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/70">{selected?.title || t("interactivePlay.lessonGame")}</p>
-              <h2 className="mt-1 text-xl font-black leading-tight text-white">{theme.action}</h2>
+              <p className="text-xs leading-[1.5] font-semibold text-white/80">{selected?.title || t("interactivePlay.lessonGame")}</p>
+              <h2 className="mt-1 text-xl leading-[1.35] font-extrabold text-white">{theme.action}</h2>
             </div>
             <div className="rounded-2xl bg-black/25 px-3 py-2 text-right">
-              <p className="text-[9px] font-black uppercase text-white/60">{t("interactivePlay.score")}</p>
+              <p className="text-xs leading-[1.5] text-white/80">{t("interactivePlay.score")}</p>
               <p className="text-2xl font-black tabular-nums">{liveCorrect * 2}</p>
             </div>
           </div>
           <div className="relative z-10 mt-5 flex items-center gap-4">
-            <div className="relative flex size-20 shrink-0 items-center justify-center rounded-3xl border border-white/25 bg-white/20 shadow-xl arcade-float">
+            <div className="relative flex size-20 shrink-0 items-center justify-center rounded-3xl border border-white/25 bg-white/20">
               <span className="text-2xl font-black tracking-tight text-white">{theme.avatar}</span>
-              <span className="absolute -right-1 -top-1 size-4 rounded-full bg-emerald-300 shadow-[0_0_16px_rgba(110,231,183,0.9)]" />
             </div>
-            <div className={`min-w-0 flex-1 rounded-3xl border p-4 backdrop-blur ${theme.panel}`}>
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Target {activeIndex + 1} / {Math.max(questions.length, 1)}</p>
-              <p className="mt-1 break-words text-base font-black leading-snug text-white">{activeQuestion?.prompt || t("interactivePlay.ready")}</p>
+            <div className={`min-w-0 flex-1 rounded-3xl border p-4 ${theme.panel}`}>
+              <p className="text-xs leading-[1.5] text-white/80">{t("interactivePlay.quickGameQuestionPrefix")} {activeIndex + 1} / {Math.max(questions.length, 1)}</p>
+              <p className="mt-1 text-base leading-snug font-black break-words text-white">{activeQuestion?.prompt || t("interactivePlay.ready")}</p>
             </div>
           </div>
           <div className="relative z-10 mt-5">
             <div className="h-3 overflow-hidden rounded-full bg-black/25">
               <div className="h-full rounded-full bg-white transition-all duration-500" style={{ width: `${progressPct}%` }} />
             </div>
-            <div className="mt-2 flex justify-between text-[10px] font-black uppercase tracking-widest text-white/70">
-              <span>Combo {liveCorrect}</span>
-              <span>{answeredCount}/{questions.length}</span>
-            </div>
+            <p className="mt-2 text-right text-xs leading-[1.5] text-white/80 tabular-nums">{answeredCount}/{questions.length}</p>
           </div>
         </div>
-        <div className="rounded-3xl border border-border bg-card p-5 shadow-xl">
-          <p className="text-xs font-black uppercase tracking-widest text-indigo-500">{selected?.title || t("interactivePlay.lessonGame")}</p>
-          <h2 className="mt-2 text-xl font-black text-foreground">ตอบให้ครบแล้วส่งคะแนน</h2>
+        <div className={cn(cardClass, 'p-5')}>
+          <h2 className="text-[17px] leading-[1.45] font-bold text-fg">{t("interactivePlay.quickGameTitle")}</h2>
         </div>
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           {questions.map((question, index) => (
-            <div key={`${question.prompt}-${index}`} className="rounded-2xl border border-border bg-card p-4 shadow-sm">
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">ข้อ {index + 1}</p>
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Stage {index + 1}</p>
+            <div key={`${question.prompt}-${index}`} className={cn(cardClass, 'p-4')}>
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-[13px] leading-[1.5] font-semibold text-fg-muted">{t("interactivePlay.quickGameQuestionPrefix")} {index + 1}</p>
                 {gameSelections[index] && (
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${gameSelections[index] === question.answer ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"}`}>
-                    {gameSelections[index] === question.answer ? "HIT" : "MISS"}
-                  </span>
+                  <span aria-hidden="true" className="text-base">{gameSelections[index] === question.answer ? "✅" : "❌"}</span>
                 )}
               </div>
-              <p className="mt-1 text-sm font-black text-foreground">{question.prompt}</p>
+              <p className="mt-1 text-[15px] leading-[1.5] font-bold text-fg">{question.prompt}</p>
               <div className="mt-3 grid gap-2">
                 {question.options.map((option) => (
                   <button
@@ -1032,7 +972,8 @@ function PlayLessonContent() {
                       }
                     }}
                     disabled={phaseReadOnly}
-                    className={`btn-3d rounded-xl px-3 py-3 text-left text-xs font-black text-white transition-all ${theme.target} ${theme.shadow} ${
+                    aria-pressed={gameSelections[index] === option}
+                    className={`btn-3d min-h-11 rounded-xl px-3 py-3 text-left text-sm font-bold text-white transition-all ${theme.target} ${theme.shadow} ${
                       gameSelections[index] === option
                         ? "ring-4 ring-white/70 brightness-110"
                         : "opacity-95"
@@ -1045,167 +986,41 @@ function PlayLessonContent() {
             </div>
           ))}
         </div>
-        <button
+        <Button
+          variant="brand"
+          size="cta"
+          className="w-full"
           onClick={handleQuickGameComplete}
           disabled={phaseReadOnly || questions.some((_question, index) => !gameSelections[index])}
-          className="w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 py-4 text-base font-black text-white shadow-lg active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          ส่งคะแนนเกม
-        </button>
-      </div>
+          {t("interactivePlay.quickGameSubmit")}
+        </Button>
+      </PhaseColumn>
     );
   };
 
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-[100dvh] bg-background flex flex-col">
+    <Screen>
+      <LessonTopBar
+        phase={currentPhase}
+        articleTitle={articleTitle}
+        reconnecting={connection === "reconnecting"}
+        readOnly={phaseReadOnly}
+        onExit={() => router.replace('/dashboard')}
+      />
 
-      {/* ── Header ── */}
-      <header className="bg-card border-b border-border px-4 py-3 flex items-center justify-between shrink-0 shadow-sm sticky top-0 z-20">
-        <div className="flex items-center gap-2.5">
-          <div className="size-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm shrink-0">
-            <span className="text-white text-xs font-black">✦</span>
-          </div>
-          <span className="font-black text-sm text-foreground">{t("interactivePlay.title")}</span>
-        </div>
-        {currentPhase > 0 && (
-          <div className="flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-lg px-2.5 py-1">
-            <div className="size-1.5 rounded-full bg-indigo-500 animate-pulse" />
-            <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Phase {currentPhase}</span>
-          </div>
-        )}
-      </header>
-
-      {phaseReadOnly && (
-        <div className="flex items-center justify-center gap-2 border-b border-amber-500/30 bg-amber-500/10 px-4 py-2 text-center text-xs font-bold text-amber-700 dark:text-amber-300">
-          <Lock size={14} />
-          <span>กำลังดู Phase ย้อนหลัง — ไม่รับคำตอบหรือเพิ่มคะแนน</span>
-        </div>
-      )}
-
-      <main className="flex-1 flex flex-col p-4 items-center justify-center relative overflow-hidden">
-
-        {/* ─── Phase 0: Waiting Room ─── */}
-        {currentPhase === 0 && (
-          <div className="phase-enter w-full max-w-sm flex flex-col gap-4">
-            {/* Article hero / gradient banner */}
-            {articleImageUrl ? (
-              <div className="w-full h-40 rounded-3xl overflow-hidden shadow-xl relative">
-                <Image src={articleImageUrl} alt="article" fill sizes="(max-width: 640px) 100vw, 384px" className="object-cover" unoptimized />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider">บทเรียนวันนี้</p>
-                  <p className="text-white font-black text-sm leading-snug mt-0.5">{articleTitle || ''}</p>
-                </div>
-              </div>
-            ) : (
-              <div className="w-full h-40 rounded-3xl bg-gradient-to-br from-indigo-500 via-violet-600 to-purple-700 flex flex-col items-center justify-center shadow-xl gap-2 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 30% 30%, white 1px, transparent 1px)', backgroundSize: '18px 18px' }} />
-                <span className="text-5xl relative z-10">📚</span>
-                <p className="text-white font-black text-base relative z-10">บทเรียนวันนี้</p>
-              </div>
-            )}
-
-            {/* Profile card */}
-            <div className="bg-card rounded-3xl border border-border shadow-lg p-5 flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-indigo-500/30 shrink-0 shadow-sm bg-indigo-500/10">
-                <Image
-                  src={profile?.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
-                  alt={name}
-                  width={56} height={56}
-                  className="w-full h-full object-cover"
-                  unoptimized
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-black text-foreground truncate text-base">{name}</p>
-                <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-full inline-block mt-1.5 border border-indigo-500/20">
-                  {t("interactivePlay.studentRole")}
-                </span>
-              </div>
-            </div>
-
-            {/* Waiting status + classmates */}
-            <div className="bg-card rounded-3xl border border-border shadow-lg p-5 text-center">
-              <div className="flex justify-center gap-1.5 mb-3">
-                {[0, 1, 2].map(i => <div key={i} className="size-2.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: `${i * 0.25}s` }} />)}
-              </div>
-              <p className="font-bold text-muted-foreground text-sm">{t("interactivePlay.waitingTeacher")}</p>
-
-              {participants.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-border">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">เพื่อนในห้อง ({participants.length})</p>
-                  <div className="flex justify-center flex-wrap gap-2">
-                    {participants.slice(0, 9).map((p, i) => (
-                      <div key={i} className="flex flex-col items-center gap-1" title={p.name}>
-                        <div className="size-9 rounded-xl overflow-hidden border-2 border-border shadow-md bg-muted flex items-center justify-center">
-                          {p.pictureUrl
-                            ? <Image src={p.pictureUrl} alt={p.name} width={36} height={36} className="size-full object-cover" unoptimized />
-                            : <span className="text-[9px] font-bold text-muted-foreground">{p.name.slice(0, 2)}</span>
-                          }
-                        </div>
-                        <span className="text-[8px] font-bold text-muted-foreground truncate max-w-[36px]">{p.name.split(' ')[0]}</span>
-                      </div>
-                    ))}
-                    {participants.length > 9 && (
-                      <div className="size-9 rounded-xl bg-muted flex items-center justify-center text-[9px] font-bold text-muted-foreground">
-                        +{participants.length - 9}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="w-full py-3.5 rounded-2xl border-2 border-border text-muted-foreground font-bold text-sm bg-card active:scale-95 transition-all"
-            >
-              {t("interactivePlay.backToHome")}
-            </button>
-          </div>
-        )}
+      <div className="flex flex-1 flex-col items-center px-4 pt-4 pb-[calc(24px+var(--safe-bottom))]">
 
         {/* ─── Look-at-screen phases ─── */}
-        {isLookAtScreenPhase && (() => {
-          const cfg = PHASE_CONFIG[currentPhase];
-          if (!cfg) return null;
-          return (
-            <div className="phase-enter w-full max-w-sm flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
-              {/* Big phase card */}
-              <div className={`${cfg.bg} border-2 ${cfg.border} rounded-3xl p-8 text-center shadow-xl shrink-0`}>
-                <div className="text-7xl mb-4" style={{ animation: 'bounce 2s infinite' }}>{cfg.emoji}</div>
-                <div className={`inline-flex items-center gap-1.5 bg-white/10 dark:bg-white/5 border ${cfg.border} rounded-full px-3 py-1 mb-3`}>
-                  <span className={`size-1.5 rounded-full animate-pulse ${cfg.color.replace('text-', 'bg-').split(' ')[0]}`} />
-                  <span className={`text-[10px] font-black uppercase tracking-widest ${cfg.color}`}>Phase {currentPhase}</span>
-                </div>
-                <h2 className={`text-2xl font-black ${cfg.color} mb-2`}>{cfg.label}</h2>
-                <p className="text-muted-foreground text-sm font-medium leading-relaxed">{cfg.tip}</p>
-              </div>
-
-              {/* Look at screen instruction */}
-              <div className="bg-card rounded-2xl border border-border shadow-md p-4 flex items-center gap-3 shrink-0">
-                <div className={`size-11 rounded-xl ${cfg.bg} ${cfg.border} border flex items-center justify-center text-xl shrink-0`}>👆</div>
-                <div>
-                  <p className="font-black text-foreground text-sm">{t("interactivePlay.lookAtScreen")}</p>
-                  <p className={`${cfg.color} text-xs font-bold mt-0.5`}>{cfg.label}</p>
-                </div>
-              </div>
-
-              {/* Article title pill */}
-              {articleTitle && (
-                <div className="bg-card rounded-2xl border border-border shadow-sm p-3 flex items-center gap-2.5 shrink-0">
-                  <span className="text-base shrink-0">📄</span>
-                  <p className="text-xs font-semibold text-muted-foreground truncate">{articleTitle}</p>
-                </div>
-              )}
-
-              {/* Compact lesson content (static, per phase) */}
-              {renderLessonContentMobile()}
-            </div>
-          );
-        })()}
+        {isLookAtScreenPhase(currentPhase) && (
+          <PhaseColumn>
+            <PhaseIntroCard phase={currentPhase} />
+            <LookAtScreenRow label={phaseMeta.label} tone={phaseMeta.tone} />
+            {renderLessonContentMobile()}
+          </PhaseColumn>
+        )}
 
         {GAME_PHASES.includes(currentPhase) && renderGamePhaseMobile()}
 
@@ -1226,28 +1041,19 @@ function PlayLessonContent() {
 
         {/* ─── Phase 3: Read the Article + Sentence Flag ─── */}
         {currentPhase === LESSON_PHASE.READ_ARTICLE && (
-          <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
-            <div className="bg-teal-500/10 border-2 border-teal-500/30 rounded-3xl p-5 text-center shrink-0">
-              <div className="text-4xl mb-2">🎧</div>
-              <h2 className="text-lg font-black text-teal-600 dark:text-teal-400">อ่านบทความ · ออกเสียง</h2>
-              <p className="text-muted-foreground text-xs font-medium mt-1">แตะประโยคที่อยากให้คุณครูช่วยออกเสียง 🚩</p>
-            </div>
-            <div className="bg-card rounded-2xl border border-border shadow-md p-4 flex items-center gap-3 shrink-0">
-              <div className="size-11 rounded-xl bg-teal-500/10 border-teal-500/30 border flex items-center justify-center text-xl shrink-0">👆</div>
-              <div>
-                <p className="font-black text-foreground text-sm">{t("interactivePlay.lookAtScreen")}</p>
-                <p className="text-teal-600 dark:text-teal-400 text-xs font-bold mt-0.5">อ่านบทความ</p>
-              </div>
-            </div>
-            <div className="bg-card rounded-2xl border border-border shadow-sm p-3 min-h-[120px] flex flex-col items-center justify-center">
+          <PhaseColumn>
+            <PhaseIntroCard
+              phase={LESSON_PHASE.READ_ARTICLE}
+              emoji="🎧"
+              title={t("interactivePlay.readArticleTitle")}
+              tip={t("interactivePlay.readArticleHint")}
+            />
+            <LookAtScreenRow label={phaseMeta.label} tone={phaseMeta.tone} />
+            <div className={cn(cardClass, 'flex min-h-[120px] flex-col items-center justify-center p-3')}>
               {(() => {
                 const activeIdx = sessionData?.activeSentenceIndex ?? -1;
                 if (activeIdx < 0) {
-                   return (
-                     <div className="text-center">
-                       <p className="text-muted-foreground text-sm font-bold animate-pulse">รอคุณครูเล่นเสียงบทความ...</p>
-                     </div>
-                   );
+                   return <WaitingNextLine>{t("interactivePlay.waitingArticleAudio")}</WaitingNextLine>;
                 }
                 const s = articleData?.sentences?.[activeIdx];
                 if (!s) return null;
@@ -1259,24 +1065,26 @@ function PlayLessonContent() {
                     onClick={() => handleFlagToggle(activeIdx)}
                     disabled={phaseReadOnly}
                     aria-disabled={phaseReadOnly}
-                    className={`w-full text-left rounded-xl px-4 py-6 transition-all flex items-start gap-3 shadow-md ${
-                      isFlagged
-                        ? 'bg-rose-500/15 border border-rose-400/50'
-                        : 'bg-teal-50/50 dark:bg-teal-900/20 border border-teal-500/20 active:scale-95'
-                    }`}
-                  >
-                    <span className="text-2xl shrink-0 mt-1">{isFlagged ? '🚩' : '🔖'}</span>
-                    <span className={`flex-1 text-lg leading-relaxed ${isFlagged ? 'text-rose-700 dark:text-rose-300 font-bold' : 'text-foreground font-semibold'}`}>
-                      {text}
-                    </span>
-                    {count > 0 && (
-                      <span className="text-xs font-black text-rose-500 bg-rose-500/10 rounded-full px-2 py-1 shrink-0">{count}</span>
+                    aria-pressed={isFlagged}
+                    className={cn(
+                      'pressable flex w-full items-start gap-3 rounded-2xl border px-4 py-5 text-left',
+                      isFlagged ? 'border-danger-border bg-danger-bg' : 'border-info-border bg-info-bg',
                     )}
+                  >
+                    <span aria-hidden="true" className="mt-0.5 shrink-0 text-2xl">{isFlagged ? '🚩' : '🔖'}</span>
+                    <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+                      <span lang="en" className={cn('text-lg leading-[1.6]', isFlagged ? 'font-bold text-danger-fg' : 'font-semibold text-fg')}>
+                        {text}
+                      </span>
+                      {count > 0 && (
+                        <span className="text-[13px] leading-[1.5] font-semibold text-danger-fg">🚩 {count} {t("interactivePlay.flagCountSuffix")}</span>
+                      )}
+                    </span>
                   </button>
                 );
               })()}
             </div>
-          </div>
+          </PhaseColumn>
         )}
 
         {/* ─── Phase 13: Guided Writing ─── */}
@@ -1285,140 +1093,99 @@ function PlayLessonContent() {
           const prompt = articleData?.shortAnswerQuestions?.[idx]?.question || t("interactivePlay.writingTitle");
           const frames = ['I think that…', 'One reason is…', 'For example,…', 'In conclusion,…'];
           return (
-            <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
+            <PhaseColumn>
               {missedQuestion ? (
                 renderMissedQuestionSummary()
               ) : aiFeedback ? (
-                <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
-                  <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-3 flex items-center gap-2">
-                    <span className="text-white text-xs font-black uppercase tracking-wider">🤖 {t("interactivePlay.aiEvaluation")}</span>
-                  </div>
-                  <div className="p-5 flex flex-col items-center gap-3">
-                    <span className={`text-4xl font-black ${getScoreColor(aiFeedback.score)}`}>{aiFeedback.score}<span className="text-base text-muted-foreground"> / 5</span></span>
-                    <div className="w-full rounded-2xl p-4 border-l-4 bg-sky-500/10 border-sky-400">
-                      <p className="text-sm font-semibold text-foreground leading-relaxed">{aiFeedback.feedback}</p>
-                    </div>
-                    <p className="text-xs font-bold text-muted-foreground animate-pulse">{t("interactivePlay.waitingNextPage")}</p>
-                  </div>
-                </div>
+                <PhaseCard icon={Bot} tone="blue" title={t("interactivePlay.aiEvaluation")}>
+                  <AiScore score={aiFeedback.score} />
+                  <AiFeedbackText>{aiFeedback.feedback}</AiFeedbackText>
+                  <WaitingNextLine />
+                </PhaseCard>
               ) : (hasAnswered || isSubmitting) ? (
-                renderAiSkeleton('sky')
+                <AiPendingCard />
               ) : (
-                <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
-                  <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-3">
-                    <span className="text-white text-xs font-black uppercase tracking-wider">✍️ {t("interactivePlay.writingTitle")}</span>
+                <PhaseCard icon={PenLine} tone="blue" title={t("interactivePlay.writingTitle")}>
+                  <p className="text-[15px] leading-[1.6] font-bold text-fg">{prompt}</p>
+                  <div className="rounded-2xl border border-info-border bg-info-bg p-3">
+                    <p className="text-[13px] leading-[1.5] font-bold text-info-fg">{t("interactivePlay.framesTitle")}</p>
+                    <p className="mt-0.5 text-[13px] leading-[1.5] text-fg-muted">{t("interactivePlay.framesHint")}</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {frames.map((f) => (
+                        <button
+                          type="button"
+                          key={f}
+                          lang="en"
+                          onClick={() => setWritingDraft((prev) => (prev ? prev.replace(/\s*$/, ' ') : '') + f.replace('…', '') + ' ')}
+                          className="pressable min-h-11 rounded-full border border-info-border bg-surface px-4 text-sm leading-[1.5] font-medium text-fg active:bg-press"
+                        >
+                          {f}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <div className="p-5 space-y-3">
-                    <p className="text-sm font-bold text-foreground leading-relaxed">{prompt}</p>
-                    <div className="bg-sky-500/5 border border-sky-500/20 rounded-2xl p-3">
-                      <p className="text-[10px] font-black text-sky-600 dark:text-sky-400 uppercase tracking-widest">{t("interactivePlay.framesTitle")}</p>
-                      <p className="text-[11px] text-muted-foreground mb-2 mt-0.5">{t("interactivePlay.framesHint")}</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {frames.map((f) => (
-                          <button
-                            type="button"
-                            key={f}
-                            onClick={() => setWritingDraft((prev) => (prev ? prev.replace(/\s*$/, ' ') : '') + f.replace('…', '') + ' ')}
-                            className="text-xs bg-card border border-sky-500/30 rounded-full px-2.5 py-1 text-foreground active:scale-95 active:bg-sky-500/10 transition-all"
-                          >
-                            {f}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-muted-foreground">{t("interactivePlay.writingPlanLabel")}</label>
-                      <textarea
-                        value={writingPlan}
-                        onChange={(e) => setWritingPlan(e.target.value)}
-                        className="mt-1 w-full border-2 border-border bg-muted text-foreground rounded-2xl p-3 min-h-[60px] text-sm focus:border-sky-500 focus:outline-none resize-y"
-                        placeholder={t("interactivePlay.writingPlanPlaceholder")}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold text-muted-foreground">{t("interactivePlay.writingDraftLabel")}</label>
-                      <textarea
-                        value={writingDraft}
-                        onChange={(e) => setWritingDraft(e.target.value)}
-                        className="mt-1 w-full border-2 border-border bg-muted text-foreground rounded-2xl p-3 min-h-[110px] text-sm focus:border-sky-500 focus:outline-none resize-y"
-                        placeholder={t("interactivePlay.writingDraftPlaceholder")}
-                      />
-                    </div>
-                    <button
-                      onClick={handleWritingSubmit}
-                      disabled={!writingDraft.trim()}
-                      className="w-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-base py-4 rounded-2xl shadow-lg disabled:opacity-40 active:scale-95 transition-all"
-                    >
-                      {t("interactivePlay.writingSubmit")}
-                    </button>
-                  </div>
-                </div>
+                  <TextArea
+                    label={t("interactivePlay.writingPlanLabel")}
+                    value={writingPlan}
+                    onChange={(e) => setWritingPlan(e.target.value)}
+                    placeholder={t("interactivePlay.writingPlanPlaceholder")}
+                    textareaClassName="min-h-[88px]"
+                  />
+                  <TextArea
+                    label={t("interactivePlay.writingDraftLabel")}
+                    value={writingDraft}
+                    onChange={(e) => setWritingDraft(e.target.value)}
+                    placeholder={t("interactivePlay.writingDraftPlaceholder")}
+                    textareaClassName="min-h-[140px]"
+                  />
+                  <Button variant="brand" size="cta" className="w-full" onClick={handleWritingSubmit} disabled={!writingDraft.trim()}>
+                    {t("interactivePlay.writingSubmit")}
+                  </Button>
+                </PhaseCard>
               )}
               <MobileLeaderboard participants={participants} studentId={studentId} />
-            </div>
+            </PhaseColumn>
           );
         })()}
 
         {/* ─── Phase 15: Language Questions ─── */}
         {currentPhase === LESSON_PHASE.LANGUAGE_QUESTIONS && (
-          <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
+          <PhaseColumn>
             {missedQuestion ? (
               renderMissedQuestionSummary()
             ) : languageSkipped ? (
-              <div className="bg-card rounded-2xl border border-border shadow-sm p-5 text-center">
-                <div className="text-2xl mb-1">👌</div>
-                <h2 className="font-black text-foreground">{t("interactivePlay.languageSkipped")}</h2>
-                <p className="text-muted-foreground text-sm mt-0.5">{t("interactivePlay.waitingFriends")}</p>
-              </div>
+              <StatusCard emoji="👌" title={t("interactivePlay.languageSkipped")} description={t("interactivePlay.waitingFriends")} />
             ) : languageAnswer ? (
-              <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
-                <div className="bg-gradient-to-r from-violet-500 to-indigo-600 px-5 py-3">
-                  <span className="text-white text-xs font-black uppercase tracking-wider">🤖 {t("interactivePlay.languageAiTitle")}</span>
+              <PhaseCard icon={Bot} tone="purple" title={t("interactivePlay.languageAiTitle")}>
+                <div className="rounded-2xl bg-fill-muted p-3">
+                  <p className="text-[13px] leading-[1.5] font-semibold text-fg-muted">{t("interactivePlay.yourQuestion")}</p>
+                  <p className="mt-0.5 text-[15px] leading-[1.6] font-semibold text-fg">{languageAnswer.question}</p>
                 </div>
-                <div className="p-5 space-y-3">
-                  <div className="bg-muted/50 rounded-2xl p-3">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{t("interactivePlay.yourAnswer")}</p>
-                    <p className="text-sm font-semibold text-foreground">{languageAnswer.question}</p>
-                  </div>
-                  <div className="rounded-2xl p-4 border-l-4 bg-violet-500/10 border-violet-400">
-                    <p className="text-sm font-semibold text-foreground leading-relaxed">{languageAnswer.answer}</p>
-                  </div>
-                  <p className="text-xs font-bold text-muted-foreground animate-pulse">{t("interactivePlay.waitingNextPage")}</p>
-                </div>
-              </div>
+                <AiFeedbackText>{languageAnswer.answer}</AiFeedbackText>
+                <WaitingNextLine />
+              </PhaseCard>
             ) : (hasAnswered || isSubmitting) ? (
-              renderAiSkeleton('violet')
+              <AiPendingCard />
             ) : (
-              <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
-                <div className="bg-gradient-to-r from-violet-500 to-indigo-600 px-5 py-3">
-                  <span className="text-white text-xs font-black uppercase tracking-wider">❓ {t("interactivePlay.languageTitle")}</span>
-                </div>
-                <div className="p-5 space-y-3">
-                  <p className="text-sm font-bold text-foreground">{t("interactivePlay.languagePrompt")}</p>
-                  <textarea
-                    value={languageQuestion}
-                    onChange={(e) => setLanguageQuestion(e.target.value)}
-                    className="w-full border-2 border-border bg-muted text-foreground rounded-2xl p-3 min-h-[100px] text-sm focus:border-violet-500 focus:outline-none resize-y"
-                    placeholder={t("interactivePlay.languagePlaceholder")}
-                  />
-                  <button
-                    onClick={handleLanguageSubmit}
-                    disabled={!languageQuestion.trim()}
-                    className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 text-white font-black text-base py-4 rounded-2xl shadow-lg disabled:opacity-40 active:scale-95 transition-all"
-                  >
+              <PhaseCard icon={MessageCircleQuestion} tone="purple" title={t("interactivePlay.languageTitle")}>
+                <TextArea
+                  label={t("interactivePlay.languagePrompt")}
+                  value={languageQuestion}
+                  onChange={(e) => setLanguageQuestion(e.target.value)}
+                  placeholder={t("interactivePlay.languagePlaceholder")}
+                />
+                <div className="flex flex-col gap-2">
+                  <Button variant="brand" size="cta" className="w-full" onClick={handleLanguageSubmit} disabled={!languageQuestion.trim()}>
                     {t("interactivePlay.languageSubmit")}
-                  </button>
-                  <button
-                    onClick={handleLanguageSkip}
-                    className="w-full border-2 border-border text-muted-foreground font-bold text-sm py-3 rounded-2xl bg-card active:scale-95 transition-all"
-                  >
+                  </Button>
+                  <Button variant="ghost" size="touch" className="w-full text-fg-muted" onClick={handleLanguageSkip}>
                     {t("interactivePlay.languageSkip")}
-                  </button>
+                  </Button>
                 </div>
-              </div>
+              </PhaseCard>
             )}
             <MobileLeaderboard participants={participants} studentId={studentId} />
-          </div>
+          </PhaseColumn>
         )}
 
         {/* ─── Phase 16: Lesson Reflection ─── */}
@@ -1459,43 +1226,28 @@ function PlayLessonContent() {
         )}
 
         {/* ─── MCQ-style Phases: Comprehension(7), Vocab(9), Sentence fill(11), Sentence order(12) ─── */}
-        {([LESSON_PHASE.COMPREHENSION, LESSON_PHASE.VOCABULARY_PRACTICE, LESSON_PHASE.SENTENCE_PRACTICE, LESSON_PHASE.SENTENCE_ORDER] as number[]).includes(currentPhase) && (
-          <div className="phase-enter w-full max-w-md flex-1 flex flex-col gap-3 min-h-0">
+        {MCQ_PHASES.includes(currentPhase) && (
+          <PhaseColumn className="flex-1">
             {missedQuestion ? (
               renderMissedQuestionSummary()
             ) : hasAnswered ? (
               /* After answering: show result + leaderboard */
-              <div className="flex flex-col items-stretch gap-3 w-full h-full overflow-y-auto pb-2">
-                {selectedChoice && (
-                  <div className="bg-card rounded-2xl border-2 border-indigo-500/30 shadow-md p-4 text-center shrink-0">
-                    <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1">{t("interactivePlay.yourAnswer")}</p>
-                    <p className="text-6xl font-black text-indigo-600 dark:text-indigo-400">{selectedChoice}</p>
-                  </div>
-                )}
+              <>
+                {selectedChoice && <AnswerEcho big>{selectedChoice}</AnswerEcho>}
                 {showEveryoneReady ? (
-                  <div className="bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl p-5 text-center shrink-0">
-                    <div className="text-3xl mb-2">🎉</div>
-                    <h2 className="font-black text-emerald-600 dark:text-emerald-400 text-lg">{t("interactivePlay.everyoneAnswered")}</h2>
-                    <p className="text-emerald-600/70 dark:text-emerald-400/70 text-sm mt-1">{t("interactivePlay.watchTeacherAnswer")}</p>
-                  </div>
+                  <StatusCard tone="success" emoji="🎉" title={t("interactivePlay.everyoneAnswered")} description={t("interactivePlay.watchTeacherAnswer")} />
                 ) : (
-                  <div className="bg-card border border-border rounded-2xl p-4 text-center shrink-0 shadow-sm">
-                    <div className="text-2xl mb-1">✅</div>
-                    <h2 className="font-black text-foreground text-base">{t("interactivePlay.answerSubmitted")}</h2>
-                    <p className="text-muted-foreground text-sm mt-0.5">{t("interactivePlay.waitingFriends")}</p>
-                  </div>
+                  <StatusCard emoji="✅" title={t("interactivePlay.answerSubmitted")} description={t("interactivePlay.waitingFriends")} />
                 )}
                 <MobileLeaderboard participants={participants} studentId={studentId} />
-              </div>
+              </>
             ) : (
               /* Before answering: show question + MCQ buttons */
               <>
                 {/* Question card */}
-                <div className="bg-card rounded-2xl shadow-lg border border-border overflow-hidden shrink-0">
-                  <div className="bg-gradient-to-r from-indigo-500 to-violet-600 px-4 py-2.5">
-                    <span className="text-[10px] font-black text-indigo-100 uppercase tracking-widest">❓ คำถาม</span>
-                  </div>
-                  <div className="px-4 py-4 text-center font-bold text-foreground text-sm leading-relaxed">
+                <section className={cn(cardClass, 'px-4 py-4 text-center')}>
+                  <Chip tone="brand" size="sm">{t("interactivePlay.questionLabel")}</Chip>
+                  <p className="mt-2 text-[17px] leading-[1.6] font-bold text-fg">
                     {(() => {
                       if (currentPhase === LESSON_PHASE.COMPREHENSION) {
                         const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.COMPREHENSION] || 0;
@@ -1516,181 +1268,94 @@ function PlayLessonContent() {
                       }
                       return t("interactivePlay.defaultQuestion");
                     })()}
-                  </div>
-                </div>
+                  </p>
+                </section>
 
                 {/* 2×2 MCQ grid */}
-                <div className="grid grid-cols-2 gap-3 flex-1">
+                <div className="grid flex-1 grid-cols-2 gap-3">
                   {mcqOptions.map((opt) => (
                     <button
                       key={opt.label}
                       onClick={() => handleMcqClick(opt.label)}
                       className={`btn-3d ${opt.bg} ${opt.shadow} ${opt.activeShadow} active:translate-y-1.5 rounded-2xl flex flex-col items-center justify-center text-white font-black min-h-[100px] gap-1 transition-transform select-none`}
                     >
-                      <span className="text-5xl">{opt.label}</span>
+                      <span className="text-5xl leading-none">{opt.label}</span>
                     </button>
                   ))}
                 </div>
               </>
             )}
-          </div>
+          </PhaseColumn>
         )}
 
         {/* ─── Phase 8: Guided Response / Short Answer ─── */}
         {currentPhase === LESSON_PHASE.GUIDED_RESPONSE && (
-          <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
-
+          <PhaseColumn>
             {missedQuestion ? (
               renderMissedQuestionSummary()
             ) : aiFeedback ? (
               /* AI Feedback result */
-              <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
-                <div className="bg-gradient-to-r from-violet-500 to-indigo-600 px-5 py-3 flex items-center gap-2">
-                  <span className="size-1.5 rounded-full bg-white animate-pulse" />
-                  <span className="text-white text-xs font-black uppercase tracking-wider">🤖 {t("interactivePlay.aiEvaluation")}</span>
-                </div>
-                <div className="p-5 flex flex-col items-center gap-4">
-                  {/* Score ring */}
-                  <div className="relative size-28">
-                    <svg className="size-full -rotate-90" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="42" fill="none" stroke="hsl(var(--muted))" strokeWidth="10" />
-                      <circle
-                        cx="50" cy="50" r="42" fill="none"
-                        stroke={getScoreStroke(aiFeedback.score)}
-                        strokeWidth="10" strokeLinecap="round"
-                        strokeDasharray="264"
-                        strokeDashoffset={264 - (264 * aiFeedback.score / 5)}
-                        style={{ animation: 'score-ring-fill 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards' }}
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className={`text-3xl font-black ${getScoreColor(aiFeedback.score)}`}>{aiFeedback.score}</span>
-                      <span className="text-[9px] font-bold text-muted-foreground uppercase">{t("interactivePlay.fullScore")}</span>
-                    </div>
-                  </div>
-                  {/* Stars */}
-                  <p className="text-xl">{getScoreStars(aiFeedback.score) || '—'}</p>
-                  {/* Feedback card */}
-                  <div className={`w-full rounded-2xl p-4 border-l-4 ${
-                    aiFeedback.score >= 4
-                      ? 'bg-emerald-500/10 border-emerald-400'
-                      : aiFeedback.score >= 2
-                      ? 'bg-amber-500/10 border-amber-400'
-                      : 'bg-rose-500/10 border-rose-400'
-                  }`}>
-                    <p className="text-sm font-semibold text-foreground leading-relaxed">{aiFeedback.feedback}</p>
-                  </div>
-                  {/* Waiting */}
-                  <p className="text-xs font-bold text-muted-foreground flex items-center gap-2 animate-pulse">
-                    <span className="relative flex size-2">
-                      <span className="animate-ping absolute size-full rounded-full bg-indigo-400 opacity-75" />
-                      <span className="relative size-2 rounded-full bg-indigo-500" />
-                    </span>
-                    {t("interactivePlay.waitingNextPage")}
-                  </p>
-                </div>
-              </div>
-
+              <PhaseCard icon={Bot} tone="purple" title={t("interactivePlay.aiEvaluation")}>
+                <AiScore score={aiFeedback.score} ring />
+                <p aria-hidden="true" className="text-center text-xl">{getScoreStars(aiFeedback.score) || '—'}</p>
+                <AiFeedbackText score={aiFeedback.score}>{aiFeedback.feedback}</AiFeedbackText>
+                <WaitingNextLine />
+              </PhaseCard>
             ) : (hasAnswered || isSubmitting) ? (
               /* Submitted — waiting for AI */
               <>
-                {selectedChoice && (
-                  <div className="bg-card rounded-2xl border-2 border-violet-500/30 shadow-md p-4 shrink-0">
-                    <p className="text-[10px] font-black text-violet-500 uppercase tracking-widest mb-2">{t("interactivePlay.yourAnswer")}</p>
-                    <p className="text-sm font-semibold text-foreground leading-relaxed break-words">{selectedChoice}</p>
-                  </div>
-                )}
+                {selectedChoice && <AnswerEcho>{selectedChoice}</AnswerEcho>}
                 {showEveryoneReady ? (
-                  <div className="bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl p-5 text-center shrink-0">
-                    <div className="text-2xl mb-2">🎉</div>
-                    <h2 className="font-black text-emerald-600 dark:text-emerald-400">{t("interactivePlay.submittedDone")}</h2>
-                    <p className="text-emerald-600/70 dark:text-emerald-400/70 text-xs mt-1">{t("interactivePlay.waitingAiScore")}</p>
-                  </div>
+                  <StatusCard tone="success" emoji="🎉" title={t("interactivePlay.submittedDone")} description={t("interactivePlay.waitingAiScore")} />
                 ) : (
-                  <div className="bg-card rounded-2xl border border-border shadow-sm p-4 shrink-0">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="relative flex size-2">
-                        <span className="animate-ping absolute size-full rounded-full bg-violet-400 opacity-75" />
-                        <span className="relative size-2 rounded-full bg-violet-500" />
-                      </span>
-                      <span className="text-[10px] font-black text-violet-600 dark:text-violet-400 uppercase tracking-wider">{t("interactivePlay.sendingAi")}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="size-12 rounded-xl bg-violet-500/10 border border-violet-500/20 overflow-hidden relative shrink-0">
-                        <div className="absolute inset-0 skeleton opacity-40" />
-                      </div>
-                      <div className="flex-1 space-y-2">
-                        <div className="h-2.5 rounded-full skeleton opacity-40" />
-                        <div className="h-2.5 w-5/6 rounded-full skeleton opacity-40" />
-                        <div className="h-2.5 w-2/3 rounded-full skeleton opacity-40" />
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground font-bold animate-pulse mt-3">{t("interactivePlay.aiChecking")}</p>
-                  </div>
+                  <AiPendingCard />
                 )}
                 <MobileLeaderboard participants={participants} studentId={studentId} />
               </>
-
             ) : (
               /* Input form */
-              <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
-                <div className="bg-gradient-to-r from-violet-500 to-indigo-600 px-5 py-3 flex items-center gap-2">
-                  <span className="text-white text-sm">✏️</span>
-                  <span className="text-white text-xs font-black uppercase tracking-wider">Short Answer</span>
-                </div>
-                <div className="p-5">
-                  <p className="text-sm font-bold text-foreground leading-relaxed mb-4">
-                    {(() => {
-                      const idx = sessionData?.phaseSelectedIndices?.[currentPhase] || 0;
-                      return articleData?.shortAnswerQuestions?.[idx]?.question || t("interactivePlay.textAnswerFallback");
-                    })()}
-                  </p>
-                  <textarea
+              <PhaseCard icon={PenLine} tone="purple" title={phaseMeta.label}>
+                <p className="text-[15px] leading-[1.6] font-bold text-fg">
+                  {(() => {
+                    const idx = sessionData?.phaseSelectedIndices?.[currentPhase] || 0;
+                    return articleData?.shortAnswerQuestions?.[idx]?.question || t("interactivePlay.textAnswerFallback");
+                  })()}
+                </p>
+                <div>
+                  <TextArea
+                    aria-label={t("interactivePlay.textAnswerFallback")}
                     value={typedAnswer}
                     onChange={(e) => setTypedAnswer(e.target.value)}
-                    className="w-full border-2 border-border bg-muted text-foreground rounded-2xl p-4 min-h-[120px] max-h-[35dvh] text-sm leading-relaxed focus:border-violet-500 focus:outline-none mb-3 resize-y transition-colors placeholder:text-muted-foreground"
                     placeholder={t("interactivePlay.textAnswerPlaceholder")}
+                    textareaClassName="max-h-[35dvh]"
                   />
                   {/* Progress bars */}
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs text-muted-foreground">{typedAnswer.length} {t("interactivePlay.characterUnit")}</span>
-                    <div className="flex gap-1">
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="text-xs leading-[1.5] text-fg-muted tabular-nums">{typedAnswer.length} {t("interactivePlay.characterUnit")}</span>
+                    <div aria-hidden="true" className="flex gap-1">
                       {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} className={`h-1.5 w-6 rounded-full transition-all duration-300 ${typedAnswer.length > i * 40 ? 'bg-violet-500' : 'bg-muted'}`} />
+                        <div key={i} className={`h-1.5 w-6 rounded-full transition-colors duration-300 ${typedAnswer.length > i * 40 ? 'bg-brand-vivid' : 'bg-fill-muted'}`} />
                       ))}
                     </div>
                   </div>
-                  <button
-                    onClick={handleTextSubmit}
-                    disabled={!typedAnswer.trim()}
-                    className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 text-white font-black text-base py-4 rounded-2xl shadow-lg disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-all"
-                  >
-                    {t("interactivePlay.submitAnswer")}
-                  </button>
                 </div>
-              </div>
+                <Button variant="brand" size="cta" className="w-full" onClick={handleTextSubmit} disabled={!typedAnswer.trim()}>
+                  {t("interactivePlay.submitAnswer")}
+                </Button>
+              </PhaseCard>
             )}
-          </div>
+          </PhaseColumn>
         )}
 
-      </main>
+      </div>
       {devPairButton}
-    </div>
+    </Screen>
   );
 }
 
 export default function PlayLessonPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="bg-card rounded-3xl border border-border shadow-xl p-8 text-center max-w-[280px] w-full">
-          <div className="size-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <span className="text-2xl">📚</span>
-          </div>
-          <p className="text-muted-foreground text-sm">{t("interactivePlay.preparingData")}</p>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<PlaySkeleton />}>
       <PlayLessonContent />
     </Suspense>
   );

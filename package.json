@@ -23,7 +23,8 @@
     "test:integration": "vitest run --config vitest.config.integration.ts",
     "contract:check": "node scripts/check-openapi-routes.mjs",
     "tts:generate": "node scripts/generate-article-tts.mjs",
-    "assessments:generate": "node scripts/generate-assessment-catalog.mjs"
+    "assessments:generate": "node scripts/generate-assessment-catalog.mjs",
+    "db:clone:local": "node scripts/clone-production-to-local.mjs"
   },
   "devDependencies": {
     "@types/supertest": "^6.0.3",

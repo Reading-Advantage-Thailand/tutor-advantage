@@ -1,71 +1,71 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { studentApi } from "@/lib/api";
-import { useLiff } from "@/components/providers/LiffProvider";
-import { AlertCircle, QrCode } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { QrCode, ScanLine, School, SearchX } from "lucide-react";
 import { toast } from "sonner";
-import { buildEnrollPathFromInviteText } from "@/lib/paymentFlow";
+import {
+  EmptyState,
+  ErrorState,
+  FilterChip,
+  HScroll,
+  IconButton,
+  IconTile,
+  ListGroup,
+  ListRow,
+  LoadingAnnouncement,
+  PageHeader,
+  Screen,
+  SearchField,
+} from "@/components/mobile";
+import { useLiff } from "@/components/providers/LiffProvider";
+import { Button } from "@/components/ui/button";
+import { studentApi } from "@/lib/api";
+import { prefetchResource, useCachedResource } from "@/lib/cachedResource";
+import { CEFR_FILTER_LEVELS, cefrFilterChipId } from "@/lib/cefr";
+import { classDetailResourceKey, classifyClassLoadError } from "@/lib/classAccess";
 import { t } from "@/lib/i18n";
-
-interface ClassItem {
-  id: string;
-  name: string;
-  status: string;
-  seriesColor?: string;
-  capacity: number;
-  enrolled: number;
-  tutor: string;
-  tutorInitials: string;
-  cefr: string;
-  level: number;
-  nextSession: string;
-  price: number;
-}
+import { buildEnrollPathFromInviteText } from "@/lib/paymentFlow";
+import { cn } from "@/lib/utils";
+import { ClassCard } from "./_components/ClassCard";
+import { ClassListSkeleton } from "./_components/ClassesSkeletons";
+import { InviteSheet } from "./_components/InviteSheet";
+import { LiffStartupError } from "./_components/LiffStartupError";
+import {
+  classesResourceKey,
+  isClassFilterActive,
+  resolveSearchQuery,
+  searchDebounceDelay,
+  type ClassListResponse,
+} from "./_components/classesList";
+import { useDebouncedValue } from "./_components/useDebouncedValue";
 
 export default function ClassesPage() {
-  const { liff, isReady, error: liffError } = useLiff();
-  const [classes, setClasses] = useState<ClassItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const { liff, isReady, error: liffError, profile } = useLiff();
   const [searchQuery, setSearchQuery] = useState("");
-  const [inviteLinkInput, setInviteLinkInput] = useState("");
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [inviteOpen, setInviteOpen] = useState(false);
 
-  useEffect(() => {
-    if (!isReady) return;
-    let isMounted = true;
+  // Only typing is debounced; an emptied search box and chip taps fetch at once.
+  const debouncedQuery = useDebouncedValue(searchQuery, searchDebounceDelay(searchQuery));
+  const query = resolveSearchQuery(searchQuery, debouncedQuery);
 
-    const timer = setTimeout(() => {
-      setLoading(true);
-      studentApi
-        .getAvailableClasses({
-          q: searchQuery || undefined,
-          cefr: activeFilter ?? undefined,
-        })
-        .then((data) => {
-          if (isMounted) {
-            setClasses(data.classes || []);
-            setError(null);
-          }
-        })
-        .catch((err) => {
-          if (isMounted) {
-            console.error("Failed to fetch classes:", err);
-            setError(err instanceof Error ? err.message : String(err));
-          }
-        })
-        .finally(() => {
-          if (isMounted) setLoading(false);
-        });
-    }, 400);
+  const { data, error, isLoading, isValidating, isPreviousData, refetch } = useCachedResource<ClassListResponse>(
+    profile ? classesResourceKey(profile.userId, query, activeFilter) : null,
+    () =>
+      studentApi.getAvailableClasses({
+        q: query || undefined,
+        cefr: activeFilter ?? undefined,
+      }),
+    { enabled: isReady, keepPreviousData: true },
+  );
 
-    return () => {
-      clearTimeout(timer);
-      isMounted = false;
-    };
-  }, [isReady, searchQuery, activeFilter]);
+  const goToEnroll = (enrollPath: string) => {
+    setInviteOpen(false);
+    // buildEnrollPathFromInviteText always returns a relative "/enroll?…" path.
+    router.push(enrollPath);
+  };
 
   const handleScanQr = async () => {
     if (!isReady || !liff) return;
@@ -83,12 +83,10 @@ export default function ClassesPage() {
 
       let scannedText = "";
 
-      // Try modern scanCodeV2 first
       if (liff.scanCodeV2) {
         const result = await liff.scanCodeV2();
         scannedText = result.value || "";
       } else if ("scanCode" in liff) {
-        // Fallback to old method
         const result = await (liff as { scanCode: () => Promise<{ value: string }> }).scanCode();
         scannedText = result.value || "";
       } else {
@@ -99,7 +97,7 @@ export default function ClassesPage() {
       if (scannedText) {
         const enrollPath = buildEnrollPathFromInviteText(scannedText);
         if (enrollPath) {
-          window.location.href = enrollPath;
+          goToEnroll(enrollPath);
         } else {
           toast.error(t("classes.qrInvalid"));
         }
@@ -109,552 +107,114 @@ export default function ClassesPage() {
     }
   };
 
-  const handleInviteLinkSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const enrollPath = buildEnrollPathFromInviteText(inviteLinkInput);
-    if (!enrollPath) {
-      toast.error(t("classes.qrInvalid"));
-      return;
-    }
-    window.location.href = enrollPath;
+  /** Warm the detail screen's cache on touch-down (same key + request as /classes/[id]). */
+  const prefetchClass = (classId: string) => {
+    if (!profile) return;
+    void prefetchResource(classDetailResourceKey(profile.userId, classId), () => studentApi.getClassDetails(classId));
   };
 
-  const statusMap = {
-    open: { label: t("classes.statusOpen"), className: "status-active" },
-    full: { label: t("classes.statusFull"), className: "status-full" },
-    closed: { label: t("classes.statusClosed"), className: "status-closed" },
+  const clearFilters = () => {
+    setSearchQuery("");
+    setActiveFilter(null);
   };
+
+  const classes = data?.classes ?? [];
+  const filtered = isClassFilterActive(searchQuery, activeFilter);
+
+  let content: ReactNode;
+  if (!isReady || isLoading || (isPreviousData && classes.length === 0)) {
+    content = <ClassListSkeleton />;
+  } else if (liffError || !profile) {
+    content = <LiffStartupError />;
+  } else if (error && (!data || isPreviousData)) {
+    content = (
+      <ErrorState
+        title={t("classes.loadErrorTitle")}
+        kind={classifyClassLoadError(error) === "offline" ? "offline" : "error"}
+        onRetry={() => void refetch()}
+        retrying={isValidating}
+      />
+    );
+  } else if (classes.length === 0) {
+    content = filtered ? (
+      <EmptyState
+        icon={SearchX}
+        tone="neutral"
+        title={t("classes.emptySearchTitle")}
+        description={t("classes.emptySearchDescription")}
+        action={
+          <Button variant="brandSoft" size="touch" onClick={clearFilters}>
+            {t("classes.clearFilters")}
+          </Button>
+        }
+      />
+    ) : (
+      <EmptyState
+        icon={School}
+        title={t("classes.emptyOpenTitle")}
+        description={t("classes.emptyOpenDescription")}
+        action={
+          <Button variant="brand" size="touch" onClick={() => setInviteOpen(true)}>
+            <QrCode aria-hidden="true" />
+            {t("classes.invite.openAction")}
+          </Button>
+        }
+      />
+    );
+  } else {
+    content = (
+      <div
+        aria-busy={isPreviousData || undefined}
+        className={cn("grid gap-3 transition-opacity duration-200 sm:grid-cols-2", isPreviousData && "opacity-50")}
+      >
+        {isPreviousData ? <LoadingAnnouncement label={t("classes.updating")} /> : null}
+        {classes.map((cls) => (
+          <ClassCard key={cls.id} cls={cls} onPressStart={prefetchClass} />
+        ))}
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div
-        className="top-bar"
-        style={{
-          background: "var(--surface-card)",
-          backdropFilter: "blur(12px)",
-        }}
+    <Screen>
+      <PageHeader
+        title={t("classes.title")}
+        subtitle={t("classes.subtitle")}
+        actions={
+          <IconButton icon={ScanLine} label={t("classes.scanQrTitle")} variant="tonal" onClick={handleScanQr} />
+        }
       >
-        <h1
-          style={{
-            fontSize: "1.0625rem",
-            fontWeight: 700,
-            color: "var(--text-primary)",
-            flex: 1,
-          }}
-        >
-          {t("classes.title")}
-        </h1>
+        <SearchField
+          id="input-search-classes"
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder={t("classes.searchPlaceholder")}
+        />
+        <HScroll aria-label={t("classes.filterAria")} className="mt-3">
+          {[null, ...CEFR_FILTER_LEVELS].map((level) => (
+            <span key={level ?? "all"} id={cefrFilterChipId(level, t("classes.allFilter"))} className="inline-flex shrink-0">
+              <FilterChip selected={activeFilter === level} onClick={() => setActiveFilter(level)}>
+                {level ?? t("classes.allFilter")}
+              </FilterChip>
+            </span>
+          ))}
+        </HScroll>
+      </PageHeader>
+
+      <div className="flex flex-col gap-4 px-4 pb-6">
+        <ListGroup>
+          <ListRow
+            onClick={() => setInviteOpen(true)}
+            leading={<IconTile icon={QrCode} tone="brand" />}
+            title={t("classes.invite.rowTitle")}
+            subtitle={t("classes.invite.rowSubtitle")}
+            chevron
+          />
+        </ListGroup>
+        {content}
       </div>
 
-      <div
-        style={{
-          padding: "16px 16px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 14,
-        }}
-      >
-        {/* Search row */}
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <div style={{ position: "relative", flex: 1 }}>
-            <svg
-              width="17"
-              height="17"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="var(--neutral-400)"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{
-                position: "absolute",
-                left: 14,
-                top: "50%",
-                transform: "translateY(-50%)",
-                zIndex: 1,
-              }}
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-            <input
-              id="input-search-classes"
-              type="search"
-              placeholder={t("classes.searchPlaceholder")}
-              className="input-field"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                paddingLeft: 42,
-                borderRadius: 16,
-                height: 48,
-                background: "var(--surface-card)",
-                width: "100%",
-              }}
-            />
-          </div>
-
-          <button
-            id="btn-scan-qr"
-            onClick={handleScanQr}
-            title={t("classes.scanQrTitle")}
-            aria-label={t("classes.scanQrTitle")}
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 16,
-              background: "var(--surface-card)",
-              border: "1.5px solid var(--surface-border)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--brand-600)",
-              cursor: "pointer",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-              flexShrink: 0,
-            }}
-          >
-            <QrCode size={22} />
-          </button>
-        </div>
-
-        <form
-          onSubmit={handleInviteLinkSubmit}
-          className="glass-card"
-          style={{
-            padding: 14,
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-            border: "1px solid rgba(6,199,85,0.18)",
-            background: "linear-gradient(135deg, rgba(6,199,85,0.07), var(--surface-card))",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div
-              style={{
-                width: 30,
-                height: 30,
-                borderRadius: 10,
-                background: "rgba(6,199,85,0.12)",
-                color: "var(--brand-600)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <QrCode size={16} />
-            </div>
-            <div style={{ minWidth: 0 }}>
-              <p style={{ fontSize: "0.8125rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
-                มีลิงก์ชวนเรียน?
-              </p>
-              <p style={{ fontSize: "0.6875rem", color: "var(--text-secondary)", margin: "1px 0 0" }}>
-                วาง invite link จากเพื่อนหรือครูเพื่อเปิดหน้าสมัครเรียน
-              </p>
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <input
-              id="input-invite-link"
-              value={inviteLinkInput}
-              onChange={(event) => setInviteLinkInput(event.target.value)}
-              placeholder="https://.../enroll?classId=..."
-              className="input-field"
-              inputMode="url"
-              autoCapitalize="none"
-              autoCorrect="off"
-              style={{
-                flex: 1,
-                minWidth: 0,
-                height: 42,
-                borderRadius: 14,
-                background: "var(--surface-card)",
-              }}
-            />
-            <button
-              type="submit"
-              disabled={!inviteLinkInput.trim()}
-              style={{
-                height: 42,
-                padding: "0 14px",
-                borderRadius: 14,
-                border: "none",
-                background: "var(--brand-500)",
-                color: "#fff",
-                fontSize: "0.75rem",
-                fontWeight: 800,
-                cursor: inviteLinkInput.trim() ? "pointer" : "not-allowed",
-                opacity: inviteLinkInput.trim() ? 1 : 0.5,
-                flexShrink: 0,
-              }}
-            >
-              เปิดลิงก์
-            </button>
-          </div>
-        </form>
-
-        {/* Filter chips */}
-        <div
-          className="scrollbar-hide"
-          style={{
-            display: "flex",
-            gap: 8,
-            overflowX: "auto",
-            paddingBottom: 2,
-          }}
-        >
-          {([
-              { label: t("classes.allFilter"), value: null },
-              { label: "Reading A1", value: "A1" },
-              { label: "Reading A2", value: "A2" },
-              { label: "Reading B1", value: "B1" },
-              { label: "Reading B2", value: "B2" },
-              { label: "Reading C1", value: "C1" },
-            ] as { label: string; value: string | null }[]).map(({ label, value }) => {
-              const isActive = activeFilter === value;
-              return (
-                <button
-                  key={label}
-                  onClick={() => setActiveFilter(value)}
-                  id={`chip-filter-${label.toLowerCase().replace(/\s+/g, "-")}`}
-                  style={{
-                    padding: "8px 16px",
-                    fontSize: "0.8125rem",
-                    whiteSpace: "nowrap",
-                    cursor: "pointer",
-                    borderRadius: "var(--radius-full)",
-                    fontFamily: "inherit",
-                    fontWeight: isActive ? 700 : 500,
-                    transition: "all 0.2s ease",
-                    background: isActive
-                      ? "var(--brand-500)"
-                      : "var(--surface-card)",
-                    color: isActive ? "#fff" : "var(--text-secondary)",
-                    border: isActive
-                      ? "1.5px solid var(--brand-500)"
-                      : "1.5px solid var(--surface-border)",
-                    boxShadow: isActive
-                      ? "0 2px 8px rgba(6,199,85,0.25)"
-                      : "none",
-                  }}
-                >
-                  {label}
-                </button>
-              );
-            },
-          )}
-          {/* Filter chips container end */}
-        </div>
-
-        {loading && (
-          <div
-            className="flex flex-col gap-3 p-4"
-          >
-            {/* Skeleton cards */}
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="glass-card"
-                style={{ width: "100%", height: 140, borderRadius: 16, overflow: "hidden" }}
-              >
-                <div style={{ display: "flex", height: "100%" }}>
-                  <div className="skeleton" style={{ width: 4, height: "100%", borderRadius: 0 }} />
-                  <div style={{ flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 10 }}>
-                    <div className="skeleton" style={{ height: 18, width: "65%", borderRadius: 8 }} />
-                    <div className="skeleton" style={{ height: 14, width: "40%", borderRadius: 8 }} />
-                    <div className="skeleton" style={{ height: 8, width: "100%", borderRadius: 8 }} />
-                    <div className="skeleton" style={{ height: 14, width: "30%", borderRadius: 8 }} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {error && (
-          <div
-            className="p-6 rounded-2xl flex flex-col items-center gap-3 text-center"
-            style={{ background: "var(--accent-red-light)" }}
-          >
-            <AlertCircle style={{ color: "var(--accent-red)" }} />
-            <p style={{ color: "var(--accent-red)", fontWeight: 500 }}>{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--accent-red)", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}
-            >
-              {t("classes.retry")}
-            </button>
-          </div>
-        )}
-
-        {!loading && !error && classes.length === 0 && (
-          <div className="p-12 text-center">
-            <p style={{ color: "var(--text-secondary)", fontWeight: 500 }}>
-              {searchQuery || activeFilter !== null
-                ? t("classes.emptySearch")
-                : t("classes.emptyOpen")}
-            </p>
-          </div>
-        )}
-
-        {/* Class cards */}
-        <div
-          className="stagger"
-          style={{ display: "flex", flexDirection: "column", gap: 14 }}
-        >
-          {!loading &&
-            classes.map((cls) => {
-              const status =
-                statusMap[cls.status as keyof typeof statusMap] ||
-                statusMap.open;
-              const seriesColor = cls.seriesColor || "#06c755";
-              const seatsLeft = cls.capacity - cls.enrolled;
-              return (
-                <Link
-                  key={cls.id}
-                  href={`/classes/${cls.id}`}
-                  id={`class-card-${cls.id}`}
-                  aria-label={cls.name}
-                  className="animate-slide-up glass-card"
-                  style={{
-                    textDecoration: "none",
-                    display: "block",
-                    overflow: "hidden",
-                  }}
-                >
-                  {/* Left accent border */}
-                  <div style={{ display: "flex" }}>
-                    <div
-                      style={{
-                        width: 4,
-                        background: seriesColor,
-                        borderRadius: "4px 0 0 4px",
-                        opacity: cls.status === "full" ? 0.4 : 1,
-                      }}
-                    />
-
-                    <div style={{ padding: "16px", flex: 1 }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          justifyContent: "space-between",
-                          gap: 10,
-                          marginBottom: 10,
-                        }}
-                      >
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <h2
-                            className="line-clamp-2"
-                            style={{
-                              fontSize: "0.9375rem",
-                              fontWeight: 700,
-                              color: "var(--text-primary)",
-                              lineHeight: 1.35,
-                            }}
-                          >
-                            {cls.name}
-                          </h2>
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 6,
-                              marginTop: 5,
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: 20,
-                                height: 20,
-                                borderRadius: "50%",
-                                background: seriesColor + "18",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: "0.5625rem",
-                                fontWeight: 800,
-                                color: seriesColor,
-                              }}
-                            >
-                              {cls.tutorInitials}
-                            </div>
-                            <span
-                              style={{
-                                fontSize: "0.8125rem",
-                                color: "var(--text-secondary)",
-                              }}
-                            >
-                              {cls.tutor}
-                            </span>
-                          </div>
-                        </div>
-                        <div
-                          className={`status-chip ${status.className}`}
-                          style={{ flexShrink: 0, fontSize: "0.6875rem" }}
-                        >
-                          {status.label}
-                        </div>
-                      </div>
-
-                      {/* Meta */}
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: 12,
-                          marginBottom: 12,
-                          flexWrap: "wrap",
-                        }}
-                      >
-                        <span
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 4,
-                            fontSize: "0.75rem",
-                            fontWeight: 600,
-                            color: seriesColor,
-                            background: seriesColor + "12",
-                            padding: "3px 8px",
-                            borderRadius: 8,
-                          }}
-                        >
-                          {cls.cefr || "A1"} / Lv.{cls.level || 1}
-                        </span>
-                        <span
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 4,
-                            fontSize: "0.75rem",
-                            color: "var(--text-tertiary)",
-                          }}
-                        >
-                          {t("classes.nextSessionPrefix")} {cls.nextSession}
-                        </span>
-                      </div>
-
-                      {/* Seats */}
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                          marginBottom: 14,
-                        }}
-                      >
-                        <div
-                          style={{
-                            flex: 1,
-                            height: 5,
-                            background: "var(--neutral-200)",
-                            borderRadius: 10,
-                            overflow: "hidden",
-                          }}
-                        >
-                          <div
-                            style={{
-                              height: "100%",
-                              width: `${(cls.enrolled / cls.capacity) * 100}%`,
-                              background:
-                                cls.status === "full"
-                                  ? "var(--accent-red)"
-                                  : seriesColor,
-                              borderRadius: 10,
-                              transition: "width 0.4s ease",
-                            }}
-                          />
-                        </div>
-                        <span
-                          style={{
-                            fontSize: "0.6875rem",
-                            fontWeight: 600,
-                            color:
-                              cls.status === "full"
-                                ? "var(--accent-red)"
-                                : "var(--text-tertiary)",
-                            flexShrink: 0,
-                          }}
-                        >
-                          {seatsLeft > 0 ? `${seatsLeft} ${t("classes.seatAvailable")}` : t("classes.statusFull")}
-                        </span>
-                      </div>
-
-                      {/* Price + CTA */}
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <div>
-                          <span
-                            style={{
-                              fontSize: "1.125rem",
-                              fontWeight: 800,
-                              color: "var(--text-primary)",
-                            }}
-                          >
-                            THB {cls.price.toLocaleString()}
-                          </span>
-                          <span
-                            style={{
-                              fontSize: "0.6875rem",
-                              color: "var(--text-tertiary)",
-                              marginLeft: 4,
-                            }}
-                          >
-                            / {t("classes.courseSuffix")}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            background:
-                              cls.status === "open"
-                                ? seriesColor
-                                : "var(--neutral-200)",
-                            color:
-                              cls.status === "open"
-                                ? "#fff"
-                                : "var(--neutral-400)",
-                            borderRadius: "var(--radius-full)",
-                            padding: "8px 18px",
-                            fontSize: "0.8125rem",
-                            fontWeight: 600,
-                            pointerEvents:
-                              cls.status === "full" ? "none" : "auto",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 4,
-                          }}
-                        >
-                          {cls.status === "open" ? t("classes.viewDetails") : t("classes.statusFull")}
-                          {cls.status === "open" && (
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <polyline points="9 18 15 12 9 6" />
-                            </svg>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-        </div>
-      </div>
-    </div>
+      <InviteSheet open={inviteOpen} onOpenChange={setInviteOpen} onScan={handleScanQr} onNavigate={goToEnroll} />
+    </Screen>
   );
 }

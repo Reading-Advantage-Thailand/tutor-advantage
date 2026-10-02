@@ -1,7 +1,9 @@
 import React from 'react';
-import Image from 'next/image';
-
+import { t } from '@/lib/i18n';
 import { LessonSessionData } from '@/hooks/useLessonSocket';
+import { LESSON_PHASE } from '@/lib/lessonPhases';
+import { Chip, UserAvatar } from '@/components/mobile';
+import { PhaseColumn, PhaseIntroCard, StatusCard } from '../PhaseBlocks';
 
 interface LessonPairPhaseProps {
   devPairPreview: 0 | 1 | 2;
@@ -26,9 +28,10 @@ export function LessonPairPhase({
         ],
       }]
     : (sessionData?.pairs || []);
-    
+
   const myPair = pairs.find((p) => p.members.some((m) => m.studentId === studentId));
   const partners = myPair ? myPair.members.filter((m) => m.studentId !== studentId) : [];
+  // English conversation starters (lesson content, not UI copy).
   const starters = [
     'What was this story about?',
     'Which new word do you like? Why?',
@@ -37,64 +40,47 @@ export function LessonPairPhase({
   ];
 
   return (
-    <div className="phase-enter w-full max-w-sm flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
-      <div className="bg-rose-500/10 border-2 border-rose-500/30 rounded-3xl p-6 text-center">
-        <div className="text-5xl mb-2">🗣️</div>
-        <h2 className="text-xl font-black text-rose-600 dark:text-rose-400">สนทนาจับคู่</h2>
-        <p className="text-muted-foreground text-sm mt-1">คุยกับคู่ของคุณเกี่ยวกับบทเรียนวันนี้</p>
-      </div>
+    <PhaseColumn>
+      <PhaseIntroCard phase={LESSON_PHASE.PAIR_CONVERSATION} tip={t("interactivePlay.pairDescription")} />
 
       {myPair ? (
-        <div className="bg-card rounded-3xl border border-border shadow-lg p-5 text-center">
-          <span className="inline-block text-[10px] font-black uppercase tracking-widest text-rose-500 bg-rose-500/10 border border-rose-500/20 rounded-full px-3 py-1 mb-4">
-            คู่ที่ {myPair.pairNumber}
-          </span>
+        <section className="rounded-[var(--radius-card)] border border-hairline bg-surface p-5 text-center shadow-[var(--shadow-card)]">
+          <Chip tone="brand" size="md">
+            {t("interactivePlay.pairNumberPrefix")} {myPair.pairNumber}
+          </Chip>
           {partners.length > 0 ? (
             <>
-              <p className="text-xs font-bold text-muted-foreground mb-3">
-                {partners.length > 1 ? 'คู่สนทนาของคุณ (กลุ่ม 3 คน)' : 'คู่สนทนาของคุณ'}
+              <p className="mt-4 text-[13px] leading-[1.5] font-semibold text-fg-muted">
+                {partners.length > 1 ? t("interactivePlay.pairPartnerGroup") : t("interactivePlay.pairPartner")}
               </p>
-              <div className="flex items-center justify-center gap-4 flex-wrap">
+              <ul className="mt-3 flex flex-wrap items-start justify-center gap-5">
                 {partners.map((partner) => (
-                  <div key={partner.studentId} className="flex flex-col items-center gap-2">
-                    <div className="size-16 rounded-full overflow-hidden border-4 border-rose-300/60 shadow-lg bg-muted">
-                      <Image
-                        src={partner.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${partner.name}`}
-                        alt={partner.name}
-                        width={64} height={64}
-                        className="size-full object-cover"
-                        unoptimized
-                      />
-                    </div>
-                    <span className="text-sm font-black text-foreground">{partner.name}</span>
-                  </div>
+                  <li key={partner.studentId} className="flex w-24 flex-col items-center gap-2">
+                    <UserAvatar src={partner.pictureUrl} name={partner.name} size="xl" ring="surface" decorative />
+                    <span className="w-full text-[15px] leading-[1.4] font-bold break-words text-fg">{partner.name}</span>
+                  </li>
                 ))}
-              </div>
-              <p className="text-muted-foreground text-xs mt-4 leading-relaxed">
-                หันไปหาคู่ของคุณ แล้วผลัดกันพูดคนละ 2-3 นาที 🤝
-              </p>
+              </ul>
+              <p className="mt-4 text-sm leading-[1.6] text-fg-muted">{t("interactivePlay.pairInstruction")}</p>
             </>
           ) : (
-            <p className="text-muted-foreground text-sm">รอคุณครูจัดคู่ให้คุณ</p>
+            <p className="mt-3 text-[15px] leading-[1.6] text-fg-muted">{t("interactivePlay.pairWaiting")}</p>
           )}
-        </div>
+        </section>
       ) : (
-        <div className="bg-card rounded-3xl border border-border shadow-lg p-6 text-center">
-          <div className="text-3xl mb-2">👀</div>
-          <p className="text-muted-foreground text-sm font-medium">ดูคู่ของคุณบนจอคุณครู</p>
-        </div>
+        <StatusCard emoji="👀" title={t("interactivePlay.pairSeeTeacherScreen")} />
       )}
 
-      <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
-        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2.5">ประโยคชวนคุย</p>
-        <div className="space-y-2">
+      <section className="rounded-[var(--radius-card)] border border-hairline bg-surface p-4 shadow-[var(--shadow-card)]">
+        <h3 className="mb-2.5 text-[15px] leading-[1.5] font-bold text-fg">{t("interactivePlay.pairStartersTitle")}</h3>
+        <ul className="flex flex-col gap-2">
           {starters.map((starter) => (
-            <div key={starter} className="bg-muted/50 border border-border/60 rounded-xl px-3 py-2 text-sm font-medium text-foreground">
-              💬 {starter}
-            </div>
+            <li key={starter} lang="en" className="rounded-xl bg-fill-muted px-3 py-2.5 text-[15px] leading-[1.5] text-fg">
+              <span aria-hidden="true">💬 </span>{starter}
+            </li>
           ))}
-        </div>
-      </div>
-    </div>
+        </ul>
+      </section>
+    </PhaseColumn>
   );
 }

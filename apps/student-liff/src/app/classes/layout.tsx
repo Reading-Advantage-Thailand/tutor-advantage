@@ -1,18 +1,14 @@
-"use client";
-
-import { BottomNav } from "@/components/layout/BottomNav";
-import { usePathname } from "next/navigation";
-
+// The bottom TabBar is rendered once by the root layout and shows only on
+// /classes itself (not on /classes/[id]), so this layout no longer needs to
+// be a client component.
+//
+// No `.page-content` wrapper: at ≥640px it adds `padding-inline: 24px
+// !important` (globals.css), which insets the sticky AppBar/BottomActionBar of
+// /classes/[id] from the column edges. <Screen> already provides the gutter.
 export default function ClassesLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  
-  // Only show BottomNav on the main classes list page, not on details [id]
-  const isDetailPage = pathname.split("/").length > 2;
-
   return (
     <div className="page-shell">
-      <div className="page-content">{children}</div>
-      {!isDetailPage && <BottomNav />}
+      <div className="flex flex-1 flex-col">{children}</div>
     </div>
   );
 }

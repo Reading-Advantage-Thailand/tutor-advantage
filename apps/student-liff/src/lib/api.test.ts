@@ -31,6 +31,7 @@ describe("student API helpers", () => {
 
     expect(fetch).toHaveBeenCalledWith("/api/learning/dashboard/summary", expect.objectContaining({
       credentials: "same-origin",
+      cache: "no-store",
       headers: expect.objectContaining({
         "Content-Type": "application/json",
       }),

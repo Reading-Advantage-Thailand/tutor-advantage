@@ -1,49 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useMemo } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { BookOpenCheck, Bot, Hourglass, Square, Star, Volume2 } from "lucide-react";
 import { useLiff } from "@/components/providers/LiffProvider";
-import { studentApi } from "@/lib/api";
-import { waitForSession } from "@/lib/cookieUtils";
+import { formatPhaseStep, getPhaseMeta } from "@/components/lesson/phaseMeta";
 import {
-  AlertCircle,
-  BookOpen,
-  CheckCircle2,
-  ChevronLeft,
-  MessageSquare,
-  RefreshCw,
-  Star,
-  Volume2,
-  XCircle,
-} from "lucide-react";
+  AppBar,
+  Chip,
+  ErrorState,
+  IconTile,
+  ListGroup,
+  ListRow,
+  Notice,
+  Screen,
+  SectionHeader,
+  StatusScreen,
+  Surface,
+} from "@/components/mobile";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { studentApi } from "@/lib/api";
+import { useCachedResource } from "@/lib/cachedResource";
+import { formatThaiDate, formatThaiTime } from "@/lib/format";
+import { t } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { ReaderSkeleton } from "./_components/ReaderSkeleton";
+import {
+  countCorrect,
+  getMcqOptions,
+  getParagraphs,
+  getReviewAnswers,
+  getWordAudio,
+  getWordText,
+  getWordThai,
+  isMcq,
+  optionLetter,
+  type ArticleWord,
+  type MCQ,
+  type SAQ,
+  type SessionAnswer,
+} from "./_components/readerModel";
+import { useReadAloud, useSpeechSupported } from "./_components/useReadAloud";
 
 /* ─── Types ──────────────────────────────────────────────────────────────────── */
-
-interface ArticleWord {
-  vocabulary?: string;
-  word?: string;
-  text?: string;
-  definition?: { th?: string };
-  translation?: string;
-}
-
-interface MCQ {
-  id: string;
-  question: string;
-  option1?: string;
-  option2?: string;
-  option3?: string;
-  option4?: string;
-  options?: Record<string, string>;
-  answer: string;
-}
-
-interface SAQ {
-  id: string;
-  question: string;
-  answer: string;
-}
 
 interface ArticleData {
   id?: string;
@@ -56,16 +56,6 @@ interface ArticleData {
   sentences?: (string | { sentences: string })[];
   multipleChoiceQuestions?: MCQ[];
   shortAnswerQuestions?: SAQ[];
-}
-
-interface SessionAnswer {
-  phase: number;
-  questionText?: string;
-  answerText?: string;
-  correctAnswer?: string;
-  isCorrect?: boolean;
-  score: number;
-  aiFeedback?: string;
 }
 
 interface SessionData {
@@ -81,255 +71,154 @@ interface PageData {
   session: SessionData | null;
 }
 
-/* ─── Helpers ────────────────────────────────────────────────────────────────── */
+const FALLBACK_HREF = "/progress";
+const latinText = "[font-family:var(--font-latin)]";
 
-function getWordText(w: ArticleWord): string {
-  return w.vocabulary ?? w.word ?? w.text ?? "";
-}
-
-function getWordThai(w: ArticleWord): string {
-  return w.definition?.th ?? w.translation ?? "";
-}
-
-function getMcqOptions(q: MCQ): string[] {
-  if (q.options) return Object.values(q.options);
-  return [q.option1, q.option2, q.option3, q.option4].filter(Boolean) as string[];
-}
-
-function formatDate(iso: string): string {
-  return new Intl.DateTimeFormat("th-TH", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(iso));
-}
-
-/* ─── Sub-components ─────────────────────────────────────────────────────────── */
+/* ─── Sections ───────────────────────────────────────────────────────────────── */
 
 function ModeBanner({ mode, session }: { mode: "pre-class" | "review"; session: SessionData | null }) {
   if (mode === "pre-class") {
     return (
-      <div
-        style={{
-          borderRadius: "var(--radius-xl)",
-          background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
-          border: "1px solid #fcd34d",
-          padding: "14px 16px",
-          display: "flex",
-          gap: 12,
-          alignItems: "flex-start",
-        }}
-      >
-        <span style={{ fontSize: "1.5rem", flexShrink: 0 }}>📚</span>
-        <div>
-          <div style={{ fontSize: "0.875rem", fontWeight: 800, color: "#92400e", marginBottom: 2 }}>
-            เตรียมตัวก่อนเรียน
-          </div>
-          <div style={{ fontSize: "0.75rem", color: "#a16207", lineHeight: 1.5 }}>
-            อ่านบทความและทำความเข้าใจคำศัพท์ก่อนเข้าคลาส เมื่อครูพาเรียนเสร็จแล้ว หน้านี้จะแสดงผลคะแนนและสรุปบทเรียนของคุณ
-          </div>
-        </div>
-      </div>
+      <Notice
+        tone="warning"
+        icon={BookOpenCheck}
+        title={t("articleReader.preClassTitle")}
+        description={t("articleReader.preClassDescription")}
+      />
     );
   }
 
-  const correctCount = session?.answers.filter(a => a.isCorrect).length ?? 0;
-  const totalCount = session?.answers.length ?? 0;
+  const { correct, total } = countCorrect(session?.answers);
+  const finishedAt = session ? `${formatThaiDate(session.finishedAt, "medium")} ${formatThaiTime(session.finishedAt, { suffix: true })}` : "";
 
   return (
-    <div
-      style={{
-        borderRadius: "var(--radius-xl)",
-        background: "linear-gradient(135deg, #dcfce8 0%, #bbf7d2 100%)",
-        border: "1px solid #86efb0",
-        padding: "14px 16px",
-        display: "flex",
-        gap: 12,
-        alignItems: "flex-start",
-      }}
-    >
-      <span style={{ fontSize: "1.5rem", flexShrink: 0 }}>✅</span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: "0.875rem", fontWeight: 800, color: "#065f28", marginBottom: 2 }}>
-          ทบทวนบทเรียน
-        </div>
-        <div style={{ fontSize: "0.75rem", color: "#047d36", lineHeight: 1.5 }}>
-          คุณได้เรียนบทนี้กับครูแล้ว เมื่อ {session ? formatDate(session.finishedAt) : ""}
-        </div>
-        {session && (
-          <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 4, background: "rgba(6,199,85,0.15)", borderRadius: "var(--radius-full)", padding: "3px 10px" }}>
-              <Star size={12} style={{ color: "#f59e0b", fill: "#f59e0b" }} />
-              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#047d36" }}>
-                {session.score} คะแนน
-              </span>
+    <Notice
+      tone="success"
+      title={t("articleReader.reviewTitle")}
+      description={
+        <>
+          <p>{t("articleReader.reviewDescriptionPrefix")} {finishedAt}</p>
+          {session ? (
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <Chip tone="success" size="sm" icon={Star}>
+                {session.score} {t("articleReader.scoreSuffix")}
+              </Chip>
+              {total > 0 ? (
+                <span className="text-[13px] leading-[1.5] text-fg-muted">
+                  {t("articleReader.correctCountPrefix")} {correct}/{total} {t("articleReader.correctCountSuffix")}
+                </span>
+              ) : null}
             </div>
-            {totalCount > 0 && (
-              <span style={{ fontSize: "0.6875rem", color: "#047d36" }}>
-                ตอบถูก {correctCount}/{totalCount} ข้อ
-              </span>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
+          ) : null}
+        </>
+      }
+    />
   );
 }
 
-function VocabularySection({ words }: { words: ArticleWord[] }) {
-  if (!words.length) return null;
+function VocabularySection({ words, canSpeak, onSpeak }: {
+  words: ArticleWord[];
+  canSpeak: boolean;
+  onSpeak: (word: string, audioUrl?: string) => void;
+}) {
+  const items = words.filter((w) => getWordText(w));
+  if (!items.length) return null;
   return (
-    <section>
-      <h2 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 10, display: "flex", alignItems: "center", gap: 7 }}>
-        <BookOpen size={16} style={{ color: "var(--brand-600)" }} />
-        คำศัพท์สำคัญ
-      </h2>
-      <div className="glass-card" style={{ overflow: "hidden" }}>
-        {words.map((w, idx) => {
-          const wordText = getWordText(w);
-          const thai = getWordThai(w);
-          if (!wordText) return null;
-          return (
-            <div
-              key={idx}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                padding: "12px 16px",
-                borderTop: idx > 0 ? "1px solid var(--surface-border)" : "none",
-              }}
-            >
-              <div
-                style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: "var(--radius-md)",
-                  background: "var(--brand-50)",
-                  border: "1px solid var(--brand-100)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                  fontSize: "1rem",
-                }}
-              >
-                📖
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--text-primary)", fontFamily: "var(--font-latin)" }}>
-                  {wordText}
-                </div>
-                {thai && (
-                  <div style={{ fontSize: "0.8125rem", color: "var(--brand-700)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {thai}
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </section>
+    <ListGroup header={t("articleReader.vocabularyTitle")}>
+      {items.map((w, idx) => {
+        const wordText = getWordText(w);
+        const thai = getWordThai(w);
+        return (
+          <ListRow
+            key={`${wordText}-${idx}`}
+            onClick={canSpeak ? () => onSpeak(wordText, getWordAudio(w)) : undefined}
+            leading={<IconTile icon={canSpeak ? Volume2 : BookOpenCheck} tone="brand" size="md" />}
+            title={<span lang="en" className={latinText}>{wordText}</span>}
+            subtitle={thai || undefined}
+            trailing={canSpeak ? <span className="sr-only">{t("articleReader.listenWord")} {wordText}</span> : undefined}
+          />
+        );
+      })}
+    </ListGroup>
   );
 }
 
+/** Pre-class questions to think about. Answers are not revealed here: they are asked (and scored) in class. */
 function PreClassQuestions({ mcqs, saqs }: { mcqs: MCQ[]; saqs: SAQ[] }) {
-  const all = [...mcqs, ...saqs];
+  const all: (MCQ | SAQ)[] = [...mcqs, ...saqs];
   if (!all.length) return null;
   return (
     <section>
-      <h2 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 10, display: "flex", alignItems: "center", gap: 7 }}>
-        <MessageSquare size={16} style={{ color: "var(--accent-blue)" }} />
-        คำถามทบทวน
-      </h2>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <SectionHeader title={t("articleReader.comprehensionTitle")} count={all.length} />
+      <p className="mb-3 text-[13px] leading-[1.6] text-fg-muted">{t("articleReader.thinkFirstHint")}</p>
+      <div className="flex flex-col gap-3">
         {all.map((q, i) => (
-          <div
-            key={q.id ?? i}
-            className="glass-card"
-            style={{ padding: "14px 16px", border: "1px solid var(--accent-blue-light)" }}
-          >
-            <div style={{ fontSize: "0.6875rem", fontWeight: 700, color: "var(--accent-blue)", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-              คำถาม {i + 1}
-            </div>
-            <p style={{ fontSize: "0.9375rem", color: "var(--text-primary)", fontWeight: 500, marginBottom: 10, fontFamily: "var(--font-latin)", lineHeight: 1.6 }}>
-              {q.question}
+          <Surface key={q.id ?? i} as="article">
+            <p className="text-[13px] leading-[1.5] font-semibold text-info-fg">
+              {t("articleReader.questionPrefix")} {i + 1}
             </p>
-            {"option1" in q || "options" in q ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {getMcqOptions(q as MCQ).map((opt, oi) => (
-                  <div key={oi} style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", padding: "6px 10px", borderRadius: "var(--radius-sm)", background: "var(--neutral-50)", border: "1px solid var(--surface-border)", fontFamily: "var(--font-latin)" }}>
-                    {String.fromCharCode(65 + oi)}. {opt}
-                  </div>
+            <p lang="en" className={cn("mt-1 text-[17px] leading-[1.6] font-semibold text-fg", latinText)}>{q.question}</p>
+            {isMcq(q) ? (
+              <ol className="mt-3 flex flex-col gap-2">
+                {getMcqOptions(q).map((opt, oi) => (
+                  <li key={oi} className="flex items-start gap-2.5 text-[15px] leading-[1.6] text-fg-muted">
+                    <span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center rounded-full bg-fill-muted text-xs font-bold text-fg-muted">
+                      {optionLetter(oi)}
+                    </span>
+                    <span lang="en" className={latinText}>{opt}</span>
+                  </li>
                 ))}
-              </div>
+              </ol>
             ) : null}
-          </div>
+          </Surface>
         ))}
       </div>
     </section>
   );
 }
 
-const PHASE_LABEL: Record<number, string> = {
-  7: "MCQ", 8: "Short Answer 1", 10: "คำศัพท์",
-  11: "Fill in the Blank", 12: "Sentence Order", 13: "Short Answer 2",
-};
-
 function ReviewAnswers({ answers }: { answers: SessionAnswer[] }) {
-  const interactive = answers.filter(a => a.questionText);
+  const interactive = getReviewAnswers(answers);
   if (!interactive.length) return null;
   return (
     <section>
-      <h2 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 10, display: "flex", alignItems: "center", gap: 7 }}>
-        <Star size={16} style={{ color: "#f59e0b" }} />
-        ผลการตอบคำถาม
-      </h2>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {interactive.map((a, i) => (
-          <div
-            key={i}
-            className="glass-card"
-            style={{
-              padding: "14px 16px",
-              border: `1px solid ${a.isCorrect === true ? "var(--brand-200)" : a.isCorrect === false ? "#fecaca" : "var(--surface-border)"}`,
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-              <span style={{ fontSize: "0.6875rem", fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase" }}>
-                Phase {a.phase} · {PHASE_LABEL[a.phase] ?? "Interactive"}
-              </span>
-              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                {a.isCorrect === true && <CheckCircle2 size={14} style={{ color: "var(--brand-500)" }} />}
-                {a.isCorrect === false && <XCircle size={14} style={{ color: "#ef4444" }} />}
-                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: a.isCorrect === true ? "var(--brand-600)" : a.isCorrect === false ? "#ef4444" : "var(--text-tertiary)" }}>
-                  +{a.score}
+      <SectionHeader title={t("articleReader.reviewAnswersTitle")} count={interactive.length} className="mb-1" />
+      <div className="flex flex-col gap-3">
+        {interactive.map((a, i) => {
+          const tone = a.isCorrect === true ? "success" : a.isCorrect === false ? "danger" : "neutral";
+          return (
+            <Surface key={i} as="article">
+              <div className="flex items-center justify-between gap-2">
+                <p className="min-w-0 truncate text-[13px] leading-[1.5] font-semibold text-fg-muted">
+                  {formatPhaseStep(a.phase)} · {getPhaseMeta(a.phase).label}
+                </p>
+                <Chip tone={tone} size="sm" className="tabular-nums">+{a.score}</Chip>
+              </div>
+              <p lang="en" className={cn("mt-1.5 text-base leading-[1.6] font-semibold text-fg", latinText)}>{a.questionText}</p>
+              <div className="mt-2.5 flex flex-wrap gap-2">
+                <span
+                  className={cn(
+                    "rounded-xl border px-3 py-1.5 text-sm leading-[1.5] font-semibold",
+                    a.isCorrect === false ? "border-danger-border bg-danger-bg text-danger-fg" : "border-success-border bg-success-bg text-success-fg",
+                  )}
+                >
+                  {t("articleReader.answerPrefix")}: <span lang="en">{a.answerText || "—"}</span>
                 </span>
+                {a.isCorrect === false && a.correctAnswer ? (
+                  <span className="rounded-xl border border-success-border bg-success-bg px-3 py-1.5 text-sm leading-[1.5] font-semibold text-success-fg">
+                    {t("articleReader.solutionPrefix")}: <span lang="en">{a.correctAnswer}</span>
+                  </span>
+                ) : null}
               </div>
-            </div>
-            <p style={{ fontSize: "0.875rem", color: "var(--text-primary)", fontFamily: "var(--font-latin)", marginBottom: 8, lineHeight: 1.5 }}>
-              {a.questionText}
-            </p>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <div style={{ padding: "4px 10px", borderRadius: "var(--radius-sm)", background: a.isCorrect === false ? "#fee2e2" : "var(--brand-50)", fontSize: "0.75rem", fontFamily: "var(--font-latin)", color: a.isCorrect === false ? "#b91c1c" : "var(--brand-700)", fontWeight: 600 }}>
-                คำตอบ: {a.answerText || "—"}
-              </div>
-              {a.isCorrect === false && a.correctAnswer && (
-                <div style={{ padding: "4px 10px", borderRadius: "var(--radius-sm)", background: "var(--brand-50)", fontSize: "0.75rem", fontFamily: "var(--font-latin)", color: "var(--brand-700)", fontWeight: 600 }}>
-                  เฉลย: {a.correctAnswer}
+              {a.aiFeedback ? (
+                <div className="mt-2.5 flex items-start gap-2 rounded-xl border border-info-border bg-info-bg p-3">
+                  <Bot aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-info-fg" />
+                  <p className="text-sm leading-[1.6] whitespace-pre-line text-fg">{a.aiFeedback}</p>
                 </div>
-              )}
-            </div>
-            {a.aiFeedback && (
-              <div style={{ marginTop: 8, padding: "8px 10px", background: "var(--accent-blue-light)", borderRadius: "var(--radius-sm)", fontSize: "0.75rem", color: "var(--accent-blue)", lineHeight: 1.5 }}>
-                💡 {a.aiFeedback}
-              </div>
-            )}
-          </div>
-        ))}
+              ) : null}
+            </Surface>
+          );
+        })}
       </div>
     </section>
   );
@@ -339,204 +228,141 @@ function ReviewAnswers({ answers }: { answers: SessionAnswer[] }) {
 
 export default function ArticleReaderPage() {
   const { articleId } = useParams<{ articleId: string }>();
-  const { isReady } = useLiff();
-  const router = useRouter();
+  const { isReady, profile, error: liffError, errorCode, retry } = useLiff();
+  // A 401 right after LIFF start-up is retried once by useCachedResource after
+  // the session cookie is confirmed, so no extra session probe is needed first.
+  const { data, error, isLoading, isValidating, refetch } = useCachedResource<PageData>(
+    profile && articleId ? `${profile.userId}:article:${articleId}` : null,
+    () => studentApi.getStudentArticle(articleId) as Promise<PageData>,
+    { enabled: isReady },
+  );
+  const article = data?.article;
+  const paragraphs = useMemo(() => (article ? getParagraphs(article) : []), [article]);
+  const speechSupported = useSpeechSupported();
+  const { readingIndex, isReading, startReading, stopReading, speakWord } = useReadAloud(paragraphs);
 
-  const [data, setData] = useState<PageData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  if (!isReady || isLoading) return <ReaderSkeleton />;
 
-  useEffect(() => {
-    let mounted = true;
-    if (!isReady) return;
+  const backAppBar = <AppBar title={t("articleReader.articleTitle")} back fallbackHref={FALLBACK_HREF} />;
 
-    async function load() {
-      try {
-        setLoading(true);
-        const hasSession = await waitForSession();
-        if (!hasSession) throw new Error("Session unavailable");
-        const result = await studentApi.getStudentArticle(articleId) as PageData;
-        if (mounted) setData(result);
-      } catch {
-        if (mounted) setError("ไม่สามารถโหลดบทความได้");
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    }
-
-    load();
-    return () => { mounted = false; };
-  }, [isReady, articleId]);
-
-  if (!isReady || loading) {
+  if (liffError || !profile) {
     return (
-      <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)" }}>
-        <div className="animate-spin" style={{ width: 32, height: 32, border: "3px solid var(--neutral-200)", borderTopColor: "var(--brand-500)", borderRadius: "50%" }} />
-      </div>
+      <Screen>
+        {backAppBar}
+        <ErrorState kind={errorCode === "network" ? "offline" : "error"} onRetry={retry} className="flex-1 justify-center" />
+      </Screen>
     );
   }
 
-  if (error || !data) {
+  if (!data || !article) {
+    const status = (error as { status?: unknown } | null)?.status;
+    const notFound = !error || status === 404 || status === 403;
     return (
-      <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, padding: 24, textAlign: "center" }}>
-        <AlertCircle size={40} style={{ color: "#ef4444" }} />
-        <p style={{ color: "var(--text-secondary)" }}>{error ?? "ไม่พบบทความ"}</p>
-        <button
-          onClick={() => router.back()}
-          style={{ display: "flex", alignItems: "center", gap: 6, padding: "10px 20px", borderRadius: "var(--radius-full)", background: "var(--brand-500)", color: "#fff", border: "none", fontWeight: 700, cursor: "pointer", fontSize: "0.875rem" }}
-        >
-          <RefreshCw size={14} /> ลองอีกครั้ง
-        </button>
-      </div>
+      <Screen>
+        {backAppBar}
+        {notFound ? (
+          <StatusScreen
+            icon={BookOpenCheck}
+            tone="neutral"
+            title={t("articleReader.notFoundTitle")}
+            description={t("articleReader.notFoundDescription")}
+            primaryAction={
+              <Link href={FALLBACK_HREF} className={cn(buttonVariants({ variant: "brand", size: "cta" }), "w-full")}>
+                {t("articleReader.progressCta")}
+              </Link>
+            }
+          />
+        ) : (
+          <ErrorState
+            title={t("articleReader.loadErrorTitle")}
+            description={t("articleReader.loadErrorDescription")}
+            onRetry={() => void refetch()}
+            retrying={isValidating}
+            className="flex-1 justify-center"
+          />
+        )}
+      </Screen>
     );
   }
 
-  const { article, mode, session } = data;
+  const { mode, session } = data;
   const words = article.words ?? [];
   const mcqs = article.multipleChoiceQuestions ?? [];
   const saqs = article.shortAnswerQuestions ?? [];
-  const paragraphs = (article.passage ?? article.summary ?? "").split("\n\n").filter(Boolean);
+  const levels = [article.cefr_level, article.ra_level].filter(Boolean).join(" · ");
+  const canListen = speechSupported && paragraphs.length > 0;
 
   return (
-    <div style={{ background: "var(--surface-bg)", minHeight: "100dvh" }}>
-      {/* Top bar */}
-      <div className="top-bar" style={{ background: "var(--surface-card)", backdropFilter: "blur(12px)" }}>
-        <button
-          onClick={() => router.back()}
-          style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: "var(--radius-md)", background: "var(--neutral-100)", border: "none", cursor: "pointer", color: "var(--text-primary)", flexShrink: 0 }}
-          aria-label="กลับ"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)" }} className="text-ellipsis">
-            {article.title ?? articleId}
-          </div>
-          {(article.cefr_level || article.ra_level) && (
-            <div style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", marginTop: 1 }}>
-              {[article.cefr_level, article.ra_level].filter(Boolean).join(" · ")}
-            </div>
-          )}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <span
-            style={{
-              padding: "4px 10px",
-              borderRadius: "var(--radius-full)",
-              fontSize: "0.6875rem",
-              fontWeight: 700,
-              background: mode === "review" ? "var(--brand-50)" : "#fef3c7",
-              color: mode === "review" ? "var(--brand-700)" : "#92400e",
-              border: `1px solid ${mode === "review" ? "var(--brand-200)" : "#fcd34d"}`,
-              flexShrink: 0,
-            }}
-          >
-            {mode === "review" ? "✅ ทบทวน" : "📚 เตรียมตัว"}
-          </span>
-          <button
-            style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: "var(--radius-md)", background: "var(--brand-50)", border: "1px solid var(--brand-100)", cursor: "pointer", color: "var(--brand-600)", flexShrink: 0 }}
-            aria-label="ฟังเสียง"
-          >
-            <Volume2 size={16} />
-          </button>
-        </div>
-      </div>
+    <Screen>
+      <AppBar
+        title={article.title ?? t("articleReader.articleTitle")}
+        subtitle={levels || undefined}
+        back
+        fallbackHref={FALLBACK_HREF}
+        actions={
+          <Chip tone={mode === "review" ? "success" : "warning"} size="sm" className="mr-3">
+            {mode === "review" ? t("articleReader.reviewChip") : t("articleReader.preClassChip")}
+          </Chip>
+        }
+      />
 
-      <div style={{ padding: "16px 16px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
-
+      <div className="mx-auto flex w-full max-w-[680px] flex-col gap-6 px-4 pt-3 pb-10">
         <ModeBanner mode={mode} session={session} />
 
         {/* Article body */}
-        <section>
-          <h2 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 10, display: "flex", alignItems: "center", gap: 7 }}>
-            <BookOpen size={16} style={{ color: "var(--brand-600)" }} />
-            บทความ
+        <article aria-labelledby="article-title">
+          <h2 id="article-title" lang="en" className={cn("text-2xl leading-[1.35] font-extrabold text-fg", latinText)}>
+            {article.title}
           </h2>
-          <div className="glass-card" style={{ padding: "18px 16px" }}>
-            <h1 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 14, lineHeight: 1.35, fontFamily: "var(--font-latin)" }}>
-              {article.title}
-            </h1>
-            <div style={{ fontSize: "1rem", lineHeight: 2, color: "var(--text-secondary)", fontFamily: "var(--font-latin)" }}>
-              {paragraphs.map((para, i) => (
-                <p key={i} style={{ marginBottom: i < paragraphs.length - 1 ? 14 : 0 }}>
-                  {para}
-                </p>
-              ))}
-            </div>
+          {canListen ? (
+            <Button
+              variant={isReading ? "brand" : "brandSoft"}
+              size="touch"
+              className="mt-3"
+              aria-pressed={isReading}
+              onClick={() => (isReading ? stopReading() : startReading(0))}
+            >
+              {isReading ? <Square aria-hidden="true" fill="currentColor" /> : <Volume2 aria-hidden="true" />}
+              {isReading ? t("articleReader.stopListening") : t("articleReader.listen")}
+            </Button>
+          ) : null}
+          <div lang="en" className={cn("mt-4 flex max-w-[65ch] flex-col gap-4 text-[18px] leading-[1.8] text-fg", latinText)}>
+            {paragraphs.map((para, i) => (
+              <p
+                key={i}
+                aria-current={readingIndex === i ? "true" : undefined}
+                className={cn("-mx-2 rounded-xl px-2 transition-colors", readingIndex === i && "bg-brand-soft")}
+              >
+                {para}
+              </p>
+            ))}
           </div>
-        </section>
+        </article>
 
-        <VocabularySection words={words} />
+        <VocabularySection words={words} canSpeak={speechSupported} onSpeak={speakWord} />
 
-        {/* Pre-class: self-check questions */}
-        {mode === "pre-class" && (
-          <PreClassQuestions mcqs={mcqs} saqs={saqs} />
-        )}
+        {/* Pre-class: questions to think about */}
+        {mode === "pre-class" && <PreClassQuestions mcqs={mcqs} saqs={saqs} />}
 
         {/* Review: scored answers */}
-        {mode === "review" && session && (
-          <ReviewAnswers answers={session.answers} />
-        )}
+        {mode === "review" && session && <ReviewAnswers answers={session.answers} />}
 
-        {/* Bottom CTA */}
+        {/* Next step */}
         {mode === "pre-class" ? (
-          <div
-            style={{
-              borderRadius: "var(--radius-xl)",
-              background: "var(--surface-card)",
-              border: "1px solid #fcd34d",
-              padding: "18px 16px",
-              textAlign: "center",
-            }}
-          >
-            <div style={{ fontSize: "1.75rem", marginBottom: 6 }}>⏳</div>
-            <div style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 6 }}>
-              รอเข้าคลาสกับครู
-            </div>
-            <div style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)", marginBottom: 16, lineHeight: 1.6 }}>
-              เมื่อครูเปิดบทเรียน คุณจะเข้าร่วม Interactive Lesson ได้จากหน้าหลัก
-            </div>
-            <Link
-              href="/dashboard"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "11px 28px",
-                borderRadius: "var(--radius-full)",
-                background: "var(--brand-500)",
-                color: "#fff",
-                fontWeight: 700,
-                fontSize: "0.875rem",
-                textDecoration: "none",
-              }}
-            >
-              กลับหน้าหลัก
+          <Surface className="flex flex-col items-center gap-2 py-6 text-center">
+            <IconTile icon={Hourglass} tone="amber" size="lg" shape="circle" />
+            <h2 className="mt-1 text-[17px] leading-[1.45] font-bold text-fg">{t("articleReader.waitClassTitle")}</h2>
+            <p className="max-w-[300px] text-sm leading-[1.6] text-fg-muted">{t("articleReader.waitClassDescription")}</p>
+            <Link href="/dashboard" className={cn(buttonVariants({ variant: "brand", size: "touch" }), "mt-3")}>
+              {t("articleReader.backHome")}
             </Link>
-          </div>
+          </Surface>
         ) : (
-          <Link
-            href="/progress"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              padding: "14px 24px",
-              borderRadius: "var(--radius-full)",
-              background: "linear-gradient(135deg, var(--brand-500), var(--brand-600))",
-              color: "#fff",
-              fontWeight: 700,
-              fontSize: "0.9375rem",
-              textDecoration: "none",
-              boxShadow: "var(--shadow-green)",
-            }}
-          >
-            ดูแผนที่การเรียน →
+          <Link href="/progress" className={cn(buttonVariants({ variant: "brand", size: "cta" }), "w-full")}>
+            {t("articleReader.progressCta")}
           </Link>
         )}
-
       </div>
-    </div>
+    </Screen>
   );
 }

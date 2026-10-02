@@ -3,6 +3,11 @@
 import { useMemo, useState } from "react";
 import { BookOpen, CheckCircle2, ChevronLeft, ChevronRight, RotateCcw, Sparkles, Volume2 } from "lucide-react";
 import { useTtsPlayer } from "@/hooks/useTtsPlayer";
+import { Chip, ProgressBar } from "@/components/mobile";
+import { Button } from "@/components/ui/button";
+import { t } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { PhaseColumn } from "./PhaseBlocks";
 
 type FlashcardWord = {
   vocabulary?: string;
@@ -22,7 +27,13 @@ type Props = {
 };
 
 const getWord = (word: FlashcardWord, index: number) => word.vocabulary || word.word || word.text || `Word ${index + 1}`;
-const getMeaning = (word: FlashcardWord) => word.definition?.th || word.translation || word.definition?.en || "ยังไม่มีคำแปล";
+const getMeaning = (word: FlashcardWord) => word.definition?.th || word.translation || word.definition?.en || t("interactivePlay.flashcardNoMeaning");
+
+const rateButtons = [
+  { value: "again", emoji: "🔁", label: "interactivePlay.flashcardAgain", tone: "border-danger-border bg-danger-bg text-danger-fg" },
+  { value: "good", emoji: "👍", label: "interactivePlay.flashcardGood", tone: "border-warning-border bg-warning-bg text-warning-fg" },
+  { value: "easy", emoji: "⚡", label: "interactivePlay.flashcardEasy", tone: "border-success-border bg-success-bg text-success-fg" },
+] as const;
 
 export function VocabularyFlashcardPhase({ words = [], hasAnswered, disabled, onComplete }: Props) {
   const cards = useMemo(() => words.slice(0, 12), [words]);
@@ -33,14 +44,34 @@ export function VocabularyFlashcardPhase({ words = [], hasAnswered, disabled, on
 
   const current = cards[index];
   const complete = hasAnswered || Object.keys(ratings).length >= cards.length;
+  const remembered = Object.values(ratings).filter((rating) => rating !== "again").length;
 
   if (!current || complete) {
     return (
-      <div className="phase-enter flex w-full max-w-md flex-1 flex-col items-center justify-center gap-5 rounded-[32px] border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-card to-cyan-500/10 p-7 text-center shadow-xl">
-        <div className="flex size-20 items-center justify-center rounded-3xl bg-emerald-500/15 text-emerald-500"><CheckCircle2 size={42} /></div>
-        <div><p className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-500">Mission complete</p><h2 className="mt-2 text-2xl font-black text-foreground">เก่งมาก! ทบทวนครบแล้ว</h2><p className="mt-2 text-sm font-semibold leading-relaxed text-muted-foreground">รอคุณครูเปิดผลและไป Phase ถัดไป</p></div>
-        <div className="grid w-full grid-cols-3 gap-2"><div className="rounded-2xl bg-muted p-3"><p className="text-xl font-black text-foreground">{cards.length}</p><p className="text-[10px] font-bold text-muted-foreground">การ์ด</p></div><div className="rounded-2xl bg-emerald-500/10 p-3"><p className="text-xl font-black text-emerald-500">{Object.values(ratings).filter((rating) => rating !== "again").length}</p><p className="text-[10px] font-bold text-muted-foreground">จำได้</p></div><div className="rounded-2xl bg-amber-500/10 p-3"><p className="text-xl font-black text-amber-500">+{Object.values(ratings).filter((rating) => rating === "easy").length * 2}</p><p className="text-[10px] font-bold text-muted-foreground">โบนัส</p></div></div>
-      </div>
+      <PhaseColumn>
+        <section role="status" className="flex flex-col items-center gap-4 rounded-[var(--radius-card)] border border-success-border bg-success-bg px-5 py-7 text-center">
+          <span className="flex size-16 items-center justify-center rounded-full bg-surface text-success-fg">
+            <CheckCircle2 aria-hidden="true" className="size-9" />
+          </span>
+          <div>
+            <p className="text-[13px] leading-[1.5] font-bold text-success-fg">{t("interactivePlay.flashcardDoneEyebrow")}</p>
+            <h2 className="mt-1 text-[22px] leading-[1.4] font-extrabold text-fg">{t("interactivePlay.flashcardDoneTitle")}</h2>
+            <p className="mt-1 text-[15px] leading-[1.6] text-fg-muted">{t("interactivePlay.flashcardDoneDescription")}</p>
+          </div>
+          <div className="grid w-full grid-cols-3 gap-2">
+            {[
+              { value: cards.length, label: t("interactivePlay.flashcardCards") },
+              { value: remembered, label: t("interactivePlay.flashcardRemembered") },
+              { value: `+${Object.values(ratings).filter((rating) => rating === "easy").length * 2}`, label: t("interactivePlay.flashcardBonus") },
+            ].map((stat) => (
+              <div key={stat.label} className="rounded-2xl bg-surface p-3">
+                <p className="text-xl leading-[1.4] font-extrabold text-fg tabular-nums">{stat.value}</p>
+                <p className="text-xs leading-[1.5] text-fg-muted">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </PhaseColumn>
     );
   }
 
@@ -57,41 +88,100 @@ export function VocabularyFlashcardPhase({ words = [], hasAnswered, disabled, on
   };
 
   const progress = (Object.keys(ratings).length / cards.length) * 100;
+  const wordText = getWord(current, index);
   const speakCurrent = () => {
-    speak(getWord(current, index), current.audioUrl || current.audio_url);
+    speak(wordText, current.audioUrl || current.audio_url);
   };
 
   return (
-    <div className="phase-enter flex w-full max-w-md flex-1 flex-col gap-4 overflow-y-auto pb-2">
-      <div className="rounded-[28px] bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 p-5 text-white shadow-xl">
-        <div className="flex items-start justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[0.25em] text-white/65">Phase 2 · Flashcards</p><h1 className="mt-1 text-2xl font-black">Word Quest</h1></div><div className="rounded-2xl bg-black/20 px-3 py-2 text-right"><p className="text-[9px] font-black uppercase text-white/60">Score</p><p className="text-xl font-black">{Object.values(ratings).filter((item) => item !== "again").length * 10}</p></div></div>
-        <div className="mt-5 flex items-center gap-3"><div className="flex size-12 items-center justify-center rounded-2xl bg-white/15"><Sparkles size={23} /></div><div className="flex-1"><div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/65"><span>Mission progress</span><span>{Object.keys(ratings).length}/{cards.length}</span></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-black/25"><div className="h-full rounded-full bg-amber-300 transition-all duration-500" style={{ width: `${progress}%` }} /></div></div></div>
-      </div>
-
-      <div className="relative">
-        <button type="button" onClick={() => setFlipped((value) => !value)} className="group min-h-[300px] w-full rounded-[32px] border border-indigo-500/20 bg-card p-1 text-center shadow-2xl transition-transform active:scale-[0.99]" aria-label="พลิกการ์ดคำศัพท์">
-          <div className="flex min-h-[292px] flex-col items-center justify-center rounded-[28px] bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950 px-7 text-white">
-            <div className="mb-5 flex size-16 items-center justify-center rounded-3xl bg-white/10 text-indigo-200">{flipped ? <Sparkles size={30} /> : <BookOpen size={30} />}</div>
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/45">{flipped ? "Meaning" : "Vocabulary"}</p>
-            <p className={`mt-4 font-black leading-tight ${flipped ? "text-3xl text-amber-200" : "text-5xl text-white"}`}>{flipped ? getMeaning(current) : getWord(current, index)}</p>
-            <p className="mt-6 text-xs font-bold text-white/40">แตะการ์ดเพื่อ {flipped ? "กลับไปดูคำศัพท์" : "เปิดดูความหมาย"}</p>
+    <PhaseColumn>
+      {/* Mission header */}
+      <section className="rounded-[var(--radius-card)] bg-tile-purple p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-[13px] leading-[1.5] font-bold text-icon-purple">{t("interactivePlay.flashcardEyebrow")}</p>
+            <h2 className="text-xl leading-[1.4] font-extrabold text-fg">{t("interactivePlay.flashcardTitle")}</h2>
           </div>
+          <Chip tone="neutral" size="md" className="bg-surface text-fg">
+            {t("interactivePlay.flashcardScore")} {remembered * 10}
+          </Chip>
+        </div>
+        <div className="mt-3 flex items-center justify-between text-[13px] leading-[1.5] text-fg-muted">
+          <span>{t("interactivePlay.flashcardProgress")}</span>
+          <span className="tabular-nums">{Object.keys(ratings).length}/{cards.length}</span>
+        </div>
+        <ProgressBar value={progress} size="sm" className="mt-1.5" label={t("interactivePlay.flashcardProgress")} />
+      </section>
+
+      {/* Card (tap to flip) + listen */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setFlipped((value) => !value)}
+          aria-label={t("interactivePlay.flashcardFlipAria")}
+          className={cn(
+            "pressable flex min-h-[280px] w-full flex-col items-center justify-center rounded-[28px] border-2 px-6 py-8 text-center shadow-[var(--shadow-card)]",
+            flipped ? "border-warning-border bg-warning-bg" : "border-hairline bg-surface",
+          )}
+        >
+          <span aria-hidden="true" className={cn("flex size-14 items-center justify-center rounded-2xl", flipped ? "bg-surface text-warning-fg" : "bg-tile-purple text-icon-purple")}>
+            {flipped ? <Sparkles className="size-7" /> : <BookOpen className="size-7" />}
+          </span>
+          <span className="mt-3 text-[13px] leading-[1.5] font-semibold text-fg-muted">
+            {flipped ? t("interactivePlay.flashcardMeaningSide") : t("interactivePlay.flashcardWordSide")}
+          </span>
+          <span
+            lang={flipped ? undefined : "en"}
+            className={cn("mt-2 font-extrabold break-words text-fg", flipped ? "text-[28px] leading-[1.4]" : "text-[44px] leading-[1.2]")}
+          >
+            {flipped ? getMeaning(current) : wordText}
+          </span>
+          <span className="mt-5 text-[13px] leading-[1.5] text-fg-muted">
+            {flipped ? t("interactivePlay.flashcardTapToWord") : t("interactivePlay.flashcardTapToMeaning")}
+          </span>
         </button>
         <button
           type="button"
           onClick={speakCurrent}
-          className="absolute right-5 top-5 inline-flex size-11 items-center justify-center rounded-2xl bg-white/15 text-white shadow-lg backdrop-blur transition hover:bg-white/25 active:scale-90"
-          aria-label={`ฟังการออกเสียง ${getWord(current, index)}`}
-          title="ฟังการออกเสียง"
+          className="pressable absolute top-3 right-3 inline-flex size-11 items-center justify-center rounded-full bg-fill-muted text-fg active:bg-press"
+          aria-label={`${t("interactivePlay.flashcardListenAria")} ${wordText}`}
         >
-          <Volume2 size={20} className={isSpeaking ? "animate-pulse text-amber-300" : ""} />
+          <Volume2 aria-hidden="true" className={cn("size-5", isSpeaking && "text-brand-fg")} />
         </button>
       </div>
 
-      <div className="flex items-center justify-between gap-2"><button type="button" onClick={() => { setIndex((value) => Math.max(0, value - 1)); setFlipped(false); }} disabled={index === 0} className="inline-flex h-11 items-center gap-1 rounded-2xl border border-border bg-card px-3 text-xs font-black text-foreground disabled:opacity-35"><ChevronLeft size={16} /> ก่อนหน้า</button><button type="button" onClick={() => setFlipped((value) => !value)} className="inline-flex h-11 items-center gap-2 rounded-2xl bg-indigo-600 px-5 text-xs font-black text-white shadow-lg"><RotateCcw size={15} /> {flipped ? "ดูคำศัพท์" : "เปิดเฉลย"}</button><button type="button" onClick={() => { setIndex((value) => Math.min(cards.length - 1, value + 1)); setFlipped(false); }} disabled={index === cards.length - 1} className="inline-flex h-11 items-center gap-1 rounded-2xl border border-border bg-card px-3 text-xs font-black text-foreground disabled:opacity-35">ถัดไป <ChevronRight size={16} /></button></div>
+      <div className="flex items-center justify-between gap-2">
+        <Button variant="outline" size="touch" onClick={() => { setIndex((value) => Math.max(0, value - 1)); setFlipped(false); }} disabled={index === 0}>
+          <ChevronLeft aria-hidden="true" /> {t("interactivePlay.flashcardPrev")}
+        </Button>
+        <Button variant="brand" size="touch" onClick={() => setFlipped((value) => !value)}>
+          <RotateCcw aria-hidden="true" /> {flipped ? t("interactivePlay.flashcardShowWord") : t("interactivePlay.flashcardShowMeaning")}
+        </Button>
+        <Button variant="outline" size="touch" onClick={() => { setIndex((value) => Math.min(cards.length - 1, value + 1)); setFlipped(false); }} disabled={index === cards.length - 1}>
+          {t("interactivePlay.flashcardNext")} <ChevronRight aria-hidden="true" />
+        </Button>
+      </div>
 
-      <div className="rounded-3xl border border-border bg-card p-4 shadow-lg"><div className="mb-3 flex items-center justify-between"><p className="text-xs font-black text-foreground">จำได้แค่ไหน?</p><p className="text-[10px] font-bold text-muted-foreground">ให้คะแนนหลังดูเฉลย</p></div><div className="grid grid-cols-3 gap-2"><button type="button" onClick={() => rating("again")} disabled={!flipped || disabled} className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-2 py-3 text-[11px] font-black text-rose-600 disabled:opacity-35">🔁 ทบทวนอีก</button><button type="button" onClick={() => rating("good")} disabled={!flipped || disabled} className="rounded-2xl border border-amber-500/20 bg-amber-500/10 px-2 py-3 text-[11px] font-black text-amber-600 disabled:opacity-35">👍 จำได้</button><button type="button" onClick={() => rating("easy")} disabled={!flipped || disabled} className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-2 py-3 text-[11px] font-black text-emerald-600 disabled:opacity-35">⚡ ง่ายมาก</button></div></div>
-      <div className="flex items-center justify-center gap-2 text-[11px] font-bold text-muted-foreground"><span className="size-2 animate-pulse rounded-full bg-emerald-500" /> ทำครบแล้วกดระดับความมั่นใจทุกใบ</div>
-    </div>
+      <section className="rounded-[var(--radius-card)] border border-hairline bg-surface p-4 shadow-[var(--shadow-card)]">
+        <div className="mb-3 flex items-baseline justify-between gap-2">
+          <h3 className="text-[15px] leading-[1.5] font-bold text-fg">{t("interactivePlay.flashcardRateTitle")}</h3>
+          <p className="text-xs leading-[1.5] text-fg-muted">{t("interactivePlay.flashcardRateHint")}</p>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {rateButtons.map((button) => (
+            <button
+              key={button.value}
+              type="button"
+              onClick={() => rating(button.value)}
+              disabled={!flipped || disabled}
+              className={cn("pressable min-h-12 rounded-2xl border px-2 py-2 text-sm leading-[1.4] font-bold disabled:opacity-40", button.tone)}
+            >
+              <span aria-hidden="true">{button.emoji} </span>{t(button.label)}
+            </button>
+          ))}
+        </div>
+      </section>
+      <p className="text-center text-[13px] leading-[1.5] text-fg-muted">{t("interactivePlay.flashcardFooterHint")}</p>
+    </PhaseColumn>
   );
 }

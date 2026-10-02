@@ -1,78 +1,65 @@
 "use client";
 
-import { Suspense } from "react";
-import { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useLiff } from "@/components/providers/LiffProvider";
-import {
-  ArrowLeft,
-  ArrowRight,
-  User,
-  BookOpen,
-  BarChart2,
-  Calendar,
-  Users,
-  CreditCard,
-  Info,
-  CheckCircle2,
-} from "lucide-react";
-import Image from "next/image";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowRight, BarChart2, BookOpen, CalendarDays, CheckCircle2, Link2Off, Users } from "lucide-react";
+import { toast } from "sonner";
+import {
+  BottomActionBar,
+  Chip,
+  ErrorState,
+  IconTile,
+  ListGroup,
+  Notice,
+  ProgressBar,
+  Screen,
+  StatusScreen,
+  Surface,
+  UserAvatar,
+} from "@/components/mobile";
+import { useLiff } from "@/components/providers/LiffProvider";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { studentApi } from "@/lib/api";
-import { t } from "@/lib/i18n";
+import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
+import { classDetailResourceKey } from "@/lib/classAccess";
+import { formatTHB } from "@/lib/format";
+import { t, type I18nKey } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { EnrollAppBar, EnrollSkeleton } from "./_components/EnrollSkeleton";
+import { InfoRow } from "./_components/InfoRow";
+import {
+  buildEnrollLoginRedirect,
+  buildEnrollPaymentHref,
+  classifyEnrollError,
+  getEnrollCtaKind,
+  getEnrollSeatState,
+  isRetryableEnrollLoadError,
+  mapEnrollClassDetails,
+  requestFreeEnrollment,
+  type EnrollErrorKind,
+} from "./_components/enrollFlow";
 
-interface ClassDetails {
-  classId: string;
-  className: string;
-  tutorName: string;
-  bookTitle: string;
-  price: number;
-  maxStudents: number;
-  currentStudents: number;
-  cefrLevel: string;
-  schedule: string;
-}
+const ENROLL_ERROR_COPY: Record<EnrollErrorKind, I18nKey> = {
+  classFull: "enroll.enrollErrors.classFull",
+  classClosed: "enroll.enrollErrors.classClosed",
+  linkInvalid: "enroll.enrollErrors.linkInvalid",
+  demoExpired: "enroll.enrollErrors.demoExpired",
+  notFound: "enroll.enrollErrors.notFound",
+  ownClass: "enroll.enrollErrors.ownClass",
+  generic: "enroll.enrollErrors.generic",
+};
 
-/* ─── Spinner used in multiple states ─── */
-function Spinner({ label }: { label: string }) {
+type EnrollDetailsResponse = { class: Parameters<typeof mapEnrollClassDetails>[0] };
+
+function BrowseClassesLink({ variant = "brand" }: { variant?: "brand" | "brandSoft" }) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "var(--surface-bg)" }}>
-      <div className="text-center">
-        <div className="w-14 h-14 rounded-full border-4 animate-spin mx-auto mb-4" style={{ borderColor: "var(--brand-100)", borderTopColor: "var(--brand-500)" }} />
-        <p className="text-muted-foreground font-medium">{label}</p>
-      </div>
-    </div>
+    <Link href="/classes" className={buttonVariants({ variant, size: variant === "brand" ? "cta" : "touch" })}>
+      {t("enroll.browseClasses")}
+    </Link>
   );
 }
 
-/* ─── Detail row ─── */
-function DetailRow({
-  icon,
-  label,
-  value,
-  valueClass,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  valueClass?: string;
-}) {
-  return (
-    <div className="flex items-start gap-3 py-3 border-b border-border last:border-0">
-      <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ background: "var(--brand-50)" }}>
-        <span style={{ color: "var(--brand-600)" }}>{icon}</span>
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
-        <p className={`font-semibold text-sm text-foreground leading-tight ${valueClass ?? ""}`}>
-          {value}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Main content ─── */
 function EnrollContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -81,307 +68,232 @@ function EnrollContent() {
   const classId = searchParams.get("classId");
   const referralToken = searchParams.get("referralToken") ?? searchParams.get("token");
 
-  const [classDetails, setClassDetails] = useState<ClassDetails | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [enrolling, setEnrolling] = useState(false);
+  // Synchronous double-submit guard (state updates are async).
+  const enrollingRef = useRef(false);
 
-  useEffect(() => {
-    if (!isReady) return;
-
-    if (classId || referralToken) {
-      const classDetailsRequest = classId
-        ? studentApi.getClassDetails(classId)
-        : studentApi.getReferralDetails(referralToken as string);
-
-      classDetailsRequest
-        .then((data) => {
-          const cls = data.class;
-          setClassDetails({
-            classId: cls.id,
-            className: cls.name,
-            tutorName: cls.tutor?.name || "Tutor Advantage",
-            bookTitle: cls.book,
-            price: cls.price,
-            maxStudents: cls.maxStudents,
-            currentStudents: cls.students,
-            cefrLevel: cls.cefr,
-            schedule: cls.schedule,
-          });
-        })
-        .catch((err) => {
-          console.error("Failed to fetch class details for enrollment:", err);
-          setError(
-            err instanceof Error ? err.message : t("enroll.errors.loadClassFailed")
-          );
-        })
-        .finally(() => setLoading(false));
-      return;
-    }
-
-    setError(t("enroll.errors.missingClass"));
-    setLoading(false);
-  }, [isReady, classId, referralToken]);
+  // classId wins over a referral token, as before. Requested only once the
+  // student is signed in (a signed-out visitor is sent to /login first).
+  const requestKey =
+    profile && classId
+      ? classDetailResourceKey(profile.userId, classId)
+      : profile && referralToken
+        ? `${profile.userId}:referral:${referralToken}`
+        : null;
+  const resource = useCachedResource<EnrollDetailsResponse>(
+    requestKey,
+    () => (classId ? studentApi.getClassDetails(classId) : studentApi.getReferralDetails(referralToken as string)),
+    { enabled: isReady },
+  );
+  const classDetails = useMemo(() => (resource.data ? mapEnrollClassDetails(resource.data.class) : null), [resource.data]);
 
   useEffect(() => {
     if (isReady && !profile) {
-      const currentParams = searchParams.toString();
-      const redirectTarget = encodeURIComponent(`/enroll?${currentParams}`);
-      router.replace(`/login?redirect=${redirectTarget}`);
+      router.replace(buildEnrollLoginRedirect(searchParams.toString()));
     }
   }, [isReady, profile, router, searchParams]);
 
   const handleAction = async () => {
-    if (!classDetails) return;
-    
+    if (!classDetails || enrollingRef.current) return;
+
     if (classDetails.price === 0) {
+      enrollingRef.current = true;
       setEnrolling(true);
       try {
-        const enrollment = referralToken
-          ? await studentApi.enrollByReferral(referralToken as string)
-          : await studentApi.enrollClass(classDetails.classId, referralToken as string | undefined);
-          
+        const enrollment = await requestFreeEnrollment(studentApi, classDetails.classId, referralToken);
         if (enrollment.status === "ACTIVE") {
+          // Home, Classes and Progress must show the new class right away.
+          if (profile) invalidateResource(`${profile.userId}:`);
           router.replace("/dashboard");
           return;
         }
       } catch (err) {
-        console.error("Enrollment failed:", err);
-        setError(err instanceof Error ? err.message : t("enroll.errors.loadClassFailed"));
+        console.warn("Enrollment failed:", err);
+        toast.error(t(ENROLL_ERROR_COPY[classifyEnrollError(err)]));
+        enrollingRef.current = false;
         setEnrolling(false);
         return;
       }
     }
 
-    const params = new URLSearchParams({ classId: classDetails.classId });
-    if (referralToken) params.set("referralToken", referralToken);
-    router.push(`/payment?${params.toString()}`);
+    enrollingRef.current = true;
+    setEnrolling(true);
+    router.push(buildEnrollPaymentHref(classDetails.classId, referralToken));
   };
 
-  /* ── Loading / auth states ── */
-  if (!isReady) return <Spinner label={t("enroll.loadingPreparing")} />;
-  if (!profile) return <Spinner label={t("enroll.redirectingLogin")} />;
+  /* ── Start-up / sign-in / loading ── */
+  if (!isReady) return <EnrollSkeleton label={t("enroll.loadingPreparing")} />;
+  if (!profile) return <EnrollSkeleton label={t("enroll.redirectingLogin")} />;
 
-  if (loading) return <Spinner label={t("enroll.loadingClass")} />;
-
-  if (error || !classDetails) {
+  if (!classId && !referralToken) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "var(--surface-bg)" }}>
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mx-auto">
-            <Info className="text-rose-500" size={28} />
-          </div>
-          <p className="text-rose-500 font-semibold">{error ?? t("enroll.errors.loadClassFailed")}</p>
-          <Link href="/dashboard" className="text-sm font-medium hover:underline" style={{ color: "var(--brand-600)" }}>
-            {t("enroll.backDashboard")}
-          </Link>
-        </div>
-      </div>
+      <Screen>
+        <EnrollAppBar />
+        <StatusScreen
+          icon={Link2Off}
+          tone="neutral"
+          title={t("enroll.missingTitle")}
+          description={t("enroll.errors.missingClass")}
+          primaryAction={<BrowseClassesLink />}
+        />
+      </Screen>
+    );
+  }
+
+  if (resource.isLoading) return <EnrollSkeleton label={t("enroll.loadingClass")} />;
+
+  if (!classDetails) {
+    const kind = classifyEnrollError(resource.error);
+    return (
+      <Screen>
+        <EnrollAppBar />
+        {isRetryableEnrollLoadError(kind) ? (
+          <ErrorState
+            title={t("enroll.loadErrorTitle")}
+            kind={resource.error instanceof TypeError ? "offline" : "error"}
+            onRetry={() => void resource.refetch()}
+            retrying={resource.isValidating}
+          />
+        ) : (
+          <StatusScreen
+            icon={Link2Off}
+            tone="neutral"
+            title={t("enroll.cannotEnrollTitle")}
+            description={t(ENROLL_ERROR_COPY[kind])}
+            primaryAction={<BrowseClassesLink />}
+          />
+        )}
+      </Screen>
     );
   }
 
   /* ── Confirm step ── */
-  const spotsLeft = classDetails.maxStudents - classDetails.currentStudents;
-  const isFull = spotsLeft <= 0;
-  const spotsPercent = Math.round((classDetails.currentStudents / classDetails.maxStudents) * 100);
+  const seats = getEnrollSeatState(classDetails.currentStudents, classDetails.maxStudents);
+  const cta = getEnrollCtaKind(seats.isFull, classDetails.price);
 
   return (
-    <div style={{ background: "var(--surface-bg)", minHeight: "100dvh" }}>
-      {/* ── Hero header ── */}
-      <div
-        className="curved-bottom relative px-5 pb-9 pt-12"
-        style={{ background: "linear-gradient(135deg, #06c755 0%, #049a42 55%, #037d36 100%)" }}
-      >
-        {/* Back button */}
-        <Link href="/dashboard" className="absolute top-5 left-4">
-          <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
-            <ArrowLeft size={18} className="text-white" />
+    <Screen>
+      <EnrollAppBar />
+
+      <div className="flex flex-col gap-4 px-4 pt-2 pb-6">
+        <section className="relative overflow-hidden rounded-[var(--radius-card)] bg-gradient-brand p-5 text-white shadow-[var(--shadow-card)]">
+          <span aria-hidden="true" className="pointer-events-none absolute -top-12 -right-10 size-36 rounded-full bg-white/10" />
+          <Chip tone="onBrand" size="md" icon={CheckCircle2} className="relative">
+            {t("enroll.confirmClass")}
+          </Chip>
+          <h2 className="relative mt-3 text-[22px] leading-[1.45] font-extrabold">{classDetails.className}</h2>
+          <div className="relative mt-3 flex flex-wrap gap-2">
+            {classDetails.cefrLevel ? (
+              <Chip tone="onBrand" size="md" icon={BarChart2}>
+                {`${t("enroll.cefrChipPrefix")} ${classDetails.cefrLevel}`}
+              </Chip>
+            ) : null}
+            <Chip tone="onBrand" size="md" icon={Users}>
+              {`${classDetails.currentStudents}/${classDetails.maxStudents}`}
+            </Chip>
           </div>
-        </Link>
+        </section>
 
-        {/* Title chip */}
-        <div className="mb-4 mt-4">
-          <span className="bg-white/20 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider">
-            <CheckCircle2 size={11} />
-            {t("enroll.title")}
-          </span>
-        </div>
+        {seats.isFull ? (
+          <Notice
+            tone="warning"
+            role="status"
+            title={t("enroll.fallbackBannerTitle")}
+            description={t("enroll.fallbackBannerDesc")}
+            action={<BrowseClassesLink variant="brandSoft" />}
+          />
+        ) : null}
 
-        {/* Class name */}
-        <h1 className="text-2xl font-black text-white leading-tight mb-3">
-          {classDetails.className}
-        </h1>
+        <ListGroup aria-label={t("enroll.confirmClass")}>
+          <InfoRow
+            leading={<UserAvatar src={classDetails.tutorPictureUrl} name={classDetails.tutorName} decorative />}
+            label={t("enroll.tutor")}
+            value={classDetails.tutorName}
+          />
+          <InfoRow leading={<IconTile icon={BookOpen} />} label={t("enroll.book")} value={classDetails.bookTitle} />
+          <InfoRow
+            leading={<IconTile icon={BarChart2} tone="blue" />}
+            label={t("enroll.level")}
+            value={classDetails.cefrLevel}
+          />
+          <InfoRow
+            leading={<IconTile icon={CalendarDays} tone="amber" />}
+            label={t("enroll.schedule")}
+            value={classDetails.schedule}
+          />
+        </ListGroup>
 
-        {/* Pill badges */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {classDetails.cefrLevel && (
-            <span className="bg-white/25 text-white text-xs font-bold px-3 py-1 rounded-full">
-              CEFR {classDetails.cefrLevel}
-            </span>
-          )}
-          <span className="bg-white/25 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-            <Users size={10} /> {classDetails.currentStudents}/{classDetails.maxStudents}
-          </span>
-        </div>
-      </div>
-
-      {/* ── Card body ── */}
-      <div className="px-4 -mt-5 pb-[calc(112px+var(--safe-bottom))] space-y-3 max-w-md mx-auto">
-
-        {/* Fallback banner — shown when class is full */}
-        {isFull && (
-          <div className="rounded-2xl bg-amber-500/10 border border-amber-500/30 px-4 py-4 flex gap-3">
-            <Info className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" size={18} />
-            <div>
-              <p className="text-sm font-bold text-amber-700 dark:text-amber-300 mb-0.5">
-                {t("enroll.fallbackBannerTitle")}
-              </p>
-              <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
-                {t("enroll.fallbackBannerDesc")}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Class details card */}
-        <div className="bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
-          <div className="px-5 pt-5 pb-2">
-            <DetailRow
-              icon={<User size={14} />}
-              label={t("enroll.tutor")}
-              value={classDetails.tutorName}
-            />
-            <DetailRow
-              icon={<BookOpen size={14} />}
-              label={t("enroll.book")}
-              value={classDetails.bookTitle}
-            />
-            <DetailRow
-              icon={<BarChart2 size={14} />}
-              label={t("enroll.level")}
-              value={classDetails.cefrLevel}
-            />
-            <DetailRow
-              icon={<Calendar size={14} />}
-              label={t("enroll.schedule")}
-              value={classDetails.schedule}
-            />
-          </div>
-
-          {/* Seats progress */}
-          <div className="px-5 py-4 border-t border-border">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-muted-foreground font-medium">{t("enroll.students")}</span>
-              <span className="text-xs font-bold text-foreground">
-                {classDetails.currentStudents}/{classDetails.maxStudents}{" "}
-                <span className="text-muted-foreground font-normal">{t("enroll.peopleUnit")}</span>
-              </span>
-            </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all ${
-                  spotsPercent >= 90
-                    ? "bg-rose-500"
-                    : spotsPercent >= 70
-                    ? "bg-amber-400"
-                    : "bg-[var(--brand-500)]"
-                }`}
-                style={{ width: `${spotsPercent}%` }}
-              />
-            </div>
-            {spotsLeft <= 3 && (
-              <p className="text-xs text-rose-500 font-semibold mt-1.5">
-                {t("enroll.urgentSeatsPrefix")} {spotsLeft} {t("enroll.urgentSeatsSuffix")}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Student info card */}
-        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-          <div className="border-b border-border px-5 py-3 flex items-center gap-2" style={{ background: "var(--brand-50)" }}>
-            <User size={14} style={{ color: "var(--brand-600)" }} />
-            <span className="text-xs font-bold text-foreground uppercase tracking-wider">
-              {t("enroll.studentInfo")}
+        <Surface>
+          <div className="flex items-baseline justify-between gap-3 text-sm leading-[1.5]">
+            <span className="text-fg-muted">{t("enroll.students")}</span>
+            <span className="font-bold text-fg tabular-nums">
+              {classDetails.currentStudents}/{classDetails.maxStudents}{" "}
+              <span className="font-normal text-fg-muted">{t("enroll.peopleUnit")}</span>
             </span>
           </div>
-          <div className="px-5 py-4 flex items-center gap-4">
-            {profile.pictureUrl ? (
-              <Image
-                src={profile.pictureUrl}
-                alt={profile.displayName}
-                width={56}
-                height={56}
-                unoptimized
-                className="w-14 h-14 rounded-full border-2 shadow-sm object-cover shrink-0"
-                style={{ borderColor: "var(--brand-200)" }}
-              />
-            ) : (
-              <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0" style={{ background: "var(--brand-50)" }}>
-                <User size={24} style={{ color: "var(--brand-600)" }} />
-              </div>
-            )}
-            <div>
-              <p className="text-xs text-muted-foreground mb-0.5">{t("enroll.name")}</p>
-              <p className="font-black text-foreground text-base">{profile.displayName}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Price card */}
-        <div className="bg-card rounded-2xl border shadow-sm overflow-hidden" style={{ borderColor: "var(--brand-200)" }}>
-          <div className="border-b px-5 py-3 flex items-center gap-2" style={{ background: "var(--brand-50)", borderColor: "var(--brand-100)" }}>
-            <CreditCard size={14} style={{ color: "var(--brand-600)" }} />
-            <span className="text-xs font-bold text-foreground uppercase tracking-wider">
-              {t("enroll.tuition")}
-            </span>
-          </div>
-          <div className="px-5 py-5 text-center">
-            <p className="text-5xl font-black mb-1" style={{ color: "var(--brand-600)" }}>
-              {classDetails.price.toLocaleString()}
+          <ProgressBar
+            value={seats.spotsPercent}
+            tone={seats.busy ? "warning" : "brand"}
+            label={t("enroll.students")}
+            className="mt-2.5"
+          />
+          {seats.urgent ? (
+            <p className="mt-2 text-[13px] leading-[1.5] font-semibold text-danger-fg">
+              {t("enroll.urgentSeatsPrefix")} {seats.spotsLeft} {t("enroll.urgentSeatsSuffix")}
             </p>
-            <p className="text-sm text-muted-foreground font-semibold">THB / {t("enroll.courseHoursNote")}</p>
-          </div>
-        </div>
+          ) : null}
+        </Surface>
 
-        {/* Action buttons */}
-        <div className="flex gap-3 pt-1">
-          <Link href="/dashboard" className="flex-1">
-            <button className="w-full py-4 rounded-2xl border border-border bg-card text-foreground font-bold text-sm active:scale-[0.98] transition-all">
-              {t("enroll.cancel")}
-            </button>
-          </Link>
-          <button
-            className="flex-2 flex-[2] py-4 rounded-2xl text-white font-black text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
-            style={{ background: isFull ? "var(--neutral-400)" : "var(--brand-500)", boxShadow: isFull ? "none" : "var(--shadow-green)" }}
-            onClick={handleAction}
-            disabled={isFull || enrolling}
-          >
-            {enrolling ? "กำลังดำเนินการ..." : (classDetails.price === 0 ? "เข้าเรียนฟรี" : t("enroll.continue"))}
-            {!enrolling && <ArrowRight size={18} />}
-          </button>
-        </div>
+        <ListGroup header={t("enroll.studentInfo")}>
+          <InfoRow
+            leading={<UserAvatar src={profile.pictureUrl} name={profile.displayName} decorative />}
+            label={t("enroll.name")}
+            value={profile.displayName}
+          />
+        </ListGroup>
 
-        <p className="text-center text-xs text-muted-foreground pb-2">
-          {t("enroll.courseHoursNote")}
-        </p>
+        {classDetails.totalHours ? (
+          <p className="px-1 text-[13px] leading-[1.5] text-fg-muted">
+            {t("enroll.hoursPrefix")} {classDetails.totalHours} {t("enroll.hoursSuffix")}
+          </p>
+        ) : null}
       </div>
-    </div>
+
+      <BottomActionBar>
+        <div className="min-w-0 shrink-0">
+          <p className="text-xs leading-[1.5] text-fg-muted">{t("enroll.tuition")}</p>
+          <p className="text-xl leading-[1.3] font-extrabold text-fg tabular-nums">
+            {classDetails.price === 0 ? t("enroll.free") : formatTHB(classDetails.price)}
+            {classDetails.price === 0 ? null : (
+              <span className="ml-1 text-xs font-normal text-fg-muted">{t("enroll.perCourse")}</span>
+            )}
+          </p>
+        </div>
+        <Button
+          variant="brand"
+          size="cta"
+          className={cn("min-w-0 flex-1", seats.isFull && "bg-fill-muted text-fg-muted shadow-none")}
+          onClick={handleAction}
+          disabled={seats.isFull}
+          loading={enrolling}
+        >
+          {enrolling
+            ? t("enroll.processing")
+            : cta === "full"
+              ? t("enroll.ctaFull")
+              : cta === "free"
+                ? t("enroll.ctaFree")
+                : t("enroll.continue")}
+          {enrolling || cta === "full" ? null : <ArrowRight aria-hidden="true" />}
+        </Button>
+      </BottomActionBar>
+    </Screen>
   );
 }
 
 export default function EnrollPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface-bg)" }}>
-          <div className="text-center">
-            <div className="w-14 h-14 rounded-full border-4 animate-spin mx-auto mb-4" style={{ borderColor: "var(--brand-100)", borderTopColor: "var(--brand-500)" }} />
-            <p className="text-muted-foreground font-medium">{t("enroll.loadingPreparing")}</p>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<EnrollSkeleton label={t("enroll.loadingPreparing")} />}>
       <EnrollContent />
     </Suspense>
   );

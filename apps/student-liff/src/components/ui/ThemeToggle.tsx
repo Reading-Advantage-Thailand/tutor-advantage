@@ -18,8 +18,8 @@ export function ThemeToggle({ className = "", size = 22 }: ThemeToggleProps) {
       aria-label={isDark ? t("app.lightMode") : t("app.darkMode")}
       className={`theme-toggle-btn ${className}`}
       style={{
-        width: 40,
-        height: 40,
+        width: 44,
+        height: 44,
         borderRadius: "50%",
         border: "1.5px solid var(--surface-border)",
         background: "var(--surface-card)",

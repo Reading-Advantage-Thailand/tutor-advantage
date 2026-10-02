@@ -2,29 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 
-import { AbyssalWellGame } from "@/components/games/sentence/abyssal-well/AbyssalWellGame"
-import { CastleDefenseGame } from "@/components/games/sentence/castle-defense/CastleDefenseGame"
-import { DevourerSlimeGame } from "@/components/games/sentence/devourer-slime/DevourerSlimeGame"
-import { DungeonLiberatorGame } from "@/components/games/sentence/dungeon-liberator/DungeonLiberatorGame"
-import { GriffinRidersEscapeGame } from "@/components/games/sentence/griffin-riders-escape/GriffinRidersEscapeGame"
-import { GriffinSkyJoustGame } from "@/components/games/sentence/griffin-sky-joust/GriffinSkyJoustGame"
-import GryphonPatrolGame from "@/components/games/sentence/gryphon-patrol/GryphonPatrolGame"
-import { HauntedLibraryGame } from "@/components/games/sentence/haunted-library/HauntedLibraryGame"
-import { LabyrinthGoblinKingGame } from "@/components/games/sentence/labyrinth-goblin-king/LabyrinthGoblinKingGame"
-import PotionRushGame from "@/components/games/sentence/potion-rush/PotionRushGame"
-import { RealmCarverGame } from "@/components/games/sentence/realm-carver/RealmCarverGame"
-import { RuneForgeChamberGame } from "@/components/games/sentence/rune-forge-chamber/RuneForgeChamberGame"
-import { ShadowGateDungeonGame } from "@/components/games/sentence/shadow-gate-dungeon/ShadowGateDungeonGame"
-import { SpellweaversRunGame } from "@/components/games/sentence/spellweavers-run/SpellweaversRunGame"
-import { StormCastleTowerGame } from "@/components/games/sentence/storm-castle-tower/StormCastleTowerGame"
-import { VillageGuardianGame } from "@/components/games/sentence/village-guardian/VillageGuardianGame"
-import { AlchemistsSynthesisGame } from "@/components/games/vocabulary/alchemists-synthesis/AlchemistsSynthesisGame"
-import { ArchersRevengeGame } from "@/components/games/vocabulary/archers-revenge/ArchersRevengeGame"
-import { DragonFlightGame } from "@/components/games/vocabulary/dragon-flight/DragonFlightGame"
-import { EnchantedLibraryGame } from "@/components/games/vocabulary/enchanted-library/EnchantedLibraryGame"
-import { PaladinsTwinSoulGame } from "@/components/games/vocabulary/paladins-twin-soul/PaladinsTwinSoulGame"
-import { RuneMatchGame } from "@/components/games/vocabulary/rune-match/RuneMatchGame"
-import { WizardZombieGame } from "@/components/games/vocabulary/wizard-vs-zombie/WizardZombieGame"
+import {
+  ArcadeGames,
+  GameErrorBoundary,
+  isGameLoaded,
+  preloadGame,
+  resolveGameId,
+} from "@/components/lesson/gameRegistry"
 import type { LiveLessonGameCategory } from "@/lib/liveLessonGames"
 import type { VocabularyItem } from "@/store/useGameStore"
 
@@ -78,21 +62,32 @@ type AdvantageArcadeRuntimeProps = {
   }) => void
 }
 
-const resolveGameId = (gameId: string, category: LiveLessonGameCategory) => {
-  const aliases: Record<string, string> = {
-    "vocabulary-matching": "rune-match",
-    "vocabulary-flashcard": "dragon-flight",
-    "vocabulary-cloze": "enchanted-library",
-    "dragon-rider": "dragon-flight",
-    "sentence-order-word": "dungeon-liberator",
-    "sentence-order-sentence": "haunted-library",
-    "sentence-cloze": "potion-rush",
-    "sentence-matching": "castle-defense",
-    "sentence-flashcard": "spellweavers-run",
-  }
-
-  return aliases[gameId] ?? gameId ?? (category === "vocabulary" ? "rune-match" : "dungeon-liberator")
-}
+// Each game is a separate chunk (see gameRegistry); names and props are unchanged.
+const {
+  AbyssalWellGame,
+  CastleDefenseGame,
+  DevourerSlimeGame,
+  DungeonLiberatorGame,
+  GriffinRidersEscapeGame,
+  GriffinSkyJoustGame,
+  GryphonPatrolGame,
+  HauntedLibraryGame,
+  LabyrinthGoblinKingGame,
+  PotionRushGame,
+  RealmCarverGame,
+  RuneForgeChamberGame,
+  ShadowGateDungeonGame,
+  SpellweaversRunGame,
+  StormCastleTowerGame,
+  VillageGuardianGame,
+  AlchemistsSynthesisGame,
+  ArchersRevengeGame,
+  DragonFlightGame,
+  EnchantedLibraryGame,
+  PaladinsTwinSoulGame,
+  RuneMatchGame,
+  WizardZombieGame,
+} = ArcadeGames
 
 const wordText = (word: LessonWord, index: number) =>
   word.vocabulary || word.word || word.text || `Word ${index + 1}`
@@ -171,9 +166,23 @@ export function AdvantageArcadeRuntime({
   const vocabulary = useMemo(() => buildVocabulary(articleData), [articleData])
   const sentences = useMemo(() => buildSentences(articleData), [articleData])
   const [hasCompleted, setHasCompleted] = useState(false)
+  // The auto-start clicker must wait for the game's chunk; a preloaded game is ready on mount.
+  const [readyGameId, setReadyGameId] = useState(() => (isGameLoaded(resolvedGameId) ? resolvedGameId : null))
+  const gameReady = readyGameId === resolvedGameId
 
   useEffect(() => {
-    if (!autoStart) return
+    if (gameReady) return
+    let cancelled = false
+    void preloadGame(resolvedGameId).then((loaded) => {
+      if (!cancelled && loaded) setReadyGameId(resolvedGameId)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [gameReady, resolvedGameId])
+
+  useEffect(() => {
+    if (!autoStart || !gameReady) return
 
     const startPatterns = [
       /start/i,
@@ -214,7 +223,7 @@ export function AdvantageArcadeRuntime({
       window.setTimeout(clickStartButton, delay),
     )
     return () => timers.forEach((timer) => window.clearTimeout(timer))
-  }, [autoStart, resolvedGameId])
+  }, [autoStart, gameReady, resolvedGameId])
 
   const handleComplete = (result: ArcadeResult) => {
     if (completedRef.current) return
@@ -252,102 +261,104 @@ export function AdvantageArcadeRuntime({
 
   return (
     <div ref={rootRef} className={commonClass}>
-      {resolvedGameId === "dragon-flight" && (
-        <DragonFlightGame vocabulary={vocabulary} autoStart={childAutoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "wizard-vs-zombie" && (
-        <WizardZombieGame vocabulary={vocabulary} autoStart={childAutoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "enchanted-library" && (
-        <EnchantedLibraryGame
-          vocabulary={vocabulary}
-          difficulty="normal"
-          onDifficultyChange={() => undefined}
-          rankings={{ easy: [], normal: [], hard: [], extreme: [] }}
-          autoStart={childAutoStart}
-          restartOnComplete={restartOnComplete}
-          tutorialMode={tutorialMode}
-          onComplete={handleComplete}
-        />
-      )}
-      {resolvedGameId === "rune-match" && (
-        <RuneMatchGame
-          vocabulary={vocabulary}
-          tutorialMode={tutorialMode}
-          restartOnComplete={restartOnComplete}
-          onComplete={handleComplete}
-        />
-      )}
-      {resolvedGameId === "alchemists-synthesis" && (
-        <AlchemistsSynthesisGame vocabulary={vocabulary} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "archers-revenge" && (
-        <ArchersRevengeGame vocabulary={vocabulary} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "paladins-twin-soul" && (
-        <PaladinsTwinSoulGame vocabulary={vocabulary} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "castle-defense" && (
-        <CastleDefenseGame
-          vocabulary={sentences}
-          autoStart={childAutoStart}
-          restartOnComplete={restartOnComplete}
-          tutorialMode={tutorialMode}
-          onComplete={handleComplete}
-        />
-      )}
-      {resolvedGameId === "potion-rush" && (
-        <PotionRushGame
-          vocabList={sentences}
-          difficulty="normal"
-          autoStart={childAutoStart}
-          restartOnComplete={restartOnComplete}
-          tutorialMode={tutorialMode}
-          onComplete={handleComplete}
-        />
-      )}
-      {resolvedGameId === "dungeon-liberator" && (
-        <DungeonLiberatorGame vocabulary={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "spellweavers-run" && (
-        <SpellweaversRunGame vocabulary={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "shadow-gate-dungeon" && (
-        <ShadowGateDungeonGame vocabulary={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "rune-forge-chamber" && (
-        <RuneForgeChamberGame vocabulary={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "village-guardian" && (
-        <VillageGuardianGame vocabulary={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "labyrinth-goblin-king" && (
-        <LabyrinthGoblinKingGame sentences={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "abyssal-well" && (
-        <AbyssalWellGame sentences={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "storm-castle-tower" && (
-        <StormCastleTowerGame vocabulary={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "griffin-sky-joust" && (
-        <GriffinSkyJoustGame vocabulary={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "realm-carver" && (
-        <RealmCarverGame sentences={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "griffin-riders-escape" && (
-        <GriffinRidersEscapeGame vocabulary={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "devourer-slime" && (
-        <DevourerSlimeGame sentences={sentences} difficulty="medium" onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "haunted-library" && (
-        <HauntedLibraryGame sentences={sentences} onComplete={handleComplete} />
-      )}
-      {resolvedGameId === "gryphon-patrol" && (
-        <GryphonPatrolGame vocabList={sentences} difficulty="normal" onComplete={handleComplete} />
-      )}
+      <GameErrorBoundary>
+        {resolvedGameId === "dragon-flight" && (
+          <DragonFlightGame vocabulary={vocabulary} autoStart={childAutoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "wizard-vs-zombie" && (
+          <WizardZombieGame vocabulary={vocabulary} autoStart={childAutoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "enchanted-library" && (
+          <EnchantedLibraryGame
+            vocabulary={vocabulary}
+            difficulty="normal"
+            onDifficultyChange={() => undefined}
+            rankings={{ easy: [], normal: [], hard: [], extreme: [] }}
+            autoStart={childAutoStart}
+            restartOnComplete={restartOnComplete}
+            tutorialMode={tutorialMode}
+            onComplete={handleComplete}
+          />
+        )}
+        {resolvedGameId === "rune-match" && (
+          <RuneMatchGame
+            vocabulary={vocabulary}
+            tutorialMode={tutorialMode}
+            restartOnComplete={restartOnComplete}
+            onComplete={handleComplete}
+          />
+        )}
+        {resolvedGameId === "alchemists-synthesis" && (
+          <AlchemistsSynthesisGame vocabulary={vocabulary} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "archers-revenge" && (
+          <ArchersRevengeGame vocabulary={vocabulary} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "paladins-twin-soul" && (
+          <PaladinsTwinSoulGame vocabulary={vocabulary} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "castle-defense" && (
+          <CastleDefenseGame
+            vocabulary={sentences}
+            autoStart={childAutoStart}
+            restartOnComplete={restartOnComplete}
+            tutorialMode={tutorialMode}
+            onComplete={handleComplete}
+          />
+        )}
+        {resolvedGameId === "potion-rush" && (
+          <PotionRushGame
+            vocabList={sentences}
+            difficulty="normal"
+            autoStart={childAutoStart}
+            restartOnComplete={restartOnComplete}
+            tutorialMode={tutorialMode}
+            onComplete={handleComplete}
+          />
+        )}
+        {resolvedGameId === "dungeon-liberator" && (
+          <DungeonLiberatorGame vocabulary={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "spellweavers-run" && (
+          <SpellweaversRunGame vocabulary={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "shadow-gate-dungeon" && (
+          <ShadowGateDungeonGame vocabulary={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "rune-forge-chamber" && (
+          <RuneForgeChamberGame vocabulary={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "village-guardian" && (
+          <VillageGuardianGame vocabulary={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "labyrinth-goblin-king" && (
+          <LabyrinthGoblinKingGame sentences={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "abyssal-well" && (
+          <AbyssalWellGame sentences={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "storm-castle-tower" && (
+          <StormCastleTowerGame vocabulary={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "griffin-sky-joust" && (
+          <GriffinSkyJoustGame vocabulary={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "realm-carver" && (
+          <RealmCarverGame sentences={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "griffin-riders-escape" && (
+          <GriffinRidersEscapeGame vocabulary={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "devourer-slime" && (
+          <DevourerSlimeGame sentences={sentences} difficulty="medium" onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "haunted-library" && (
+          <HauntedLibraryGame sentences={sentences} onComplete={handleComplete} />
+        )}
+        {resolvedGameId === "gryphon-patrol" && (
+          <GryphonPatrolGame vocabList={sentences} difficulty="normal" onComplete={handleComplete} />
+        )}
+      </GameErrorBoundary>
     </div>
   )
 }

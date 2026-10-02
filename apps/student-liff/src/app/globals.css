@@ -1,4 +1,5 @@
-/* Fonts loaded via next/font/google in layout.tsx — no duplicate @import needed */
+/* No web fonts are loaded: the app uses the platform's system font stack
+   (--font-system below), like a native app, so there are zero font bytes. */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -7,6 +8,78 @@
 
 /* ─── Design Tokens ───────────────────────────────────────────────────────── */
 :root {
+  color-scheme: light;
+
+  /* System font stack (Thai-capable on iOS, Android and Windows) */
+  --font-system: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai",
+    "Sukhumvit Set", Thonburi, "Leelawadee UI", Tahoma, sans-serif;
+
+  /* ── Mobile shell layout ── */
+  --appbar-h: 56px;
+  --tabbar-h: 64px;
+  --gutter: 16px;
+  --radius-card: 20px;
+
+  /* z-index scale (use these instead of ad-hoc numbers) */
+  --z-appbar: 40;
+  --z-tabbar: 50;
+  --z-sheet: 60;
+  --z-overlay: 60;
+  --z-consent: 80;
+  --z-toast: 90;
+
+  /* ── Mobile surfaces & lines ── */
+  --hairline: rgba(15, 23, 42, 0.09);
+  --field-border: #cbd5e1;
+  --fill-muted: rgba(116, 124, 138, 0.13);
+  --press-tint: rgba(15, 23, 42, 0.06);
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 2px 8px -2px rgb(15 23 42 / 0.05);
+  --shadow-bar: 0 1px 0 var(--hairline);
+  --skeleton-base: #e6eaf0;
+  --skeleton-shine: rgba(255, 255, 255, 0.65);
+
+  /* ── Brand roles (contrast-safe on white) ── */
+  --brand-fg: #047d36;            /* brand text/icons on surfaces (5.2:1 on white) */
+  --brand-vivid: #05a847;         /* progress fills, switches, indicators */
+  --brand-solid: #047d36;         /* filled buttons with white text (5.2:1) */
+  --brand-solid-pressed: #036a2d;
+  --brand-soft: #e5f6ec;          /* tonal backgrounds, active tab pill */
+  --brand-soft-border: #b9e7cb;
+  --gradient-brand: linear-gradient(135deg, var(--brand-600) 0%, var(--brand-700) 100%);
+
+  /* ── Semantic tones (fg is ≥4.5:1 on its bg in both themes) ── */
+  --success-fg: #047d36;
+  --success-bg: #e5f6ec;
+  --success-border: #b9e7cb;
+  --warning-fg: #92400e;
+  --warning-bg: #fef3c7;
+  --warning-border: #fcd98a;
+  --warning-solid: #f59e0b;
+  --on-warning: #422006;
+  --danger-fg: #b91c1c;
+  --danger-bg: #fee2e2;
+  --danger-border: #fecaca;
+  --danger-solid: #dc2626;
+  --info-fg: #1d4ed8;
+  --info-bg: #dbeafe;
+  --info-border: #bfdbfe;
+
+  /* ── Decorative tile tones (IconTile, UserAvatar) ── */
+  --tile-brand: var(--brand-soft);
+  --tile-amber: #fef3c7;
+  --tile-blue: #dbeafe;
+  --tile-purple: #ede9fe;
+  --tile-pink: #fce7f3;
+  --tile-red: #fee2e2;
+  --tile-neutral: #eceff3;
+  --icon-brand: #05a847;
+  --icon-amber: #d97706;
+  --icon-blue: #2563eb;
+  --icon-purple: #7c3aed;
+  --icon-pink: #db2777;
+  --icon-red: #dc2626;
+  --icon-neutral: #475569;
+
   /* LINE brand green-to-teal */
   --line-green: #06c755;
   --line-green-dark: #05a847;
@@ -53,8 +126,8 @@
 
   /* Surfaces — theme-aware (single canonical definitions below) */
 
-  /* Typography */
-  --font-thai: "Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif;
+  /* Typography (legacy aliases; prefer --font-system) */
+  --font-thai: var(--font-system);
   --font-latin: Inter, Arial, "Helvetica Neue", sans-serif;
 
   /* Radius */
@@ -93,8 +166,8 @@
   /* Responsive max-width — tablet up to 768px */
   --max-mobile: 768px;
 
-  /* Custom surface tokens (Light) */
-  --surface-bg: #f8fafc;
+  /* Custom surface tokens (Light) — light grey app background, white cards */
+  --surface-bg: #f3f5f8;
   --surface-card: #ffffff;
   --surface-elevated: #ffffff;
   --surface-nav: rgba(255, 255, 255, 0.97);
@@ -140,61 +213,44 @@
 }
 
 /* ─── Reset & Base ────────────────────────────────────────────────────────── */
-/* Reset moved to @layer base below to prevent cascade override */
-
-html {
-  -webkit-text-size-adjust: 100%;
-  font-size: 16px;
-  scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-}
+/* Element rules (html, body, headings, focus) live in @layer base further down
+   so Tailwind utilities can override them. */
 
 html::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
-}
-
-body {
-  font-family: var(--font-thai), var(--font-latin);
-  background-color: var(--surface-bg);
-  color: var(--neutral-900);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
 body::-webkit-scrollbar {
   display: none;
 }
 
-/* Centre & cap the LIFF app at mobile width */
+/* iOS zooms the page when a focused field is under 16px. Unlayered on purpose
+   so no utility class (text-sm etc.) can bring a field below 16px. */
+:where(input, select, textarea) {
+  font-size: max(16px, 1rem);
+}
+
+/* Centre & cap the LIFF app at mobile width.
+   overflow-x: clip (not hidden) so .liff-root does NOT become a scroll
+   container — otherwise position:sticky app bars stick to it instead of the
+   viewport. `hidden` stays first as the fallback for iOS < 16. */
 .liff-root {
+  --tabbar-space: 0px;
+  min-height: 100vh;
   min-height: 100dvh;
   max-width: var(--max-mobile);
   margin-inline: auto;
   position: relative;
   background: var(--surface-bg);
   overflow-x: hidden;
+  overflow-x: clip;
 }
 
-/* ─── Typography ──────────────────────────────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+/* The TabBar renders an in-flow spacer as a direct child of .liff-root on tab
+   roots; screens subtract it from their min-height so short pages don't scroll. */
+.liff-root:has(> [data-tabbar-spacer]) {
+  --tabbar-space: calc(var(--tabbar-h) + var(--safe-bottom));
 }
-
-h1 { font-size: 1.75rem; }
-h2 { font-size: 1.375rem; }
-h3 { font-size: 1.125rem; }
-
-p { line-height: 1.7; }
-
-/* Thai text needs a tiny bit more line-height */
-:lang(th) { line-height: 1.8; }
 
 /* ─── Utility Classes ────────────────────────────────────────────────────── */
 
@@ -211,20 +267,8 @@ p { line-height: 1.7; }
   background: linear-gradient(135deg, #ffffff 0%, #f0fdf6 100%);
 }
 
-/* Glass morphism */
-.glass {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-}
-
-.glass-dark {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
+/* (Removed the unused .glass / .glass-dark blur classes: backdrop-filter is
+   expensive in Android WebView. Use opaque token surfaces instead.) */
 
 /* Shimmer loading */
 @keyframes shimmer {
@@ -293,10 +337,12 @@ p { line-height: 1.7; }
   box-shadow: var(--shadow-green);
 }
 
-.btn-primary:hover {
-  background: var(--brand-600);
-  box-shadow: var(--shadow-green-lg);
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .btn-primary:hover {
+    background: var(--brand-600);
+    box-shadow: var(--shadow-green-lg);
+    transform: translateY(-1px);
+  }
 }
 
 .btn-primary:active {
@@ -312,9 +358,11 @@ p { line-height: 1.7; }
   box-shadow: var(--shadow-xs);
 }
 
-.btn-secondary:hover {
-  background: var(--neutral-200);
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .btn-secondary:hover {
+    background: var(--neutral-200);
+    transform: translateY(-1px);
+  }
 }
 
 .btn-outline {
@@ -324,9 +372,11 @@ p { line-height: 1.7; }
   border: 1.5px solid var(--brand-500);
 }
 
-.btn-outline:hover {
-  background: var(--brand-50);
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .btn-outline:hover {
+    background: var(--brand-50);
+    transform: translateY(-1px);
+  }
 }
 
 .btn-ghost {
@@ -335,8 +385,10 @@ p { line-height: 1.7; }
   padding: 10px 16px;
 }
 
-.btn-ghost:hover {
-  background: var(--neutral-100);
+@media (hover: hover) {
+  .btn-ghost:hover {
+    background: var(--neutral-100);
+  }
 }
 
 .btn-full { width: 100%; }
@@ -369,11 +421,17 @@ p { line-height: 1.7; }
   -webkit-tap-highlight-color: transparent;
 }
 
-.btn-line:hover,
 .btn-line:focus-visible {
   background: var(--brand-600);
   box-shadow: var(--shadow-green-lg);
-  transform: translateY(-2px);
+}
+
+@media (hover: hover) {
+  .btn-line:hover {
+    background: var(--brand-600);
+    box-shadow: var(--shadow-green-lg);
+    transform: translateY(-2px);
+  }
 }
 
 .btn-line:active {
@@ -454,19 +512,20 @@ p { line-height: 1.7; }
 
 /* ─── Page Shells ─────────────────────────────────────────────────────────── */
 .page-shell {
-  min-height: 100dvh;
+  min-height: calc(100vh - var(--tabbar-space, 0px));
+  min-height: calc(100dvh - var(--tabbar-space, 0px));
   display: flex;
   flex-direction: column;
 }
 
-/* Fixed header */
+/* Legacy sticky header (prefer the <AppBar> primitive). Opaque, no blur. */
 .top-bar {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: var(--z-appbar);
   padding: 0 16px;
   padding-top: var(--safe-top);
-  height: calc(56px + var(--safe-top));
+  height: calc(var(--appbar-h) + var(--safe-top));
   display: flex;
   align-items: center;
   gap: 12px;
@@ -474,12 +533,11 @@ p { line-height: 1.7; }
   border-bottom: 1px solid var(--neutral-200);
 }
 
-/* Page content area with floating bottom nav padding.
-   BottomNav already adds safe-area-inset-bottom to its own height,
-   so we only need the nav's base height (~60px) + a small gap here. */
+/* Page content area. No bottom padding here: on tab roots the <TabBar>
+   reserves its own space with an in-flow spacer (incl. the safe area), and
+   pushed screens without a tab bar get no dead space. */
 .page-content {
   flex: 1;
-  padding-bottom: 68px;
 }
 
 /* ─── Form Elements ───────────────────────────────────────────────────────── */
@@ -489,7 +547,7 @@ p { line-height: 1.7; }
   border: 1.5px solid var(--neutral-200);
   border-radius: var(--radius-lg);
   font-family: inherit;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   color: var(--neutral-900);
   background: var(--surface-card);
   transition: border-color var(--duration-fast) var(--ease-smooth),
@@ -652,11 +710,12 @@ p { line-height: 1.7; }
   100% { opacity: 1; transform: scale(1); }
 }
 
-.animate-slide-up { animation: slide-up var(--duration-slow) var(--ease-smooth) forwards; }
-.animate-fade-in  { animation: fade-in var(--duration-normal) var(--ease-smooth) forwards; }
-.animate-scale-in { animation: scale-in var(--duration-normal) var(--ease-spring) forwards; }
+/* fill-mode "both" keeps staggered items hidden during their delay (no flash). */
+.animate-slide-up { animation: slide-up var(--duration-slow) var(--ease-smooth) both; }
+.animate-fade-in  { animation: fade-in var(--duration-normal) var(--ease-smooth) both; }
+.animate-scale-in { animation: scale-in var(--duration-normal) var(--ease-spring) both; }
 .animate-spin     { animation: spin 1s linear infinite; }
-.animate-bounce-in{ animation: bounce-in var(--duration-slow) var(--ease-spring) forwards; }
+.animate-bounce-in{ animation: bounce-in var(--duration-slow) var(--ease-spring) both; }
 
 /* Stagger children */
 .stagger > *:nth-child(1) { animation-delay: 0ms; }
@@ -681,10 +740,10 @@ p { line-height: 1.7; }
   background-clip: text;
 }
 
-/* Shine sweep effect */
+/* Shine sweep effect — compositor-only (transform), runs twice then rests. */
 @keyframes shine {
-  0% { left: -100%; }
-  100% { left: 200%; }
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(200%); }
 }
 .shine-effect {
   position: relative;
@@ -694,11 +753,13 @@ p { line-height: 1.7; }
   content: '';
   position: absolute;
   top: 0;
-  left: -100%;
+  left: 0;
   width: 50%;
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  animation: shine 3s ease-in-out infinite;
+  transform: translateX(-100%);
+  animation: shine 2.4s ease-in-out 0.6s 2 both;
+  will-change: transform;
   pointer-events: none;
 }
 
@@ -708,9 +769,11 @@ p { line-height: 1.7; }
   border-radius: var(--radius-xl);
   border: 1px solid var(--surface-border);
   box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
-.glass-card:active {
+/* Press feedback only for cards that are (or sit inside) something tappable. */
+.glass-card:is(a, button, [role="button"], .clickable-effect):active,
+:where(a, button, [role="button"]) .glass-card:active {
   transform: scale(0.985);
 }
 
@@ -766,10 +829,8 @@ p { line-height: 1.7; }
 ::-webkit-scrollbar-thumb { background: var(--neutral-300); border-radius: 4px; }
 
 /* ─── Focus ring ──────────────────────────────────────────────────────────── */
-:focus-visible {
-  outline: 2px solid var(--brand-500);
-  outline-offset: 2px;
-}
+/* Defined in @layer base (below) so utilities such as outline-offset-[-2px]
+   or outline-none can adjust it per component. */
 
 /* ─── Selection ──────────────────────────────────────────────────────────── */
 ::selection {
@@ -799,8 +860,68 @@ p { line-height: 1.7; }
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
+  --font-heading: var(--font-system);
+  --font-sans: var(--font-system);
+
+  /* Mobile design-system colors → bg-brand-500, text-brand-fg, bg-surface,
+     border-hairline, text-fg-muted, bg-success-bg, bg-tile-amber … */
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-brand-fg: var(--brand-fg);
+  --color-brand-vivid: var(--brand-vivid);
+  --color-brand-solid: var(--brand-solid);
+  --color-brand-solid-pressed: var(--brand-solid-pressed);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-soft-border: var(--brand-soft-border);
+  --color-line-green: var(--line-green);
+  --color-success-fg: var(--success-fg);
+  --color-success-bg: var(--success-bg);
+  --color-success-border: var(--success-border);
+  --color-warning-fg: var(--warning-fg);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-border: var(--warning-border);
+  --color-warning-solid: var(--warning-solid);
+  --color-on-warning: var(--on-warning);
+  --color-danger-fg: var(--danger-fg);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-border: var(--danger-border);
+  --color-danger-solid: var(--danger-solid);
+  --color-info-fg: var(--info-fg);
+  --color-info-bg: var(--info-bg);
+  --color-info-border: var(--info-border);
+  --color-app: var(--surface-bg);
+  --color-surface: var(--surface-card);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-hairline: var(--hairline);
+  --color-field-border: var(--field-border);
+  --color-fill-muted: var(--fill-muted);
+  --color-press: var(--press-tint);
+  --color-fg: var(--text-primary);
+  --color-fg-muted: var(--text-secondary);
+  --color-fg-subtle: var(--text-tertiary);
+  --color-tile-brand: var(--tile-brand);
+  --color-tile-amber: var(--tile-amber);
+  --color-tile-blue: var(--tile-blue);
+  --color-tile-purple: var(--tile-purple);
+  --color-tile-pink: var(--tile-pink);
+  --color-tile-red: var(--tile-red);
+  --color-tile-neutral: var(--tile-neutral);
+  --color-icon-brand: var(--icon-brand);
+  --color-icon-amber: var(--icon-amber);
+  --color-icon-blue: var(--icon-blue);
+  --color-icon-purple: var(--icon-purple);
+  --color-icon-pink: var(--icon-pink);
+  --color-icon-red: var(--icon-red);
+  --color-icon-neutral: var(--icon-neutral);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -841,7 +962,68 @@ p { line-height: 1.7; }
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Thai-friendly line heights for Tailwind's text-* sizes (stacked vowels and
+   tone marks need room; Tailwind's defaults are tuned for Latin). */
+@theme {
+  --text-xs--line-height: 1.5;
+  --text-sm--line-height: 1.5;
+  --text-base--line-height: 1.6;
+  --text-lg--line-height: 1.5;
+  --text-xl--line-height: 1.45;
+  --text-2xl--line-height: 1.35;
+  --text-3xl--line-height: 1.3;
+  --text-4xl--line-height: 1.25;
+}
+
 .dark {
+  color-scheme: dark;
+
+  /* Mobile design-system tokens (dark) */
+  --hairline: rgba(255, 255, 255, 0.1);
+  --field-border: #3a424c;
+  --fill-muted: rgba(148, 158, 172, 0.18);
+  --press-tint: rgba(255, 255, 255, 0.08);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.35);
+  --skeleton-base: #222932;
+  --skeleton-shine: rgba(255, 255, 255, 0.06);
+
+  --brand-fg: #4ade80;
+  --brand-vivid: #22c55e;
+  --brand-solid: #047d36;
+  --brand-solid-pressed: #05923f;
+  --brand-soft: #12301d;
+  --brand-soft-border: #1d4d2c;
+
+  --success-fg: #4ade80;
+  --success-bg: #0f2a19;
+  --success-border: #1d4d2c;
+  --warning-fg: #fbbf24;
+  --warning-bg: #2d1f02;
+  --warning-border: #5c3d06;
+  --warning-solid: #f59e0b;
+  --on-warning: #1f1300;
+  --danger-fg: #f87171;
+  --danger-bg: #2d0f0f;
+  --danger-border: #5c1d1d;
+  --danger-solid: #dc2626;
+  --info-fg: #60a5fa;
+  --info-bg: #0c1a2e;
+  --info-border: #1e3a5f;
+
+  --tile-amber: #2d1f02;
+  --tile-blue: #0c1a2e;
+  --tile-purple: #1a1030;
+  --tile-pink: #2d0f1f;
+  --tile-red: #2d0f0f;
+  --tile-neutral: #21262d;
+  --icon-brand: #4ade80;
+  --icon-amber: #fbbf24;
+  --icon-blue: #60a5fa;
+  --icon-purple: #a78bfa;
+  --icon-pink: #f472b6;
+  --icon-red: #f87171;
+  --icon-neutral: #b1bac4;
+
   /* Shadcn base tokens */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -935,19 +1117,52 @@ p { line-height: 1.7; }
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+    font-size: 16px;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    /* Keep focused/anchored content clear of a sticky app bar. */
+    scroll-padding-top: calc(var(--appbar-h) + var(--safe-top) + 8px);
+    transition: background-color 0.3s var(--ease-smooth), color 0.3s var(--ease-smooth);
+  }
+  body {
+    font-family: var(--font-system);
+    background-color: var(--surface-bg);
+    color: var(--text-primary);
+    /* Thai-friendly default; headings tighten below. */
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    overflow-x: clip;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  /* ─── Typography ─── (layered: text-* / font-* / leading-* utilities win) */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.3; /* room for Thai stacked vowels/tone marks */
+    letter-spacing: normal;
+  }
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.375rem; }
+  h3 { font-size: 1.125rem; }
+
+  /* Native-app touch behaviour: no grey tap flash, no double-tap zoom delay. */
+  a, button, [role="button"], summary, label, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand-500);
+    outline-offset: 2px;
   }
 }
-
-/* ─── Theme transition ───────────────────────────────────────────────────── */
-html {
-  transition: background-color 0.3s var(--ease-smooth), color 0.3s var(--ease-smooth);
-}
-body { background-color: var(--surface-bg); color: var(--text-primary); }
 
 /* ─── Component dark overrides ──────────────────────────────────────────── */
 .top-bar { background: var(--surface-card); border-bottom-color: var(--surface-border); }
@@ -957,9 +1172,11 @@ body { background-color: var(--surface-bg); color: var(--text-primary); }
 .section-action { color: var(--brand-500); }
 .input-field { background: var(--surface-card); border-color: var(--surface-border); color: var(--text-primary); }
 .input-field::placeholder { color: var(--text-tertiary); }
-.dark .glass { background: rgba(22, 27, 34, 0.92); border-color: rgba(255,255,255,0.08); }
 .skeleton { background: linear-gradient(90deg, var(--neutral-200) 25%, var(--neutral-100) 50%, var(--neutral-200) 75%); }
-.theme-toggle-btn:hover { background: var(--neutral-100) !important; transform: scale(1.05); }
+@media (hover: hover) {
+  .theme-toggle-btn:hover { background: var(--neutral-100) !important; }
+}
+.theme-toggle-btn:active { transform: scale(0.94); }
 
 /* Hide scrollbar for horizontally scrollable areas */
 .scrollbar-hide::-webkit-scrollbar {
@@ -968,6 +1185,242 @@ body { background-color: var(--surface-bg); color: var(--text-primary); }
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE DESIGN SYSTEM — shell + primitives (src/components/mobile/**)
+   Layered as components so Tailwind utilities passed via className win.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* `bg-gradient-brand`: LINE-green hero/header gradient (brand-600 → brand-700). */
+@utility bg-gradient-brand {
+  background-image: var(--gradient-brand);
+}
+
+/* `pressable`: native press feedback (scale ~0.97) without hover effects. */
+@utility pressable {
+  -webkit-tap-highlight-color: transparent;
+  transition-property: transform, background-color, box-shadow, opacity;
+  transition-duration: 130ms;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  &:active:not(:disabled, [aria-disabled="true"]) {
+    transform: scale(0.97);
+  }
+}
+
+@keyframes screen-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes skeleton-sweep {
+  to { transform: translateX(100%); }
+}
+
+@layer components {
+  /* Screen: page wrapper. Opacity-only enter — a transform on an ancestor
+     would turn it into the containing block of position:fixed children.
+     Fill mode is `backwards`, not `both`: an opacity animation that stays "in
+     effect" (forwards fill) keeps the element a stacking context (Web
+     Animations spec; Gecko/WebKit), which would trap in-page fixed overlays
+     (z-[150] sheets, modals) underneath the TabBar (z 50) for good. */
+  .screen {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - var(--tabbar-space, 0px));
+    min-height: calc(100dvh - var(--tabbar-space, 0px));
+    background: var(--surface-bg);
+    animation: screen-in 160ms ease-out backwards;
+  }
+
+  /* AppBar: sticky, opaque (no backdrop blur), hairline appears once scrolled. */
+  .appbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-appbar);
+    padding-top: var(--safe-top);
+    background-color: var(--surface-card);
+    color: var(--text-primary);
+    box-shadow: 0 1px 0 transparent;
+    transition: box-shadow 150ms ease, background-color 150ms ease;
+  }
+  .appbar[data-scrolled] {
+    box-shadow: var(--shadow-bar);
+  }
+  .appbar[data-variant="brand"] {
+    background-color: var(--brand-700);
+    color: #fff;
+  }
+  .appbar[data-variant="brand"][data-scrolled] {
+    box-shadow: 0 1px 0 rgb(0 0 0 / 0.14);
+  }
+  .appbar[data-variant="transparent"]:not([data-scrolled]) {
+    background-color: transparent;
+  }
+
+  /* TabBar: fixed, centred on the app column, opaque surface + top hairline.
+     The spacer is in-flow so page content never hides behind the bar. */
+  .tabbar-spacer {
+    flex-shrink: 0;
+    height: calc(var(--tabbar-h) + var(--safe-bottom));
+  }
+  .tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin-inline: auto;
+    max-width: var(--max-mobile);
+    z-index: var(--z-tabbar);
+    display: flex;
+    height: calc(var(--tabbar-h) + var(--safe-bottom));
+    padding-bottom: var(--safe-bottom);
+    background-color: var(--surface-card);
+    border-top: 1px solid var(--hairline);
+  }
+  /* With interactive-widget=resizes-content (Android) a fixed bar rides up on
+     top of the on-screen keyboard and eats the little space left; iOS shows it
+     floating mid-screen while scrolling with the keyboard up. Like native
+     apps, hide the bar while a text field in the page has focus (the in-flow
+     spacer stays, so nothing shifts). Touch devices only. */
+  @media (pointer: coarse) {
+    .liff-root:has(:is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"], [type="reset"], [type="file"], [type="color"], [type="image"]), textarea, [contenteditable="true"], [contenteditable=""]):focus) > .tabbar {
+      display: none;
+    }
+  }
+
+  /* ListRow: inset hairline between adjacent rows (rows must be siblings). */
+  .list-row {
+    position: relative;
+  }
+  .list-row + .list-row::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: var(--row-divider-inset, 16px);
+    height: 1px;
+    background: var(--hairline);
+    pointer-events: none;
+  }
+  .list-row[data-leading] {
+    --row-divider-inset: 68px;
+  }
+
+  /* Skeleton: token colours + compositor-only shimmer (static when reduced motion). */
+  .skeleton-block {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--skeleton-base);
+  }
+  .skeleton-block::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, var(--skeleton-shine), transparent);
+    transform: translateX(-100%);
+    animation: skeleton-sweep 1.4s ease-in-out infinite;
+  }
+
+  /* BottomSheet (Base UI Drawer parts) */
+  .sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-sheet);
+    background: rgb(15 23 42 / 0.45);
+    opacity: calc(1 - var(--drawer-swipe-progress, 0));
+    transition: opacity 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .dark .sheet-backdrop {
+    background: rgb(0 0 0 / 0.6);
+  }
+  .sheet-backdrop[data-starting-style],
+  .sheet-backdrop[data-ending-style] {
+    opacity: 0;
+  }
+  .sheet-backdrop[data-swiping] {
+    transition-duration: 0ms;
+  }
+  .sheet-viewport {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-sheet);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .sheet-popup {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: var(--max-mobile);
+    max-height: 90vh;
+    max-height: 90dvh;
+    background-color: var(--surface-card);
+    color: var(--text-primary);
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -8px 32px rgb(15 23 42 / 0.16);
+    outline: none;
+    transform: translateY(var(--drawer-swipe-movement-y, 0px));
+    transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform;
+  }
+  .sheet-popup[data-starting-style],
+  .sheet-popup[data-ending-style] {
+    transform: translateY(100%);
+  }
+  .sheet-popup[data-ending-style] {
+    transition-duration: calc(var(--drawer-swipe-strength, 1) * 320ms);
+  }
+  .sheet-popup[data-swiping] {
+    transition-duration: 0ms;
+    user-select: none;
+  }
+  .sheet-handle {
+    flex-shrink: 0;
+    width: 40px;
+    height: 5px;
+    margin: 8px auto 4px;
+    border-radius: 9999px;
+    background: var(--neutral-300);
+  }
+  .sheet-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4px 20px 20px;
+  }
+  .sheet-popup:not([data-has-footer]) .sheet-body {
+    padding-bottom: calc(20px + var(--safe-bottom));
+  }
+  .sheet-footer {
+    flex-shrink: 0;
+    padding: 12px 20px calc(12px + var(--safe-bottom));
+    border-top: 1px solid var(--hairline);
+    background-color: var(--surface-card);
+  }
+}
+
+/* ─── Reduced motion ──────────────────────────────────────────────────────── */
+/* Global opt-out of non-essential motion. A subtree can keep its motion (e.g. a
+   game stage whose animations carry meaning) with data-motion="full". Canvas
+   (Konva) drawing is JS-driven and unaffected either way. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *:not(:where([data-motion="full"], [data-motion="full"] *)),
+  *:not(:where([data-motion="full"], [data-motion="full"] *))::before,
+  *:not(:where([data-motion="full"], [data-motion="full"] *))::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ─── Tablet layout (≥640px) ────────────────────────────────────────────── */

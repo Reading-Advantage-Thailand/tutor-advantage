@@ -1,60 +1,79 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Users } from "lucide-react";
+import { Notice, Screen } from "@/components/mobile";
 import { useLiff } from "@/components/providers/LiffProvider";
+import { BrandMark } from "@/components/icons/BrandMark";
 import { LineIcon } from "@/components/icons/LineIcon";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { Shield, Users } from "lucide-react";
 import { t } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 import { waitForSession } from "@/lib/cookieUtils";
+import { BrandSplash, ENTRY_HERO_BG } from "../../_components/BrandSplash";
+import { LiffErrorScreen } from "../../_components/LiffErrorScreen";
+import { SESSION_ERROR_DETAIL, getLiffErrorKind, safeIsLoggedIn } from "../../_components/liffErrors";
+import { useLiffRecovery } from "../../_components/useLiffRecovery";
+import { getSafeRedirect } from "./_components/loginRedirect";
+
+/** Inline legal link with a ~44px tall hit area inside the sentence. */
+const legalLinkClass =
+  "-my-3 inline-block rounded-md py-3 font-semibold text-brand-fg underline decoration-brand-fg/40 underline-offset-4 active:bg-press";
 
 export default function LoginPage() {
-  const { liff, isReady, error } = useLiff();
+  const { liff, isReady, error, errorCode } = useLiff();
   const router = useRouter();
   const [sessionError, setSessionError] = useState<string | null>(null);
+  const [retrying, setRetrying] = useState(false);
 
-  const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
-  const rawRedirect = searchParams?.get("redirect") || "/dashboard";
-  // Prevent open redirect — only allow relative paths starting with /
-  const redirectPath = rawRedirect.startsWith("/") && !rawRedirect.startsWith("//") ? rawRedirect : "/dashboard";
+  // Only same-origin paths (no open redirect); defaults to /dashboard.
+  const redirectPath = getSafeRedirect(typeof window !== "undefined" ? window.location.search : null);
+  const recover = useLiffRecovery(redirectPath);
+  const isLoggedIn = isReady && safeIsLoggedIn(liff);
 
+  // Logged in to LINE: wait until the student-session cookie is confirmed, then go on.
   useEffect(() => {
-    if (isReady && liff?.isLoggedIn() && !error) {
+    if (isReady && !error && safeIsLoggedIn(liff)) {
       let cancelled = false;
       void waitForSession(20, 250).then((hasSession) => {
         if (cancelled) return;
         if (hasSession) router.replace(redirectPath);
-        else setSessionError(t("app.sessionCreationFailed"));
+        else setSessionError(SESSION_ERROR_DETAIL);
       });
 
-      return () => { cancelled = true; };
+      return () => {
+        cancelled = true;
+      };
     }
   }, [isReady, liff, error, router, redirectPath]);
 
-  if (!isReady || (isReady && liff?.isLoggedIn() && !error && !sessionError)) {
+  if (error || sessionError) {
+    const kind = getLiffErrorKind(errorCode, sessionError);
     return (
-      <main className="page-shell" style={{ minHeight: "100dvh", background: "linear-gradient(160deg, #06c755 0%, #047d36 40%, #0f172a 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        <div className="animate-pulse" style={{ color: "#fff", fontWeight: 600, fontSize: "1.125rem" }}>
-          {t("app.preparingLogin")}
-        </div>
-      </main>
+      <LiffErrorScreen
+        kind={kind}
+        details={error ?? sessionError}
+        retrying={retrying}
+        onRetry={() => {
+          setRetrying(true);
+          recover(kind);
+        }}
+      />
     );
   }
 
-  const handleLogin = () => {
-    if (liff?.isLoggedIn() && (error || sessionError)) {
-      liff.logout();
-      window.location.reload();
-      return;
-    }
+  // Starting up, or logged in and waiting for the session → splash (never an endless spinner:
+  // waitForSession gives up after ~5s and the error screen above takes over).
+  if (!isReady || isLoggedIn) {
+    return <BrandSplash label={t("app.preparingLogin")} />;
+  }
 
-    if (liff && !liff.isLoggedIn()) {
+  const handleLogin = () => {
+    if (liff && !safeIsLoggedIn(liff)) {
       try {
-        // Construct proper redirect destination
-        const target = redirectPath.startsWith("/") ? redirectPath : "/" + redirectPath;
-        liff.login({ redirectUri: window.location.origin + target });
+        liff.login({ redirectUri: window.location.origin + redirectPath });
       } catch (err) {
         console.error("LoginPage: liff.login() failed:", err);
       }
@@ -62,94 +81,63 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="page-shell" style={{ minHeight: "100dvh", background: "linear-gradient(160deg, #06c755 0%, #049a42 35%, #037d36 55%, #0f172a 100%)", display: "flex", flexDirection: "column" }}>
-      <style>{`#liff-mock-root { z-index: 999999 !important; position: relative; }`}</style>
-
-      {/* Decorative */}
-      <div aria-hidden style={{ position: "fixed", top: -100, right: -80, width: 320, height: 320, borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
-      <div aria-hidden style={{ position: "fixed", bottom: 60, left: -80, width: 240, height: 240, borderRadius: "50%", background: "rgba(255,255,255,0.03)", pointerEvents: "none" }} />
-
-      {/* Theme toggle */}
-      <div style={{ position: "absolute", top: 16, right: 16, zIndex: 10, background: "rgba(255,255,255,0.1)", borderRadius: 14, border: "1px solid rgba(255,255,255,0.15)" }}>
-        <ThemeToggle size={16} />
+    <Screen className={cn(ENTRY_HERO_BG, "text-white")}>
+      {/* Brand */}
+      <div className="flex flex-1 flex-col items-center justify-center px-6 pt-[calc(var(--safe-top)+40px)] pb-10 text-center">
+        <BrandMark size="xl" tone="onBrand" />
+        <p className="mt-5 text-[28px] leading-[1.3] font-extrabold tracking-tight">{t("entry.brandName")}</p>
+        <p className="mt-1 text-[15px] leading-[1.6] font-medium text-white/90">{t("app.studentPortal")}</p>
       </div>
 
-      {/* Top branding */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "56px 24px 24px", textAlign: "center" }}>
-        <div className="animate-bounce-in" style={{ width: 96, height: 96, borderRadius: 28, background: "rgba(255,255,255,0.12)", border: "2px solid rgba(255,255,255,0.25)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 32, boxShadow: "0 8px 40px rgba(0,0,0,0.2), 0 0 80px rgba(6,199,85,0.15)", backdropFilter: "blur(12px)" }}>
-          <span style={{ fontSize: "2rem", fontWeight: 800, color: "#fff", letterSpacing: "-0.02em", fontFamily: "var(--font-latin)" }}>TA</span>
-        </div>
-
-        <div className="animate-slide-up">
-          <h1 style={{ color: "#fff", fontSize: "1.875rem", fontWeight: 800, marginBottom: 8, lineHeight: 1.2, letterSpacing: "-0.02em" }}>
-            Tutor Advantage
+      {/* Login sheet */}
+      <section
+        aria-labelledby="login-title"
+        className="rounded-t-[28px] bg-surface px-5 pt-7 pb-[calc(20px+var(--safe-bottom))] text-fg shadow-[0_-8px_30px_-12px_rgb(0_0_0/0.35)]"
+      >
+        <div className="mx-auto w-full max-w-md">
+          <h1 id="login-title" className="text-center text-xl leading-[1.4] font-extrabold">
+            {t("app.login")}
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.9375rem", lineHeight: 1.7 }}>
-            {t("app.studentPortal")}
-          </p>
-        </div>
-      </div>
+          <p className="mt-1 text-center text-sm leading-[1.6] text-fg-muted">{t("app.loginSubtitle")}</p>
 
-      {/* Login card */}
-      <div className="animate-slide-up" style={{ margin: "0 16px 32px", borderRadius: 24, padding: "28px 24px 24px", boxShadow: "0 20px 60px rgba(0,0,0,0.15)", background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
-        <h2 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 6, textAlign: "center" }}>
-          {t("app.login")}
-        </h2>
-        <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", textAlign: "center", marginBottom: 24, lineHeight: 1.6 }}>
-          {t("app.loginSubtitle")}
-        </p>
+          <Button
+            id="btn-line-login"
+            variant="line"
+            size="cta"
+            className="mt-6 w-full"
+            onClick={handleLogin}
+            disabled={!isReady}
+          >
+            <LineIcon variant="mono" size={26} />
+            {t("app.lineLogin")}
+          </Button>
 
-        {/* Error */}
-        {(error || sessionError) && (
-          <div style={{ color: "#ef4444", fontSize: "0.75rem", textAlign: "center", marginBottom: 12, padding: "10px 14px", background: "var(--accent-red-light)", borderRadius: 14, border: "1px solid #fee2e2" }}>
-            {error || sessionError}
-          </div>
-        )}
-
-        {/* LINE Login button */}
-        <Button
-          onClick={handleLogin}
-          id="btn-line-login"
-          className="w-full h-14 rounded-2xl text-base font-bold bg-[#06c755] hover:bg-[#047d36] text-white shadow-[0_4px_16px_rgba(6,199,85,0.3)] mb-4 shine-effect"
-          aria-label={t("app.lineLogin")}
-          disabled={!isReady}
-        >
-          <LineIcon size={22} />
-          {error || sessionError ? t("app.retryLogin") : isReady ? t("app.lineLogin") : t("app.loading")}
-        </Button>
-
-        {/* PDPA notice */}
-        <div style={{ background: "var(--neutral-50)", borderRadius: 14, padding: "12px 14px", border: "1px solid var(--surface-border)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-            <Shield size={14} style={{ color: "var(--text-tertiary)", flexShrink: 0 }} />
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{t("app.privacyPolicy")}</span>
-          </div>
-          <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.7 }}>
+          <p className="mt-4 text-center text-[13px] leading-[1.7] text-fg-muted">
             {t("app.loginConsentPrefix")}{" "}
-            <a href="/terms" style={{ color: "var(--brand-600)", fontWeight: 600, textDecoration: "none" }}>{t("app.terms")}</a>{" "}
+            <Link href="/terms" className={legalLinkClass}>
+              {t("app.terms")}
+            </Link>{" "}
             {t("app.and")}{" "}
-            <a href="/privacy" style={{ color: "var(--brand-600)", fontWeight: 600, textDecoration: "none" }}>{t("app.privacyPolicy")}</a>
+            <Link href="/privacy" className={legalLinkClass}>
+              {t("app.privacyPolicy")}
+            </Link>
+          </p>
+
+          <Notice
+            tone="warning"
+            icon={Users}
+            title={t("app.underagePrefix")}
+            description={t("app.underageNotice")}
+            className="mt-5"
+          />
+
+          <p className="mt-6 text-center text-xs leading-[1.6] text-fg-muted">
+            {t("entry.copyright")}
+            <br />
+            {t("app.securePaymentLine")}
           </p>
         </div>
-
-        {/* Guardian note */}
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginTop: 14, padding: "12px 14px", background: "var(--accent-amber-light)", borderRadius: 14, border: "1px solid #fde68a" }}>
-          <Users size={16} style={{ color: "#92400e", flexShrink: 0, marginTop: 1 }} />
-          <p style={{ fontSize: "0.75rem", color: "#92400e", lineHeight: 1.65 }}>
-            <strong>{t("app.underagePrefix")}</strong>{" "}
-            {t("app.underageNotice")}
-          </p>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div style={{ textAlign: "center", padding: "0 24px 36px" }}>
-        <p style={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>
-          2026 Tutor Advantage Thailand
-          <br />
-          {t("app.securePaymentLine")}
-        </p>
-      </div>
-    </main>
+      </section>
+    </Screen>
   );
 }

@@ -1,18 +1,43 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
-import Image from "next/image";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Users, CheckCircle2, Loader2, AlertCircle, Play, ShieldCheck, Bell } from "lucide-react";
+import { Bell, Check, DoorOpen, Hourglass, Lock, Play, Radio, SearchX, WifiOff } from "lucide-react";
+import { toast } from "sonner";
 import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { useLessonSocket } from "@/hooks/useLessonSocket";
-import { Button } from "@/components/ui/button";
-import { t } from "@/lib/i18n";
-import { playSound } from "@/lib/sounds";
 import { useLiveAssessment } from "@/hooks/useLiveAssessment";
 import LiveAssessmentStudent from "@/components/LiveAssessmentStudent";
+import { preloadArcadeRuntime } from "@/components/lesson/gameRegistry";
+import { getLessonConnectionState, getLessonErrorKind } from "@/components/lesson/lessonConnection";
+import { PaymentRequiredScreen } from "@/components/lesson/PaymentRequiredScreen";
+import {
+  AppBar,
+  BottomActionBar,
+  Chip,
+  ErrorState,
+  IconTile,
+  Notice,
+  Screen,
+  Spinner,
+  StatusScreen,
+  Surface,
+  UserAvatar,
+} from "@/components/mobile";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { t } from "@/lib/i18n";
+import { playSound } from "@/lib/sounds";
+import { cn } from "@/lib/utils";
+import { buildPlayUrl } from "@/components/lesson/lessonRoutes";
+import { LobbySkeleton } from "./_components/LobbySkeleton";
+import {
+  getLobbyActivity,
+  getLobbyActivityMode,
+  shouldShowLiveAssessment,
+  sortParticipantsMeFirst,
+} from "./_components/lobbyModel";
 
 interface PageProps {
   params: Promise<{ classId: string }>;
@@ -27,18 +52,40 @@ interface ClassInfo {
   enrollmentStatus?: string | null;
 }
 
+type ClassLoadError = "notFound" | "offline" | "error";
+
+/** Clear the optimistic "sending ready" spinner if the server never answers. */
+const READY_PENDING_TIMEOUT_MS = 4000;
+
+function classifyLoadError(err: unknown): ClassLoadError {
+  const status = (err as { status?: unknown } | null)?.status;
+  if (status === 404 || status === 403) return "notFound";
+  if (typeof status === "number") return "error";
+  return "offline";
+}
+
 export default function LessonLobbyPage({ params }: PageProps) {
   const { classId } = use(params);
+  // "Connect again" remounts the lobby, which reopens the socket (and refetches the class).
+  const [attempt, setAttempt] = useState(0);
+  return <LessonLobby key={attempt} classId={classId} onReconnect={() => setAttempt((value) => value + 1)} />;
+}
+
+function LessonLobby({ classId, onReconnect }: { classId: string; onReconnect: () => void }) {
   const router = useRouter();
-  const { profile, isReady: liffReady } = useLiff();
-  
+  const { profile, isReady: liffReady, error: liffError, errorCode: liffErrorCode, retry: retryLiff } = useLiff();
+
   const [classInfo, setClassInfo] = useState<ClassInfo | null>(null);
   const [fetchingClass, setFetchingClass] = useState(true);
   const [accessDenied, setAccessDenied] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<ClassLoadError | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [readyPending, setReadyPending] = useState(false);
 
   const studentId = profile?.userId || "";
   const studentName = profile?.displayName || "Student";
   const pictureUrl = profile?.pictureUrl;
+  const classHref = `/classes/${classId}`;
 
   // Use socket for lobby
   const {
@@ -52,6 +99,9 @@ export default function LessonLobbyPage({ params }: PageProps) {
     kicked
   } = useLessonSocket(classInfo?.isEnrolled ? classId : undefined, studentId, studentName, pictureUrl);
   const assessment = useLiveAssessment(socket, sessionData?.sessionId, sessionData?.currentPhase);
+
+  const myParticipant = participants.find(p => p.studentId === studentId);
+  const isReady = myParticipant?.isReady || false;
 
   useEffect(() => {
     if (liffReady && classId) {
@@ -67,363 +117,309 @@ export default function LessonLobbyPage({ params }: PageProps) {
           setFetchingClass(false);
         })
         .catch(err => {
-          console.error("Failed to fetch class info:", err);
+          console.warn("Failed to fetch class info:", err);
+          setLoadError(classifyLoadError(err));
           setFetchingClass(false);
         });
     }
-  }, [liffReady, classId]);
+  }, [liffReady, classId, reloadKey]);
 
-  // Handle auto-redirect when phase changes (Lesson Starts)
+  // Handle auto-redirect when phase changes (Lesson Starts). replace, not push:
+  // otherwise Android back from the lesson lands here and bounces straight back.
   useEffect(() => {
     if (sessionData && sessionData.currentPhase > 0) {
-      router.push(`/interactive/play?classId=${classId}&studentName=${studentName}`);
+      router.replace(buildPlayUrl(classId));
     }
-  }, [sessionData, router, classId, studentName]);
+  }, [sessionData, router, classId]);
 
-  // Play sound when nudge arrives
+  // Warm the live-lesson route and the arcade runtime while students wait.
+  const enrolled = Boolean(classInfo?.isEnrolled);
+  useEffect(() => {
+    if (!enrolled) return;
+    router.prefetch("/interactive/play");
+    const timer = window.setTimeout(() => void preloadArcadeRuntime(), 1500);
+    return () => window.clearTimeout(timer);
+  }, [enrolled, router]);
+
+  // Teacher nudge: sound (as before) + a toast instead of a fixed banner.
   useEffect(() => {
     if (nudgeMessage) {
       playSound('nudged');
+      toast(t("lessonLobby.nudgeTitle"), {
+        description: nudgeMessage,
+        icon: <Bell aria-hidden="true" className="size-4" />,
+        duration: 5000,
+      });
     }
   }, [nudgeMessage]);
 
-  if (!liffReady || fetchingClass) {
+  // The ready state only changes when the server broadcasts participants;
+  // show a spinner until then (and block double taps).
+  useEffect(() => {
+    setReadyPending(false);
+  }, [isReady]);
+  useEffect(() => {
+    if (!readyPending) return;
+    const timer = window.setTimeout(() => setReadyPending(false), READY_PENDING_TIMEOUT_MS);
+    return () => window.clearTimeout(timer);
+  }, [readyPending]);
+
+  if (!liffReady) {
+    return <LobbySkeleton fallbackHref={classHref} />;
+  }
+
+  if (liffError || !profile) {
     return (
-      <div
-        style={{
-          minHeight: "100dvh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "var(--surface-bg)",
-          padding: "max(24px, var(--safe-top)) 24px max(24px, var(--safe-bottom))",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            maxWidth: 280,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 12,
-            padding: 24,
-            borderRadius: 20,
-            background: "var(--surface-card)",
-            border: "1px solid var(--surface-border)",
-            boxShadow: "var(--shadow-sm)",
-            textAlign: "center",
-          }}
-        >
-          <Loader2 className="animate-spin" size={36} style={{ color: "var(--brand-500)" }} />
-          <p style={{ color: "var(--text-primary)", fontSize: "0.875rem", fontWeight: 800 }}>{t("lessonLobby.preparingTitle")}</p>
-          <p style={{ color: "var(--text-tertiary)", fontSize: "0.75rem", lineHeight: 1.5 }}>{t("lessonLobby.preparingDescription")}</p>
-        </div>
-      </div>
+      <Screen>
+        <AppBar title={t("lessonLobby.lobbyTitle")} back fallbackHref={classHref} />
+        <ErrorState kind={liffErrorCode === "network" ? "offline" : "error"} onRetry={retryLiff} className="flex-1 justify-center" />
+      </Screen>
     );
   }
 
+  if (fetchingClass) {
+    return <LobbySkeleton fallbackHref={classHref} />;
+  }
+
+  const homeLink = (
+    <Link href="/dashboard" className={cn(buttonVariants({ variant: "brand", size: "cta" }), "w-full")}>
+      {t("lessonLobby.backHome")}
+    </Link>
+  );
+
   if (kicked) {
     return (
-      <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)", padding: 24, textAlign: "center" }}>
-        <div style={{ width: 80, height: 80, borderRadius: 30, background: "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
-           <AlertCircle size={40} style={{ color: "#ef4444" }} />
-        </div>
-        <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 12 }}>{kicked}</h2>
-        <p style={{ color: "var(--text-tertiary)", marginBottom: 32 }}>{t("lessonLobby.contactTutorIfMistake")}</p>
-        <Link href="/dashboard" className="btn btn-secondary btn-lg btn-full" style={{ textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center" }}>{t("lessonLobby.backHome")}</Link>
-      </div>
+      <Screen>
+        <AppBar title={t("lessonLobby.lobbyTitle")} back fallbackHref="/dashboard" />
+        <StatusScreen
+          icon={DoorOpen}
+          tone="red"
+          title={kicked}
+          description={t("lessonLobby.contactTutorIfMistake")}
+          primaryAction={homeLink}
+        />
+      </Screen>
     );
   }
 
   if (!classInfo) {
     return (
-      <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)", padding: 24, textAlign: "center" }}>
-        <AlertCircle size={48} style={{ color: "var(--accent-red)", marginBottom: 16 }} />
-        <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 8 }}>{t("lessonLobby.classNotFoundTitle")}</h2>
-        <p style={{ color: "var(--text-tertiary)", marginBottom: 24 }}>{t("lessonLobby.classNotFoundDescription")}</p>
-        <Link href="/dashboard" className="btn btn-primary" style={{ padding: "0 24px", height: 48, borderRadius: 12 }}>{t("lessonLobby.backHome")}</Link>
-      </div>
+      <Screen>
+        <AppBar title={t("lessonLobby.lobbyTitle")} back fallbackHref={classHref} />
+        {loadError === "notFound" ? (
+          <StatusScreen
+            icon={SearchX}
+            tone="neutral"
+            title={t("lessonLobby.classNotFoundTitle")}
+            description={t("lessonLobby.classNotFoundDescription")}
+            primaryAction={homeLink}
+          />
+        ) : (
+          <ErrorState
+            kind={loadError === "offline" ? "offline" : "error"}
+            title={loadError === "offline" ? undefined : t("lessonLobby.loadErrorTitle")}
+            description={loadError === "offline" ? undefined : t("lessonLobby.loadErrorDescription")}
+            onRetry={() => {
+              setLoadError(null);
+              setFetchingClass(true);
+              setReloadKey((value) => value + 1);
+            }}
+            className="flex-1 justify-center"
+          />
+        )}
+      </Screen>
     );
   }
 
   if (accessDenied) {
     return (
-      <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)", padding: 24, textAlign: "center" }}>
-        <AlertCircle size={48} style={{ color: "var(--accent-red)", marginBottom: 16 }} />
-        <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 8 }}>{accessDenied}</h2>
-        <p style={{ color: "var(--text-tertiary)", marginBottom: 24 }}>{t("lessonLobby.enrollmentInactive")}</p>
-        <Link href={`/payment?classId=${classId}`} className="btn btn-primary" style={{ padding: "0 24px", height: 48, borderRadius: 12 }}>{t("lessonLobby.goPayment")}</Link>
-      </div>
+      <Screen>
+        <AppBar title={t("lessonLobby.lobbyTitle")} back fallbackHref={classHref} />
+        <StatusScreen
+          icon={Lock}
+          tone="amber"
+          title={accessDenied}
+          description={t("lessonLobby.enrollmentInactive")}
+          primaryAction={
+            <Link href={`/payment?classId=${classId}`} className={cn(buttonVariants({ variant: "brand", size: "cta" }), "w-full")}>
+              {t("lessonLobby.goPayment")}
+            </Link>
+          }
+        />
+      </Screen>
     );
   }
 
   if (paymentRequired) {
-    const bookLabel = [paymentRequired.bookCode, paymentRequired.bookTitle].filter(Boolean).join(": ") || "เล่มนี้";
-    const paymentAmountText =
-      paymentRequired.packagePriceSatang != null
-        ? new Intl.NumberFormat("th-TH", {
-            style: "currency",
-            currency: "THB",
-            maximumFractionDigits: 0,
-          }).format(paymentRequired.packagePriceSatang / 100)
-        : null;
-    const paymentUrl =
-      paymentRequired.paymentUrl ||
-      `/payment?classId=${classId}${paymentRequired.cycleId ? `&cycleId=${paymentRequired.cycleId}` : ""}`;
-
-    return (
-      <div style={{ minHeight: "100dvh", background: "var(--surface-bg)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)" }} aria-hidden="true" />
-        <div
-          role="dialog"
-          aria-modal="true"
-          style={{
-            position: "relative",
-            zIndex: 1,
-            width: "100%",
-            maxWidth: 380,
-            borderRadius: 24,
-            background: "var(--surface-card)",
-            border: "1px solid rgba(245,158,11,0.35)",
-            boxShadow: "0 24px 60px rgba(15,23,42,0.25)",
-            padding: 24,
-            textAlign: "center",
-          }}
-        >
-          <div style={{ width: 56, height: 56, margin: "0 auto 16px", borderRadius: 18, background: "rgba(245,158,11,0.14)", color: "#d97706", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30, fontWeight: 900 }}>
-            ฿
-          </div>
-          <p style={{ color: "#d97706", fontSize: 11, fontWeight: 900, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8 }}>Payment required</p>
-          <h2 style={{ color: "var(--text-primary)", fontSize: 22, fontWeight: 900, marginBottom: 10 }}>ต้องชำระเงินก่อนเข้าเล่มนี้</h2>
-          <p style={{ color: "var(--text-tertiary)", fontSize: 14, fontWeight: 600, lineHeight: 1.6, marginBottom: 16 }}>
-            คุณครูเปิดสอน {bookLabel} แล้ว แต่บัญชีของคุณยังไม่มีสิทธิ์เข้าเล่มนี้
-          </p>
-          {paymentAmountText && (
-            <div style={{ border: "1px solid var(--surface-border)", background: "var(--surface-muted)", borderRadius: 18, padding: "12px 16px", marginBottom: 16 }}>
-              <p style={{ color: "var(--text-tertiary)", fontSize: 11, fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase" }}>ยอดชำระ</p>
-              <p style={{ color: "var(--text-primary)", fontSize: 26, fontWeight: 900, marginTop: 4 }}>{paymentAmountText}</p>
-            </div>
-          )}
-          <div style={{ display: "grid", gap: 10 }}>
-            <button type="button" onClick={() => router.push(paymentUrl)} className="btn btn-primary btn-lg btn-full">
-              ไปชำระเงิน
-            </button>
-            <button type="button" onClick={() => router.push(`/classes/${classId}`)} className="btn btn-secondary btn-lg btn-full">
-              กลับไปดูเล่มที่เรียนได้
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    return <PaymentRequiredScreen data={paymentRequired} classId={classId} title={t("lessonLobby.lobbyTitle")} />;
   }
 
-  const myParticipant = participants.find(p => p.studentId === studentId);
-  if (assessment.state?.supported && assessment.state.mode !== "LESSON" && assessment.state.status !== "LOBBY" && sessionData?.currentPhase === 0) {
+  if (assessment.state && shouldShowLiveAssessment(assessment.state, sessionData?.currentPhase)) {
     return <main className="live-assessment-page">
       <LiveAssessmentStudent key={`${assessment.state.sessionId}-${assessment.state.mode}`} state={assessment.state} busy={assessment.busy} error={assessment.error} onAnswer={assessment.answer} lessonName={classInfo.name} tutorName={classInfo.tutor?.name} />
     </main>;
   }
-  const isReady = myParticipant?.isReady || false;
+
   const readyCount = participants.filter(p => p.isReady).length;
-  const selectedActivity = assessment.state?.supported ? assessment.state.mode : "LESSON";
-  const activityTitle = selectedActivity === "PRE"
-    ? "แบบประเมินก่อนเรียน"
-    : selectedActivity === "POST"
-      ? "แบบประเมินหลังเรียน"
-      : "เรียนตาม Lesson";
-  const activityDescription = selectedActivity === "LESSON"
-    ? "เมื่อทุกคนพร้อม คุณครูจะเริ่มบทเรียนพร้อมกัน"
-    : isReady
-      ? `คุณพร้อมแล้ว รอคุณครูเริ่ม${activityTitle}`
-      : `กดพร้อมก่อน แล้วรอคุณครูเริ่ม${activityTitle}`;
+  const selectedActivity = getLobbyActivityMode(assessment.state);
+  const activity = getLobbyActivity(selectedActivity, isReady);
+  const connection = getLessonConnectionState(error, Boolean(sessionData));
+  const errorKind = getLessonErrorKind(error);
+  const canToggleReady = Boolean(sessionData) && !error;
+
+  const handleReadyToggle = () => {
+    setReadyPending(true);
+    toggleReady();
+  };
 
   return (
-    <div className="page-shell" style={{ background: "var(--surface-bg)", minHeight: "100dvh" }}>
-      {/* Nudge Alert */}
-      {nudgeMessage && (
-        <div style={{
-          position: "fixed", top: 72, left: 16, right: 16, zIndex: 200,
-          background: "linear-gradient(135deg, #f97316 0%, #ef4444 100%)",
-          color: "#fff",
-          borderRadius: 20,
-          boxShadow: "0 8px 32px rgba(249,115,22,0.55), 0 2px 8px rgba(0,0,0,0.18)",
-          display: "flex", alignItems: "center", gap: 14,
-          padding: "14px 18px",
-          animation: "nudgePop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-          border: "2px solid rgba(255,255,255,0.25)",
-        }}>
-          {/* Bell icon with pulse ring */}
-          <div style={{ position: "relative", flexShrink: 0 }}>
-            <div style={{
-              position: "absolute", inset: -6,
-              borderRadius: "50%",
-              border: "2px solid rgba(255,255,255,0.4)",
-              animation: "nudgeRing 0.8s ease-out",
-            }} />
-            <div style={{
-              width: 40, height: 40, borderRadius: 12,
-              background: "rgba(255,255,255,0.22)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <Bell size={20} fill="white" color="white" />
-            </div>
-          </div>
-          {/* Message */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", opacity: 0.8, marginBottom: 2 }}>
-              แจ้งเตือนจากครู
-            </p>
-            <p style={{ fontSize: "0.9rem", fontWeight: 700, lineHeight: 1.3 }}>{nudgeMessage}</p>
-          </div>
-          {/* Emoji accent */}
-          <span style={{ fontSize: "1.6rem", flexShrink: 0 }}>👀</span>
-        </div>
-      )}
+    <Screen>
+      <AppBar title={t("lessonLobby.lobbyTitle")} back fallbackHref={classHref} />
 
-      {/* Header */}
-      <div className="top-bar" style={{ background: "var(--surface-card)" }}>
-        <Link href="/dashboard" style={{ background: "var(--neutral-100)", border: "none", borderRadius: 12, width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-secondary)", textDecoration: "none" }}>
-          <ChevronLeft size={18} />
-        </Link>
-        <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", flex: 1 }}>{t("lessonLobby.lobbyTitle")}</h1>
-      </div>
-
-      <div style={{ padding: "24px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
-        
-        {/* Class Banner */}
-        <div className="glass-card" style={{ padding: "20px", background: "linear-gradient(135deg, #06c755 0%, #037d36 100%)", border: "none", position: "relative", overflow: "hidden" }}>
-           <div style={{ position: "absolute", right: -20, top: -20, opacity: 0.1 }}>
-              <Play size={120} color="#fff" fill="#fff" />
-           </div>
-           <div style={{ position: "relative", zIndex: 1 }}>
-              <div style={{ background: "rgba(255,255,255,0.2)", padding: "4px 10px", borderRadius: 8, display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
-                <ShieldCheck size={14} color="#fff" />
-                <span style={{ color: "#fff", fontSize: "0.6875rem", fontWeight: 700, textTransform: "uppercase" }}>Live Lesson</span>
-              </div>
-              <h2 style={{ color: "#fff", fontSize: "1.25rem", fontWeight: 800, marginBottom: 4 }}>{classInfo.name}</h2>
-              <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.875rem" }}>{t("lessonLobby.tutorPrefix")} {classInfo.tutor?.name || t("lessonLobby.defaultTutor")}</p>
-           </div>
-        </div>
+      <div className="flex flex-col gap-5 px-4 pt-3 pb-6">
+        {/* Class hero */}
+        <section className="rounded-[var(--radius-card)] bg-gradient-brand p-5 text-white shadow-[var(--shadow-card)]">
+          <Chip tone="onBrand" icon={Radio}>{t("lessonLobby.liveBadge")}</Chip>
+          <h2 className="mt-3 text-xl leading-[1.4] font-extrabold text-white">{classInfo.name}</h2>
+          <p className="mt-1 text-sm leading-[1.5] text-white/85">
+            {t("lessonLobby.tutorPrefix")} {classInfo.tutor?.name || t("lessonLobby.defaultTutor")}
+          </p>
+        </section>
 
         {/* The selected activity stays visible while students ready up in the normal Lobby. */}
-        <div className="glass-card" aria-live="polite" style={{ padding: "16px 18px", border: "1px solid rgba(6,199,85,0.28)", background: "linear-gradient(135deg, rgba(6,199,85,0.10), rgba(59,130,246,0.06))", display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 14, background: "var(--brand-500)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Play size={20} fill="currentColor" />
+        <Surface tone="brand" className="flex items-center gap-3" aria-label={t("lessonLobby.activityEyebrow")}>
+          <IconTile icon={Play} tone="brand" size="lg" className="bg-surface" />
+          <div className="min-w-0 flex-1" aria-live="polite">
+            <p className="text-[13px] leading-[1.5] font-semibold text-brand-fg">{t("lessonLobby.activityEyebrow")}</p>
+            <h3 className="text-base leading-[1.45] font-bold text-fg">{activity.title}</h3>
+            <p className="mt-0.5 text-sm leading-[1.6] text-fg-muted">{activity.description}</p>
           </div>
-          <div style={{ minWidth: 0 }}>
-            <p style={{ color: "var(--brand-600)", fontSize: "0.6875rem", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 3 }}>กิจกรรมที่กำลังจะเริ่ม</p>
-            <h3 style={{ color: "var(--text-primary)", fontSize: "1rem", fontWeight: 800, marginBottom: 3 }}>{activityTitle}</h3>
-            <p style={{ color: "var(--text-tertiary)", fontSize: "0.8125rem", lineHeight: 1.5 }}>{activityDescription}</p>
+        </Surface>
+
+        {/* Classmates */}
+        <section aria-labelledby="lobby-classmates">
+          <div className="mb-3 flex min-h-11 items-center justify-between gap-3">
+            <h2 id="lobby-classmates" className="flex items-center gap-2 text-[17px] leading-[1.5] font-bold text-fg">
+              {t("lessonLobby.classmates")}
+              <span className="rounded-full bg-fill-muted px-2 py-0.5 text-xs leading-[1.4] font-semibold text-fg-muted tabular-nums">
+                {participants.length}
+              </span>
+            </h2>
+            <Chip tone="brand" size="md" icon={Check}>
+              {t("lessonLobby.readyPrefix")} {readyCount}/{participants.length}
+            </Chip>
           </div>
-        </div>
 
-        {/* Participants Count */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 8 }}>
-            <Users size={18} style={{ color: "var(--brand-500)" }} />
-            {t("lessonLobby.classmates")} ({participants.length})
-          </h3>
-          <span style={{ fontSize: "0.8125rem", color: "var(--brand-600)", fontWeight: 700 }}>
-             {t("lessonLobby.readyPrefix")} {readyCount}/{participants.length}
-          </span>
-        </div>
-
-        {/* Participant List */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
           {participants.length === 0 ? (
-             <div className="glass-card" style={{ gridColumn: "span 3", padding: "40px 20px", textAlign: "center", border: "2px dashed var(--neutral-200)", background: "transparent" }}>
-                <div style={{ fontSize: "2rem", marginBottom: 10 }}>👋</div>
-                <p style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>{t("lessonLobby.waitingClassmates")}</p>
-             </div>
+            <div className="rounded-[var(--radius-card)] border-2 border-dashed border-hairline px-5 py-8 text-center">
+              <p aria-hidden="true" className="text-[32px] leading-none">👋</p>
+              <p className="mt-3 text-sm leading-[1.6] text-fg-muted">{t("lessonLobby.waitingClassmates")}</p>
+            </div>
           ) : (
-            [...participants]
-              .sort((a, b) => a.studentId === studentId ? -1 : b.studentId === studentId ? 1 : 0)
-              .map((p) => {
+            <ul className="grid grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4">
+              {sortParticipantsMeFirst(participants, studentId).map((p) => {
                 const isMe = p.studentId === studentId;
                 return (
-                  <div key={p.studentId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-                    <div style={{ position: "relative" }}>
-                       <div style={{ 
-                         width: 72, height: 72, borderRadius: 24, position: "relative",
-                         background: isMe ? "var(--brand-50)" : "var(--neutral-100)", 
-                         display: "flex", alignItems: "center", justifyContent: "center",
-                         border: isMe ? "3px solid var(--brand-500)" : p.isReady ? "3px solid var(--brand-300)" : "3px solid transparent",
-                         boxShadow: isMe ? "0 0 15px rgba(6,199,85,0.2)" : "none",
-                         transition: "all 0.3s ease",
-                         overflow: "hidden"
-                       }}>
-                         <Image
-                           src={p.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.name}`} 
-                           alt={p.name} 
-                           fill
-                           sizes="72px"
-                           unoptimized
-                           style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                         />
-                       </div>
-                       {p.isReady && (
-                         <div style={{ position: "absolute", bottom: -2, right: -2, background: "var(--brand-500)", borderRadius: "50%", padding: 3, border: "2px solid var(--surface-bg)", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
-                           <CheckCircle2 size={16} color="#fff" />
-                         </div>
-                       )}
+                  <li key={p.studentId} className="flex min-w-0 flex-col items-center gap-1.5">
+                    <div className="relative">
+                      <UserAvatar
+                        src={p.pictureUrl}
+                        name={p.name}
+                        size="lg"
+                        decorative
+                        className={cn(
+                          "ring-3 ring-offset-2 ring-offset-app transition-shadow",
+                          isMe ? "ring-brand-vivid" : p.isReady ? "ring-brand-soft-border" : "ring-transparent",
+                        )}
+                      />
+                      {p.isReady ? (
+                        <span className="absolute -right-1 -bottom-1 flex size-6 items-center justify-center rounded-full bg-brand-solid text-white ring-2 ring-app">
+                          <Check aria-hidden="true" className="size-3.5" strokeWidth={3} />
+                        </span>
+                      ) : null}
                     </div>
-                    <div style={{ textAlign: "center", width: "100%" }}>
-                      <div style={{ 
-                        fontSize: "0.75rem", 
-                        fontWeight: 800, 
-                        color: isMe ? "var(--brand-600)" : p.isReady ? "var(--text-primary)" : "var(--text-secondary)",
-                        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"
-                      }}>
-                        {isMe ? t("lessonLobby.me") : p.name}
-                      </div>
-                      {isMe && <div style={{ fontSize: "0.625rem", color: "var(--brand-500)", fontWeight: 700, textTransform: "uppercase", marginTop: 2 }}>You</div>}
-                    </div>
-                  </div>
+                    <p className={cn("w-full truncate text-center text-[13px] leading-[1.5] font-semibold", isMe ? "text-brand-fg" : "text-fg")}>
+                      {isMe ? t("lessonLobby.me") : p.name}
+                      {p.isReady ? <span className="sr-only"> · {t("lessonLobby.readyPrefix")}</span> : null}
+                    </p>
+                  </li>
                 );
-              })
+              })}
+            </ul>
           )}
-        </div>
+        </section>
 
-        {/* Status Message */}
-        <div style={{ marginTop: 20 }}>
-           {error ? (
-              <div className="glass-card" style={{ padding: "12px 16px", background: "#fef2f2", border: "1px solid #fecaca", display: "flex", gap: 10, alignItems: "center" }}>
-                <AlertCircle size={18} style={{ color: "#ef4444" }} />
-                <p style={{ fontSize: "0.8125rem", color: "#991b1b" }}>{error}</p>
-              </div>
-           ) : !sessionData ? (
-              <div className="glass-card" style={{ padding: "16px", textAlign: "center", border: "1px solid var(--surface-border)" }}>
-                <Loader2 className="animate-spin" size={20} style={{ color: "var(--brand-500)", margin: "0 auto 8px" }} />
-                <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>{t("lessonLobby.connectingLesson")}</p>
-              </div>
-           ) : (
-              <div className="glass-card" style={{ padding: "16px", textAlign: "center", border: "1px solid var(--surface-border)" }}>
-                <p style={{ fontSize: "0.875rem", color: "var(--text-primary)", fontWeight: 500 }}>
-                  {selectedActivity === "LESSON"
-                    ? isReady ? t("lessonLobby.waitingTutor") : t("lessonLobby.readyInstruction")
-                    : activityDescription}
-                </p>
-              </div>
-           )}
-        </div>
-
-        {/* Action Button */}
-        <div style={{ position: "fixed", bottom: 24, left: 20, right: 20, zIndex: 10 }}>
-           <Button 
-             onClick={toggleReady} 
-             disabled={!sessionData || !!error}
-             className={isReady ? "btn-secondary btn-lg btn-full" : "btn-primary btn-lg btn-full shine-effect"}
-             style={{ 
-               height: 60, borderRadius: 20, fontSize: "1.125rem", fontWeight: 800,
-               boxShadow: isReady ? "none" : "0 10px 25px rgba(6,199,85,0.3)"
-             }}
-           >
-             {isReady ? t("lessonLobby.cancelReady") : t("lessonLobby.readyCta")}
-           </Button>
-        </div>
-
+        {/* Status */}
+        {connection === "fatal" && errorKind === "notStarted" ? (
+          // The usual state before the tutor starts: not a network failure.
+          <Notice
+            tone="info"
+            icon={Hourglass}
+            role="status"
+            title={t("lessonLobby.notStartedTitle")}
+            description={t("lessonLobby.notStartedDescription")}
+            action={
+              <Button variant="brand" size="touch" onClick={onReconnect}>
+                {t("lessonLobby.checkAgainCta")}
+              </Button>
+            }
+          />
+        ) : connection === "fatal" ? (
+          <Notice
+            tone="danger"
+            icon={WifiOff}
+            role="alert"
+            title={t("lessonLobby.connectFailedTitle")}
+            description={errorKind === "server" && error ? error : t("lessonLobby.connectFailedDescription")}
+            action={
+              <Button variant="brand" size="touch" onClick={onReconnect}>
+                {t("lessonLobby.reconnectCta")}
+              </Button>
+            }
+          />
+        ) : connection === "reconnecting" ? (
+          <div role="status" className="flex items-center gap-3 rounded-2xl border border-warning-border bg-warning-bg p-4">
+            <Spinner size="sm" className="text-warning-fg" />
+            <div className="min-w-0">
+              <p className="text-sm leading-[1.5] font-bold text-warning-fg">{t("lessonLobby.reconnecting")}</p>
+              <p className="text-[13px] leading-[1.6] text-fg-muted">{t("lessonLobby.reconnectingDescription")}</p>
+            </div>
+          </div>
+        ) : !sessionData ? (
+          <div role="status" className="flex items-center justify-center gap-2 rounded-2xl border border-hairline bg-surface p-4">
+            <Spinner size="sm" className="text-brand-fg" />
+            <p className="text-sm leading-[1.5] text-fg-muted">{t("lessonLobby.connectingLesson")}</p>
+          </div>
+        ) : (
+          <Notice
+            tone={isReady ? "success" : "brand"}
+            role="status"
+            title={
+              selectedActivity === "LESSON"
+                ? isReady ? t("lessonLobby.waitingTutor") : t("lessonLobby.readyInstruction")
+                : activity.description
+            }
+          />
+        )}
       </div>
-    </div>
+
+      <BottomActionBar>
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          {!canToggleReady && connection === "ok" ? (
+            <p className="text-center text-[13px] leading-[1.5] text-fg-muted">{t("lessonLobby.readyHintConnecting")}</p>
+          ) : null}
+          <Button
+            variant={isReady ? "brandSoft" : "brand"}
+            size="cta"
+            className="w-full"
+            onClick={handleReadyToggle}
+            disabled={!canToggleReady}
+            loading={readyPending}
+          >
+            {isReady ? t("lessonLobby.cancelReady") : t("lessonLobby.readyCta")}
+          </Button>
+        </div>
+      </BottomActionBar>
+    </Screen>
   );
 }

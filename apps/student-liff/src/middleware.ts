@@ -88,6 +88,30 @@ function createLoginRedirect(request: NextRequest) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // localhost shares cookies across ports, so a tutor_session from the Tutor PWA
+  // can otherwise win over student-session when the backend parses Cookie.
+  // Student API proxies must authenticate explicitly as the student account.
+  const isStudentServiceProxy = ["/api/learning/", "/api/identity/", "/api/finance/"]
+    .some((prefix) => pathname.startsWith(prefix));
+  if (isStudentServiceProxy) {
+    const token = request.cookies.get("student-session")?.value;
+    if (!token) {
+      return withSecurityHeaders(
+        NextResponse.json(
+          { error: { code: "UNAUTHORIZED", message: "Student session required" } },
+          { status: 401 },
+        ),
+        request,
+      );
+    }
+
+    const headers = new Headers(request.headers);
+    headers.set("Authorization", `Bearer ${token}`);
+    // Do not forward other apps' session cookies to this service.
+    headers.delete("cookie");
+    return withSecurityHeaders(NextResponse.next({ request: { headers } }), request);
+  }
+
   const isPrivateRoute = PRIVATE_ROUTES.some((route) =>
     pathname.startsWith(route)
   );
@@ -117,6 +141,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/api/learning/:path*",
+    "/api/identity/:path*",
+    "/api/finance/:path*",
     "/((?!api|_next/static|_next/image|favicon.ico|manifest.json).*)",
   ],
 };

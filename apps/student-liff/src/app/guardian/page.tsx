@@ -1,282 +1,218 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronDown, Users, Check, ShieldAlert, Save, Loader2 } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { PartyPopper, Save, ShieldCheck, Users } from "lucide-react";
+import { toast } from "sonner";
+import {
+  AppBar,
+  BottomActionBar,
+  IconTile,
+  Screen,
+  StatusScreen,
+  Surface,
+  TextField,
+  useBackNavigation,
+} from "@/components/mobile";
 import { useLiff } from "@/components/providers/LiffProvider";
+import { Button } from "@/components/ui/button";
+import { LiffErrorState } from "@/app/dashboard/_components/LiffErrorState";
 import { studentApi } from "@/lib/api";
+import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { t } from "@/lib/i18n";
+import { AgreementCheck, GuardianFaq, RelationPicker, StepCard } from "./_components/GuardianFormParts";
+import { GuardianSkeleton } from "./_components/GuardianSkeleton";
+import { getGuardianErrorKey, hasErrors, validateGuardianForm, type GuardianFormErrors } from "./_lib/form";
+
+const FORM_ID = "guardian-form";
+const guardianConsentKey = (userId: string) => `${userId}:guardianConsent`;
+/** After saving, go back to Profile on our own after this long (as before). */
+const SUCCESS_REDIRECT_MS = 2000;
 
 export default function GuardianPage() {
-  const { isReady } = useLiff();
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { isReady, profile, error: liffError } = useLiff();
+  const userId = profile?.userId;
+  const goBack = useBackNavigation("/profile");
 
-  // Form State
+  // Already given? (Saving again would not change anything on the server.)
+  const consent = useCachedResource<{ hasConsent?: boolean }>(
+    userId ? guardianConsentKey(userId) : null,
+    () => studentApi.checkGuardianConsent(),
+    { enabled: isReady },
+  );
+
   const [guardianName, setGuardianName] = useState("");
   const [relation, setRelation] = useState("");
   const [agreed, setAgreed] = useState(false);
+  const [errors, setErrors] = useState<GuardianFormErrors>({});
+  const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const relationRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!guardianName || !relation || !agreed) {
-      setError(t("guardian.validationError"));
+  // Leave exactly once (auto-redirect timer or the button, whichever is first).
+  const leftRef = useRef(false);
+  const leave = useCallback(() => {
+    if (leftRef.current) return;
+    leftRef.current = true;
+    goBack();
+  }, [goBack]);
+
+  useEffect(() => {
+    if (!success) return;
+    const timer = window.setTimeout(leave, SUCCESS_REDIRECT_MS);
+    return () => window.clearTimeout(timer);
+  }, [success, leave]);
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (saving) return;
+    const nextErrors = validateGuardianForm({ guardianName, relation, agreed });
+    setErrors(nextErrors);
+    if (hasErrors(nextErrors)) {
+      if (nextErrors.guardianName) nameRef.current?.focus();
+      else if (nextErrors.relation) relationRef.current?.focus();
       return;
     }
 
+    setSaving(true);
     try {
-      setLoading(true);
-      setError(null);
       await studentApi.submitGuardianConsent(guardianName, relation);
+      consent.mutate({ hasConsent: true });
+      // Other cached screens show the guardian status too (e.g. "my consents",
+      // where back usually returns to): mark them stale so they refetch.
+      if (userId) {
+        const consentKey = guardianConsentKey(userId);
+        invalidateResource((key) => key.startsWith(`${userId}:`) && key !== consentKey);
+      }
       setSuccess(true);
-      setTimeout(() => {
-        router.push("/profile");
-      }, 2000);
     } catch (err) {
-      console.error("Failed to submit guardian info:", err);
-      setError(err instanceof Error ? err.message : t("guardian.saveFailed"));
+      console.warn("Failed to submit guardian info:", err);
+      toast.error(t(getGuardianErrorKey(err)));
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
-  if (!isReady) {
+  if (!isReady || consent.isLoading) return <GuardianSkeleton />;
+
+  if (liffError || !profile) {
     return (
-      <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)" }}>
-        <Loader2 className="animate-spin" style={{ width: 32, height: 32, color: "var(--brand-500)" }} />
-      </div>
+      <Screen>
+        <AppBar title={t("guardian.title")} back fallbackHref="/profile" />
+        <LiffErrorState />
+      </Screen>
+    );
+  }
+
+  if (success) {
+    return (
+      <Screen>
+        <AppBar title={t("guardian.title")} back fallbackHref="/profile" onBack={leave} />
+        <StatusScreen
+          icon={PartyPopper}
+          title={t("guardian.savedTitle")}
+          description={t("guardian.savedDescription")}
+          primaryAction={
+            <Button variant="brand" size="cta" className="w-full" onClick={leave}>
+              {t("guardian.backToProfile")}
+            </Button>
+          }
+        />
+      </Screen>
+    );
+  }
+
+  // A failed status check never blocks the form.
+  if (consent.data?.hasConsent) {
+    return (
+      <Screen>
+        <AppBar title={t("guardian.title")} back fallbackHref="/profile" />
+        <StatusScreen
+          icon={ShieldCheck}
+          title={t("guardian.alreadyGivenTitle")}
+          description={t("guardian.alreadyGivenDescription")}
+          primaryAction={
+            <Button variant="brand" size="cta" className="w-full" onClick={goBack}>
+              {t("guardian.backToProfile")}
+            </Button>
+          }
+        />
+      </Screen>
     );
   }
 
   return (
-    <div style={{ minHeight: "100dvh", background: "var(--surface-bg)", color: "var(--text-primary)", display: "flex", flexDirection: "column" }}>
-      {/* Header */}
-      <header 
-        style={{ 
-          position: "sticky", 
-          top: 0, 
-          zIndex: 50, 
-          width: "100%", 
-          borderBottom: "1px solid var(--surface-border)", 
-          background: "var(--surface-card-trans)", 
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)"
-        }}
-      >
-        <div style={{ maxWidth: "768px", margin: "0 auto", display: "flex", height: "56px", alignItems: "center", justifyContent: "space-between", padding: "0 16px" }}>
-          <Link
-            href="/profile"
-            style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.875rem", fontWeight: 500, color: "var(--text-secondary)", textDecoration: "none" }}
-          >
-            <ChevronLeft size={18} />
-            <span>{t("profile.title")}</span>
-          </Link>
-          <ThemeToggle size={16} />
-        </div>
-      </header>
+    <Screen>
+      <AppBar title={t("guardian.title")} back fallbackHref="/profile" />
 
-      {/* Main Content */}
-      <main style={{ flex: 1, maxWidth: "768px", margin: "0 auto", width: "100%", padding: "24px 16px 80px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
-          <div style={{ 
-            width: "48px", 
-            height: "48px", 
-            borderRadius: "14px", 
-            background: "rgba(236, 72, 153, 0.15)", 
-            display: "flex", 
-            alignItems: "center", 
-            justifyContent: "center",
-            color: "rgb(236, 72, 153)"
-          }}>
-            <Users size={24} />
+      <form id={FORM_ID} noValidate onSubmit={handleSubmit} className="flex flex-col gap-4 px-4 pt-2 pb-6">
+        <Surface tone="brand" className="flex items-start gap-3">
+          <IconTile icon={Users} tone="pink" size="lg" />
+          <div className="min-w-0">
+            <p className="text-[15px] leading-[1.5] font-bold text-fg">{t("guardian.subtitle")}</p>
+            <p className="mt-0.5 text-sm leading-[1.6] text-fg-muted">{t("guardian.intro")}</p>
           </div>
-          <div>
-            <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "2px" }}>
-              {t("guardian.title")}
-            </h1>
-            <p style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>
-              {t("guardian.subtitle")}
-            </p>
-          </div>
-        </div>
+        </Surface>
 
-        {success ? (
-          <Card className="glass-card" style={{ padding: "32px 24px", textAlign: "center", border: "1px solid var(--accent-emerald-light)", background: "rgba(16, 185, 129, 0.05)" }}>
-            <div style={{ 
-              width: "64px", 
-              height: "64px", 
-              borderRadius: "50%", 
-              background: "rgb(16, 185, 129)", 
-              color: "white", 
-              display: "flex", 
-              alignItems: "center", 
-              justifyContent: "center", 
-              margin: "0 auto 16px" 
-            }}>
-              <Check size={32} />
-            </div>
-            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "8px" }}>{t("guardian.savedTitle")}</h2>
-            <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", marginBottom: "24px" }}>{t("guardian.savedDescription")}</p>
-            <Button
-              onClick={() => router.push("/profile")}
-              className="h-11 rounded-xl text-sm font-bold w-full max-w-[240px]"
-              style={{ background: "linear-gradient(135deg, #06c755 0%, #049a42 100%)", color: "white" }}
-            >
-              {t("profile.title")}
-            </Button>
-          </Card>
-        ) : (
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {error && (
-              <div style={{ 
-                padding: "12px 16px", 
-                background: "rgba(239, 68, 68, 0.1)", 
-                border: "1px solid rgba(239, 68, 68, 0.2)", 
-                borderRadius: "12px",
-                color: "#ef4444",
-                fontSize: "0.875rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px"
-              }}>
-                <ShieldAlert size={16} />
-                <span>{error}</span>
-              </div>
-            )}
+        <StepCard step={1}>
+          <TextField
+            ref={nameRef}
+            label={t("guardian.nameLabel")}
+            placeholder={t("guardian.namePlaceholder")}
+            autoComplete="name"
+            enterKeyHint="next"
+            required
+            value={guardianName}
+            onChange={(event) => {
+              setGuardianName(event.target.value);
+              if (errors.guardianName) setErrors((prev) => ({ ...prev, guardianName: undefined }));
+            }}
+            error={errors.guardianName ? t(errors.guardianName) : undefined}
+          />
+        </StepCard>
 
-            <Card className="glass-card" style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "20px" }}>
-              <div>
-                <label htmlFor="guardianName" style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "8px" }}>
-                  {t("guardian.nameLabel")}
-                </label>
-                <input
-                  type="text"
-                  id="guardianName"
-                  placeholder={t("guardian.namePlaceholder")}
-                  value={guardianName}
-                  onChange={(e) => setGuardianName(e.target.value)}
-                  style={{
-                    width: "100%",
-                    height: "48px",
-                    padding: "0 16px",
-                    background: "var(--surface-card)",
-                    border: "1px solid var(--surface-border)",
-                    borderRadius: "12px",
-                    color: "var(--text-primary)",
-                    fontSize: "0.9375rem",
-                    outline: "none",
-                    transition: "border-color 0.2s"
-                  }}
-                  className="focus:border-emerald-500"
-                  required
-                />
-              </div>
+        <StepCard step={2}>
+          <RelationPicker
+            value={relation}
+            onChange={(value) => {
+              setRelation(value);
+              if (errors.relation) setErrors((prev) => ({ ...prev, relation: undefined }));
+            }}
+            error={errors.relation ? t(errors.relation) : undefined}
+            firstOptionRef={relationRef}
+          />
+        </StepCard>
 
-              <div>
-                <label htmlFor="relation" style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "8px" }}>
-                  {t("guardian.relationLabel")}
-                </label>
-                <div style={{ position: "relative" }}>
-                  <select
-                    id="relation"
-                    value={relation}
-                    onChange={(e) => setRelation(e.target.value)}
-                    style={{
-                      width: "100%",
-                      height: "48px",
-                      padding: "0 16px",
-                      background: "var(--surface-card)",
-                      border: "1px solid var(--surface-border)",
-                      borderRadius: "12px",
-                      color: "var(--text-primary)",
-                      fontSize: "0.9375rem",
-                      appearance: "none",
-                      outline: "none"
-                    }}
-                    className="focus:border-emerald-500"
-                    required
-                  >
-                    <option value="" disabled>{t("guardian.relationPlaceholder")}</option>
-                    <option value="Father">{t("guardian.father")}</option>
-                    <option value="Mother">{t("guardian.mother")}</option>
-                    <option value="Relative">{t("guardian.relative")}</option>
-                    <option value="Other">{t("guardian.other")}</option>
-                  </select>
-                  <div style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "var(--text-tertiary)" }}>
-                    <ChevronDown size={16} />
-                  </div>
-                </div>
-              </div>
-            </Card>
+        <StepCard step={3}>
+          <p className="text-sm leading-[1.5] font-semibold text-fg">{t("guardian.confirmLabel")}</p>
+          <AgreementCheck
+            checked={agreed}
+            onChange={(checked) => {
+              setAgreed(checked);
+              if (errors.agreed) setErrors((prev) => ({ ...prev, agreed: undefined }));
+            }}
+            showHint={!agreed}
+            invalid={Boolean(errors.agreed)}
+          />
+        </StepCard>
 
-            <div style={{ display: "flex", gap: "12px", padding: "4px" }}>
-              <div style={{ marginTop: "2px" }}>
-                <input
-                  type="checkbox"
-                  id="agreed"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                  style={{
-                    width: "20px",
-                    height: "20px",
-                    cursor: "pointer",
-                    accentColor: "var(--brand-600)"
-                  }}
-                />
-              </div>
-              <label htmlFor="agreed" style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.5, cursor: "pointer" }}>
-                {t("guardian.agreement")}
-              </label>
-            </div>
+        <GuardianFaq />
+      </form>
 
-            <Button 
-              type="submit" 
-              disabled={loading || !agreed} 
-              className="h-12 rounded-xl text-base font-bold w-full"
-              style={{ 
-                background: "linear-gradient(135deg, #06c755 0%, #049a42 100%)", 
-                color: "white",
-                opacity: (loading || !agreed) ? 0.6 : 1,
-                boxShadow: "0 4px 12px rgba(6, 199, 85, 0.25)",
-                marginTop: "12px"
-              }}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="animate-spin mr-2" size={18} />
-                  {t("guardian.saving")}
-                </>
-              ) : (
-                <>
-                  <Save size={18} className="mr-2" />
-                  {t("guardian.save")}
-                </>
-              )}
-            </Button>
-          </form>
-        )}
-
-        <div style={{ marginTop: "40px", padding: "20px", borderRadius: "16px", background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
-          <h3 style={{ fontSize: "0.875rem", fontWeight: 700, marginBottom: "12px", color: "var(--text-primary)" }}>{t("guardian.faqTitle")}</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <div>
-              <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>{t("guardian.faqWhyTitle")}</p>
-              <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>{t("guardian.faqWhyDescription")}</p>
-            </div>
-            <div style={{ height: "1px", background: "var(--surface-border)" }} />
-            <div>
-              <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>{t("guardian.faqEditTitle")}</p>
-              <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>{t("guardian.faqEditDescription")}</p>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+      <BottomActionBar>
+        <Button
+          type="submit"
+          form={FORM_ID}
+          variant="brand"
+          size="cta"
+          className="flex-1"
+          loading={saving}
+          disabled={!agreed}
+        >
+          {saving ? null : <Save aria-hidden="true" />}
+          {saving ? t("guardian.saving") : t("guardian.save")}
+        </Button>
+      </BottomActionBar>
+    </Screen>
   );
 }

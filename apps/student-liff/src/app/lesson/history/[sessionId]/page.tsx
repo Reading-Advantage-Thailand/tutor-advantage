@@ -1,10 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { Bot, CheckCircle2, Lightbulb, MessageSquareText, SearchX, XCircle } from "lucide-react";
+import { useLiff } from "@/components/providers/LiffProvider";
+import { formatPhaseStep, getPhaseMeta } from "@/components/lesson/phaseMeta";
+import { RankBadge } from "@/components/lesson/RankBadge";
+import { formatRankOf, getRankMeta } from "@/components/lesson/rankMeta";
+import { AppBar, Chip, EmptyState, ErrorState, Screen, SectionHeader, StatusScreen, Surface } from "@/components/mobile";
+import { buttonVariants } from "@/components/ui/button";
 import { studentApi } from "@/lib/api";
+import { useCachedResource } from "@/lib/cachedResource";
+import { formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { DetailSkeleton } from "./_components/DetailSkeleton";
+import { isNotFoundError, parseAnswerChoice } from "./_components/detailModel";
 
 interface Answer {
   phase: number;
@@ -30,296 +41,193 @@ interface LessonDetail {
   answers: Answer[];
 }
 
-const RANK_EMOJI: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
+const HISTORY_HREF = "/lesson/history";
+
+function AnswerCard({ answer: a }: { answer: Answer }) {
+  const choice = parseAnswerChoice(a.answer);
+  const phaseLabel = `${formatPhaseStep(a.phase)} · ${getPhaseMeta(a.phase).label}`;
+  const scored = a.score > 0;
+
+  return (
+    <Surface as="article" padding="none" className="overflow-hidden">
+      <div className="flex items-center justify-between gap-2 border-b border-hairline px-4 py-2.5">
+        <p className="min-w-0 truncate text-[13px] leading-[1.5] font-semibold text-fg-muted">{phaseLabel}</p>
+        <Chip tone={scored ? "success" : "danger"} size="sm" className="tabular-nums">
+          +{a.score} {t("lessonHistory.pointsUnit")}
+        </Chip>
+      </div>
+
+      <div className="flex flex-col gap-3 p-4">
+        <p lang="en" className="text-base leading-[1.6] font-bold text-fg">
+          {a.question || t("lessonHistory.questionFallback")}
+        </p>
+
+        {/* Student answer */}
+        <div
+          className={cn(
+            "flex items-start gap-3 rounded-2xl border p-3",
+            a.isCorrect ? "border-success-border bg-success-bg" : "border-danger-border bg-danger-bg",
+          )}
+        >
+          {choice.label ? (
+            <span
+              aria-hidden="true"
+              className={cn(
+                "flex size-10 shrink-0 items-center justify-center rounded-xl text-lg font-black text-white",
+                a.isCorrect ? "bg-brand-solid" : "bg-danger-solid",
+              )}
+            >
+              {choice.label}
+            </span>
+          ) : a.isCorrect ? (
+            <CheckCircle2 aria-hidden="true" className="mt-0.5 size-6 shrink-0 text-success-fg" />
+          ) : (
+            <XCircle aria-hidden="true" className="mt-0.5 size-6 shrink-0 text-danger-fg" />
+          )}
+          <div className="min-w-0 flex-1">
+            <p className={cn("text-[13px] leading-[1.5] font-bold", a.isCorrect ? "text-success-fg" : "text-danger-fg")}>
+              {t("lessonHistory.yourAnswer")} · {a.isCorrect ? t("lessonHistory.correctLabel") : t("lessonHistory.incorrectLabel")}
+            </p>
+            <p className="mt-0.5 text-[15px] leading-[1.5] font-semibold break-words text-fg">
+              {choice.label ? <span className="sr-only">{choice.label}. </span> : null}
+              {choice.text}
+            </p>
+          </div>
+        </div>
+
+        {/* Correct answer */}
+        {!a.isCorrect && a.correctAnswer ? (
+          <div className="flex items-start gap-3 rounded-2xl border border-warning-border bg-warning-bg p-3">
+            <Lightbulb aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-warning-fg" />
+            <div className="min-w-0">
+              <p className="text-[13px] leading-[1.5] font-bold text-warning-fg">{t("lessonHistory.correctAnswer")}</p>
+              <p lang="en" className="mt-0.5 text-[15px] leading-[1.5] font-semibold break-words text-fg">{a.correctAnswer}</p>
+            </div>
+          </div>
+        ) : null}
+
+        {/* AI feedback */}
+        {a.aiFeedback ? (
+          <div className="flex items-start gap-3 rounded-2xl border border-info-border bg-info-bg p-3">
+            <Bot aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-info-fg" />
+            <div className="min-w-0">
+              <p className="text-[13px] leading-[1.5] font-bold text-info-fg">{t("lessonHistory.aiFeedbackLabel")}</p>
+              <p className="mt-0.5 text-[15px] leading-[1.6] whitespace-pre-line text-fg">{a.aiFeedback}</p>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </Surface>
+  );
+}
 
 export default function LessonHistoryDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const sessionId = params.sessionId as string;
+  const { isReady, profile, error: liffError, errorCode, retry } = useLiff();
+  const { data: detail, error, isLoading, isValidating, refetch } = useCachedResource<LessonDetail>(
+    profile && sessionId ? `${profile.userId}:lessonHistory:${sessionId}` : null,
+    () => studentApi.getLessonSessionDetails(sessionId),
+    { enabled: isReady },
+  );
 
-  const [loading, setLoading] = useState(true);
-  const [detail, setDetail] = useState<LessonDetail | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  if (!isReady || isLoading) return <DetailSkeleton />;
 
-  useEffect(() => {
-    if (sessionId) {
-      const fetchDetail = async () => {
-        try {
-          const data = await studentApi.getLessonSessionDetails(sessionId);
-          setDetail(data);
-        } catch (err: unknown) {
-          const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
-          setError(errorMessage || t("lessonHistory.detailLoadFailed"));
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchDetail();
-    }
-  }, [sessionId]);
+  const appBar = <AppBar title={t("lessonHistory.summaryTitle")} back fallbackHref={HISTORY_HREF} />;
+  const backToHistory = (
+    <Link href={HISTORY_HREF} className={cn(buttonVariants({ variant: "ghost", size: "touch" }), "w-full text-fg-muted")}>
+      {t("lessonHistory.backToHistory")}
+    </Link>
+  );
 
-  if (loading) {
+  if (liffError || !profile) {
     return (
-      <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)" }}>
-        <div className="animate-spin" style={{ width: 32, height: 32, border: "3px solid var(--neutral-200)", borderTopColor: "var(--brand-500)", borderRadius: "50%" }} />
-      </div>
+      <Screen>
+        {appBar}
+        <ErrorState kind={errorCode === "network" ? "offline" : "error"} onRetry={retry} className="flex-1 justify-center" />
+      </Screen>
     );
   }
 
-  if (error || !detail) {
+  if (!detail?.session) {
     return (
-      <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px", textAlign: "center", gap: 16, background: "var(--surface-bg)" }}>
-        <div style={{ fontSize: "3rem" }}>😕</div>
-        <h2 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--text-primary)" }}>{t("lessonHistory.errorTitle")}</h2>
-        <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", maxWidth: 280 }}>{error || t("lessonHistory.detailNotFound")}</p>
-        <button
-          onClick={() => router.back()}
-          style={{ padding: "10px 24px", borderRadius: "var(--radius-xl)", background: "var(--brand-500)", color: "white", border: "none", fontWeight: 700, cursor: "pointer", fontSize: "0.875rem" }}
-        >
-          {t("lessonHistory.back")}
-        </button>
-      </div>
+      <Screen>
+        {appBar}
+        {error && !isNotFoundError(error) ? (
+          <ErrorState
+            description={t("lessonHistory.detailLoadFailed")}
+            onRetry={() => void refetch()}
+            retrying={isValidating}
+            secondaryAction={backToHistory}
+            className="flex-1 justify-center"
+          />
+        ) : (
+          <StatusScreen
+            icon={SearchX}
+            tone="neutral"
+            title={t("lessonHistory.notFoundTitle")}
+            description={t("lessonHistory.notFoundDescription")}
+            primaryAction={
+              <Link href={HISTORY_HREF} className={cn(buttonVariants({ variant: "brand", size: "cta" }), "w-full")}>
+                {t("lessonHistory.backToHistory")}
+              </Link>
+            }
+          />
+        )}
+      </Screen>
     );
   }
 
-  const { session, answers } = detail;
-  const rankEmoji = session.rank ? (RANK_EMOJI[session.rank] ?? "🎖️") : null;
+  const { session } = detail;
+  const answers = detail.answers ?? [];
+  // Explicit > 0 checks: `{rank && …}` used to print a stray "0".
+  const rankMeta = getRankMeta(session.rank);
 
   return (
-    <div style={{ minHeight: "100dvh", background: "var(--surface-bg)", paddingBottom: 48 }}>
-      {/* Sticky Top Bar */}
-      <div style={{
-        padding: "14px 20px",
-        background: "var(--surface-card)",
-        position: "sticky",
-        top: 0,
-        zIndex: 10,
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        borderBottom: "1px solid var(--surface-border)",
-        backdropFilter: "blur(8px)",
-      }}>
-        <button
-          onClick={() => router.back()}
-          style={{ width: 36, height: 36, borderRadius: "50%", border: "none", background: "var(--neutral-100)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}
-        >
-          <ChevronLeft size={18} style={{ color: "var(--text-primary)" }} />
-        </button>
-        <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-          {t("lessonHistory.summaryTitle")}
-        </h1>
-      </div>
-
-      {/* Hero Banner */}
-      <div style={{
-        position: "relative",
-        overflow: "hidden",
-        padding: "32px 20px 28px",
-        background: "linear-gradient(135deg, #06c755 0%, #059669 60%, #0d9488 100%)",
-        color: "white",
-        textAlign: "center",
-      }}>
-        {/* Decorative blobs */}
-        <div style={{ position: "absolute", top: -24, right: -24, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.08)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: -20, left: -20, width: 90, height: 90, borderRadius: "50%", background: "rgba(255,255,255,0.06)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", top: "40%", right: "20%", width: 60, height: 60, borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
-
-        {/* Trophy */}
-        <div style={{ fontSize: "3rem", marginBottom: 12, filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.2))" }}>🏆</div>
-
-        <h2 style={{ fontSize: "1.125rem", fontWeight: 800, marginBottom: 6, lineHeight: 1.35, padding: "0 8px" }}>
-          {session.articleTitle}
-        </h2>
-        <p style={{ fontSize: "0.8125rem", opacity: 0.9, marginBottom: 20 }}>
-          {t("lessonHistory.tutorPrefix")} {session.tutorName} · 📅 {new Date(session.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' })}
-        </p>
-
-        {/* Score + Rank Badges */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
-          {/* Score */}
-          <div style={{ background: "white", color: "#059669", borderRadius: 16, padding: "10px 20px", display: "flex", alignItems: "baseline", gap: 6, boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}>
-            <span style={{ fontSize: "0.625rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: "#059669" }}>Score</span>
-            <span style={{ fontSize: "1.75rem", fontWeight: 900, lineHeight: 1 }}>{session.totalScore}</span>
-            <span style={{ fontSize: "0.625rem", fontWeight: 700, textTransform: "uppercase", opacity: 0.6 }}>pts</span>
-          </div>
-
-          {/* Rank */}
-          {session.rank && (
-            <div style={{ background: "rgba(255,255,255,0.22)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.32)", color: "white", borderRadius: 16, padding: "10px 20px", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 4px 16px rgba(0,0,0,0.1)" }}>
-              <span style={{ fontSize: "1.5rem", lineHeight: 1 }}>{rankEmoji}</span>
-              <div>
-                <div style={{ fontSize: "0.5625rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", opacity: 0.85 }}>Rank</div>
-                <div style={{ fontSize: "1.25rem", fontWeight: 900, lineHeight: 1 }}>
-                  {session.rank}
-                  {session.totalParticipants && (
-                    <span style={{ fontSize: "0.75rem", opacity: 0.7 }}>/{session.totalParticipants}</span>
-                  )}
-                </div>
+    <Screen>
+      {appBar}
+      <div className="flex flex-col gap-5 px-4 pt-3 pb-8">
+        {/* Result hero */}
+        <section className="rounded-[var(--radius-card)] bg-gradient-brand p-5 text-white shadow-[var(--shadow-card)]">
+          <h2 lang="en" className="text-xl leading-[1.4] font-extrabold text-white">{session.articleTitle}</h2>
+          <p className="mt-1 text-sm leading-[1.5] text-white/85">
+            {t("lessonHistory.tutorPrefix")} {session.tutorName} · {formatThaiDate(session.date, "long")}
+          </p>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="rounded-2xl bg-white/15 px-3 py-2.5">
+              <p className="text-xs leading-[1.5] text-white/85">{t("lessonHistory.scoreStat")}</p>
+              <p className="text-[26px] leading-[1.3] font-extrabold tabular-nums">
+                {session.totalScore}
+                <span className="ml-1 text-sm font-semibold text-white/85">{t("lessonHistory.pointsUnit")}</span>
+              </p>
+            </div>
+            <div className="flex items-center gap-2.5 rounded-2xl bg-white/15 px-3 py-2.5">
+              {/* Fixed light tile on the brand hero: dark text so "#5" stays readable in dark mode too. */}
+              {rankMeta.hasRank ? <RankBadge rank={rankMeta.rank} size="md" className="bg-white/90 text-slate-700" /> : null}
+              <div className="min-w-0">
+                <p className="text-xs leading-[1.5] text-white/85">{t("lessonHistory.rankLabel")}</p>
+                <p className="text-[26px] leading-[1.3] font-extrabold tabular-nums">
+                  {rankMeta.hasRank ? formatRankOf(rankMeta.rank, session.totalParticipants) : "–"}
+                </p>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Answers */}
+        <section>
+          <SectionHeader title={t("lessonHistory.answerSection")} count={answers.length} className="mb-2" />
+          {answers.length === 0 ? (
+            <EmptyState icon={MessageSquareText} tone="neutral" title={t("lessonHistory.emptyAnswers")} />
+          ) : (
+            <div className="flex flex-col gap-3">
+              {answers.map((answer, index) => (
+                <AnswerCard key={index} answer={answer} />
+              ))}
+            </div>
           )}
-        </div>
+        </section>
       </div>
-
-      {/* Answers Section */}
-      <div style={{ padding: "20px 16px" }}>
-        {/* Section Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-          <h3 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 6 }}>
-            📝 {t("lessonHistory.answerSection")}
-          </h3>
-          <span style={{ fontSize: "0.75rem", color: "var(--text-tertiary)", background: "var(--neutral-100)", padding: "4px 12px", borderRadius: 20, fontWeight: 600 }}>
-            {answers.length} {t("lessonHistory.questionUnit")}
-          </span>
-        </div>
-
-        {answers.length === 0 ? (
-          <div className="glass-card" style={{ padding: "40px 20px", textAlign: "center" }}>
-            <div style={{ fontSize: "2rem", marginBottom: 8 }}>🤔</div>
-            <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>{t("lessonHistory.emptyAnswers")}</p>
-          </div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {answers.map((a: Answer, index: number) => {
-              const rawAnswer = a.answer || t("lessonHistory.unspecified");
-              const match = rawAnswer.match(new RegExp(`^${t("lessonHistory.optionPrefix")}\\s+([A-Z]):\\s*(.+)$`, "i")) || rawAnswer.match(/^([A-D])\s*:\s*(.+)$/i);
-              const displayLabel = match ? match[1].toUpperCase() : null;
-              const displayText = match ? match[2] : rawAnswer;
-
-              return (
-                <div
-                  key={index}
-                  className="glass-card"
-                  style={{ overflow: "hidden", animation: `journey-node-in 0.4s cubic-bezier(0.34,1.56,0.64,1) ${Math.min(index * 60, 300)}ms both` }}
-                >
-                  {/* Phase Header */}
-                  <div style={{
-                    padding: "10px 16px",
-                    background: "var(--neutral-100)",
-                    borderBottom: "1px solid var(--surface-border)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--brand-500)", display: "inline-block" }} />
-                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                        Phase {a.phase}
-                      </span>
-                    </div>
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 4,
-                      padding: "4px 10px",
-                      borderRadius: 8,
-                      fontWeight: 700,
-                      fontSize: "0.8125rem",
-                      background: a.score > 0 ? "rgba(5,150,105,0.1)" : "rgba(239,68,68,0.1)",
-                      color: a.score > 0 ? "#059669" : "#dc2626",
-                    }}>
-                      <span>{a.score > 0 ? "✅" : "❌"}</span>
-                      <span>+{a.score} Pts</span>
-                    </div>
-                  </div>
-
-                  <div style={{ padding: "16px", display: "flex", flexDirection: "column", gap: 12 }}>
-                    {/* Question */}
-                    <p style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", lineHeight: 1.5, margin: 0 }}>
-                      {a.question || t("lessonHistory.questionFallback")}
-                    </p>
-
-                    {/* Student Answer */}
-                    <div style={{
-                      borderRadius: 14,
-                      border: `2px solid ${a.isCorrect ? "rgba(16,185,129,0.3)" : "rgba(248,113,113,0.3)"}`,
-                      background: a.isCorrect ? "rgba(16,185,129,0.1)" : "rgba(248,113,113,0.1)",
-                      padding: "12px 14px",
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 12,
-                    }}>
-                      {displayLabel ? (
-                        <div style={{
-                          width: 42,
-                          height: 42,
-                          borderRadius: 10,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontWeight: 900,
-                          fontSize: "1.25rem",
-                          flexShrink: 0,
-                          background: a.isCorrect ? "linear-gradient(135deg, #059669, #06c755)" : "linear-gradient(135deg, #dc2626, #ef4444)",
-                          color: "white",
-                          boxShadow: a.isCorrect ? "0 4px 12px rgba(5,150,105,0.35)" : "0 4px 12px rgba(239,68,68,0.35)",
-                        }}>
-                          {displayLabel}
-                        </div>
-                      ) : (
-                        <span style={{ fontSize: "1.75rem", lineHeight: 1, flexShrink: 0 }}>{a.isCorrect ? "✅" : "❌"}</span>
-                      )}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <span style={{ display: "block", fontSize: "0.6875rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4, color: a.isCorrect ? "#10b981" : "#f87171" }}>
-                          {t("lessonHistory.yourAnswer")}
-                        </span>
-                        <p style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", lineHeight: 1.4, margin: 0 }}>
-                          {displayText}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Correct Answer */}
-                    {!a.isCorrect && a.correctAnswer && (
-                      <div style={{
-                        borderRadius: 14,
-                        border: "1px solid rgba(251,191,36,0.35)",
-                        background: "rgba(251,191,36,0.1)",
-                        padding: "12px 14px",
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: 12,
-                      }}>
-                        <span style={{ fontSize: "1.5rem", flexShrink: 0, lineHeight: 1 }}>💡</span>
-                        <div>
-                          <span style={{ display: "block", fontSize: "0.6875rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4, color: "#fbbf24" }}>
-                            {t("lessonHistory.correctAnswer")}
-                          </span>
-                          <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>{a.correctAnswer}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* AI Feedback */}
-                    {a.aiFeedback && (
-                      <div style={{
-                        borderRadius: 14,
-                        border: "1px solid rgba(129,140,248,0.3)",
-                        background: "rgba(99,102,241,0.08)",
-                        padding: "12px 14px",
-                        display: "flex",
-                        gap: 12,
-                      }}>
-                        <span style={{ fontSize: "1.5rem", flexShrink: 0, lineHeight: 1 }}>🤖</span>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.6875rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 6, color: "#a5b4fc", background: "rgba(99,102,241,0.15)", padding: "2px 8px", borderRadius: 20 }}>
-                            <span className="animate-pulse" style={{ width: 6, height: 6, borderRadius: "50%", background: "#818cf8", display: "inline-block" }} />
-                            AI Evaluation
-                          </span>
-                          <p style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "var(--text-primary)", fontWeight: 500, whiteSpace: "pre-line", margin: 0 }}>
-                            {a.aiFeedback}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
+    </Screen>
   );
 }

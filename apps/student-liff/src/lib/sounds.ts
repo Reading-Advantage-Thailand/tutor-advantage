@@ -47,6 +47,42 @@ function playTone(frequency: number, duration: number, type: OscillatorType = 's
   } catch {}
 }
 
+/** localStorage key for the student's "mute notification sounds" setting. */
+export const NOTIFICATION_MUTE_KEY = 'app-notif-muted';
+
+/** True when the student muted notification sounds (Notifications settings). */
+export function isNotificationSoundMuted(): boolean {
+  if (typeof window === 'undefined') return true;
+  try {
+    return window.localStorage.getItem(NOTIFICATION_MUTE_KEY) === 'true';
+  } catch {
+    return false; // storage blocked (private mode): fall back to sound on
+  }
+}
+
+/** Persist the mute setting read by playNotificationSound(). */
+export function setNotificationSoundMuted(muted: boolean): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(NOTIFICATION_MUTE_KEY, String(muted));
+  } catch {
+    // storage blocked: the setting simply won't persist
+  }
+}
+
+/**
+ * Play the new-message/notification chime unless the student muted it.
+ * Safe to call anywhere: never throws, no-op on the server or without Web Audio.
+ */
+export function playNotificationSound(): void {
+  try {
+    if (isNotificationSoundMuted()) return;
+    playSound('notification');
+  } catch {
+    // Sound is best-effort.
+  }
+}
+
 export function playSound(name: SoundName): void {
   if (typeof window === 'undefined') return;
 
