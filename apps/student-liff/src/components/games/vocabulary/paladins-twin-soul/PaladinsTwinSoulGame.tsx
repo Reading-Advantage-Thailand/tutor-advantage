@@ -19,6 +19,7 @@ import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { VirtualDPad } from "@/components/ui/VirtualDPad";
 import { tx } from "@/lib/games/gameText";
+import { computeLetterbox } from "@/lib/games/letterbox";
 
 interface PaladinsTwinSoulGameProps {
   vocabulary: VocabularyItem[];
@@ -26,7 +27,7 @@ interface PaladinsTwinSoulGameProps {
 }
 
 const MOBILE_GAME_CONTAINER_CLASS =
-  "relative h-dvh min-h-[560px] w-full overflow-hidden rounded-none bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none sm:h-[75vh] sm:rounded-3xl md:aspect-video md:h-auto";
+  "relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none";
 
 export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSoulGameProps) {
   const { containerRef, enterFullscreen, exitFullscreen } = useGameFullscreen();
@@ -76,7 +77,7 @@ export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSou
     updateDimensions();
 
     return () => observer.disconnect();
-  }, [containerRef]);
+  }, [containerRef, gamePhase]);
 
   const hasGameState = !!gameState;
   useEffect(() => {
@@ -158,6 +159,9 @@ export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSou
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT);
   }, [dimensions]);
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT });
+
   if (gamePhase === "start") {
     return (
       <div ref={containerRef} className={MOBILE_GAME_CONTAINER_CLASS}>
@@ -190,7 +194,7 @@ export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSou
       {gamePhase === "playing" && gameState && (
         <>
           <Stage width={dimensions.width} height={dimensions.height}>
-            <Layer scaleX={scale} scaleY={scale}>
+            <Layer scaleX={scale} scaleY={scale} x={boardOffset.x} y={boardOffset.y}>
               <Rect x={0} y={0} width={GAME_WIDTH} height={GAME_HEIGHT} fill={PALADINS_TWIN_SOUL_CONFIG.colors.background} />
               
               {/* Stars Background */}

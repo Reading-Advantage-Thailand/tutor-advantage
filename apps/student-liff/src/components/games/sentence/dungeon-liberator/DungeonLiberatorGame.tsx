@@ -168,7 +168,7 @@ export function DungeonLiberatorGame({ vocabulary, onComplete }: DungeonLiberato
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   const [totalXP, setTotalXP] = useState(0)
   const [totalCorrect, setTotalCorrect] = useState(0)
@@ -268,7 +268,7 @@ export function DungeonLiberatorGame({ vocabulary, onComplete }: DungeonLiberato
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
           gameTitle={tx("Dungeon Liberator")}
@@ -316,7 +316,7 @@ export function DungeonLiberatorGame({ vocabulary, onComplete }: DungeonLiberato
     <div
       ref={containerRef}
       style={{ minHeight: '400px' }}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto fullscreen:h-screen fullscreen:rounded-none"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none fullscreen:h-screen"
     >
       {gamePhase === 'playing' && gameState && (
         <>

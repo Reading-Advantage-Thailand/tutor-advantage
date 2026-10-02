@@ -21,6 +21,7 @@ import { useGameFullscreen } from '@/hooks/useGameFullscreen'
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { Bird, Shield, Sword } from 'lucide-react'
 import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type GriffinSkyJoustGameResult = {
   xp: number
@@ -85,7 +86,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
     return () => {
       observer.disconnect()
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   useEffect(() => {
     if (gamePhase !== 'playing') return
@@ -162,6 +163,9 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
     return Math.min(dimensions.width / GRIFFIN_SKY_JOUST_CONFIG.gameWidth, dimensions.height / GRIFFIN_SKY_JOUST_CONFIG.gameHeight)
   }, [dimensions])
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GRIFFIN_SKY_JOUST_CONFIG.gameWidth, height: GRIFFIN_SKY_JOUST_CONFIG.gameHeight })
+
   const handleFlap = useCallback((e?: KonvaEventObject<MouseEvent | TouchEvent>) => {
     if (gamePhase !== 'playing') return
     
@@ -173,7 +177,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
       if (stage) {
         const pos = stage.getPointerPosition()
         if (pos) {
-          const x = pos.x / scale
+          const x = (pos.x - boardOffset.x) / scale
           dir = x < GRIFFIN_SKY_JOUST_CONFIG.gameWidth / 2 ? -1 : 1
         }
       }
@@ -183,7 +187,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
       if (!prevState || prevState.status !== 'playing') return prevState
       return flap(prevState, dir)
     })
-  }, [gamePhase, scale, playSound])
+  }, [gamePhase, scale, boardOffset.x, playSound])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -208,7 +212,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
           gameTitle={tx("Griffin Sky-Joust")}
@@ -254,7 +258,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameEndScreen
           status={gameState?.status === 'victory' ? 'victory' : 'defeat'}
@@ -279,7 +283,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
   return (
     <div
       ref={containerRef}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
     >
       {gameState && (
         <Stage
@@ -288,7 +292,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
           onMouseDown={handleFlap}
           onTouchStart={handleFlap}
         >
-          <Layer scaleX={scale} scaleY={scale}>
+          <Layer scaleX={scale} scaleY={scale} x={boardOffset.x} y={boardOffset.y}>
             {/* Sky Background */}
             <Rect
               x={0}

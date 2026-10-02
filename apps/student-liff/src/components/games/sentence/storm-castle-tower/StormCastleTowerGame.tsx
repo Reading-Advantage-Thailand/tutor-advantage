@@ -22,6 +22,7 @@ import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { calculateXP } from '@/lib/games/xp'
 import { Shield, BookOpen, AlertTriangle, Target, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react'
 import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type StormCastleTowerGameResult = {
   xp: number
@@ -93,7 +94,7 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   useEffect(() => {
     if (gamePhase !== 'playing') return
@@ -158,6 +159,9 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
     return Math.min(dimensions.width / STORM_CASTLE_TOWER_CONFIG.gameWidth, dimensions.height / STORM_CASTLE_TOWER_CONFIG.gameHeight)
   }, [dimensions])
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: STORM_CASTLE_TOWER_CONFIG.gameWidth, height: STORM_CASTLE_TOWER_CONFIG.gameHeight })
+
   const handleMove = useCallback((direction: 'up' | 'down' | 'left' | 'right') => {
     if (gamePhase !== 'playing') return
     setGameState(prevState => {
@@ -205,7 +209,7 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
           gameTitle={tx("Storm the Castle Tower")}
@@ -265,7 +269,7 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameEndScreen
           status={gameState?.phase === 'victory' ? 'victory' : 'defeat'}
@@ -290,13 +294,15 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
   return (
     <div
       ref={containerRef}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
     >
       {gameState && (
         <Stage
-          width={STORM_CASTLE_TOWER_CONFIG.gameWidth}
-          height={STORM_CASTLE_TOWER_CONFIG.gameHeight}
+          width={dimensions.width || STORM_CASTLE_TOWER_CONFIG.gameWidth}
+          height={dimensions.height || STORM_CASTLE_TOWER_CONFIG.gameHeight}
           scale={{ x: scale, y: scale }}
+          x={boardOffset.x}
+          y={boardOffset.y}
         >
           <Layer>
             <Rect

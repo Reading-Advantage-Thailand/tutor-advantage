@@ -44,7 +44,10 @@ export function GriffinRidersEscapeGame({ vocabulary, onComplete }: GameProps) {
   const { input } = useDirectionalInput()
   const lastInputDx = useRef(0)
 
-  // Measure stage dimensions
+  // Measure stage dimensions. The component renders nothing until the game
+  // state exists, so re-run once the root is mounted (before, the ref was
+  // still null on the only run and the stage stayed 0x0, i.e. no canvas).
+  const hasRoot = gameState !== null
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -57,7 +60,7 @@ export function GriffinRidersEscapeGame({ vocabulary, onComplete }: GameProps) {
     observer.observe(el)
     updateDimensions()
     return () => observer.disconnect()
-  }, [containerRef])
+  }, [containerRef, hasRoot])
 
   const resetGame = useCallback(() => {
     if (vocabulary.length > 0) {
@@ -204,7 +207,7 @@ export function GriffinRidersEscapeGame({ vocabulary, onComplete }: GameProps) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[70vh] min-h-[600px] overflow-hidden rounded-3xl border border-sky-800 bg-sky-950 shadow-2xl"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-sky-950"
     >
       {gamePhase !== 'start' && (
         <Stage
@@ -213,7 +216,7 @@ export function GriffinRidersEscapeGame({ vocabulary, onComplete }: GameProps) {
           scaleX={scale}
           scaleY={scale}
           x={(dimensions.width - GAME_WIDTH * scale) / 2 + (Math.random() - 0.5) * shake}
-          y={(Math.random() - 0.5) * shake}
+          y={Math.max(0, (dimensions.height - GAME_HEIGHT * scale) / 2) + (Math.random() - 0.5) * shake}
         >
           <Layer>
             {/* Background Clouds (Simplified for now) */}

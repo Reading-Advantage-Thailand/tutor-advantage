@@ -21,6 +21,7 @@ import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { Target, Shield, Zap, Sword, Heart, Clock, Award } from "lucide-react";
 import { tx } from "@/lib/games/gameText";
+import { computeLetterbox } from "@/lib/games/letterbox";
 
 type ArchersRevengeGameProps = {
   vocabulary: VocabularyItem[];
@@ -28,7 +29,7 @@ type ArchersRevengeGameProps = {
 };
 
 const MOBILE_GAME_CONTAINER_CLASS =
-  "relative h-dvh min-h-[560px] w-full overflow-hidden rounded-none bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none sm:h-[75vh] sm:rounded-3xl md:aspect-video md:h-auto";
+  "relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none";
 
 export function ArchersRevengeGame({
   vocabulary,
@@ -72,7 +73,7 @@ export function ArchersRevengeGame({
     updateDimensions();
 
     return () => observer.disconnect();
-  }, [containerRef]);
+  }, [containerRef, gamePhase]);
 
   useEffect(() => {
     if (gamePhase === "playing") {
@@ -141,15 +142,18 @@ export function ArchersRevengeGame({
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT);
   }, [dimensions]);
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT });
+
   const handleStageClick = useCallback((e: KonvaEventObject<MouseEvent | TouchEvent | Event>) => {
     if (gamePhase !== "playing") return;
     const stage = e.target.getStage();
     const pointerPosition = stage?.getPointerPosition();
     if (pointerPosition) {
-      const x = pointerPosition.x / scale;
+      const x = (pointerPosition.x - boardOffset.x) / scale;
       setGameState(prev => prev ? fireArrow(prev, x) : null);
     }
-  }, [gamePhase, scale]);
+  }, [gamePhase, scale, boardOffset.x]);
 
   if (gamePhase === "start") {
     return (
@@ -204,7 +208,7 @@ export function ArchersRevengeGame({
             onClick={handleStageClick}
             onTap={handleStageClick}
           >
-            <Layer scaleX={scale} scaleY={scale}>
+            <Layer scaleX={scale} scaleY={scale} x={boardOffset.x} y={boardOffset.y}>
               {/* Background */}
               <Rect x={0} y={0} width={GAME_WIDTH} height={GAME_HEIGHT} fill="#0f172a" />
               

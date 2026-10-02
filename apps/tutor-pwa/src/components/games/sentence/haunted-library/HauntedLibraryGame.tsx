@@ -21,6 +21,7 @@ import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { Book, DoorOpen, Sparkles, Zap, AlertTriangle } from 'lucide-react'
 import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 /**
  * Host-injectable navigation contract (Phase 5 Decision 5.1, D-09).
@@ -83,6 +84,26 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
   const { getEffectiveTextSize } = useAccessibilitySettings()
   const [gameState, setGameState] = useState<LibraryState | null>(null)
   const [gamePhase, setGamePhase] = useState<'start' | 'playing' | 'ended'>('start')
+  // The board is a fixed 390x844 design; fit it into whatever frame hosts the
+  // game (phone: 1:1, wide student column / presenter: centred letterbox).
+  const [frameSize, setFrameSize] = useState({ width: 0, height: 0 })
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const measure = () => {
+      const { width, height } = el.getBoundingClientRect()
+      setFrameSize((prev) =>
+        Math.round(prev.width) === Math.round(width) && Math.round(prev.height) === Math.round(height)
+          ? prev
+          : { width, height },
+      )
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [containerRef, gamePhase])
+  const board = computeLetterbox(frameSize, { width: GAME_WIDTH, height: GAME_HEIGHT })
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium')
   const { playSound } = useSound()
   const { input, setVirtualInput } = useDirectionalInput()
@@ -302,9 +323,9 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
   if (!gameState) return null
 
   return (
-    <div ref={containerRef} className="flex flex-col items-center justify-center min-h-[600px] bg-slate-900 rounded-lg overflow-hidden shadow-2xl border-4 border-slate-700 relative">
-      <Stage width={GAME_WIDTH} height={GAME_HEIGHT}>
-        <Layer>
+    <div ref={containerRef} className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900">
+      <Stage width={frameSize.width || GAME_WIDTH} height={frameSize.height || GAME_HEIGHT}>
+        <Layer x={board.x} y={board.y} scaleX={board.scale} scaleY={board.scale}>
           {/* Background */}
           <Rect width={GAME_WIDTH} height={GAME_HEIGHT} fill="#1a1a2e" />
 
