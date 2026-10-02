@@ -72,7 +72,6 @@ export default async function VerificationBanner({
       tone={isPending ? "info" : isRejected ? "danger" : "warning"}
       icon={isPending ? Clock : isRejected ? AlertCircle : ShieldAlert}
       title={title}
-      className="mb-6"
     >
       {isRejected && rejectedFields.length > 0 ? (
         <span className="flex flex-col gap-0.5">
