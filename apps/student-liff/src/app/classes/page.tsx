@@ -22,7 +22,7 @@ import { useLiff } from "@/components/providers/LiffProvider";
 import { Button } from "@/components/ui/button";
 import { studentApi } from "@/lib/api";
 import { prefetchResource, useCachedResource } from "@/lib/cachedResource";
-import { CEFR_FILTER_LEVELS, cefrFilterChipId } from "@/lib/cefr";
+import { CEFR_FILTER_LEVELS, cefrFilterChipId, getLevelTone, levelToneClass } from "@/lib/cefr";
 import { classDetailResourceKey, classifyClassLoadError } from "@/lib/classAccess";
 import { t } from "@/lib/i18n";
 import { buildEnrollPathFromInviteText } from "@/lib/paymentFlow";
@@ -194,6 +194,14 @@ export default function ClassesPage() {
           {[null, ...CEFR_FILTER_LEVELS].map((level) => (
             <span key={level ?? "all"} id={cefrFilterChipId(level, t("classes.allFilter"))} className="inline-flex shrink-0">
               <FilterChip selected={activeFilter === level} onClick={() => setActiveFilter(level)}>
+                {level ? (
+                  <span
+                    aria-hidden="true"
+                    className={`size-2.5 shrink-0 rounded-full ${levelToneClass[getLevelTone(level)].solid} ${
+                      activeFilter === level ? "ring-2 ring-white" : ""
+                    }`}
+                  />
+                ) : null}
                 {level ?? t("classes.allFilter")}
               </FilterChip>
             </span>
@@ -205,7 +213,7 @@ export default function ClassesPage() {
         <ListGroup>
           <ListRow
             onClick={() => setInviteOpen(true)}
-            leading={<IconTile icon={QrCode} tone="brand" />}
+            leading={<IconTile icon={QrCode} tone="teal" />}
             title={t("classes.invite.rowTitle")}
             subtitle={t("classes.invite.rowSubtitle")}
             chevron

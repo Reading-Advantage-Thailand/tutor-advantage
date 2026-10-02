@@ -51,6 +51,7 @@ export {
   type FilterChipProps,
   type HScrollProps,
 } from "./Chip";
+export { LevelChip, type LevelChipProps } from "./LevelChip";
 export { UserAvatar, type UserAvatarProps, type UserAvatarSize } from "./UserAvatar";
 export { getInitials, getAvatarTone, AVATAR_TONES, type AvatarTone } from "./avatarInitials";
 export { Spinner, type SpinnerProps } from "./Spinner";

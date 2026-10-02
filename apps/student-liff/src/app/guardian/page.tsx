@@ -110,6 +110,7 @@ export default function GuardianPage() {
         <AppBar title={t("guardian.title")} back fallbackHref="/profile" onBack={leave} />
         <StatusScreen
           icon={PartyPopper}
+          mascot="cheer"
           title={t("guardian.savedTitle")}
           description={t("guardian.savedDescription")}
           primaryAction={

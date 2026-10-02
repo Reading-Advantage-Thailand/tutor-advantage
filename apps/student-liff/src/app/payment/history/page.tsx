@@ -34,7 +34,7 @@ function PaymentRow({ payment, onOpen }: { payment: PaymentHistoryRecord; onOpen
   return (
     <ListRow
       onClick={onOpen}
-      leading={<IconTile icon={isPromptPay ? QrCode : CreditCard} tone={isPromptPay ? "brand" : "blue"} />}
+      leading={<IconTile icon={isPromptPay ? QrCode : CreditCard} tone={isPromptPay ? "teal" : "amber"} />}
       title={payment.enrollment?.class?.title || t("payment.history.unnamedClass")}
       subtitle={date ? `${book} · ${date}` : book}
       trailing={

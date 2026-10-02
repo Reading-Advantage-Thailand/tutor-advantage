@@ -26,6 +26,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { CelebrationDemo } from "./CelebrationDemo";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { LineIcon } from "@/components/icons/LineIcon";
@@ -43,6 +44,7 @@ import {
   HScroll,
   IconButton,
   IconTile,
+  LevelChip,
   ListGroup,
   ListRow,
   ListRowSkeleton,
@@ -69,9 +71,10 @@ import {
   type NoticeTone,
   type TabRoot,
 } from "@/components/mobile";
+import { CEFR_FILTER_LEVELS, getLevelTone, levelToneClass } from "@/lib/cefr";
 import { cn } from "@/lib/utils";
 
-const ICON_TONES: IconTileTone[] = ["brand", "amber", "blue", "purple", "pink", "red", "neutral"];
+const ICON_TONES: IconTileTone[] = ["brand", "teal", "amber", "orange", "blue", "purple", "pink", "red", "neutral"];
 const CHIP_TONES: ChipTone[] = ["brand", "success", "warning", "danger", "info", "neutral"];
 const NOTICE_TONES: NoticeTone[] = ["info", "success", "warning", "danger", "brand"];
 const CEFR = ["ทั้งหมด", "A1", "A2", "B1", "B2", "C1"];
@@ -264,6 +267,27 @@ export function UiKitGallery() {
           </HScroll>
         </Section>
 
+        <Section title="Level colours (CEFR)">
+          <div className="flex flex-wrap gap-2">
+            {CEFR_FILTER_LEVELS.map((level) => (
+              <LevelChip key={level} cefr={level} />
+            ))}
+            <LevelChip cefr={null}>Primary</LevelChip>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {CEFR_FILTER_LEVELS.map((level) => (
+              <div
+                key={level}
+                className="relative overflow-hidden rounded-[var(--radius-card)] border border-hairline bg-surface p-3 pt-4 shadow-[var(--shadow-card)]"
+              >
+                <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1.5 ${levelToneClass[getLevelTone(level)].solid}`} />
+                <p className="text-sm font-bold text-fg">Reading {level}</p>
+                <LevelChip cefr={level} className="mt-2">{`${level} · Lv.1`}</LevelChip>
+              </div>
+            ))}
+          </div>
+        </Section>
+
         <Section title="Icon tiles">
           {(["sm", "md", "lg"] as const).map((size) => (
             <div key={size} className="flex flex-wrap items-center gap-2">
@@ -388,6 +412,10 @@ export function UiKitGallery() {
           </div>
           <Progress value={45} className="h-1.5" />
           <p className="text-xs text-fg-subtle">↑ ui/progress (legacy API) now uses the brand colour and className reaches the track</p>
+        </Section>
+
+        <Section title="Celebration (confetti)">
+          <CelebrationDemo />
         </Section>
 
         <Section title="Avatars">

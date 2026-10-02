@@ -12,6 +12,7 @@ import {
   Spinner,
   StatusScreen,
 } from "@/components/mobile";
+import { Confetti } from "@/components/celebrate/Confetti";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { formatSatang } from "@/lib/format";
 import { t } from "@/lib/i18n";
@@ -97,9 +98,11 @@ function ReceiptRow({ label, children }: { label: string; children: ReactNode })
 export function SuccessStep({ classTitle, tutor, amountSatang, method }: SuccessStepProps) {
   return (
     <Screen>
+      <Confetti intensity="big" origin={{ x: 0.5, y: 0.25 }} />
       <AppBar title={t("payment.select.title")} />
       <StatusScreen
         icon={CheckCircle2}
+        mascot="cheer"
         tone="brand"
         title={t("payment.success.title")}
         description={t("payment.success.description")}

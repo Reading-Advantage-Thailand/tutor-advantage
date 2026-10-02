@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { LessonParticipant } from '@/hooks/useLessonSocket';
 import { Notice } from '@/components/mobile';
 import { Button, buttonVariants } from '@/components/ui/button';
+import { Confetti } from '@/components/celebrate/Confetti';
 import { MobileLeaderboard } from '../MobileLeaderboard';
 import { PhaseColumn } from '../PhaseBlocks';
 import { rankParticipants } from '../leaderboardModel';
@@ -27,6 +28,8 @@ export function LessonWrapUpPhase({ participants, studentId, classBookCycleId, a
 
   return (
     <PhaseColumn>
+      {/* Fires once when the wrap-up appears; later score/poll updates don't re-fire. */}
+      <Confetti intensity={rank >= 1 && rank <= 3 ? 'big' : 'medium'} />
       {/* Rank hero */}
       <section className="rounded-[var(--radius-card)] bg-hero px-5 py-7 text-center text-hero-fg shadow-[var(--shadow-card)]">
         <p aria-hidden="true" className="text-[64px] leading-[1.15]">{rankMeta.emoji ?? '🎖️'}</p>

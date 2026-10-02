@@ -22,6 +22,7 @@ import {
   Chip,
   ConfirmSheet,
   IconTile,
+  LevelChip,
   ListGroup,
   ListRow,
   PageHeader,
@@ -81,7 +82,8 @@ export default function ProfilePage() {
 
   const name = profile.displayName || t("dashboard.defaultName");
   // Same featured class as Home (live → first paid), never a fake default level.
-  const levelLabel = formatLevelLabel(getPrimaryClass(summary));
+  const primaryClass = getPrimaryClass(summary);
+  const levelLabel = formatLevelLabel(primaryClass);
   const shortUserId = profile.userId.length > 10 ? `${profile.userId.slice(0, 8)}…` : profile.userId;
 
   const copyUserId = async () => {
@@ -118,9 +120,15 @@ export default function ProfilePage() {
             {levelLoading ? (
               <Skeleton className="mt-2 h-[30px] w-40 rounded-full" />
             ) : levelLabel ? (
-              <Chip tone="brand" size="md" icon={BookOpen} className="mt-2">
-                {levelLabel}
-              </Chip>
+              primaryClass?.seriesCefr ? (
+                <LevelChip cefr={primaryClass.seriesCefr} size="md" className="mt-2">
+                  {levelLabel}
+                </LevelChip>
+              ) : (
+                <Chip tone="brand" size="md" icon={BookOpen} className="mt-2">
+                  {levelLabel}
+                </Chip>
+              )
             ) : null}
           </div>
         </Surface>
@@ -129,16 +137,16 @@ export default function ProfilePage() {
           <ListRow href="/classes" leading={<IconTile icon={BookOpen} tone="brand" />} title={t("profile.myClasses")} />
           <ListRow
             href="/payment/history"
-            leading={<IconTile icon={CreditCard} tone="brand" />}
+            leading={<IconTile icon={CreditCard} tone="amber" />}
             title={t("profile.paymentHistory")}
           />
-          <ListRow href="/schedule" leading={<IconTile icon={Calendar} tone="brand" />} title={t("profile.schedule")} />
+          <ListRow href="/schedule" leading={<IconTile icon={Calendar} tone="purple" />} title={t("profile.schedule")} />
         </ListGroup>
 
         <ListGroup header={t("profile.appSettings")}>
           <div className="list-row px-4 py-3" data-leading="">
             <div className="flex items-center gap-3">
-              <IconTile icon={Palette} tone="amber" />
+              <IconTile icon={Palette} tone="orange" />
               <span className="text-[15px] leading-[1.5] font-semibold text-fg">
                 {t("profile.theme")}
               </span>
@@ -152,7 +160,7 @@ export default function ProfilePage() {
             />
           </div>
           <SwitchRow
-            leading={<IconTile icon={Volume2} tone="amber" />}
+            leading={<IconTile icon={Volume2} tone="pink" />}
             title={t("profile.notificationSound")}
             subtitle={t("profile.notificationSoundSub")}
             checked={soundOn}
@@ -161,16 +169,16 @@ export default function ProfilePage() {
         </ListGroup>
 
         <ListGroup header={t("profile.account")}>
-          <ListRow href="/notifications" leading={<IconTile icon={Bell} tone="blue" />} title={t("profile.notifications")} />
-          <ListRow href="/consent" leading={<IconTile icon={ShieldCheck} tone="blue" />} title={t("profile.consent")} />
-          <ListRow href="/guardian" leading={<IconTile icon={Users} tone="blue" />} title={t("profile.guardian")} />
+          <ListRow href="/notifications" leading={<IconTile icon={Bell} tone="pink" />} title={t("profile.notifications")} />
+          <ListRow href="/consent" leading={<IconTile icon={ShieldCheck} tone="teal" />} title={t("profile.consent")} />
+          <ListRow href="/guardian" leading={<IconTile icon={Users} tone="teal" />} title={t("profile.guardian")} />
         </ListGroup>
 
         <ListGroup header={t("profile.help")}>
           <ListRow
             href={LINE_OA_URL}
             chevron={false}
-            leading={<IconTile icon={MessageCircle} tone="neutral" />}
+            leading={<IconTile icon={MessageCircle} tone="blue" />}
             title={t("profile.contactTeam")}
             subtitle={t("profile.contactTeamSub")}
             trailing={<ExternalLink aria-hidden="true" className="size-4 text-fg-subtle" />}

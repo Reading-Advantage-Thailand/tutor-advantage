@@ -2,11 +2,11 @@
 
 import { BookOpen, Check, Lock } from "lucide-react";
 import {
-  Chip,
   EmptyState,
   ErrorState,
   FilterChip,
   HScroll,
+  LevelChip,
   ListGroup,
   ListRow,
   ListRowSkeleton,
@@ -14,9 +14,8 @@ import {
   ProgressBar,
   SectionHeader,
   Surface,
-  iconTileToneClass,
 } from "@/components/mobile";
-import { cefrTone, normalizeCefr } from "@/lib/cefr";
+import { normalizeCefr } from "@/lib/cefr";
 import { classifyClassLoadError, getArticleRowHref, getLessonListFooter, type ClassAccess } from "@/lib/classAccess";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -67,7 +66,7 @@ function LessonRow({ article, canRead }: { article: LessonRowArticle; canRead: b
       trailing={
         cefr || !canRead ? (
           <>
-            {cefr ? <Chip className={iconTileToneClass[cefrTone(cefr)]}>{cefr}</Chip> : null}
+            {cefr ? <LevelChip cefr={cefr} /> : null}
             {canRead ? null : (
               <>
                 <Lock aria-hidden="true" className="size-4 text-fg-subtle" />

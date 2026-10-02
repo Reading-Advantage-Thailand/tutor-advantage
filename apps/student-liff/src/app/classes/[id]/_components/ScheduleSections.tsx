@@ -31,7 +31,7 @@ export function ScheduleSection({ cls, onAddToCalendar }: { cls: ClassDetail; on
       <SectionHeader as="h3" title={t("classes.detail.schedule")} />
       <ListGroup className="mt-1">
         <ListRow
-          leading={<IconTile icon={CalendarDays} tone="brand" />}
+          leading={<IconTile icon={CalendarDays} tone="purple" />}
           title={cls.schedule}
           subtitle={`${t("classes.detail.nextLessonPrefix")} ${cls.nextSession || t("classes.detail.tba")}`}
         />
@@ -40,7 +40,7 @@ export function ScheduleSection({ cls, onAddToCalendar }: { cls: ClassDetail; on
         ) : null}
         <ListRow
           onClick={onAddToCalendar}
-          leading={<IconTile icon={CalendarPlus} tone="amber" />}
+          leading={<IconTile icon={CalendarPlus} tone="teal" />}
           title={t("classes.detail.addToCalendar")}
           chevron
         />
@@ -56,7 +56,7 @@ export function NextSessionCard({ cls, onAddToCalendar }: { cls: ClassDetail; on
   return (
     <Surface>
       <div className="flex items-start gap-3">
-        <IconTile icon={CalendarClock} tone="brand" size="lg" />
+        <IconTile icon={CalendarClock} tone="purple" size="lg" />
         <div className="min-w-0 flex-1">
           <p className="text-[13px] leading-[1.5] font-semibold text-fg-muted">{t("classes.detail.nextSessionTitle")}</p>
           <p className="mt-0.5 text-base leading-[1.5] font-bold text-fg">{nextSession}</p>
@@ -122,7 +122,7 @@ export function CalendarSheet({
       <ListGroup>
         <ListRow
           onClick={handleIcs}
-          leading={<IconTile icon={CalendarPlus} tone="brand" />}
+          leading={<IconTile icon={CalendarPlus} tone="teal" />}
           title={t("classes.detail.calendarIcs")}
           subtitle={t("classes.detail.calendarIcsHint")}
           chevron

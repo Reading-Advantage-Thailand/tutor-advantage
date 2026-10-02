@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { CalendarDays, Users } from "lucide-react";
-import { Chip, UserAvatar, iconTileToneClass } from "@/components/mobile";
-import { cefrTone, formatLevelLabel } from "@/lib/cefr";
+import { Chip, LevelChip, UserAvatar } from "@/components/mobile";
+import { formatLevelLabel, getLevelTone, levelToneClass, normalizeCefr } from "@/lib/cefr";
 import { getSeatInfo } from "@/lib/classAccess";
 import { formatTHB } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { getClassStatusBadge, type ClassListItem } from "./classesList";
 
 const cardClass =
-  "pressable block rounded-[var(--radius-card)] border border-hairline bg-surface p-4 text-left shadow-[var(--shadow-card)] active:bg-press";
+  "pressable relative block overflow-hidden rounded-[var(--radius-card)] border border-hairline bg-surface p-4 pt-5 text-left shadow-[var(--shadow-card)] active:bg-press";
 
 /**
  * Catalog card: the whole card is the tap target (no fake CTA pill). Order of
@@ -20,6 +20,9 @@ export function ClassCard({ cls, onPressStart }: { cls: ClassListItem; onPressSt
   const { seatsLeft, urgent } = getSeatInfo(cls.enrolled, cls.capacity);
   const badge = getClassStatusBadge(cls.status);
   const isFull = badge === "full" || seatsLeft <= 0;
+  // Same "A1" fallback as formatLevelLabel so label and colour always agree.
+  const cefr = normalizeCefr(cls.cefr) ?? "A1";
+  const levelTone = levelToneClass[getLevelTone(cefr)];
 
   return (
     <Link
@@ -28,6 +31,8 @@ export function ClassCard({ cls, onPressStart }: { cls: ClassListItem; onPressSt
       className={cardClass}
       onPointerDown={onPressStart ? () => onPressStart(cls.id) : undefined}
     >
+      {/* Level colour band (A0 teal · A1 green · A2 orange · B1 blue · B2 purple · C1 pink) */}
+      <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1.5 ${levelTone.solid}`} />
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <h2 className="line-clamp-2 text-base leading-[1.5] font-bold text-fg">{cls.name}</h2>
@@ -49,9 +54,7 @@ export function ClassCard({ cls, onPressStart }: { cls: ClassListItem; onPressSt
       </p>
 
       <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-hairline pt-3">
-        <Chip className={iconTileToneClass[cefrTone(cls.cefr)]}>
-          {formatLevelLabel(cls.cefr, cls.level, t("classes.levelShort"))}
-        </Chip>
+        <LevelChip cefr={cefr}>{formatLevelLabel(cls.cefr, cls.level, t("classes.levelShort"))}</LevelChip>
         <Chip tone={isFull ? "danger" : urgent ? "warning" : "neutral"} icon={Users}>
           {isFull
             ? t("classes.statusFull")

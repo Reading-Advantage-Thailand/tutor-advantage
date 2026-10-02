@@ -4,7 +4,15 @@ import { AlertTriangle, CheckCircle2, CloudOff, Info, OctagonAlert, RotateCw, Sp
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { IconTile, type IconTileTone } from "./IconTile";
+import { ReedyMini, type ReedyMood } from "@/components/mascot/ReedyMini";
+import { IconTile, iconTileToneClass, type IconTileTone } from "./IconTile";
+
+/** Default Reedy mood for a status tone (warnings/errors look worried, neutral stays calm). */
+function moodForTone(tone: IconTileTone): ReedyMood {
+  if (tone === "amber" || tone === "red") return "oops";
+  if (tone === "neutral" || tone === "blue") return "calm";
+  return "happy";
+}
 
 /* ─── EmptyState ─────────────────────────────────────────────────────────── */
 
@@ -16,14 +24,23 @@ export interface EmptyStateProps {
   /** One primary action, e.g. <Button variant="brand" size="touch">…</Button>. */
   action?: ReactNode;
   tone?: IconTileTone;
+  /**
+   * Reedy mascot mood (default "calm"); the icon becomes a small badge beside him.
+   * Pass false to show only the plain icon tile.
+   */
+  mascot?: ReedyMood | false;
   className?: string;
 }
 
-/** Friendly in-list empty state (icon, title, one action). Server-compatible. */
-export function EmptyState({ icon, title, description, action, tone = "brand", className }: EmptyStateProps) {
+/** Friendly in-list empty state (Reedy + icon badge, title, one action). Server-compatible. */
+export function EmptyState({ icon: Icon, title, description, action, tone = "brand", mascot = "calm", className }: EmptyStateProps) {
   return (
     <div className={cn("flex flex-col items-center px-6 py-10 text-center", className)}>
-      <IconTile icon={icon} tone={tone} size="lg" shape="circle" className="size-16 [&>svg]:size-7" />
+      {mascot ? (
+        <ReedyMini mood={mascot} size="md" decorative badge={<Icon strokeWidth={2.4} />} badgeClassName={iconTileToneClass[tone]} />
+      ) : (
+        <IconTile icon={Icon} tone={tone} size="lg" shape="circle" className="size-16 [&>svg]:size-7" />
+      )}
       <h3 className="mt-4 text-base leading-[1.45] font-bold text-fg">{title ?? t("common.emptyTitle")}</h3>
       {description ? (
         <p className="mt-1 max-w-[300px] text-sm leading-[1.6] text-fg-muted">{description}</p>
@@ -50,6 +67,8 @@ export interface ErrorStateProps {
   secondaryAction?: ReactNode;
   /** Use "offline" for network errors (cloud icon + network copy default). */
   kind?: "error" | "offline";
+  /** Reedy mascot mood (default "oops"). Pass false to show only the plain icon tile. */
+  mascot?: ReedyMood | false;
   className?: string;
 }
 
@@ -62,18 +81,19 @@ export function ErrorState({
   retrying,
   secondaryAction,
   kind = "error",
+  mascot = "oops",
   className,
 }: ErrorStateProps) {
   const offline = kind === "offline";
+  const Icon = offline ? CloudOff : AlertTriangle;
+  const tone: IconTileTone = offline ? "neutral" : "amber";
   return (
     <div role="alert" className={cn("flex flex-col items-center px-6 py-10 text-center", className)}>
-      <IconTile
-        icon={offline ? CloudOff : AlertTriangle}
-        tone={offline ? "neutral" : "amber"}
-        size="lg"
-        shape="circle"
-        className="size-16 [&>svg]:size-7"
-      />
+      {mascot ? (
+        <ReedyMini mood={mascot} size="md" decorative badge={<Icon strokeWidth={2.4} />} badgeClassName={iconTileToneClass[tone]} />
+      ) : (
+        <IconTile icon={Icon} tone={tone} size="lg" shape="circle" className="size-16 [&>svg]:size-7" />
+      )}
       <h3 className="mt-4 text-base leading-[1.45] font-bold text-fg">
         {title ?? (offline ? t("common.offlineTitle") : t("common.errorTitle"))}
       </h3>
@@ -107,6 +127,12 @@ export interface StatusScreenProps {
   secondaryAction?: ReactNode;
   /** Extra content between the text and the actions. */
   children?: ReactNode;
+  /**
+   * Reedy mascot mood; defaults from `tone` (amber/red → "oops", neutral/blue → "calm",
+   * otherwise "happy"). The icon becomes a badge beside him. Pass false for the plain icon tile
+   * (when the icon itself is the message, e.g. a QR code).
+   */
+  mascot?: ReedyMood | false;
   className?: string;
 }
 
@@ -116,15 +142,17 @@ export interface StatusScreenProps {
  * <Screen> (put it after the <AppBar>). Server-compatible.
  */
 export function StatusScreen({
-  icon,
+  icon: Icon,
   tone = "brand",
   title,
   description,
   primaryAction,
   secondaryAction,
   children,
+  mascot,
   className,
 }: StatusScreenProps) {
+  const mood = mascot === undefined ? moodForTone(tone) : mascot;
   return (
     <div
       className={cn(
@@ -132,7 +160,11 @@ export function StatusScreen({
         className,
       )}
     >
-      <IconTile icon={icon} tone={tone} size="lg" shape="circle" className="size-20 [&>svg]:size-9" />
+      {mood ? (
+        <ReedyMini mood={mood} size="lg" float decorative badge={<Icon strokeWidth={2.4} />} badgeClassName={iconTileToneClass[tone]} />
+      ) : (
+        <IconTile icon={Icon} tone={tone} size="lg" shape="circle" className="size-20 [&>svg]:size-9" />
+      )}
       <h2 className="mt-5 text-xl leading-[1.4] font-extrabold text-fg">{title}</h2>
       {description ? (
         <p className="mt-2 max-w-[320px] text-[15px] leading-[1.6] text-fg-muted">{description}</p>

@@ -53,7 +53,7 @@ export function NextUpCard({ enrollment, kind, needsPayment }: NextUpCardProps) 
   return (
     <section aria-labelledby="next-up-session" className={cn(cardClass, "border-hairline")}>
       <div className="flex items-center gap-3">
-        <IconTile icon={CalendarClock} tone="brand" />
+        <IconTile icon={CalendarClock} tone="purple" />
         <div className="min-w-0 flex-1">
           <p className="text-[13px] leading-[1.5] font-medium text-fg-muted">{t("dashboard.nextLesson")}</p>
           <h2 id="next-up-session" className="line-clamp-2 text-base leading-[1.5] font-bold text-fg">

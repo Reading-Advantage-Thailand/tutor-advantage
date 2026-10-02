@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
-import { Chip, HScroll, IconTile, ProgressBar, SectionHeader } from "@/components/mobile";
+import { Chip, HScroll, IconTile, LevelChip, ProgressBar, SectionHeader } from "@/components/mobile";
+import { getLevelTone, levelToneClass, normalizeCefr } from "@/lib/cefr";
 import { buildEnrollmentHref, getEnrollmentKey, type Enrollment } from "@/lib/enrollmentStatus";
 import { t } from "@/lib/i18n";
 
@@ -9,12 +10,26 @@ const cardClass =
 
 function ClassCard({ enrollment }: { enrollment: Enrollment }) {
   const progress = Math.round(enrollment.progress || 0);
+  const cefr = normalizeCefr(enrollment.seriesCefr);
   return (
-    <Link href={buildEnrollmentHref(enrollment)} className={`${cardClass} w-[78%] max-w-[300px] gap-1`}>
-      {enrollment.isLive ? (
-        <Chip tone="danger" dot className="mb-1 self-start">
-          {t("dashboard.liveNow")}
-        </Chip>
+    <Link
+      href={buildEnrollmentHref(enrollment)}
+      className={`${cardClass} relative w-[78%] max-w-[300px] gap-1 overflow-hidden pt-5`}
+    >
+      {/* Level colour band; brand green when the book has no CEFR level. */}
+      <span
+        aria-hidden="true"
+        className={`absolute inset-x-0 top-0 h-1.5 ${cefr ? levelToneClass[getLevelTone(cefr)].solid : "bg-brand-vivid"}`}
+      />
+      {enrollment.isLive || cefr ? (
+        <span className="mb-1 flex flex-wrap items-center gap-1.5">
+          {enrollment.isLive ? (
+            <Chip tone="danger" dot>
+              {t("dashboard.liveNow")}
+            </Chip>
+          ) : null}
+          {cefr ? <LevelChip cefr={cefr} /> : null}
+        </span>
       ) : null}
       <span className="line-clamp-2 text-[15px] leading-[1.5] font-bold text-fg">{enrollment.name}</span>
       <span className="truncate text-[13px] leading-[1.5] text-fg-muted">

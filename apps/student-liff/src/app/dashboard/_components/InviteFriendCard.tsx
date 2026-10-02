@@ -39,7 +39,7 @@ export function InviteFriendCard({ shareable }: { shareable: Enrollment[] }) {
         aria-busy={singleLoading || undefined}
         className="pressable flex min-h-[72px] w-full items-center gap-3 rounded-[var(--radius-card)] border border-hairline bg-surface p-4 text-left shadow-[var(--shadow-card)] active:bg-press"
       >
-        <IconTile icon={QrCode} tone="brand" size="lg" />
+        <IconTile icon={QrCode} tone="teal" size="lg" />
         <span className="min-w-0 flex-1">
           <span className="block text-[15px] leading-[1.5] font-semibold text-fg">{t("dashboard.shareTitle")}</span>
           <span className="block text-[13px] leading-[1.5] text-fg-muted">{t("dashboard.shareDescription")}</span>

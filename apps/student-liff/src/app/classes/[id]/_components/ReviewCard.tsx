@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, Star } from "lucide-react";
 import { toast } from "sonner";
+import { Confetti, useCelebrate } from "@/components/celebrate/Confetti";
 import { Chip, IconTile, Skeleton, Surface, TextArea } from "@/components/mobile";
 import { Button } from "@/components/ui/button";
 import { studentApi } from "@/lib/api";
@@ -155,8 +156,16 @@ export function ReviewCard({
   loading: boolean;
   onSaved: (review: TutorReview) => void;
 }) {
+  // Lives here (not in ReviewForm, which re-mounts on save) so the burst survives the swap.
+  const [celebration, celebrate] = useCelebrate();
+  const handleSaved = (saved: TutorReview) => {
+    onSaved(saved);
+    celebrate();
+  };
+
   return (
     <Surface tone="warning" padding="lg">
+      <Confetti fire={celebration} intensity="small" origin={{ x: 0.5, y: 0.55 }} />
       <div className="flex items-start gap-3">
         <IconTile icon={Star} tone="amber" />
         <div className="min-w-0 flex-1">
@@ -173,7 +182,7 @@ export function ReviewCard({
           </div>
         ) : (
           // Re-mount when a review appears/changes so the form starts from it.
-          <ReviewForm key={review?.id ?? "new"} classId={classId} review={review} onSaved={onSaved} />
+          <ReviewForm key={review?.id ?? "new"} classId={classId} review={review} onSaved={handleSaved} />
         )}
       </div>
     </Surface>

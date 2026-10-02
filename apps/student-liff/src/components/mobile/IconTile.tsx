@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type IconTileTone = "brand" | "amber" | "blue" | "purple" | "pink" | "red" | "neutral";
+export type IconTileTone = "brand" | "amber" | "blue" | "purple" | "pink" | "red" | "neutral" | "teal" | "orange";
 export type IconTileSize = "sm" | "md" | "lg";
 
 export interface IconTileProps {
@@ -13,7 +13,15 @@ export interface IconTileProps {
   className?: string;
 }
 
-/** Tone → background + icon colour classes (theme-aware tokens). */
+/**
+ * Tone → background + icon colour classes (theme-aware tokens).
+ *
+ * App-wide concept → tone mapping (keep consistent):
+ *   classes / books / lessons → brand · schedule / calendar → purple
+ *   payment / price → amber · chat / tutor → blue · notifications → pink
+ *   profile / account → teal · progress / achievements → orange
+ *   danger / logout → red · settings / legal / misc → neutral
+ */
 export const iconTileToneClass: Record<IconTileTone, string> = {
   brand: "bg-tile-brand text-icon-brand",
   amber: "bg-tile-amber text-icon-amber",
@@ -22,6 +30,8 @@ export const iconTileToneClass: Record<IconTileTone, string> = {
   pink: "bg-tile-pink text-icon-pink",
   red: "bg-tile-red text-icon-red",
   neutral: "bg-tile-neutral text-icon-neutral",
+  teal: "bg-tile-teal text-icon-teal",
+  orange: "bg-tile-orange text-icon-orange",
 };
 
 const sizeClass: Record<IconTileSize, { box: string; radius: string; icon: string }> = {

@@ -12,6 +12,7 @@ export default function JoinLessonPage() {
       <AppBar title={t("interactiveJoin.appBarTitle")} back fallbackHref="/dashboard" />
       <StatusScreen
         icon={QrCode}
+        mascot={false}
         tone="brand"
         title={t("interactiveJoin.title")}
         description={t("interactiveJoin.description")}

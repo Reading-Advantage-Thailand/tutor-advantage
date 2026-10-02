@@ -22,6 +22,7 @@ import { useLiff } from "@/components/providers/LiffProvider";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { studentApi } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
+import { getLevelTone } from "@/lib/cefr";
 import { classDetailResourceKey } from "@/lib/classAccess";
 import { formatTHB } from "@/lib/format";
 import { t, type I18nKey } from "@/lib/i18n";
@@ -212,12 +213,12 @@ function EnrollContent() {
           />
           <InfoRow leading={<IconTile icon={BookOpen} />} label={t("enroll.book")} value={classDetails.bookTitle} />
           <InfoRow
-            leading={<IconTile icon={BarChart2} tone="blue" />}
+            leading={<IconTile icon={BarChart2} tone={getLevelTone(classDetails.cefrLevel)} />}
             label={t("enroll.level")}
             value={classDetails.cefrLevel}
           />
           <InfoRow
-            leading={<IconTile icon={CalendarDays} tone="amber" />}
+            leading={<IconTile icon={CalendarDays} tone="purple" />}
             label={t("enroll.schedule")}
             value={classDetails.schedule}
           />

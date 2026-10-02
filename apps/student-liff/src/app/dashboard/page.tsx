@@ -88,6 +88,7 @@ export default function DashboardPage() {
           <div className="rounded-[var(--radius-card)] border border-hairline bg-surface shadow-[var(--shadow-card)]">
             <EmptyState
               icon={Sparkles}
+              mascot="happy"
               title={t("dashboard.noClasses")}
               description={t("dashboard.noClassesSub")}
               action={

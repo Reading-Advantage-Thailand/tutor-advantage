@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { CEFR_FILTER_LEVELS, cefrFilterChipId, cefrTone, formatLevelLabel, normalizeCefr } from "./cefr";
+import {
+  CEFR_FILTER_LEVELS,
+  cefrFilterChipId,
+  cefrTone,
+  formatLevelLabel,
+  getLevelTone,
+  levelToneClass,
+  normalizeCefr,
+} from "./cefr";
 
 describe("normalizeCefr", () => {
   it("trims and upper-cases, null for empty or non-strings", () => {
@@ -11,18 +19,54 @@ describe("normalizeCefr", () => {
   });
 });
 
-describe("cefrTone", () => {
-  it("groups levels into colour families", () => {
-    expect(cefrTone("A0")).toBe("brand");
-    expect(cefrTone("A2")).toBe("brand");
-    expect(cefrTone("B1")).toBe("blue");
-    expect(cefrTone("b2")).toBe("blue");
-    expect(cefrTone("C1")).toBe("purple");
+describe("getLevelTone", () => {
+  it("gives every catalog level its own colour", () => {
+    expect(getLevelTone("A0")).toBe("teal");
+    expect(getLevelTone("A1")).toBe("brand");
+    expect(getLevelTone("A2")).toBe("orange");
+    expect(getLevelTone("B1")).toBe("blue");
+    expect(getLevelTone("B2")).toBe("purple");
+    expect(getLevelTone("C1")).toBe("pink");
+    const tones = CEFR_FILTER_LEVELS.map((level) => getLevelTone(level));
+    expect(new Set(tones).size).toBe(CEFR_FILTER_LEVELS.length);
+    expect(tones).not.toContain("neutral");
   });
 
-  it("never throws on null (Primary books have no CEFR)", () => {
-    expect(cefrTone(null)).toBe("neutral");
-    expect(cefrTone("Pre-A1")).toBe("neutral");
+  it("normalises case and whitespace", () => {
+    expect(getLevelTone(" b2 ")).toBe("purple");
+    expect(getLevelTone("a0")).toBe("teal");
+  });
+
+  it("falls back by family for unlisted levels", () => {
+    expect(getLevelTone("C2")).toBe("pink");
+    expect(getLevelTone("B3")).toBe("blue");
+    expect(getLevelTone("A3")).toBe("brand");
+  });
+
+  it("never throws on null / unknown (Primary books have no CEFR)", () => {
+    expect(getLevelTone(null)).toBe("neutral");
+    expect(getLevelTone(undefined)).toBe("neutral");
+    expect(getLevelTone(42)).toBe("neutral");
+    expect(getLevelTone("")).toBe("neutral");
+    expect(getLevelTone("Pre-A1")).toBe("neutral");
+    expect(getLevelTone("Beginner")).toBe("neutral");
+  });
+
+  it("keeps cefrTone as an alias", () => {
+    expect(cefrTone).toBe(getLevelTone);
+  });
+});
+
+describe("levelToneClass", () => {
+  it("has soft / solid / text classes for every tone", () => {
+    for (const level of [...CEFR_FILTER_LEVELS, null]) {
+      const tone = getLevelTone(level);
+      const classes = levelToneClass[tone];
+      expect(classes.soft).toMatch(/^bg-/);
+      expect(classes.solid).toMatch(/^bg-/);
+      expect(classes.text).toMatch(/^text-/);
+    }
+    expect(levelToneClass.orange.solid).toBe("bg-icon-orange");
   });
 });
 

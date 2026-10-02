@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import { ArrowRight, BookOpen, CheckCircle2, Clock3, Flame, LockKeyhole, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, Clock3, Flame, LockKeyhole } from "lucide-react";
 import {
-  Chip,
   EmptyState,
   ErrorState,
   FilterChip,
   HScroll,
+  LevelChip,
   Notice,
   PageHeader,
   Screen,
@@ -24,6 +24,7 @@ import { progressResourceKey } from "@/lib/resourceKeys";
 import { cn } from "@/lib/utils";
 import { LiffErrorState } from "../dashboard/_components/LiffErrorState";
 import { LessonList } from "./_components/LessonList";
+import { BookCompleteCelebration } from "./_components/BookCompleteCelebration";
 import { ProgressHero } from "./_components/ProgressHero";
 import { ProgressSkeleton } from "./_components/ProgressSkeleton";
 import { WeeklyActivityCard } from "./_components/WeeklyActivityCard";
@@ -104,9 +105,7 @@ export default function ProgressPage() {
     <Screen>
       {header(
         hasData ? (
-          <Chip tone="brand" size="md" icon={Sparkles}>
-            {stats.cefr}
-          </Chip>
+          <LevelChip cefr={stats.cefr} size="md" />
         ) : null,
       )}
 
@@ -175,7 +174,10 @@ export default function ProgressPage() {
           )}
         >
           {hasData ? (
-            <ProgressHero stats={stats} currentArticle={currentArticle} />
+            <>
+              <ProgressHero stats={stats} currentArticle={currentArticle} />
+              <BookCompleteCelebration bookCycleId={data.selectedBookCycleId} isComplete={stats.isBookComplete} />
+            </>
           ) : (
             <div className="rounded-[var(--radius-card)] border border-hairline bg-surface shadow-[var(--shadow-card)]">
               <EmptyState

@@ -27,7 +27,7 @@ const TOAST_ID = "notification-settings";
 const LEARNING_TOGGLES: Array<{
   key: NotificationToggleKey;
   icon: typeof BookOpen;
-  tone: "purple" | "amber" | "blue";
+  tone: "purple" | "orange" | "blue";
   title: Parameters<typeof t>[0];
   subtitle: Parameters<typeof t>[0];
 }> = [
@@ -41,7 +41,7 @@ const LEARNING_TOGGLES: Array<{
   {
     key: "notifyScoreUpdates",
     icon: Trophy,
-    tone: "amber",
+    tone: "orange",
     title: "notifications.scoreSummary",
     subtitle: "notifications.scoreSummaryDescription",
   },
@@ -157,7 +157,7 @@ export default function NotificationsPage() {
 
             <ListGroup header={t("notifications.marketingNews")} footer={t("notifications.autoSaveHint")}>
               <SwitchRow
-                leading={<IconTile icon={Megaphone} tone="brand" />}
+                leading={<IconTile icon={Megaphone} tone="amber" />}
                 title={t("notifications.offers")}
                 subtitle={t("notifications.offersDescription")}
                 checked={Boolean(settings.notifyMarketing)}
