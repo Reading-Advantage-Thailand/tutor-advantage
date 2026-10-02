@@ -1471,3 +1471,51 @@ export function advanceCastleDefenseTime(
     completedSentences,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Camera / viewport fitting
+// ---------------------------------------------------------------------------
+
+/**
+ * How the 800x600 board is mapped onto the game's container.
+ * - "cover": fill the container and follow the player (phones, real play).
+ * - "contain": letterbox the whole board inside the container (presenter demo).
+ */
+export type CastleDefenseCameraFit = "cover" | "contain";
+
+export type CastleDefenseCamera = { x: number; y: number; scale: number };
+
+/**
+ * Pure camera transform for the Konva layer. The result always keeps the
+ * board's aspect ratio (uniform scale) and never leaves a gap inside the
+ * viewport in "cover" mode; in "contain" mode the whole board is visible
+ * between `insetTop` (HUD, capped at 40% of the height) and `insetBottom`
+ * (overlay chrome such as a tutorial card, capped at 25%).
+ */
+export function computeCastleDefenseCamera(
+  view: { width: number; height: number },
+  focus: { x: number; y: number },
+  options: { fit?: CastleDefenseCameraFit; insetTop?: number; insetBottom?: number } = {},
+): CastleDefenseCamera {
+  const { width, height } = view;
+  if (width <= 0 || height <= 0) return { x: 0, y: 0, scale: 1 };
+
+  if (options.fit === "contain") {
+    const insetTop = Math.max(0, Math.min(options.insetTop ?? 0, height * 0.4));
+    const insetBottom = Math.max(0, Math.min(options.insetBottom ?? 0, height * 0.25));
+    const availableHeight = height - insetTop - insetBottom;
+    const scale = Math.min(width / GAME_WIDTH, availableHeight / GAME_HEIGHT);
+    return {
+      x: (width - GAME_WIDTH * scale) / 2,
+      y: insetTop + (availableHeight - GAME_HEIGHT * scale) / 2,
+      scale,
+    };
+  }
+
+  const scale = Math.max(width / GAME_WIDTH, height / GAME_HEIGHT, 0.8);
+  const minX = width - GAME_WIDTH * scale;
+  const minY = height - GAME_HEIGHT * scale;
+  const x = minX > 0 ? minX / 2 : Math.max(minX, Math.min(0, width / 2 - focus.x * scale));
+  const y = minY > 0 ? minY / 2 : Math.max(minY, Math.min(0, height / 2 - focus.y * scale));
+  return { x, y, scale };
+}

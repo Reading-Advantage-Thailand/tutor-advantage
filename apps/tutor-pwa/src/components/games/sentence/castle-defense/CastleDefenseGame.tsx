@@ -47,6 +47,8 @@ import {
   WORD_RADIUS,
   inRange,
   calculateCastleDefenseXP,
+  computeCastleDefenseCamera,
+  type CastleDefenseCameraFit,
   updateProjectiles,
   updateTowers,
   type SentenceItem,
@@ -92,6 +94,13 @@ type Props = {
   }) => void;
   autoStart?: boolean;
   tutorialMode?: boolean;
+  /**
+   * "cover" (default) fills the container and follows the player; "contain"
+   * letterboxes the whole board below the HUD (presenter demo stage).
+   */
+  fit?: CastleDefenseCameraFit;
+  /** "contain" only: px at the bottom kept clear of the board (host overlays). */
+  insetBottom?: number;
   onTutorialStepChange?: (step: number) => void;
 };
 
@@ -127,6 +136,8 @@ type TutorialPointer = {
   x: number;
   y: number;
   label: string;
+  /** x/y are container pixels (HUD targets) instead of board coordinates. */
+  screen?: boolean;
 };
 
 export function CastleDefenseGame({
@@ -135,6 +146,8 @@ export function CastleDefenseGame({
   autoStart = false,
   tutorialMode = false,
   onTutorialStepChange,
+  fit = "cover",
+  insetBottom = 0,
 }: Props) {
   const t = useScopedI18n("pages.student.gamesPage.castleDefense");
   const gameVocabulary = useMemo(() => buildRoundSentences(vocabulary), [vocabulary]);
@@ -181,6 +194,12 @@ export function CastleDefenseGame({
   const [tutorialCycle, setTutorialCycle] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const hudRef = useRef<HTMLDivElement>(null);
+  const sentencePromptRef = useRef<HTMLDivElement>(null);
+  // Height of the top HUD (relative to the game root). In "contain" mode the
+  // board is laid out below it so the HUD never covers word orbs.
+  const [hudInset, setHudInset] = useState(0);
+  const cameraOptionsRef = useRef({ fit, insetTop: 0, insetBottom });
   const previousTowerIds = useRef<string[]>([]);
   const lastFrameRef = useRef<number>(0);
   const rafRef = useRef<number>(0);
@@ -216,6 +235,21 @@ export function CastleDefenseGame({
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
+
+  useEffect(() => {
+    cameraOptionsRef.current = { fit, insetTop: hudInset, insetBottom };
+  }, [fit, hudInset, insetBottom]);
+
+  const hasGameState = gameState !== null;
+  useEffect(() => {
+    const hud = hudRef.current;
+    if (!hud) return;
+    const measure = () => setHudInset(Math.ceil(hud.offsetTop + hud.offsetHeight + 8));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(hud);
+    return () => observer.disconnect();
+  }, [hasStarted, assets, hasGameState]);
 
   useEffect(() => {
     onTutorialStepChangeRef.current = onTutorialStepChange;
@@ -332,19 +366,8 @@ export function CastleDefenseGame({
   // a small separate effect while the scripted player moves around the map.
   useEffect(() => {
     if (!tutorialMode || !gameState || dimensions.width <= 0 || dimensions.height <= 0) return;
-
-    const scaleX = dimensions.width / GAME_WIDTH;
-    const scaleY = dimensions.height / GAME_HEIGHT;
-    const scale = Math.max(scaleX, scaleY, 0.8);
-    let x = dimensions.width / 2 - gameState.player.x * scale;
-    let y = dimensions.height / 2 - gameState.player.y * scale;
-    const minX = dimensions.width - GAME_WIDTH * scale;
-    const minY = dimensions.height - GAME_HEIGHT * scale;
-
-    x = minX > 0 ? (dimensions.width - GAME_WIDTH * scale) / 2 : Math.max(minX, Math.min(0, x));
-    y = minY > 0 ? (dimensions.height - GAME_HEIGHT * scale) / 2 : Math.max(minY, Math.min(0, y));
-    setCamera({ x, y, scale });
-  }, [dimensions.height, dimensions.width, gameState, tutorialMode]);
+    setCamera(computeCastleDefenseCamera(dimensions, gameState.player, { fit, insetTop: hudInset, insetBottom }));
+  }, [dimensions, fit, gameState, hudInset, insetBottom, tutorialMode]);
 
   const startGame = useCallback(() => {
     completedRef.current = false;
@@ -592,7 +615,13 @@ export function CastleDefenseGame({
 
     const run = async () => {
       setStep(0);
-      movePointer({ x: GAME_WIDTH / 2, y: 112, label: "อ่านคำแปลก่อน" });
+      const prompt = sentencePromptRef.current?.getBoundingClientRect();
+      const root = containerRef.current?.getBoundingClientRect();
+      movePointer(
+        prompt && root
+          ? { x: prompt.left - root.left + prompt.width / 2, y: prompt.top - root.top + prompt.height / 2 + 16, label: "อ่านคำแปลก่อน", screen: true }
+          : { x: GAME_WIDTH / 2, y: 112, label: "อ่านคำแปลก่อน" },
+      );
       await wait(1500);
       if (cancelled) return;
 
@@ -700,25 +729,9 @@ export function CastleDefenseGame({
           gameVocabulary,
         );
 
-        // Update camera
+        // Update camera (always sized to the measured container, never the viewport)
         if (dimensions.width > 0 && dimensions.height > 0) {
-          const scaleX = dimensions.width / GAME_WIDTH;
-          const scaleY = dimensions.height / GAME_HEIGHT;
-          const scale = Math.max(scaleX, scaleY, 0.8);
-
-          let camX = dimensions.width / 2 - nextState.player.x * scale;
-          let camY = dimensions.height / 2 - nextState.player.y * scale;
-
-          const minX = dimensions.width - GAME_WIDTH * scale;
-          const minY = dimensions.height - GAME_HEIGHT * scale;
-
-          if (minX > 0) camX = (dimensions.width - GAME_WIDTH * scale) / 2;
-          else camX = Math.max(minX, Math.min(0, camX));
-
-          if (minY > 0) camY = (dimensions.height - GAME_HEIGHT * scale) / 2;
-          else camY = Math.max(minY, Math.min(0, camY));
-
-          setCamera({ x: camX, y: camY, scale });
+          setCamera(computeCastleDefenseCamera(dimensions, nextState.player, cameraOptionsRef.current));
         }
 
         // Animation frames
@@ -816,7 +829,7 @@ export function CastleDefenseGame({
 
   if (!assets) {
     if (autoStart) {
-      return <div className="h-dvh w-screen bg-slate-950" />;
+      return <div className="h-full min-h-0 w-full bg-slate-950" />;
     }
     return (
       <div className="relative h-[60vh] w-full overflow-hidden rounded-2xl bg-slate-950 flex items-center justify-center border border-white/10 md:aspect-video md:h-auto">
@@ -829,7 +842,7 @@ export function CastleDefenseGame({
 
   if (!hasStarted) {
     if (autoStart) {
-      return <div className="h-dvh w-screen bg-slate-950" />;
+      return <div className="h-full min-h-0 w-full bg-slate-950" />;
     }
     return (
       <div className="relative h-[60vh] w-full overflow-hidden rounded-2xl bg-slate-950 border border-white/10 md:aspect-video md:h-auto">
@@ -910,7 +923,7 @@ export function CastleDefenseGame({
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden bg-slate-900 touch-none select-none h-dvh w-screen rounded-none"
+      className="relative h-full min-h-0 w-full overflow-hidden bg-slate-900 touch-none select-none rounded-none"
     >
       {gameState && dimensions.width > 0 && dimensions.height > 0 && (
         <Stage width={dimensions.width} height={dimensions.height}>
@@ -1123,7 +1136,7 @@ export function CastleDefenseGame({
       )}
 
       {gameState && (
-        <div className="absolute top-[max(0.5rem,env(safe-area-inset-top))] inset-x-0 z-20 pointer-events-none flex flex-col items-center gap-1.5 px-3">
+        <div ref={hudRef} className="absolute top-[max(0.5rem,env(safe-area-inset-top))] inset-x-0 z-20 pointer-events-none flex flex-col items-center gap-1.5 px-3">
 
           {/* Top status bar: Score | Timer | Castle HP */}
           <div className="flex w-full items-center justify-between gap-2">
@@ -1156,18 +1169,25 @@ export function CastleDefenseGame({
             </div>
           </div>
 
-          {/* Wave info */}
-          <div className="bg-slate-950/70 border border-white/10 px-3 py-0.5 rounded-full shadow-lg text-white text-[10px] font-bold uppercase tracking-widest">
-            {t("hud.wave", {
-              current: gameState.wave,
-              killed: gameState.enemiesKilledThisWave,
-              total: gameState.totalEnemiesThisWave,
-            })}
+          {/* Wave info (+ frozen-time badge while the tutorial demo runs) */}
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
+            <div className="bg-slate-950/70 border border-white/10 px-3 py-0.5 rounded-full shadow-lg text-white text-[10px] font-bold uppercase tracking-widest">
+              {t("hud.wave", {
+                current: gameState.wave,
+                killed: gameState.enemiesKilledThisWave,
+                total: gameState.totalEnemiesThisWave,
+              })}
+            </div>
+            {tutorialMode && (
+              <div className="rounded-full border border-violet-300/50 bg-slate-950/90 px-3 py-0.5 text-[10px] font-black uppercase tracking-widest text-violet-200 shadow-xl backdrop-blur-md">
+                ⏸ หยุดเวลา · สาธิตอัตโนมัติ
+              </div>
+            )}
           </div>
 
           {/* Thai sentence prompt */}
           {gameState.currentSentenceThai && (
-            <div className="bg-blue-900/90 border border-blue-400/40 px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md w-full">
+            <div ref={sentencePromptRef} className="bg-blue-900/90 border border-blue-400/40 px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md w-full">
               <div className="text-white text-sm font-black text-center leading-snug" style={{ fontSize: getEffectiveTextSize(15) }}>
                 {gameState.currentSentenceThai}
               </div>
@@ -1212,8 +1232,8 @@ export function CastleDefenseGame({
           <div
             className="absolute flex flex-col items-center gap-1 transition-[left,top] duration-1000 ease-in-out"
             style={{
-              left: camera.x + tutorialPointer.x * camera.scale,
-              top: camera.y + tutorialPointer.y * camera.scale,
+              left: tutorialPointer.screen ? tutorialPointer.x : camera.x + tutorialPointer.x * camera.scale,
+              top: tutorialPointer.screen ? tutorialPointer.y : camera.y + tutorialPointer.y * camera.scale,
               transform: "translate(-50%, -50%)",
             }}
           >
@@ -1226,12 +1246,6 @@ export function CastleDefenseGame({
               {tutorialPointer.label}
             </span>
           </div>
-        </div>
-      )}
-
-      {tutorialMode && (
-        <div className="pointer-events-none absolute right-3 top-[max(0.5rem,env(safe-area-inset-top))] z-30 rounded-full border border-violet-300/50 bg-slate-950/90 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-violet-200 shadow-xl backdrop-blur-md">
-          ⏸ หยุดเวลา · สาธิตอัตโนมัติ
         </div>
       )}
 

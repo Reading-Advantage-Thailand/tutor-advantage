@@ -248,7 +248,7 @@ export function GamePhaseStage({
     );
   } else if (status === "teacher_demo") {
     body = (
-      <div data-tour-target={tour(`phase-${currentPhase}-teacher-demo`)} className="w-full">
+      <div data-tour-target={tour(`phase-${currentPhase}-teacher-demo`)} className={cn("w-full", isFullscreen && "flex min-h-0 flex-1 flex-col")}>
         {teachingStage("teacher") ?? (
           <StagePanel as="div" className="grid gap-6 p-6 xl:grid-cols-[0.8fr_1.2fr] xl:items-center">
             <div>
@@ -297,7 +297,7 @@ export function GamePhaseStage({
   } else if (status === "tutorial") {
     const tutorialSteps = getGameTutorial(gameState?.selectedGameId, category);
     body = (
-      <div data-tour-target={tour(`phase-${currentPhase}-tutorial`)} className="w-full">
+      <div data-tour-target={tour(`phase-${currentPhase}-tutorial`)} className={cn("w-full", isFullscreen && "flex min-h-0 flex-1 flex-col")}>
         {teachingStage("tutorial") ?? (
           <StagePanel as="div" className="p-6">
             <StageEyebrow icon={Gamepad2}>{t("lesson.live.tutorialBadge")}</StageEyebrow>
