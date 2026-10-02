@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Stage, Layer, Text, Group, Rect, Circle } from 'react-konva'
 import {
   createStormCastleTowerState,
@@ -23,6 +23,9 @@ import { calculateXP } from '@/lib/games/xp'
 import { Shield, BookOpen, AlertTriangle, Target, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react'
 import { tx } from '@/lib/games/gameText'
 import { computeLetterbox } from '@/lib/games/letterbox'
+
+/** Height of the on-screen control strip under the board (buttons + key hints). */
+const CONTROL_STRIP_PX = 88
 
 export type StormCastleTowerGameResult = {
   xp: number
@@ -154,13 +157,14 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
     }
   }, [gamePhase, results, onComplete])
 
-  const scale = useMemo(() => {
-    if (dimensions.width === 0 || dimensions.height === 0) return 1
-    return Math.min(dimensions.width / STORM_CASTLE_TOWER_CONFIG.gameWidth, dimensions.height / STORM_CASTLE_TOWER_CONFIG.gameHeight)
-  }, [dimensions])
-
-  // Centre the board in its frame (letterbox) instead of pinning it top-left.
-  const boardOffset = computeLetterbox(dimensions, { width: STORM_CASTLE_TOWER_CONFIG.gameWidth, height: STORM_CASTLE_TOWER_CONFIG.gameHeight })
+  // The on-screen controls live in a strip under the board (CONTROL_STRIP_PX);
+  // the board is letterboxed into the space above it, so no window/word can
+  // ever sit under a button.
+  const boardOffset = computeLetterbox(
+    { width: dimensions.width, height: Math.max(0, dimensions.height - CONTROL_STRIP_PX) },
+    { width: STORM_CASTLE_TOWER_CONFIG.gameWidth, height: STORM_CASTLE_TOWER_CONFIG.gameHeight },
+  )
+  const scale = boardOffset.scale
 
   const handleMove = useCallback((direction: 'up' | 'down' | 'left' | 'right') => {
     if (gamePhase !== 'playing') return
@@ -304,7 +308,14 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
           x={boardOffset.x}
           y={boardOffset.y}
         >
-          <Layer>
+          {/* Clip to the board: the stage now spans the whole frame, and tower
+              windows scrolled below the board must not show in the control strip. */}
+          <Layer
+            clipX={0}
+            clipY={0}
+            clipWidth={STORM_CASTLE_TOWER_CONFIG.gameWidth}
+            clipHeight={STORM_CASTLE_TOWER_CONFIG.gameHeight}
+          >
             <Rect
               x={0}
               y={0}
@@ -446,32 +457,31 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
         </Stage>
       )}
       
-      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4 text-xs text-white/50">
+      {/* Control strip: CONTROL_STRIP_PX tall, below the letterboxed board. */}
+      <div className="absolute bottom-1.5 left-0 right-0 flex justify-center gap-4 text-[11px] leading-4 text-white/50">
         <span>{tx("Arrows/WASD = Move")}</span>
         <span>{tx("Space = Collect")}</span>
       </div>
       
-      <div className="absolute bottom-20 left-0 right-0 flex justify-center gap-2">
+      <div className="absolute bottom-7 left-0 right-0 flex items-center justify-center gap-2">
         <button
           onTouchStart={() => handleTouchMove('left')}
           className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <div className="flex flex-col gap-2">
-          <button
-            onTouchStart={() => handleTouchMove('up')}
-            className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"
-          >
-            <ArrowUp className="w-6 h-6" />
-          </button>
-          <button
-            onTouchStart={() => handleTouchMove('down')}
-            className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"
-          >
-            <ArrowDown className="w-6 h-6" />
-          </button>
-        </div>
+        <button
+          onTouchStart={() => handleTouchMove('up')}
+          className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"
+        >
+          <ArrowUp className="w-6 h-6" />
+        </button>
+        <button
+          onTouchStart={() => handleTouchMove('down')}
+          className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"
+        >
+          <ArrowDown className="w-6 h-6" />
+        </button>
         <button
           onTouchStart={() => handleTouchMove('right')}
           className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"

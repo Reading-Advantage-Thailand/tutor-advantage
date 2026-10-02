@@ -22,6 +22,7 @@ import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { Target, Shield, Zap, Sword, Heart, Clock, Award } from "lucide-react";
 import { tx } from "@/lib/games/gameText";
 import { computeLetterbox } from "@/lib/games/letterbox";
+import { fitText } from "@/lib/games/textFit";
 
 type ArchersRevengeGameProps = {
   vocabulary: VocabularyItem[];
@@ -259,16 +260,37 @@ export function ArchersRevengeGame({
                   {!enemy.shieldUp && (
                     <Circle radius={28} stroke="#10b981" strokeWidth={2} opacity={0.5} />
                   )}
-                  <Text
-                    x={-40}
-                    y={25}
-                    text={enemy.translation}
-                    fontSize={getEffectiveTextSize(16)}
-                    fontStyle="bold"
-                    fill="white"
-                    width={80}
-                    align="center"
-                  />
+                  {(() => {
+                    // One line, as wide as the gap between neighbours: shrink
+                    // to fit (never wrap mid-word) so labels can't overlap.
+                    const labelWidth = ARCHERS_REVENGE_CONFIG.layout.enemySpacing.x - 4;
+                    const label = fitText(enemy.translation, {
+                      width: labelWidth,
+                      height: 16,
+                      maxFontSize: Math.min(15, getEffectiveTextSize(15)),
+                      minFontSize: 8,
+                      lineHeight: 1,
+                      fontFamily: "Arial",
+                      fontStyle: "bold",
+                    });
+                    return (
+                      <Text
+                        x={-labelWidth / 2}
+                        y={24}
+                        text={label.lines.join(" ")}
+                        fontSize={label.fontSize}
+                        fontStyle="bold"
+                        fill="white"
+                        width={labelWidth}
+                        height={16}
+                        align="center"
+                        verticalAlign="middle"
+                        wrap="none"
+                        shadowColor="#020617"
+                        shadowBlur={3}
+                      />
+                    );
+                  })()}
                 </Group>
               ))}
 
