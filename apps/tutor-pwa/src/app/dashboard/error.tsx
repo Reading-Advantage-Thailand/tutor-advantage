@@ -1,6 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/app/ErrorState";
+import { t } from "@/lib/i18n";
 
 export default function DashboardError({
   error,
@@ -9,20 +10,5 @@ export default function DashboardError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] gap-6 text-center px-4">
-      <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center">
-        <span className="text-3xl">⚠️</span>
-      </div>
-      <div className="space-y-2">
-        <h2 className="text-xl font-bold text-foreground">เกิดข้อผิดพลาด</h2>
-        <p className="text-sm font-medium text-muted-foreground max-w-sm">
-          ไม่สามารถโหลดหน้าแดชบอร์ดได้ กรุณาลองใหม่อีกครั้ง
-        </p>
-      </div>
-      <Button onClick={reset} className="gap-2">
-        ลองใหม่
-      </Button>
-    </div>
-  );
+  return <ErrorState page description={t("shell.errorPageBody")} onRetry={reset} digest={error.digest} />;
 }

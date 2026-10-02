@@ -46,21 +46,21 @@ export function ConsentProvider({ children, hasConsent }: ConsentProviderProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center p-4 sm:p-6 overflow-y-auto">
-      <div className="w-full max-w-2xl bg-card border border-border shadow-2xl rounded-2xl p-6 sm:p-8 relative mt-10 mb-10">
+    <div className="fixed inset-0 z-(--z-consent) flex flex-col items-center overflow-y-auto bg-app px-4 pt-[max(1rem,var(--safe-top))] pb-[max(1rem,var(--safe-bottom))] sm:justify-center sm:p-6">
+      <div className="relative my-4 w-full max-w-2xl rounded-2xl border border-hairline bg-surface p-5 shadow-card sm:my-10 sm:p-8">
         <div className="flex flex-col items-center mb-6 text-center">
-          <div className="w-16 h-16 bg-brand-500/10 text-brand-600 rounded-full flex items-center justify-center mb-4">
-            <ShieldCheck className="w-8 h-8" />
+          <div className="mb-4 flex size-14 items-center justify-center rounded-xl bg-brand-soft text-brand-fg">
+            <ShieldCheck className="size-7" />
           </div>
-          <h2 className="text-2xl font-black text-foreground">
+          <h2 className="text-xl font-bold text-fg sm:text-2xl">
             นโยบายความเป็นส่วนตัวและข้อตกลงการใช้งาน
           </h2>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="mt-1 text-sm text-fg-muted">
             PDPA & Terms of Service Agreement
           </p>
         </div>
 
-        <div className="bg-muted/30 rounded-xl p-4 sm:p-6 h-64 overflow-y-auto border border-border/50 text-sm text-foreground space-y-4 mb-6">
+        <div className="mb-6 h-64 space-y-4 overflow-y-auto rounded-xl border border-hairline bg-surface-muted p-4 text-sm leading-relaxed text-fg sm:p-5">
           <p>
             <strong>นโยบายความเป็นส่วนตัว (Privacy Policy)</strong>
           </p>
@@ -77,19 +77,19 @@ export function ConsentProvider({ children, hasConsent }: ConsentProviderProps) 
             2. คุณยินยอมให้แพลตฟอร์มประมวลผลข้อมูลการสอนและการเงินของคุณ <br />
             3. การกระทำที่ผิดต่อกฎหมายหรือข้อตกลง อาจทำให้บัญชีของคุณถูกระงับ
           </p>
-          <p className="text-xs text-muted-foreground pt-4">
+          <p className="pt-2 text-xs text-fg-muted">
             * เอกสารฉบับเต็มจะพร้อมให้ดาวน์โหลดได้ในเมนูการตั้งค่าหลังจากการเข้าสู่ระบบ
           </p>
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-red-500/10 text-red-600 text-sm font-semibold">
+          <div className="mb-4 flex items-center gap-2 rounded-xl border border-danger-border bg-danger-bg p-3 text-sm font-medium text-danger-fg">
             <AlertCircle className="w-4 h-4" />
             <span>{error}</span>
           </div>
         )}
 
-        <div className="flex items-start space-x-3 mb-6 bg-brand-500/5 p-4 rounded-xl border border-brand-500/20">
+        <div className="mb-6 flex items-start gap-3 rounded-xl border border-brand-soft-border bg-brand-soft/60 p-4">
           <Checkbox
             id="terms"
             checked={agreed}
@@ -99,11 +99,11 @@ export function ConsentProvider({ children, hasConsent }: ConsentProviderProps) 
           <div className="grid gap-1.5 leading-none">
             <label
               htmlFor="terms"
-              className="text-sm font-semibold text-foreground cursor-pointer"
+              className="cursor-pointer text-sm font-semibold text-fg"
             >
               ข้าพเจ้าได้อ่านและยอมรับเงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว
             </label>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-fg-muted">
               ข้าพเจ้ายินยอมให้ประมวลผลข้อมูลส่วนบุคคลตามที่ระบุไว้
             </p>
           </div>
@@ -112,7 +112,7 @@ export function ConsentProvider({ children, hasConsent }: ConsentProviderProps) 
         <Button
           onClick={handleAgree}
           disabled={!agreed || loading}
-          className="w-full h-12 rounded-xl text-base font-bold"
+          size="xl" className="w-full"
         >
           {loading ? "กำลังดำเนินการ..." : "ยืนยันการยอมรับ"}
         </Button>

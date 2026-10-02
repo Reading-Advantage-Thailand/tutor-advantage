@@ -7,19 +7,21 @@ import { DevToolbar } from "@/components/dev/DevToolbar";
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: dark)", color: "#161b22" },
   ],
   width: "device-width",
   initialScale: 1,
+  // Draw under the notch/home indicator; the shells pad with safe-area insets.
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
-  title: "Tutor PWA - Tutor Advantage",
+  title: "Tutor Advantage — ครูผู้สอน",
   description: t("app.rootDescription"),
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
     title: "Tutor PWA",
   },
 };

@@ -1,12 +1,12 @@
 {
-  "name": "Tutor PWA",
+  "name": "Tutor Advantage — ครูผู้สอน",
   "short_name": "Tutor PWA",
   "description": "แอปสำหรับครูผู้สอน Tutor Advantage",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#4f46e5",
-  "orientation": "portrait",
+  "background_color": "#f4f7f5",
+  "theme_color": "#14883b",
+  "orientation": "any",
   "icons": [
     {
       "src": "/icons/icon-192.png",

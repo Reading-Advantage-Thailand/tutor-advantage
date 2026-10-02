@@ -4,7 +4,7 @@ import { summarizeAssessment } from "./assessment-report-summary";
 describe("assessment report summary", () => {
   it("summarizes completed attempts and only counts paired students for comparison", () => {
     const summary = summarizeAssessment({
-      postOpenedAt: "2026-09-09T00:00:00.000Z",
+      windows: [{ articleId: "article-1", postOpenedAt: "2026-09-09T00:00:00.000Z" }],
       students: [
         {
           userId: "student-1",

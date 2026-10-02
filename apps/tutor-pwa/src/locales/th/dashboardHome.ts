@@ -1,0 +1,22 @@
+// Thai UI strings: "dashboardHome" namespace. Append-only; keep keys sorted by feature.
+export const dashboardHome = {
+  openClasses: "คลาสที่เปิด",
+  totalStudents: "นักเรียนทั้งหมด",
+  monthlyIncome: "รายได้เดือนนี้",
+  weeklyClasses: "คลาสสัปดาห์นี้",
+  title: "ภาพรวม",
+  subtitle: "สรุปคลาสและรายได้ของคุณในเดือนนี้",
+  nextRateGoal: "เป้าหมายเรทถัดไป",
+  currentRate: "เรทปัจจุบัน",
+  targetPrefix: "เป้า",
+  maxRate: "เรทสูงสุด",
+  alreadyMaxRate: "อยู่ในเรทสูงสุดแล้ว",
+  reachedGoal: "ถึงเป้าหมายแล้ว!",
+  remainingPrefix: "ขาดอีก",
+  unlockHint: "ยอดการสอนสดและโบนัสทีมรวมกันจะปลดล็อกเรทคอมมิชชั่นที่สูงขึ้น",
+  netTotal: "รวมสุทธิ",
+  viewDetails: "ดูรายละเอียด",
+  recentClasses: "คลาสเรียนล่าสุด",
+  viewAll: "ดูทั้งหมด",
+  emptyClasses: "ไม่มีคลาสเรียนในขณะนี้",
+} as const;
