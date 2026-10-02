@@ -53,6 +53,10 @@ export default function PotionRushGame({
   const [images, setImages] = useState<Record<string, HTMLImageElement>>({});
   const assetsLoaded = Object.keys(images).length === 3;
   const showControls = autoStart || tutorialMode;
+  // Below lg the strip sits under the board. The tutorial overlay already walks
+  // through each step and its spotlight targets the full-height board, so the
+  // strip only shows there in teacher/play mode.
+  const showBottomControls = showControls && !tutorialMode;
 
 
   useEffect(() => {
@@ -226,10 +230,11 @@ export default function PotionRushGame({
     return (
       <div
         ref={setFullscreenContainerRef}
-        className="flex h-full min-h-0 w-full overflow-hidden bg-slate-950"
+        className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-slate-950 lg:flex-row"
       >
         {showControls && <PotionRushControlPanel variant="sidebar" />}
-        <div ref={containerRef} className="h-full min-w-0 flex-1 bg-slate-950" />
+        <div ref={containerRef} className="min-h-0 min-w-0 flex-1 bg-slate-950" />
+        {showBottomControls && <PotionRushControlPanel variant="bottom" />}
       </div>
     );
   }
@@ -237,14 +242,16 @@ export default function PotionRushGame({
   return (
     <div
       ref={setFullscreenContainerRef}
-      className="relative flex h-full min-h-0 w-full overflow-hidden bg-slate-950 font-sans touch-none select-none"
+      // Below lg the how-to-play strip sits under the board (not over it), so
+      // the stage measures the remaining height and the conveyor labels stay clear.
+      className="relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-slate-950 font-sans touch-none select-none lg:flex-row"
     >
       <PotionRushSoundController />
       {showControls && <PotionRushControlPanel variant="sidebar" />}
 
       <div
         ref={containerRef}
-        className="relative h-full min-w-0 flex-1 overflow-hidden bg-slate-950"
+        className="relative min-h-0 min-w-0 flex-1 overflow-hidden bg-slate-950"
       >
 
       <AnimatePresence>
@@ -286,17 +293,17 @@ export default function PotionRushGame({
         <div className="absolute inset-x-0 top-0 z-10 grid grid-cols-[1fr_auto_1fr] items-start gap-2 p-2 text-white pointer-events-none sm:p-4">
           <div>
             <div className="text-base sm:text-xl font-bold text-amber-400 drop-shadow-lg">
-              Score: {score}
+              {t("hud.score")}: {score}
             </div>
             <div className="text-xs sm:text-sm text-slate-300 drop-shadow-md">
-              Reputation: {Math.max(0, Math.round(reputation))}%
+              {t("hud.reputation")}: {Math.max(0, Math.round(reputation))}%
             </div>
           </div>
           <div className="justify-self-center text-lg sm:text-2xl font-bold text-amber-400 drop-shadow-lg bg-black/40 border border-amber-500/35 px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-sm">
             ⏱️ {Math.max(0, Math.ceil(60 - gameTime))}s
           </div>
           <div className="justify-self-end text-right text-lg sm:text-2xl font-bold text-white drop-shadow-lg bg-black/30 px-2 sm:px-4 py-1 rounded-full">
-            Served: {completedSentences}
+            {t("hud.served")}: {completedSentences}
           </div>
         </div>
       )}
@@ -445,38 +452,43 @@ export default function PotionRushGame({
           </motion.div>
         </motion.div>
       )}
-        {showControls && <PotionRushControlPanel variant="bottom" />}
       </div>
+      {showBottomControls && <PotionRushControlPanel variant="bottom" />}
     </div>
   );
 }
 
 function PotionRushControlPanel({ variant }: { variant: "sidebar" | "bottom" }) {
+  const t = useScopedI18n("pages.student.gamesPage.potionRush");
   const items = [
-    { icon: MousePointer2, text: "Drag ingredients into the matching cauldron" },
-    { icon: Hand, text: "Use HOLD slots to save a word for later" },
-    { icon: Trash2, text: "Drop wrong items into the trash" },
+    { icon: MousePointer2, text: t("howToPlay.drag") },
+    { icon: Hand, text: t("howToPlay.hold") },
+    { icon: Trash2, text: t("howToPlay.trash") },
   ];
 
   return (
     <aside
-      aria-label="Potion Rush controls"
+      aria-label={t("howToPlay.title")}
       className={
         variant === "sidebar"
           ? "hidden w-[clamp(220px,18vw,300px)] shrink-0 flex-col justify-center gap-4 border-r border-white/10 bg-slate-950/95 p-5 text-white shadow-2xl lg:flex"
-          : "absolute inset-x-2 bottom-2 z-20 flex justify-center lg:hidden"
+          : "relative z-20 flex shrink-0 justify-center border-t border-white/10 bg-slate-950 px-2 py-1.5 lg:hidden"
       }
     >
       <div
         className={
           variant === "sidebar"
             ? "rounded-3xl border border-violet-400/25 bg-violet-500/10 p-4 backdrop-blur-md"
-            : "w-full max-w-xl rounded-2xl border border-violet-400/30 bg-slate-950/90 px-3 py-2 shadow-2xl backdrop-blur-md"
+            : "w-full max-w-2xl rounded-2xl border border-violet-400/30 bg-violet-500/10 px-3 py-2"
         }
       >
-        <div className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-violet-200">
+        <div
+          className={`flex items-center gap-2 text-xs font-black text-violet-200 ${
+            variant === "sidebar" ? "mb-3" : "mb-1.5"
+          }`}
+        >
           <Beaker className="size-4 text-violet-300" aria-hidden="true" />
-          How to play
+          {t("howToPlay.title")}
         </div>
         <div className={variant === "sidebar" ? "space-y-3" : "grid grid-cols-3 gap-2"}>
           {items.map(({ icon: Icon, text }) => (
@@ -485,7 +497,7 @@ function PotionRushControlPanel({ variant }: { variant: "sidebar" | "bottom" }) 
               className={
                 variant === "sidebar"
                   ? "flex items-start gap-2.5 text-xs font-semibold leading-snug text-white/80"
-                  : "flex items-center gap-1.5 text-[10px] font-bold leading-tight text-white/80"
+                  : "flex items-center gap-1.5 text-[11px] font-bold leading-tight text-white/85"
               }
             >
               <Icon className="mt-0.5 size-4 shrink-0 text-violet-300" aria-hidden="true" />

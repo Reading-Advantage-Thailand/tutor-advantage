@@ -94,8 +94,13 @@ export function EnchantedLibraryTeachingGame({ vocabulary, mode, fullscreen = fa
   return (
     <div
       key={key}
+      // The game sizes its stage to this frame, so the frame needs a definite
+      // height: a board-shaped (4:3) stage capped to the screen inline, or the
+      // remaining presenter stage in fullscreen.
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${
-        fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none" : "min-h-[520px] rounded-[32px] shadow-2xl"
+        fullscreen
+          ? "h-full min-h-[360px] flex-1 rounded-none shadow-none"
+          : "aspect-[4/3] max-h-[max(420px,calc(100dvh-13rem))] min-h-[420px] rounded-[32px] shadow-2xl"
       }`}
       data-testid={`enchanted-library-${mode}`}
     >

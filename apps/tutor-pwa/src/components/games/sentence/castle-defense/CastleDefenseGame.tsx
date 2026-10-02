@@ -1142,7 +1142,7 @@ export function CastleDefenseGame({
           <div className="flex w-full items-center justify-between gap-2">
             {/* Score */}
             <div className="flex flex-col items-center bg-slate-950/80 border border-white/10 px-2.5 py-1 rounded-xl shadow-lg backdrop-blur min-w-[52px]">
-              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">{t("hud.score")}</span>
+              <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wide leading-none">{t("hud.score")}</span>
               <span className="text-sm font-black text-white leading-tight">{gameState.score}</span>
             </div>
 
@@ -1158,7 +1158,7 @@ export function CastleDefenseGame({
 
             {/* Castle HP */}
             <div className="flex flex-col items-center bg-slate-950/80 border border-white/10 px-2.5 py-1 rounded-xl shadow-lg backdrop-blur min-w-[52px]">
-              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">{t("hud.castleHp")}</span>
+              <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wide leading-none">{t("hud.castleHp")}</span>
               <span className="text-sm font-black text-rose-400 leading-tight">{gameState.base.hp}</span>
               <div className="w-10 h-1 bg-slate-700 rounded-full overflow-hidden mt-0.5">
                 <div
@@ -1171,7 +1171,7 @@ export function CastleDefenseGame({
 
           {/* Wave info (+ frozen-time badge while the tutorial demo runs) */}
           <div className="flex flex-wrap items-center justify-center gap-1.5">
-            <div className="bg-slate-950/70 border border-white/10 px-3 py-0.5 rounded-full shadow-lg text-white text-[10px] font-bold uppercase tracking-widest">
+            <div className="bg-slate-950/70 border border-white/10 px-3 py-0.5 rounded-full shadow-lg text-white text-[11px] font-bold uppercase tracking-wide">
               {t("hud.wave", {
                 current: gameState.wave,
                 killed: gameState.enemiesKilledThisWave,
@@ -1196,7 +1196,7 @@ export function CastleDefenseGame({
 
           {/* Progress (blank slots) */}
           <div className="bg-slate-950/70 border border-white/10 px-3 py-1 rounded-xl shadow-lg backdrop-blur-md text-center w-full">
-            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block leading-none mb-0.5">
+            <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wide block leading-none mb-0.5">
               {t("hud.progress")}
             </span>
             <div className="text-xs font-semibold text-white">
@@ -1217,7 +1217,7 @@ export function CastleDefenseGame({
 
           {/* Sentence complete badge */}
           {gameState.sentenceCompleted && (
-            <div className="bg-emerald-600/90 border border-emerald-300/60 px-3 py-0.5 rounded-full shadow-lg text-white text-[10px] font-black uppercase tracking-widest">
+            <div className="bg-emerald-600/90 border border-emerald-300/60 px-3 py-0.5 rounded-full shadow-lg text-white text-[11px] font-black uppercase tracking-wide">
               {t("messages.sentenceComplete")}
             </div>
           )}

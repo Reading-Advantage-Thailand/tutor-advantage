@@ -10,6 +10,7 @@ import {
   type Difficulty,
   ARENA_WIDTH,
   ARENA_HEIGHT,
+  computeSlimeCamera,
 } from '@/lib/games/devourerSlime'
 import type { VocabularyItem } from '@/store/useGameStore'
 import { useInterval } from '@/hooks/useInterval'
@@ -17,12 +18,10 @@ import { useDirectionalInput } from '@/hooks/useDirectionalInput'
 import { useSound } from '@/hooks/useSound'
 import { useGameFullscreen } from '@/hooks/useGameFullscreen'
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
+import { useScopedI18n } from '@/hooks/useScopedI18n'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { Move, Zap, Target, Shield } from 'lucide-react'
-
-const VIEWPORT_WIDTH = 390
-const VIEWPORT_HEIGHT = 844
 
 interface DevourerSlimeGameProps {
   sentences: VocabularyItem[]
@@ -37,6 +36,27 @@ export function DevourerSlimeGame({ sentences, difficulty = 'medium', onComplete
   const { playSound } = useSound()
   const { getEffectiveTouchTarget } = useAccessibilitySettings()
   const { containerRef, enterFullscreen, exitFullscreen } = useGameFullscreen()
+  const t = useScopedI18n('pages.student.gamesPage.devourerSlime')
+  // The stage follows its container (phone, wide student column, fullscreen)
+  // instead of a fixed 390x844 canvas pinned to the top-left corner.
+  const [viewport, setViewport] = useState({ width: 0, height: 0 })
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const measure = () => {
+      const { width, height } = el.getBoundingClientRect()
+      setViewport((prev) =>
+        Math.round(prev.width) === Math.round(width) && Math.round(prev.height) === Math.round(height)
+          ? prev
+          : { width, height },
+      )
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [containerRef, gamePhase])
 
   const [grassPatches] = useState(() => 
     Array.from({ length: 40 }, (_, i) => ({
@@ -110,18 +130,19 @@ export function DevourerSlimeGame({ sentences, difficulty = 'medium', onComplete
     if (!gameState) return []
     const indicators: { x: number; y: number; label: string; color: string }[] = []
     
-    const cameraX = Math.max(0, Math.min(ARENA_WIDTH - VIEWPORT_WIDTH, gameState.slime.pos.x - VIEWPORT_WIDTH / 2))
-    const cameraY = Math.max(0, Math.min(ARENA_HEIGHT - VIEWPORT_HEIGHT, gameState.slime.pos.y - VIEWPORT_HEIGHT / 2))
-    
+    const camera = computeSlimeCamera(viewport, gameState.slime.pos)
+    const screenWidth = camera.viewWidth * camera.scale
+    const screenHeight = camera.viewHeight * camera.scale
+
     // Target orb indicator
     const targetOrb = gameState.orbs.find(o => !o.isEaten && o.index === gameState.targetWordIndex)
     if (targetOrb) {
-      const screenX = targetOrb.pos.x - cameraX
-      const screenY = targetOrb.pos.y - cameraY
-      if (screenX < 0 || screenX > VIEWPORT_WIDTH || screenY < 0 || screenY > VIEWPORT_HEIGHT) {
+      const screenX = (targetOrb.pos.x - camera.x) * camera.scale
+      const screenY = (targetOrb.pos.y - camera.y) * camera.scale
+      if (screenX < 0 || screenX > screenWidth || screenY < 0 || screenY > screenHeight) {
         indicators.push({
-          x: Math.max(20, Math.min(VIEWPORT_WIDTH - 20, screenX)),
-          y: Math.max(20, Math.min(VIEWPORT_HEIGHT - 20, screenY)),
+          x: Math.max(20, Math.min(screenWidth - 20, screenX)),
+          y: Math.max(20, Math.min(screenHeight - 20, screenY)),
           label: targetOrb.word,
           color: '#fbbf24'
         })
@@ -129,11 +150,11 @@ export function DevourerSlimeGame({ sentences, difficulty = 'medium', onComplete
     }
     
     return indicators
-  }, [gameState])
+  }, [gameState, viewport])
 
   if (gamePhase === 'start') {
     return (
-      <div ref={containerRef} className="relative h-screen w-full overflow-hidden bg-emerald-950">
+      <div ref={containerRef} className="relative h-full min-h-0 w-full overflow-hidden bg-emerald-950">
         <GameStartScreen
           gameTitle="Devourer Slime"
           gameSubtitle="Eat words, grow big, devour knights!"
@@ -160,7 +181,7 @@ export function DevourerSlimeGame({ sentences, difficulty = 'medium', onComplete
       ? Math.round((gameState.correctAnswers / gameState.totalAttempts) * 100)
       : 0
     return (
-      <div ref={containerRef} className="relative h-screen w-full overflow-hidden bg-emerald-950">
+      <div ref={containerRef} className="relative h-full min-h-0 w-full overflow-hidden bg-emerald-950">
         <GameEndScreen
           status={gameState.phase === 'victory' ? 'victory' : 'defeat'}
           score={gameState.score}
@@ -180,20 +201,19 @@ export function DevourerSlimeGame({ sentences, difficulty = 'medium', onComplete
   const currentSentence = gameState.sentences[gameState.currentSentenceIndex]
   const words = currentSentence?.term.split(' ') || []
 
-  // Camera logic: Center on Slime
-  const cameraX = Math.max(0, Math.min(ARENA_WIDTH - VIEWPORT_WIDTH, gameState.slime.pos.x - VIEWPORT_WIDTH / 2))
-  const cameraY = Math.max(0, Math.min(ARENA_HEIGHT - VIEWPORT_HEIGHT, gameState.slime.pos.y - VIEWPORT_HEIGHT / 2))
+  // Camera logic: follow the slime, sized to the container
+  const camera = computeSlimeCamera(viewport, gameState.slime.pos)
 
   const indicators = getIndicators()
   const dpadSize = getEffectiveTouchTarget(64)
   const dpadScale = dpadSize / 64
 
   return (
-    <div ref={containerRef} className="relative h-screen w-full overflow-hidden bg-emerald-950 touch-none">
+    <div ref={containerRef} className="relative h-full min-h-0 w-full overflow-hidden bg-emerald-950 touch-none">
       {/* HUD: Translation */}
       <div className="absolute top-6 left-0 right-0 z-10 px-6">
         <div className="bg-emerald-950/40 backdrop-blur-md border border-emerald-500/30 rounded-2xl p-4 text-center">
-          <p className="text-emerald-200 text-xs font-bold uppercase tracking-widest mb-1 opacity-70">Translation</p>
+          <p className="text-emerald-200 text-xs font-bold uppercase tracking-widest mb-1 opacity-70">{t('hud.translation')}</p>
           <p className="text-white text-xl font-medium">{currentSentence?.translation}</p>
           <div className="mt-3 flex justify-center gap-1">
             {words.map((w, i) => (
@@ -220,10 +240,10 @@ export function DevourerSlimeGame({ sentences, difficulty = 'medium', onComplete
           </div>
         </div>
         <div className="bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full border border-white/10 text-xs font-bold text-emerald-300 tracking-tighter uppercase">
-          Score: {gameState.score}
+          {t('hud.score')}: {gameState.score}
         </div>
         <div className="bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full border border-white/10 text-xs font-bold text-blue-300 tracking-tighter uppercase">
-          Size: {(gameState.slime.scale * 100).toFixed(0)}%
+          {t('hud.size')}: {(gameState.slime.scale * 100).toFixed(0)}%
         </div>
       </div>
 
@@ -244,8 +264,13 @@ export function DevourerSlimeGame({ sentences, difficulty = 'medium', onComplete
         </div>
       ))}
 
-      <Stage width={VIEWPORT_WIDTH} height={VIEWPORT_HEIGHT}>
-        <Layer x={-cameraX} y={-cameraY}>
+      <Stage width={camera.viewWidth * camera.scale} height={camera.viewHeight * camera.scale}>
+        <Layer
+          x={-camera.x * camera.scale}
+          y={-camera.y * camera.scale}
+          scaleX={camera.scale}
+          scaleY={camera.scale}
+        >
           {/* Forest Floor */}
           <Rect width={ARENA_WIDTH} height={ARENA_HEIGHT} fill="#064e3b" />
           {grassPatches.map(patch => (

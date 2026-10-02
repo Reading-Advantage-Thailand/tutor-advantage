@@ -1157,7 +1157,7 @@ export function DragonFlightGame({
           <div className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 sm:gap-4">
             {/* Left: Prompt */}
             <div className={`min-w-[84px] rounded-2xl border bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg transition-all ${tutorialMode && tutorialStep === 0 ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}>
-              <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white/60 mb-0.5">
+              <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-white/70 mb-0.5">
                 {t("dragonFlight.prompt")}
               </div>
               <div className="text-base sm:text-2xl font-bold text-white leading-tight">
@@ -1196,7 +1196,7 @@ export function DragonFlightGame({
             <div className={`min-w-[84px] rounded-2xl border bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg text-right transition-all ${tutorialMode && tutorialStep === 3 ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}>
               <div className="flex items-center justify-end gap-1 sm:gap-1.5 mb-0.5">
                 <Flame className="h-3 w-3 text-amber-400" />
-                <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white/60">
+                <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-white/70">
                   {t("dragonFlight.dragons")}
                 </span>
               </div>

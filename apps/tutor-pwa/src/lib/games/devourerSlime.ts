@@ -285,3 +285,47 @@ function handleOrbEaten(state: SlimeState, orb: WordOrb, rng: () => number): Sli
   
   return nextState
 }
+
+/** The portrait frame the game was designed for; phones keep this 1:1 look. */
+export const SLIME_PHONE_VIEWPORT = { width: 390, height: 844 }
+/** Frames up to this width are treated as phones (no zoom, original camera). */
+export const SLIME_PHONE_MAX_WIDTH = 480
+
+export type SlimeCamera = {
+  /** Screen pixels per arena unit. */
+  scale: number
+  /** Arena-space top-left corner of the visible window. */
+  x: number
+  y: number
+  /** Visible window size in arena units. */
+  viewWidth: number
+  viewHeight: number
+}
+
+const followAxis = (focus: number, view: number, arena: number) =>
+  view >= arena ? 0 : Math.max(0, Math.min(arena - view, focus - view / 2))
+
+/**
+ * Camera for a container of any size. Phones render the arena 1:1 exactly as
+ * before; wider frames (tablets, desktop columns, presenter stages) zoom in
+ * just enough for the arena to cover the whole frame, so the board fills and
+ * stays centred on the slime instead of drawing into the top-left 390px.
+ */
+export function computeSlimeCamera(
+  viewport: { width: number; height: number },
+  focus: Point,
+): SlimeCamera {
+  const width = viewport.width > 0 ? viewport.width : SLIME_PHONE_VIEWPORT.width
+  const height = viewport.height > 0 ? viewport.height : SLIME_PHONE_VIEWPORT.height
+  const scale =
+    width <= SLIME_PHONE_MAX_WIDTH ? 1 : Math.max(1, width / ARENA_WIDTH, height / ARENA_HEIGHT)
+  const viewWidth = width / scale
+  const viewHeight = height / scale
+  return {
+    scale,
+    viewWidth,
+    viewHeight,
+    x: followAxis(focus.x, viewWidth, ARENA_WIDTH),
+    y: followAxis(focus.y, viewHeight, ARENA_HEIGHT),
+  }
+}
