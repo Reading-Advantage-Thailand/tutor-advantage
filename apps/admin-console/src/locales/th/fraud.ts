@@ -1,0 +1,22 @@
+// Thai UI strings: "fraud" namespace. Owner: G3. Append-only.
+export const fraud = {
+  title: "ตรวจสอบความเสี่ยง (Risk & Fraud)",
+  description: "ติดตามและจัดการความเสี่ยงจากระบบอัตโนมัติ",
+  refresh: "รีเฟรชข้อมูล",
+  activeAlerts: "การแจ้งเตือนที่ใช้งานอยู่",
+  velocityStatus: "สถานะความเร็วการทำรายการ",
+  suspendedAccounts: "บัญชีที่ถูกระงับ",
+  actionFailed: "ดำเนินการไม่สำเร็จ",
+  reviewQueue: "คิวงานตรวจสอบ",
+  reviewQueueDescription: "ค้นหาและจัดการความเสี่ยงที่รอการตรวจสอบ",
+  searchPlaceholder: "ค้นหาชื่อ, รหัสอ้างอิง หรือประเภท...",
+  safeTitle: "ปลอดภัย!",
+  safeDescription: "ไม่มีความเสี่ยงที่ต้องจัดการในขณะนี้",
+  noDescription: "ไม่มีคำอธิบาย",
+  clear: "เคลียร์รายการ",
+  monitor: "เฝ้าระวัง",
+  freeze: "ระงับบัญชี",
+  confirmFreezeTitle: "ยืนยันการระงับบัญชี",
+  confirmFreezeDescription: "คุณต้องการระงับบัญชีผู้ใช้นี้ใช่หรือไม่? ผู้ใช้จะไม่สามารถเข้าสู่ระบบได้จนกว่าจะปลดล็อก",
+  actionSuccess: "อัปเดตสถานะรายการสำเร็จ",
+} as const;

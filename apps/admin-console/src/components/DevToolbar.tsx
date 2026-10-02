@@ -3,16 +3,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Terminal, X, ChevronUp, ChevronDown, RefreshCw,
+  Terminal, X, ChevronDown, RefreshCw,
   Zap, Trash2, Users, ReceiptText,
-  ShieldAlert, FilePenLine, Loader2, AlertTriangle,
+  ShieldAlert, FilePenLine, Loader2,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle,
-  DialogDescription, DialogFooter,
-} from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/app/ConfirmDialog";
 import { fetchWithAuth } from "@/lib/api";
 
 interface DevState {
@@ -43,6 +38,8 @@ export function DevToolbar() {
   const [busy, setBusy] = useState<string | null>(null);
   const logIdRef = useRef(0);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  // Every purge goes through a type-to-confirm dialog (they wipe shared local QA data).
+  const [pendingPurge, setPendingPurge] = useState<{ id: string; label: string; fn: () => Promise<any> } | null>(null);
 
   const log = (type: LogEntry["type"], msg: string) => {
     const ts = new Date().toLocaleTimeString("th-TH");
@@ -61,6 +58,11 @@ export function DevToolbar() {
   useEffect(() => {
     if (open) loadState();
   }, [open, loadState]);
+
+  const requestRun = (key: string, label: string, fn: () => Promise<any>) => {
+    if (key.startsWith("purge")) setPendingPurge({ id: key, label, fn });
+    else void run(key, label, fn);
+  };
 
   const run = async (key: string, label: string, fn: () => Promise<any>) => {
     setBusy(key);
@@ -142,19 +144,19 @@ export function DevToolbar() {
     {
       id: "purge-fraud",
       label: "ลบ fraud flag [DEV] ทั้งหมด",
-      icon: <Trash2 className="h-3.5 w-3.5 text-red-500" />,
+      icon: <Trash2 className="h-3.5 w-3.5 text-danger-fg" />,
       action: () => devFetch("POST", "/v1/dev/actions/purge", { resource: "fraud" }),
     },
     {
       id: "purge-adj",
       label: "ลบ adjustment DEV_TOOL ทั้งหมด",
-      icon: <Trash2 className="h-3.5 w-3.5 text-red-500" />,
+      icon: <Trash2 className="h-3.5 w-3.5 text-danger-fg" />,
       action: () => devFetch("POST", "/v1/dev/actions/purge", { resource: "adjustments" }),
     },
     {
       id: "purge-settlements",
       label: "ลบ settlement PENDING (DEV) ทั้งหมด",
-      icon: <Trash2 className="h-3.5 w-3.5 text-red-500" />,
+      icon: <Trash2 className="h-3.5 w-3.5 text-danger-fg" />,
       action: () => devFetch("POST", "/v1/dev/actions/purge", { resource: "settlements" }),
     },
   ].filter((ga) => !pageActionIds.has(ga.id.replace(/-g$/, "")));
@@ -164,35 +166,35 @@ export function DevToolbar() {
       {/* ปุ่มลอย */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-5 right-5 z-[9999] flex items-center gap-1.5 rounded-full bg-orange-500 text-white shadow-lg shadow-orange-500/30 px-3 py-2 text-xs font-bold hover:bg-orange-600 transition-all active:scale-95"
+        className="fixed right-3 bottom-[calc(var(--tabbar-space,0px)+12px)] z-[55] flex size-9 items-center justify-center rounded-full border border-warning-border bg-warning-bg text-warning-fg shadow-popover transition-colors hover:brightness-95 md:right-4 md:bottom-4"
         title="Dev Toolbar"
+        aria-label="Dev Toolbar"
+        aria-expanded={open}
       >
-        <Terminal className="h-3.5 w-3.5" />
-        DEV
-        {open ? <ChevronDown className="h-3 w-3" /> : <ChevronUp className="h-3 w-3" />}
+        {open ? <ChevronDown className="size-4" /> : <Terminal className="size-4" />}
       </button>
 
       {/* แผง */}
       {open && (
-        <div className="fixed bottom-16 right-5 z-[9998] w-[360px] max-h-[80vh] flex flex-col rounded-2xl border border-orange-500/30 bg-background shadow-2xl shadow-black/20 overflow-hidden">
+        <div className="fixed right-3 bottom-[calc(var(--tabbar-space,0px)+56px)] z-[55] flex max-h-[min(80vh,calc(100dvh-var(--tabbar-space,0px)-80px))] w-[min(360px,calc(100vw-24px))] flex-col overflow-hidden rounded-xl border border-hairline bg-surface-elevated text-fg shadow-popover md:right-5 md:bottom-16 md:right-4">
           {/* หัว */}
-          <div className="flex items-center justify-between px-4 py-3 bg-orange-500/10 border-b border-orange-500/20 shrink-0">
+          <div className="flex items-center justify-between px-4 py-3 bg-warning-bg border-b border-warning-border shrink-0">
             <div className="flex items-center gap-2">
-              <Terminal className="h-4 w-4 text-orange-500" />
-              <span className="text-sm font-bold text-foreground">เครื่องมือ Dev</span>
-              <Badge className="bg-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">DEV</Badge>
+              <Terminal className="h-4 w-4 text-warning-fg" />
+              <span className="text-sm font-bold text-fg">เครื่องมือ Dev</span>
+              <span className="rounded-full bg-warning-bg px-1.5 py-0.5 text-xs font-semibold text-warning-fg">DEV</span>
             </div>
             <div className="flex items-center gap-1">
               <button
                 onClick={loadState}
-                className="p-1 rounded-lg hover:bg-orange-500/10 text-muted-foreground hover:text-orange-500 transition-colors"
+                className="p-1 rounded-lg hover:bg-press text-fg-muted hover:text-warning-fg transition-colors"
                 title="รีเฟรช"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
               </button>
               <button
                 onClick={() => setOpen(false)}
-                className="p-1 rounded-lg hover:bg-muted text-muted-foreground transition-colors"
+                className="p-1 rounded-lg hover:bg-press text-fg-muted transition-colors"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -202,8 +204,8 @@ export function DevToolbar() {
           <div className="overflow-y-auto flex-1">
             {/* สถานะระบบ */}
             {state && (
-              <div className="px-4 py-3 border-b border-border/50 bg-muted/20">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">สถานะระบบ</p>
+              <div className="px-4 py-3 border-b border-hairline bg-surface-muted">
+                <p className="text-xs font-semibold text-fg-muted mb-2">สถานะระบบ</p>
                 <div className="grid grid-cols-3 gap-2">
                   {[
                     { label: "ผู้ใช้", value: state.userCount },
@@ -213,9 +215,9 @@ export function DevToolbar() {
                     { label: "Run ล่าสุด", value: state.latestRun?.period ?? "—" },
                     { label: "สถานะ Run", value: state.latestRun?.status ?? "—" },
                   ].map(({ label, value }) => (
-                    <div key={label} className="bg-card rounded-lg p-2 border border-border/50">
-                      <p className="text-[9px] text-muted-foreground font-medium">{label}</p>
-                      <p className="text-xs font-bold text-foreground truncate">{value}</p>
+                    <div key={label} className="bg-surface rounded-lg p-2 border border-hairline">
+                      <p className="text-xs text-fg-muted">{label}</p>
+                      <p className="text-xs font-bold text-fg truncate">{value}</p>
                     </div>
                   ))}
                 </div>
@@ -224,40 +226,40 @@ export function DevToolbar() {
 
             {/* Action เฉพาะหน้า */}
             {pageActions.length > 0 && (
-              <div className="px-4 py-3 border-b border-border/50">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-orange-500 mb-2 flex items-center gap-1">
+              <div className="px-4 py-3 border-b border-hairline">
+                <p className="text-xs font-semibold text-warning-fg mb-2 flex items-center gap-1">
                   <Zap className="h-3 w-3" /> Action หน้านี้
                 </p>
                 <div className="space-y-1.5">
                   {pageActions.map(({ id, ...rest }) => (
-                    <ActionBtn key={id} id={id} {...rest} busy={busy} onRun={(k, l, fn) => run(k, l, fn)} />
+                    <ActionBtn key={id} id={id} {...rest} busy={busy} onRun={requestRun} />
                   ))}
                 </div>
               </div>
             )}
 
             {/* Action ทั่วไป */}
-            <div className="px-4 py-3 border-b border-border/50">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Action ทั่วไป</p>
+            <div className="px-4 py-3 border-b border-hairline">
+              <p className="text-xs font-semibold text-fg-muted mb-2">Action ทั่วไป</p>
               <div className="space-y-1.5">
                 {globalActions.map(({ id, ...rest }) => (
-                  <ActionBtn key={id} id={id} {...rest} busy={busy} onRun={(k, l, fn) => run(k, l, fn)} />
+                  <ActionBtn key={id} id={id} {...rest} busy={busy} onRun={requestRun} />
                 ))}
                 {/* purge-all แยกออกมา — เปิด confirm dialog โดยตรง ไม่ผ่าน run() */}
                 <button
                   onClick={() => setConfirmOpen(true)}
                   disabled={busy !== null}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-card border border-red-500/30 hover:border-red-500/60 hover:bg-red-500/5 text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-surface border border-danger-border hover:bg-danger-bg text-danger-fg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
                 >
                   <Trash2 className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate">⚠️ ล้างข้อมูล settlement ทั้งหมด</span>
+                  <span className="truncate">ล้างข้อมูล settlement ทั้งหมด</span>
                 </button>
               </div>
             </div>
 
             {/* ไปหน้า */}
-            <div className="px-4 py-3 border-b border-border/50">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">ไปที่หน้า</p>
+            <div className="px-4 py-3 border-b border-hairline">
+              <p className="text-xs font-semibold text-fg-muted mb-2">ไปที่หน้า</p>
               <div className="flex flex-wrap gap-1.5">
                 {[
                   { href: "/dev", label: "จัดการผู้ใช้", icon: <Users className="h-3 w-3" /> },
@@ -268,7 +270,7 @@ export function DevToolbar() {
                   <a
                     key={href}
                     href={href}
-                    className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-muted hover:bg-muted/80 text-foreground border border-border/50 transition-colors"
+                    className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-surface-muted hover:bg-press text-fg border border-hairline transition-colors"
                   >
                     {icon} {label}
                   </a>
@@ -279,26 +281,26 @@ export function DevToolbar() {
             {/* ประวัติ */}
             <div className="px-4 py-3">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">ประวัติ</p>
+                <p className="text-xs font-semibold text-fg-muted">ประวัติ</p>
                 {logs.length > 0 && (
                   <button
                     onClick={() => setLogs([])}
-                    className="text-[9px] text-muted-foreground hover:text-foreground"
+                    className="text-xs text-fg-muted hover:text-fg"
                   >
                     ล้าง
                   </button>
                 )}
               </div>
               {logs.length === 0 ? (
-                <p className="text-[10px] text-muted-foreground italic">ยังไม่มีการทดสอบ</p>
+                <p className="text-xs text-fg-subtle">ยังไม่มีการทดสอบ</p>
               ) : (
                 <div className="space-y-1 max-h-40 overflow-y-auto">
                   {logs.map((l) => (
-                    <div key={l.id} className="flex gap-2 text-[10px] font-mono">
-                      <span className="text-muted-foreground shrink-0">{l.ts}</span>
+                    <div key={l.id} className="flex gap-2 text-xs font-mono">
+                      <span className="text-fg-muted shrink-0">{l.ts}</span>
                       <span className={
-                        l.type === "ok" ? "text-emerald-600" :
-                        l.type === "err" ? "text-red-500" : "text-muted-foreground"
+                        l.type === "ok" ? "text-success-fg" :
+                        l.type === "err" ? "text-danger-fg" : "text-fg-muted"
                       }>
                         {l.msg}
                       </span>
@@ -310,56 +312,39 @@ export function DevToolbar() {
           </div>
         </div>
       )}
-      {/* Confirm dialog — ล้าง settlement ทั้งหมด */}
-      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <DialogContent className="max-w-sm" showCloseButton={false}>
-          <DialogHeader>
-            <div className="flex items-center gap-3 mb-1">
-              <div className="p-2 bg-red-500/10 rounded-xl shrink-0">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-              </div>
-              <DialogTitle className="text-base">ล้างข้อมูล Settlement ทั้งหมด</DialogTitle>
-            </div>
-            <DialogDescription className="text-sm leading-relaxed">
-              ข้อมูลต่อไปนี้จะถูกลบถาวร และ<span className="font-bold text-foreground">ไม่สามารถกู้คืนได้</span>
-            </DialogDescription>
-            <ul className="mt-1 space-y-1 text-xs list-disc list-inside text-muted-foreground">
-              <li>Settlement Run ทั้งหมด (ทุกสถานะ)</li>
-              <li>Payout Lines ทั้งหมด</li>
-              <li>Payout Documents ทั้งหมด</li>
-              <li>Adjustments ที่ผูกกับ Settlement</li>
-            </ul>
-          </DialogHeader>
-          <DialogFooter className="mt-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-xl"
-              onClick={() => setConfirmOpen(false)}
-              disabled={busy === "purge-all-settlements"}
-            >
-              ยกเลิก
-            </Button>
-            <Button
-              size="sm"
-              className="rounded-xl bg-red-600 hover:bg-red-700 text-white"
-              disabled={busy === "purge-all-settlements"}
-              onClick={() => {
-                setConfirmOpen(false);
-                run(
-                  "purge-all-settlements",
-                  "ล้างข้อมูล settlement ทั้งหมด",
-                  () => devFetch("POST", "/v1/dev/actions/purge", { resource: "all-settlements" }),
-                );
-              }}
-            >
-              {busy === "purge-all-settlements"
-                ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                : "ยืนยัน ลบทั้งหมด"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Confirm: ล้าง settlement ทั้งหมด */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        tone="danger"
+        title="ล้างข้อมูลรอบจ่ายเงินทั้งหมด"
+        description="ลบรอบจ่ายเงินทุกสถานะ รายการจ่ายเงิน เอกสารจ่ายเงิน และรายการปรับปรุงยอดที่ผูกอยู่ ในฐานข้อมูลที่ใช้ร่วมกัน"
+        irreversible
+        requireText="DELETE"
+        confirmLabel="ลบทั้งหมด"
+        onConfirm={() =>
+          run("purge-all-settlements", "ล้างข้อมูล settlement ทั้งหมด", () =>
+            devFetch("POST", "/v1/dev/actions/purge", { resource: "all-settlements" }),
+          )
+        }
+      />
+      {/* Confirm: purge actions */}
+      <ConfirmDialog
+        open={pendingPurge !== null}
+        onOpenChange={(next) => {
+          if (!next) setPendingPurge(null);
+        }}
+        tone="danger"
+        title={pendingPurge?.label ?? ""}
+        description="ข้อมูลทดสอบในฐานข้อมูลที่ใช้ร่วมกันจะถูกลบถาวร"
+        irreversible
+        requireText="DELETE"
+        confirmLabel="ลบ"
+        onConfirm={async () => {
+          const target = pendingPurge;
+          if (target) await run(target.id, target.label, target.fn);
+        }}
+      />
     </>
   );
 }
@@ -384,7 +369,7 @@ function ActionBtn({
     <button
       onClick={() => onRun(id, label, action)}
       disabled={busy !== null}
-      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-card border border-border/60 hover:border-orange-500/50 hover:bg-orange-500/5 text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
+      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-surface border border-hairline hover:border-hairline-strong hover:bg-surface-muted text-fg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
     >
       {isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" /> : <span className="shrink-0">{icon}</span>}
       <span className="truncate">{label}</span>

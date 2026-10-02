@@ -1,0 +1,21 @@
+// Thai UI strings: "roles" namespace. Owner: G4. Append-only.
+export const roles = {
+  title: "จัดการสิทธิ์การใช้งาน",
+  description: "เพิ่มหรือแก้ไขสิทธิ์การเข้าถึงระบบ Admin Console และ Finance Checker",
+  addRoleBtn: "เพิ่มสิทธิ์ให้ผู้ใช้",
+  searchPlaceholder: "ค้นหาอีเมล, ชื่อ...",
+  emailCol: "อีเมล",
+  nameCol: "ชื่อ",
+  roleCol: "สิทธิ์การใช้งาน",
+  noUsers: "ไม่พบผู้ใช้งานที่มีสิทธิ์นี้",
+  modalTitle: "เพิ่ม/แก้ไขสิทธิ์การใช้งาน",
+  modalDescription: "หากผู้ใช้นี้ยังไม่ได้ลงทะเบียน ระบบจะสร้างสิทธิ์ล่วงหน้าและผูกกับ Google Login อัตโนมัติ",
+  emailLabel: "อีเมลผู้ใช้",
+  emailPlaceholder: "เช่น hr@example.com",
+  roleLabel: "สิทธิ์การใช้งาน",
+  submitBtn: "บันทึกการตั้งค่า",
+  savingBtn: "กำลังบันทึก...",
+  success: "บันทึกข้อมูลสิทธิ์สำเร็จ",
+  error: "เกิดข้อผิดพลาด ไม่สามารถบันทึกข้อมูลได้",
+  pendingRegistration: "(ยังไม่ลงทะเบียน)",
+} as const;

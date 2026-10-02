@@ -28,7 +28,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchWithAuth, getAdminRole } from "@/lib/api";
+import { errorMessage, getAdminRole } from "@/lib/api";
+import { useAdminOverview } from "@/components/app/AdminSummary";
 import { t } from "@/lib/i18n";
 
 const ACTION_TYPE_LABELS: Record<string, string> = {
@@ -131,9 +132,14 @@ function StatSkeleton() {
 }
 
 export default function DashboardPage() {
-  const [overview, setOverview] = useState<Overview | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  // G0: read the shell's shared overview resource (one deduped, visibility-aware
+  // poller app-wide) instead of fetching /v1/admin/overview a second time.
+  const overviewResource = useAdminOverview();
+  const overview = (overviewResource.data as unknown as Overview | undefined) ?? null;
+  const loading = overviewResource.isLoading;
+  const [errorDismissed, setErrorDismissed] = useState(false);
+  const error = overviewResource.error && !errorDismissed ? errorMessage(overviewResource.error) : "";
+  const setError = (_value: string) => setErrorDismissed(true);
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
@@ -141,22 +147,11 @@ export default function DashboardPage() {
     setRole(r || null);
   }, []);
 
+  const { refetch } = overviewResource;
   const loadOverview = useCallback(async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const data = await fetchWithAuth("/v1/admin/overview");
-      setOverview(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not load overview");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadOverview();
-  }, [loadOverview]);
+    setErrorDismissed(false);
+    await refetch();
+  }, [refetch]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">

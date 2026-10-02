@@ -44,7 +44,7 @@ import {
   Send,
   X,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/components/app/Toast";
 
 import { t } from "@/lib/i18n";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";

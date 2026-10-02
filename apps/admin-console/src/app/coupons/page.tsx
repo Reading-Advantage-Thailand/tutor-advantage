@@ -24,7 +24,7 @@ import {
   Ban,
   X,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/components/app/Toast";
 import {
   Select,
   SelectContent,

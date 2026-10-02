@@ -43,7 +43,7 @@ import {
   Save,
   X as XIcon,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/components/app/Toast";
 
 import { fetchWithAuth, getAdminRole } from "@/lib/api";
 import { useEffect, useState, useCallback, useRef } from "react";

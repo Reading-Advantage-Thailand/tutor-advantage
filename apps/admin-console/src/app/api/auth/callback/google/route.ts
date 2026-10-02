@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
 import { prisma } from "@tutor-advantage/database";
-import { getJwtSecret } from "@/lib/security";
+import { isAdminRole } from "@/lib/routes";
+import { setAdminSessionCookies } from "@/lib/security";
 
 
 export async function GET(request: Request) {
@@ -89,10 +89,11 @@ export async function GET(request: Request) {
     const profile = await profileResponse.json();
     const { email, name } = profile;
 
-    if (!email) {
-      return NextResponse.redirect(
-        new URL("/login?error=no_email_returned", publicBase)
-      );
+    // S-4: only accept Google accounts whose email address Google has verified.
+    const emailVerified = profile.verified_email === true || profile.email_verified === true;
+    if (!email || !emailVerified) {
+      console.warn(`Rejected Google login without a verified email: ${email ?? "(none)"}`);
+      return NextResponse.redirect(new URL("/login?error=email_not_verified", publicBase));
     }
 
     // 3. Verify user exists in DB with an admin role
@@ -101,8 +102,7 @@ export async function GET(request: Request) {
       select: { userId: true, role: true, isActive: true, displayName: true, profilePictureUrl: true },
     });
 
-    const ALLOWED_ROLES = ["ADMIN", "FINANCE_CHECKER"];
-    if (!dbUser || !dbUser.isActive || !ALLOWED_ROLES.includes(dbUser.role)) {
+    if (!dbUser || !dbUser.isActive || !isAdminRole(dbUser.role)) {
       console.warn(
         `Unauthorized access attempt from: ${email} with role: ${dbUser?.role}`
       );
@@ -127,66 +127,14 @@ export async function GET(request: Request) {
 
     const { role, userId } = dbUser;
 
-    // 4. Issue JWT stored only in an httpOnly cookie
-    const token = jwt.sign(
-      { userId, email, name, role, iss: "admin-console" },
-      getJwtSecret(),
-      { expiresIn: "12h" }
-    );
-
+    // 4. Issue the admin-console session (httpOnly token + display cookies).
     const response = NextResponse.redirect(new URL("/", publicBase));
-
-    response.cookies.set("admin_token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 12,
-      path: "/",
-    });
-
-    response.cookies.set("admin_role", role, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 12,
-      path: "/",
-    });
-
-    response.cookies.set("admin_email", email, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 12,
-      path: "/",
-    });
-
-    // Determine the most up-to-date name and picture to use
-    // Using dbUser values since we updated them earlier if needed
-    const finalName = dbUser.displayName || name || email;
-    const finalPicture = dbUser.profilePictureUrl || profile.picture || "";
-
-    response.cookies.set("admin_name", finalName, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 12,
-      path: "/",
-    });
-
-    response.cookies.set("admin_picture", finalPicture, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 12,
-      path: "/",
-    });
-
-    response.cookies.set("admin_user_id", userId, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 12,
-      path: "/",
+    await setAdminSessionCookies(response, {
+      userId,
+      role,
+      email,
+      name: dbUser.displayName || name || email,
+      picture: dbUser.profilePictureUrl || profile.picture || "",
     });
 
     // Consume one-time cookies
