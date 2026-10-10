@@ -14,7 +14,9 @@ const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
-  navigationPreload: true,
+  // Preload fires a second request for the same navigation. For /api/auth/*
+  // that means two random oauth_state values and a state_mismatch on callback.
+  navigationPreload: false,
   runtimeCaching: [
     {
       matcher: ({ sameOrigin, url }) =>
