@@ -27,4 +27,12 @@ const serwist = new Serwist({
   ],
 });
 
+// navigationPreload is persisted on the registration, so omitting enable() does
+// not turn it off for browsers that already have it on. Disable it explicitly.
+self.addEventListener("activate", (event) => {
+  if (self.registration.navigationPreload) {
+    event.waitUntil(self.registration.navigationPreload.disable());
+  }
+});
+
 serwist.addEventListeners();
