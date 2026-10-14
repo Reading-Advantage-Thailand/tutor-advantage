@@ -1,3 +1,4 @@
+import { unstable_rethrow } from "next/navigation";
 import { Gift, Sparkles } from "lucide-react";
 import { CardHeader, Chip, IconTile, Page, PageHeader, Surface } from "@/components/app";
 import { t } from "@/lib/i18n";
@@ -12,6 +13,8 @@ export default async function DemoPage() {
   try {
     [books, demoClasses] = await Promise.all([getBooks(), getMyDemoClasses()]);
   } catch (err) {
+    // Let Next.js handle its own control-flow errors (dynamic bailout, redirect).
+    unstable_rethrow(err);
     console.error(err);
     loadError = true;
   }
