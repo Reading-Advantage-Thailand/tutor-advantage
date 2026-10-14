@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, SendHorizonal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { tx } from "@/lib/games/gameText";
 
 interface InputControllerProps {
   onSubmit: (value: string) => void;
@@ -62,7 +63,7 @@ export function InputController({
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          placeholder="Type spell..."
+          placeholder={tx("Type spell...")}
           className={cn(
             "flex-1 rounded-xl border bg-white/5 px-4 py-2.5",
             "text-white text-base font-semibold placeholder:text-slate-500",
@@ -112,7 +113,7 @@ export function InputController({
               className="absolute text-slate-300 font-medium tracking-widest uppercase text-sm flex items-center gap-2"
             >
               <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
-              <span>Type spell...</span>
+              <span>{tx("Type spell...")}</span>
               <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
             </motion.div>
           )}

@@ -1,8 +1,13 @@
 import React from 'react';
+import { Star } from 'lucide-react';
 import { t } from '@/lib/i18n';
-import { MobileLeaderboard } from '../MobileLeaderboard';
-
+import { cn } from '@/lib/utils';
 import { LessonParticipant } from '@/hooks/useLessonSocket';
+import { LESSON_PHASE } from '@/lib/lessonPhases';
+import { TextArea } from '@/components/mobile';
+import { Button } from '@/components/ui/button';
+import { MobileLeaderboard } from '../MobileLeaderboard';
+import { PhaseColumn, PhaseIntroCard, StatusCard } from '../PhaseBlocks';
 
 interface LessonReflectionPhaseProps {
   hasAnswered: boolean;
@@ -18,6 +23,39 @@ interface LessonReflectionPhaseProps {
   handleReflectionSubmit: () => void;
   participants: LessonParticipant[];
   studentId: string;
+}
+
+/** 2-column choice group; the selected label is what gets submitted (unchanged). */
+function ChoiceGroup({ title, options, value, onChange }: {
+  title: string;
+  options: { v: string; label: string }[];
+  value: string;
+  onChange: (label: string) => void;
+}) {
+  return (
+    <fieldset>
+      <legend className="mb-2 text-[15px] leading-[1.5] font-bold text-fg">{title}</legend>
+      <div className="grid grid-cols-2 gap-2">
+        {options.map((o) => {
+          const selected = value === o.label;
+          return (
+            <button
+              key={o.v}
+              type="button"
+              aria-pressed={selected}
+              onClick={() => onChange(o.label)}
+              className={cn(
+                'pressable min-h-12 rounded-2xl border-2 px-3 py-2 text-[15px] leading-[1.4] font-semibold',
+                selected ? 'border-warning-solid bg-warning-bg text-warning-fg' : 'border-hairline bg-surface text-fg-muted active:bg-press',
+              )}
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
 }
 
 export function LessonReflectionPhase({
@@ -49,88 +87,75 @@ export function LessonReflectionPhase({
   ];
 
   return (
-    <div className="phase-enter w-full max-w-md flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
-      <div className="bg-amber-500/10 border-2 border-amber-500/30 rounded-3xl p-6 text-center">
-        <div className="text-5xl mb-2">📝</div>
-        <h2 className="text-xl font-black text-amber-600 dark:text-amber-400">{t("interactivePlay.reflectionTitle")}</h2>
-        <p className="text-muted-foreground text-sm mt-1">{t("interactivePlay.reflectionPrompt")}</p>
-      </div>
+    <PhaseColumn>
+      <PhaseIntroCard
+        phase={LESSON_PHASE.REFLECTION}
+        title={t("interactivePlay.reflectionTitle")}
+        tip={t("interactivePlay.reflectionPrompt")}
+      />
 
       {hasAnswered ? (
-        <div className="bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl p-6 text-center">
-          <div className="text-4xl mb-2">✅</div>
-          <h3 className="font-black text-emerald-600 dark:text-emerald-400 text-lg">{t("interactivePlay.reflectionDone")}</h3>
+        <StatusCard tone="success" emoji="✅" title={t("interactivePlay.reflectionDone")}>
           {reviewRating > 0 && (
-            <p className="text-emerald-600/70 dark:text-emerald-400/70 text-sm mt-1">{'★'.repeat(reviewRating)} บันทึกรีวิวคุณครูแล้ว</p>
+            <p className="mt-1 text-sm leading-[1.5] text-success-fg">
+              <span aria-hidden="true">{'★'.repeat(reviewRating)}</span> {t("interactivePlay.tutorReviewSaved")}
+            </p>
           )}
-        </div>
+        </StatusCard>
       ) : (
-        <div className="bg-card rounded-3xl border border-border shadow-lg p-5 space-y-4">
-          <div>
-            <p className="text-sm font-bold text-foreground mb-2">{t("interactivePlay.reflectionUnderstanding")}</p>
-            <div className="grid grid-cols-2 gap-2">
-              {uOptions.map((o) => (
-                <button
-                  key={o.v}
-                  onClick={() => setUnderstanding(o.label)}
-                  className={`rounded-2xl border-2 py-2.5 text-sm font-bold transition-all active:scale-95 ${understanding === o.label ? 'border-amber-400 bg-amber-400/15 text-amber-600' : 'border-border bg-muted/40 text-muted-foreground'}`}
-                >
-                  {o.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="text-sm font-bold text-foreground mb-2">{t("interactivePlay.reflectionEffort")}</p>
-            <div className="grid grid-cols-2 gap-2">
-              {eOptions.map((o) => (
-                <button
-                  key={o.v}
-                  onClick={() => setEffort(o.label)}
-                  className={`rounded-2xl border-2 py-2.5 text-sm font-bold transition-all active:scale-95 ${effort === o.label ? 'border-amber-400 bg-amber-400/15 text-amber-600' : 'border-border bg-muted/40 text-muted-foreground'}`}
-                >
-                  {o.label}
-                </button>
-              ))}
-            </div>
-          </div>
+        <section className="flex flex-col gap-5 rounded-[var(--radius-card)] border border-hairline bg-surface p-4 shadow-[var(--shadow-card)]">
+          <ChoiceGroup title={t("interactivePlay.reflectionUnderstanding")} options={uOptions} value={understanding} onChange={setUnderstanding} />
+          <ChoiceGroup title={t("interactivePlay.reflectionEffort")} options={eOptions} value={effort} onChange={setEffort} />
 
-          <div className="border-t border-border pt-4">
-            <p className="text-sm font-bold text-foreground">ให้คะแนนคุณครู <span className="text-muted-foreground font-normal text-xs">(ไม่บังคับ)</span></p>
-            <p className="text-muted-foreground text-xs leading-relaxed mb-2">คะแนนนี้จะถูกนำไปคำนวณเรตติ้งเฉลี่ยจริงของคุณครู</p>
-            <div className="grid grid-cols-5 gap-2 mb-3">
-              {[1, 2, 3, 4, 5].map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setReviewRating(value)}
-                  aria-label={`ให้ ${value} ดาว`}
-                  className={`h-12 rounded-2xl border text-2xl transition-all active:scale-95 ${value <= reviewRating ? 'border-amber-400 bg-amber-400/15 text-amber-500' : 'border-border bg-muted/40 text-muted-foreground'}`}
-                >
-                  ★
-                </button>
-              ))}
+          <div className="border-t border-hairline pt-4">
+            <p className="text-[15px] leading-[1.5] font-bold text-fg">
+              {t("interactivePlay.rateTutorTitle")} <span className="text-[13px] font-normal text-fg-muted">({t("common.optional")})</span>
+            </p>
+            <p className="mb-3 text-[13px] leading-[1.5] text-fg-muted">{t("interactivePlay.rateTutorHint")}</p>
+            <div className="mb-4 grid grid-cols-5 gap-2">
+              {[1, 2, 3, 4, 5].map((value) => {
+                const filled = value <= reviewRating;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setReviewRating(value)}
+                    aria-label={`${t("interactivePlay.rateStarsAriaPrefix")} ${value} ${t("interactivePlay.rateStarsAriaSuffix")}`}
+                    aria-pressed={value === reviewRating}
+                    className={cn(
+                      'pressable flex h-12 items-center justify-center rounded-2xl border',
+                      filled ? 'border-warning-border bg-warning-bg text-warning-solid' : 'border-hairline bg-fill-muted text-fg-subtle active:bg-press',
+                    )}
+                  >
+                    <Star aria-hidden="true" className="size-6" fill={filled ? 'currentColor' : 'none'} />
+                  </button>
+                );
+              })}
             </div>
-            <textarea
+            <TextArea
+              label={t("interactivePlay.reviewCommentLabel")}
               value={reviewComment}
               onChange={(event) => setReviewComment(event.target.value)}
-              placeholder="เล่าความประทับใจหรือข้อเสนอแนะเพิ่มเติม"
+              placeholder={t("interactivePlay.reviewCommentPlaceholder")}
               maxLength={500}
-              className="min-h-20 w-full resize-y rounded-2xl border border-border bg-background p-3 text-sm font-medium text-foreground outline-none focus:border-amber-400"
+              textareaClassName="min-h-[96px]"
             />
           </div>
 
-          <button
+          <Button
+            variant="brand"
+            size="cta"
+            className="w-full"
             onClick={handleReflectionSubmit}
             disabled={!understanding || !effort || isSubmitting}
-            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-base py-4 rounded-2xl shadow-lg disabled:opacity-40 active:scale-95 transition-all"
+            loading={isSubmitting}
           >
-            {isSubmitting ? 'กำลังส่ง...' : t("interactivePlay.reflectionSubmit")}
-          </button>
-        </div>
+            {isSubmitting ? t("interactivePlay.sending") : t("interactivePlay.reflectionSubmit")}
+          </Button>
+        </section>
       )}
 
       <MobileLeaderboard participants={participants} studentId={studentId} />
-    </div>
+    </PhaseColumn>
   );
 }

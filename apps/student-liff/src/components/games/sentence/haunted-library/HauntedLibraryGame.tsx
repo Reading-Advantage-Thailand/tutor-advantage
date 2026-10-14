@@ -20,6 +20,8 @@ import { VirtualDPad } from '@/lib/games-runtime'
 import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { Book, DoorOpen, Sparkles, Zap, AlertTriangle } from 'lucide-react'
+import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 /**
  * Host-injectable navigation contract (Phase 5 Decision 5.1, D-09).
@@ -82,6 +84,26 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
   const { getEffectiveTextSize } = useAccessibilitySettings()
   const [gameState, setGameState] = useState<LibraryState | null>(null)
   const [gamePhase, setGamePhase] = useState<'start' | 'playing' | 'ended'>('start')
+  // The board is a fixed 390x844 design; fit it into whatever frame hosts the
+  // game (phone: 1:1, wide student column / presenter: centred letterbox).
+  const [frameSize, setFrameSize] = useState({ width: 0, height: 0 })
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const measure = () => {
+      const { width, height } = el.getBoundingClientRect()
+      setFrameSize((prev) =>
+        Math.round(prev.width) === Math.round(width) && Math.round(prev.height) === Math.round(height)
+          ? prev
+          : { width, height },
+      )
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [containerRef, gamePhase])
+  const board = computeLetterbox(frameSize, { width: GAME_WIDTH, height: GAME_HEIGHT })
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium')
   const { playSound } = useSound()
   const { input, setVirtualInput } = useDirectionalInput()
@@ -164,17 +186,13 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
 
   // Game Loop with requestAnimationFrame.
   //
-  // The next-frame schedule is hoisted into the `setGameState` updater so a
-  // game-over tick (one tick) consumes exactly one `requestAnimationFrame`
-  // callback. Without this, the loop would self-schedule from inside its
-  // own body after the updater call, using a second RAF even when the
-  // tick already ended the game — which broke the import-harness test's
-  // strict `rafCalls < 2` mock (the first game would consume both RAFs
-  // and the second game would never get a frame).
-  //
-  // Production impact: a single-RAF-per-tick game still drives the
-  // 60-fps loop correctly because the updater schedules the next frame
-  // every time the game is still in `playing` phase.
+  // Exactly one requestAnimationFrame is scheduled per frame, from the loop
+  // itself, never from inside the setGameState updater: React may run an
+  // updater more than once (Strict Mode / concurrent rendering), and each run
+  // scheduled another frame, so the pending callbacks doubled every frame
+  // (~2M rAF requests/s after a few seconds) and the tab froze. The loop stops
+  // when endGame clears isLoopActiveRef (synchronously, so a RAF mock that
+  // ignores cancelAnimationFrame still terminates).
   useEffect(() => {
     if (gamePhase !== 'playing') {
       isLoopActiveRef.current = false
@@ -182,9 +200,12 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
     }
 
     isLoopActiveRef.current = true
+    // Per-effect flag: an input change restarts the loop, and a frame queued
+    // by the previous run must not keep a second loop alive.
+    let active = true
 
     const loop = (timestamp: number) => {
-      if (!isLoopActiveRef.current) {
+      if (!active || !isLoopActiveRef.current) {
         return
       }
       const delta = lastFrameRef.current ? timestamp - lastFrameRef.current : 16
@@ -195,30 +216,30 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
         if (!prev || prev.phase !== 'playing') {
           return prev
         }
-        const nextState = tickLibrary(prev, clampedDelta, { dx: input.dx, dy: input.dy })
-        if (nextState.phase !== 'playing') {
-          endGame(nextState)
-          // Game over — do NOT schedule another RAF. The jsdom test mock
-          // has a strict RAF budget; production is unaffected because
-          // real RAFs still fire (the next-frame scheduling for the live
-          // game comes from the early-return path below when the game is
-          // still in `playing`).
-          return nextState
-        }
-        // Still playing — schedule the next frame from inside the updater
-        // so a single RAF tick consumes one `requestAnimationFrame` slot.
-        rafRef.current = requestAnimationFrame(loop)
-        return nextState
+        return tickLibrary(prev, clampedDelta, { dx: input.dx, dy: input.dy })
       })
+
+      if (active && isLoopActiveRef.current) {
+        rafRef.current = requestAnimationFrame(loop)
+      }
     }
 
     rafRef.current = requestAnimationFrame(loop)
     return () => {
+      active = false
       isLoopActiveRef.current = false
       cancelAnimationFrame(rafRef.current)
       lastFrameRef.current = 0
     }
-  }, [gamePhase, input.dx, input.dy, endGame])
+  }, [gamePhase, input.dx, input.dy])
+
+  // End the game once a tick leaves the 'playing' phase (kept out of the
+  // state updater so it runs once per game, not once per updater call).
+  useEffect(() => {
+    if (gamePhase === 'playing' && gameState && gameState.phase !== 'playing') {
+      endGame(gameState)
+    }
+  }, [gamePhase, gameState, endGame])
 
   // Fullscreen handling
   useEffect(() => {
@@ -245,35 +266,35 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
     return (
       <div className="absolute inset-0 z-50 bg-slate-950" ref={containerRef}>
         <GameStartScreen
-          gameTitle="The Haunted Library"
-          gameSubtitle="A Spooky Word Adventure"
+          gameTitle={tx("The Haunted Library")}
+          gameSubtitle={tx("A Spooky Word Adventure")}
           vocabulary={sentences}
           onStart={startGame}
           icon={Book}
           instructions={[
-            { step: 1, text: "Explore the library floors using the DPad or Arrow Keys.", icon: Sparkles },
-            { step: 2, text: "Bounce on the orange trampolines at the edges to reach higher floors.", icon: Zap },
-            { step: 3, text: "Open doors by pressing UP when nearby to collect the next word.", icon: DoorOpen },
-            { step: 4, text: "Avoid ghosts and bats! Slamming a door on a ghost will stun it.", icon: AlertTriangle }
+            { step: 1, text: tx("Explore the library floors using the DPad or Arrow Keys."), icon: Sparkles },
+            { step: 2, text: tx("Bounce on the orange trampolines at the edges to reach higher floors."), icon: Zap },
+            { step: 3, text: tx("Open doors by pressing UP when nearby to collect the next word."), icon: DoorOpen },
+            { step: 4, text: tx("Avoid ghosts and bats! Slamming a door on a ghost will stun it."), icon: AlertTriangle }
           ]}
-          proTip="Collecting words in the correct order is key to purifying the library!"
+          proTip={tx("Collecting words in the correct order is key to purifying the library!")}
           controls={[
-            { label: "Move", keys: "Arrow Keys / WASD", color: "bg-blue-500" },
-            { label: "Open Door", keys: "Up Arrow / W", color: "bg-green-500" },
-            { label: "Bounce", keys: "Move to Edges", color: "bg-orange-500" }
+            { label: tx("Move"), keys: tx("Arrow Keys / WASD"), color: "bg-blue-500" },
+            { label: tx("Open Door"), keys: tx("Up Arrow / W"), color: "bg-green-500" },
+            { label: tx("Bounce"), keys: tx("Move to Edges"), color: "bg-orange-500" }
           ]}
         >
           <div className="flex items-center gap-2">
-            <span className="text-sm uppercase tracking-wider text-white/50" style={{ fontSize: getEffectiveTextSize(16) }}>Difficulty:</span>
+            <span className="text-sm uppercase tracking-wider text-white/50" style={{ fontSize: getEffectiveTextSize(16) }}>{tx("Difficulty:")}</span>
             <select
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value as 'easy' | 'medium' | 'hard')}
               className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-base text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
               style={{ fontSize: getEffectiveTextSize(16) }}
             >
-              <option value="easy">Novice Scholarly</option>
-              <option value="medium">Master Archivist</option>
-              <option value="hard">Forbidden Knowledge</option>
+              <option value="easy">{tx("Novice Scholarly")}</option>
+              <option value="medium">{tx("Master Archivist")}</option>
+              <option value="hard">{tx("Forbidden Knowledge")}</option>
             </select>
           </div>
         </GameStartScreen>
@@ -292,7 +313,7 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
           accuracy={gameState.totalAttempts > 0 ? gameState.correctAnswers / gameState.totalAttempts : 0}
           onRestart={handleRestart}
           onExit={handleExit}
-          title="The Haunted Library"
+          title={tx("The Haunted Library")}
         />
       </div>
     )
@@ -302,9 +323,9 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
   if (!gameState) return null
 
   return (
-    <div ref={containerRef} className="flex flex-col items-center justify-center min-h-[600px] bg-slate-900 rounded-lg overflow-hidden shadow-2xl border-4 border-slate-700 relative">
-      <Stage width={GAME_WIDTH} height={GAME_HEIGHT}>
-        <Layer>
+    <div ref={containerRef} className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900">
+      <Stage width={frameSize.width || GAME_WIDTH} height={frameSize.height || GAME_HEIGHT}>
+        <Layer x={board.x} y={board.y} scaleX={board.scale} scaleY={board.scale}>
           {/* Background */}
           <Rect width={GAME_WIDTH} height={GAME_HEIGHT} fill="#1a1a2e" />
 
@@ -376,7 +397,7 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
               />
               {ghost.state === 'stunned' && (
                 <Text
-                  text="ZZZ"
+                  text={tx("ZZZ")}
                   fontSize={getEffectiveTextSize(16)}
                   fill="white"
                   x={10}
@@ -423,7 +444,7 @@ export function HauntedLibraryGame({ sentences, onComplete, onNavigate }: Haunte
             <span className="flex items-center gap-1 font-bold">
               <Book className="w-4 h-4 text-blue-400" /> {gameState.lives}
             </span>
-            <span className="font-bold">Score: {gameState.score}</span>
+            <span className="font-bold">{tx("Score:")} {gameState.score}</span>
           </div>
           <div className="flex gap-1">
             {gameState.words.map((_, i) => (

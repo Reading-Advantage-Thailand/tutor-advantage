@@ -1,22 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  ArrowRight,
-  BarChart3,
-  CheckCircle2,
-  RefreshCw,
-  TrendingUp,
-  UsersRound,
-} from "lucide-react";
+import { ArrowRight, CheckCircle2, RefreshCw, TrendingUp, UsersRound } from "lucide-react";
+import { Chip, EmptyState, Sheet, Skeleton, StatCard, TextAreaField, fieldControlClass } from "@/components/app";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { formatNumber } from "@/lib/format";
+import { t } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 import { assessmentAction } from "./assessment-actions";
 import {
   ASSESSMENT_SKILLS,
@@ -26,34 +16,38 @@ import {
   type AssessmentStudent,
 } from "./assessment-report-summary";
 
+const PEOPLE = t("tutorClass.classes.peopleUnit");
+
 function formatAverage(value: number | null, maximum: number) {
-  return value === null ? "—" : `${value.toFixed(1)}/${maximum}`;
+  return value === null ? "–" : `${formatNumber(value, 1)}/${maximum}`;
 }
 
 function MiniSkillChart({ summary }: { summary: ReturnType<typeof summarizeAssessment> }) {
   return (
-    <div className="rounded-2xl border border-border/60 bg-background/60 p-3.5" aria-label="กราฟคะแนนเฉลี่ยรายทักษะก่อนและหลังเรียน">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="text-xs font-bold text-foreground">คะแนนเฉลี่ยรายทักษะ</p>
-        <div className="flex items-center gap-3 text-[10px] font-semibold text-muted-foreground">
-          <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-slate-400" />ก่อนเรียน</span>
-          <span className="flex items-center gap-1.5"><i className="size-2 rounded-full bg-emerald-500" />หลังเรียน</span>
+    <div className="rounded-xl bg-surface-muted p-4" role="group" aria-label={t("tutorClass.assessment.chartLabel")}>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm font-medium text-fg">{t("tutorClass.assessment.skillAverages")}</p>
+        <div className="flex items-center gap-3 text-xs text-fg-muted">
+          <span className="flex items-center gap-1.5"><i aria-hidden="true" className="size-2 rounded-full bg-fg-subtle" />{t("tutorClass.assessment.pre")}</span>
+          <span className="flex items-center gap-1.5"><i aria-hidden="true" className="size-2 rounded-full bg-brand-vivid" />{t("tutorClass.assessment.post")}</span>
         </div>
       </div>
-      <div className="space-y-2.5">
+      <div className="flex flex-col gap-3">
         {summary.skillAverages.map((skill) => (
-          <div key={skill.key} className="grid grid-cols-[4.25rem_1fr_3.25rem] items-center gap-2">
-            <span className="text-[11px] font-semibold text-muted-foreground">{skill.label}</span>
-            <div className="space-y-1" aria-hidden="true">
-              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                <span className="block h-full rounded-full bg-slate-400 transition-[width]" style={{ width: `${((skill.pre || 0) / 5) * 100}%` }} />
+          <div key={skill.key} className="grid grid-cols-[4.5rem_1fr_auto] items-center gap-3">
+            <span className="text-[0.8125rem] text-fg-muted">{skill.label}</span>
+            <div className="flex flex-col gap-1" aria-hidden="true">
+              <div className="h-1.5 overflow-hidden rounded-full bg-fill-muted">
+                <span className="block h-full rounded-full bg-fg-subtle" style={{ width: `${((skill.pre || 0) / 5) * 100}%` }} />
               </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                <span className="block h-full rounded-full bg-emerald-500 transition-[width]" style={{ width: `${((skill.post || 0) / 5) * 100}%` }} />
+              <div className="h-1.5 overflow-hidden rounded-full bg-fill-muted">
+                <span className="block h-full rounded-full bg-brand-vivid" style={{ width: `${((skill.post || 0) / 5) * 100}%` }} />
               </div>
             </div>
-            <span className="text-right text-[10px] font-bold tabular-nums text-foreground">
-              {skill.pre === null && skill.post === null ? "ยังไม่มีผล" : `${skill.pre?.toFixed(1) || "—"} → ${skill.post?.toFixed(1) || "—"}`}
+            <span className="text-right text-xs font-medium text-fg tabular">
+              {skill.pre === null && skill.post === null
+                ? t("tutorClass.assessment.noResult")
+                : `${skill.pre === null ? "–" : formatNumber(skill.pre, 1)} → ${skill.post === null ? "–" : formatNumber(skill.post, 1)}`}
             </span>
           </div>
         ))}
@@ -72,67 +66,70 @@ function StudentResult({ student, cycleId, articleId }: { student: AssessmentStu
   const difference = pre && post ? (post.total || 0) - (pre.total || 0) : null;
 
   return (
-    <article className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
+    <article className="min-w-0 rounded-xl border border-hairline bg-surface p-4 shadow-card">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h3 className="font-bold text-foreground">{student.displayName || "นักเรียน"}</h3>
-          <p className="mt-1 text-xs text-muted-foreground">
-            ก่อนเรียน <strong className="text-foreground">{pre ? `${pre.total}/15` : "ยังไม่มีผล"}</strong>
-            <span className="px-1.5">→</span>
-            หลังเรียน <strong className="text-foreground">{post ? `${post.total}/15` : "ยังไม่มีผล"}</strong>
+        <div className="min-w-0">
+          <h3 className="truncate text-[0.9375rem] font-semibold text-fg">{student.displayName || t("tutorClass.students.unnamed")}</h3>
+          <p className="mt-0.5 text-[0.8125rem] text-fg-muted">
+            {t("tutorClass.assessment.pre")} <strong className="font-semibold text-fg tabular">{pre ? `${pre.total}/15` : t("tutorClass.assessment.noResult")}</strong>
+            <span aria-hidden="true" className="px-1.5">→</span>
+            {t("tutorClass.assessment.post")} <strong className="font-semibold text-fg tabular">{post ? `${post.total}/15` : t("tutorClass.assessment.noResult")}</strong>
           </p>
         </div>
         {difference !== null && (
-          <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${difference > 0 ? "bg-emerald-500/10 text-emerald-600" : difference < 0 ? "bg-amber-500/10 text-amber-700" : "bg-muted text-muted-foreground"}`}>
-            {difference > 0 ? `+${difference} ข้อ` : difference === 0 ? "คะแนนคงที่" : `${difference} ข้อ`}
-          </span>
+          <Chip tone={difference > 0 ? "success" : difference < 0 ? "warning" : "neutral"} size="sm">
+            {difference > 0
+              ? `+${difference} ${t("tutorClass.assessment.itemsUnit")}`
+              : difference === 0
+                ? t("tutorClass.assessment.unchanged")
+                : `${difference} ${t("tutorClass.assessment.itemsUnit")}`}
+          </Chip>
         )}
       </div>
 
       {target ? (
         <>
-          <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+          <dl className="mt-3 grid grid-cols-3 gap-2">
             {ASSESSMENT_SKILLS.map(({ key, label }) => (
-              <div key={key} className="rounded-xl bg-muted/50 p-2.5 text-center">
-                <p className="text-muted-foreground">{label}</p>
-                <p className="mt-1 font-black tabular-nums text-foreground">{pre?.scores?.[key] ?? "—"} → {post?.scores?.[key] ?? "—"}</p>
+              <div key={key} className="rounded-lg bg-surface-muted p-2.5 text-center">
+                <dt className="text-xs text-fg-muted">{label}</dt>
+                <dd className="mt-0.5 text-sm font-semibold text-fg tabular">{pre?.scores?.[key] ?? "–"} → {post?.scores?.[key] ?? "–"}</dd>
               </div>
             ))}
-          </div>
-          <label className="mt-3 block text-xs font-semibold text-foreground">
-            คำแนะนำจากครู
-            <textarea
-              className="mt-1.5 min-h-20 w-full resize-y rounded-xl border border-input bg-background p-3 text-sm font-normal outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
-              value={comment}
-              maxLength={2000}
-              placeholder="เขียนคำแนะนำที่นักเรียนจะเห็น…"
-              onChange={(event) => { setComment(event.target.value); setStatus(""); }}
-            />
-          </label>
+          </dl>
+          <TextAreaField
+            containerClassName="mt-3"
+            label={t("tutorClass.assessment.commentLabel")}
+            rows={3}
+            value={comment}
+            maxLength={2000}
+            placeholder={t("tutorClass.assessment.commentPlaceholder")}
+            onChange={(event) => { setComment(event.target.value); setStatus(""); }}
+          />
           <div className="mt-2 flex items-center justify-end gap-3">
-            {status && <p role="status" className="text-xs text-muted-foreground">{status}</p>}
+            {status && <p role="status" className="text-[0.8125rem] text-fg-muted">{status}</p>}
             <Button
-              className="h-9 rounded-xl px-4 font-bold"
-              disabled={saving}
+              size="sm"
+              loading={saving}
               onClick={async () => {
                 setSaving(true);
                 setStatus("");
                 try {
                   await assessmentAction(cycleId, "comment", { attemptId: target.attemptId, comment });
-                  setStatus("บันทึกแล้ว");
+                  setStatus(t("tutorClass.assessment.saved"));
                 } catch (error) {
-                  setStatus(error instanceof Error ? error.message : "บันทึกไม่สำเร็จ");
+                  setStatus(error instanceof Error ? error.message : t("tutorClass.assessment.saveFailed"));
                 } finally {
                   setSaving(false);
                 }
               }}
             >
-              {saving ? "กำลังบันทึก…" : "บันทึกคำแนะนำ"}
+              {saving ? t("tutorClass.detail.saving") : t("tutorClass.assessment.saveComment")}
             </Button>
           </div>
         </>
       ) : (
-        <p className="mt-3 rounded-xl bg-muted/40 px-3 py-2.5 text-xs text-muted-foreground">ยังไม่มีผลการประเมินของนักเรียนคนนี้</p>
+        <p className="mt-3 rounded-lg bg-surface-muted px-3 py-2.5 text-[0.8125rem] text-fg-muted">{t("tutorClass.assessment.studentNoResult")}</p>
       )}
     </article>
   );
@@ -151,7 +148,7 @@ export default function AssessmentReport({ cycleId }: { cycleId: string }) {
     try {
       setReport(await assessmentAction(cycleId, "report"));
     } catch (error) {
-      setError(error instanceof Error ? error.message : "โหลดไม่สำเร็จ");
+      setError(error instanceof Error ? error.message : t("tutorClass.assessment.loadFailed"));
     } finally {
       if (showProgress) setRefreshing(false);
     }
@@ -161,7 +158,7 @@ export default function AssessmentReport({ cycleId }: { cycleId: string }) {
     let active = true;
     assessmentAction(cycleId, "report")
       .then((data) => { if (active) setReport(data); })
-      .catch((error) => { if (active) setError(error instanceof Error ? error.message : "โหลดไม่สำเร็จ"); });
+      .catch((error) => { if (active) setError(error instanceof Error ? error.message : t("tutorClass.assessment.loadFailed")); });
     return () => { active = false; };
   }, [cycleId]);
 
@@ -186,119 +183,125 @@ export default function AssessmentReport({ cycleId }: { cycleId: string }) {
     ? summary.postAverage - summary.preAverage
     : null;
 
+  const articleCount = report?.articles?.length || 0;
+
   return (
     <>
-      <section className="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
-        <div className="grid gap-4 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,1.15fr)_auto] lg:items-center">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 text-xs font-bold text-primary">
-              <span className="flex size-8 items-center justify-center rounded-xl bg-primary/10"><TrendingUp className="size-4" /></span>
-              {report?.title || "ผลการประเมิน"}
-            </div>
-            <h2 className="mt-2 text-lg font-black text-foreground">พัฒนาการก่อน–หลังเรียน</h2>
-            {(report?.articles?.length || 0) > 1 && (
-              <select
-                aria-label="เลือกบทเรียนสำหรับดูผลประเมิน"
-                value={selectedArticleId}
-                onChange={(event) => setSelectedArticleId(event.target.value)}
-                className="mt-2 h-9 max-w-full rounded-xl border border-input bg-background px-3 text-xs font-semibold text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
-              >
-                {report?.articles?.map((article) => <option key={article.articleId} value={article.articleId}>{article.title}</option>)}
-              </select>
-            )}
-            {selectedArticle && (report?.articles?.length || 0) === 1 && <p className="mt-1 text-xs text-muted-foreground">{selectedArticle.title}</p>}
-            {error ? (
-              <p role="alert" className="mt-2 text-sm text-destructive">{error}</p>
-            ) : !summary ? (
-              <p role="status" className="mt-2 text-sm text-muted-foreground">กำลังโหลดผลประเมิน…</p>
-            ) : (
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                <div className="rounded-xl bg-muted/40 p-2.5">
-                  <p className="text-[10px] font-semibold text-muted-foreground">ก่อนเรียน</p>
-                  <p className="mt-0.5 text-base font-black tabular-nums text-foreground">{formatAverage(summary.preAverage, 15)}</p>
-                  <p className="text-[10px] text-muted-foreground">{summary.preCompleted}/{summary.totalStudents} คน</p>
-                </div>
-                <div className="rounded-xl bg-primary/10 p-2.5">
-                  <p className="text-[10px] font-semibold text-primary">หลังเรียน</p>
-                  <p className="mt-0.5 text-base font-black tabular-nums text-primary">{formatAverage(summary.postAverage, 15)}</p>
-                  <p className="text-[10px] text-muted-foreground">{summary.postCompleted}/{summary.totalStudents} คน</p>
-                </div>
-                <div className="rounded-xl bg-emerald-500/10 p-2.5">
-                  <p className="text-[10px] font-semibold text-emerald-700">เปลี่ยนแปลง</p>
-                  <p className="mt-0.5 text-base font-black tabular-nums text-emerald-600">{averageChange === null ? "—" : `${averageChange >= 0 ? "+" : ""}${averageChange.toFixed(1)}`}</p>
-                  <p className="text-[10px] text-muted-foreground">เทียบได้ {summary.paired} คน</p>
-                </div>
-              </div>
-            )}
+      <section aria-labelledby="assessment-title" className="rounded-xl border border-hairline bg-surface p-4 shadow-card md:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+          <div className="min-w-0 flex-1">
+            <p className="flex items-center gap-1.5 text-[0.8125rem] font-medium text-brand-fg">
+              <TrendingUp aria-hidden="true" className="size-4" />
+              {report?.title || t("tutorClass.assessment.eyebrow")}
+            </p>
+            <h2 id="assessment-title" className="mt-1 text-base font-semibold text-fg">{t("tutorClass.assessment.title")}</h2>
+            {selectedArticle && articleCount === 1 && <p className="mt-0.5 text-sm text-fg-muted">{selectedArticle.title}</p>}
           </div>
-
-          {summary && <MiniSkillChart summary={summary} />}
-
-          <div className="flex gap-2 lg:flex-col">
+          <div className="flex items-center gap-2">
             <Button
-              variant="outline"
-              size="icon-lg"
-              className="rounded-xl"
-              aria-label="รีเฟรชผลประเมิน"
-              title="รีเฟรชผล"
+              variant="ghost"
+              size="icon"
+              aria-label={t("tutorClass.assessment.refresh")}
+              title={t("tutorClass.assessment.refresh")}
               disabled={refreshing}
               onClick={() => { void refresh(); }}
             >
               <RefreshCw className={refreshing ? "animate-spin" : ""} />
             </Button>
-            <Button className="h-11 flex-1 gap-2 rounded-xl px-4 font-bold lg:flex-none" disabled={!report} onClick={() => setDialogOpen(true)}>
-              ดูรายละเอียดทั้งห้อง <ArrowRight className="size-4" />
+            <Button variant="outline" className="flex-1 sm:flex-none" disabled={!report} onClick={() => setDialogOpen(true)}>
+              {t("tutorClass.assessment.viewDetails")}
+              <ArrowRight aria-hidden="true" />
             </Button>
           </div>
         </div>
+        {articleCount > 1 && (
+          <select
+            aria-label={t("tutorClass.assessment.selectLesson")}
+            value={selectedArticleId}
+            onChange={(event) => setSelectedArticleId(event.target.value)}
+            className={cn(fieldControlClass, "mt-3 h-10 max-w-full cursor-pointer md:max-w-md pointer-coarse:h-11")}
+          >
+            {report?.articles?.map((article) => <option key={article.articleId} value={article.articleId}>{article.title}</option>)}
+          </select>
+        )}
+
+        <div className="mt-4">
+          {error && !report ? (
+            <EmptyState
+              compact
+              icon={TrendingUp}
+              title={error}
+              action={
+                <Button variant="ghost" size="sm" loading={refreshing} onClick={() => { void refresh(); }}>
+                  <RefreshCw aria-hidden="true" />
+                  {t("shell.retry")}
+                </Button>
+              }
+            />
+          ) : !summary ? (
+            <div role="status" className="grid gap-3 md:grid-cols-2">
+              <span className="sr-only">{t("tutorClass.assessment.loading")}</span>
+              <Skeleton className="h-24 rounded-xl" />
+              <Skeleton className="h-24 rounded-xl" />
+            </div>
+          ) : (
+            <div className="grid gap-3 xl:grid-cols-2">
+              <dl className="grid grid-cols-3 gap-2">
+                <div className="rounded-xl bg-surface-muted p-3">
+                  <dt className="text-xs text-fg-muted">{t("tutorClass.assessment.pre")}</dt>
+                  <dd className="mt-0.5 text-lg font-semibold text-fg tabular">{formatAverage(summary.preAverage, 15)}</dd>
+                  <dd className="text-xs text-fg-muted tabular">{summary.preCompleted}/{summary.totalStudents} {PEOPLE}</dd>
+                </div>
+                <div className="rounded-xl bg-brand-soft p-3">
+                  <dt className="text-xs text-brand-fg">{t("tutorClass.assessment.post")}</dt>
+                  <dd className="mt-0.5 text-lg font-semibold text-brand-fg tabular">{formatAverage(summary.postAverage, 15)}</dd>
+                  <dd className="text-xs text-fg-muted tabular">{summary.postCompleted}/{summary.totalStudents} {PEOPLE}</dd>
+                </div>
+                <div className="rounded-xl bg-surface-muted p-3">
+                  <dt className="text-xs text-fg-muted">{t("tutorClass.assessment.change")}</dt>
+                  <dd className="mt-0.5 text-lg font-semibold text-fg tabular">{averageChange === null ? "–" : `${averageChange >= 0 ? "+" : ""}${formatNumber(averageChange, 1)}`}</dd>
+                  <dd className="text-xs text-fg-muted">{t("tutorClass.assessment.pairedPrefix")} {summary.paired} {PEOPLE}</dd>
+                </div>
+              </dl>
+              <MiniSkillChart summary={summary} />
+            </div>
+          )}
+          {error && report ? <p role="alert" className="mt-2 text-[0.8125rem] text-danger-fg">{error}</p> : null}
+        </div>
       </section>
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-h-[90dvh] max-w-5xl overflow-hidden rounded-3xl p-0 sm:max-w-5xl">
-          <DialogHeader className="border-b border-border/60 bg-gradient-to-r from-primary/10 via-background to-background px-5 py-5 pr-14 sm:px-6">
-            <div className="flex items-center gap-3">
-              <span className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground"><BarChart3 className="size-5" /></span>
-              <div>
-                <DialogTitle className="text-lg font-black">รายละเอียดพัฒนาการทั้งห้อง</DialogTitle>
-                <DialogDescription className="mt-1">{selectedArticle?.title || "คะแนนก่อน–หลังเรียนรายคน"} · คำแนะนำที่นักเรียนจะเห็น</DialogDescription>
-              </div>
+      <Sheet
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        width={960}
+        title={t("tutorClass.assessment.detailTitle")}
+        description={`${selectedArticle?.title || t("tutorClass.assessment.detailFallback")} · ${t("tutorClass.assessment.detailSuffix")}`}
+      >
+        <div className="flex flex-col gap-4">
+          {summary && (
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              <StatCard label={t("tutorClass.assessment.totalStudents")} value={`${summary.totalStudents} ${PEOPLE}`} icon={UsersRound} tone="teal" />
+              <StatCard label={t("tutorClass.assessment.preDone")} value={`${summary.preCompleted} ${PEOPLE}`} icon={CheckCircle2} tone="neutral" />
+              <StatCard label={t("tutorClass.assessment.postDone")} value={`${summary.postCompleted} ${PEOPLE}`} icon={CheckCircle2} tone="brand" />
+              <StatCard label={t("tutorClass.assessment.paired")} value={`${summary.paired} ${PEOPLE}`} icon={TrendingUp} tone="blue" />
             </div>
-          </DialogHeader>
-
-          <div className="max-h-[calc(90dvh-6.5rem)] overflow-y-auto bg-muted/20 p-4 sm:p-6">
-            {summary && (
-              <div className="mb-4 grid gap-3 sm:grid-cols-4">
-                {[
-                  ["นักเรียนทั้งหมด", `${summary.totalStudents} คน`, UsersRound],
-                  ["ทำก่อนเรียน", `${summary.preCompleted} คน`, CheckCircle2],
-                  ["ทำหลังเรียน", `${summary.postCompleted} คน`, CheckCircle2],
-                  ["มีผลเปรียบเทียบ", `${summary.paired} คน`, TrendingUp],
-                ].map(([label, value, Icon]) => (
-                  <div key={String(label)} className="rounded-2xl border border-border/60 bg-card p-3.5">
-                    <Icon className="size-4 text-primary" />
-                    <p className="mt-2 text-xs text-muted-foreground">{String(label)}</p>
-                    <p className="mt-0.5 text-lg font-black text-foreground">{String(value)}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-            {!report?.students.length ? (
-              <div className="rounded-2xl border-2 border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">ยังไม่มีนักเรียนที่มีสิทธิ์เรียนเล่มนี้</div>
-            ) : (
-              <div className="grid gap-3 lg:grid-cols-2">
-                {report.students.map((student) => (
-                  <StudentResult
-                    key={`${student.userId}-${selectedArticleId}-${completedAssessmentAttempt(student, "POST", selectedArticleId)?.attemptId || completedAssessmentAttempt(student, "PRE", selectedArticleId)?.attemptId || "empty"}`}
-                    student={student}
-                    cycleId={cycleId}
-                    articleId={selectedArticleId || undefined}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+          )}
+          {!report?.students.length ? (
+            <EmptyState compact icon={UsersRound} title={t("tutorClass.assessment.noStudents")} />
+          ) : (
+            <div className="grid gap-3 lg:grid-cols-2">
+              {report.students.map((student) => (
+                <StudentResult
+                  key={`${student.userId}-${selectedArticleId}-${completedAssessmentAttempt(student, "POST", selectedArticleId)?.attemptId || completedAssessmentAttempt(student, "PRE", selectedArticleId)?.attemptId || "empty"}`}
+                  student={student}
+                  cycleId={cycleId}
+                  articleId={selectedArticleId || undefined}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </Sheet>
     </>
   );
 }

@@ -47,6 +47,9 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
   try {
     const response = await fetch(url, {
       ...options,
+      // These endpoints return account-specific data. Avoid reusing a previous
+      // student's response after a session change or login switch.
+      cache: options.cache ?? 'no-store',
       headers: {
         'Content-Type': 'application/json',
         ...options.headers,

@@ -1,83 +1,25 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface PageTransitionProps {
   children: React.ReactNode;
   className?: string;
-  /** Animation type: 'slide-up' | 'fade' | 'scale' */
+  /** @deprecated Ignored: pages no longer animate in (calmer, and no client JS). */
   variant?: "slide-up" | "fade" | "scale";
-  /** Enable staggered animation for children */
+  /** @deprecated Ignored. */
   stagger?: boolean;
 }
 
 /**
- * Page transition wrapper that adds entrance animations.
- * Uses CSS animations from globals.css — no Framer Motion needed.
- * Respects prefers-reduced-motion.
- *
- * Usage:
- * ```tsx
- * <PageTransition stagger>
- *   <StatCard />
- *   <StatCard />
- *   <Chart />
- * </PageTransition>
- * ```
+ * @deprecated Plain wrapper kept so unmigrated pages compile. It used to be a
+ * client component that animated every page in (and staggered children);
+ * the tutor design system drops page-entrance motion. Migrated pages should
+ * use <Page> from "@/components/app" instead.
  */
-export function PageTransition({
-  children,
-  className,
-  variant = "slide-up",
-  stagger = false,
-}: PageTransitionProps) {
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const checkedRef = useRef(false);
-
-  useEffect(() => {
-    if (!checkedRef.current) {
-      checkedRef.current = true;
-      if (typeof window !== "undefined") {
-        setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-      }
-    }
-  }, []);
-
-  const animationClass = reducedMotion
-    ? undefined
-    : {
-        "slide-up": "animate-slide-up",
-        fade: "animate-fade-in",
-        scale: "animate-scale-in",
-      }[variant];
-
-  return (
-    <div
-      className={cn(
-        animationClass,
-        stagger && "stagger",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
+export function PageTransition({ children, className }: PageTransitionProps) {
+  return <div className={cn(className)}>{children}</div>;
 }
 
-interface StaggerGroupProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-/**
- * Wrapper for staggered child animations.
- * Each direct child will animate in with increasing delay.
- */
-export function StaggerGroup({ children, className }: StaggerGroupProps) {
-  return (
-    <div className={cn("stagger", className)}>
-      {children}
-    </div>
-  );
+/** @deprecated Plain wrapper (no stagger animation any more). */
+export function StaggerGroup({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn(className)}>{children}</div>;
 }

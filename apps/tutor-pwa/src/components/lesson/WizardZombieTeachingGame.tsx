@@ -10,6 +10,7 @@ import {
   type InputState,
   type WizardZombieState,
 } from "@/lib/games/wizardZombie";
+import { tx } from "@/lib/games/gameText";
 
 export type WizardZombieTeachingWord = {
   term: string;
@@ -32,10 +33,10 @@ const FALLBACK_WORDS: WizardZombieTeachingWord[] = [
 ];
 
 const TUTORIAL_COPY = [
-  { title: "ดูคำศัพท์เป้าหมาย", detail: "อ่านคำที่ต้องตามหาในกล่อง Find", target: "target" },
+  { title: "ดูคำศัพท์เป้าหมาย", detail: "อ่านคำที่ต้องตามหาในกล่องหาคำแปล", target: "target" },
   { title: "ใช้ WASD หรือลูกศร", detail: "พาพ่อมดเดินไปหาลูกแก้วที่ตรงคำศัพท์", target: "controls" },
   { title: "เก็บลูกแก้วที่ถูก", detail: "ลูกแก้วที่ถูกจะเพิ่มคะแนนและพลังป้องกัน", target: "orb" },
-  { title: "หลบซอมบี้และใช้เวท", detail: "สะสม Shockwave แล้วใช้ Space เพื่อเปิดทาง", target: "zombie" },
+  { title: "หลบซอมบี้และใช้เวท", detail: "สะสมคลื่นพลังแล้วกด Space เพื่อเปิดทาง", target: "zombie" },
 ] as const;
 
 export function WizardZombieTeachingGame({ vocabulary, mode, fullscreen = false }: WizardZombieTeachingGameProps) {
@@ -172,11 +173,11 @@ export function WizardZombieTeachingGame({ vocabulary, mode, fullscreen = false 
       <div className={`relative z-10 flex flex-col p-5 sm:p-7 ${fullscreen ? "h-full min-h-0 pb-28 sm:pb-28" : "min-h-[500px]"}`}>
         <div className="flex items-start justify-between gap-4">
           <div className={`rounded-2xl border bg-black/55 px-5 py-3 backdrop-blur transition-all ${highlighted("target") ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/15"}`}>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/55">Find</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/55">{tx("Find")}</p>
             <p className="mt-1 text-3xl font-black text-amber-300">{current.term}</p>
           </div>
           <div className={`rounded-2xl border bg-black/55 px-5 py-3 text-right backdrop-blur transition-all ${highlighted("zombie") ? "border-cyan-300 ring-8 ring-cyan-300/25" : "border-white/15"}`}>
-            <p className="flex items-center justify-end gap-1 text-[10px] font-black uppercase tracking-[0.2em] text-white/55"><Shield size={12} className="text-cyan-300" /> Shockwave</p>
+            <p className="flex items-center justify-end gap-1 text-[10px] font-black uppercase tracking-[0.2em] text-white/55"><Shield size={12} className="text-cyan-300" /> {tx("Shockwave")}</p>
             <p className="mt-1 text-3xl font-black">{gameState.player.shockwaveCharges}</p>
           </div>
         </div>
@@ -206,9 +207,9 @@ export function WizardZombieTeachingGame({ vocabulary, mode, fullscreen = false 
         <div className="relative z-20 mt-3 flex items-center justify-between gap-4">
           {mode === "teacher" ? (
             <>
-              <div className="flex items-center gap-2 rounded-2xl border border-white/20 bg-black/45 px-5 py-3 text-sm font-black backdrop-blur"><Heart size={20} className="text-rose-400" /> HP {gameState.player.hp}</div>
-              <p className="rounded-full bg-black/45 px-5 py-2 text-sm font-black text-white/70">WASD / ลูกศร เดิน · Space / Enter ใช้ Shockwave</p>
-              <div className="rounded-2xl border border-white/20 bg-black/45 px-5 py-3 text-sm font-black backdrop-blur">Score {gameState.score}</div>
+              <div className="flex items-center gap-2 rounded-2xl border border-white/20 bg-black/45 px-5 py-3 text-sm font-black backdrop-blur"><Heart size={20} className="text-rose-400" /> {tx("HP")} {gameState.player.hp}</div>
+              <p className="rounded-full bg-black/45 px-5 py-2 text-sm font-black text-white/70">WASD / ลูกศร เดิน · Space / Enter ใช้คลื่นพลัง</p>
+              <div className="rounded-2xl border border-white/20 bg-black/45 px-5 py-3 text-sm font-black backdrop-blur">{tx("Score")} {gameState.score}</div>
             </>
           ) : (
             <div className="mx-auto flex w-full max-w-3xl items-center gap-4 rounded-3xl border border-amber-300/30 bg-slate-950/90 p-4 shadow-2xl backdrop-blur">

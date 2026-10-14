@@ -1,471 +1,426 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  Users,
-  BookOpen,
-  CalendarDays,
-  ExternalLink,
-  CalendarPlus,
-} from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { useEffect, useMemo, useState } from "react";
+import { CalendarClock, CalendarDays, CalendarRange, ChevronLeft, ChevronRight, Clock, Plus } from "lucide-react";
+import { EmptyState, Grid, SegmentedControl, SplitLayout, StatCard, Surface } from "@/components/app";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { RELATIVE_DAY_LABELS, formatNumber, formatThaiDate, formatThaiMonthYear } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { CalendarSync } from "./components/CalendarSync";
+import { DayAgenda } from "./components/EventList";
+import type { CalendarExportInput } from "./lib/calendar-export";
+import {
+  addDays,
+  addMonths,
+  buildEvents,
+  groupByDay,
+  keyToDate,
+  monthGrid,
+  todayKey,
+  totalMinutes,
+  weekKeys,
+  type DateKey,
+  type ScheduleClass,
+  type ScheduledEvent,
+} from "./lib/schedule-events";
 
-interface ScheduledEvent {
-  id: string;
-  classId: string;
-  title: string;
-  book: string;
-  students: number;
-  time: string;
-  dateStr: string; // YYYY-MM-DD
-  schedule: string; // raw scheduleDescription for ICS
-  startsAt?: string | null;
-  endsAt?: string | null;
+type View = "week" | "month";
+const VIEW_STORAGE_KEY = "tutor-schedule-view";
+
+const WEEKDAY_SHORT = [
+  t("dashboardSchedule.weekdays.sun"),
+  t("dashboardSchedule.weekdays.mon"),
+  t("dashboardSchedule.weekdays.tue"),
+  t("dashboardSchedule.weekdays.wed"),
+  t("dashboardSchedule.weekdays.thu"),
+  t("dashboardSchedule.weekdays.fri"),
+  t("dashboardSchedule.weekdays.sat"),
+];
+
+/** "วันนี้ · ศ. 2 ต.ค." / "พรุ่งนี้ · ส. 3 ต.ค." / "จ. 5 ต.ค." */
+function dayHeading(key: DateKey, today: DateKey): string {
+  const date = formatThaiDate(keyToDate(key), "weekdayShort");
+  if (key === today) return `${t("dashboardSchedule.today")} · ${date}`;
+  if (key === addDays(today, 1)) return `${RELATIVE_DAY_LABELS.tomorrow} · ${date}`;
+  return date;
 }
 
-export default function ScheduleClient({ initialClasses }: { initialClasses: any[] }) {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
+function rangeTitle(view: View, anchor: DateKey): string {
+  if (view === "month") return formatThaiMonthYear(keyToDate(anchor));
+  const days = weekKeys(anchor);
+  const first = keyToDate(days[0]);
+  const last = keyToDate(days[6]);
+  const sameMonth = days[0].slice(0, 7) === days[6].slice(0, 7);
+  return sameMonth
+    ? `${days[0].slice(8).replace(/^0/, "")}–${formatThaiDate(last, "long")}`
+    : `${formatThaiDate(first, "short")} – ${formatThaiDate(last, "medium")}`;
+}
 
-  // 1. Parse Thai schedule string and extract event dates
-  const allEvents = useMemo(() => {
-    const events: ScheduledEvent[] = [];
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 60); // past 60 days
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 90); // future 90 days
+export default function ScheduleClient({ initialClasses }: { initialClasses: ScheduleClass[] }) {
+  const [today] = useState(() => todayKey());
+  const [view, setView] = useState<View>("week");
+  const [anchor, setAnchor] = useState<DateKey>(today);
 
-    initialClasses.forEach((cls) => {
-      // 1a. Handle Demo Class specifically: Show only once on the day it was created
-      if (cls.isDemo) {
-        // Creation date is approx 24h before expiry
-        const createDate = cls.expiresAt ? new Date(new Date(cls.expiresAt).getTime() - 24 * 60 * 60 * 1000) : new Date();
-        const dStr = toLocalDateStr(createDate);
-        
-        // Ensure it fits inside the calendar window bounds
-        if (createDate >= startDate && createDate <= endDate) {
-          events.push({
-            id: `${cls.id}-${dStr}`,
-            classId: cls.id,
-            title: cls.name,
-            book: cls.book,
-            students: cls.students,
-            time: "ตลอดวัน (24 ชม.)",
-            dateStr: dStr,
-            schedule: "ห้อง Demo",
-            startsAt: cls.startsAt ?? null,
-            endsAt: cls.endsAt ?? null,
-          });
-        }
-        return; // Skip normal schedule generation for Demo classes
-      }
-
-      const { days, timeRange } = parseThaiSchedule(cls.nextSession || "");
-
-      // Respect class start/end dates — clamp to window bounds
-      const clsStart = cls.startsAt ? new Date(cls.startsAt) : startDate;
-      const clsEnd   = cls.endsAt   ? new Date(cls.endsAt)   : endDate;
-      const loopStart = clsStart > startDate ? clsStart : startDate;
-      const loopEnd   = clsEnd   < endDate   ? clsEnd   : endDate;
-
-      const loopDate = new Date(loopStart);
-      while (loopDate <= loopEnd) {
-        if (days.includes(loopDate.getDay())) {
-          const dStr = toLocalDateStr(loopDate);
-          events.push({
-            id: `${cls.id}-${dStr}`,
-            classId: cls.id,
-            title: cls.name,
-            book: cls.book,
-            students: cls.students,
-            time: timeRange,
-            dateStr: dStr,
-            schedule: cls.nextSession || "",
-            startsAt: cls.startsAt ?? null,
-            endsAt: cls.endsAt ?? null,
-          });
-        }
-        loopDate.setDate(loopDate.getDate() + 1);
-      }
-    });
-
-    return events;
-  }, [initialClasses]);
-
-  // 2. Calendar state computation
-  const daysInMonth = useMemo(() => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const startingDayOfWeek = firstDay.getDay();
-    
-    const cells = [];
-    const prevLastDay = new Date(year, month, 0).getDate();
-    
-    for (let i = startingDayOfWeek - 1; i >= 0; i--) {
-      cells.push({ day: prevLastDay - i, month: "prev", date: new Date(year, month - 1, prevLastDay - i) });
+  // Remember the tutor's preferred view on this device.
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(VIEW_STORAGE_KEY);
+      if (saved === "week" || saved === "month") setView(saved);
+    } catch {
+      // storage unavailable
     }
-    for (let i = 1; i <= lastDay.getDate(); i++) {
-      cells.push({ day: i, month: "curr", date: new Date(year, month, i) });
+  }, []);
+  const changeView = (next: View) => {
+    setView(next);
+    try {
+      localStorage.setItem(VIEW_STORAGE_KEY, next);
+    } catch {
+      // storage unavailable
     }
-    const remaining = 42 - cells.length;
-    for (let i = 1; i <= remaining; i++) {
-      cells.push({ day: i, month: "next", date: new Date(year, month + 1, i) });
-    }
-    return cells;
-  }, [currentDate]);
-
-  const thaiMonths = [
-    t("dashboardSchedule.months.jan"),
-    t("dashboardSchedule.months.feb"),
-    t("dashboardSchedule.months.mar"),
-    t("dashboardSchedule.months.apr"),
-    t("dashboardSchedule.months.may"),
-    t("dashboardSchedule.months.jun"),
-    t("dashboardSchedule.months.jul"),
-    t("dashboardSchedule.months.aug"),
-    t("dashboardSchedule.months.sep"),
-    t("dashboardSchedule.months.oct"),
-    t("dashboardSchedule.months.nov"),
-    t("dashboardSchedule.months.dec"),
-  ];
-  const daysOfWeek = [
-    t("dashboardSchedule.weekdays.sun"),
-    t("dashboardSchedule.weekdays.mon"),
-    t("dashboardSchedule.weekdays.tue"),
-    t("dashboardSchedule.weekdays.wed"),
-    t("dashboardSchedule.weekdays.thu"),
-    t("dashboardSchedule.weekdays.fri"),
-    t("dashboardSchedule.weekdays.sat"),
-  ];
-
-  const handlePrevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-  const handleNextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-  
-  const isSameDay = (d1: Date, d2: Date) => d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
-
-  const eventsOnDate = (d: Date) => {
-    const dStr = toLocalDateStr(d);
-    return allEvents.filter(ev => ev.dateStr === dStr);
   };
 
-  const selectedDateStr = toLocalDateStr(selectedDate);
-  const selectedEvents = useMemo(() => 
-    allEvents.filter(ev => ev.dateStr === selectedDateStr).sort((a, b) => a.time.localeCompare(b.time)),
-    [allEvents, selectedDateStr]
+  const days = useMemo(() => (view === "week" ? weekKeys(anchor) : monthGrid(anchor).map((c) => c.key)), [view, anchor]);
+  const events = useMemo(() => buildEvents(initialClasses, days[0], days[days.length - 1]), [initialClasses, days]);
+  const byDay = useMemo(() => groupByDay(events), [events]);
+
+  const upcoming = useMemo(() => {
+    const now = new Date();
+    const hhmm = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    return buildEvents(initialClasses, today, addDays(today, 60)).find(
+      (e) => e.dateKey > today || !e.start || (e.end ?? e.start) >= hhmm,
+    );
+  }, [initialClasses, today]);
+
+  const exportable: CalendarExportInput[] = useMemo(
+    () =>
+      initialClasses
+        .filter((c) => !c.isDemo)
+        .map((c) => ({
+          classId: c.id,
+          title: c.name,
+          schedule: c.nextSession || "",
+          startsAt: c.startsAt ?? null,
+          endsAt: c.endsAt ?? null,
+          dateKey: today,
+        })),
+    [initialClasses, today],
   );
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+  const step = (direction: 1 | -1) =>
+    setAnchor((current) => (view === "week" ? addDays(current, 7 * direction) : addMonths(current, direction)));
 
-      {/* Left Column: Monthly Calendar View */}
-      <div className="lg:col-span-8 animate-fade-in">
-        <Card className="border border-border/40 hover:shadow-md rounded-3xl shadow-sm bg-card bg-gradient-to-br from-card via-card to-brand-500/2 dark:to-brand-500/5 transition-all duration-300 overflow-hidden">
-          <CardContent className="p-5 sm:p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-black tracking-tight text-foreground">
-                {thaiMonths[currentDate.getMonth()]} {currentDate.getFullYear() + 543}
-              </h2>
-              <div className="flex gap-2">
-                <Button variant="outline" size="icon" className="h-9 w-9 rounded-xl hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-600 hover:border-brand-500/30 transition-all duration-200" onClick={handlePrevMonth}>
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="icon" className="h-9 w-9 rounded-xl hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-600 hover:border-brand-500/30 transition-all duration-200" onClick={handleNextMonth}>
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+  if (initialClasses.length === 0) {
+    return (
+      <EmptyState
+        icon={CalendarDays}
+        tone="blue"
+        title={t("dashboardSchedule.noClassesTitle")}
+        description={t("dashboardSchedule.noClassesDescription")}
+        action={
+          <Link href="/dashboard/classes/new" className={buttonVariants()}>
+            <Plus aria-hidden="true" />
+            {t("dashboardSchedule.createClass")}
+          </Link>
+        }
+      />
+    );
+  }
 
-            {/* Week Header */}
-            <div className="grid grid-cols-7 mb-2">
-              {daysOfWeek.map((dw, idx) => (
-                <div key={idx} className={cn("text-center text-xs font-bold py-2 text-muted-foreground uppercase tracking-wider", 
-                  (idx === 0 || idx === 6) && "text-brand-500/70")}>
-                  {dw}
-                </div>
-              ))}
-            </div>
+  const isCurrentRange = days.includes(today) && (view === "week" || anchor.slice(0, 7) === today.slice(0, 7));
+  const rangeEvents = view === "week" ? events : events.filter((e) => e.dateKey.slice(0, 7) === anchor.slice(0, 7));
+  const hours = totalMinutes(rangeEvents) / 60;
 
-            {/* Days Grid */}
-            <div className="grid grid-cols-7 gap-1.5">
-              {daysInMonth.map((dayObj, i) => {
-                const isSelected = isSameDay(dayObj.date, selectedDate);
-                const isToday = isSameDay(dayObj.date, new Date());
-                const dayEvts = eventsOnDate(dayObj.date);
-                const hasEvents = dayEvts.length > 0;
-                const isInactive = dayObj.month !== "curr";
-
-                return (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedDate(dayObj.date)}
-                    className={cn(
-                      "relative group min-h-[72px] sm:min-h-[96px] border rounded-2xl transition-all duration-300 flex flex-col items-start p-2 focus:outline-none hover-lift press-scale",
-                      isSelected 
-                        ? "border-brand-500 bg-brand-500/5 dark:bg-brand-500/10 shadow-[0_0_15px_rgba(6,199,85,0.12)] ring-1 ring-brand-500/30 z-10" 
-                        : "border-border/30 hover:border-brand-500/20 hover:bg-brand-500/5 bg-muted/10 dark:bg-muted/5",
-                      isInactive && "opacity-30"
-                    )}
-                  >
-                    <span className={cn(
-                      "text-xs font-bold flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300 mb-1",
-                      isToday && !isSelected && "bg-brand-500 text-white shadow-md shadow-brand-500/20",
-                      isSelected && "bg-brand-500 text-white shadow-md shadow-brand-500/30",
-                      !isToday && !isSelected && "text-foreground group-hover:text-brand-500"
-                    )}>
-                      {dayObj.day}
-                    </span>
-                    
-                    {/* Tiny dots or summaries on desktop view inside the cell */}
-                    <div className="w-full flex flex-col gap-1 overflow-hidden mt-auto">
-                      {dayEvts.slice(0, 2).map((evt, idx) => (
-                        <div key={idx} className="hidden sm:block text-[9px] truncate leading-tight px-1.5 py-0.5 bg-brand-500/10 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400 font-bold rounded-md border border-brand-500/5">
-                          {evt.time.split(' ')[0]} {evt.title}
-                        </div>
-                      ))}
-                      {dayEvts.length > 2 && (
-                        <div className="hidden sm:block text-[8px] text-muted-foreground font-semibold pl-1">
-                          +{dayEvts.length - 2} {t("dashboardSchedule.moreClassesSuffix")}
-                        </div>
-                      )}
-                      {/* Mobile summary dot */}
-                      {hasEvents && (
-                        <div className="sm:hidden mx-auto mt-1">
-                          <div className={cn("w-1.5 h-1.5 rounded-full transition-all duration-300", isSelected ? "bg-white scale-110 shadow-sm" : "bg-brand-500 shadow-[0_0_8px_rgba(6,199,85,0.6)]")} />
-                        </div>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+  const toolbar = (
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => step(-1)}
+          aria-label={view === "week" ? t("dashboardSchedule.prevWeek") : t("dashboardSchedule.prevMonth")}
+        >
+          <ChevronLeft aria-hidden="true" />
+        </Button>
+        <h2 className="min-w-0 flex-1 truncate text-center text-base font-semibold text-fg tabular sm:flex-none sm:px-1 md:text-lg" aria-live="polite">
+          {rangeTitle(view, anchor)}
+        </h2>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => step(1)}
+          aria-label={view === "week" ? t("dashboardSchedule.nextWeek") : t("dashboardSchedule.nextMonth")}
+        >
+          <ChevronRight aria-hidden="true" />
+        </Button>
+        <Button variant="outline" size="sm" className="ml-1" disabled={isCurrentRange && anchor === today} onClick={() => setAnchor(today)}>
+          {t("dashboardSchedule.goToday")}
+        </Button>
       </div>
-
-      {/* Right Column: Daily Summary view */}
-      <div className="lg:col-span-4 sticky top-[var(--header-height,5rem)] animate-fade-in" style={{ animationDelay: '100ms' }}>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-foreground">
-            {isSameDay(selectedDate, new Date()) ? t("dashboardSchedule.today") : `${selectedDate.getDate()} ${thaiMonths[selectedDate.getMonth()]}`}
-          </h3>
-          <Badge variant="secondary" className="font-bold bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/10">
-            {selectedEvents.length} {t("dashboardSchedule.teachingItems")}
-          </Badge>
-        </div>
-
-        <div className="space-y-4">
-          {selectedEvents.length === 0 ? (
-            <div className="border border-dashed border-border/60 rounded-3xl p-12 flex flex-col items-center justify-center text-center bg-card/40 backdrop-blur-sm animate-scale-in">
-              <div className="w-12 h-12 rounded-2xl bg-brand-500/10 border border-brand-500/10 flex items-center justify-center mb-4 animate-float">
-                <CalendarDays className="h-6 w-6 text-brand-500" />
-              </div>
-              <p className="text-sm font-semibold text-muted-foreground">{t("dashboardSchedule.emptyDay")}</p>
-            </div>
-          ) : (
-            selectedEvents.map((ev, idx) => (
-              <Card key={ev.id} className="border border-border/40 hover:border-brand-500/30 hover:shadow-lg rounded-2xl relative overflow-hidden bg-card bg-gradient-to-br from-card via-card to-brand-500/2 dark:to-brand-500/5 transition-all duration-300">
-                {/* Color accent strip */}
-                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-brand-400 to-brand-600" />
-                <CardContent className="p-4 pl-5">
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    <Link href={`/dashboard/classes/${ev.classId}`} className="group flex-1 focus:outline-none">
-                      <h4 className="font-bold text-foreground leading-tight group-hover:text-brand-500 transition-colors flex items-center gap-1.5">
-                        {ev.title}
-                        <ExternalLink className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-brand-500/70 shrink-0" />
-                      </h4>
-                    </Link>
-                    <button
-                      onClick={() => cancelICS(ev)}
-                      className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full bg-red-50 dark:bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors"
-                      title={t("dashboardSchedule.removeFromCalendar")}
-                    >
-                      <CalendarPlus className="h-4 w-4 rotate-45" />
-                    </button>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-brand-400 bg-brand-500/10 dark:bg-brand-500/20 w-fit px-2.5 py-1 rounded-lg border border-brand-500/5">
-                      <Clock className="h-3.5 w-3.5" />
-                      {ev.time}
-                    </div>
-
-                    <div className="flex items-center gap-4 pt-1 text-xs text-muted-foreground font-medium">
-                      <div className="flex items-center gap-1.5">
-                        <BookOpen className="h-3.5 w-3.5 text-muted-foreground/60" />
-                        {ev.book}
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Users className="h-3.5 w-3.5 text-muted-foreground/60" />
-                        {ev.students} {t("dashboardSchedule.peopleUnit")}
-                      </div>
-                    </div>
-
-                    {/* Calendar action buttons */}
-                    <div className="flex items-center gap-1.5 pt-3 border-t border-border/40 overflow-x-auto pb-1 scrollbar-hide flex-nowrap">
-                      <button
-                        onClick={() => downloadICS(ev)}
-                        className="flex items-center justify-center whitespace-nowrap gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-brand-500/10 hover:text-brand-600 transition-colors flex-1"
-                      >
-                        <CalendarPlus className="h-3.5 w-3.5" />
-                        {t("dashboardSchedule.addToCalendarICS")}
-                      </button>
-                      <a
-                        href={googleCalUrl(ev)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center whitespace-nowrap gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-blue-500/10 hover:text-blue-600 transition-colors flex-1"
-                      >
-                        <CalendarPlus className="h-3.5 w-3.5" />
-                        {t("dashboardSchedule.addToCalendarGoogle")}
-                      </a>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
+      <div className="shrink-0 max-sm:order-first sm:w-56">
+        <SegmentedControl<View>
+          aria-label={t("dashboardSchedule.viewLabel")}
+          items={[
+            { value: "week", label: t("dashboardSchedule.viewWeek"), icon: CalendarRange },
+            { value: "month", label: t("dashboardSchedule.viewMonth"), icon: CalendarDays },
+          ]}
+          value={view}
+          onValueChange={changeView}
+          fullWidth
+        />
       </div>
-
     </div>
   );
+
+  const stats = (
+    <Grid cols={2} className="grid-cols-2 sm:grid-cols-2 lg:grid-cols-1">
+      <StatCard
+        label={t("dashboardSchedule.statSessions")}
+        value={`${formatNumber(rangeEvents.length)} ${t("dashboardSchedule.sessionsUnit")}`}
+        icon={CalendarClock}
+        tone="blue"
+      />
+      <StatCard
+        label={t("dashboardSchedule.statHours")}
+        value={`${formatNumber(Math.round(hours * 10) / 10)} ${t("dashboardSchedule.hoursUnit")}`}
+        icon={Clock}
+        tone="blue"
+      />
+    </Grid>
+  );
+
+  const nextCard = upcoming ? (
+    <Surface padding="md" href={`/dashboard/classes/${upcoming.classId}`}>
+      <p className="text-[0.8125rem] text-fg-muted">{t("dashboardSchedule.statNext")}</p>
+      <p className="mt-1 text-base font-semibold text-fg">{dayHeading(upcoming.dateKey, today)}</p>
+      <p className="text-sm text-fg">{upcoming.timeLabel}</p>
+      <p className="mt-1 truncate text-[0.8125rem] text-fg-muted">{upcoming.title}</p>
+    </Surface>
+  ) : null;
+
+  return (
+    <SplitLayout
+      main={
+        <>
+          {toolbar}
+          {view === "week" ? (
+            <WeekView days={days} byDay={byDay} today={today} anchor={anchor} onSelect={setAnchor} />
+          ) : (
+            <MonthView anchor={anchor} byDay={byDay} today={today} onSelect={setAnchor} />
+          )}
+        </>
+      }
+      side={
+        <>
+          {view === "month" ? (
+            <section aria-labelledby="selected-day-heading" className="flex flex-col gap-2">
+              <h3 id="selected-day-heading" className="px-1 text-sm font-semibold text-fg-muted">
+                {dayHeading(anchor, today)}
+              </h3>
+              <DayAgenda events={byDay.get(anchor) ?? []} label={dayHeading(anchor, today)} />
+            </section>
+          ) : null}
+          {stats}
+          {nextCard}
+          <CalendarSync classes={exportable} />
+        </>
+      }
+    />
+  );
 }
 
-/* Helper: local YYYY-MM-DD without UTC shift */
-function toLocalDateStr(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
+/* ─── Week: day strip + agenda for all 7 days ───────────────────────────── */
 
-/*
-  Helper: Smart parser from Thai schedule strings.
-  Duplicated from shared logic or kept inline for performance isolation.
-*/
-function parseThaiSchedule(scheduleStr: string) {
-  if (!scheduleStr || scheduleStr === t("dashboardSchedule.unsetSchedule")) {
-    return { days: [1, 3, 5], timeRange: t("dashboardSchedule.byAppointment") };
-  }
-
-  const lowerStr = scheduleStr.toLowerCase();
-  const dayMapping: { [key: string]: number } = {
-    [t("tutorClass.days.sunFull")]: 0,
-    [t("tutorClass.days.monFull")]: 1,
-    [t("tutorClass.days.tueFull")]: 2,
-    [t("tutorClass.days.wedFull")]: 3,
-    [t("tutorClass.days.thuFull")]: 4,
-    [t("dashboardSchedule.parserThuShort")]: 4,
-    [t("tutorClass.days.friFull")]: 5,
-    [t("tutorClass.days.satFull")]: 6,
+function WeekView({
+  days,
+  byDay,
+  today,
+  anchor,
+  onSelect,
+}: {
+  days: DateKey[];
+  byDay: Map<DateKey, ScheduledEvent[]>;
+  today: DateKey;
+  anchor: DateKey;
+  onSelect: (key: DateKey) => void;
+}) {
+  const total = days.reduce((sum, key) => sum + (byDay.get(key)?.length ?? 0), 0);
+  const select = (key: DateKey) => {
+    onSelect(key);
+    document.getElementById(`day-${key}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+  return (
+    <>
+      <div role="group" aria-label={t("dashboardSchedule.weekStripLabel")} className="grid grid-cols-7 gap-1 rounded-xl border border-hairline bg-surface p-1.5 shadow-card">
+        {days.map((key) => {
+          const count = byDay.get(key)?.length ?? 0;
+          const isToday = key === today;
+          const selected = key === anchor;
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={() => select(key)}
+              aria-pressed={selected}
+              aria-label={`${formatThaiDate(keyToDate(key), "full")} · ${count > 0 ? t("dashboardSchedule.sessionsOnDay").replace("{count}", String(count)) : t("dashboardSchedule.noClassesDay")}`}
+              className={cn(
+                "pressable flex min-h-16 flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-fg hover:bg-surface-muted",
+                selected && "bg-brand-solid text-on-brand hover:bg-brand-solid",
+              )}
+            >
+              <span className={cn("text-xs", selected ? "text-on-brand" : isToday ? "font-semibold text-brand-fg" : "text-fg-muted")}>
+                {WEEKDAY_SHORT[days.indexOf(key)]}
+              </span>
+              <span className={cn("text-base font-semibold tabular", !selected && isToday && "text-brand-fg")}>
+                {Number(key.slice(8))}
+              </span>
+              <span aria-hidden="true" className="flex h-1.5 items-center gap-0.5">
+                {Array.from({ length: Math.min(count, 3) }, (_, i) => (
+                  <span key={i} className={cn("size-1.5 rounded-full", selected ? "bg-on-brand" : "bg-brand-vivid")} />
+                ))}
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
-  const detectedDays: number[] = [];
-  Object.entries(dayMapping).forEach(([name, val]) => {
-    if (lowerStr.includes(name)) {
-      if (!detectedDays.includes(val)) detectedDays.push(val);
-    }
-  });
-
-  if (lowerStr.includes(t("tutorClass.scheduleEveryDayPrefix")) && detectedDays.length === 0) {
-    return { days: [0, 1, 2, 3, 4, 5, 6], timeRange: extractTime(scheduleStr) };
-  }
-
-  const timeRange = extractTime(scheduleStr);
-  if (detectedDays.length === 0) {
-    return { days: [1, 3, 5], timeRange }; 
-  }
-  return { days: detectedDays, timeRange };
+      {total === 0 ? (
+        <EmptyState
+          icon={CalendarRange}
+          tone="blue"
+          title={t("dashboardSchedule.weekEmptyTitle")}
+          description={t("dashboardSchedule.weekEmptyDescription")}
+        />
+      ) : (
+        <div className="flex flex-col gap-4">
+          {days.map((key) => {
+            const dayEvents = byDay.get(key) ?? [];
+            const heading = dayHeading(key, today);
+            const past = key < today;
+            return (
+              <section key={key} id={`day-${key}`} aria-labelledby={`day-${key}-h`} className="flex scroll-mt-24 flex-col gap-2">
+                <h3
+                  id={`day-${key}-h`}
+                  className={cn(
+                    "flex items-center gap-2 px-1 text-sm font-semibold",
+                    key === today ? "text-brand-fg" : past ? "text-fg-subtle" : "text-fg-muted",
+                  )}
+                >
+                  {heading}
+                  <span className="font-normal text-fg-subtle">
+                    ·{" "}
+                    {dayEvents.length > 0
+                      ? t("dashboardSchedule.sessionsOnDay").replace("{count}", String(dayEvents.length))
+                      : t("dashboardSchedule.noClassesDay")}
+                  </span>
+                </h3>
+                {dayEvents.length > 0 ? (
+                  <DayAgenda events={dayEvents} label={heading} className={cn(past && "opacity-70")} />
+                ) : null}
+              </section>
+            );
+          })}
+        </div>
+      )}
+    </>
+  );
 }
 
-function extractTime(str: string) {
-  const regex = /(\d{1,2}[:.]\d{2})(?:\s*น\.?)?\s*[-–]\s*(\d{1,2}[:.]\d{2})(?:\s*น\.?)?/i;
-  const match = str.match(regex);
-  if (match) {
-    return `${match[1].replace('.', ':')} - ${match[2].replace('.', ':')} ${t("tutorClass.scheduleSuffix")}`;
-  }
-  return t("dashboardSchedule.byAppointment");
-}
+/* ─── Month: grid (pills on md+, dots on phones) ────────────────────────── */
 
-/* ── ICS calendar helpers ─────────────────────────────────────────────────── */
-const BY_DAY: Record<number, string> = { 0:"SU",1:"MO",2:"TU",3:"WE",4:"TH",5:"FR",6:"SA" };
-const DAY_NAMES_MAP: Record<string, number> = {
-  "จันทร์":1,"อังคาร":2,"พุธ":3,"พฤหัสบดี":4,"พฤหัส":4,"ศุกร์":5,"เสาร์":6,"อาทิตย์":0,
-};
-
-function parseDaysAndTime(schedStr: string) {
-  const days: number[] = [];
-  Object.entries(DAY_NAMES_MAP).forEach(([name, val]) => {
-    if (schedStr.includes(name) && !days.includes(val)) days.push(val);
-  });
-  if (days.length === 0) days.push(1);
-  const m = schedStr.match(/(\d{1,2}):(\d{2})\s*[-–]\s*(\d{1,2}):(\d{2})/);
-  return { days, sh:m?parseInt(m[1]):19, sm:m?parseInt(m[2]):0, eh:m?parseInt(m[3]):21, em:m?parseInt(m[4]):0 };
-}
-
-function buildICSContent(ev: ScheduledEvent & { startsAt?:string|null; endsAt?:string|null; schedule?:string }): string {
-  const schedStr = ev.schedule || "";
-  const { days, sh, sm, eh, em } = parseDaysAndTime(schedStr);
-  const anchor = ev.startsAt ? new Date(ev.startsAt) : (ev.dateStr ? new Date(ev.dateStr) : new Date());
-  const first = new Date(anchor); first.setHours(0,0,0,0);
-  for (let i=0; i<7; i++) { if (days.includes(first.getDay())) break; first.setDate(first.getDate()+1); }
-  const pad = (n:number) => String(n).padStart(2,"0");
-  const fmt = (d:Date,h:number,mi:number) => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(h)}${pad(mi)}00`;
-  const byday = days.map(d=>BY_DAY[d]).join(",");
-  const until = ev.endsAt ? `;UNTIL=${new Date(ev.endsAt).toISOString().replace(/[-:.]/g,"").slice(0,15)}Z` : "";
-  const dtstamp = new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z";
-  return [
-    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tutor Advantage//TH",
-    "CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-TIMEZONE:Asia/Bangkok",
-    "BEGIN:VEVENT",
-    `UID:${ev.classId}@ta.th`,`DTSTAMP:${dtstamp}`,
-    `DTSTART;TZID=Asia/Bangkok:${fmt(first,sh,sm)}`,`DTEND;TZID=Asia/Bangkok:${fmt(first,eh,em)}`,
-    `RRULE:FREQ=WEEKLY;BYDAY=${byday}${until}`,
-    `SUMMARY:${ev.title}`,`DESCRIPTION:${schedStr.replace(/\n/g,"\\n")}`,
-    "BEGIN:VALARM","TRIGGER:-PT30M","ACTION:DISPLAY",`DESCRIPTION:แจ้งเตือน: ${ev.title}`,
-    "END:VALARM","END:VEVENT","END:VCALENDAR",
-  ].join("\r\n");
-}
-
-function downloadICS(ev: ScheduledEvent & { startsAt?:string|null; endsAt?:string|null; schedule?:string }) {
-  const blob = new Blob([buildICSContent(ev)], { type:"text/calendar;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href=url; a.download=`${ev.title.replace(/\s+/g,"-")}.ics`;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-}
-
-function cancelICS(ev: ScheduledEvent) {
-  const dtstamp = new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z";
-  const content = [
-    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tutor Advantage//TH",
-    "CALSCALE:GREGORIAN","METHOD:CANCEL",
-    "BEGIN:VEVENT",
-    `UID:${ev.classId}@ta.th`,`DTSTAMP:${dtstamp}`,
-    `SUMMARY:${ev.title}`,"STATUS:CANCELLED",
-    "END:VEVENT","END:VCALENDAR",
-  ].join("\r\n");
-  const blob = new Blob([content], { type:"text/calendar;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href=url; a.download=`cancel-${ev.title.replace(/\s+/g,"-")}.ics`;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-}
-
-function googleCalUrl(ev: ScheduledEvent & { startsAt?:string|null; schedule?:string }): string {
-  const schedStr = ev.schedule || "";
-  const { days, sh, sm, eh, em } = parseDaysAndTime(schedStr);
-  const anchor = ev.startsAt ? new Date(ev.startsAt) : (ev.dateStr ? new Date(ev.dateStr) : new Date());
-  const pad = (n:number) => String(n).padStart(2,"0");
-  const fmt = (d:Date,h:number,mi:number) => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(h)}${pad(mi)}00`;
-  const byday = days.map(d=>BY_DAY[d]).join("%2C");
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title)}&dates=${fmt(anchor,sh,sm)}/${fmt(anchor,eh,em)}&recur=RRULE%3AFREQ%3DWEEKLY%3BBYDAY%3D${byday}&details=${encodeURIComponent(schedStr)}`;
+function MonthView({
+  anchor,
+  byDay,
+  today,
+  onSelect,
+}: {
+  anchor: DateKey;
+  byDay: Map<DateKey, ScheduledEvent[]>;
+  today: DateKey;
+  onSelect: (key: DateKey) => void;
+}) {
+  const cells = monthGrid(anchor);
+  return (
+    <div
+      role="grid"
+      aria-label={t("dashboardSchedule.monthGridLabel").replace("{month}", formatThaiMonthYear(keyToDate(anchor)))}
+      className="overflow-hidden rounded-xl border border-hairline bg-surface shadow-card"
+    >
+      <div role="row" className="grid grid-cols-7 border-b border-hairline bg-surface-muted">
+        {WEEKDAY_SHORT.map((label, index) => (
+          <div
+            key={label}
+            role="columnheader"
+            className={cn("py-2 text-center text-xs font-medium", index === 0 || index === 6 ? "text-fg-subtle" : "text-fg-muted")}
+          >
+            {label}
+          </div>
+        ))}
+      </div>
+      {Array.from({ length: 6 }, (_, row) => (
+        <div key={row} role="row" className="grid grid-cols-7 border-hairline [&:not(:last-child)]:border-b">
+          {cells.slice(row * 7, row * 7 + 7).map(({ key, inMonth }) => {
+            const dayEvents = byDay.get(key) ?? [];
+            const selected = key === anchor;
+            const isToday = key === today;
+            return (
+              <div key={key} role="gridcell" aria-selected={selected} className="border-hairline [&:not(:last-child)]:border-r">
+                <button
+                  type="button"
+                  onClick={() => onSelect(key)}
+                  aria-label={`${formatThaiDate(keyToDate(key), "full")} · ${dayEvents.length > 0 ? t("dashboardSchedule.sessionsOnDay").replace("{count}", String(dayEvents.length)) : t("dashboardSchedule.noClassesDay")}`}
+                  className={cn(
+                    "flex h-14 w-full flex-col items-center gap-1 px-1 pt-1.5 text-left hover:bg-surface-muted focus-visible:relative focus-visible:z-10 md:h-28 md:items-stretch md:px-1.5",
+                    selected && "bg-brand-soft hover:bg-brand-soft",
+                    !inMonth && "bg-surface-muted/50",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "inline-flex size-7 shrink-0 items-center justify-center rounded-full text-sm tabular md:size-6 md:text-[0.8125rem]",
+                      !inMonth && "text-fg-subtle",
+                      inMonth && "text-fg",
+                      isToday && "bg-brand-solid font-semibold text-on-brand",
+                      selected && !isToday && "font-semibold text-brand-fg",
+                    )}
+                  >
+                    {Number(key.slice(8))}
+                  </span>
+                  {dayEvents.length > 0 ? (
+                    <>
+                      <span aria-hidden="true" className="flex gap-0.5 md:hidden">
+                        {Array.from({ length: Math.min(dayEvents.length, 3) }, (_, i) => (
+                          <span key={i} className="size-1.5 rounded-full bg-brand-vivid" />
+                        ))}
+                      </span>
+                      <span aria-hidden="true" className="hidden min-w-0 flex-col gap-0.5 md:flex">
+                        {dayEvents.slice(0, 2).map((event) => (
+                          <span
+                            key={event.id}
+                            className={cn(
+                              "truncate rounded-md px-1.5 py-0.5 text-xs leading-tight",
+                              inMonth ? "bg-brand-soft text-brand-fg" : "bg-fill-muted text-fg-muted",
+                            )}
+                          >
+                            {event.start ? `${event.start} ` : ""}
+                            {event.title}
+                          </span>
+                        ))}
+                        {dayEvents.length > 2 ? (
+                          <span className="px-1.5 text-xs text-fg-muted">
+                            +{dayEvents.length - 2} {t("dashboardSchedule.moreClassesSuffix")}
+                          </span>
+                        ) : null}
+                      </span>
+                    </>
+                  ) : null}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
 }

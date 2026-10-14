@@ -1,8 +1,14 @@
 import Link from "next/link";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { AlertCircle, ArrowLeft, BookOpen } from "lucide-react";
+import { EmptyState } from "@/components/app/Feedback";
+import { LessonContent } from "@/components/app/LessonShell";
+import { ShellTitle } from "@/components/app/ShellContext";
 import { Button } from "@/components/ui/button";
+import { t } from "@/lib/i18n";
+import { parsePreparationMode } from "../../_lib/articles";
+import { resolveArticleCovers } from "../../_lib/server";
 import { getPreparationArticle } from "../actions";
-import PrepareLessonClient from "./PrepareLessonClient";
+import PrepareLessonClient, { type PreparationArticle } from "./PrepareLessonClient";
 
 export default async function PreparationLessonPage({
   params,
@@ -11,51 +17,67 @@ export default async function PreparationLessonPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ articleId?: string; mode?: string }>;
 }) {
-  const { id: classId } = await params;
-  const { articleId, mode } = await searchParams;
-  const preparationMode = mode === "guided" ? "guided" : "explore";
+  const [{ id: classId }, { articleId, mode }] = await Promise.all([params, searchParams]);
+  const preparationMode = parsePreparationMode(mode);
 
   if (!articleId) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center p-6">
-        <div className="max-w-md text-center">
-          <AlertCircle className="mx-auto size-10 text-amber-500" />
-          <h1 className="mt-4 text-xl font-black text-foreground">ยังไม่ได้เลือกบทความ</h1>
-          <p className="mt-2 text-sm text-muted-foreground">กลับไปเลือกบทความก่อนเริ่มเตรียมสอน</p>
-          <Link href={`/lesson/${classId}/prepare`}>
-            <Button className="mt-5 gap-2">
-              <ArrowLeft className="size-4" /> กลับไปเลือกโหมด
+      <LessonContent width="narrow" className="flex-1 justify-center">
+        <ShellTitle title={t("lesson.preflow.prepare.title")} />
+        <EmptyState
+          icon={BookOpen}
+          tone="amber"
+          title={t("lesson.preflow.rehearsal.noArticleTitle")}
+          description={t("lesson.preflow.rehearsal.noArticleBody")}
+          action={
+            <Button render={<Link href={`/lesson/${classId}/prepare`} />} nativeButton={false}>
+              <ArrowLeft aria-hidden="true" />
+              {t("lesson.preflow.rehearsal.backToModes")}
             </Button>
-          </Link>
-        </div>
-      </div>
+          }
+        />
+      </LessonContent>
     );
   }
 
+  let article: Record<string, unknown>;
   try {
-    const article = await getPreparationArticle(classId, articleId);
-    return (
-      <PrepareLessonClient
-        classId={classId}
-        article={article}
-        mode={preparationMode}
-      />
-    );
+    article = await getPreparationArticle(classId, articleId);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "โหลดบทเรียนไม่สำเร็จ";
+    // Show our own (Thai) messages; hide raw technical errors behind a generic hint.
+    const raw = error instanceof Error ? error.message : "";
+    const message = /[\u0E00-\u0E7F]/.test(raw) ? raw : t("lesson.preflow.articlesLoadFailedBody");
     return (
-      <div className="flex min-h-[60vh] items-center justify-center p-6">
-        <div className="max-w-md text-center">
-          <AlertCircle className="mx-auto size-10 text-destructive" />
-          <h1 className="mt-4 text-xl font-black text-foreground">เปิดบทเรียนไม่ได้</h1>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{message}</p>
-          <Link href={`/lesson/${classId}/select?prepare=1&mode=${preparationMode}`}>
-            <Button variant="outline" className="mt-5 gap-2">
-              <ArrowLeft className="size-4" /> กลับไปเลือกบทความ
+      <LessonContent width="narrow" className="flex-1 justify-center">
+        <ShellTitle title={t("lesson.preflow.prepare.title")} />
+        <EmptyState
+          icon={AlertCircle}
+          tone="red"
+          title={t("lesson.preflow.rehearsal.loadFailedTitle")}
+          description={message}
+          action={
+            <Button
+              variant="outline"
+              render={<Link href={`/lesson/${classId}/select?prepare=1&mode=${preparationMode}`} />}
+              nativeButton={false}
+            >
+              <ArrowLeft aria-hidden="true" />
+              {t("lesson.preflow.rehearsal.backToSelect")}
             </Button>
-          </Link>
-        </div>
-      </div>
+          }
+        />
+      </LessonContent>
     );
   }
+
+  // Resolve the cover on the server so the stage never shows a broken image.
+  const imageUrls = await resolveArticleCovers(article);
+
+  return (
+    <PrepareLessonClient
+      classId={classId}
+      article={{ ...article, image_urls: imageUrls } as unknown as PreparationArticle}
+      mode={preparationMode}
+    />
+  );
 }

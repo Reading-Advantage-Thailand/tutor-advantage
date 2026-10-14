@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Trophy, Medal, Award, User } from "lucide-react";
 import { useState } from "react";
 import type { Difficulty } from "@/lib/games/enchantedLibrary";
+import { tx } from "@/lib/games/gameText";
 
 interface RankingEntry {
   userId: string;
@@ -20,10 +21,10 @@ interface RankingDisplayProps {
 }
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  easy: "Easy",
-  normal: "Normal",
-  hard: "Hard",
-  extreme: "Extreme",
+  easy: tx("Easy"),
+  normal: tx("Normal"),
+  hard: tx("Hard"),
+  extreme: tx("Extreme"),
 };
 
 export function RankingDisplay({
@@ -40,7 +41,7 @@ export function RankingDisplay({
     <div className="w-full max-w-3xl mx-auto bg-white/95 rounded-2xl shadow-2xl p-6">
       <div className="flex items-center justify-center gap-3 mb-6">
         <Trophy className="w-8 h-8 text-yellow-500" />
-        <h2 className="text-2xl font-bold text-amber-900">Leaderboard</h2>
+        <h2 className="text-2xl font-bold text-amber-900">{tx("Leaderboard")}</h2>
       </div>
 
       {/* Difficulty Tabs */}
@@ -65,8 +66,8 @@ export function RankingDisplay({
         {currentRankings.length === 0 ? (
           <div className="text-center py-8 text-amber-600">
             <Award className="w-12 h-12 mx-auto mb-2 opacity-50" />
-            <p>No rankings yet for this difficulty.</p>
-            <p className="text-sm mt-1">Be the first to play!</p>
+            <p>{tx("No rankings yet for this difficulty.")}</p>
+            <p className="text-sm mt-1">{tx("Be the first to play!")}</p>
           </div>
         ) : (
           currentRankings.map((entry, index) => {
@@ -131,7 +132,7 @@ export function RankingDisplay({
                   >
                     {entry.name}
                     {isCurrentUser && (
-                      <span className="ml-2 text-xs">(You)</span>
+                      <span className="ml-2 text-xs">{tx("(You)")}</span>
                     )}
                   </div>
                 </div>
@@ -139,7 +140,7 @@ export function RankingDisplay({
                 {/* XP */}
                 <div className="flex-shrink-0">
                   <div className="bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                    {entry.xp.toLocaleString()} XP
+                    {entry.xp.toLocaleString()} {tx("XP")}
                   </div>
                 </div>
               </motion.div>

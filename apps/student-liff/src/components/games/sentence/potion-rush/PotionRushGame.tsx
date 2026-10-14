@@ -17,6 +17,7 @@ import CustomerQueue from "./CustomerQueue";
 import TrashPortal from "./TrashPortal";
 import PotionRushEffectsLayer from "./PotionRushEffectsLayer";
 import PotionRushSoundController from "./PotionRushSoundController";
+import { tx } from "@/lib/games/gameText";
 
 export interface PotionRushGameResult {
   xp: number;
@@ -210,13 +211,13 @@ export default function PotionRushGame({
   }, [autoStart, tutorialMode, assetsLoaded, hasStarted, vocabList, difficulty, enterFullscreen, startGame]);
 
   if (dimensions.width === 0)
-    return <div ref={containerRef} className="w-screen h-dvh bg-slate-950" />;
+    return <div ref={containerRef} className="h-full min-h-0 w-full bg-slate-950" />;
 
   return (
     <div ref={(node) => {
       (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
       (fsContainerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-    }} className="w-screen h-dvh relative font-sans overflow-hidden bg-slate-950 rounded-none touch-none select-none">
+    }} className="h-full min-h-0 w-full relative font-sans overflow-hidden bg-slate-950 rounded-none touch-none select-none">
       <PotionRushSoundController />
 
       <AnimatePresence>
@@ -347,7 +348,7 @@ export default function PotionRushGame({
                       dash={[6, 4]}
                     />
                     <Text
-                      text="HOLD"
+                      text={tx("HOLD")}
                       fontSize={11}
                       fontStyle="bold"
                       fill="rgba(255, 255, 255, 0.35)"

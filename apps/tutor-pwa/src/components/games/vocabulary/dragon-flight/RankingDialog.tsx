@@ -12,6 +12,7 @@ import { Trophy, Medal, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
 import type { Difficulty } from "./DragonFlightGame";
+import { tx } from "@/lib/games/gameText";
 
 type RankingEntry = {
   userId: string;
@@ -155,7 +156,7 @@ export function RankingDialog({
 
               <div className="text-right">
                 <div className="text-sm font-bold text-emerald-400">
-                  {user.xp.toLocaleString()} XP
+                  {user.xp.toLocaleString()} {tx("XP")}
                 </div>
               </div>
             </div>

@@ -6,16 +6,17 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Swords, Trophy, Heart } from 'lucide-react'
 import { withBasePath } from '@/lib/games/basePath'
+import { tx } from '@/lib/games/gameText'
 
 type MonsterSelectionProps = {
   onSelect: (monster: MonsterType) => void
 }
 
 const MONSTER_METADATA: Record<MonsterType, { label: string; color: string; description: string; image: string }> = {
-  goblin: { label: 'Goblin', color: 'bg-green-900/50 text-green-400 border-green-500/30', description: 'Weak but fast.', image: '/games/vocabulary/rune-match/monsters/goblin_3x4_pose_sheet.png' },
-  skeleton: { label: 'Skeleton', color: 'bg-slate-800/50 text-slate-300 border-slate-500/30', description: 'Restless undead.', image: '/games/vocabulary/rune-match/monsters/skeleton_3x4_pose_sheet.png' },
-  orc: { label: 'Orc', color: 'bg-red-900/50 text-red-400 border-red-500/30', description: 'A fierce warrior.', image: '/games/vocabulary/rune-match/monsters/orc_3x4_pose_sheet.png' },
-  dragon: { label: 'Dragon', color: 'bg-amber-900/50 text-amber-400 border-amber-500/30', description: 'The ultimate challenge.', image: '/games/vocabulary/rune-match/monsters/dragon_3x4_pose_sheet.png' },
+  goblin: { label: tx("Goblin"), color: 'bg-green-900/50 text-green-400 border-green-500/30', description: tx("Weak but fast."), image: '/games/vocabulary/rune-match/monsters/goblin_3x4_pose_sheet.png' },
+  skeleton: { label: tx("Skeleton"), color: 'bg-slate-800/50 text-slate-300 border-slate-500/30', description: tx("Restless undead."), image: '/games/vocabulary/rune-match/monsters/skeleton_3x4_pose_sheet.png' },
+  orc: { label: tx("Orc"), color: 'bg-red-900/50 text-red-400 border-red-500/30', description: tx("A fierce warrior."), image: '/games/vocabulary/rune-match/monsters/orc_3x4_pose_sheet.png' },
+  dragon: { label: tx("Dragon"), color: 'bg-amber-900/50 text-amber-400 border-amber-500/30', description: tx("The ultimate challenge."), image: '/games/vocabulary/rune-match/monsters/dragon_3x4_pose_sheet.png' },
 }
 
 export function MonsterSelection({ onSelect }: MonsterSelectionProps) {
@@ -24,8 +25,8 @@ export function MonsterSelection({ onSelect }: MonsterSelectionProps) {
   return (
     <div className="flex flex-col items-start justify-start p-6 pt-12 w-full max-w-5xl mx-auto space-y-8 animate-in fade-in zoom-in duration-300">
       <div className="text-center w-full space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight text-white">Choose Your Opponent</h2>
-        <p className="text-slate-400">Select a monster to begin the rune match battle.</p>
+        <h2 className="text-3xl font-bold tracking-tight text-white">{tx("Choose Your Opponent")}</h2>
+        <p className="text-slate-400">{tx("Select a monster to begin the rune match battle.")}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
@@ -44,19 +45,19 @@ export function MonsterSelection({ onSelect }: MonsterSelectionProps) {
               <CardContent className="space-y-4">
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-2"><Heart className="w-4 h-4" /> HP</span>
-                    <span className="font-bold">{config.hp} HP</span>
+                    <span className="flex items-center gap-2"><Heart className="w-4 h-4" /> {tx("HP")}</span>
+                    <span className="font-bold">{config.hp} {tx("HP")}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-2"><Swords className="w-4 h-4" /> Attack</span>
+                    <span className="flex items-center gap-2"><Swords className="w-4 h-4" /> {tx("Attack")}</span>
                     <span className="font-bold">1-{config.attack}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-2"><Trophy className="w-4 h-4" /> Reward</span>
-                    <span className="font-bold text-yellow-500">{config.xp} XP</span>
+                    <span className="flex items-center gap-2"><Trophy className="w-4 h-4" /> {tx("Reward")}</span>
+                    <span className="font-bold text-yellow-500">{config.xp} {tx("XP")}</span>
                   </div>
                 </div>
-                <Button onClick={() => onSelect(type)} variant="outline" className="w-full bg-white/10 hover:bg-white hover:text-black border-none transition-colors">Battle</Button>
+                <Button onClick={() => onSelect(type)} variant="outline" className="w-full bg-white/10 hover:bg-white hover:text-black border-none transition-colors">{tx("Battle")}</Button>
               </CardContent>
             </Card>
           )

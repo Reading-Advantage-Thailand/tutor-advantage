@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
+import { tx } from "@/lib/games/gameText";
 
 interface StartScreenProps {
   vocabulary: VocabularyItem[];
@@ -73,7 +74,7 @@ export function StartScreen({
         {/* Header Section */}
         <div className="px-3 sm:px-6 py-3 sm:py-4 flex-none">
           <div className="text-[10px] uppercase tracking-[0.3em] text-purple-300/60 mb-1 font-bold">
-            Magic Defense
+            {tx("Magic Defense")}
           </div>
           <div className="flex flex-wrap items-start sm:items-center justify-between gap-2">
             <div>

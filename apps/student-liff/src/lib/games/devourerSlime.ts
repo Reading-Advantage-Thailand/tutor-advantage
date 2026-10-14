@@ -44,6 +44,8 @@ export type SlimeState = {
   correctAnswers: number
   totalAttempts: number
   difficulty: Difficulty
+  /** gameTime (ms) until which knights cannot hurt the slime (start / after a hit). */
+  invulnerableUntil?: number
   lastEvent?: 'correct' | 'incorrect' | 'hit' | 'eat_enemy' | 'victory' | 'defeat'
 }
 
@@ -53,6 +55,27 @@ export const INITIAL_SLIME_RADIUS = 25
 export const ORB_RADIUS = 20
 export const KNIGHT_RADIUS = 35
 export const MAX_LIVES = 3
+/**
+ * Units: positions are arena px and every tick/move takes dt in milliseconds,
+ * so velocities are px per ms. Knights used to get a random component in
+ * [-1, 1] px/ms on each axis (up to ~1400 px/s, an 800px arena in half a
+ * second); they now walk at a fixed speed per difficulty, below the slime's.
+ */
+export const SLIME_SPEED_PX_PER_MS = 0.2
+export const KNIGHT_SPEED_PX_PER_MS: Record<Difficulty, number> = {
+  easy: 0.06,
+  medium: 0.09,
+  hard: 0.12,
+}
+/** Longest step simulated at once (a background tab or slow frame). */
+export const MAX_TICK_MS = 50
+
+/** Knights never spawn closer than this (centre to centre) to the slime. */
+export const SPAWN_SAFE_RADIUS = 220
+/** Grace period at the start of each sentence before knights can hurt. */
+export const SPAWN_GRACE_MS = 2000
+/** Grace period after being hit, so one touch costs one life (not one per frame). */
+export const HIT_GRACE_MS = 1200
 
 export type SlimeConfig = {
   rng?: () => number
@@ -88,7 +111,8 @@ export function createSlimeState(
     gameTime: 0,
     correctAnswers: 0,
     totalAttempts: 0,
-    difficulty: config.difficulty || 'medium'
+    difficulty: config.difficulty || 'medium',
+    invulnerableUntil: SPAWN_GRACE_MS,
   }
 
   return spawnLevel(state, config.rng ?? Math.random)
@@ -113,26 +137,74 @@ function spawnLevel(state: SlimeState, rng: () => number): SlimeState {
   const enemyCount = state.difficulty === 'easy' ? 2 : state.difficulty === 'hard' ? 6 : 4
   const enemies: KnightEnemy[] = Array.from({ length: enemyCount }).map((_, i) => ({
     id: `knight-${i}-${Date.now()}-${rng()}`,
-    pos: {
-      x: rng() * ARENA_WIDTH,
-      y: rng() * ARENA_HEIGHT,
-    },
-    vel: {
-      x: (rng() - 0.5) * 2,
-      y: (rng() - 0.5) * 2,
-    },
+    pos: pickSafeSpawn(rng, state.slime.pos, SPAWN_SAFE_RADIUS + state.slime.radius - INITIAL_SLIME_RADIUS),
+    vel: knightVelocity(rng, state.difficulty),
     radius: KNIGHT_RADIUS,
     patrolPoints: [],
     currentPatrolIndex: 0
   }))
 
-  return { ...state, orbs, enemies, targetWordIndex: 0 }
+  return {
+    ...state,
+    orbs,
+    enemies,
+    targetWordIndex: 0,
+    invulnerableUntil: Math.max(state.invulnerableUntil ?? 0, state.gameTime + SPAWN_GRACE_MS),
+  }
+}
+
+/**
+ * Random knight position inside the arena that is at least `minDistance` from
+ * `avoid` (the slime). Retries a few random points, then pushes the last one
+ * straight away from the slime (wrapping to the far side if the edge is hit).
+ */
+export function pickSafeSpawn(rng: () => number, avoid: Point, minDistance: number): Point {
+  const margin = KNIGHT_RADIUS
+  const randomPoint = () => ({
+    x: margin + rng() * (ARENA_WIDTH - margin * 2),
+    y: margin + rng() * (ARENA_HEIGHT - margin * 2),
+  })
+  const far = (p: Point) => Math.hypot(p.x - avoid.x, p.y - avoid.y) >= minDistance
+  let point = randomPoint()
+  for (let attempt = 0; attempt < 12 && !far(point); attempt += 1) point = randomPoint()
+  if (far(point)) return point
+
+  // Push away from the slime along the same direction; flip if it leaves the arena.
+  const dx = point.x - avoid.x
+  const dy = point.y - avoid.y
+  const length = Math.hypot(dx, dy) || 1
+  const clampX = (x: number) => Math.max(margin, Math.min(ARENA_WIDTH - margin, x))
+  const clampY = (y: number) => Math.max(margin, Math.min(ARENA_HEIGHT - margin, y))
+  for (const sign of [1, -1]) {
+    const candidate = {
+      x: clampX(avoid.x + (sign * dx * minDistance) / length),
+      y: clampY(avoid.y + (sign * dy * minDistance) / length),
+    }
+    if (far(candidate)) return candidate
+  }
+  // Last resort: the arena corner farthest from the slime.
+  return {
+    x: avoid.x < ARENA_WIDTH / 2 ? ARENA_WIDTH - margin : margin,
+    y: avoid.y < ARENA_HEIGHT / 2 ? ARENA_HEIGHT - margin : margin,
+  }
+}
+
+/** Random heading at the difficulty's fixed walking speed (px per ms). */
+export function knightVelocity(rng: () => number, difficulty: Difficulty): Velocity {
+  const angle = rng() * Math.PI * 2
+  const speed = KNIGHT_SPEED_PX_PER_MS[difficulty] ?? KNIGHT_SPEED_PX_PER_MS.medium
+  return { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed }
+}
+
+export function isSlimeInvulnerable(state: SlimeState): boolean {
+  return state.gameTime < (state.invulnerableUntil ?? 0)
 }
 
 export function moveSlime(state: SlimeState, dx: number, dy: number, dt: number): SlimeState {
   if (state.phase !== 'playing') return state
 
-  const speed = 0.2
+  const speed = SLIME_SPEED_PX_PER_MS
+  dt = Math.min(Math.max(dt, 0), MAX_TICK_MS)
   const nx = state.slime.pos.x + dx * speed * dt
   const ny = state.slime.pos.y + dy * speed * dt
 
@@ -149,6 +221,7 @@ export function moveSlime(state: SlimeState, dx: number, dy: number, dt: number)
 export function tickSlime(state: SlimeState, dt: number, rng: () => number = Math.random): SlimeState {
   if (state.phase !== 'playing') return state
 
+  dt = Math.min(Math.max(dt, 0), MAX_TICK_MS)
   let nextState: SlimeState = { ...state, gameTime: state.gameTime + dt, lastEvent: undefined }
 
   // 1. Move Enemies
@@ -200,8 +273,12 @@ function handleCollisions(state: SlimeState, rng: () => number): SlimeState {
         nextState.enemies = newEnemies
         nextState.score += 500
         nextState.lastEvent = 'eat_enemy'
+      } else if (isSlimeInvulnerable(nextState)) {
+        // Spawn / post-hit grace: knights pass through harmlessly.
+        continue
       } else {
         // Get hit
+        nextState.invulnerableUntil = nextState.gameTime + HIT_GRACE_MS
         nextState.lives -= 1
         nextState.lastEvent = 'hit'
         // Shrink
@@ -284,4 +361,48 @@ function handleOrbEaten(state: SlimeState, orb: WordOrb, rng: () => number): Sli
   }
   
   return nextState
+}
+
+/** The portrait frame the game was designed for; phones keep this 1:1 look. */
+export const SLIME_PHONE_VIEWPORT = { width: 390, height: 844 }
+/** Frames up to this width are treated as phones (no zoom, original camera). */
+export const SLIME_PHONE_MAX_WIDTH = 480
+
+export type SlimeCamera = {
+  /** Screen pixels per arena unit. */
+  scale: number
+  /** Arena-space top-left corner of the visible window. */
+  x: number
+  y: number
+  /** Visible window size in arena units. */
+  viewWidth: number
+  viewHeight: number
+}
+
+const followAxis = (focus: number, view: number, arena: number) =>
+  view >= arena ? 0 : Math.max(0, Math.min(arena - view, focus - view / 2))
+
+/**
+ * Camera for a container of any size. Phones render the arena 1:1 exactly as
+ * before; wider frames (tablets, desktop columns, presenter stages) zoom in
+ * just enough for the arena to cover the whole frame, so the board fills and
+ * stays centred on the slime instead of drawing into the top-left 390px.
+ */
+export function computeSlimeCamera(
+  viewport: { width: number; height: number },
+  focus: Point,
+): SlimeCamera {
+  const width = viewport.width > 0 ? viewport.width : SLIME_PHONE_VIEWPORT.width
+  const height = viewport.height > 0 ? viewport.height : SLIME_PHONE_VIEWPORT.height
+  const scale =
+    width <= SLIME_PHONE_MAX_WIDTH ? 1 : Math.max(1, width / ARENA_WIDTH, height / ARENA_HEIGHT)
+  const viewWidth = width / scale
+  const viewHeight = height / scale
+  return {
+    scale,
+    viewWidth,
+    viewHeight,
+    x: followAxis(focus.x, viewWidth, ARENA_WIDTH),
+    y: followAxis(focus.y, viewHeight, ARENA_HEIGHT),
+  }
 }

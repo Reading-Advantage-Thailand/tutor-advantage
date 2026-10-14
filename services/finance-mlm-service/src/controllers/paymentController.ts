@@ -611,7 +611,7 @@ export async function getPromptPayQrCode(
   }
 }
 
-async function fulfillPaymentIntent(paymentIntentId: string, providerRef?: string | null) {
+export async function fulfillPaymentIntent(paymentIntentId: string, providerRef?: string | null) {
   return prisma.$transaction(async (tx) => {
     const existingIntent = await tx.paymentIntent.findUnique({
       where: { paymentIntentId },
@@ -912,7 +912,7 @@ export async function handleWebhook(req: Request, res: Response) {
   }
 }
 
-async function markPaymentIntentFailed(
+export async function markPaymentIntentFailed(
   paymentIntentId: string,
   providerRef: string | null | undefined,
 ) {
@@ -1268,7 +1268,7 @@ function getWebhookEventId(payload: unknown, providerRef: unknown) {
     .digest("hex")}`;
 }
 
-async function retrieveAndVerifyOmiseCharge(
+export async function retrieveAndVerifyOmiseCharge(
   paymentIntentId: string,
   providerRef: string,
 ) {

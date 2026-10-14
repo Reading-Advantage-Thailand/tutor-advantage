@@ -19,6 +19,8 @@ import { useSound } from "@/hooks/useSound";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import type { VocabularyItem } from "@/store/useGameStore";
+import { tx } from "@/lib/games/gameText";
+import { computeLetterbox } from "@/lib/games/letterbox";
 
 interface RealmCarverGameProps {
   sentences: SentenceItem[];
@@ -68,7 +70,7 @@ export function RealmCarverGame({ sentences, onComplete }: RealmCarverGameProps)
     updateDimensions();
 
     return () => observer.disconnect();
-  }, []);
+  }, [gamePhase]);
 
   // Update game state with input
   useEffect(() => {
@@ -168,25 +170,28 @@ export function RealmCarverGame({ sentences, onComplete }: RealmCarverGameProps)
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT);
   }, [dimensions]);
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT });
+
   const cellScale = GAME_WIDTH / GRID_SIZE;
 
   if (gamePhase === "start") {
     return (
-      <div ref={containerRef} className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto">
+      <div ref={containerRef} className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none">
         <GameStartScreen
-          gameTitle="Realm Carver"
-          gameSubtitle="Magical Cartographer"
+          gameTitle={tx("Realm Carver")}
+          gameSubtitle={tx("Magical Cartographer")}
           vocabulary={sentences as VocabularyItem[]}
           instructions={[
-            { step: 1, text: "Move to draw lines and claim territory.", icon: MapIcon },
-            { step: 2, text: "Enclose words to capture them in order.", icon: Target },
-            { step: 3, text: "Don't let monsters hit your trail!", icon: Shield },
+            { step: 1, text: tx("Move to draw lines and claim territory."), icon: MapIcon },
+            { step: 2, text: tx("Enclose words to capture them in order."), icon: Target },
+            { step: 3, text: tx("Don't let monsters hit your trail!"), icon: Shield },
           ]}
-          proTip="Return to a claimed area to finish your circuit."
+          proTip={tx("Return to a claimed area to finish your circuit.")}
           controls={[
-            { label: "Move", keys: "DPad / Arrows", color: "bg-amber-500" },
+            { label: tx("Move"), keys: tx("DPad / Arrows"), color: "bg-amber-500" },
           ]}
-          startButtonText="Start Mapping"
+          startButtonText={tx("Start Mapping")}
           icon={MapIcon}
           onStart={startGame}
         />
@@ -195,7 +200,7 @@ export function RealmCarverGame({ sentences, onComplete }: RealmCarverGameProps)
   }
 
   return (
-    <div ref={containerRef} className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto flex flex-col items-center">
+    <div ref={containerRef} className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none flex flex-col items-center">
       {gamePhase === "playing" && gameState && (
         <>
           {/* HUD */}
@@ -226,7 +231,7 @@ export function RealmCarverGame({ sentences, onComplete }: RealmCarverGameProps)
           {/* Current Target Word */}
           <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10 px-6 py-2 bg-amber-500/20 border border-amber-500/40 rounded-full backdrop-blur-sm">
             <div className="flex flex-col items-center">
-              <span className="uppercase tracking-widest text-amber-400 font-bold mb-0.5" style={{ fontSize: getEffectiveTextSize(16) }}>Find</span>
+              <span className="uppercase tracking-widest text-amber-400 font-bold mb-0.5" style={{ fontSize: getEffectiveTextSize(16) }}>{tx("Find")}</span>
               <span className="font-black text-amber-500 drop-shadow-sm" style={{ fontSize: getEffectiveTextSize(20) }}>
                 {gameState.currentSentence.term}
               </span>
@@ -234,7 +239,7 @@ export function RealmCarverGame({ sentences, onComplete }: RealmCarverGameProps)
           </div>
 
           <Stage width={dimensions.width} height={dimensions.height} className="mt-auto mb-auto">
-            <Layer scaleX={scale} scaleY={scale}>
+            <Layer scaleX={scale} scaleY={scale} x={boardOffset.x} y={boardOffset.y}>
               {/* Background */}
               <Rect x={0} y={0} width={GAME_WIDTH} height={GAME_HEIGHT} fill={REALM_CARVER_CONFIG.colors.wild} />
               
@@ -331,8 +336,8 @@ export function RealmCarverGame({ sentences, onComplete }: RealmCarverGameProps)
       {gamePhase === "ended" && gameState && (
         <GameEndScreen
           status={gameState.status === "playing" ? "complete" : gameState.status}
-          title={gameState.status === "victory" ? "Map Completed!" : "Cartographer Defeated!"}
-          subtitle={gameState.status === "victory" ? "The realm has been fully mapped." : "The wild magic was too strong."}
+          title={gameState.status === "victory" ? tx("Map Completed!") : tx("Cartographer Defeated!")}
+          subtitle={gameState.status === "victory" ? tx("The realm has been fully mapped.") : tx("The wild magic was too strong.")}
           score={gameState.score}
           xp={Math.floor(gameState.score / 10)}
           accuracy={gameState.targetWordIndex / gameState.fullSentence.length}

@@ -1,0 +1,5 @@
+{
+  "private": true,
+  "description": "Marks the mobile design-system modules as side-effect free so the bundler can drop unused re-exports of the \"@/components/mobile\" barrel. Without it every page that imports the barrel ships every primitive (about 15-20 kB gz extra per route).",
+  "sideEffects": false
+}

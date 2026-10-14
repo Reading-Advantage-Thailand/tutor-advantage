@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { X, ShieldCheck } from "lucide-react";
+import { ShieldCheck, X } from "lucide-react";
+import { Notice } from "@/components/app/Feedback";
+import { t } from "@/lib/i18n";
 
+/** One-time success notice after ?role_upgraded=true (removes the param). */
 export function RoleUpgradeBanner() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -13,7 +16,6 @@ export function RoleUpgradeBanner() {
   useEffect(() => {
     if (searchParams.get("role_upgraded") === "true") {
       setVisible(true);
-      // Remove query param from URL without reload
       const params = new URLSearchParams(searchParams.toString());
       params.delete("role_upgraded");
       const newUrl = params.size > 0 ? `${pathname}?${params}` : pathname;
@@ -24,12 +26,22 @@ export function RoleUpgradeBanner() {
   if (!visible) return null;
 
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm font-medium text-emerald-700 dark:text-emerald-400">
-      <ShieldCheck className="h-5 w-5 shrink-0" />
-      <span className="flex-1">บัญชีของคุณได้รับการอัปเกรดเป็น Tutor แล้ว</span>
-      <button onClick={() => setVisible(false)} className="shrink-0 opacity-60 hover:opacity-100 transition-opacity">
-        <X className="h-4 w-4" />
-      </button>
-    </div>
+    <Notice
+      tone="success"
+      icon={ShieldCheck}
+      role="status"
+      action={
+        <button
+          type="button"
+          onClick={() => setVisible(false)}
+          aria-label={t("shell.close")}
+          className="inline-flex size-7 items-center justify-center rounded-md opacity-70 hover:opacity-100"
+        >
+          <X aria-hidden="true" className="size-4" />
+        </button>
+      }
+    >
+      บัญชีของคุณได้รับการอัปเกรดเป็น Tutor แล้ว
+    </Notice>
   );
 }

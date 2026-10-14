@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
 import type { AssessmentControl, LiveAssessmentState } from "@tutor-advantage/shared-config";
+import { usePolling } from "@/hooks/usePolling";
 
 export function useLiveAssessment(socket: Socket | null, sessionId?: string, phase = 0) {
   const [state, setState] = useState<LiveAssessmentState | null>(null);
@@ -30,10 +31,11 @@ export function useLiveAssessment(socket: Socket | null, sessionId?: string, pha
     const refresh = () => { void request("assessment_get"); };
     refresh();
     socket.on("assessment_updated", refresh);
-    // Reconcile missed notifications after transient disconnects / bus outages.
-    const timer = setInterval(refresh, 5000);
-    return () => { socket.off("assessment_updated", refresh); clearInterval(timer); };
+    return () => { socket.off("assessment_updated", refresh); };
   }, [socket, sessionId, phase, request]);
+  // Reconcile missed notifications after transient disconnects / bus outages.
+  // Visibility-aware and never overlapping (a request can take up to 8 s).
+  usePolling(() => request("assessment_get"), { interval: 5000, enabled: Boolean(socket && sessionId && phase <= 0), immediate: false });
   const control = async (command: AssessmentControl) => {
     if (mutationInFlight.current) return false;
     mutationInFlight.current = true;

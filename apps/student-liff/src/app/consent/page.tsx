@@ -1,86 +1,124 @@
 "use client";
 
-import Link from "next/link";
-import { ChevronLeft, ShieldCheck, FileCheck, Calendar, AlertCircle } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { Card } from "@/components/ui/card";
-import { studentLegalCopy, t } from "@/lib/i18n";
+import { FileText, Shield, ShieldCheck, Users } from "lucide-react";
+import { AppBar, Chip, ErrorState, IconTile, ListGroup, ListRow, Notice, Screen, type ChipTone } from "@/components/mobile";
+import { useLiff } from "@/components/providers/LiffProvider";
+import { studentApi } from "@/lib/api";
+import { useCachedResource } from "@/lib/cachedResource";
+import { formatThaiDate } from "@/lib/format";
+import { t } from "@/lib/i18n";
+import { ConsentSkeleton } from "./_components/ConsentSkeleton";
+import {
+  buildConsentSummary,
+  type ConsentSummary,
+  type GuardianConsentResponse,
+  type MeResponse,
+} from "./_components/consentSummary";
 
+/** GET /v1/users/me + GET /v1/guardian/consent, reduced to what this screen shows. */
+async function fetchConsentSummary(): Promise<ConsentSummary> {
+  const [me, guardian] = await Promise.all([
+    studentApi.getCurrentUser() as Promise<MeResponse>,
+    studentApi.checkGuardianConsent() as Promise<GuardianConsentResponse>,
+  ]);
+  return buildConsentSummary(me, guardian);
+}
+
+/** "My consents": the student's real PDPA consent records and the legal documents. */
 export default function ConsentPage() {
+  const { isReady, profile, error: liffError, errorCode, retry } = useLiff();
+  const { data, error, isLoading, isValidating, refetch } = useCachedResource(
+    profile ? `${profile.userId}:consents` : null,
+    fetchConsentSummary,
+    // Always revalidate on open: coming back from /guardian right after giving
+    // consent must not show the cached "ยังไม่มี" (the guardian page only updates its own key).
+    { enabled: isReady, staleTime: 0 },
+  );
+
+  if (!isReady || isLoading) return <ConsentSkeleton />;
+
+  let body: React.ReactNode;
+  if (liffError || !profile) {
+    body = <ErrorState kind={errorCode === "network" ? "offline" : "error"} onRetry={retry} />;
+  } else if (error && !data) {
+    body = <ErrorState onRetry={() => void refetch()} retrying={isValidating} />;
+  } else if (data) {
+    body = <ConsentDetails summary={data} />;
+  }
+
   return (
-    <div style={{ minHeight: "100dvh", background: "var(--surface-bg)", color: "var(--text-primary)", display: "flex", flexDirection: "column" }}>
-      <header style={{ position: "sticky", top: 0, zIndex: 50, width: "100%", borderBottom: "1px solid var(--surface-border)", background: "var(--surface-card-trans)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
-        <div style={{ maxWidth: "768px", margin: "0 auto", display: "flex", height: "56px", alignItems: "center", justifyContent: "space-between", padding: "0 16px" }}>
-          <Link href="/profile" style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.875rem", fontWeight: 500, color: "var(--text-secondary)", textDecoration: "none" }}>
-            <ChevronLeft size={18} />
-            <span>{t("app.consentProfile")}</span>
-          </Link>
-          <ThemeToggle size={16} />
-        </div>
-      </header>
+    <Screen>
+      <AppBar title={t("legal.consentTitle")} back fallbackHref="/profile" />
+      {body}
+    </Screen>
+  );
+}
 
-      <main style={{ flex: 1, maxWidth: "768px", margin: "0 auto", width: "100%", padding: "24px 16px 80px" }}>
-        <div style={{ marginBottom: "24px" }}>
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "6px" }}>
-            {t("app.consentTitle")}
-          </h1>
-          <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-            {t("app.consentSubtitle")}
-          </p>
-        </div>
+function ConsentDetails({ summary }: { summary: ConsentSummary }) {
+  const { terms, guardian } = summary;
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {studentLegalCopy.consents.map((consent) => (
-            <Card key={consent.title} className="glass-card" style={{ padding: "16px", border: "1px solid var(--surface-border)" }}>
-              <div style={{ display: "flex", gap: "14px" }}>
-                <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: consent.status === "ACTIVE" ? "var(--accent-emerald-light)" : "var(--neutral-100)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  {consent.status === "ACTIVE" ? (
-                    <ShieldCheck size={20} style={{ color: "var(--accent-emerald)" }} />
-                  ) : (
-                    <FileCheck size={20} style={{ color: "var(--neutral-400)" }} />
-                  )}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px", marginBottom: "4px" }}>
-                    <h3 style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>{consent.title}</h3>
-                    <span style={{ fontSize: "0.6875rem", fontWeight: 700, padding: "2px 8px", borderRadius: "6px", background: consent.status === "ACTIVE" ? "var(--accent-emerald-light)" : "var(--neutral-100)", color: consent.status === "ACTIVE" ? "var(--accent-emerald)" : "var(--text-secondary)" }}>
-                      {consent.status === "ACTIVE" ? t("app.consentActive") : t("app.consentInactive")}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "12px" }}>
-                    {consent.description}
-                  </p>
-                  {consent.status === "ACTIVE" && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.75rem", color: "var(--text-tertiary)" }}>
-                      <Calendar size={12} />
-                      <span>{t("app.consentDatePrefix")} {consent.date}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+  const termsStatus: StatusLineProps = terms.accepted
+    ? {
+        tone: "success",
+        chip: t("legal.chipGranted"),
+        detail: terms.acceptedAt
+          ? `${t("legal.consentAcceptedOn")} ${formatThaiDate(terms.acceptedAt, "long")}`
+          : null,
+      }
+    : { tone: "neutral", chip: t("legal.chipMissing"), detail: t("legal.consentNotAccepted") };
 
-        <div style={{ marginTop: "32px", padding: "16px", borderRadius: "16px", background: "rgba(251, 191, 36, 0.08)", border: "1px solid rgba(251, 191, 36, 0.2)", display: "flex", gap: "12px" }}>
-          <AlertCircle size={20} style={{ color: "var(--accent-amber)", flexShrink: 0, marginTop: "2px" }} />
-          <div>
-            <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--accent-amber)", marginBottom: "4px" }}>{t("app.revokeConsentTitle")}</h4>
-            <p style={{ fontSize: "0.8125rem", color: "var(--accent-amber)", lineHeight: 1.6 }}>
-              {t("app.revokeConsentDescription")}
-            </p>
-          </div>
-        </div>
+  const guardianStatus: Record<ConsentSummary["guardian"], StatusLineProps> = {
+    granted: { tone: "success", chip: t("legal.chipGranted"), detail: null },
+    required: { tone: "warning", chip: t("legal.chipMissing"), detail: t("legal.consentGuardianRequired") },
+    notNeeded: { tone: "neutral", chip: t("legal.chipNotNeeded"), detail: t("legal.consentGuardianNotNeeded") },
+  };
 
-        <div style={{ marginTop: "40px", textAlign: "center", display: "flex", flexDirection: "column", gap: "12px" }}>
-          <Link href="/privacy" style={{ fontSize: "0.8125rem", color: "var(--brand-600)", textDecoration: "none", fontWeight: 500 }}>
-            {t("app.readFullPrivacy")}
-          </Link>
-          <Link href="/terms" style={{ fontSize: "0.8125rem", color: "var(--brand-600)", textDecoration: "none", fontWeight: 500 }}>
-            {t("app.readFullTerms")}
-          </Link>
-        </div>
-      </main>
+  return (
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 pt-2 pb-[calc(24px+var(--safe-bottom))]">
+      <p className="text-sm leading-[1.6] text-fg-muted">{t("legal.consentSubtitle")}</p>
+
+      <ListGroup header={t("legal.consentStatusHeader")}>
+        <ListRow
+          leading={<IconTile icon={ShieldCheck} tone={terms.accepted ? "brand" : "neutral"} />}
+          title={t("legal.consentTermsTitle")}
+          subtitle={<StatusLine {...termsStatus} />}
+        />
+        <ListRow
+          leading={
+            <IconTile
+              icon={Users}
+              tone={guardian === "granted" ? "brand" : guardian === "required" ? "amber" : "neutral"}
+            />
+          }
+          title={t("legal.consentGuardianTitle")}
+          subtitle={<StatusLine {...guardianStatus[guardian]} />}
+          // Missing guardian consent → the guardian form.
+          href={guardian === "required" ? "/guardian" : undefined}
+        />
+      </ListGroup>
+
+      <Notice tone="warning" title={t("legal.revokeTitle")} description={t("legal.revokeDescription")} />
+
+      <ListGroup header={t("legal.documentsHeader")}>
+        <ListRow href="/privacy" leading={<IconTile icon={Shield} tone="brand" />} title={t("app.privacyPolicy")} />
+        <ListRow href="/terms" leading={<IconTile icon={FileText} tone="blue" />} title={t("app.terms")} />
+      </ListGroup>
     </div>
+  );
+}
+
+interface StatusLineProps {
+  tone: ChipTone;
+  chip: string;
+  detail: string | null;
+}
+
+/** Status chip + optional detail, used as a ListRow subtitle. */
+function StatusLine({ tone, chip, detail }: StatusLineProps) {
+  return (
+    <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+      <Chip tone={tone}>{chip}</Chip>
+      {detail ? <span>{detail}</span> : null}
+    </span>
   );
 }

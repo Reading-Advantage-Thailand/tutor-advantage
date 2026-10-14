@@ -42,6 +42,7 @@ import { VocabularyProgress } from "./VocabularyProgress";
 import { GameEndScreen } from "@/components/games/game/GameEndScreen";
 import { GameStartScreen } from "@/components/games/game/GameStartScreen";
 import { RankingDisplay } from "./RankingDisplay";
+import { tx } from "@/lib/games/gameText";
 
 export type EnchantedLibraryGameResult = {
   xp: number;
@@ -535,6 +536,7 @@ export function EnchantedLibraryGame({
     }
   }, [autoStart, restartOnComplete, tutorialMode, gameState, correctAnswers, gameVocabulary.length, totalAttempts, onComplete, resetGame]);
 
+  const hasAssets = Boolean(assets);
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -570,7 +572,10 @@ export function EnchantedLibraryGame({
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, []);
+    // The loading placeholder and the game root are different elements: observe
+    // whichever is mounted, or the stage keeps the placeholder's size (the board
+    // sat in the top 320px of the presenter frame with an empty band below).
+  }, [hasAssets]);
 
   // Memoize sprite grids
   const grids = useMemo(() => {
@@ -654,7 +659,7 @@ export function EnchantedLibraryGame({
         className="relative h-[50vh] sm:h-[60vh] w-full overflow-hidden rounded-2xl bg-gradient-to-b from-amber-100 to-amber-200 flex items-center justify-center border border-amber-300 md:aspect-video md:h-auto"
       >
         <div className="text-amber-800 animate-pulse font-mono tracking-widest uppercase text-base">
-          Loading Library...
+          {t("loading")}
         </div>
       </div>
     );
@@ -667,7 +672,7 @@ export function EnchantedLibraryGame({
       className={`relative w-full overflow-hidden bg-slate-950 shadow-2xl touch-none ${
         fullscreen
           ? "h-full min-h-0 flex-1 rounded-none shadow-none"
-          : "h-full min-h-[500px] rounded-3xl"
+          : "h-full min-h-[320px] rounded-3xl"
       }`}
     >
       {gamePhase === "start" && !autoStart && !tutorialMode && (
@@ -763,8 +768,8 @@ export function EnchantedLibraryGame({
           </div>
 
           <div className="absolute right-3 top-24 z-10 max-w-[42vw] rounded-2xl border border-yellow-300 bg-gradient-to-r from-yellow-400 to-amber-500 px-3 py-2 text-right shadow-lg backdrop-blur-sm pointer-events-none sm:right-5 sm:top-28 sm:max-w-[320px] sm:px-4">
-            <span className="block text-[10px] uppercase tracking-[0.18em] text-white/80 sm:text-xs">
-              Find:
+            <span className="block text-[10px] font-semibold text-white/85 sm:text-xs">
+              {t("hud.find")}
             </span>
             <span className="block break-words text-sm font-bold leading-tight text-white drop-shadow-md sm:text-lg">
               {gameState.targetWord}
@@ -776,7 +781,7 @@ export function EnchantedLibraryGame({
               onClick={() => setShowGrimoire(true)}
               disabled={tutorialMode}
               className="bg-white/90 p-2 sm:p-3 rounded-full text-amber-900 shadow-lg border-2 border-amber-300 hover:scale-110 transition-transform active:scale-95 min-w-[44px] min-h-[44px] flex items-center justify-center disabled:cursor-default disabled:opacity-70"
-              title="My Grimoire"
+              title={tx("My Grimoire")}
             >
               <Book className="w-6 h-6" />
             </button>
@@ -876,7 +881,7 @@ export function EnchantedLibraryGame({
             </div>
             {tutorialMode && (tutorialStep === 1 || tutorialStep === 2 || tutorialStep === 3) && (
               <span className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-cyan-300 px-3.5 py-1 text-xs font-black text-slate-950 shadow-xl animate-bounce">
-                🎮 {inputRef.current.dx === 1 ? "กดขวา ►" : inputRef.current.dx === -1 ? "กดซ้าย ◄" : inputRef.current.dy === 1 ? "กดลง ▼" : inputRef.current.dy === -1 ? "กดขึ้น ▲" : "ปุ่มทิศทาง D-Pad"}
+                🎮 {inputRef.current.dx === 1 ? "กดขวา ►" : inputRef.current.dx === -1 ? "กดซ้าย ◄" : inputRef.current.dy === 1 ? "กดลง ▼" : inputRef.current.dy === -1 ? "กดขึ้น ▲" : "ปุ่มทิศทาง"}
               </span>
             )}
           </div>
@@ -897,7 +902,7 @@ export function EnchantedLibraryGame({
               }`}
             >
               <Shield className="h-5 w-5" />
-              Shield
+              {t("controls.shield")}
             </button>
             {tutorialMode && tutorialStep === 5 && (
               <span className="absolute -top-9 right-0 whitespace-nowrap rounded-full bg-blue-300 px-3.5 py-1 text-xs font-black text-slate-950 shadow-xl animate-bounce">
@@ -1049,7 +1054,7 @@ export function EnchantedLibraryGame({
               },
               { label: t("messages.correctBooks"), value: correctAnswers },
               {
-                label: "Difficulty",
+                label: tx("Difficulty"),
                 value: difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
               },
             ]}

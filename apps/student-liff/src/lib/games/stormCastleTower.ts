@@ -116,6 +116,13 @@ function createWindows(words: string[], rng: () => number): GameWindow[] {
   return windows
 }
 
+/**
+ * Rows are drawn top-down (getGridPosition: y = row * cellSize - scrollOffset),
+ * so moving UP on screen means a smaller row. This used to be reversed: the
+ * up arrow / W / on-screen ↑ moved the knight down the screen.
+ */
+export const ROW_STEP: Record<'up' | 'down', -1 | 1> = { up: -1, down: 1 }
+
 export function movePlayer(
   state: StormCastleTowerState,
   direction: 'up' | 'down' | 'left' | 'right'
@@ -132,10 +139,8 @@ export function movePlayer(
   
   switch (direction) {
     case 'up':
-      newPos = { ...position, row: position.row + 1 }
-      break
     case 'down':
-      newPos = { ...position, row: Math.max(0, position.row - 1) }
+      newPos = { ...position, row: Math.max(0, position.row + ROW_STEP[direction]) }
       break
     case 'left':
       newPos = { ...position, col: Math.max(0, position.col - 1) }

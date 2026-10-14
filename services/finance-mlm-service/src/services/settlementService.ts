@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { prisma } from "@tutor-advantage/database";
 import { Prisma } from "@prisma/client";
 import {
@@ -173,54 +174,118 @@ function validatePayoutIdentitySnapshots(
   }
 }
 
+/** One payout line as calculated (before it is persisted). */
+export interface ComputedPayoutLine {
+  tutorUserId: string;
+  grossVolumeMinor: bigint;
+  payoutRate: number;
+  payoutAmountMinor: bigint;
+  withholdingTaxMinor: bigint;
+  netPayoutMinor: bigint;
+  badgeBonusMinor: bigint;
+  eligibilityStatus: string;
+  payoutIdentityVersion: number;
+  recipientSnapshot: string | null;
+}
+
+export interface ComputedSettlement {
+  periodMonth: string;
+  lines: ComputedPayoutLine[];
+  paymentCount: number;
+  approvedAdjustmentIds: string[];
+  approvedAdjustmentTotalSatang: bigint;
+  totalPayoutSatang: bigint;
+  totalNetPayoutSatang: bigint;
+}
+
+/** Why a DRAFT/SUBMITTED run can no longer be submitted or approved as-is. */
+export type SettlementStaleReason =
+  | "NOT_PREVIEWED"
+  | "LINES_CHANGED"
+  | "ADJUSTMENTS_CHANGED";
+
+export interface SettlementFreshness {
+  /** The run has been calculated at least once (non-empty preview payload). */
+  previewed: boolean;
+  lineCount: number;
+  stale: boolean;
+  reasons: SettlementStaleReason[];
+  /** Tutors whose payout line would differ if the run were recalculated now. */
+  changedTutorUserIds: string[];
+  checkedAt: string;
+}
+
+type FingerprintLine = {
+  tutorUserId: string;
+  grossVolumeMinor: bigint;
+  payoutRate: unknown;
+  payoutAmountMinor: bigint;
+  withholdingTaxMinor: bigint;
+  netPayoutMinor: bigint;
+  badgeBonusMinor: bigint;
+  eligibilityStatus: string;
+  payoutIdentityVersion: number;
+  recipientSnapshot: string | null;
+};
+
+function lineKey(line: FingerprintLine) {
+  const rate = Number(String(line.payoutRate ?? 0));
+  return [
+    line.tutorUserId,
+    line.grossVolumeMinor.toString(),
+    Number.isFinite(rate) ? rate.toFixed(8) : String(line.payoutRate),
+    line.payoutAmountMinor.toString(),
+    line.withholdingTaxMinor.toString(),
+    line.netPayoutMinor.toString(),
+    line.badgeBonusMinor.toString(),
+    line.eligibilityStatus,
+    String(line.payoutIdentityVersion ?? 0),
+    line.recipientSnapshot ?? "",
+  ].join("|");
+}
+
+/** Stable hash of a set of payout lines (order independent). */
+export function fingerprintPayoutLines(lines: FingerprintLine[]) {
+  const keys = lines.map(lineKey).sort();
+  return createHash("sha256").update(keys.join("\n")).digest("hex");
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+/** A run counts as previewed once its payload carries calculation results. */
+export function isPreviewedPayload(payload: unknown) {
+  return Object.keys(asRecord(payload)).length > 0;
+}
+
+/**
+ * Maker-checker bypass for local development only: an ADMIN may approve a
+ * DRAFT directly. Requires an explicit opt-in (ENABLE_DEV_ROUTES=true) AND a
+ * non-production NODE_ENV, so staging/preview deploys keep maker-checker.
+ */
+export function isDevMakerCheckerOverrideEnabled(env: NodeJS.ProcessEnv = process.env) {
+  return env.ENABLE_DEV_ROUTES === "true" && env.NODE_ENV !== "production";
+}
+
+export class SettlementStaleError extends Error {
+  constructor(public readonly freshness: SettlementFreshness) {
+    super(`SETTLEMENT_STALE:${freshness.changedTutorUserIds.join(",")}`);
+  }
+}
+
 export class SettlementService {
   /**
-   * Generates a preview for a settlement period.
+   * Calculates payout lines for a period WITHOUT writing anything. Used by
+   * preview (which then persists the result) and by the freshness check that
+   * guards submit/approve.
    * This calculation uses a Bottom-Up approach for a unilevel or differential tree.
    */
-  static async previewSettlement(
-    periodMonth: string,
-    createdBy: string,
-    options?: { refreshRunId?: string },
-  ) {
+  static async computeSettlement(periodMonth: string): Promise<ComputedSettlement> {
     const { start: startOfMonth, end: endOfMonth } =
       getIctMonthWindow(periodMonth);
-
-    // There is one canonical run per period. Adjustment holders and rejected
-    // runs are refreshed in place; approved/submitted runs are immutable.
-    let effectiveRefreshRunId = options?.refreshRunId;
-    let resetExistingRunToDraft = false;
-    if (effectiveRefreshRunId) {
-      const refreshRun = await prisma.settlementRun.findUnique({
-        where: { settlementRunId: effectiveRefreshRunId },
-        select: { status: true, periodMonth: true },
-      });
-      if (!refreshRun) throw new Error("NOT_FOUND");
-      if (refreshRun.periodMonth !== periodMonth) {
-        throw new Error("SETTLEMENT_PERIOD_MISMATCH");
-      }
-      if (!["DRAFT", "ADJUSTMENT_PENDING", "REJECTED", "REFRESHING"].includes(refreshRun.status)) {
-        throw new Error("SETTLEMENT_IMMUTABLE");
-      }
-      resetExistingRunToDraft = [
-        "ADJUSTMENT_PENDING",
-        "REJECTED",
-        "REFRESHING",
-      ].includes(refreshRun.status);
-    }
-    if (!effectiveRefreshRunId) {
-      const existingRun = await prisma.settlementRun.findFirst({
-        where: { periodMonth },
-      });
-      if (existingRun) {
-        if (["ADJUSTMENT_PENDING", "REJECTED"].includes(existingRun.status)) {
-          effectiveRefreshRunId = existingRun.settlementRunId;
-          resetExistingRunToDraft = true;
-        } else {
-          throw new Error("DRAFT_EXISTS");
-        }
-      }
-    }
 
     const payments = await prisma.paymentIntent.findMany({
       where: {
@@ -448,8 +513,6 @@ export class SettlementService {
       }
     }
 
-    let totalPayoutSatang = 0n;
-
     const calculatePayouts = (userId: string, visiting = new Set<string>()) => {
       if (visiting.has(userId)) {
         throw new Error("SPONSOR_TREE_CYCLE");
@@ -501,63 +564,6 @@ export class SettlementService {
       }
     }
 
-    const previewPayload = {
-      paymentCount: payments.length,
-      approvedAdjustmentCount: approvedAdjustments.length,
-      approvedAdjustmentTotalSatang: approvedAdjustments
-        .reduce((sum, adjustment) => sum + adjustment.amountMinor, 0n)
-        .toString(),
-      ...(effectiveRefreshRunId
-        ? { refreshedAt: new Date().toISOString() }
-        : {}),
-    };
-
-    // 6. Persist Draft Settlement Run, or refresh an existing active run.
-    let run;
-    try {
-      run = effectiveRefreshRunId
-        ? await prisma.settlementRun.update({
-            where: { settlementRunId: effectiveRefreshRunId },
-            data: {
-              previewPayload,
-              ...(resetExistingRunToDraft ? { status: "DRAFT" } : {}),
-            },
-          })
-        : await prisma.settlementRun.create({
-            data: {
-              periodMonth,
-              status: "DRAFT",
-              createdBy,
-              previewPayload,
-            },
-          });
-    } catch (error) {
-      // The unique period constraint is the final guard for two previews that
-      // race after both have passed the read-side idempotency check.
-      if ((error as { code?: string }).code === "P2002") {
-        throw new Error("DRAFT_EXISTS");
-      }
-      throw error;
-    }
-
-    if (effectiveRefreshRunId) {
-      const existingLines = await prisma.payoutLine.findMany({
-        where: { settlementRunId: effectiveRefreshRunId },
-        select: { payoutLineId: true },
-      });
-      const existingLineIds = existingLines.map((line) => line.payoutLineId);
-
-      if (existingLineIds.length > 0) {
-        await prisma.payoutDocument.deleteMany({
-          where: { payoutLineId: { in: existingLineIds } },
-        });
-      }
-
-      await prisma.payoutLine.deleteMany({
-        where: { settlementRunId: effectiveRefreshRunId },
-      });
-    }
-
     // Fetch badge bonuses for all tutors in this settlement
     // Badge bonus amounts in Satang — must match BadgeService.BADGE_BONUS_SATANG
     const BADGE_BONUS_SATANG: Record<string, bigint> = {
@@ -585,9 +591,9 @@ export class SettlementService {
       );
     }
 
-    // Bulk insert payout lines
-    let payoutLineCount = 0;
+    let totalPayoutSatang = 0n;
     let totalNetPayoutSatang = 0n;
+    const lines: ComputedPayoutLine[] = [];
     for (const node of nodes.values()) {
       // Unverified tutors are blocked from ALL payouts — commission was already zeroed above.
       // Also block badge bonuses and adjustments so unverified tutors receive nothing.
@@ -613,6 +619,9 @@ export class SettlementService {
 
       if (!hasActivity) continue;
 
+      // BUSINESS RULE (pending owner decision, unchanged): a negative total
+      // (clawback larger than earnings) is paid out as 0 with no WHT and no
+      // carry-forward to the next period.
       const tax =
         adjustedPayoutMinor > 0n
           ? calculateWithholdingTax(adjustedPayoutMinor)
@@ -627,41 +636,301 @@ export class SettlementService {
           ? `${node.eligibilityStatus}_ADJUSTED`
           : node.eligibilityStatus;
 
-      await prisma.payoutLine.create({
-        data: {
-          settlementRunId: run.settlementRunId,
-          tutorUserId: node.userId,
-          grossVolumeMinor: node.groupVolumeMinor,
-          payoutRate: new Prisma.Decimal(node.payoutRate),
-          payoutAmountMinor: adjustedPayoutMinor,
-          withholdingTaxMinor: tax.withholdingTaxMinor,
-          netPayoutMinor: tax.netPayoutMinor,
-          badgeBonusMinor: effectiveBadgeBonus,
-          eligibilityStatus,
-          payoutIdentityVersion: node.payoutIdentityVersion,
-          recipientSnapshot: node.recipientId,
-        },
+      lines.push({
+        tutorUserId: node.userId,
+        grossVolumeMinor: node.groupVolumeMinor,
+        payoutRate: node.payoutRate,
+        payoutAmountMinor: adjustedPayoutMinor,
+        withholdingTaxMinor: tax.withholdingTaxMinor,
+        netPayoutMinor: tax.netPayoutMinor,
+        badgeBonusMinor: effectiveBadgeBonus,
+        eligibilityStatus,
+        payoutIdentityVersion: node.payoutIdentityVersion,
+        recipientSnapshot: node.recipientId,
       });
-      payoutLineCount++;
+    }
+
+    return {
+      periodMonth,
+      lines,
+      paymentCount: payments.length,
+      approvedAdjustmentIds: approvedAdjustments
+        .map((adjustment) => adjustment.adjustmentId)
+        .filter((id): id is string => typeof id === "string")
+        .sort(),
+      approvedAdjustmentTotalSatang: approvedAdjustments.reduce(
+        (sum, adjustment) => sum + adjustment.amountMinor,
+        0n,
+      ),
+      totalPayoutSatang,
+      totalNetPayoutSatang,
+    };
+  }
+
+  /**
+   * Calculates a period and persists it as the period's DRAFT run. All writes
+   * (run row, old line/document removal, new lines) happen in ONE transaction,
+   * so a run can never be left with a partial set of lines.
+   */
+  static async previewSettlement(
+    periodMonth: string,
+    createdBy: string,
+    options?: { refreshRunId?: string },
+  ) {
+    // Validates the period (throws INVALID_PERIOD_MONTH).
+    getIctMonthWindow(periodMonth);
+
+    // There is one canonical run per period. Adjustment holders, rejected runs
+    // and never-calculated (empty) drafts are refreshed in place;
+    // approved/submitted runs and calculated drafts are not overwritten here.
+    let effectiveRefreshRunId = options?.refreshRunId;
+    let expectedStatus: string | null = null;
+    let resetExistingRunToDraft = false;
+    if (effectiveRefreshRunId) {
+      const refreshRun = await prisma.settlementRun.findUnique({
+        where: { settlementRunId: effectiveRefreshRunId },
+        select: { status: true, periodMonth: true },
+      });
+      if (!refreshRun) throw new Error("NOT_FOUND");
+      if (refreshRun.periodMonth !== periodMonth) {
+        throw new Error("SETTLEMENT_PERIOD_MISMATCH");
+      }
+      if (!["DRAFT", "ADJUSTMENT_PENDING", "REJECTED", "REFRESHING"].includes(refreshRun.status)) {
+        throw new Error("SETTLEMENT_IMMUTABLE");
+      }
+      expectedStatus = refreshRun.status;
+      resetExistingRunToDraft = [
+        "ADJUSTMENT_PENDING",
+        "REJECTED",
+        "REFRESHING",
+      ].includes(refreshRun.status);
+    }
+    if (!effectiveRefreshRunId) {
+      const existingRun = await prisma.settlementRun.findFirst({
+        where: { periodMonth },
+      });
+      if (existingRun) {
+        const isEmptyDraft =
+          existingRun.status === "DRAFT" &&
+          (!isPreviewedPayload(existingRun.previewPayload) ||
+            (await prisma.payoutLine.count({
+              where: { settlementRunId: existingRun.settlementRunId },
+            })) === 0);
+        if (["ADJUSTMENT_PENDING", "REJECTED"].includes(existingRun.status) || isEmptyDraft) {
+          effectiveRefreshRunId = existingRun.settlementRunId;
+          expectedStatus = existingRun.status;
+          resetExistingRunToDraft = existingRun.status !== "DRAFT";
+        } else {
+          throw Object.assign(new Error("DRAFT_EXISTS"), {
+            existingRunId: existingRun.settlementRunId,
+            existingStatus: existingRun.status,
+          });
+        }
+      }
+    }
+
+    const computed = await SettlementService.computeSettlement(periodMonth);
+    const previewedAt = new Date().toISOString();
+    const previewPayload = {
+      paymentCount: computed.paymentCount,
+      approvedAdjustmentCount: computed.approvedAdjustmentIds.length,
+      approvedAdjustmentTotalSatang: computed.approvedAdjustmentTotalSatang.toString(),
+      approvedAdjustmentIds: computed.approvedAdjustmentIds,
+      payoutLineCount: computed.lines.length,
+      totalPayoutSatang: computed.totalPayoutSatang.toString(),
+      totalNetPayoutSatang: computed.totalNetPayoutSatang.toString(),
+      linesFingerprint: fingerprintPayoutLines(computed.lines),
+      previewedAt,
+      previewedBy: createdBy,
+      ...(effectiveRefreshRunId ? { refreshedAt: previewedAt } : {}),
+    };
+
+    // 6. Persist Draft Settlement Run, or refresh an existing active run.
+    let run;
+    try {
+      run = await prisma.$transaction(async (tx) => {
+        let persistedRun;
+        if (effectiveRefreshRunId) {
+          // Conditional claim: if anyone changed the run's status since we read
+          // it (submit, approve, another refresh) nothing is overwritten.
+          const claimed = await tx.settlementRun.updateMany({
+            where: {
+              settlementRunId: effectiveRefreshRunId,
+              ...(expectedStatus ? { status: expectedStatus } : {}),
+            },
+            data: {
+              previewPayload,
+              ...(resetExistingRunToDraft ? { status: "DRAFT" } : {}),
+            },
+          });
+          if (claimed.count !== 1) throw new Error("SETTLEMENT_ALREADY_CLAIMED");
+          persistedRun = await tx.settlementRun.findUnique({
+            where: { settlementRunId: effectiveRefreshRunId },
+          });
+          if (!persistedRun) throw new Error("NOT_FOUND");
+
+          const existingLines = await tx.payoutLine.findMany({
+            where: { settlementRunId: effectiveRefreshRunId },
+            select: { payoutLineId: true },
+          });
+          const existingLineIds = existingLines.map((line) => line.payoutLineId);
+          if (existingLineIds.length > 0) {
+            await tx.payoutDocument.deleteMany({
+              where: { payoutLineId: { in: existingLineIds } },
+            });
+          }
+          await tx.payoutLine.deleteMany({
+            where: { settlementRunId: effectiveRefreshRunId },
+          });
+        } else {
+          persistedRun = await tx.settlementRun.create({
+            data: {
+              periodMonth,
+              status: "DRAFT",
+              createdBy,
+              previewPayload,
+            },
+          });
+        }
+
+        if (computed.lines.length > 0) {
+          await tx.payoutLine.createMany({
+            data: computed.lines.map((line) => ({
+              settlementRunId: persistedRun.settlementRunId,
+              tutorUserId: line.tutorUserId,
+              grossVolumeMinor: line.grossVolumeMinor,
+              payoutRate: new Prisma.Decimal(line.payoutRate),
+              payoutAmountMinor: line.payoutAmountMinor,
+              withholdingTaxMinor: line.withholdingTaxMinor,
+              netPayoutMinor: line.netPayoutMinor,
+              badgeBonusMinor: line.badgeBonusMinor,
+              eligibilityStatus: line.eligibilityStatus,
+              payoutIdentityVersion: line.payoutIdentityVersion,
+              recipientSnapshot: line.recipientSnapshot,
+            })),
+          });
+        }
+        return persistedRun;
+      });
+    } catch (error) {
+      // The unique period constraint is the final guard for two previews that
+      // race after both have passed the read-side idempotency check.
+      if ((error as { code?: string }).code === "P2002") {
+        throw new Error("DRAFT_EXISTS");
+      }
+      throw error;
     }
 
     return {
       snapshotId: run.settlementRunId,
       periodMonth,
-      totalPayoutSatang: Number(totalPayoutSatang),
-      totalNetPayoutSatang: Number(totalNetPayoutSatang),
-      payoutLineCount,
+      totalPayoutSatang: Number(computed.totalPayoutSatang),
+      totalNetPayoutSatang: Number(computed.totalNetPayoutSatang),
+      payoutLineCount: computed.lines.length,
       status: run.status,
     };
   }
 
-  static async refreshSettlementRun(snapshotId: string) {
+  /**
+   * Compares a DRAFT/SUBMITTED run with what a recalculation would produce
+   * right now (payments, approved adjustments, tutor eligibility/identity).
+   * Read-only.
+   */
+  static async getRunFreshness(run: {
+    settlementRunId: string;
+    periodMonth: string;
+    previewPayload: unknown;
+  }): Promise<SettlementFreshness> {
+    const payload = asRecord(run.previewPayload);
+    const previewed = isPreviewedPayload(payload);
+    const [storedLines, computed] = await Promise.all([
+      prisma.payoutLine.findMany({
+        where: { settlementRunId: run.settlementRunId },
+        select: {
+          tutorUserId: true,
+          grossVolumeMinor: true,
+          payoutRate: true,
+          payoutAmountMinor: true,
+          withholdingTaxMinor: true,
+          netPayoutMinor: true,
+          badgeBonusMinor: true,
+          eligibilityStatus: true,
+          payoutIdentityVersion: true,
+          recipientSnapshot: true,
+        },
+      }),
+      SettlementService.computeSettlement(run.periodMonth),
+    ]);
+
+    const reasons: SettlementStaleReason[] = [];
+    if (!previewed) reasons.push("NOT_PREVIEWED");
+
+    const storedByTutor = new Map(storedLines.map((line) => [line.tutorUserId, lineKey(line)]));
+    const computedByTutor = new Map(computed.lines.map((line) => [line.tutorUserId, lineKey(line)]));
+    const changed = new Set<string>();
+    for (const [tutorUserId, key] of storedByTutor) {
+      if (computedByTutor.get(tutorUserId) !== key) changed.add(tutorUserId);
+    }
+    for (const tutorUserId of computedByTutor.keys()) {
+      if (!storedByTutor.has(tutorUserId)) changed.add(tutorUserId);
+    }
+    if (changed.size > 0) reasons.push("LINES_CHANGED");
+
+    if (previewed) {
+      const storedIds = Array.isArray(payload.approvedAdjustmentIds)
+        ? (payload.approvedAdjustmentIds as unknown[]).map(String).sort()
+        : null;
+      const adjustmentsChanged = storedIds
+        ? storedIds.join(",") !== computed.approvedAdjustmentIds.join(",")
+        : (payload.approvedAdjustmentCount !== undefined &&
+            Number(payload.approvedAdjustmentCount) !== computed.approvedAdjustmentIds.length) ||
+          (payload.approvedAdjustmentTotalSatang !== undefined &&
+            String(payload.approvedAdjustmentTotalSatang) !==
+              computed.approvedAdjustmentTotalSatang.toString());
+      if (adjustmentsChanged) reasons.push("ADJUSTMENTS_CHANGED");
+    }
+
+    return {
+      previewed,
+      lineCount: storedLines.length,
+      stale: reasons.length > 0,
+      reasons,
+      changedTutorUserIds: [...changed].sort(),
+      checkedAt: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Server-side gate for submit and approve: the run must have lines and must
+   * match a recalculation made now. Throws SETTLEMENT_EMPTY,
+   * SETTLEMENT_NOT_PREVIEWED or SettlementStaleError (SETTLEMENT_STALE:…).
+   */
+  static async assertRunReadyForReview(run: {
+    settlementRunId: string;
+    periodMonth: string;
+    previewPayload: unknown;
+  }) {
+    const freshness = await SettlementService.getRunFreshness(run);
+    if (freshness.lineCount === 0) throw new Error("SETTLEMENT_EMPTY");
+    if (!freshness.previewed) throw new Error("SETTLEMENT_NOT_PREVIEWED");
+    if (freshness.stale) throw new SettlementStaleError(freshness);
+    return freshness;
+  }
+
+  static async refreshSettlementRun(
+    snapshotId: string,
+    options?: { actorId?: string; allowSubmitted?: boolean },
+  ) {
     const run = await prisma.settlementRun.findUnique({
       where: { settlementRunId: snapshotId },
     });
 
     if (!run) throw new Error("NOT_FOUND");
-    if (!["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"].includes(run.status)) {
+    const refreshable = ["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"];
+    // A SUBMITTED run whose inputs changed after review goes back to DRAFT
+    // (the caller has verified it is stale); it must be submitted again.
+    if (options?.allowSubmitted) refreshable.push("SUBMITTED");
+    if (!refreshable.includes(run.status)) {
       return {
         refreshed: false,
         status: run.status,
@@ -686,7 +955,7 @@ export class SettlementService {
     try {
       const preview = await SettlementService.previewSettlement(
         run.periodMonth,
-        run.createdBy ?? "SYSTEM",
+        options?.actorId ?? run.createdBy ?? "SYSTEM",
         { refreshRunId: snapshotId },
       );
 
@@ -725,6 +994,11 @@ export class SettlementService {
       ? ["DRAFT", "SUBMITTED"]
       : ["SUBMITTED"];
     if (!validStatuses.includes(run.status)) throw new Error("INVALID_STATUS");
+
+    // Never approve an empty run, and never approve lines that no longer match
+    // the inputs (adjustments approved/rejected, payments refunded, tutor
+    // eligibility/identity changed) since they were calculated (F-2, F-3).
+    await SettlementService.assertRunReadyForReview(run);
 
     const positivePayoutLines = await prisma.payoutLine.findMany({
       where: {

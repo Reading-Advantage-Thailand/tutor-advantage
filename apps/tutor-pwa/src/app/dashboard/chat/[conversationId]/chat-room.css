@@ -1,0 +1,16 @@
+/*
+ * Chat room on phones (<768px): a full-height conversation screen like native
+ * messengers. The shell's bottom tab bar (and its spacer) is hidden while a
+ * room is mounted so the composer sits at the bottom edge; the app bar keeps
+ * the back button. Scoped with :has() so it only applies on this route.
+ * (Candidate for a shell option, e.g. <AppShell hideTabBar>.)
+ */
+@media (max-width: 767.98px) {
+  .app-root:has([data-chat-room]) {
+    --tabbar-space: 0px;
+  }
+  .app-root:has([data-chat-room]) .app-tabbar,
+  .app-root:has([data-chat-room]) .app-tabbar-spacer {
+    display: none;
+  }
+}

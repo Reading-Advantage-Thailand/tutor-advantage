@@ -41,6 +41,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
           toast: "cn-toast",
         },
       }}
+      // Keep top toasts clear of the notch / status bar (safe-top inset).
+      offset={{ top: "calc(var(--safe-top) + 12px)" }}
+      mobileOffset={{ top: "calc(var(--safe-top) + 8px)" }}
       {...props}
     />
   )

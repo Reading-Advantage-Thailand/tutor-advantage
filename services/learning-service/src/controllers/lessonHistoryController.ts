@@ -3,6 +3,7 @@ import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
+import { getSessionAnswerKind } from "../services/sessionAnswerKind";
 
 function isMissingTableError(error: any) {
   return error?.code === "P2021" || error?.meta?.table;
@@ -126,7 +127,8 @@ export async function getLessonSessionDetails(req: AuthenticatedRequest, res: Re
         correctAnswer: a.correctAnswer,
         isCorrect: a.isCorrect,
         score: a.score,
-        aiFeedback: a.aiFeedback
+        aiFeedback: a.aiFeedback,
+        kind: getSessionAnswerKind(a)
       }))
     });
 

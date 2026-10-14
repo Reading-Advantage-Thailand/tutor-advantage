@@ -6,7 +6,12 @@ import { useSearchParams } from "next/navigation";
 import { AlertCircle, BookOpenCheck, ChevronDown, ChevronLeft, Clock3, Headphones, Lightbulb, Mic, MicOff, PhoneOff, X } from "lucide-react";
 import { toast } from "sonner";
 import { studentApi } from "@/lib/api";
+import { AppBar, Screen, StatusScreen } from "@/components/mobile";
+import { buttonVariants } from "@/components/ui/button";
+import { t } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 import styles from "./voice-practice.module.css";
+import { VoicePracticeSkeleton } from "./_components/VoicePracticeSkeleton";
 import Reedy from "./Reedy";
 import GuidedReading, { passageSegments, type ReadingCue } from "./GuidedReading";
 import { REEDY_PREVIEW_EVENT, REEDY_READING_PREVIEW_EVENT, REEDY_READING_PREVIEWS } from "@/lib/reedy-preview";
@@ -602,8 +607,24 @@ function VoicePracticeContent() {
     setMuted(!track.enabled);
   };
 
-  if (loading) return <main className="min-h-dvh grid place-items-center"><div className="size-10 animate-spin rounded-full border-4 border-emerald-100 border-t-emerald-600" /></main>;
-  if (error && !entitlement) return <main className="min-h-dvh grid place-items-center p-6 text-center"><AlertCircle className="size-12 text-red-500" /><p>{error}</p><Link href="/progress" className="btn btn-primary">กลับหน้าความคืบหน้า</Link></main>;
+  if (loading) return <VoicePracticeSkeleton />;
+  if (error && !entitlement) {
+    return (
+      <Screen>
+        <AppBar title={t("interactivePlay.voicePracticeTitle")} back fallbackHref="/progress" />
+        <StatusScreen
+          icon={AlertCircle}
+          tone="amber"
+          title={error}
+          primaryAction={
+            <Link href="/progress" className={cn(buttonVariants({ variant: "brand", size: "cta" }), "w-full")}>
+              {t("interactivePlay.voicePracticeBackProgress")}
+            </Link>
+          }
+        />
+      </Screen>
+    );
+  }
 
   const canStart = Boolean(selectedArticle && entitlement?.enabled && entitlement.remainingSeconds > 0 && !entitlement.activeSession);
   const summary = result?.summary as { summaryTh?: string; strengths?: string[]; improvements?: string[] } | undefined;
@@ -751,5 +772,5 @@ function VoicePracticeContent() {
 }
 
 export default function VoicePracticePage() {
-  return <Suspense fallback={<main className="min-h-dvh grid place-items-center">กำลังโหลด…</main>}><VoicePracticeContent /></Suspense>;
+  return <Suspense fallback={<VoicePracticeSkeleton />}><VoicePracticeContent /></Suspense>;
 }

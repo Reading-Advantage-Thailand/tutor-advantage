@@ -47,7 +47,7 @@ import {
   syncPayoutTransfer,
 } from "./controllers/settlementController";
 import { auditTrailMiddleware } from "./middlewares/auditMiddleware";
-import { getAuditLogs } from "./controllers/auditController";
+import { exportAuditLogs, getAuditLogs } from "./controllers/auditController";
 import {
   getAdjustments,
   createAdjustment,
@@ -69,17 +69,29 @@ import {
   suspendUser,
   anonymizeUser,
   updateOmiseRecipient,
+  getUserPayments,
+  getUserAuditEvents,
 } from "./controllers/userController";
 import {
   getFraudFlags,
   triggerFraudAction,
 } from "./controllers/fraudController";
-import { getPaymentReconciliation } from "./controllers/reconciliationController";
+import {
+  activatePaymentEnrollment,
+  dismissOrphanEvent,
+  getActiveWithoutPayment,
+  getOrphanEvents,
+  getPaymentReconciliation,
+  linkOrphanEvent,
+  verifyPaymentWithProvider,
+} from "./controllers/reconciliationController";
 import { getAdminOverview } from "./controllers/adminController";
 import {
   createCoupon,
   getCoupons,
   voidCoupon,
+  updateCoupon,
+  searchCouponTutors,
 } from "./controllers/couponController";
 import {
   devListUsers,
@@ -190,10 +202,18 @@ app.get("/version", (_req: Request, res: Response) => {
 
 app.get("/v1/admin/overview", authMiddleware, financeStaffOnly, getAdminOverview);
 app.get("/v1/reconciliation/payments", authMiddleware, financeStaffOnly, getPaymentReconciliation);
+app.post("/v1/reconciliation/payments/:id/activate", authMiddleware, financeStaffOnly, activatePaymentEnrollment);
+app.post("/v1/reconciliation/payments/:id/verify", authMiddleware, financeStaffOnly, verifyPaymentWithProvider);
+app.get("/v1/reconciliation/orphan-events", authMiddleware, financeStaffOnly, getOrphanEvents);
+app.post("/v1/reconciliation/orphan-events/:id/link", authMiddleware, financeStaffOnly, linkOrphanEvent);
+app.post("/v1/reconciliation/orphan-events/:id/dismiss", authMiddleware, financeStaffOnly, dismissOrphanEvent);
+app.get("/v1/reconciliation/active-without-payment", authMiddleware, financeStaffOnly, getActiveWithoutPayment);
 
 // ── Coupon Routes (admin) ──────────────────────────────────────────────────
 app.post("/v1/coupons", authMiddleware, adminOnly, createCoupon);
 app.get("/v1/coupons", authMiddleware, adminOnly, getCoupons);
+app.get("/v1/coupons/tutors", authMiddleware, adminOnly, searchCouponTutors);
+app.patch("/v1/coupons/:couponId", authMiddleware, adminOnly, updateCoupon);
 app.post("/v1/coupons/:couponId/void", authMiddleware, adminOnly, voidCoupon);
 
 // ── Payment Routes ─────────────────────────────────────────────────────────
@@ -308,6 +328,7 @@ app.post(
 );
 
 app.get("/v1/audit-logs", authMiddleware, financeStaffOnly, getAuditLogs);
+app.get("/v1/audit-logs/export", authMiddleware, financeStaffOnly, exportAuditLogs);
 
 // ── Operations Routes ──────────────────────────────────────────────────────
 app.get("/v1/operations/exceptions", authMiddleware, financeStaffOnly, getExceptions);
@@ -336,7 +357,10 @@ app.delete(
 // ── Users Routes ───────────────────────────────────────────────────────────
 app.get("/v1/users", authMiddleware, financeStaffOnly, getUsers);
 app.get("/v1/users/:id", authMiddleware, financeStaffOnly, getUserDetails);
-app.post("/v1/users/:id/verify", authMiddleware, financeStaffOnly, verifyUser);
+app.get("/v1/users/:id/payments", authMiddleware, financeStaffOnly, getUserPayments);
+app.get("/v1/users/:id/audit", authMiddleware, adminOnly, getUserAuditEvents);
+// ADMIN only: checkers get masked PII and cannot see documents, so they cannot review them.
+app.post("/v1/users/:id/verify", authMiddleware, adminOnly, verifyUser);
 app.post("/v1/users/:id/suspend", authMiddleware, adminOnly, suspendUser);
 app.post("/v1/users/:id/anonymize", authMiddleware, adminOnly, anonymizeUser);
 app.patch("/v1/users/:id/omise-recipient", authMiddleware, adminOnly, updateOmiseRecipient);

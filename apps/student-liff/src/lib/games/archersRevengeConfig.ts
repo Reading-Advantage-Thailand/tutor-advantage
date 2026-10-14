@@ -81,7 +81,9 @@ export const ARCHERS_REVENGE_CONFIG: ArchersRevengeConfig = {
     accuracyBonus: 50,
   },
   layout: {
-    enemySpacing: { x: 55, y: 45 },
+    // Wide/tall enough that each enemy's translation label (one line under
+    // the 44px orb) fits between neighbours and above the next row's orb.
+    enemySpacing: { x: 64, y: 62 },
     enemySize: { width: 50, height: 35 },
     playerY: 750,
     formationTopMargin: 140,

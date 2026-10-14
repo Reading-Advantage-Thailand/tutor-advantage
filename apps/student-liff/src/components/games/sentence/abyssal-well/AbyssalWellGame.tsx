@@ -21,6 +21,8 @@ import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { Flame, BookOpen, AlertTriangle, Target } from 'lucide-react'
+import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type AbyssalWellGameResult = {
   xp: number
@@ -92,7 +94,7 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   useEffect(() => {
     if (gamePhase !== 'playing') return
@@ -162,6 +164,9 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
     return Math.min(dimensions.width / ABYSSAL_WELL_CONFIG.gameWidth, dimensions.height / ABYSSAL_WELL_CONFIG.gameHeight)
   }, [dimensions])
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: ABYSSAL_WELL_CONFIG.gameWidth, height: ABYSSAL_WELL_CONFIG.gameHeight })
+
   const handleRotate = useCallback((direction: number) => {
     if (gameState && gameState.phase === 'playing' && gamePhase === 'playing') {
       setGameState(prevState => {
@@ -220,23 +225,23 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
-          gameTitle="The Abyssal Well"
-          gameSubtitle="Defend the Rim"
+          gameTitle={tx("The Abyssal Well")}
+          gameSubtitle={tx("Defend the Rim")}
           vocabulary={sentences}
           instructions={[
-            { step: 1, text: 'Enemies climb up from the well carrying word orbs.', icon: BookOpen },
-            { step: 2, text: 'Shoot the enemies in the correct sentence order!', icon: Target },
-            { step: 3, text: 'If an enemy reaches the rim, you lose a life. Don\'t let them through!', icon: AlertTriangle },
+            { step: 1, text: tx("Enemies climb up from the well carrying word orbs."), icon: BookOpen },
+            { step: 2, text: tx("Shoot the enemies in the correct sentence order!"), icon: Target },
+            { step: 3, text: tx("If an enemy reaches the rim, you lose a life. Don't let them through!"), icon: AlertTriangle },
           ]}
-          proTip="Rotate left/right to aim, tap center to fire. Hit enemies carrying the correct word in sequence!"
+          proTip={tx("Rotate left/right to aim, tap center to fire. Hit enemies carrying the correct word in sequence!")}
           controls={[
-            { label: 'Rotate', keys: '← → / A D', color: 'bg-cyan-500' },
-            { label: 'Fire', keys: 'Space / Tap Center', color: 'bg-purple-500' },
+            { label: tx("Rotate"), keys: '← → / A D', color: 'bg-cyan-500' },
+            { label: tx("Fire"), keys: tx("Space / Tap Center"), color: 'bg-purple-500' },
           ]}
-          startButtonText="Enter the Well"
+          startButtonText={tx("Enter the Well")}
           icon={Flame}
           onStart={() => {
             resetGame()
@@ -247,27 +252,27 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
         >
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-sm uppercase tracking-wider text-white/50">Well Depth:</span>
+              <span className="text-sm uppercase tracking-wider text-white/50">{tx("Well Depth:")}</span>
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value as AbyssalWellDifficulty)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
               >
-                <option value="easy">Shallow Well</option>
-                <option value="medium">Deep Chasm</option>
-                <option value="hard">Abyss</option>
+                <option value="easy">{tx("Shallow Well")}</option>
+                <option value="medium">{tx("Deep Chasm")}</option>
+                <option value="hard">{tx("Abyss")}</option>
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm uppercase tracking-wider text-white/50">Enemy Type:</span>
+              <span className="text-sm uppercase tracking-wider text-white/50">{tx("Enemy Type:")}</span>
               <select
                 value={selectedCreature}
                 onChange={(e) => setSelectedCreature(e.target.value as CreatureType)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
               >
-                <option value="goblin-scout">Goblin Scout (Slow)</option>
-                <option value="cave-spider">Cave Spider (Medium)</option>
-                <option value="shadow-demon">Shadow Demon (Fast)</option>
+                <option value="goblin-scout">{tx("Goblin Scout (Slow)")}</option>
+                <option value="cave-spider">{tx("Cave Spider (Medium)")}</option>
+                <option value="shadow-demon">{tx("Shadow Demon (Fast)")}</option>
               </select>
             </div>
           </div>
@@ -280,7 +285,7 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameEndScreen
           status={gameState?.phase === 'victory' ? 'victory' : 'defeat'}
@@ -292,8 +297,8 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
             setGamePhase('start')
           }}
           customStats={[
-            { label: 'Words Collected', value: gameState?.correctWords ?? 0 },
-            { label: 'Lives Left', value: gameState?.player.lives ?? 0 },
+            { label: tx("Words Collected"), value: gameState?.correctWords ?? 0 },
+            { label: tx("Lives Left"), value: gameState?.player.lives ?? 0 },
           ]}
         />
       </div>
@@ -305,14 +310,16 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
   return (
     <div
       ref={containerRef}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       onTouchStart={handleTouchStart}
     >
       {gameState && (
         <Stage
-          width={ABYSSAL_WELL_CONFIG.gameWidth}
-          height={ABYSSAL_WELL_CONFIG.gameHeight}
+          width={dimensions.width || ABYSSAL_WELL_CONFIG.gameWidth}
+          height={dimensions.height || ABYSSAL_WELL_CONFIG.gameHeight}
           scale={{ x: scale, y: scale }}
+          x={boardOffset.x}
+          y={boardOffset.y}
         >
           <Layer>
             <Rect
@@ -344,7 +351,7 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
             <Text
               x={10}
               y={70}
-              text={`Target: ${targetWord}`}
+              text={tx("Target: {targetWord}", { targetWord })}
               fontSize={getEffectiveTextSize(18)}
               fill="#22d3ee"
               width={ABYSSAL_WELL_CONFIG.gameWidth - 20}
@@ -453,8 +460,8 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
       )}
       
       <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4 text-sm text-white/50">
-        <span>← → Rotate</span>
-        <span>Space = Fire</span>
+        <span>{tx("← → Rotate")}</span>
+        <span>{tx("Space = Fire")}</span>
       </div>
     </div>
   )

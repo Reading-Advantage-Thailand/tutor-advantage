@@ -1,5 +1,4 @@
 "use server";
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { cookies } from "next/headers";
 import { IDENTITY_URL, LEARNING_URL } from "@/lib/service-urls";
@@ -28,7 +27,7 @@ export async function getNotificationsSummary() {
   }
 }
 
-export async function updateSettingsAction(settings: any) {
+export async function updateSettingsAction(settings: Record<string, unknown>) {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;
   if (!token) throw new Error("Unauthorized");
@@ -104,7 +103,7 @@ export async function uploadFileAction(formData: FormData) {
         if (error.error?.message) {
           errorMessage = error.error.message;
         }
-      } catch (e) {
+      } catch {
         // Fallback to generic message if json parse fails
       }
       return { success: false, error: errorMessage };

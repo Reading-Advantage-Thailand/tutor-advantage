@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose/jwt/verify";
 import { IDENTITY_URL } from "@/lib/service-urls";
@@ -16,7 +17,7 @@ export type ActiveTutorSession = {
   };
 };
 
-export async function getActiveTutorSession(): Promise<ActiveTutorSession | null> {
+async function loadActiveTutorSession(): Promise<ActiveTutorSession | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;
   if (!token) return null;
@@ -48,3 +49,12 @@ export async function getActiveTutorSession(): Promise<ActiveTutorSession | null
     return null;
   }
 }
+
+/**
+ * The signed-in tutor (JWT verified locally + identity /v1/users/me).
+ * Wrapped in React `cache()`, so within ONE server render (layout + page +
+ * nested server components) the identity call runs once. The memo is
+ * per-request, never shared between tutors. Outside a React render (route
+ * handlers) it behaves like a plain function.
+ */
+export const getActiveTutorSession = cache(loadActiveTutorSession);

@@ -1,50 +1,29 @@
+import { ListSkeleton, LoadingAnnouncement, PageHeaderSkeleton, Skeleton, StatGridSkeleton } from "@/components/app";
+
+/** Mirrors the schedule page: toolbar, week strip + agenda, side stats. */
 export default function ScheduleLoading() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-pulse">
-      {/* Calendar skeleton */}
-      <div className="lg:col-span-8">
-        <div className="rounded-3xl border border-border/40 bg-card p-5 sm:p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="h-7 w-36 bg-muted rounded-2xl" />
-            <div className="flex gap-2">
-              <div className="h-9 w-9 bg-muted rounded-xl" />
-              <div className="h-9 w-9 bg-muted rounded-xl" />
-            </div>
+    <div className="flex flex-col gap-6 lg:gap-8">
+      <LoadingAnnouncement />
+      <PageHeaderSkeleton actions={false} />
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-8">
+        <div aria-hidden="true" className="flex min-w-0 flex-col gap-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <Skeleton className="h-9 w-64 rounded-lg" />
+            <Skeleton className="h-9 w-full rounded-lg sm:w-44" />
           </div>
-
-          {/* Weekday headers */}
-          <div className="grid grid-cols-7 mb-2 gap-1">
-            {[...Array(7)].map((_, i) => (
-              <div key={i} className="h-7 bg-muted rounded-lg" />
-            ))}
+          <Skeleton className="h-[76px] w-full rounded-xl" />
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-4 w-32" />
+            <ListSkeleton rows={1} leading={false} />
           </div>
-
-          {/* Calendar grid */}
-          <div className="grid grid-cols-7 gap-1.5">
-            {[...Array(35)].map((_, i) => (
-              <div key={i} className="h-16 sm:h-24 bg-muted/50 rounded-2xl" />
-            ))}
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-4 w-32" />
+            <ListSkeleton rows={2} leading={false} />
           </div>
         </div>
-      </div>
-
-      {/* Day summary skeleton */}
-      <div className="lg:col-span-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="h-5 w-24 bg-muted rounded-xl" />
-          <div className="h-6 w-20 bg-muted rounded-full" />
-        </div>
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="rounded-2xl border border-border/40 p-4 bg-card space-y-3">
-              <div className="h-4 w-36 bg-muted rounded-xl" />
-              <div className="h-6 w-24 bg-muted rounded-lg" />
-              <div className="flex gap-4">
-                <div className="h-3 w-20 bg-muted rounded-xl" />
-                <div className="h-3 w-16 bg-muted rounded-xl" />
-              </div>
-            </div>
-          ))}
+        <div aria-hidden="true" className="flex flex-col gap-6">
+          <StatGridSkeleton count={2} className="lg:grid-cols-1" />
         </div>
       </div>
     </div>

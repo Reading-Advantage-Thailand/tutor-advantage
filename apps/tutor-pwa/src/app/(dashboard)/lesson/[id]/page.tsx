@@ -1,134 +1,236 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, BookOpen, Play, Settings, Sparkles, Users, Zap } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
+import { BookOpen, ClipboardCheck, GraduationCap, ListChecks, Play, QrCode, Settings } from "lucide-react";
+import { Chip, IconTile, ProgressBar, type TileTone } from "@/components/app/Atoms";
+import { EmptyState } from "@/components/app/Feedback";
+import { LessonContent } from "@/components/app/LessonShell";
+import { Grid, PageHeader, Section } from "@/components/app/Page";
+import { Skeleton } from "@/components/app/Skeletons";
+import { Surface } from "@/components/app/Surface";
+import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { ArticlesLoadError } from "./_components/ArticlesLoadError";
+import { LessonCover } from "./_components/LessonCover";
+import { fill, getLessonProgress, getNextArticle, lessonStartHref, type LessonArticle } from "./_lib/articles";
+import { getLessonArticles, getLessonClass } from "./_lib/server";
 
-export default function LessonDetailPage() {
-  const params = useParams();
-  const classId = params.id as string;
+/**
+ * Lesson hub: what to teach next (streamed, since the article list is slow),
+ * shortcuts to select / prepare / class settings, and the 3-step how-to.
+ */
+export default async function LessonHubPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: classId } = await params;
+  const cls = await getLessonClass(classId);
 
-  const steps = [
+  const actions: { href: string; icon: typeof Play; tone: TileTone; title: string; description: string }[] = [
     {
-      step: 1,
-      icon: <BookOpen className="h-5 w-5" />,
-      title: t("lesson.selectLesson"),
-      desc: t("lesson.selectLessonStepDescription"),
-      color: "text-blue-600 dark:text-blue-400",
-      bg: "bg-blue-500/10 dark:bg-blue-500/15",
-      borderColor: "border-blue-500/20",
+      href: `/lesson/${classId}/select`,
+      icon: ListChecks,
+      tone: "brand",
+      title: t("lesson.preflow.hub.selectTitle"),
+      description: t("lesson.preflow.hub.selectDescription"),
     },
     {
-      step: 2,
-      icon: <Zap className="h-5 w-5" />,
-      title: t("lesson.shareClassLink"),
-      desc: t("lesson.shareClassLinkDescription"),
-      color: "text-amber-600 dark:text-amber-400",
-      bg: "bg-amber-500/10 dark:bg-amber-500/15",
-      borderColor: "border-amber-500/20",
+      href: `/lesson/${classId}/prepare`,
+      icon: GraduationCap,
+      tone: "purple",
+      title: t("lesson.preflow.hub.prepareTitle"),
+      description: t("lesson.preflow.hub.prepareDescription"),
     },
     {
-      step: 3,
-      icon: <Play className="h-5 w-5" />,
-      title: t("lesson.teach"),
-      desc: t("lesson.teachDescription"),
-      color: "text-emerald-600 dark:text-emerald-400",
-      bg: "bg-emerald-500/10 dark:bg-emerald-500/15",
-      borderColor: "border-emerald-500/20",
+      href: `/dashboard/classes/${classId}`,
+      icon: Settings,
+      tone: "neutral",
+      title: t("lesson.preflow.hub.settingsTitle"),
+      description: t("lesson.preflow.hub.settingsDescription"),
     },
   ];
 
+  const steps = [
+    { icon: BookOpen, title: t("lesson.selectLesson"), description: t("lesson.selectLessonStepDescription") },
+    { icon: QrCode, title: t("lesson.shareClassLink"), description: t("lesson.shareClassLinkDescription") },
+    { icon: Play, title: t("lesson.teach"), description: t("lesson.teachDescription") },
+  ];
+
   return (
-    <div className="w-full max-w-4xl pb-24 lg:pb-0">
-      <div className="flex items-center gap-3 mb-8">
-        <Link href="/dashboard/classes">
-          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-muted transition-colors">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">
-            {t("lesson.manageTitle")}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {t("lesson.manageSubtitle")}
-          </p>
-        </div>
-      </div>
+    <LessonContent width="default">
+      <PageHeader
+        title={cls?.name ?? t("lesson.manageTitle")}
+        description={t("lesson.preflow.hub.description")}
+        meta={cls?.bookTitle ? <Chip icon={BookOpen}>{cls.bookTitle}</Chip> : null}
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-        <Link href={`/lesson/${classId}/select`} className="block group">
-          <Card className="cursor-pointer border-2 border-primary/20 hover:border-primary hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 h-full overflow-hidden relative">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/50" />
-            <CardContent className="p-7 flex flex-col items-center justify-center text-center min-h-[220px]">
-              <div className="w-18 h-18 rounded-2xl bg-primary/10 dark:bg-primary/15 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                <Play className="h-9 w-9 text-primary fill-primary/20" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">
-                {t("lesson.startTeaching")}
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t("lesson.startTeachingDescription")}
-              </p>
-              <div className="mt-4 flex items-center gap-2 text-xs text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                <Zap className="h-3.5 w-3.5" />
-                <span>{t("lesson.openLiveRoom")}</span>
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
+      <Suspense fallback={<NextLessonSkeleton />}>
+        <NextLesson classId={classId} />
+      </Suspense>
 
-        <Link href={`/dashboard/classes/${classId}`} className="block group">
-          <Card className="cursor-pointer border-2 border-border/60 hover:border-primary/50 hover:shadow-lg transition-all duration-300 h-full overflow-hidden relative">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-muted-foreground/20 via-muted-foreground/10 to-transparent" />
-            <CardContent className="p-7 flex flex-col items-center justify-center text-center min-h-[220px]">
-              <div className="w-18 h-18 rounded-2xl bg-muted flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                <Settings className="h-9 w-9 text-muted-foreground group-hover:text-foreground transition-colors" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">
-                {t("lesson.classSettings")}
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {t("lesson.classSettingsDescription")}
-              </p>
-              <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                <Users className="h-3.5 w-3.5" />
-                <span>{t("lesson.manageClass")}</span>
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
-      </div>
+      <Section title={t("lesson.preflow.hub.quickActions")}>
+        <Grid cols={3}>
+          {actions.map((action) => (
+            <Surface key={action.href} href={action.href} padding="md" className="flex items-start gap-3">
+              <IconTile icon={action.icon} tone={action.tone} />
+              <span className="min-w-0">
+                <span className="block text-[0.9375rem] font-semibold text-fg">{action.title}</span>
+                <span className="mt-0.5 block text-[0.8125rem] text-fg-muted">{action.description}</span>
+              </span>
+            </Surface>
+          ))}
+        </Grid>
+      </Section>
 
-      <Card className="border-border/40 bg-card/50 dark:bg-card/80 overflow-hidden">
-        <div className="px-6 pt-5 pb-3 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/15 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-primary" />
-          </div>
-          <h3 className="text-sm font-bold text-foreground">{t("lesson.howToUse")}</h3>
-        </div>
-        <CardContent className="px-6 pb-6 pt-0">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {steps.map((item) => (
-              <div
-                key={item.step}
-                className={`relative rounded-xl border ${item.borderColor} bg-card p-5 transition-all hover:shadow-md`}
-              >
-                <div className={`w-7 h-7 rounded-lg ${item.bg} flex items-center justify-center mb-3`}>
-                  <span className={`text-xs font-black ${item.color}`}>{item.step}</span>
-                </div>
-
-                <div className={`mb-2 ${item.color}`}>{item.icon}</div>
-                <h4 className="font-bold text-foreground text-sm mb-1">{item.title}</h4>
-                <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
-              </div>
+      <Section title={t("lesson.preflow.hub.howTitle")}>
+        <Surface padding="none">
+          <ol className="grid divide-y divide-hairline md:grid-cols-3 md:divide-x md:divide-y-0">
+            {steps.map((step, index) => (
+              <li key={step.title} className="flex items-start gap-3 p-4">
+                <span
+                  aria-hidden="true"
+                  className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-soft text-sm font-semibold text-brand-fg tabular"
+                >
+                  {index + 1}
+                </span>
+                <span className="min-w-0">
+                  <span className="flex items-center gap-1.5 text-sm font-semibold text-fg">
+                    <step.icon aria-hidden="true" className="size-4 text-fg-muted" />
+                    {step.title}
+                  </span>
+                  <span className="mt-0.5 block text-[0.8125rem] text-fg-muted">{step.description}</span>
+                </span>
+              </li>
             ))}
+          </ol>
+        </Surface>
+      </Section>
+    </LessonContent>
+  );
+}
+
+async function NextLesson({ classId }: { classId: string }) {
+  let articles: LessonArticle[];
+  try {
+    articles = await getLessonArticles(classId);
+  } catch (error) {
+    console.error("[lesson/hub] failed to load class articles", error);
+    return (
+      <Surface padding="none">
+        <ArticlesLoadError compact />
+      </Surface>
+    );
+  }
+
+  if (articles.length === 0) {
+    return (
+      <EmptyState
+        icon={BookOpen}
+        title={t("lesson.preflow.hub.noArticlesTitle")}
+        description={t("lesson.preflow.hub.noArticlesBody")}
+        action={
+          <Button variant="outline" render={<Link href={`/dashboard/classes/${classId}`} />} nativeButton={false}>
+            {t("lesson.preflow.hub.openClass")}
+          </Button>
+        }
+      />
+    );
+  }
+
+  const progress = getLessonProgress(articles);
+  const next = getNextArticle(articles);
+  const progressRow = (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-hairline pt-4">
+      <ProgressBar value={progress.percent} label={t("lesson.preflow.completed")} className="min-w-40 flex-1" />
+      <span className="text-[0.8125rem] text-fg-muted tabular">
+        {fill(t("lesson.preflow.chaptersProgress"), { done: progress.done, total: progress.total })}
+      </span>
+    </div>
+  );
+
+  if (!next) {
+    return (
+      <Surface padding="lg" className="flex flex-col gap-4">
+        <div className="flex items-start gap-3">
+          <IconTile icon={ClipboardCheck} tone="brand" />
+          <div className="min-w-0 flex-1">
+            <h2 className="text-base font-semibold text-fg">{t("lesson.preflow.hub.allDoneTitle")}</h2>
+            <p className="mt-0.5 text-sm text-fg-muted">{t("lesson.preflow.hub.allDoneBody")}</p>
           </div>
-        </CardContent>
-      </Card>
+          <Button render={<Link href={`/lesson/${classId}/select`} />} nativeButton={false} className="max-sm:hidden">
+            {t("lesson.preflow.hub.selectTitle")}
+          </Button>
+        </div>
+        {progressRow}
+      </Surface>
+    );
+  }
+
+  const chapter = fill(t("lesson.preflow.chapter"), { n: next.articleNumber });
+  return (
+    <Surface as="section" padding="lg" aria-labelledby="next-lesson-title" className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
+        <LessonCover
+          src={next.imageUrl}
+          alt={fill(t("lesson.preflow.coverAlt"), { title: next.title })}
+          seed={next.articleNumber}
+          eager
+          className="aspect-[16/6] w-full shrink-0 rounded-lg sm:aspect-auto sm:min-h-36 sm:w-48 md:w-56"
+          iconClassName="size-10"
+        />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <p className="text-[0.8125rem] font-medium text-brand-fg">
+            {t("lesson.preflow.hub.nextTitle")} · {chapter}
+          </p>
+          <h2 id="next-lesson-title" className="mt-1 text-lg font-semibold text-fg md:text-xl">
+            {next.title}
+          </h2>
+          {next.summary ? <p className="mt-1 line-clamp-2 text-sm text-fg-muted">{next.summary}</p> : null}
+          {next.cefrLevel ? (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              <Chip>{fill(t("lesson.preflow.cefr"), { level: next.cefrLevel })}</Chip>
+            </div>
+          ) : null}
+          <div className="mt-4 flex flex-wrap gap-2 sm:mt-auto sm:pt-4">
+            <Button
+              size="lg"
+              render={<Link href={lessonStartHref(classId, next.id, null)} />}
+              nativeButton={false}
+              className="max-sm:flex-1"
+            >
+              <Play aria-hidden="true" />
+              {t("lesson.preflow.hub.startThis")}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              render={<Link href={`/lesson/${classId}/prepare?articleId=${encodeURIComponent(next.id)}`} />}
+              nativeButton={false}
+              className="max-sm:flex-1"
+            >
+              <GraduationCap aria-hidden="true" />
+              {t("lesson.preflow.hub.rehearseThis")}
+            </Button>
+          </div>
+        </div>
+      </div>
+      {progressRow}
+    </Surface>
+  );
+}
+
+function NextLessonSkeleton() {
+  return (
+    <div aria-hidden="true" className="flex flex-col gap-4 rounded-xl border border-hairline bg-surface p-5 md:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row">
+        <Skeleton className="aspect-[16/6] w-full rounded-lg sm:aspect-auto sm:h-36 sm:w-48 md:w-56" />
+        <div className="flex flex-1 flex-col gap-2">
+          <Skeleton className="h-3.5 w-40" />
+          <Skeleton className="h-6 w-3/4" />
+          <Skeleton className="h-4 w-full" />
+          <div className="mt-auto flex gap-2 pt-4">
+            <Skeleton className="h-10 w-36 rounded-lg" />
+            <Skeleton className="h-10 w-32 rounded-lg" />
+          </div>
+        </div>
+      </div>
+      <Skeleton className="h-2 w-full rounded-full" />
     </div>
   );
 }

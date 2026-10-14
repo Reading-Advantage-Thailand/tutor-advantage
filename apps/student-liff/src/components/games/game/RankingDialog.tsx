@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trophy, Medal, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { tx } from "@/lib/games/gameText";
 
 /**
  * Phase 4 — Canonical difficulty keys. `medium` (not `normal`) is the
@@ -97,8 +98,8 @@ export function RankingDialog({ open, onOpenChange }: RankingDialogProps) {
       return (
         <div className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
           <Trophy className="h-10 w-10 mb-2 opacity-20" />
-          <p className="text-sm">No rankings available.</p>
-          <p className="text-xs">Be the first to set a score!</p>
+          <p className="text-sm">{tx("No rankings available.")}</p>
+          <p className="text-xs">{tx("Be the first to set a score!")}</p>
         </div>
       );
     }
@@ -129,12 +130,12 @@ export function RankingDialog({ open, onOpenChange }: RankingDialogProps) {
                 <div className="truncate text-sm font-semibold text-foreground">
                   {user.name}
                 </div>
-                <div className="text-xs text-muted-foreground">Candidate</div>
+                <div className="text-xs text-muted-foreground">{tx("Candidate")}</div>
               </div>
 
               <div className="text-right">
                 <div className="text-sm font-bold text-foreground">
-                  {user.xp.toLocaleString()} XP
+                  {user.xp.toLocaleString()} {tx("XP")}
                 </div>
               </div>
             </div>
@@ -150,7 +151,7 @@ export function RankingDialog({ open, onOpenChange }: RankingDialogProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl font-bold tracking-tight">
             <Trophy className="h-5 w-5" />
-            Hall of Records
+            {tx("Hall of Records")}
           </DialogTitle>
         </DialogHeader>
 

@@ -2,6 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Book, Star } from "lucide-react";
 import type { VocabularyItem } from "@/store/useGameStore";
+import { tx } from "@/lib/games/gameText";
 
 interface VocabularyProgressProps {
   vocabulary: VocabularyItem[];
@@ -40,7 +41,7 @@ export function VocabularyProgress({
             <div className="p-4 border-b border-amber-300/50 flex items-center justify-between bg-white/30">
               <h3 className="text-xl font-bold text-amber-900 flex items-center gap-2">
                 <Book className="w-6 h-6 text-amber-700" />
-                My Grimoire
+                {tx("My Grimoire")}
               </h3>
               <button
                 onClick={onClose}
@@ -85,7 +86,7 @@ export function VocabularyProgress({
             </div>
 
             <div className="p-4 bg-white/30 border-t border-amber-300/50 text-center text-xs text-amber-800 font-medium uppercase tracking-wider">
-              Collect all words twice!
+              {tx("Collect all words twice!")}
             </div>
           </motion.div>
         </>

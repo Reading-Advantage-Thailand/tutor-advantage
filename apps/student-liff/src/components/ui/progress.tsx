@@ -4,6 +4,11 @@ import { Progress as ProgressPrimitive } from "@base-ui/react/progress"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Base UI progress. `className` styles the visible track (e.g. "h-1.5"), so
+ * size/colour overrides land on the bar itself; the indicator uses the brand
+ * colour. For new screens prefer `ProgressBar` from "@/components/mobile".
+ */
 function Progress({
   className,
   children,
@@ -14,11 +19,11 @@ function Progress({
     <ProgressPrimitive.Root
       value={value}
       data-slot="progress"
-      className={cn("flex flex-wrap gap-3", className)}
+      className="flex flex-wrap gap-3"
       {...props}
     >
       {children}
-      <ProgressTrack>
+      <ProgressTrack className={typeof className === "string" ? className : undefined}>
         <ProgressIndicator />
       </ProgressTrack>
     </ProgressPrimitive.Root>
@@ -29,7 +34,7 @@ function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
   return (
     <ProgressPrimitive.Track
       className={cn(
-        "relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-muted",
+        "relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-[var(--neutral-200)]",
         className
       )}
       data-slot="progress-track"
@@ -45,7 +50,7 @@ function ProgressIndicator({
   return (
     <ProgressPrimitive.Indicator
       data-slot="progress-indicator"
-      className={cn("h-full bg-primary transition-all", className)}
+      className={cn("h-full rounded-full bg-brand-vivid transition-all", className)}
       {...props}
     />
   )

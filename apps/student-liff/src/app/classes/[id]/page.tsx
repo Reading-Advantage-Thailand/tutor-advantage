@@ -1,557 +1,121 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import {
-  Star, Users, Calendar, CheckCircle2, Lock, Share2, ChevronLeft,
-  Loader2, AlertCircle, ChevronRight, BookOpen, Sparkles, CalendarPlus,
-} from "lucide-react";
+import { DoorOpen, SearchX } from "lucide-react";
 import { toast } from "sonner";
-import { StudentApiError, studentApi } from "@/lib/api";
-import { useLiff } from "@/components/providers/LiffProvider";
-import { Button } from "@/components/ui/button";
-import { t } from "@/lib/i18n";
 import AssessmentPanel from "@/components/AssessmentPanel";
+import { BottomActionBar, ErrorState, Notice, Screen, StatusScreen } from "@/components/mobile";
+import { useLiff } from "@/components/providers/LiffProvider";
+import { buttonVariants } from "@/components/ui/button";
+import { useCachedResource } from "@/lib/cachedResource";
+import {
+  classArticlesResourceKey,
+  classDetailResourceKey,
+  classReviewResourceKey,
+  classifyClassLoadError,
+  deriveClassAccess,
+  getClassPrimaryAction,
+  resolveSelectedCycleId,
+  type ClassPrimaryAction,
+} from "@/lib/classAccess";
+import { formatTHB } from "@/lib/format";
+import { t } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { LiffStartupError } from "../_components/LiffStartupError";
+import { ClassDetailAppBar, ClassDetailSkeleton } from "./_components/ClassDetailSkeleton";
+import { ClassHero } from "./_components/ClassHero";
+import { BenefitsSection, SeatsSection, TutorSection } from "./_components/InfoSections";
+import { CoursePreviewSection, LessonsSection, type ArticlesState } from "./_components/Lessons";
+import { ReviewCard } from "./_components/ReviewCard";
+import { CalendarSheet, NextSessionCard, ScheduleSection } from "./_components/ScheduleSections";
+import { fetchClassArticles, fetchClassDetail, fetchClassReview } from "./_components/classDetailData";
+import type { ClassArticleDetail, ClassDetail, TutorReview } from "./_components/types";
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-interface Tutor {
-  name: string;
-  initials: string;
-  pictureUrl?: string | null;
-  bio?: string;
-  rating?: number;
-  students?: number;
-}
-
-interface ClassArticlePreview {
-  id: string;
-  no: number;
-  title: string;
-  type?: string | null;
-  genre?: string | null;
-}
-
-interface ClassDetail {
-  id: string;
-  name: string;
-  status: string;
-  seriesColor?: string;
-  maxStudents: number;
-  students: number;
-  tutor: Tutor;
-  cefr: string;
-  level: number;
-  nextSession: string;
-  price: number;
-  book: string;
-  bookCode?: string | null;
-  seriesName?: string | null;
-  seriesTagline?: string | null;
-  articleCount?: number;
-  independentHours?: number;
-  totalHours?: number;
-  schedule: string;
-  highlights?: string[];
-  articles?: ClassArticlePreview[];
-  isEnrolled?: boolean;
-  enrollmentStatus?: string | null;
-  articleId?: string | null;
-  startsAt?: string | null;
-  endsAt?: string | null;
-  activeBookCycleId?: string | null;
-  bookCycles?: Array<{
-    id: string;
-    title: string;
-    bookCode?: string | null;
-    price: number;
-    packagePriceSatang: number;
-    accessStatus: string;
-    hasAccess: boolean;
-    sequence: number;
-  }>;
-}
-
-interface ClassArticleDetail {
-  id: string;
-  articleNumber: number;
-  title: string;
-  summary: string;
-  passage: string;
-  cefrLevel: string;
-  isCompleted: boolean;
-}
-
-interface TutorReview {
-  id: string;
-  rating: number;
-  comment?: string | null;
-}
-
-// ── ICS / calendar helpers ───────────────────────────────────────────────────
-const ICS_BYDAY: Record<number,string> = {0:"SU",1:"MO",2:"TU",3:"WE",4:"TH",5:"FR",6:"SA"};
-const ICS_DAY_MAP: Record<string,number> = {
-  "จันทร์":1,"อังคาร":2,"พุธ":3,"พฤหัสบดี":4,"พฤหัส":4,"ศุกร์":5,"เสาร์":6,"อาทิตย์":0,
-};
-function icsParseSchedule(schedStr: string) {
-  const days: number[] = [];
-  Object.entries(ICS_DAY_MAP).forEach(([name,val]) => {
-    if (schedStr.includes(name) && !days.includes(val)) days.push(val);
-  });
-  if (days.length===0) days.push(1);
-  const m = schedStr.match(/(\d{1,2}):(\d{2})\s*[-–]\s*(\d{1,2}):(\d{2})/);
-  return { days, sh:m?parseInt(m[1]):19, sm:m?parseInt(m[2]):0, eh:m?parseInt(m[3]):21, em:m?parseInt(m[4]):0 };
-}
-function downloadClassICS(cls: { id:string; name:string; schedule:string; startsAt?:string|null; endsAt?:string|null }) {
-  const { days, sh, sm, eh, em } = icsParseSchedule(cls.schedule);
-  const anchor = cls.startsAt ? new Date(cls.startsAt) : new Date();
-  const first = new Date(anchor); first.setHours(0,0,0,0);
-  for (let i=0;i<7;i++) { if (days.includes(first.getDay())) break; first.setDate(first.getDate()+1); }
-  const pad = (n:number) => String(n).padStart(2,"0");
-  const fmt = (d:Date,h:number,mi:number) => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(h)}${pad(mi)}00`;
-  const byday = days.map(d=>ICS_BYDAY[d]).join(",");
-  const until = cls.endsAt ? `;UNTIL=${new Date(cls.endsAt).toISOString().replace(/[-:.]/g,"").slice(0,15)}Z` : "";
-  const dtstamp = new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z";
-  const ics = [
-    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tutor Advantage//TH",
-    "CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-TIMEZONE:Asia/Bangkok",
-    "BEGIN:VEVENT",
-    `UID:${cls.id}@ta.th`,`DTSTAMP:${dtstamp}`,
-    `DTSTART;TZID=Asia/Bangkok:${fmt(first,sh,sm)}`,`DTEND;TZID=Asia/Bangkok:${fmt(first,eh,em)}`,
-    `RRULE:FREQ=WEEKLY;BYDAY=${byday}${until}`,
-    `SUMMARY:${cls.name}`,`DESCRIPTION:${cls.schedule.replace(/\n/g,"\\n")}`,
-    "BEGIN:VALARM","TRIGGER:-PT30M","ACTION:DISPLAY",`DESCRIPTION:แจ้งเตือน: ${cls.name}`,
-    "END:VALARM","END:VEVENT","END:VCALENDAR",
-  ].join("\r\n");
-  const blob = new Blob([ics], { type:"text/calendar;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href=url; a.download=`${cls.name.replace(/\s+/g,"-")}.ics`;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-}
-function googleCalClassUrl(cls: { name:string; schedule:string; startsAt?:string|null }): string {
-  const { days, sh, sm, eh, em } = icsParseSchedule(cls.schedule);
-  const anchor = cls.startsAt ? new Date(cls.startsAt) : new Date();
-  const pad = (n:number) => String(n).padStart(2,"0");
-  const fmt = (d:Date,h:number,mi:number) => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(h)}${pad(mi)}00`;
-  const byday = days.map(d=>ICS_BYDAY[d]).join("%2C");
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(cls.name)}&dates=${fmt(anchor,sh,sm)}/${fmt(anchor,eh,em)}&recur=RRULE%3AFREQ%3DWEEKLY%3BBYDAY%3D${byday}&details=${encodeURIComponent(cls.schedule)}`;
-}
-
-// ── CEFR colour helper ──────────────────────────────────────────────────────
-function cefrColor(level: string): string {
-  if (level.startsWith("C")) return "#7c3aed";
-  if (level.startsWith("B2")) return "#2563eb";
-  if (level.startsWith("B1")) return "#0891b2";
-  if (level.startsWith("A2")) return "#059669";
-  return "#16a34a"; // A1
-}
-
-// ── Article type icon ────────────────────────────────────────────────────────
-// ── Passage excerpt with blur tail ──────────────────────────────────────────
-function PassageExcerpt({ text }: { text: string }) {
-  if (!text) return null;
-  const trimmed = text.replace(/\.\.\.$/, "").trim();
+function PriceBlock({ label, price }: { label: string; price: number }) {
   return (
-    <div style={{ position: "relative", overflow: "hidden" }}>
-      <p style={{
-        fontSize: "0.875rem",
-        lineHeight: 1.85,
-        color: "var(--text-secondary)",
-        fontFamily: "var(--font-latin, Georgia, serif)",
-        margin: 0,
-        whiteSpace: "pre-wrap",
-      }}>
-        {trimmed}
+    <div className="min-w-0 shrink-0">
+      <p className="text-xs leading-[1.5] text-fg-muted">{label}</p>
+      <p className="text-xl leading-[1.3] font-extrabold text-fg tabular-nums">
+        {price === 0 ? t("classes.free") : formatTHB(price)}
       </p>
-      {/* fade-out gradient */}
-      <div style={{
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 48,
-        background: "linear-gradient(to bottom, transparent, var(--surface-card))",
-        pointerEvents: "none",
-      }} />
     </div>
   );
 }
 
-// ── Featured Article Preview Card ────────────────────────────────────────────
-function FeaturedArticleCard({
-  article,
-  accent,
-  isEnrolled,
-}: {
-  article: ClassArticleDetail;
-  accent: string;
-  isEnrolled: boolean;
-}) {
-  const cc = cefrColor(article.cefrLevel);
-
+/** Bottom bar: upgrade (price + next book) · enter the class · enroll (price + CTA). */
+function PrimaryActionBar({ action }: { action: ClassPrimaryAction }) {
+  const cta = cn(buttonVariants({ variant: "brand", size: "cta" }), "min-w-0 flex-1");
+  if (action.kind === "upgrade") {
+    return (
+      <BottomActionBar>
+        <PriceBlock label={t("classes.detail.upgradePriceLabel")} price={action.price} />
+        <Link href={action.href} id="btn-upgrade-class" className={cta}>
+          {`${t("classes.detail.upgradeNextBookPrefix")} ${action.cycleSequence}`}
+        </Link>
+      </BottomActionBar>
+    );
+  }
+  if (action.kind === "enter") {
+    return (
+      <BottomActionBar>
+        <Link href={action.href} id="btn-enter-class" className={cta}>
+          <DoorOpen aria-hidden="true" />
+          {t("classes.detail.enterClass")}
+        </Link>
+      </BottomActionBar>
+    );
+  }
   return (
-    <div
-      className="glass-card"
-      style={{
-        overflow: "hidden",
-        border: `1.5px solid ${accent}28`,
-        background: `linear-gradient(135deg, ${accent}06 0%, var(--surface-card) 60%)`,
-      }}
-    >
-      {/* Card header strip */}
-      <div style={{
-        background: `linear-gradient(90deg, ${accent} 0%, ${accent}bb 100%)`,
-        padding: "10px 16px",
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-      }}>
-        <span style={{
-          background: "rgba(255,255,255,0.25)",
-          color: "#fff",
-          fontSize: "0.625rem",
-          fontWeight: 800,
-          padding: "3px 9px",
-          borderRadius: 20,
-          letterSpacing: "0.06em",
-          textTransform: "uppercase",
-          border: "1px solid rgba(255,255,255,0.3)",
-        }}>
-          {t("classes.detail.lessonSampleBadge")}
-        </span>
-        <span style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.75rem", fontWeight: 600 }}>
-          {t("classes.detail.lessonNumberPrefix")} {article.articleNumber}
-        </span>
-        <span style={{
-          marginLeft: "auto",
-          background: "rgba(255,255,255,0.2)",
-          color: "#fff",
-          fontSize: "0.6875rem",
-          fontWeight: 700,
-          padding: "2px 10px",
-          borderRadius: 10,
-        }}>
-          {article.cefrLevel}
-        </span>
-      </div>
-
-      <div style={{ padding: "16px 16px 0" }}>
-        {/* Article title */}
-        <h4 style={{
-          fontSize: "1.0625rem",
-          fontWeight: 800,
-          color: "var(--text-primary)",
-          fontFamily: "var(--font-latin, Georgia, serif)",
-          lineHeight: 1.3,
-          marginBottom: 10,
-        }}>
-          {article.title}
-        </h4>
-
-        {/* Thai summary pill */}
-        {article.summary && (
-          <div style={{
-            display: "flex",
-            alignItems: "flex-start",
-            gap: 8,
-            marginBottom: 14,
-            padding: "10px 12px",
-            borderRadius: 12,
-            background: `${accent}10`,
-            border: `1px solid ${accent}22`,
-          }}>
-            <span style={{ fontSize: "1rem", flexShrink: 0 }}>🇹🇭</span>
-            <p style={{
-              fontSize: "0.8125rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.65,
-              margin: 0,
-            }}>
-              {article.summary}
-            </p>
-          </div>
-        )}
-
-        {/* Passage snippet */}
-        {article.passage && (
-          <div style={{ marginBottom: 16 }}>
-            <div style={{
-              fontSize: "0.625rem",
-              fontWeight: 700,
-              color: "var(--text-tertiary)",
-              textTransform: "uppercase",
-              letterSpacing: "0.07em",
-              marginBottom: 8,
-              display: "flex",
-              alignItems: "center",
-              gap: 5,
-            }}>
-              <BookOpen size={11} />
-              {t("classes.detail.lessonSamplePassage")}
-            </div>
-            <PassageExcerpt text={article.passage} />
-          </div>
-        )}
-      </div>
-
-      {/* CTA footer */}
-      <div style={{
-        padding: "12px 16px 16px",
-        borderTop: `1px solid ${accent}18`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 10,
-      }}>
-        {isEnrolled ? (
-          <Link
-            href={`/student/read/${article.id}`}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 7,
-              background: accent,
-              color: "#fff",
-              padding: "10px 18px",
-              borderRadius: 14,
-              fontWeight: 700,
-              fontSize: "0.875rem",
-              textDecoration: "none",
-              boxShadow: `0 4px 14px ${accent}40`,
-            }}
-          >
-            <BookOpen size={15} />
-            {t("classes.detail.lessonSampleReadFull")}
-            <ChevronRight size={14} />
-          </Link>
-        ) : (
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 7,
-            color: "var(--text-tertiary)",
-            fontSize: "0.8125rem",
-            fontWeight: 600,
-          }}>
-            <Lock size={14} />
-            {t("classes.detail.lessonSampleLocked")}
-          </div>
-        )}
-        <span style={{
-          fontSize: "0.6875rem",
-          fontWeight: 600,
-          color: cc,
-          background: `${cc}12`,
-          padding: "4px 10px",
-          borderRadius: 8,
-          border: `1px solid ${cc}28`,
-        }}>
-          {article.cefrLevel}
-        </span>
-      </div>
-    </div>
+    <BottomActionBar>
+      <PriceBlock label={t("classes.detail.priceLabel")} price={action.price} />
+      <Link href={action.href} id="btn-enroll-class" className={cta}>
+        {action.pendingPayment ? t("classes.detail.continuePayment") : t("classes.detail.enrollNow")}
+      </Link>
+    </BottomActionBar>
   );
 }
 
-// ── Compact Article Row ──────────────────────────────────────────────────────
-function ArticleRow({
-  article,
-  isEnrolled,
-  accent,
-  index,
-}: {
-  article: ClassArticleDetail;
-  isEnrolled: boolean;
-  accent: string;
-  index: number;
-}) {
-  const isFirst = index === 0;
-  const cc = cefrColor(article.cefrLevel);
-
-  return (
-    <div style={{
-      display: "flex",
-      alignItems: "center",
-      gap: 12,
-      padding: "13px 16px",
-      borderTop: index > 0 ? "1px solid var(--surface-border)" : "none",
-      opacity: !isEnrolled && !isFirst ? 0.65 : 1,
-    }}>
-      {/* Number badge */}
-      <div style={{
-        width: 32,
-        height: 32,
-        borderRadius: 10,
-        background: isFirst ? `${accent}18` : "var(--neutral-100)",
-        border: isFirst ? `1.5px solid ${accent}30` : "none",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "0.75rem",
-        fontWeight: 800,
-        color: isFirst ? accent : "var(--text-tertiary)",
-        flexShrink: 0,
-      }}>
-        {article.articleNumber}
-      </div>
-
-      {/* Text */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          fontSize: "0.875rem",
-          fontWeight: 600,
-          color: "var(--text-primary)",
-          fontFamily: "var(--font-latin, Georgia, serif)",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          marginBottom: 2,
-        }}>
-          {article.title}
-        </div>
-        {article.summary && (
-          <div style={{
-            fontSize: "0.75rem",
-            color: "var(--text-tertiary)",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}>
-            {article.summary}
-          </div>
-        )}
-      </div>
-
-      {/* Right side */}
-      <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-        <span style={{
-          fontSize: "0.625rem",
-          fontWeight: 700,
-          color: cc,
-          background: `${cc}12`,
-          padding: "2px 7px",
-          borderRadius: 6,
-        }}>
-          {article.cefrLevel}
-        </span>
-        {article.isCompleted ? (
-          <CheckCircle2 size={16} style={{ color: "#22c55e" }} />
-        ) : isEnrolled && isFirst ? (
-          <ChevronRight size={14} style={{ color: accent }} />
-        ) : (
-          <Lock size={13} style={{ color: "var(--neutral-300)" }} />
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ── Skeleton article rows ────────────────────────────────────────────────────
-function ArticleSkeleton() {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-      {[1, 2, 3].map((i) => (
-        <div key={i} style={{
-          display: "flex", alignItems: "center", gap: 12,
-          padding: "14px 16px",
-          borderTop: i > 1 ? "1px solid var(--surface-border)" : "none",
-        }}>
-          <div style={{ width: 32, height: 32, borderRadius: 10, background: "var(--neutral-100)" }} />
-          <div style={{ flex: 1 }}>
-            <div style={{ height: 12, background: "var(--neutral-100)", borderRadius: 6, width: "70%", marginBottom: 6 }} />
-            <div style={{ height: 10, background: "var(--neutral-100)", borderRadius: 6, width: "50%" }} />
-          </div>
-          <div style={{ width: 28, height: 18, background: "var(--neutral-100)", borderRadius: 5 }} />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// ── Main Page ────────────────────────────────────────────────────────────────
 export default function ClassDetailPage({ params }: PageProps) {
   const { id } = use(params);
-  const { liff, isReady } = useLiff();
-  const [cls, setCls] = useState<ClassDetail | null>(null);
-  const [articles, setArticles] = useState<ClassArticleDetail[]>([]);
-  const [articlesLoading, setArticlesLoading] = useState(false);
-  const [review, setReview] = useState<TutorReview | null>(null);
-  const [reviewRating, setReviewRating] = useState(0);
-  const [reviewComment, setReviewComment] = useState("");
-  const [reviewLoading, setReviewLoading] = useState(false);
-  const [reviewSubmitting, setReviewSubmitting] = useState(false);
-  const [reviewEditing, setReviewEditing] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedCycleId, setSelectedCycleId] = useState<string>("");
+  const { liff, isReady, error: liffError, profile } = useLiff();
+  const userId = profile?.userId;
+  const [userSelectedCycleId, setUserSelectedCycleId] = useState<string | null>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
-  useEffect(() => {
-    if (!isReady || !id) return;
-    studentApi.getClassDetails(id)
-      .then(data => {
-        const nextClass = data.class as ClassDetail;
-        const cycles = nextClass.bookCycles ?? [];
-        const defaultCycle =
-          [...cycles].reverse().find((cycle) => cycle.hasAccess) ||
-          cycles.find((cycle) => cycle.id === nextClass.activeBookCycleId) ||
-          cycles[0];
-        setCls(nextClass);
-        setSelectedCycleId(defaultCycle?.id || "");
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err instanceof Error ? err.message : String(err));
-        setLoading(false);
-      });
-  }, [isReady, id]);
+  const detail = useCachedResource<{ class: ClassDetail }>(
+    userId && id ? classDetailResourceKey(userId, id) : null,
+    () => fetchClassDetail(id),
+    { enabled: isReady },
+  );
+  const cls = detail.data?.class ?? null;
+  const selectedCycleId = cls ? resolveSelectedCycleId(cls, userSelectedCycleId) : "";
+  const access = cls ? deriveClassAccess(cls, selectedCycleId) : null;
 
-  // Fetch detailed articles once class loads
-  useEffect(() => {
-    if (!isReady || !id || !cls) return;
-    const selectedCycle = cls.bookCycles?.find((cycle) => cycle.id === selectedCycleId);
-    if (selectedCycle && !selectedCycle.hasAccess) {
-      setArticles([]);
-      setArticlesLoading(false);
-      return;
-    }
-    setArticlesLoading(true);
-    studentApi.getClassArticles(id, selectedCycleId || undefined)
-      .then(data => {
-        setArticles(data.articles || []);
-      })
-      .catch((err) => {
-        if (err instanceof StudentApiError && err.status === 402) {
-          setArticles([]);
-          return;
-        }
-        // silently fallback — basic preview still shows from cls.articles
-      })
-      .finally(() => setArticlesLoading(false));
-  }, [isReady, id, cls, selectedCycleId]);
+  // Lessons of the selected book; a locked book is never requested (as before).
+  const articlesRequested = Boolean(cls && access && !access.selectedCycleLocked);
+  const articlesResource = useCachedResource<ClassArticleDetail[]>(
+    userId && articlesRequested ? classArticlesResourceKey(userId, id, selectedCycleId) : null,
+    () => fetchClassArticles(id, selectedCycleId),
+    { enabled: isReady },
+  );
+  const articles: ArticlesState = {
+    data: articlesResource.data,
+    error: articlesResource.error,
+    isLoading: articlesResource.isLoading,
+    isValidating: articlesResource.isValidating,
+    refetch: () => void articlesResource.refetch(),
+  };
 
-  const canReview = Boolean(cls?.isEnrolled && cls.status === "closed");
-  const activeCycle = cls?.bookCycles?.find((cycle) => cycle.id === cls.activeBookCycleId);
-  const needsUpgrade = Boolean(cls?.isEnrolled && activeCycle && !activeCycle.hasAccess);
-  const selectedCycle = cls?.bookCycles?.find((cycle) => cycle.id === selectedCycleId);
-  const canReadSelectedCycle = Boolean(cls?.isEnrolled && (!selectedCycle || selectedCycle.hasAccess));
-  const footerPrice = needsUpgrade && activeCycle ? activeCycle.price : cls?.price ?? 0;
-
-  useEffect(() => {
-    if (!isReady || !id || !canReview) return;
-    setReviewLoading(true);
-    studentApi.getClassReview(id)
-      .then(data => {
-        const existingReview = data.review || null;
-        setReview(existingReview);
-        setReviewRating(existingReview?.rating || 0);
-        setReviewComment(existingReview?.comment || "");
-      })
-      .catch(() => setReview(null))
-      .finally(() => setReviewLoading(false));
-  }, [isReady, id, canReview]);
+  const reviewResource = useCachedResource<{ review: TutorReview | null }>(
+    userId && access?.canReview ? classReviewResourceKey(userId, id) : null,
+    () => fetchClassReview(id),
+    { enabled: isReady },
+  );
 
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}/classes/${id}`;
@@ -564,753 +128,118 @@ export default function ClassDetailPage({ params }: PageProps) {
         await navigator.clipboard.writeText(shareUrl);
         toast.success(t("classes.detail.shareSuccess"));
       }
-    } catch {
+    } catch (error) {
+      // Closing the system share sheet is not a failure.
+      if (error instanceof DOMException && error.name === "AbortError") return;
       toast.error(t("classes.detail.shareFailed"));
     }
   };
 
-  const handleSubmitReview = async () => {
-    if (!reviewRating) {
-      toast.error(t("classes.detail.reviewSelectStarFirst"));
-      return;
-    }
-    setReviewSubmitting(true);
-    try {
-      const data = await studentApi.submitClassReview(id, {
-        rating: reviewRating,
-        comment: reviewComment.trim() || undefined,
-      });
-      setReview(data.review);
-      setReviewEditing(false);
-      toast.success(t("classes.detail.reviewSaveSuccess"));
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : t("classes.detail.reviewSaveFailed"));
-    } finally {
-      setReviewSubmitting(false);
-    }
-  };
+  if (!isReady || detail.isLoading) return <ClassDetailSkeleton />;
 
-  if (!isReady || loading) {
+  if (liffError || !profile) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center bg-background px-6 py-[max(24px,var(--safe-top))]">
-        <div className="w-full max-w-[280px] rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
-          <Loader2 className="animate-spin text-primary w-10 h-10 mx-auto mb-4" />
-          <p className="text-foreground text-sm font-bold">{t("classes.detail.loadingTitle")}</p>
-          <p className="text-muted-foreground text-xs font-medium mt-1">{t("classes.detail.loadingSubtitle")}</p>
-        </div>
-      </div>
+      <Screen>
+        <ClassDetailAppBar />
+        <LiffStartupError />
+      </Screen>
     );
   }
 
-  if (error || !cls) {
+  if (!cls || !access) {
+    const kind = classifyClassLoadError(detail.error);
     return (
-      <div className="min-h-[100dvh] flex flex-col items-center justify-center p-6 text-center gap-4">
-        <AlertCircle className="text-red-500 w-12 h-12" />
-        <h2 className="text-xl font-bold text-slate-800">{t("classes.detail.notFound")}</h2>
-        <p className="text-slate-500">{error || t("classes.detail.retry")}</p>
-        <Link href="/classes">
-          <Button variant="outline">{t("classes.detail.backToClasses")}</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  const seriesColor = cls.seriesColor || "#06c755";
-  const seatsLeft = cls.maxStudents - cls.students;
-  const fillPct = Math.round((cls.students / cls.maxStudents) * 100);
-
-  const fallbackHighlights = [
-    t("classes.detail.highlightSystem"),
-    cls.totalHours
-      ? `${t("classes.detail.liveHoursPrefix")} ${cls.totalHours} ${t("classes.detail.hourUnit")}`
-      : t("classes.detail.liveBySchedule"),
-    t("classes.detail.appAccess"),
-    t("classes.detail.parentReport"),
-  ];
-
-  const highlights = cls.highlights?.length ? cls.highlights : fallbackHighlights;
-  const articleCount = cls.articleCount ?? articles.length;
-
-  const tutorBio =
-    cls.tutor.bio ||
-    `${t("classes.detail.tutorBioPrefix")} ${cls.tutor.name} ${t("classes.detail.tutorBioWithContent")} ${cls.book}${
-      cls.seriesName ? ` ${t("classes.detail.tutorBioSeriesPrefix")} ${cls.seriesName}` : ""
-    }`;
-
-  // Featured = first article from detailed fetch, fallback to basic info
-  const featuredArticle = articles[0] ?? null;
-  return (
-    <div className="page-shell">
-      {/* Top bar */}
-      <div className="top-bar" style={{ background: "var(--surface-card)", backdropFilter: "blur(12px)" }}>
-        <Link
-          href="/classes"
-          style={{
-            display: "flex", alignItems: "center", justifyContent: "center",
-            width: 36, height: 36, borderRadius: 12,
-            background: "var(--neutral-100)", color: "var(--text-secondary)",
-            textDecoration: "none", flexShrink: 0,
-          }}
-          aria-label={t("classes.detail.backAria")}
-        >
-          <ChevronLeft size={18} />
-        </Link>
-        <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", flex: 1 }}>
-          {t("classes.detail.title")}
-        </h1>
-        <button
-          id="btn-share-class"
-          onClick={handleShare}
-          style={{
-            display: "flex", alignItems: "center", justifyContent: "center",
-            width: 36, height: 36, borderRadius: 12,
-            background: "var(--neutral-100)", border: "none",
-            cursor: "pointer", color: "var(--text-secondary)",
-          }}
-          aria-label={t("classes.detail.shareAria")}
-        >
-          <Share2 size={16} />
-        </button>
-      </div>
-
-      {/* Hero banner */}
-      <div
-        className="curved-bottom"
-        style={{
-          background: `linear-gradient(135deg, ${seriesColor} 0%, #037d36 100%)`,
-          padding: "28px 20px 36px",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <div aria-hidden style={{
-          position: "absolute", top: -40, right: -40,
-          width: 140, height: 140, borderRadius: "50%",
-          background: "rgba(255,255,255,0.06)",
-        }} />
-
-        <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
-          <span style={{
-            background: "rgba(255,255,255,0.18)", color: "#fff",
-            borderRadius: "var(--radius-full)", padding: "5px 14px",
-            fontSize: "0.75rem", fontWeight: 700,
-            border: "1px solid rgba(255,255,255,0.25)", backdropFilter: "blur(4px)",
-          }}>
-            {cls.cefr || "A1"} / Level {cls.level || 1}
-          </span>
-          <span style={{
-            background: seatsLeft <= 2 ? "rgba(239,68,68,0.2)" : "rgba(255,255,255,0.12)",
-            color: "#fff",
-            borderRadius: "var(--radius-full)", padding: "5px 14px",
-            fontSize: "0.75rem", fontWeight: 700,
-            border: `1px solid ${seatsLeft <= 2 ? "rgba(239,68,68,0.3)" : "rgba(255,255,255,0.2)"}`,
-          }}>
-            {seatsLeft <= 2
-              ? `${t("classes.detail.urgentSeatsPrefix")} ${seatsLeft} ${t("classes.detail.seatsLeftSuffix")}`
-              : `${seatsLeft} ${t("classes.detail.seatsAvailableSuffix")}`}
-          </span>
-          {cls.isEnrolled && (
-            <span style={{
-              background: "rgba(255,255,255,0.25)", color: "#fff",
-              borderRadius: "var(--radius-full)", padding: "5px 14px",
-              fontSize: "0.75rem", fontWeight: 800,
-              border: "1px solid rgba(255,255,255,0.4)",
-            }}>
-              ✅ {t("classes.detail.enrolled")}
-            </span>
-          )}
-        </div>
-
-        <h2 style={{ color: "#fff", fontSize: "1.25rem", fontWeight: 800, marginBottom: 6, lineHeight: 1.3 }}>
-          {cls.name}
-        </h2>
-        <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.875rem" }}>
-          {cls.book}{cls.bookCode ? ` (${cls.bookCode})` : ""} / {cls.totalHours || 0} {t("classes.detail.hourUnit")} / {t("classes.detail.perCourse")}
-        </p>
-      </div>
-
-      {/* Content */}
-      <div style={{ padding: "20px 16px", display: "flex", flexDirection: "column", gap: 20, paddingBottom: 120, marginTop: -8 }}>
-
-        {/* Tutor card */}
-        {selectedCycleId && canReadSelectedCycle && <AssessmentPanel key={selectedCycleId} cycleId={selectedCycleId} classId={id} />}
-        <div className="glass-card" style={{ padding: "18px" }}>
-          <div style={{ display: "flex", gap: 14, alignItems: "center", marginBottom: 12 }}>
-            {cls.tutor?.pictureUrl ? (
-              <Image
-                src={cls.tutor.pictureUrl}
-                alt={cls.tutor.name}
-                width={52}
-                height={52}
-                style={{
-                  width: 52, height: 52, borderRadius: 16,
-                  objectFit: "cover", flexShrink: 0,
-                  border: `2px solid ${seriesColor}44`,
-                }}
-              />
-            ) : (
-              <div style={{
-                width: 52, height: 52, borderRadius: 16,
-                background: `linear-gradient(135deg, ${seriesColor}, ${seriesColor}88)`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                color: "#fff", fontSize: "1rem", fontWeight: 800, flexShrink: 0,
-              }}>
-                {cls.tutor?.initials}
-              </div>
-            )}
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--text-primary)" }}>
-                {cls.tutor.name}
-              </div>
-              <div style={{ display: "flex", gap: 12, marginTop: 4 }}>
-                {typeof cls.tutor?.rating === "number" && (
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 3 }}>
-                    <Star size={12} style={{ color: "#f59e0b", fill: "#f59e0b" }} /> {cls.tutor.rating.toFixed(1)}
-                  </span>
-                )}
-                <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 3 }}>
-                  <Users size={12} /> {cls.tutor?.students || 0} {t("classes.detail.studentsUnit")}
-                </span>
-              </div>
-            </div>
-          </div>
-          <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.7 }}>
-            {tutorBio}
-          </p>
-        </div>
-
-        {/* Schedule */}
-        <div>
-          <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 10 }}>
-            {t("classes.detail.schedule")}
-          </h3>
-          <div className="glass-card" style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px" }}>
-            <div style={{
-              width: 44, height: 44, borderRadius: 14,
-              background: "var(--brand-50)", display: "flex",
-              alignItems: "center", justifyContent: "center",
-              flexShrink: 0, border: "1px solid var(--brand-100)",
-            }}>
-              <Calendar size={20} style={{ color: "var(--brand-600)" }} />
-            </div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--text-primary)" }}>
-                {cls.schedule}
-              </div>
-              <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginTop: 2 }}>
-                {t("classes.detail.nextLessonPrefix")} {cls.nextSession || "TBA"}
-              </div>
-              {(cls.startsAt || cls.endsAt) && (
-                <div style={{ display: "flex", gap: 16, marginTop: 6, flexWrap: "wrap" }}>
-                  {cls.startsAt && (
-                    <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)" }}>
-                      <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>{t("classes.detail.classStartsPrefix")}</span>{" "}
-                      {new Date(cls.startsAt).toLocaleDateString("th-TH", { year: "numeric", month: "short", day: "numeric" })}
-                    </div>
-                  )}
-                  {cls.endsAt && (
-                    <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)" }}>
-                      <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>{t("classes.detail.classEndsPrefix")}</span>{" "}
-                      {new Date(cls.endsAt).toLocaleDateString("th-TH", { year: "numeric", month: "short", day: "numeric" })}
-                    </div>
-                  )}
-                </div>
-              )}
-              {/* Add to calendar */}
-              <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-                <button
-                  onClick={() => downloadClassICS({ id: cls.id, name: cls.name, schedule: cls.schedule, startsAt: cls.startsAt, endsAt: cls.endsAt })}
-                  style={{
-                    display: "flex", alignItems: "center", gap: 6,
-                    fontSize: "0.75rem", fontWeight: 600,
-                    padding: "6px 12px", borderRadius: 10,
-                    background: "var(--brand-50)", color: "var(--brand-600)",
-                    border: "1px solid var(--brand-100)", cursor: "pointer",
-                  }}
-                >
-                  <CalendarPlus size={13} />
-                  {t("classes.detail.addToCalendar")}
-                </button>
-                <a
-                  href={googleCalClassUrl({ name: cls.name, schedule: cls.schedule, startsAt: cls.startsAt })}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "flex", alignItems: "center", gap: 6,
-                    fontSize: "0.75rem", fontWeight: 600,
-                    padding: "6px 12px", borderRadius: 10,
-                    background: "var(--neutral-50)", color: "var(--text-secondary)",
-                    border: "1px solid var(--surface-border)", textDecoration: "none",
-                  }}
-                >
-                  <CalendarPlus size={13} />
-                  {t("classes.detail.addToCalendarGoogle")}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Capacity */}
-        <div className="glass-card" style={{ padding: "18px" }}>
-          <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 12 }}>
-            {t("classes.detail.seats")}
-          </h3>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-            <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>
-              {cls.students} {t("classes.detail.from")} {cls.maxStudents} {t("classes.detail.peopleUnit")}
-            </span>
-            <span style={{
-              fontSize: "0.875rem", fontWeight: 700,
-              color: seatsLeft <= 2 ? "var(--accent-red)" : "var(--brand-600)",
-            }}>
-              {t("classes.detail.remainingPrefix")} {seatsLeft} {t("classes.detail.seatsLeftSuffix")}
-            </span>
-          </div>
-          <div className="progress-bar">
-            <div
-              className="progress-bar-fill"
-              style={{
-                width: `${fillPct}%`,
-                background: seatsLeft <= 2
-                  ? "linear-gradient(90deg, var(--accent-red), #f87171)"
-                  : undefined,
-              }}
-            />
-          </div>
-        </div>
-
-        {/* ─── LESSON PREVIEW SECTION ─────────────────────────────────────── */}
-        <div>
-          {needsUpgrade && activeCycle && (
-            <div
-              className="glass-card"
-              style={{
-                padding: "14px 16px",
-                marginBottom: 14,
-                border: "1px solid rgba(245,158,11,0.35)",
-                background: "linear-gradient(135deg, rgba(245,158,11,0.12), var(--surface-card))",
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-              }}
-            >
-              <AlertCircle size={18} style={{ color: "#f59e0b", flexShrink: 0 }} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: "0.875rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
-                  New book is ready
-                </p>
-                <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5, marginTop: 2 }}>
-                  {activeCycle.title} is waiting for payment. You can still study books you already have access to.
-                </p>
-              </div>
-              <Link
-                href={`/payment?classId=${cls.id}&cycleId=${activeCycle.id}`}
-                style={{
-                  flexShrink: 0,
-                  borderRadius: 12,
-                  background: "#f59e0b",
-                  color: "#fff",
-                  padding: "8px 12px",
-                  fontSize: "0.75rem",
-                  fontWeight: 800,
-                  textDecoration: "none",
-                }}
-              >
-                Pay
+      <Screen>
+        <ClassDetailAppBar />
+        {kind === "notFound" ? (
+          <StatusScreen
+            icon={SearchX}
+            tone="neutral"
+            title={t("classes.detail.notFound")}
+            description={t("classes.detail.notFoundDescription")}
+            primaryAction={
+              <Link href="/classes" className={buttonVariants({ variant: "brand", size: "cta" })}>
+                {t("classes.detail.backToClasses")}
               </Link>
-            </div>
-          )}
-
-          {(cls.bookCycles?.length ?? 0) > 1 && (
-            <div className="glass-card" style={{ padding: "12px 14px", marginBottom: 14 }}>
-              <label
-                htmlFor="class-book-cycle"
-                style={{
-                  display: "block",
-                  fontSize: "0.75rem",
-                  fontWeight: 800,
-                  color: "var(--text-tertiary)",
-                  marginBottom: 8,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                Book
-              </label>
-              <select
-                id="class-book-cycle"
-                value={selectedCycleId}
-                onChange={(event) => setSelectedCycleId(event.target.value)}
-                style={{
-                  width: "100%",
-                  height: 44,
-                  borderRadius: 14,
-                  border: "1px solid var(--surface-border)",
-                  background: "var(--surface-card)",
-                  color: "var(--text-primary)",
-                  padding: "0 12px",
-                  fontSize: "0.875rem",
-                  fontWeight: 700,
-                }}
-              >
-                {cls.bookCycles?.map((cycle) => (
-                  <option key={cycle.id} value={cycle.id}>
-                    Book {cycle.sequence}: {cycle.title}{cycle.hasAccess ? "" : " - payment required"}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div style={{
-            display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14,
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{
-                width: 30, height: 30, borderRadius: 8,
-                background: `${seriesColor}18`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <Sparkles size={15} style={{ color: seriesColor }} />
-              </div>
-              <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                {t("classes.detail.lessonSampleTitle")}
-              </h3>
-            </div>
-            <span style={{
-              background: "var(--neutral-100)", color: "var(--text-secondary)",
-              padding: "4px 10px", borderRadius: "var(--radius-full)",
-              fontSize: "0.6875rem", fontWeight: 700,
-            }}>
-              {articleCount} {t("classes.detail.lessonsUnit")}
-            </span>
-          </div>
-
-          {/* Featured article or skeleton */}
-          {articlesLoading ? (
-            <div className="glass-card" style={{ padding: "20px", textAlign: "center" }}>
-              <Loader2 size={20} className="animate-spin mx-auto" style={{ color: seriesColor }} />
-              <p style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)", marginTop: 8 }}>
-                {t("classes.detail.loadingLesson")}
-              </p>
-            </div>
-          ) : featuredArticle ? (
-            <FeaturedArticleCard
-              article={featuredArticle}
-              accent={seriesColor}
-              isEnrolled={canReadSelectedCycle}
-            />
-          ) : selectedCycle && !selectedCycle.hasAccess ? (
-            <div className="glass-card" style={{ padding: "20px", textAlign: "center" }}>
-              <Lock size={22} style={{ color: "var(--text-tertiary)", margin: "0 auto 8px" }} />
-              <p style={{ fontSize: "0.875rem", fontWeight: 800, color: "var(--text-primary)" }}>
-                Payment required for this book
-              </p>
-              <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: 4 }}>
-                Switch to a previous book to keep studying, or pay to unlock this one.
-              </p>
-            </div>
-          ) : null}
-
-          {/* Remaining articles list */}
-          {(articlesLoading || articles.length > 1) && (
-            <div className="glass-card" style={{ marginTop: 12, overflow: "hidden" }}>
-              <div style={{
-                padding: "10px 16px",
-                borderBottom: "1px solid var(--surface-border)",
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                color: "var(--text-tertiary)",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-              }}>
-                {t("classes.detail.allLessons")} ({articleCount})
-              </div>
-
-              {articlesLoading ? (
-                <ArticleSkeleton />
-              ) : (
-                <>
-                  {articles.map((art, idx) => (
-                    <ArticleRow
-                      key={art.id}
-                      article={art}
-                      isEnrolled={canReadSelectedCycle}
-                      accent={seriesColor}
-                      index={idx}
-                    />
-                  ))}
-
-                  {/* More lessons footer */}
-                  {articleCount > articles.length && (
-                    <div style={{
-                      padding: "12px 16px",
-                      borderTop: "1px solid var(--surface-border)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 8,
-                    }}>
-                      <Lock size={13} style={{ color: "var(--neutral-400)" }} />
-                      <span style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>
-                        {t("classes.detail.moreLessonsPrefix")} {articleCount - articles.length} {t("classes.detail.moreLessonsSuffix")}
-                      </span>
-                    </div>
-                  )}
-
-                  {articleCount === articles.length && articles.length > 0 && (
-                    <div style={{
-                      padding: "12px 16px",
-                      borderTop: "1px solid var(--surface-border)",
-                      textAlign: "center",
-                      fontSize: "0.8125rem",
-                      color: "var(--text-tertiary)",
-                    }}>
-                      {t("classes.detail.allLessonsAfterPayment")}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Non-enrolled CTA */}
-          {!cls.isEnrolled && !articlesLoading && featuredArticle && (
-            <div style={{
-              marginTop: 12,
-              padding: "14px 16px",
-              borderRadius: 16,
-              background: `${seriesColor}08`,
-              border: `1px dashed ${seriesColor}40`,
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-            }}>
-              <Sparkles size={18} style={{ color: seriesColor, flexShrink: 0 }} />
-              <p style={{ flex: 1, fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                {t("classes.detail.lessonSampleEnrollCta")}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* ─── Highlights ─────────────────────────────────────────────────── */}
-        <div>
-          <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 10 }}>
-            {t("classes.detail.benefits")}
-          </h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {highlights.map((h, i) => (
-              <div key={i} className="glass-card" style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px" }}>
-                <CheckCircle2 size={18} style={{ color: "var(--brand-500)", flexShrink: 0 }} />
-                <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>{h}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ─── Review section ─────────────────────────────────────────────── */}
-        {canReview && (
-          <div className="glass-card" style={{
-            padding: "18px",
-            border: "1px solid rgba(245,158,11,0.28)",
-            background: "linear-gradient(135deg, rgba(245,158,11,0.10), var(--surface-card))",
-          }}>
-            <h3 style={{ fontSize: "0.9375rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 6 }}>
-              {t("classes.detail.reviewTitle")}
-            </h3>
-            <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 14 }}>
-              {t("classes.detail.reviewDescription")}
-            </p>
-
-            {reviewLoading ? (
-              <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--text-secondary)", fontSize: "0.8125rem", fontWeight: 700 }}>
-                <Loader2 size={16} className="animate-spin" />
-                {t("classes.detail.reviewLoading")}
-              </div>
-            ) : review && !reviewEditing ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <CheckCircle2 size={16} style={{ color: "#22c55e", flexShrink: 0 }} />
-                  <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "#22c55e" }}>
-                    {t("classes.detail.reviewed")}
-                  </span>
-                </div>
-                <div style={{ display: "flex", gap: 6 }}>
-                  {[1, 2, 3, 4, 5].map((value) => (
-                    <Star
-                      key={value}
-                      size={22}
-                      fill={value <= review.rating ? "#f59e0b" : "transparent"}
-                      color={value <= review.rating ? "#f59e0b" : "var(--neutral-300)"}
-                    />
-                  ))}
-                </div>
-                {review.comment && (
-                  <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.6, margin: 0 }}>
-                    {review.comment}
-                  </p>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setReviewEditing(true)}
-                  style={{
-                    alignSelf: "flex-start", fontSize: "0.8125rem", fontWeight: 700,
-                    color: "var(--text-secondary)", background: "none",
-                    border: "1px solid var(--surface-border)", borderRadius: 10,
-                    padding: "6px 14px", cursor: "pointer",
-                  }}
-                >
-                  {t("classes.detail.editReview")}
-                </button>
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <div style={{ display: "flex", gap: 8 }}>
-                  {[1, 2, 3, 4, 5].map((value) => (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => setReviewRating(value)}
-                      aria-label={`${t("classes.detail.reviewStarPrefix")} ${value} ${t("classes.detail.reviewStarSuffix")}`}
-                      style={{
-                        width: 42, height: 42, borderRadius: 14,
-                        border: value <= reviewRating ? "1px solid rgba(245,158,11,0.45)" : "1px solid var(--surface-border)",
-                        background: value <= reviewRating ? "rgba(245,158,11,0.14)" : "var(--surface-card)",
-                        color: value <= reviewRating ? "#f59e0b" : "var(--neutral-300)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}
-                    >
-                      <Star size={22} fill={value <= reviewRating ? "#f59e0b" : "transparent"} />
-                    </button>
-                  ))}
-                </div>
-
-                <textarea
-                  value={reviewComment}
-                  onChange={(e) => setReviewComment(e.target.value)}
-                  placeholder={t("classes.detail.reviewPlaceholder")}
-                  maxLength={500}
-                  style={{
-                    width: "100%", minHeight: 92, borderRadius: 16,
-                    border: "1px solid var(--surface-border)",
-                    background: "var(--surface-card)", color: "var(--text-primary)",
-                    padding: "12px 14px", fontSize: "0.875rem", lineHeight: 1.6,
-                    resize: "vertical", outline: "none",
-                  }}
-                />
-
-                <div style={{ display: "flex", gap: 8 }}>
-                  {reviewEditing && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setReviewRating(review!.rating);
-                        setReviewComment(review!.comment ?? "");
-                        setReviewEditing(false);
-                      }}
-                      style={{
-                        flex: 1, height: 48, borderRadius: 16, fontWeight: 800, fontSize: "0.875rem",
-                        border: "1px solid var(--surface-border)",
-                        background: "var(--surface-card)", color: "var(--text-secondary)", cursor: "pointer",
-                      }}
-                    >
-                      {t("classes.detail.reviewCancel")}
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={handleSubmitReview}
-                    disabled={reviewSubmitting || reviewRating === 0}
-                    className="btn btn-primary"
-                    style={{
-                      flex: 1, height: 48, borderRadius: 16, fontWeight: 800,
-                      opacity: reviewSubmitting || reviewRating === 0 ? 0.55 : 1,
-                    }}
-                  >
-                    {reviewSubmitting
-                      ? t("classes.detail.reviewSaving")
-                      : reviewEditing
-                      ? t("classes.detail.reviewSaveEdits")
-                      : t("classes.detail.reviewSubmit")}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Sticky CTA footer */}
-      <div style={{
-        position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)",
-        width: "100%", maxWidth: "var(--max-mobile)",
-        background: "var(--nav-glass-bg)",
-        backdropFilter: "blur(24px) saturate(180%)",
-        WebkitBackdropFilter: "blur(24px) saturate(180%)",
-        borderTop: "1px solid var(--surface-border)",
-        padding: "16px 20px 34px",
-        display: "flex", gap: 16, alignItems: "center",
-        zIndex: 100, boxShadow: "0 -10px 30px rgba(0,0,0,0.1)",
-      }}>
-        <div style={{ flex: 1 }}>
-          <div style={{
-            fontSize: "0.6875rem", color: "var(--text-tertiary)", fontWeight: 600,
-            textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2,
-          }}>
-            {t("classes.detail.netPrice")}
-          </div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-            <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
-              THB {footerPrice.toLocaleString()}
-            </span>
-          </div>
-        </div>
-
-        {needsUpgrade && activeCycle ? (
-          <Link
-            href={`/payment?classId=${cls.id}&cycleId=${activeCycle.id}`}
-            id="btn-upgrade-class"
-            className="btn btn-primary shine-effect"
-            style={{
-              borderRadius: 20, flexShrink: 0, padding: "0 24px", height: 56,
-              fontSize: "0.9375rem", fontWeight: 700,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: "0 8px 20px rgba(6,199,85,0.3)",
-            }}
-          >
-            {t("classes.detail.upgradeNextBookPrefix")} {activeCycle.sequence}
-          </Link>
-        ) : cls.isEnrolled ? (
-          <div
-            className="btn"
-            style={{
-              borderRadius: 20, flexShrink: 0, padding: "0 24px", height: 56,
-              fontSize: "0.9375rem", fontWeight: 700,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              background: "var(--neutral-100)", color: "var(--text-tertiary)",
-              border: "1px solid var(--surface-border)", cursor: "default",
-            }}
-          >
-            {t("classes.detail.enrolled")}
-          </div>
+            }
+          />
         ) : (
-          <Link
-            href={`/payment?classId=${cls.id}`}
-            id="btn-enroll-class"
-            className="btn btn-primary shine-effect"
-            style={{
-              borderRadius: 20, flexShrink: 0, padding: "0 32px", height: 56,
-              fontSize: "1.0625rem", fontWeight: 700,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: "0 8px 20px rgba(6,199,85,0.3)",
-            }}
-          >
-            {t("classes.detail.enrollNow")}
-          </Link>
+          <ErrorState
+            title={t("classes.detail.loadErrorTitle")}
+            kind={kind === "offline" ? "offline" : "error"}
+            onRetry={() => void detail.refetch()}
+            retrying={detail.isValidating}
+          />
+        )}
+      </Screen>
+    );
+  }
+
+  const primaryAction = getClassPrimaryAction(cls, access);
+  const openCalendar = () => setCalendarOpen(true);
+
+  return (
+    <Screen>
+      <ClassDetailAppBar onShare={handleShare} />
+
+      <div className="flex flex-col gap-5 px-4 pt-2 pb-6">
+        <ClassHero cls={cls} />
+
+        {cls.isEnrolled ? (
+          <>
+            {access.canReview ? (
+              <ReviewCard
+                classId={id}
+                review={reviewResource.data?.review ?? null}
+                loading={reviewResource.isLoading}
+                onSaved={(review) => reviewResource.mutate({ review })}
+              />
+            ) : null}
+
+            {access.needsUpgrade && access.activeCycle ? (
+              <Notice
+                tone="warning"
+                title={t("classes.detail.newBookTitle")}
+                description={`${access.activeCycle.title} ${t("classes.detail.newBookDescriptionSuffix")}`}
+              />
+            ) : null}
+
+            <NextSessionCard cls={cls} onAddToCalendar={openCalendar} />
+
+            <LessonsSection
+              cls={cls}
+              access={access}
+              selectedCycleId={selectedCycleId}
+              onSelectCycle={setUserSelectedCycleId}
+              articles={articles}
+            />
+
+            {selectedCycleId && access.canReadSelectedCycle ? (
+              <AssessmentPanel key={selectedCycleId} cycleId={selectedCycleId} classId={id} />
+            ) : null}
+
+            <TutorSection cls={cls} />
+          </>
+        ) : (
+          <>
+            {cls.enrollmentStatus === "PENDING_PAYMENT" ? (
+              <Notice
+                tone="info"
+                title={t("classes.detail.pendingPaymentTitle")}
+                description={t("classes.detail.pendingPaymentDescription")}
+              />
+            ) : null}
+            <TutorSection cls={cls} />
+            <ScheduleSection cls={cls} onAddToCalendar={openCalendar} />
+            <SeatsSection cls={cls} />
+            <CoursePreviewSection cls={cls} articles={articles} articlesRequested={articlesRequested} />
+            <BenefitsSection cls={cls} />
+          </>
         )}
       </div>
-    </div>
+
+      <PrimaryActionBar action={primaryAction} />
+      <CalendarSheet cls={cls} liff={liff} open={calendarOpen} onOpenChange={setCalendarOpen} />
+    </Screen>
   );
 }

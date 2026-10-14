@@ -28,13 +28,13 @@ const TUTORIAL_STEPS = [
   {
     step: 1,
     title: "1. อ่านคำศัพท์ภาษาอังกฤษเป้าหมาย",
-    detail: "สังเกตกล่อง Find มุมขวาบน (เช่น clue) เพื่อเตรียมหาคำแปลภาษาไทย",
+    detail: "สังเกตกล่องหาคำแปลมุมขวาบน เพื่อเตรียมหาคำแปลภาษาไทย",
     icon: Sparkles,
   },
   {
     step: 2,
-    title: "2. บังคับจอมเวทด้วยปุ่มทิศทาง D-Pad",
-    detail: "สังเกตปุ่ม D-Pad ด้านล่างจะเรืองแสงสีฟ้าและขยับตามทิศทาง ขึ้น-ลง-ซ้าย-ขวา",
+    title: "2. บังคับจอมเวทด้วยปุ่มทิศทาง",
+    detail: "สังเกตปุ่มทิศทางด้านล่างจะเรืองแสงสีฟ้าและขยับตามทิศทาง ขึ้น-ลง-ซ้าย-ขวา",
     icon: Compass,
   },
   {
@@ -45,20 +45,20 @@ const TUTORIAL_STEPS = [
   },
   {
     step: 4,
-    title: "4. เดินชนหนังสือเพื่อสะสมคะแนน & Mana",
+    title: "4. เดินชนหนังสือเพื่อสะสมคะแนนและมานา",
     detail: "เมื่อจอมเวทเดินชนหนังสือที่ถูกต้อง จะเกิดแสงประกาย ✨ และได้คะแนนทันที",
     icon: CheckCircle2,
   },
   {
     step: 5,
     title: "5. สังเกตและระวังผีวิญญาณสปีริต",
-    detail: "อย่าให้ผีวิญญาณลอยเข้ามาชน หากโดนชน พลังเกราะ Mana จะลดลง",
+    detail: "อย่าให้ผีวิญญาณลอยเข้ามาชน หากโดนชน มานาจะลดลง",
     icon: Ghost,
   },
   {
     step: 6,
-    title: "6. กดปุ่ม Shield เปิดเกราะกางบาเรีย",
-    detail: "สังเกตปุ่ม Shield มุมขวาล่างจะเรืองแสงสีฟ้า กดเพื่อกางบาเรียป้องกันตัว",
+    title: "6. กดปุ่มโล่เปิดเกราะกางบาเรีย",
+    detail: "สังเกตปุ่มโล่มุมขวาล่างจะเรืองแสงสีฟ้า กดเพื่อกางบาเรียป้องกันตัว",
     icon: Shield,
   },
 ];
@@ -94,8 +94,13 @@ export function EnchantedLibraryTeachingGame({ vocabulary, mode, fullscreen = fa
   return (
     <div
       key={key}
+      // The game sizes its stage to this frame, so the frame needs a definite
+      // height: a board-shaped (4:3) stage capped to the screen inline, or the
+      // remaining presenter stage in fullscreen.
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${
-        fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none" : "min-h-[520px] rounded-[32px] shadow-2xl"
+        fullscreen
+          ? "h-full min-h-[360px] flex-1 rounded-none shadow-none"
+          : "aspect-[4/3] max-h-[max(420px,calc(100dvh-13rem))] min-h-[420px] rounded-[32px] shadow-2xl"
       }`}
       data-testid={`enchanted-library-${mode}`}
     >

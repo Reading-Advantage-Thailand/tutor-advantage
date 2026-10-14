@@ -790,6 +790,9 @@ model AuditEvent {
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   @@index([entityType, entityId, createdAt(sort: Desc)])
+  // Audit trail list/export: time-ordered scans and the actionType filter.
+  @@index([createdAt(sort: Desc)])
+  @@index([action, createdAt(sort: Desc)])
   @@map("audit_events")
   @@schema("finance_mlm")
 }

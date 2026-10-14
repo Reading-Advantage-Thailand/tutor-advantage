@@ -1,18 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { claimClass } from "./actions";
 import { useRouter } from "next/navigation";
+import { ConfirmDialog, Sheet } from "@/components/app";
+import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { claimClass } from "./actions";
 
 export function ClaimButton({ transferId }: { transferId: string }) {
   const [loading, setLoading] = useState(false);
@@ -28,8 +21,8 @@ export function ClaimButton({ transferId }: { transferId: string }) {
     try {
       await claimClass(transferId);
       setSuccessOpen(true);
-    } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
-      setErrorMessage(error.message || t("tutorClass.auction.claimFailed"));
+    } catch (error) {
+      setErrorMessage(error instanceof Error && error.message ? error.message : t("tutorClass.auction.claimFailed"));
       setErrorOpen(true);
     } finally {
       setLoading(false);
@@ -43,62 +36,53 @@ export function ClaimButton({ transferId }: { transferId: string }) {
 
   return (
     <>
-      <Button
-        size="sm"
-        className="w-full sm:w-auto"
-        onClick={() => setConfirmOpen(true)}
-        disabled={loading}
-      >
+      <Button className="w-full md:w-auto" onClick={() => setConfirmOpen(true)} loading={loading}>
         {loading ? t("tutorClass.auction.claiming") : t("tutorClass.auction.claim")}
       </Button>
 
-      {/* Confirm Dialog */}
-      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>ยืนยันการรับคลาสนี้?</DialogTitle>
-            <DialogDescription>
-              {t("tutorClass.auction.confirmClaim")}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmOpen(false)}>
-              {t("tutorClass.detail.cancel")}
-            </Button>
-            <Button onClick={handleConfirm}>
-              ยืนยัน
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t("tutorClass.ui.claimConfirmTitle")}
+        description={t("tutorClass.auction.confirmClaim")}
+        confirmLabel={t("shell.confirm")}
+        cancelLabel={t("tutorClass.detail.cancel")}
+        onConfirm={handleConfirm}
+      />
 
-      {/* Success Dialog */}
-      <Dialog open={successOpen} onOpenChange={handleSuccessClose}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>สำเร็จ</DialogTitle>
-            <DialogDescription>
-              {t("tutorClass.auction.claimSuccess")}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button onClick={handleSuccessClose}>ตกลง</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Sheet
+        open={successOpen}
+        onOpenChange={(open) => {
+          if (!open) handleSuccessClose();
+        }}
+        title={t("tutorClass.ui.claimSuccessTitle")}
+        description={t("tutorClass.auction.claimSuccess")}
+        width={440}
+        bodyClassName="hidden"
+        footer={
+          <div className="flex md:justify-end">
+            <Button size="lg" className="w-full md:h-9 md:w-auto" onClick={handleSuccessClose}>
+              {t("tutorClass.ui.goToClasses")}
+            </Button>
+          </div>
+        }
+      />
 
-      {/* Error Dialog */}
-      <Dialog open={errorOpen} onOpenChange={setErrorOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>เกิดข้อผิดพลาด</DialogTitle>
-            <DialogDescription>{errorMessage}</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setErrorOpen(false)}>ปิด</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <Sheet
+        open={errorOpen}
+        onOpenChange={setErrorOpen}
+        title={t("shell.errorTitle")}
+        description={errorMessage}
+        width={440}
+        bodyClassName="hidden"
+        footer={
+          <div className="flex md:justify-end">
+            <Button variant="outline" size="lg" className="w-full md:h-9 md:w-auto" onClick={() => setErrorOpen(false)}>
+              {t("shell.close")}
+            </Button>
+          </div>
+        }
+      />
     </>
   );
 }

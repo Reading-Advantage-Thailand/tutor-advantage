@@ -1,5 +1,6 @@
 import type { VocabularyItem } from "@/store/useGameStore";
 import { RUNE_MATCH_CONFIG, type MonsterType } from "./runeMatchConfig";
+import { tx as translateText } from "./gameText";
 
 export type GridPosition = {
   row: number;
@@ -431,7 +432,7 @@ export const advanceTime = (
           ...newState.floatingTexts,
           {
             id: generateId(),
-            text: "BLOCKED!",
+            text: translateText("BLOCKED!"),
             x: -1,
             y: -1,
             offsetX: 0,
@@ -448,7 +449,7 @@ export const advanceTime = (
           ...newState.floatingTexts,
           {
             id: generateId(),
-            text: "HURRY!",
+            text: translateText("HURRY!"),
             x: -1,
             y: -1,
             offsetX: 0,
@@ -489,7 +490,7 @@ export const shuffleGrid = (state: RuneMatchState): RuneMatchState => {
       ...state.floatingTexts,
       {
         id: generateId(),
-        text: "SHUFFLE!",
+        text: translateText("SHUFFLE!"),
         x: -1,
         y: -1,
         offsetX: 0,
@@ -518,7 +519,7 @@ export const freezeMonster = (state: RuneMatchState): RuneMatchState => {
       ...state.floatingTexts,
       {
         id: generateId(),
-        text: "FROZEN!",
+        text: translateText("FROZEN!"),
         x: -1,
         y: -1,
         offsetX: 0,
@@ -589,7 +590,7 @@ export const applyPairMatchResult = (
       ...state.floatingTexts,
       {
         id: generateId(),
-        text: `${isPower ? "POWER! " : ""}+1 / ${damage}`,
+        text: `${isPower ? translateText("POWER!") + " " : ""}+1 / ${damage}`,
         x: second.col,
         y: second.row,
         offsetX: 0,
@@ -633,7 +634,7 @@ export const applyMatchResult = (
       totalDamage += groupTotal;
       newFloatingTexts.push({
         id: generateId(),
-        text: `${isPower ? "POWER! " : ""}${groupTotal}`,
+        text: `${isPower ? translateText("POWER!") + " " : ""}${groupTotal}`,
         x: tx,
         y: ty,
         offsetX: 0,
@@ -664,7 +665,7 @@ export const applyMatchResult = (
       hasShield = true;
       newFloatingTexts.push({
         id: generateId(),
-        text: "SHIELD!",
+        text: translateText("SHIELD!"),
         x: tx,
         y: ty,
         offsetX: 0,
@@ -684,7 +685,7 @@ export const applyMatchResult = (
       totalDamage += RUNE_MATCH_CONFIG.combat.cascadeBonus;
       newFloatingTexts.push({
         id: generateId(),
-        text: `COMBO x${idx + 1}!`,
+        text: translateText("COMBO x{count}!", { count: idx + 1 }),
         x: -1,
         y: -1,
         offsetX: 0,

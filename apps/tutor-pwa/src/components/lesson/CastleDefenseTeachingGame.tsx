@@ -57,6 +57,22 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
 
   const [key, setKey] = useState(0);
   const [tutorialStep, setTutorialStep] = useState(0);
+  const tutorialCardRef = React.useRef<HTMLDivElement>(null);
+  const [tutorialCardInset, setTutorialCardInset] = useState(0);
+
+  // Keep the letterboxed board clear of the tutorial card pinned to the bottom.
+  useEffect(() => {
+    const card = tutorialCardRef.current;
+    if (mode !== "tutorial" || !card) {
+      setTutorialCardInset(0);
+      return;
+    }
+    const measure = () => setTutorialCardInset(Math.ceil(card.offsetHeight + 16));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, [mode]);
 
   useEffect(() => {
     setTutorialStep(0);
@@ -82,8 +98,13 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
   return (
     <div
       key={key}
+      // The game sizes itself to this frame (not the viewport), so the frame
+      // needs a definite height: a 4:3 board-shaped stage capped to the screen
+      // inline, or the remaining presenter stage in fullscreen.
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${
-        fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none" : "min-h-[520px] rounded-[32px] shadow-2xl"
+        fullscreen
+          ? "h-full min-h-[360px] flex-1 rounded-none shadow-none"
+          : "aspect-[4/3] max-h-[max(420px,calc(100dvh-13rem))] min-h-[420px] rounded-[32px] shadow-2xl"
       }`}
       data-testid={`castle-defense-${mode}`}
     >
@@ -93,13 +114,15 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
         tutorialMode={mode === "tutorial"}
         onTutorialStepChange={handleTutorialStepChange}
         onComplete={handleComplete}
+        fit="contain"
+        insetBottom={mode === "tutorial" ? tutorialCardInset : 0}
       />
 
       {mode === "tutorial" && (
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 w-full max-w-xl px-4 pointer-events-none">
-          <div className="flex items-center gap-3.5 rounded-2xl border border-emerald-400/50 bg-slate-950/95 p-3.5 shadow-2xl backdrop-blur-md">
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/25">
-              <StepIcon size={24} />
+        <div ref={tutorialCardRef} className="absolute bottom-3 left-1/2 -translate-x-1/2 z-40 w-full max-w-xl px-4 pointer-events-none">
+          <div className="flex items-center gap-3 rounded-2xl border border-emerald-400/50 bg-slate-950/95 px-3 py-2.5 shadow-2xl backdrop-blur-md">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/25">
+              <StepIcon size={20} />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
@@ -107,8 +130,8 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
                   ขั้นตอนที่ {tutorialStep + 1} / {TUTORIAL_STEPS.length}
                 </span>
               </div>
-              <p className="mt-1 text-lg font-black text-white leading-tight">{currentStep.title}</p>
-              <p className="text-xs font-semibold text-white/70 leading-snug mt-0.5">{currentStep.detail}</p>
+              <p className="mt-0.5 text-base font-black text-white leading-tight">{currentStep.title}</p>
+              <p className="line-clamp-1 text-xs font-semibold text-white/70 leading-snug mt-0.5">{currentStep.detail}</p>
             </div>
             <div className="flex items-center gap-1.5 shrink-0" aria-hidden="true">
               {TUTORIAL_STEPS.map((_, idx) => (

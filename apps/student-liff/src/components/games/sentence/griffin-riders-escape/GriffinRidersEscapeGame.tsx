@@ -20,6 +20,7 @@ import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { Heart } from 'lucide-react'
+import { tx } from '@/lib/games/gameText'
 
 type GameProps = {
   vocabulary: VocabularyItem[]
@@ -43,7 +44,10 @@ export function GriffinRidersEscapeGame({ vocabulary, onComplete }: GameProps) {
   const { input } = useDirectionalInput()
   const lastInputDx = useRef(0)
 
-  // Measure stage dimensions
+  // Measure stage dimensions. The component renders nothing until the game
+  // state exists, so re-run once the root is mounted (before, the ref was
+  // still null on the only run and the stage stayed 0x0, i.e. no canvas).
+  const hasRoot = gameState !== null
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -56,7 +60,7 @@ export function GriffinRidersEscapeGame({ vocabulary, onComplete }: GameProps) {
     observer.observe(el)
     updateDimensions()
     return () => observer.disconnect()
-  }, [containerRef])
+  }, [containerRef, hasRoot])
 
   const resetGame = useCallback(() => {
     if (vocabulary.length > 0) {
@@ -203,7 +207,7 @@ export function GriffinRidersEscapeGame({ vocabulary, onComplete }: GameProps) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[70vh] min-h-[600px] overflow-hidden rounded-3xl border border-sky-800 bg-sky-950 shadow-2xl"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-sky-950"
     >
       {gamePhase !== 'start' && (
         <Stage
@@ -212,7 +216,7 @@ export function GriffinRidersEscapeGame({ vocabulary, onComplete }: GameProps) {
           scaleX={scale}
           scaleY={scale}
           x={(dimensions.width - GAME_WIDTH * scale) / 2 + (Math.random() - 0.5) * shake}
-          y={(Math.random() - 0.5) * shake}
+          y={Math.max(0, (dimensions.height - GAME_HEIGHT * scale) / 2) + (Math.random() - 0.5) * shake}
         >
           <Layer>
             {/* Background Clouds (Simplified for now) */}
@@ -277,13 +281,13 @@ export function GriffinRidersEscapeGame({ vocabulary, onComplete }: GameProps) {
                 ))}
              </div>
              <div className="bg-black/40 backdrop-blur px-4 py-2 rounded-xl border border-white/20">
-                <div className="text-base text-white/60 uppercase" style={{ fontSize: getEffectiveTextSize(16) }}>Score</div>
+                <div className="text-base text-white/60 uppercase" style={{ fontSize: getEffectiveTextSize(16) }}>{tx("Score")}</div>
                 <div className="text-2xl font-bold text-white leading-tight">{gameState.score}</div>
              </div>
           </div>
 
           <div className="mt-4 w-full bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20">
-             <div className="text-base text-amber-300 uppercase font-bold tracking-wider mb-1" style={{ fontSize: getEffectiveTextSize(16) }}>Translate</div>
+             <div className="text-base text-amber-300 uppercase font-bold tracking-wider mb-1" style={{ fontSize: getEffectiveTextSize(16) }}>{tx("Translate")}</div>
              <div className="text-xl text-white font-medium" style={{ fontSize: getEffectiveTextSize(20) }}>{gameState.currentSentence.translation}</div>
           </div>
 
@@ -299,17 +303,17 @@ export function GriffinRidersEscapeGame({ vocabulary, onComplete }: GameProps) {
 
       {gamePhase === 'start' && (
         <GameStartScreen
-          gameTitle="Griffin Rider's Escape"
-          gameSubtitle="Soar through magical gates to complete the sentence!"
+          gameTitle={tx("Griffin Rider's Escape")}
+          gameSubtitle={tx("Soar through magical gates to complete the sentence!")}
           vocabulary={vocabulary}
           instructions={[
-            { step: 1, text: 'Swipe left or right to change lanes.' },
-            { step: 2, text: 'Fly through the gate with the next word in the sentence.' },
-            { step: 3, text: 'Avoid storm clouds and wrong words to keep your lives!' },
+            { step: 1, text: tx("Swipe left or right to change lanes.") },
+            { step: 2, text: tx("Fly through the gate with the next word in the sentence.") },
+            { step: 3, text: tx("Avoid storm clouds and wrong words to keep your lives!") },
           ]}
-          proTip="Use the translation banner at the top to plan your route."
+          proTip={tx("Use the translation banner at the top to plan your route.")}
           controls={[
-            { label: 'Switch Lane', keys: 'Left/Right Arrows or Swipe', color: 'bg-sky-500' }
+            { label: tx("Switch Lane"), keys: tx("Left/Right Arrows or Swipe"), color: 'bg-sky-500' }
           ]}
           onStart={handleStart}
         />

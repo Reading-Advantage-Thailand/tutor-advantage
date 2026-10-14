@@ -227,17 +227,17 @@ export function DevToolbar() {
       {/* ── Floating toggle button ───────────────────────────────────────── */}
       <button
         onClick={handleOpen}
-        className="fixed bottom-24 right-4 z-[9999] flex items-center gap-1.5 rounded-full bg-orange-500 text-white shadow-lg shadow-orange-500/30 px-3 py-2 text-xs font-bold hover:bg-orange-600 active:scale-95 transition-all lg:bottom-5 lg:right-5"
+        className="fixed right-0 top-1/2 z-[9999] flex -translate-y-1/2 items-center gap-1 rounded-l-lg bg-orange-500 text-white shadow-lg shadow-orange-500/30 px-1.5 py-2 text-[10px] font-bold [writing-mode:vertical-rl] opacity-60 hover:opacity-100 hover:bg-orange-600 active:scale-95 transition-all"
         title="Dev Toolbar"
       >
-        <Terminal className="h-3.5 w-3.5" />
+        <Terminal className="h-3 w-3 rotate-90" />
         DEV
         {open ? <ChevronDown className="h-3 w-3" /> : <ChevronUp className="h-3 w-3" />}
       </button>
 
       {/* ── Panel ────────────────────────────────────────────────────────── */}
       {open && (
-        <div className="fixed bottom-36 right-4 z-[9998] w-[340px] max-h-[75vh] flex flex-col rounded-2xl border border-orange-500/30 bg-background shadow-2xl shadow-black/20 overflow-hidden lg:bottom-16 lg:right-5">
+        <div className="fixed right-9 top-1/2 z-[9998] w-[min(340px,calc(100vw-48px))] max-h-[75vh] -translate-y-1/2 flex flex-col rounded-2xl border border-orange-500/30 bg-background shadow-2xl shadow-black/20 overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-orange-500/10 border-b border-orange-500/20 shrink-0">
             <div className="flex items-center gap-2">

@@ -1,120 +1,40 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { ShieldCheck, AlertCircle } from "lucide-react";
+import dynamic from "next/dynamic";
+
+/**
+ * The PDPA gate UI is only downloaded when this student has not accepted the
+ * terms yet; everyone else gets a pass-through provider with no extra JS.
+ */
+const ConsentGate = dynamic(() => import("./ConsentGate"), {
+  ssr: false,
+  loading: () => <ConsentGateFallback />,
+});
 
 interface ConsentProviderProps {
   children: React.ReactNode;
+  /** From the root layout: the student accepted TERMS_AND_PRIVACY (or there is no session). */
   hasConsent: boolean;
 }
 
+/** Renders the app when consent is granted, otherwise only the full-screen consent gate. */
 export function ConsentProvider({ children, hasConsent }: ConsentProviderProps) {
-  const [agreed, setAgreed] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const router = useRouter();
-
   if (hasConsent) {
     return <>{children}</>;
   }
+  return <ConsentGate />;
+}
 
-  const handleAgree = async () => {
-    if (!agreed) return;
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/auth/consent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ consentType: "TERMS_AND_PRIVACY" }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to record consent");
-      }
-
-      router.refresh();
-    } catch (err) {
-      setError((err as Error).message);
-      setLoading(false);
-    }
-  };
-
+/** Opaque placeholder with the gate's shape while its chunk loads (no spinner). */
+function ConsentGateFallback() {
   return (
-    <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center p-4 sm:p-6 overflow-y-auto">
-      <div className="w-full max-w-2xl bg-card border border-border shadow-2xl rounded-2xl p-6 sm:p-8 relative mt-10 mb-10">
-        <div className="flex flex-col items-center mb-6 text-center">
-          <div className="w-16 h-16 bg-brand-500/10 text-brand-600 rounded-full flex items-center justify-center mb-4">
-            <ShieldCheck className="w-8 h-8" />
-          </div>
-          <h2 className="text-2xl font-black text-foreground">
-            นโยบายความเป็นส่วนตัวและข้อตกลงการใช้งาน
-          </h2>
-          <p className="text-sm text-muted-foreground mt-2">
-            PDPA & Terms of Service Agreement
-          </p>
-        </div>
-
-        <div className="bg-muted/30 rounded-xl p-4 sm:p-6 h-64 overflow-y-auto border border-border/50 text-sm text-foreground space-y-4 mb-6">
-          <p>
-            <strong>นโยบายความเป็นส่วนตัว (Privacy Policy)</strong>
-          </p>
-          <p>
-            แพลตฟอร์มของเราให้ความสำคัญกับการคุ้มครองข้อมูลส่วนบุคคลของคุณ (PDPA)
-            เราจะทำการเก็บรวบรวม ใช้ และเปิดเผยข้อมูลของคุณเฉพาะเท่าที่จำเป็นเพื่อให้บริการการเรียนการสอน
-            รวมถึงประวัติการเข้าเรียนและการติดต่อสื่อสาร
-          </p>
-          <p>
-            <strong>ข้อตกลงการใช้งาน (Terms of Service)</strong>
-          </p>
-          <p>
-            1. คุณยืนยันว่าข้อมูลที่ให้ไว้เป็นความจริงทุกประการ <br />
-            2. คุณยินยอมให้แพลตฟอร์มประมวลผลข้อมูลการเรียนของคุณ <br />
-            3. การกระทำที่ผิดต่อกฎหมายหรือข้อตกลง อาจทำให้บัญชีของคุณถูกระงับ
-          </p>
-          <p className="text-xs text-muted-foreground pt-4">
-            * เอกสารฉบับเต็มจะพร้อมให้ดาวน์โหลดได้ในเมนูโปรไฟล์หลังจากเข้าสู่ระบบ
-          </p>
-        </div>
-
-        {error && (
-          <div className="flex items-center gap-2 p-3 mb-4 rounded-xl bg-red-500/10 text-red-600 text-sm font-semibold">
-            <AlertCircle className="w-4 h-4" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <div className="flex items-start space-x-3 mb-6 bg-brand-500/5 p-4 rounded-xl border border-brand-500/20">
-          <Checkbox
-            id="terms"
-            checked={agreed}
-            onCheckedChange={(checked) => setAgreed(checked as boolean)}
-            className="mt-1"
-          />
-          <div className="grid gap-1.5 leading-none">
-            <label
-              htmlFor="terms"
-              className="text-sm font-semibold text-foreground cursor-pointer"
-            >
-              ข้าพเจ้าได้อ่านและยอมรับเงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว
-            </label>
-            <p className="text-xs text-muted-foreground">
-              ข้าพเจ้ายินยอมให้ประมวลผลข้อมูลส่วนบุคคลตามที่ระบุไว้
-            </p>
-          </div>
-        </div>
-
-        <Button
-          onClick={handleAgree}
-          disabled={!agreed || loading}
-          className="w-full h-12 rounded-xl text-base font-bold"
-        >
-          {loading ? "กำลังดำเนินการ..." : "ยืนยันการยอมรับ"}
-        </Button>
+    <div aria-busy="true" className="fixed inset-0 z-[var(--z-consent)] flex flex-col bg-app">
+      <div className="h-[calc(var(--appbar-h)+var(--safe-top))] shrink-0 bg-surface" />
+      <div className="flex flex-col items-center px-4 pt-6">
+        <div className="skeleton-block size-16 rounded-full" />
+        <div className="skeleton-block mt-5 h-5 w-3/4 rounded-full" />
+        <div className="skeleton-block mt-3 h-4 w-2/3 rounded-full" />
+        <div className="skeleton-block mt-6 h-48 w-full rounded-[var(--radius-card)]" />
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ import {
   Send,
   ShoppingBag,
 } from "lucide-react";
+import { tx } from "@/lib/games/gameText";
 
 export type PotionRushTeachingSentence = {
   term: string;
@@ -60,8 +61,8 @@ const TUTORIAL_STEPS = [
     target: { left: "50%", top: "66%", width: "94%", height: "62%" },
   },
   {
-    title: "3. ตรวจหม้อที่ขึ้น DONE",
-    detail: "เมื่อคำครบ หม้อจะเปลี่ยนเป็น DONE และพร้อมนำไปเสิร์ฟ",
+    title: "3. ตรวจหม้อที่ขึ้นว่า “เสร็จ!”",
+    detail: "เมื่อคำครบ หม้อจะขึ้นว่า “เสร็จ!” และพร้อมนำไปเสิร์ฟ",
     icon: Beaker,
     target: { left: "50%", top: "49%", width: "94%", height: "24%" },
   },
@@ -255,8 +256,12 @@ export function PotionRushTeachingGame({
 
   return (
     <div
+      // PotionRushGame fills this frame (not the viewport), so the frame needs a
+      // definite height: capped to the screen inline, the stage in fullscreen.
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${
-        fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none" : "min-h-[520px] rounded-[32px] shadow-2xl"
+        fullscreen
+          ? "h-full min-h-[360px] flex-1 rounded-none shadow-none"
+          : "h-[max(480px,calc(100dvh-13rem))] rounded-[32px] shadow-2xl"
       }`}
       data-testid={`potion-rush-${mode}`}
     >
@@ -324,7 +329,7 @@ export function PotionRushTeachingGame({
                 <span>{scriptDone ? "สาธิตเสร็จแล้ว" : "สาธิตอัตโนมัติ · หยุดเวลา"}</span>
               </div>
               <span className="rounded-full border border-violet-400/30 bg-violet-500/15 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-violet-200">
-                Step {scriptStep + 1} / {TUTORIAL_STEPS.length}
+                {tx("Step")} {scriptStep + 1} / {TUTORIAL_STEPS.length}
               </span>
             </div>
 

@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 import { calculateXP } from "@/lib/games/xp";
 import { useScopedI18n } from "@/locales/client";
+import { tx } from "@/lib/games/gameText";
 
 export type WizardZombieGameResult = {
   xp: number;
@@ -506,7 +507,7 @@ export function WizardZombieGame({
         style={{ height: "min(75svh, 100%)" }}
       >
         <div className="text-white animate-pulse font-mono tracking-widest uppercase text-sm sm:text-base">
-          Initializing Grimoire...
+          {tx("Initializing Grimoire...")}
         </div>
       </div>
     );
@@ -516,19 +517,19 @@ export function WizardZombieGame({
     return (
       <div ref={containerRef} className="relative h-full w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none">
         <GameStartScreen
-          gameTitle="Wizard vs Zombie"
-          gameSubtitle="Arcane Defense"
+          gameTitle={tx("Wizard vs Zombie")}
+          gameSubtitle={tx("Arcane Defense")}
           vocabulary={gameVocabulary}
           instructions={[
-            { step: 1, text: "The horde is endless. Survive as long as possible by collecting Healing Orbs.", icon: Shield },
-            { step: 2, text: "Match the Target Word shown at the bottom to heal (+10 HP).", icon: Zap },
-            { step: 3, text: "Picking the Wrong Orb reshuffles the field and costs 5 points.", icon: Shield },
-            { step: 4, text: "Each correct orb grants one Shockwave charge. Use it to blast zombies back!", icon: Zap },
+            { step: 1, text: tx("The horde is endless. Survive as long as possible by collecting Healing Orbs."), icon: Shield },
+            { step: 2, text: tx("Match the Target Word shown at the bottom to heal (+10 HP)."), icon: Zap },
+            { step: 3, text: tx("Picking the Wrong Orb reshuffles the field and costs 5 points."), icon: Shield },
+            { step: 4, text: tx("Each correct orb grants one Shockwave charge. Use it to blast zombies back!"), icon: Zap },
           ]}
-          proTip="Use Shockwave when surrounded to create space for an escape!"
+          proTip={tx("Use Shockwave when surrounded to create space for an escape!")}
           controls={[
-            { label: "Move", keys: "Arrows / WASD", color: "bg-blue-500" },
-            { label: "Cast", keys: "Space / Enter", color: "bg-yellow-500" },
+            { label: tx("Move"), keys: tx("Arrows / WASD"), color: "bg-blue-500" },
+            { label: tx("Cast"), keys: tx("Space / Enter"), color: "bg-yellow-500" },
           ]}
           startButtonText={t("common.startSurvival")}
           icon={Sword}
@@ -548,9 +549,9 @@ export function WizardZombieGame({
         <>
           {/* HUD Overlay */}
           <div className={`absolute top-2 sm:top-4 left-2 sm:left-4 z-10 flex flex-col gap-0.5 sm:gap-1 rounded-xl text-white font-bold text-sm sm:text-lg pointer-events-none drop-shadow-md ${tutorialMode && tutorialStep === 3 ? "ring-4 ring-cyan-300/80" : ""}`}>
-            <div>HP: {Math.ceil(gameState.player.hp)}</div>
+            <div>{tx("HP:")} {Math.ceil(gameState.player.hp)}</div>
             <div className="text-blue-400 text-xs sm:text-sm flex items-center gap-0.5 sm:gap-1">
-              SHOCKWAVE:{" "}
+              {tx("SHOCKWAVE:")}{" "}
               {Array(gameState.player.maxShockwaveCharges)
                 .fill(0)
                 .map((_, i) => (
@@ -572,7 +573,7 @@ export function WizardZombieGame({
           </div>
           <div className="absolute top-2 sm:top-4 left-1/2 z-10 -translate-x-1/2 rounded-full border border-white/15 bg-black/55 px-4 py-1.5 text-center font-black text-white shadow-lg backdrop-blur-sm pointer-events-none">
             <div className="text-[10px] uppercase tracking-[0.18em] text-white/60">
-              Time
+              {tx("Time")}
             </div>
             <div className="text-lg leading-none tabular-nums text-cyan-300">
               {Math.max(
@@ -586,7 +587,7 @@ export function WizardZombieGame({
           {/* Target Word - centered below HUD, above virtual controls */}
           <div className={`absolute right-3 top-20 z-10 max-w-[42vw] rounded-2xl border border-white/20 bg-black/65 px-3 py-2 text-right shadow-lg backdrop-blur-sm pointer-events-none sm:right-5 sm:top-24 sm:max-w-[320px] sm:px-4 ${tutorialMode && tutorialStep === 0 ? "ring-4 ring-amber-300/80" : ""}`}>
             <span className="block text-[10px] uppercase tracking-[0.18em] text-white/60 sm:text-xs">
-              Find:
+              {tx("Find:")}
             </span>
             <span className="block break-words text-sm font-bold leading-tight text-yellow-400 sm:text-lg">
               {gameState.targetWord}
@@ -645,7 +646,7 @@ export function WizardZombieGame({
               }`}
             >
               <Zap className="h-5 w-5" />
-              Cast
+              {tx("Cast")}
             </button>
           </div>
 
@@ -800,9 +801,9 @@ export function WizardZombieGame({
           ))}
           {tutorialMode && (
             <div className="pointer-events-none absolute left-1/2 top-24 z-30 w-[min(520px,calc(100%-32px))] -translate-x-1/2 rounded-3xl border border-amber-300/35 bg-slate-950/90 p-4 text-white shadow-2xl backdrop-blur">
-              <p className="text-xs font-black uppercase tracking-widest text-amber-300">Tutorial · {tutorialStep + 1} / 4</p>
-              <p className="mt-1 text-lg font-black">{["ดูคำศัพท์เป้าหมาย", "ใช้ WASD หรือลูกศรเพื่อเดิน", "เดินเก็บลูกแก้วที่ตรงคำศัพท์", "ได้คะแนนและชาร์จ Shockwave แล้ว"][tutorialStep]}</p>
-              <p className="mt-1 text-sm font-semibold text-white/65">{["ดูคำในกล่อง Find ก่อนเลือก", "พาพ่อมดเดินไปหาลูกแก้ว", "เลือกความหมายที่ตรงกับคำศัพท์", "ใช้ Space หรือ Enter เมื่อถูกซอมบี้ล้อม"][tutorialStep]}</p>
+              <p className="text-xs font-black uppercase tracking-widest text-amber-300">{tx("Tutorial ·")} {tutorialStep + 1} / 4</p>
+              <p className="mt-1 text-lg font-black">{["ดูคำศัพท์เป้าหมาย", "ใช้ WASD หรือลูกศรเพื่อเดิน", "เดินเก็บลูกแก้วที่ตรงคำศัพท์", "ได้คะแนนและชาร์จคลื่นพลังแล้ว"][tutorialStep]}</p>
+              <p className="mt-1 text-sm font-semibold text-white/65">{["ดูคำในกล่องหาคำแปลก่อนเลือก", "พาพ่อมดเดินไปหาลูกแก้ว", "เลือกความหมายที่ตรงกับคำศัพท์", "ใช้ Space หรือ Enter เมื่อถูกซอมบี้ล้อม"][tutorialStep]}</p>
             </div>
           )}
         </>

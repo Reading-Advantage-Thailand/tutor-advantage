@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { SettlementService } from "./settlementService";
+import {
+  SettlementService,
+  SettlementStaleError,
+  fingerprintPayoutLines,
+  isDevMakerCheckerOverrideEnabled,
+} from "./settlementService";
 
 const omiseMock = vi.hoisted(() => ({
   createOmiseTransfer: vi.fn(),
@@ -31,6 +36,8 @@ const prismaMock = vi.hoisted(() => ({
   },
   payoutLine: {
     create: vi.fn(),
+    createMany: vi.fn(),
+    count: vi.fn(),
     findMany: vi.fn(),
     findUnique: vi.fn(),
     deleteMany: vi.fn(),
@@ -63,6 +70,13 @@ vi.mock("@tutor-advantage/database", () => ({
 
 vi.mock("./omiseService", () => omiseMock);
 
+/** All payout lines written via payoutLine.createMany in this test. */
+function createdLines() {
+  return prismaMock.payoutLine.createMany.mock.calls.flatMap(
+    (call) => (call[0] as { data: unknown[] }).data,
+  );
+}
+
 describe("SettlementService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -72,10 +86,28 @@ describe("SettlementService", () => {
     prismaMock.settlementRun.findFirst.mockResolvedValue(null);
     prismaMock.tutorBadge.findMany.mockResolvedValue([]);
     prismaMock.payoutDocument.updateMany.mockResolvedValue({ count: 1 });
+    // Preview persists inside prisma.$transaction; by default run the callback
+    // against the same mock client (tests that need a separate tx override it).
+    prismaMock.$transaction.mockImplementation(async (callback: (tx: unknown) => unknown) =>
+      callback(prismaMock),
+    );
+    prismaMock.settlementRun.updateMany.mockResolvedValue({ count: 1 });
+    prismaMock.payoutLine.createMany.mockResolvedValue({ count: 0 });
+    // Approval tests below exercise the transfer/identity logic; the freshness
+    // gate has its own tests at the end of this file.
+    vi.spyOn(SettlementService, "assertRunReadyForReview").mockResolvedValue({
+      previewed: true,
+      lineCount: 1,
+      stale: false,
+      reasons: [],
+      changedTutorUserIds: [],
+      checkedAt: new Date().toISOString(),
+    });
   });
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.restoreAllMocks();
   });
 
   it("includes approved clawback adjustments in payout lines without negative WHT", async () => {
@@ -127,15 +159,13 @@ describe("SettlementService", () => {
         reason: true,
       },
     });
-    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
+    expect(createdLines()).toContainEqual(expect.objectContaining({
         tutorUserId: "tutor-1",
         payoutAmountMinor: -250000n,
         withholdingTaxMinor: 0n,
         netPayoutMinor: 0n,
         eligibilityStatus: "ELIGIBLE_BASE_ADJUSTED",
-      }),
-    });
+      }));
   });
 
   it("removes refunded payment volume before calculating MLM payouts", async () => {
@@ -177,13 +207,11 @@ describe("SettlementService", () => {
 
     await SettlementService.previewSettlement("2026-05", "admin-1");
 
-    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
+    expect(createdLines()).toContainEqual(expect.objectContaining({
         tutorUserId: "tutor-1",
         grossVolumeMinor: 0n,
         payoutAmountMinor: -2_500n,
-      }),
-    });
+      }));
   });
 
   it("adds approved positive adjustments before withholding tax", async () => {
@@ -217,13 +245,11 @@ describe("SettlementService", () => {
     );
 
     expect(result.totalPayoutSatang).toBe(10000);
-    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
+    expect(createdLines()).toContainEqual(expect.objectContaining({
         payoutAmountMinor: 10000n,
         withholdingTaxMinor: 300n,
         netPayoutMinor: 9700n,
-      }),
-    });
+      }));
   });
 
   it("rejects a concurrent preview for an active period", async () => {
@@ -261,7 +287,7 @@ describe("SettlementService", () => {
     await expect(
       SettlementService.previewSettlement("2026-05", "admin-1"),
     ).resolves.toMatchObject({ snapshotId: "run-cycle" });
-    expect(prismaMock.payoutLine.create).not.toHaveBeenCalled();
+    expect(createdLines()).toHaveLength(0);
   });
 
   it("does not recreate an approved settlement period", async () => {
@@ -298,12 +324,10 @@ describe("SettlementService", () => {
     await expect(
       SettlementService.previewSettlement("2026-05", "admin-1"),
     ).resolves.toMatchObject({ snapshotId: "run-mixed", payoutLineCount: 1 });
-    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
+    expect(createdLines()).toContainEqual(expect.objectContaining({
         tutorUserId: "healthy-root",
         eligibilityStatus: "ELIGIBLE",
-      }),
-    });
+      }));
   });
 
   it("compresses an active tutor around an inactive sponsor instead of dropping the subtree", async () => {
@@ -338,9 +362,7 @@ describe("SettlementService", () => {
     await expect(
       SettlementService.previewSettlement("2026-05", "admin-1"),
     ).resolves.toMatchObject({ snapshotId: "run-compressed", payoutLineCount: 1 });
-    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({ tutorUserId: "child", grossVolumeMinor: 100_000n }),
-    });
+    expect(createdLines()).toContainEqual(expect.objectContaining({ tutorUserId: "child", grossVolumeMinor: 100_000n }));
   });
 
   it("keeps historical payment volume with the tutor who owned the class at payment time", async () => {
@@ -368,12 +390,8 @@ describe("SettlementService", () => {
 
     await SettlementService.previewSettlement("2026-05", "admin-1");
 
-    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({ tutorUserId: "original-tutor", grossVolumeMinor: 100_000n }),
-    });
-    expect(prismaMock.payoutLine.create).not.toHaveBeenCalledWith({
-      data: expect.objectContaining({ tutorUserId: "new-tutor", grossVolumeMinor: 100_000n }),
-    });
+    expect(createdLines()).toContainEqual(expect.objectContaining({ tutorUserId: "original-tutor", grossVolumeMinor: 100_000n }));
+    expect(createdLines()).not.toContainEqual(expect.objectContaining({ tutorUserId: "new-tutor", grossVolumeMinor: 100_000n }));
   });
 
   it("calculates a compressed tree and blocks unverified payouts", async () => {
@@ -421,20 +439,16 @@ describe("SettlementService", () => {
     );
 
     expect(result.payoutLineCount).toBe(2);
-    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
+    expect(createdLines()).toContainEqual(expect.objectContaining({
         tutorUserId: "root",
         payoutAmountMinor: 0n,
         eligibilityStatus: "INELIGIBLE_NO_PV",
-      }),
-    });
-    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
+      }));
+    expect(createdLines()).toContainEqual(expect.objectContaining({
         tutorUserId: "child",
         badgeBonusMinor: 0n,
         eligibilityStatus: "ELIGIBLE",
-      }),
-    });
+      }));
   });
 
   it("selects successful payment volume by paidAt instead of updatedAt", async () => {
@@ -1023,5 +1037,214 @@ describe("SettlementService", () => {
     ).rejects.toThrow("TRANSFER_ALREADY_ACTIVE");
     expect(omiseMock.createOmiseTransfer).not.toHaveBeenCalled();
     expect(prismaMock.$executeRaw).toHaveBeenCalledOnce();
+  });
+
+  // ── F-2 / F-3 / transactional preview (admin G2) ──────────────────────────
+
+  function oneTutorWithBonus(adjustments: Array<{ adjustmentId: string; amountMinor: bigint }>) {
+    prismaMock.paymentIntent.findMany.mockResolvedValue([]);
+    prismaMock.enrollment.findMany.mockResolvedValue([]);
+    prismaMock.adjustment.findMany.mockResolvedValue(
+      adjustments.map((adjustment) => ({
+        ...adjustment,
+        tutorUserId: "tutor-1",
+        volumeMinor: null,
+        reason: "manual_bonus",
+      })),
+    );
+    prismaMock.user.findMany.mockResolvedValue([{
+      userId: "tutor-1",
+      sponsorTutorId: null,
+      isActive: true,
+      verificationStatus: "VERIFIED",
+      payoutIdentityVersion: 0,
+      settings: {},
+    }]);
+  }
+
+  it("refreshes a never-calculated (phantom) DRAFT instead of answering DRAFT_EXISTS", async () => {
+    oneTutorWithBonus([{ adjustmentId: "adj-1", amountMinor: 10_000n }]);
+    prismaMock.settlementRun.findFirst.mockResolvedValue({
+      settlementRunId: "run-phantom",
+      periodMonth: "2026-09",
+      status: "DRAFT",
+      previewPayload: {},
+    });
+    prismaMock.settlementRun.findUnique.mockResolvedValue({
+      settlementRunId: "run-phantom",
+      periodMonth: "2026-09",
+      status: "DRAFT",
+    });
+    prismaMock.payoutLine.findMany.mockResolvedValue([]);
+
+    const result = await SettlementService.previewSettlement("2026-09", "admin-1");
+
+    expect(result).toMatchObject({ snapshotId: "run-phantom", payoutLineCount: 1 });
+    expect(prismaMock.settlementRun.create).not.toHaveBeenCalled();
+    expect(prismaMock.settlementRun.updateMany).toHaveBeenCalledWith({
+      where: { settlementRunId: "run-phantom", status: "DRAFT" },
+      data: expect.objectContaining({
+        previewPayload: expect.objectContaining({
+          previewedBy: "admin-1",
+          approvedAdjustmentIds: ["adj-1"],
+          payoutLineCount: 1,
+        }),
+      }),
+    });
+  });
+
+  it("keeps answering DRAFT_EXISTS (with the run id) for a calculated draft", async () => {
+    prismaMock.settlementRun.findFirst.mockResolvedValue({
+      settlementRunId: "run-calculated",
+      status: "DRAFT",
+      previewPayload: { previewedAt: "2026-09-01T00:00:00.000Z" },
+    });
+    prismaMock.payoutLine.count.mockResolvedValue(3);
+
+    await expect(
+      SettlementService.previewSettlement("2026-09", "admin-1"),
+    ).rejects.toMatchObject({ message: "DRAFT_EXISTS", existingRunId: "run-calculated" });
+    expect(prismaMock.paymentIntent.findMany).not.toHaveBeenCalled();
+  });
+
+  it("writes the run and all of its lines inside one transaction", async () => {
+    oneTutorWithBonus([{ adjustmentId: "adj-1", amountMinor: 10_000n }]);
+    const tx = {
+      settlementRun: {
+        create: vi.fn().mockResolvedValue({ settlementRunId: "run-tx", status: "DRAFT" }),
+      },
+      payoutLine: { createMany: vi.fn().mockRejectedValue(new Error("disk full")) },
+    };
+    prismaMock.$transaction.mockImplementation(async (callback: (client: unknown) => unknown) =>
+      callback(tx),
+    );
+
+    await expect(
+      SettlementService.previewSettlement("2026-09", "admin-1"),
+    ).rejects.toThrow("disk full");
+    expect(tx.settlementRun.create).toHaveBeenCalledOnce();
+    expect(tx.payoutLine.createMany).toHaveBeenCalledOnce();
+    // Nothing was written outside the transaction (it rolls back as a unit).
+    expect(prismaMock.settlementRun.create).not.toHaveBeenCalled();
+    expect(prismaMock.payoutLine.createMany).not.toHaveBeenCalled();
+    expect(prismaMock.payoutLine.create).not.toHaveBeenCalled();
+  });
+
+  it("reports a run as stale when an adjustment is approved after it was calculated", async () => {
+    oneTutorWithBonus([{ adjustmentId: "adj-1", amountMinor: 10_000n }]);
+    const computed = await SettlementService.computeSettlement("2026-08");
+    const storedLines = computed.lines.map((line) => ({
+      ...line,
+      payoutRate: { toString: () => String(line.payoutRate) },
+    }));
+    prismaMock.payoutLine.findMany.mockResolvedValue(storedLines);
+    const run = {
+      settlementRunId: "run-08",
+      periodMonth: "2026-08",
+      previewPayload: {
+        previewedAt: "2026-09-01T00:00:00.000Z",
+        approvedAdjustmentIds: ["adj-1"],
+        linesFingerprint: fingerprintPayoutLines(computed.lines),
+      },
+    };
+
+    await expect(SettlementService.getRunFreshness(run)).resolves.toMatchObject({
+      stale: false,
+      lineCount: 1,
+      reasons: [],
+    });
+
+    // A checker approves +฿300 for the same tutor after the run was reviewed.
+    oneTutorWithBonus([
+      { adjustmentId: "adj-1", amountMinor: 10_000n },
+      { adjustmentId: "adj-2", amountMinor: 30_000n },
+    ]);
+    const stale = await SettlementService.getRunFreshness(run);
+    expect(stale.stale).toBe(true);
+    expect(stale.reasons).toEqual(["LINES_CHANGED", "ADJUSTMENTS_CHANGED"]);
+    expect(stale.changedTutorUserIds).toEqual(["tutor-1"]);
+  });
+
+  it("refuses to submit/approve an empty, never-calculated or stale run", async () => {
+    vi.mocked(SettlementService.assertRunReadyForReview).mockRestore();
+    const freshness = vi.spyOn(SettlementService, "getRunFreshness");
+    const run = { settlementRunId: "run-x", periodMonth: "2026-09", previewPayload: {} };
+
+    freshness.mockResolvedValueOnce({
+      previewed: false, lineCount: 0, stale: true, reasons: ["NOT_PREVIEWED"],
+      changedTutorUserIds: [], checkedAt: "",
+    });
+    await expect(SettlementService.assertRunReadyForReview(run)).rejects.toThrow("SETTLEMENT_EMPTY");
+
+    freshness.mockResolvedValueOnce({
+      previewed: false, lineCount: 2, stale: true, reasons: ["NOT_PREVIEWED"],
+      changedTutorUserIds: [], checkedAt: "",
+    });
+    await expect(SettlementService.assertRunReadyForReview(run)).rejects.toThrow("SETTLEMENT_NOT_PREVIEWED");
+
+    freshness.mockResolvedValueOnce({
+      previewed: true, lineCount: 2, stale: true, reasons: ["ADJUSTMENTS_CHANGED"],
+      changedTutorUserIds: ["tutor-1"], checkedAt: "",
+    });
+    await expect(SettlementService.assertRunReadyForReview(run)).rejects.toBeInstanceOf(SettlementStaleError);
+  });
+
+  it("does not approve (or send transfers for) a stale run", async () => {
+    omiseMock.isOmiseConfigured.mockReturnValue(true);
+    prismaMock.settlementRun.findUnique.mockResolvedValue({
+      settlementRunId: "run-stale",
+      periodMonth: "2026-08",
+      status: "SUBMITTED",
+      previewPayload: { previewedAt: "x" },
+    });
+    vi.mocked(SettlementService.assertRunReadyForReview).mockRejectedValue(
+      new SettlementStaleError({
+        previewed: true, lineCount: 1, stale: true, reasons: ["ADJUSTMENTS_CHANGED"],
+        changedTutorUserIds: ["tutor-1"], checkedAt: "",
+      }),
+    );
+
+    await expect(
+      SettlementService.approveSettlement("run-stale", "checker-1"),
+    ).rejects.toThrow("SETTLEMENT_STALE:tutor-1");
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
+    expect(omiseMock.createOmiseTransfer).not.toHaveBeenCalled();
+  });
+
+  it("lets a stale SUBMITTED run be recalculated back to DRAFT only when asked", async () => {
+    prismaMock.settlementRun.findUnique.mockResolvedValue({
+      settlementRunId: "run-sub",
+      periodMonth: "2026-08",
+      status: "SUBMITTED",
+      createdBy: "admin-1",
+    });
+    await expect(SettlementService.refreshSettlementRun("run-sub")).resolves.toMatchObject({
+      refreshed: false,
+    });
+
+    const preview = vi.spyOn(SettlementService, "previewSettlement").mockResolvedValue({
+      snapshotId: "run-sub",
+      periodMonth: "2026-08",
+      totalPayoutSatang: 1,
+      totalNetPayoutSatang: 1,
+      payoutLineCount: 1,
+      status: "DRAFT",
+    });
+    await expect(
+      SettlementService.refreshSettlementRun("run-sub", { allowSubmitted: true, actorId: "admin-2" }),
+    ).resolves.toMatchObject({ refreshed: true, status: "DRAFT" });
+    expect(prismaMock.settlementRun.updateMany).toHaveBeenCalledWith({
+      where: { settlementRunId: "run-sub", status: "SUBMITTED" },
+      data: { status: "REFRESHING" },
+    });
+    expect(preview).toHaveBeenCalledWith("2026-08", "admin-2", { refreshRunId: "run-sub" });
+  });
+
+  it("enables the maker-checker bypass only with explicit opt-in outside production", () => {
+    expect(isDevMakerCheckerOverrideEnabled({ ENABLE_DEV_ROUTES: "true", NODE_ENV: "development" })).toBe(true);
+    expect(isDevMakerCheckerOverrideEnabled({ ENABLE_DEV_ROUTES: "true", NODE_ENV: "production" })).toBe(false);
+    expect(isDevMakerCheckerOverrideEnabled({ NODE_ENV: "development" })).toBe(false);
+    expect(isDevMakerCheckerOverrideEnabled({ ENABLE_DEV_ROUTES: "false", NODE_ENV: "staging" })).toBe(false);
+    expect(isDevMakerCheckerOverrideEnabled({ ENABLE_DEV_ROUTES: "true", NODE_ENV: "staging" })).toBe(true);
   });
 });

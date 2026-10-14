@@ -18,6 +18,8 @@ import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { Wand2, BookOpen, AlertTriangle } from 'lucide-react'
 import type { Difficulty } from '@/store/useGameStore'
+import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type SpellweaversRunGameResult = {
   xp: number
@@ -100,7 +102,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
       clearTimeout(timeout)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [gamePhase])
 
   useEffect(() => {
     if (gamePhase !== 'playing') {
@@ -154,6 +156,9 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT)
   }, [dimensions])
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT })
+
   const laneWidth = GAME_WIDTH / SPELLWEAVERS_RUN_CONFIG.laneCount
 
   const handleLaneTap = useCallback((lane: Lane) => {
@@ -184,7 +189,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
     }
     
     const x = clientX - rect.left
-    const gameX = x / scale
+    const gameX = (x - boardOffset.x) / scale
     const laneIndex = Math.floor(gameX / laneWidth)
     const lanes: Lane[] = ['left', 'center', 'right']
     const lane = lanes[Math.min(Math.max(laneIndex, 0), 2)]
@@ -216,24 +221,24 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
-          gameTitle="Spellweaver's Run"
-          gameSubtitle="Enchanted Forest Runner"
+          gameTitle={tx("Spellweaver's Run")}
+          gameSubtitle={tx("Enchanted Forest Runner")}
           vocabulary={vocabulary}
           instructions={[
-            { step: 1, text: 'Collect word orbs in the correct order to form the sentence.', icon: BookOpen },
-            { step: 2, text: 'The translation scrolls at the top - use it to find the next word!', icon: BookOpen },
-            { step: 3, text: 'Wrong words drain your mana. Run out of mana and the spell fails!', icon: AlertTriangle },
+            { step: 1, text: tx("Collect word orbs in the correct order to form the sentence."), icon: BookOpen },
+            { step: 2, text: tx("The translation scrolls at the top - use it to find the next word!"), icon: BookOpen },
+            { step: 3, text: tx("Wrong words drain your mana. Run out of mana and the spell fails!"), icon: AlertTriangle },
           ]}
-          proTip="Watch the translation carefully. Tap the lane when the correct orb enters the collection zone!"
+          proTip={tx("Watch the translation carefully. Tap the lane when the correct orb enters the collection zone!")}
           controls={[
-            { label: 'Left Lane', keys: '← / A', color: 'bg-purple-500' },
-            { label: 'Center Lane', keys: '↓ / S', color: 'bg-indigo-500' },
-            { label: 'Right Lane', keys: '→ / D', color: 'bg-violet-500' },
+            { label: tx("Left Lane"), keys: '← / A', color: 'bg-purple-500' },
+            { label: tx("Center Lane"), keys: '↓ / S', color: 'bg-indigo-500' },
+            { label: tx("Right Lane"), keys: '→ / D', color: 'bg-violet-500' },
           ]}
-          startButtonText="Begin the Run"
+          startButtonText={tx("Begin the Run")}
           icon={Wand2}
           onStart={() => {
             resetGame()
@@ -241,15 +246,15 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
           }}
         >
           <div className="flex items-center gap-2">
-            <span className="text-xs uppercase tracking-wider text-white/50">Difficulty:</span>
+            <span className="text-xs uppercase tracking-wider text-white/50">{tx("Difficulty:")}</span>
             <select
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value as Difficulty)}
               className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
             >
-              <option value="easy">Easy</option>
-              <option value="normal">Medium</option>
-              <option value="hard">Hard</option>
+              <option value="easy">{tx("Easy")}</option>
+              <option value="normal">{tx("Medium")}</option>
+              <option value="hard">{tx("Hard")}</option>
             </select>
           </div>
         </GameStartScreen>
@@ -261,7 +266,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
     <div
       ref={containerRef}
       style={{ minHeight: '400px' }}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       onClick={handleStageClick}
       onTouchStart={handleStageClick}
     >
@@ -273,7 +278,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
             style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
           >
             <Layer>
-              <Group scale={{ x: scale, y: scale }} offsetX={0} offsetY={0}>
+              <Group scale={{ x: scale, y: scale }} x={boardOffset.x} y={boardOffset.y}>
                 <Rect
                   x={0}
                   y={0}
@@ -383,7 +388,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
                   <Text
                     x={GAME_WIDTH / 2 - 20}
                     y={2}
-                    text={`Mana: ${gameState.mana}`}
+                    text={tx("Mana: {mana}", { mana: gameState.mana })}
                     fontSize={tinyTextSize}
                     fill="white"
                     fontStyle="bold"
@@ -393,7 +398,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
                 <Text
                   x={GAME_WIDTH - 80}
                   y={SPELLWEAVERS_RUN_CONFIG.scrollHeight + 30}
-                  text={`Score: ${gameState.score}`}
+                  text={tx("Score: {score}", { score: gameState.score })}
                   fontSize={smallTextSize}
                   fill="white"
                   fontStyle="bold"
@@ -402,7 +407,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
                 <Text
                   x={GAME_WIDTH - 80}
                   y={SPELLWEAVERS_RUN_CONFIG.scrollHeight + 50}
-                  text={`Combo: ${gameState.combo}`}
+                  text={tx("Combo: {combo}", { combo: gameState.combo })}
                   fontSize={tinyTextSize}
                   fill="#a5b4fc"
                 />
@@ -415,14 +420,14 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
       {gamePhase === 'ended' && gameState && results && (
         <GameEndScreen
           status={gameState.status === 'victory' ? 'victory' : 'defeat'}
-          title={gameState.status === 'victory' ? 'Sentence Complete!' : 'Mana Depleted!'}
-          subtitle={gameState.status === 'victory' ? 'You wove the spell perfectly!' : 'The magic faded away...'}
+          title={gameState.status === 'victory' ? tx("Sentence Complete!") : tx("Mana Depleted!")}
+          subtitle={gameState.status === 'victory' ? tx("You wove the spell perfectly!") : tx("The magic faded away...")}
           score={totalCorrect * 10}
           xp={results.xp}
           accuracy={results.accuracy}
           customStats={[
-            { label: 'Words Collected', value: totalCorrect, icon: BookOpen },
-            { label: 'Sentences Complete', value: gameState.sentencesCompleted },
+            { label: tx("Words Collected"), value: totalCorrect, icon: BookOpen },
+            { label: tx("Sentences Complete"), value: gameState.sentencesCompleted },
           ]}
           onRestart={() => {
             resetGame()

@@ -16,7 +16,7 @@ async function createSessionToken() {
 
 function createRequest(path: string, token?: string, headers?: HeadersInit) {
   const requestHeaders = new Headers(headers);
-  if (token) {
+  if (token && !requestHeaders.has("cookie")) {
     requestHeaders.set("cookie", `student-session=${token}`);
   }
 
@@ -75,5 +75,28 @@ describe("student LIFF middleware", () => {
       "http://localhost:3004/login?redirect=%2Fdashboard"
     );
     expect(response.headers.get("set-cookie")).toContain("student-session=");
+  });
+
+  it("uses only the student session for student service API requests", async () => {
+    const token = await createSessionToken();
+    const response = await middleware(createRequest(
+      "/api/learning/book-cycles/cycle-1/voice-entitlement",
+      undefined,
+      { cookie: `tutor_session=tutor-token; student-session=${token}` },
+    ));
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("x-middleware-request-authorization")).toBe(`Bearer ${token}`);
+    expect(response.headers.get("x-middleware-request-cookie") || "").not.toContain("tutor-token");
+  });
+
+  it("rejects student service API requests without a student session", async () => {
+    const response = await middleware(createRequest(
+      "/api/learning/dashboard/summary",
+      undefined,
+      { cookie: "tutor_session=tutor-token" },
+    ));
+
+    expect(response.status).toBe(401);
   });
 });

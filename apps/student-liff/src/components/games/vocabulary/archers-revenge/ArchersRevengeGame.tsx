@@ -20,6 +20,9 @@ import { GameEndScreen } from "@/components/games/game/GameEndScreen";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { Target, Shield, Zap, Sword, Heart, Clock, Award } from "lucide-react";
+import { tx } from "@/lib/games/gameText";
+import { computeLetterbox } from "@/lib/games/letterbox";
+import { fitText } from "@/lib/games/textFit";
 
 type ArchersRevengeGameProps = {
   vocabulary: VocabularyItem[];
@@ -27,7 +30,7 @@ type ArchersRevengeGameProps = {
 };
 
 const MOBILE_GAME_CONTAINER_CLASS =
-  "relative h-dvh min-h-[560px] w-full overflow-hidden rounded-none bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none sm:h-[75vh] sm:rounded-3xl md:aspect-video md:h-auto";
+  "relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none";
 
 export function ArchersRevengeGame({
   vocabulary,
@@ -71,7 +74,7 @@ export function ArchersRevengeGame({
     updateDimensions();
 
     return () => observer.disconnect();
-  }, [containerRef]);
+  }, [containerRef, gamePhase]);
 
   useEffect(() => {
     if (gamePhase === "playing") {
@@ -140,38 +143,41 @@ export function ArchersRevengeGame({
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT);
   }, [dimensions]);
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT });
+
   const handleStageClick = useCallback((e: KonvaEventObject<MouseEvent | TouchEvent | Event>) => {
     if (gamePhase !== "playing") return;
     const stage = e.target.getStage();
     const pointerPosition = stage?.getPointerPosition();
     if (pointerPosition) {
-      const x = pointerPosition.x / scale;
+      const x = (pointerPosition.x - boardOffset.x) / scale;
       setGameState(prev => prev ? fireArrow(prev, x) : null);
     }
-  }, [gamePhase, scale]);
+  }, [gamePhase, scale, boardOffset.x]);
 
   if (gamePhase === "start") {
     return (
       <div ref={containerRef} className={MOBILE_GAME_CONTAINER_CLASS}>
         <GameStartScreen
-          gameTitle="Archer's Revenge"
-          gameSubtitle="Defend the Realm"
+          gameTitle={tx("Archer's Revenge")}
+          gameSubtitle={tx("Defend the Realm")}
           vocabulary={vocabulary}
           instructions={[
-            { step: 1, text: "Target word is shown at the top. Find the enemy with the matching translation.", icon: Target },
-            { step: 2, text: "Tap a column to fire an arrow. Only the enemy with their SHIELD DOWN is vulnerable.", icon: Shield },
-            { step: 3, text: "Don't hit shielded enemies! They will shoot back and damage your HP.", icon: Zap },
+            { step: 1, text: tx("Target word is shown at the top. Find the enemy with the matching translation."), icon: Target },
+            { step: 2, text: tx("Tap a column to fire an arrow. Only the enemy with their SHIELD DOWN is vulnerable."), icon: Shield },
+            { step: 3, text: tx("Don't hit shielded enemies! They will shoot back and damage your HP."), icon: Zap },
           ]}
-          proTip="The target changes every few seconds. Keep an eye on the top text!"
+          proTip={tx("The target changes every few seconds. Keep an eye on the top text!")}
           controls={[
-            { label: "Shoot", keys: "Tap / Click", color: "bg-amber-500" },
+            { label: tx("Shoot"), keys: tx("Tap / Click"), color: "bg-amber-500" },
           ]}
-          startButtonText="Draw Your Bow"
+          startButtonText={tx("Draw Your Bow")}
           icon={Sword}
           onStart={startGame}
         >
           <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-slate-400" style={{ fontSize: getEffectiveTextSize(16) }}>Difficulty:</span>
+            <span className="text-sm font-medium text-slate-400" style={{ fontSize: getEffectiveTextSize(16) }}>{tx("Difficulty:")}</span>
             <div className="flex gap-2">
               {(["easy", "medium", "hard"] as Difficulty[]).map((d) => (
                 <button
@@ -203,7 +209,7 @@ export function ArchersRevengeGame({
             onClick={handleStageClick}
             onTap={handleStageClick}
           >
-            <Layer scaleX={scale} scaleY={scale}>
+            <Layer scaleX={scale} scaleY={scale} x={boardOffset.x} y={boardOffset.y}>
               {/* Background */}
               <Rect x={0} y={0} width={GAME_WIDTH} height={GAME_HEIGHT} fill="#0f172a" />
               
@@ -224,7 +230,7 @@ export function ArchersRevengeGame({
                 <Text
                   x={GAME_WIDTH / 2}
                   y={55}
-                  text="Target Translation"
+                  text={tx("Target Translation")}
                   fontSize={getEffectiveTextSize(16)}
                   fill="#94a3b8"
                   align="center"
@@ -235,9 +241,9 @@ export function ArchersRevengeGame({
 
               {/* Stats */}
               <Group y={110}>
-                <Text x={30} y={0} text={`HP: ${gameState.hp}/${gameState.maxHp}`} fontSize={18} fontStyle="bold" fill="#ef4444" />
-                <Text x={GAME_WIDTH - 120} y={0} text={`Score: ${Math.floor(gameState.score)}`} fontSize={18} fontStyle="bold" fill="#22c55e" align="right" width={90} />
-                <Text x={GAME_WIDTH / 2 - 40} y={0} text={`Wave ${gameState.wave}`} fontSize={18} fontStyle="bold" fill="#3b82f6" align="center" width={80} />
+                <Text x={30} y={0} text={tx("HP: {hp}/{maxHp}", { hp: gameState.hp, maxHp: gameState.maxHp })} fontSize={18} fontStyle="bold" fill="#ef4444" />
+                <Text x={GAME_WIDTH - 120} y={0} text={tx("Score: {score}", { score: Math.floor(gameState.score) })} fontSize={18} fontStyle="bold" fill="#22c55e" align="right" width={90} />
+                <Text x={GAME_WIDTH / 2 - 40} y={0} text={tx("Wave {wave}", { wave: gameState.wave })} fontSize={18} fontStyle="bold" fill="#3b82f6" align="center" width={80} />
               </Group>
 
               {/* Enemies */}
@@ -254,16 +260,37 @@ export function ArchersRevengeGame({
                   {!enemy.shieldUp && (
                     <Circle radius={28} stroke="#10b981" strokeWidth={2} opacity={0.5} />
                   )}
-                  <Text
-                    x={-40}
-                    y={25}
-                    text={enemy.translation}
-                    fontSize={getEffectiveTextSize(16)}
-                    fontStyle="bold"
-                    fill="white"
-                    width={80}
-                    align="center"
-                  />
+                  {(() => {
+                    // One line, as wide as the gap between neighbours: shrink
+                    // to fit (never wrap mid-word) so labels can't overlap.
+                    const labelWidth = ARCHERS_REVENGE_CONFIG.layout.enemySpacing.x - 4;
+                    const label = fitText(enemy.translation, {
+                      width: labelWidth,
+                      height: 16,
+                      maxFontSize: Math.min(15, getEffectiveTextSize(15)),
+                      minFontSize: 8,
+                      lineHeight: 1,
+                      fontFamily: "Arial",
+                      fontStyle: "bold",
+                    });
+                    return (
+                      <Text
+                        x={-labelWidth / 2}
+                        y={24}
+                        text={label.lines.join(" ")}
+                        fontSize={label.fontSize}
+                        fontStyle="bold"
+                        fill="white"
+                        width={labelWidth}
+                        height={16}
+                        align="center"
+                        verticalAlign="middle"
+                        wrap="none"
+                        shadowColor="#020617"
+                        shadowBlur={3}
+                      />
+                    );
+                  })()}
                 </Group>
               ))}
 
@@ -315,16 +342,16 @@ export function ArchersRevengeGame({
       {gamePhase === "ended" && gameState && (
         <GameEndScreen
           status={gameState.status === "victory" ? "victory" : "defeat"}
-          title={gameState.status === "victory" ? "Champion Archer!" : "Wall Breached!"}
-          subtitle={gameState.status === "victory" ? "The realm is safe... for now." : "The monsters have overrun the defense."}
+          title={gameState.status === "victory" ? tx("Champion Archer!") : tx("Wall Breached!")}
+          subtitle={gameState.status === "victory" ? tx("The realm is safe... for now.") : tx("The monsters have overrun the defense.")}
           score={Math.floor(gameState.score)}
           xp={calculateXP(gameState)}
           accuracy={gameState.totalAttempts > 0 ? gameState.correctAnswers / gameState.totalAttempts : 0}
           customStats={[
-            { label: "Correct", value: gameState.correctAnswers, icon: Target },
-            { label: "Wave", value: gameState.wave, icon: Award },
-            { label: "Time", value: `${Math.floor(gameState.gameTime / 1000)}s`, icon: Clock },
-            { label: "Health", value: `${gameState.hp}/${gameState.maxHp}`, icon: Heart },
+            { label: tx("Correct"), value: gameState.correctAnswers, icon: Target },
+            { label: tx("Wave"), value: gameState.wave, icon: Award },
+            { label: tx("Time"), value: `${Math.floor(gameState.gameTime / 1000)}s`, icon: Clock },
+            { label: tx("Health"), value: `${gameState.hp}/${gameState.maxHp}`, icon: Heart },
           ]}
           onRestart={() => {
             setGamePhase("start");

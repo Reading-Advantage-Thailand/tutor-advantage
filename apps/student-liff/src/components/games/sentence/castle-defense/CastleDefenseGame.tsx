@@ -33,8 +33,6 @@ import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { getCachedGameImage, loadGameImage } from "@/lib/games/gameAssetPreloader";
 
 import {
-  GAME_WIDTH,
-  GAME_HEIGHT,
   TILE_SIZE,
   GAME_TICK_MS,
   ANIMATION_FRAME_MS,
@@ -44,9 +42,12 @@ import {
   WORD_RADIUS,
   inRange,
   calculateCastleDefenseXP,
+  computeCastleDefenseCamera,
+  type CastleDefenseCameraFit,
   type SentenceItem,
 } from "@/lib/games/castleDefense";
 import { BackgroundLayer } from "./BackgroundLayer";
+import { tx } from "@/lib/games/gameText";
 
 const buildSpriteGrid = (width: number, height: number) => {
   const fw = width / 3;
@@ -85,6 +86,13 @@ type Props = {
   autoStart?: boolean;
   restartOnComplete?: boolean;
   tutorialMode?: boolean;
+  /**
+   * "cover" (default) fills the container and follows the player; "contain"
+   * letterboxes the whole board below the HUD (presenter demo stage).
+   */
+  fit?: CastleDefenseCameraFit;
+  /** "contain" only: px at the bottom kept clear of the board (host overlays). */
+  insetBottom?: number;
 };
 
 const GAME_DURATION_MS = 60_000;
@@ -115,7 +123,7 @@ const getCachedCastleAssets = (): GameAssets | null => {
     : null;
 };
 
-export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, restartOnComplete = true, tutorialMode = false }: Props) {
+export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, restartOnComplete = true, tutorialMode = false, fit = "cover", insetBottom = 0 }: Props) {
   const t = useScopedI18n("pages.student.gamesPage.castleDefense");
   const gameVocabulary = useMemo(() => buildRoundSentences(vocabulary), [vocabulary]);
 
@@ -158,6 +166,11 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
   const [enemyFrame, setEnemyFrame] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const hudRef = useRef<HTMLDivElement>(null);
+  // Height of the top HUD (relative to the game root). In "contain" mode the
+  // board is laid out below it so the HUD never covers word orbs.
+  const [hudInset, setHudInset] = useState(0);
+  const cameraOptionsRef = useRef({ fit, insetTop: 0, insetBottom });
   const previousTowerIds = useRef<string[]>([]);
   const lastFrameRef = useRef<number>(0);
   const rafRef = useRef<number>(0);
@@ -190,6 +203,21 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
+
+  useEffect(() => {
+    cameraOptionsRef.current = { fit, insetTop: hudInset, insetBottom };
+  }, [fit, hudInset, insetBottom]);
+
+  const hasGameState = gameState !== null;
+  useEffect(() => {
+    const hud = hudRef.current;
+    if (!hud) return;
+    const measure = () => setHudInset(Math.ceil(hud.offsetTop + hud.offsetHeight + 8));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(hud);
+    return () => observer.disconnect();
+  }, [hasStarted, assets, hasGameState]);
 
   const handleBackToMenu = useCallback(() => {
     setHasStarted(false);
@@ -326,25 +354,9 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
           gameVocabulary,
         );
 
-        // Update camera
+        // Update camera (always sized to the measured container, never the viewport)
         if (dimensions.width > 0 && dimensions.height > 0) {
-          const scaleX = dimensions.width / GAME_WIDTH;
-          const scaleY = dimensions.height / GAME_HEIGHT;
-          const scale = Math.max(scaleX, scaleY, 0.8);
-
-          let camX = dimensions.width / 2 - nextState.player.x * scale;
-          let camY = dimensions.height / 2 - nextState.player.y * scale;
-
-          const minX = dimensions.width - GAME_WIDTH * scale;
-          const minY = dimensions.height - GAME_HEIGHT * scale;
-
-          if (minX > 0) camX = (dimensions.width - GAME_WIDTH * scale) / 2;
-          else camX = Math.max(minX, Math.min(0, camX));
-
-          if (minY > 0) camY = (dimensions.height - GAME_HEIGHT * scale) / 2;
-          else camY = Math.max(minY, Math.min(0, camY));
-
-          setCamera({ x: camX, y: camY, scale });
+          setCamera(computeCastleDefenseCamera(dimensions, nextState.player, cameraOptionsRef.current));
         }
 
         // Animation frames
@@ -442,7 +454,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
 
   if (!assets) {
     if (autoStart) {
-      return <div className="h-dvh w-screen bg-slate-950" />;
+      return <div className="h-full min-h-0 w-full bg-slate-950" />;
     }
     return (
       <div className="relative h-[60vh] w-full overflow-hidden rounded-2xl bg-slate-950 flex items-center justify-center border border-white/10 md:aspect-video md:h-auto">
@@ -455,7 +467,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
 
   if (!hasStarted) {
     if (autoStart) {
-      return <div className="h-dvh w-screen bg-slate-950" />;
+      return <div className="h-full min-h-0 w-full bg-slate-950" />;
     }
     return (
       <div className="relative h-[60vh] w-full overflow-hidden rounded-2xl bg-slate-950 border border-white/10 md:aspect-video md:h-auto">
@@ -474,7 +486,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
             <button
               onClick={() => setShowRanking(true)}
               className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-amber-400 transition-colors border border-white/10"
-              title="Leaderboard"
+              title={tx("Leaderboard")}
               style={{ minHeight: getEffectiveTextSize(44), minWidth: getEffectiveTextSize(44) }}
             >
               <Trophy className="w-5 h-5" />
@@ -536,7 +548,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden bg-slate-900 touch-none select-none h-dvh w-screen rounded-none"
+      className="relative h-full min-h-0 w-full overflow-hidden bg-slate-900 touch-none select-none rounded-none"
     >
       {gameState && dimensions.width > 0 && dimensions.height > 0 && (
         <Stage width={dimensions.width} height={dimensions.height}>
@@ -749,13 +761,13 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
       )}
 
       {gameState && (
-        <div className="absolute top-[max(0.5rem,env(safe-area-inset-top))] inset-x-0 z-20 pointer-events-none flex flex-col items-center gap-1.5 px-3">
+        <div ref={hudRef} className="absolute top-[max(0.5rem,env(safe-area-inset-top))] inset-x-0 z-20 pointer-events-none flex flex-col items-center gap-1.5 px-3">
 
           {/* Top status bar: Score | Timer | Castle HP */}
           <div className="flex w-full items-center justify-between gap-2">
             {/* Score */}
             <div className="flex flex-col items-center bg-slate-950/80 border border-white/10 px-2.5 py-1 rounded-xl shadow-lg backdrop-blur min-w-[52px]">
-              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">{t("hud.score")}</span>
+              <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wide leading-none">{t("hud.score")}</span>
               <span className="text-sm font-black text-white leading-tight">{gameState.score}</span>
             </div>
 
@@ -771,7 +783,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
 
             {/* Castle HP */}
             <div className="flex flex-col items-center bg-slate-950/80 border border-white/10 px-2.5 py-1 rounded-xl shadow-lg backdrop-blur min-w-[52px]">
-              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">{t("hud.castleHp")}</span>
+              <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wide leading-none">{t("hud.castleHp")}</span>
               <span className="text-sm font-black text-rose-400 leading-tight">{gameState.base.hp}</span>
               <div className="w-10 h-1 bg-slate-700 rounded-full overflow-hidden mt-0.5">
                 <div
@@ -783,7 +795,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
           </div>
 
           {/* Wave info */}
-          <div className="bg-slate-950/70 border border-white/10 px-3 py-0.5 rounded-full shadow-lg text-white text-[10px] font-bold uppercase tracking-widest">
+          <div className="bg-slate-950/70 border border-white/10 px-3 py-0.5 rounded-full shadow-lg text-white text-[11px] font-bold uppercase tracking-wide">
             {t("hud.wave", {
               current: gameState.wave,
               killed: gameState.enemiesKilledThisWave,
@@ -802,7 +814,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
 
           {/* Progress (blank slots) */}
           <div className="bg-slate-950/70 border border-white/10 px-3 py-1 rounded-xl shadow-lg backdrop-blur-md text-center w-full">
-            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block leading-none mb-0.5">
+            <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wide block leading-none mb-0.5">
               {t("hud.progress")}
             </span>
             <div className="text-xs font-semibold text-white">
@@ -823,7 +835,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
 
           {/* Sentence complete badge */}
           {gameState.sentenceCompleted && (
-            <div className="bg-emerald-600/90 border border-emerald-300/60 px-3 py-0.5 rounded-full shadow-lg text-white text-[10px] font-black uppercase tracking-widest">
+            <div className="bg-emerald-600/90 border border-emerald-300/60 px-3 py-0.5 rounded-full shadow-lg text-white text-[11px] font-black uppercase tracking-wide">
               {t("messages.sentenceComplete")}
             </div>
           )}

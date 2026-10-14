@@ -9,6 +9,13 @@ const isDev = process.env.NODE_ENV === "development";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  poweredByHeader: false,
+  // The Next dev badge sat on top of the mobile tab bar / page actions.
+  devIndicators: false,
+  experimental: {
+    // Tree-shake icon barrels (only the icons used are bundled).
+    optimizePackageImports: ["lucide-react"],
+  },
   async headers() {
     // Skip security headers in development — they block Next.js HMR / Turbopack
     if (isDev) return [];

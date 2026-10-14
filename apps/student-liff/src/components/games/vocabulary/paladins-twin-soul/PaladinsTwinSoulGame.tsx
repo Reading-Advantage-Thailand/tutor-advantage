@@ -18,6 +18,8 @@ import { useSound } from "@/hooks/useSound";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { VirtualDPad } from "@/components/ui/VirtualDPad";
+import { tx } from "@/lib/games/gameText";
+import { computeLetterbox } from "@/lib/games/letterbox";
 
 interface PaladinsTwinSoulGameProps {
   vocabulary: VocabularyItem[];
@@ -25,7 +27,7 @@ interface PaladinsTwinSoulGameProps {
 }
 
 const MOBILE_GAME_CONTAINER_CLASS =
-  "relative h-dvh min-h-[560px] w-full overflow-hidden rounded-none bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none sm:h-[75vh] sm:rounded-3xl md:aspect-video md:h-auto";
+  "relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none";
 
 export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSoulGameProps) {
   const { containerRef, enterFullscreen, exitFullscreen } = useGameFullscreen();
@@ -75,7 +77,7 @@ export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSou
     updateDimensions();
 
     return () => observer.disconnect();
-  }, [containerRef]);
+  }, [containerRef, gamePhase]);
 
   const hasGameState = !!gameState;
   useEffect(() => {
@@ -157,24 +159,27 @@ export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSou
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT);
   }, [dimensions]);
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT });
+
   if (gamePhase === "start") {
     return (
       <div ref={containerRef} className={MOBILE_GAME_CONTAINER_CLASS}>
         <GameStartScreen
-          gameTitle="Paladin's Twin-Soul"
-          gameSubtitle="Gargoyle Defense"
+          gameTitle={tx("Paladin's Twin-Soul")}
+          gameSubtitle={tx("Gargoyle Defense")}
           vocabulary={vocabulary}
           instructions={[
-            { step: 1, text: "Move left/right to defend against gargoyles.", icon: Shield },
-            { step: 2, text: "Rescue your twin soul from the correct enemy.", icon: Heart },
-            { step: 3, text: "Match the translation to identify your ally!", icon: Target },
+            { step: 1, text: tx("Move left/right to defend against gargoyles."), icon: Shield },
+            { step: 2, text: tx("Rescue your twin soul from the correct enemy."), icon: Heart },
+            { step: 3, text: tx("Match the translation to identify your ally!"), icon: Target },
           ]}
-          proTip="Double your fire rate by rescuing your soul mate!"
+          proTip={tx("Double your fire rate by rescuing your soul mate!")}
           controls={[
-            { label: "Move", keys: "Arrows / A-D", color: "bg-amber-500" },
-            { label: "Shoot", keys: "Auto-fire", color: "bg-amber-500" },
+            { label: tx("Move"), keys: tx("Arrows / A-D"), color: "bg-amber-500" },
+            { label: tx("Shoot"), keys: tx("Auto-fire"), color: "bg-amber-500" },
           ]}
-          startButtonText="Begin Defense"
+          startButtonText={tx("Begin Defense")}
           icon={Sword}
           onStart={startGame}
         />
@@ -189,7 +194,7 @@ export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSou
       {gamePhase === "playing" && gameState && (
         <>
           <Stage width={dimensions.width} height={dimensions.height}>
-            <Layer scaleX={scale} scaleY={scale}>
+            <Layer scaleX={scale} scaleY={scale} x={boardOffset.x} y={boardOffset.y}>
               <Rect x={0} y={0} width={GAME_WIDTH} height={GAME_HEIGHT} fill={PALADINS_TWIN_SOUL_CONFIG.colors.background} />
               
               {/* Stars Background */}
@@ -313,11 +318,11 @@ export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSou
               {/* HUD Stats */}
               <Group y={20}>
                 <Group x={30} y={0}>
-                  <Text text={`WAVE ${gameState.wave}`} fill="white" fontSize={getEffectiveTextSize(16)} opacity={0.7} />
-                  <Text y={20} text={`Score: ${gameState.score}`} fill="#22c55e" fontSize={getEffectiveTextSize(18)} fontStyle="bold" />
+                  <Text text={tx("WAVE {wave}", { wave: gameState.wave })} fill="white" fontSize={getEffectiveTextSize(16)} opacity={0.7} />
+                  <Text y={20} text={tx("Score: {score}", { score: gameState.score })} fill="#22c55e" fontSize={getEffectiveTextSize(18)} fontStyle="bold" />
                 </Group>
                 <Group x={GAME_WIDTH - 80} y={0}>
-                  <Text text="HP" fill="#ef4444" fontSize={getEffectiveTextSize(16)} opacity={0.7} />
+                  <Text text={tx("HP")} fill="#ef4444" fontSize={getEffectiveTextSize(16)} opacity={0.7} />
                   <Text y={20} text={gameState.player.hp.toString()} fill="#ef4444" fontSize={getEffectiveTextSize(24)} fontStyle="bold" />
                 </Group>
               </Group>
@@ -334,8 +339,8 @@ export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSou
       {gamePhase === "ended" && gameState && (
         <GameEndScreen
           status={gameState.status as "victory" | "defeat" | "complete"}
-          title={gameState.status === "victory" ? "Defense Successful!" : "Realm Overrun!"}
-          subtitle={gameState.status === "victory" ? "The gargoyles have been repelled." : "The twin souls have been lost."}
+          title={gameState.status === "victory" ? tx("Defense Successful!") : tx("Realm Overrun!")}
+          subtitle={gameState.status === "victory" ? tx("The gargoyles have been repelled.") : tx("The twin souls have been lost.")}
           score={gameState.score}
           xp={calculateXP({
             correctWords: gameState.correctAnswers,

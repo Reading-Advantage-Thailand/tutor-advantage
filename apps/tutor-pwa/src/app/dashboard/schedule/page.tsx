@@ -1,37 +1,35 @@
 import { cookies } from "next/headers";
+import { Page, PageHeader } from "@/components/app";
 import { LEARNING_URL } from "@/lib/service-urls";
-import ScheduleClient from "./schedule-client";
 import { t } from "@/lib/i18n";
-import { PageTransition } from "@/components/ui/page-transition";
+import type { ScheduleClass } from "./lib/schedule-events";
+import ScheduleClient from "./schedule-client";
 
-async function getClassesData(token: string) {
-  const res = await fetch(`${LEARNING_URL}/v1/classes`, {
-    headers: { Authorization: `Bearer ${token}` },
-    next: { revalidate: 30 },
-  });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.classes || [];
+/** The tutor's classes (per-tutor data: never cached across requests). */
+async function getClassesData(token: string | null): Promise<ScheduleClass[]> {
+  if (!token) return [];
+  try {
+    const res = await fetch(`${LEARNING_URL}/v1/classes`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.classes || [];
+  } catch (error) {
+    console.error("[schedule] failed to load classes", error);
+    return [];
+  }
 }
 
 export default async function SchedulePage() {
   const cookieStore = await cookies();
-  const token = cookieStore.get("tutor_session")?.value || "";
-  
-  const classesList = await getClassesData(token);
+  const classesList = await getClassesData(cookieStore.get("tutor_session")?.value || null);
 
   return (
-    <PageTransition variant="slide-up" stagger className="space-y-6 max-w-7xl mx-auto pb-24 sm:pb-12">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-in">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-foreground">{t("dashboardSchedule.title")}</h1>
-          <p className="text-sm font-medium text-muted-foreground mt-1">
-            {t("dashboardSchedule.subtitle")}
-          </p>
-        </div>
-      </div>
-
+    <Page>
+      <PageHeader title={t("dashboardSchedule.title")} description={t("dashboardSchedule.subtitle")} />
       <ScheduleClient initialClasses={classesList} />
-    </PageTransition>
+    </Page>
   );
 }

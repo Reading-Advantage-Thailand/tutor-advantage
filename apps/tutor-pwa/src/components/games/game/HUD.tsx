@@ -3,6 +3,7 @@
 import React from "react";
 import { Trophy, Target, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { tx } from "@/lib/games/gameText";
 
 interface HUDProps {
   score: number;
@@ -24,7 +25,7 @@ export function HUD({ score, accuracy, combo, mana, timeRemaining }: HUDProps) {
           <div className="flex items-center gap-1 sm:gap-2 mb-0.5">
             <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-foreground" />
             <div className="text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              Score
+              {tx("Score")}
             </div>
           </div>
           <div className="text-xl sm:text-2xl font-bold text-foreground leading-none">
@@ -75,7 +76,7 @@ export function HUD({ score, accuracy, combo, mana, timeRemaining }: HUDProps) {
             animate={{ y: 0, opacity: 1 }}
             className="hidden sm:block text-[10px] font-bold text-foreground uppercase tracking-widest animate-pulse"
           >
-            Ready (Space)
+            {tx("Ready (Space)")}
           </motion.div>
         )}
       </div>
@@ -84,7 +85,7 @@ export function HUD({ score, accuracy, combo, mana, timeRemaining }: HUDProps) {
       <div className="min-w-0 rounded-lg border border-border bg-background/60 px-3 sm:px-5 py-2 sm:py-3 backdrop-blur-md shadow-sm text-right">
         <div className="flex items-center justify-end gap-1 sm:gap-2 mb-0.5">
           <div className="text-[9px] sm:text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-            Accuracy
+            {tx("Accuracy")}
           </div>
           <Target className="h-3 w-3 sm:h-4 sm:w-4 text-foreground" />
         </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Stage, Layer, Text, Group, Rect, Circle } from 'react-konva'
 import {
   createStormCastleTowerState,
@@ -21,6 +21,15 @@ import { useGameFullscreen } from '@/hooks/useGameFullscreen'
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { calculateXP } from '@/lib/games/xp'
 import { Shield, BookOpen, AlertTriangle, Target, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react'
+import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
+
+/** Height of the on-screen control strip under the board (buttons + key hints). */
+const CONTROL_STRIP_PX = 88
+/** Top of the tower area in board coordinates (below the translation bar and target line). */
+const TOWER_TOP_PX = 100
+/** Row 0 sits half a cell below the tower top, so the player orb is never cut off. */
+const TOWER_INSET_PX = STORM_CASTLE_TOWER_CONFIG.cellSize / 2
 
 export type StormCastleTowerGameResult = {
   xp: number
@@ -92,7 +101,7 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   useEffect(() => {
     if (gamePhase !== 'playing') return
@@ -152,10 +161,14 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
     }
   }, [gamePhase, results, onComplete])
 
-  const scale = useMemo(() => {
-    if (dimensions.width === 0 || dimensions.height === 0) return 1
-    return Math.min(dimensions.width / STORM_CASTLE_TOWER_CONFIG.gameWidth, dimensions.height / STORM_CASTLE_TOWER_CONFIG.gameHeight)
-  }, [dimensions])
+  // The on-screen controls live in a strip under the board (CONTROL_STRIP_PX);
+  // the board is letterboxed into the space above it, so no window/word can
+  // ever sit under a button.
+  const boardOffset = computeLetterbox(
+    { width: dimensions.width, height: Math.max(0, dimensions.height - CONTROL_STRIP_PX) },
+    { width: STORM_CASTLE_TOWER_CONFIG.gameWidth, height: STORM_CASTLE_TOWER_CONFIG.gameHeight },
+  )
+  const scale = boardOffset.scale
 
   const handleMove = useCallback((direction: 'up' | 'down' | 'left' | 'right') => {
     if (gamePhase !== 'playing') return
@@ -204,23 +217,23 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
-          gameTitle="Storm the Castle Tower"
-          gameSubtitle="Scale the Walls"
+          gameTitle={tx("Storm the Castle Tower")}
+          gameSubtitle={tx("Scale the Walls")}
           vocabulary={vocabulary}
           instructions={[
-            { step: 1, text: 'Windows on the tower show words from the sentence.', icon: BookOpen },
-            { step: 2, text: 'Move to windows and tap to collect words in the correct order!', icon: Target },
-            { step: 3, text: 'Dodge boiling oil and falling rocks!', icon: AlertTriangle },
+            { step: 1, text: tx("Windows on the tower show words from the sentence."), icon: BookOpen },
+            { step: 2, text: tx("Move to windows and tap to collect words in the correct order!"), icon: Target },
+            { step: 3, text: tx("Dodge boiling oil and falling rocks!"), icon: AlertTriangle },
           ]}
-          proTip="Move quickly but carefully. Wrong words slam the window shut and cost a life!"
+          proTip={tx("Move quickly but carefully. Wrong words slam the window shut and cost a life!")}
           controls={[
-            { label: 'Move', keys: 'Arrow Keys / WASD', color: 'bg-cyan-500' },
-            { label: 'Collect', keys: 'Space / Tap Window', color: 'bg-purple-500' },
+            { label: tx("Move"), keys: tx("Arrow Keys / WASD"), color: 'bg-cyan-500' },
+            { label: tx("Collect"), keys: tx("Space / Tap Window"), color: 'bg-purple-500' },
           ]}
-          startButtonText="Storm the Tower"
+          startButtonText={tx("Storm the Tower")}
           icon={Shield}
           onStart={() => {
             resetGame()
@@ -231,27 +244,27 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
         >
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-white/50">Tower Height:</span>
+              <span className="text-xs uppercase tracking-wider text-white/50">{tx("Tower Height:")}</span>
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value as Difficulty)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
               >
-                <option value="easy">Squire&apos;s Tower (4 words)</option>
-                <option value="medium">Knight&apos;s Keep (5 words)</option>
-                <option value="hard">Lord&apos;s Citadel (6 words)</option>
+                <option value="easy">{tx("Squire's Tower (4 words)")}</option>
+                <option value="medium">{tx("Knight's Keep (5 words)")}</option>
+                <option value="hard">{tx("Lord's Citadel (6 words)")}</option>
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-white/50">Guard Type:</span>
+              <span className="text-xs uppercase tracking-wider text-white/50">{tx("Guard Type:")}</span>
               <select
                 value={selectedGuard}
                 onChange={(e) => setSelectedGuard(e.target.value as GuardType)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
               >
-                <option value="lazy-guard">Lazy Guard (Slow)</option>
-                <option value="alert-sentry">Alert Sentry (Medium)</option>
-                <option value="elite-watchman">Elite Watchman (Fast)</option>
+                <option value="lazy-guard">{tx("Lazy Guard (Slow)")}</option>
+                <option value="alert-sentry">{tx("Alert Sentry (Medium)")}</option>
+                <option value="elite-watchman">{tx("Elite Watchman (Fast)")}</option>
               </select>
             </div>
           </div>
@@ -264,7 +277,7 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameEndScreen
           status={gameState?.phase === 'victory' ? 'victory' : 'defeat'}
@@ -276,8 +289,8 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
             setGamePhase('start')
           }}
           customStats={[
-            { label: 'Words Collected', value: gameState?.correctWords ?? 0 },
-            { label: 'Lives Left', value: gameState?.player.lives ?? 0 },
+            { label: tx("Words Collected"), value: gameState?.correctWords ?? 0 },
+            { label: tx("Lives Left"), value: gameState?.player.lives ?? 0 },
           ]}
         />
       </div>
@@ -289,15 +302,24 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
   return (
     <div
       ref={containerRef}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
     >
       {gameState && (
         <Stage
-          width={STORM_CASTLE_TOWER_CONFIG.gameWidth}
-          height={STORM_CASTLE_TOWER_CONFIG.gameHeight}
+          width={dimensions.width || STORM_CASTLE_TOWER_CONFIG.gameWidth}
+          height={dimensions.height || STORM_CASTLE_TOWER_CONFIG.gameHeight}
           scale={{ x: scale, y: scale }}
+          x={boardOffset.x}
+          y={boardOffset.y}
         >
-          <Layer>
+          {/* Clip to the board: the stage now spans the whole frame, and tower
+              windows scrolled below the board must not show in the control strip. */}
+          <Layer
+            clipX={0}
+            clipY={0}
+            clipWidth={STORM_CASTLE_TOWER_CONFIG.gameWidth}
+            clipHeight={STORM_CASTLE_TOWER_CONFIG.gameHeight}
+          >
             <Rect
               x={0}
               y={0}
@@ -327,7 +349,7 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
             <Text
               x={10}
               y={70}
-              text={`Target: ${targetWord}`}
+              text={tx("Target: {targetWord}", { targetWord })}
               fontSize={getEffectiveTextSize(18)}
               fill="#fbbf24"
               width={STORM_CASTLE_TOWER_CONFIG.gameWidth - 20}
@@ -346,125 +368,135 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
               <Text
                 x={15}
                 y={15}
-                text={`Lives: ${gameState.player.lives}`}
+                text={tx("Lives: {lives}", { lives: gameState.player.lives })}
                 fontSize={getEffectiveTextSize(16)}
                 fill="#f87171"
               />
             </Group>
             
-            {gameState.windows.map(win => {
-              if (win.state === 'collected') return null
+            {/* Tower (windows, hazards, player) lives below the HUD: shifted by
+                TOWER_TOP_PX and clipped there, so the player orb and falling
+                hazards never poke into the top bar. */}
+            <Group
+              y={TOWER_TOP_PX + TOWER_INSET_PX}
+              clipX={0}
+              clipY={-TOWER_INSET_PX}
+              clipWidth={STORM_CASTLE_TOWER_CONFIG.gameWidth}
+              clipHeight={STORM_CASTLE_TOWER_CONFIG.gameHeight - TOWER_TOP_PX}
+            >
+              {gameState.windows.map(win => {
+                if (win.state === 'collected') return null
               
-              const pos = getGridPosition(win.position.col, win.position.row, gameState.scrollOffset)
-              const isTarget = win.wordIndex === gameState.targetIndex
-              const windowColor = win.state === 'closed' ? '#6b7280' : (isTarget ? '#fbbf24' : '#64748b')
+                const pos = getGridPosition(win.position.col, win.position.row, gameState.scrollOffset)
+                const isTarget = win.wordIndex === gameState.targetIndex
+                const windowColor = win.state === 'closed' ? '#6b7280' : (isTarget ? '#fbbf24' : '#64748b')
               
-              return (
-                <Group key={win.id}>
-                  <Rect
-                    x={pos.x - STORM_CASTLE_TOWER_CONFIG.window.width / 2}
-                    y={pos.y - STORM_CASTLE_TOWER_CONFIG.window.height / 2}
-                    width={STORM_CASTLE_TOWER_CONFIG.window.width}
-                    height={STORM_CASTLE_TOWER_CONFIG.window.height}
-                    fill={win.state === 'closed' ? '#374151' : '#1e293b'}
-                    stroke={windowColor}
-                    strokeWidth={isTarget ? 3 : 1}
-                    cornerRadius={5}
-                  />
-                  {win.state === 'open' && (
-                    <Text
-                      x={pos.x - 30}
-                      y={pos.y - 8}
-                      text={win.word}
-                      fontSize={getEffectiveTextSize(16)}
-                      fill={isTarget ? '#fef3c7' : '#e2e8f0'}
-                      width={60}
-                      align="center"
-                    />
-                  )}
-                </Group>
-              )
-            })}
-            
-            {gameState.hazards.map(hazard => {
-              const x = hazard.column * STORM_CASTLE_TOWER_CONFIG.cellSize + STORM_CASTLE_TOWER_CONFIG.cellSize / 2
-              const y = hazard.y
-              
-              if (hazard.type === 'oil') {
                 return (
-                  <Rect
-                    key={hazard.id}
-                    x={x - STORM_CASTLE_TOWER_CONFIG.hazards.oilWidth / 2}
-                    y={y}
-                    width={STORM_CASTLE_TOWER_CONFIG.hazards.oilWidth}
-                    height={30}
-                    fill="#f97316"
-                    opacity={0.8}
-                    cornerRadius={3}
-                  />
+                  <Group key={win.id}>
+                    <Rect
+                      x={pos.x - STORM_CASTLE_TOWER_CONFIG.window.width / 2}
+                      y={pos.y - STORM_CASTLE_TOWER_CONFIG.window.height / 2}
+                      width={STORM_CASTLE_TOWER_CONFIG.window.width}
+                      height={STORM_CASTLE_TOWER_CONFIG.window.height}
+                      fill={win.state === 'closed' ? '#374151' : '#1e293b'}
+                      stroke={windowColor}
+                      strokeWidth={isTarget ? 3 : 1}
+                      cornerRadius={5}
+                    />
+                    {win.state === 'open' && (
+                      <Text
+                        x={pos.x - 30}
+                        y={pos.y - 8}
+                        text={win.word}
+                        fontSize={getEffectiveTextSize(16)}
+                        fill={isTarget ? '#fef3c7' : '#e2e8f0'}
+                        width={60}
+                        align="center"
+                      />
+                    )}
+                  </Group>
                 )
-              } else {
+              })}
+            
+              {gameState.hazards.map(hazard => {
+                const x = hazard.column * STORM_CASTLE_TOWER_CONFIG.cellSize + STORM_CASTLE_TOWER_CONFIG.cellSize / 2
+                const y = hazard.y
+              
+                if (hazard.type === 'oil') {
+                  return (
+                    <Rect
+                      key={hazard.id}
+                      x={x - STORM_CASTLE_TOWER_CONFIG.hazards.oilWidth / 2}
+                      y={y}
+                      width={STORM_CASTLE_TOWER_CONFIG.hazards.oilWidth}
+                      height={30}
+                      fill="#f97316"
+                      opacity={0.8}
+                      cornerRadius={3}
+                    />
+                  )
+                } else {
+                  return (
+                    <Circle
+                      key={hazard.id}
+                      x={x}
+                      y={y}
+                      radius={STORM_CASTLE_TOWER_CONFIG.hazards.rockRadius}
+                      fill="#78716c"
+                      stroke="#a8a29e"
+                      strokeWidth={2}
+                    />
+                  )
+                }
+              })}
+            
+              {(() => {
+                const playerPos = getGridPosition(
+                  gameState.player.position.col,
+                  gameState.player.position.row,
+                  gameState.scrollOffset
+                )
                 return (
                   <Circle
-                    key={hazard.id}
-                    x={x}
-                    y={y}
-                    radius={STORM_CASTLE_TOWER_CONFIG.hazards.rockRadius}
-                    fill="#78716c"
-                    stroke="#a8a29e"
-                    strokeWidth={2}
+                    x={playerPos.x}
+                    y={playerPos.y}
+                    radius={STORM_CASTLE_TOWER_CONFIG.player.radius}
+                    fill="#3b82f6"
+                    stroke="#60a5fa"
+                    strokeWidth={3}
                   />
                 )
-              }
-            })}
-            
-            {(() => {
-              const playerPos = getGridPosition(
-                gameState.player.position.col,
-                gameState.player.position.row,
-                gameState.scrollOffset
-              )
-              return (
-                <Circle
-                  x={playerPos.x}
-                  y={playerPos.y}
-                  radius={STORM_CASTLE_TOWER_CONFIG.player.radius}
-                  fill="#3b82f6"
-                  stroke="#60a5fa"
-                  strokeWidth={3}
-                />
-              )
-            })()}
+              })()}
+            </Group>
           </Layer>
         </Stage>
       )}
       
-      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4 text-xs text-white/50">
-        <span>Arrows/WASD = Move</span>
-        <span>Space = Collect</span>
+      {/* Control strip: CONTROL_STRIP_PX tall, below the letterboxed board. */}
+      <div className="absolute bottom-1.5 left-0 right-0 flex justify-center gap-4 text-[11px] leading-4 text-white/50">
+        <span>{tx("Arrows/WASD = Move")}</span>
+        <span>{tx("Space = Collect")}</span>
       </div>
       
-      <div className="absolute bottom-20 left-0 right-0 flex justify-center gap-2">
+      <div className="absolute bottom-7 left-0 right-0 flex items-center justify-center gap-2">
         <button
           onTouchStart={() => handleTouchMove('left')}
           className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <div className="flex flex-col gap-2">
-          <button
-            onTouchStart={() => handleTouchMove('up')}
-            className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"
-          >
-            <ArrowUp className="w-6 h-6" />
-          </button>
-          <button
-            onTouchStart={() => handleTouchMove('down')}
-            className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"
-          >
-            <ArrowDown className="w-6 h-6" />
-          </button>
-        </div>
+        <button
+          onTouchStart={() => handleTouchMove('up')}
+          className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"
+        >
+          <ArrowUp className="w-6 h-6" />
+        </button>
+        <button
+          onTouchStart={() => handleTouchMove('down')}
+          className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"
+        >
+          <ArrowDown className="w-6 h-6" />
+        </button>
         <button
           onTouchStart={() => handleTouchMove('right')}
           className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white active:bg-white/20"
@@ -475,7 +507,7 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
           onTouchStart={handleCollect}
           className="w-16 h-12 bg-purple-500/50 rounded-lg flex items-center justify-center text-white active:bg-purple-500/70 ml-4"
         >
-          Collect
+          {tx("Collect")}
         </button>
       </div>
     </div>

@@ -8,10 +8,12 @@ const withSerwist = require("@serwist/next").default({
   disable: process.env.NODE_ENV === "development",
   cacheOnNavigation: true,
   reloadOnOnline: true,
-  // PDF templates are server-side generation inputs, not app-shell assets.
-  // Precaching them makes every visitor download the blank 50 Tawi form,
-  // including unauthenticated users on the login page.
-  exclude: [/documents\//],
+  // Precache only the app shell from public/: icons + manifest. public/games
+  // (~240 MB of game art/audio) is cached at runtime on first use (see sw.ts),
+  // and public/documents + public/fonts are server-side PDF inputs.
+  globPublicPatterns: ["icons/**/*", "manifest.json"],
+  // Build artefacts that must never be precached.
+  exclude: [/documents\//, /\.map$/, /^manifest.*\.js$/],
 });
 
 /** @type {import('next').NextConfig} */

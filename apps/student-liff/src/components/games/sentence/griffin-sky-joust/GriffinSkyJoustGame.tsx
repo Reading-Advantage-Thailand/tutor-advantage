@@ -20,6 +20,8 @@ import { useSound } from '@/hooks/useSound'
 import { useGameFullscreen } from '@/hooks/useGameFullscreen'
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { Bird, Shield, Sword } from 'lucide-react'
+import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type GriffinSkyJoustGameResult = {
   xp: number
@@ -84,7 +86,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
     return () => {
       observer.disconnect()
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   useEffect(() => {
     if (gamePhase !== 'playing') return
@@ -161,6 +163,9 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
     return Math.min(dimensions.width / GRIFFIN_SKY_JOUST_CONFIG.gameWidth, dimensions.height / GRIFFIN_SKY_JOUST_CONFIG.gameHeight)
   }, [dimensions])
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GRIFFIN_SKY_JOUST_CONFIG.gameWidth, height: GRIFFIN_SKY_JOUST_CONFIG.gameHeight })
+
   const handleFlap = useCallback((e?: KonvaEventObject<MouseEvent | TouchEvent>) => {
     if (gamePhase !== 'playing') return
     
@@ -172,7 +177,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
       if (stage) {
         const pos = stage.getPointerPosition()
         if (pos) {
-          const x = pos.x / scale
+          const x = (pos.x - boardOffset.x) / scale
           dir = x < GRIFFIN_SKY_JOUST_CONFIG.gameWidth / 2 ? -1 : 1
         }
       }
@@ -182,7 +187,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
       if (!prevState || prevState.status !== 'playing') return prevState
       return flap(prevState, dir)
     })
-  }, [gamePhase, scale, playSound])
+  }, [gamePhase, scale, boardOffset.x, playSound])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -207,23 +212,23 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
-          gameTitle="Griffin Sky-Joust"
-          gameSubtitle="Aerial Word Combat"
+          gameTitle={tx("Griffin Sky-Joust")}
+          gameSubtitle={tx("Aerial Word Combat")}
           vocabulary={vocabulary}
           instructions={[
-            { step: 1, text: 'Tap to flap wings and gain altitude.', icon: Bird },
-            { step: 2, text: 'Land ON TOP of enemy knights carrying the target word.', icon: Sword },
-            { step: 3, text: 'Striking from below or hitting the wrong word costs a heart!', icon: Shield },
+            { step: 1, text: tx("Tap to flap wings and gain altitude."), icon: Bird },
+            { step: 2, text: tx("Land ON TOP of enemy knights carrying the target word."), icon: Sword },
+            { step: 3, text: tx("Striking from below or hitting the wrong word costs a heart!"), icon: Shield },
           ]}
-          proTip="Use momentum to drift! Screen edges wrap around horizontally."
+          proTip={tx("Use momentum to drift! Screen edges wrap around horizontally.")}
           controls={[
-            { label: 'Flap', keys: 'Space / Tap', color: 'bg-cyan-500' },
-            { label: 'Drift', keys: 'A/D or Tap Sides', color: 'bg-blue-500' },
+            { label: tx("Flap"), keys: tx("Space / Tap"), color: 'bg-cyan-500' },
+            { label: tx("Drift"), keys: tx("A/D or Tap Sides"), color: 'bg-blue-500' },
           ]}
-          startButtonText="Take Flight"
+          startButtonText={tx("Take Flight")}
           icon={Bird}
           onStart={() => {
             if (gameState) {
@@ -233,15 +238,15 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
           }}
         >
           <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-slate-400">Difficulty:</span>
+            <span className="text-sm font-medium text-slate-400">{tx("Difficulty:")}</span>
             <select
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value as GriffinSkyJoustDifficulty)}
               className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
             >
-              <option value="easy">Fledgling (Low Gravity)</option>
-              <option value="medium">Rider (Standard)</option>
-              <option value="hard">Veteran (Heavy Gravity)</option>
+              <option value="easy">{tx("Fledgling (Low Gravity)")}</option>
+              <option value="medium">{tx("Rider (Standard)")}</option>
+              <option value="hard">{tx("Veteran (Heavy Gravity)")}</option>
             </select>
           </div>
         </GameStartScreen>
@@ -253,7 +258,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameEndScreen
           status={gameState?.status === 'victory' ? 'victory' : 'defeat'}
@@ -265,8 +270,8 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
             setGamePhase('start')
           }}
           customStats={[
-            { label: 'Words Joustred', value: gameState?.correctAnswers ?? 0 },
-            { label: 'Hearts Left', value: gameState?.player.hp ?? 0 },
+            { label: tx("Words Joustred"), value: gameState?.correctAnswers ?? 0 },
+            { label: tx("Hearts Left"), value: gameState?.player.hp ?? 0 },
           ]}
         />
       </div>
@@ -278,7 +283,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
   return (
     <div
       ref={containerRef}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
     >
       {gameState && (
         <Stage
@@ -287,7 +292,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
           onMouseDown={handleFlap}
           onTouchStart={handleFlap}
         >
-          <Layer scaleX={scale} scaleY={scale}>
+          <Layer scaleX={scale} scaleY={scale} x={boardOffset.x} y={boardOffset.y}>
             {/* Sky Background */}
             <Rect
               x={0}
@@ -346,7 +351,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
             <Text
               x={10}
               y={60}
-              text={`Target: ${targetWord}`}
+              text={tx("Target: {targetWord}", { targetWord })}
               fontSize={getEffectiveTextSize(20)}
               fontStyle="bold"
               fill="#fbbf24"
@@ -367,7 +372,7 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
             {/* Score */}
             <Group x={GRIFFIN_SKY_JOUST_CONFIG.gameWidth - 80} y={10}>
               <Text
-                text={`Score: ${gameState.score}`}
+                text={tx("Score: {score}", { score: gameState.score })}
                 fontSize={getEffectiveTextSize(16)}
                 fill="#fbbf24"
                 align="right"
@@ -426,8 +431,8 @@ export function GriffinSkyJoustGame({ vocabulary, onComplete }: GriffinSkyJoustG
       )}
       
       <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-4 text-xs text-white/50">
-        <span>Space/Tap = Flap</span>
-        <span>A/D = Drift</span>
+        <span>{tx("Space/Tap = Flap")}</span>
+        <span>{tx("A/D = Drift")}</span>
       </div>
     </div>
   )

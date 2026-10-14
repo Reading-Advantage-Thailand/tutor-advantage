@@ -21,6 +21,8 @@ import { Shield, BookOpen, AlertTriangle, Heart, Users } from 'lucide-react'
 import { useGameFullscreen } from '@/hooks/useGameFullscreen'
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { useScopedI18n } from '@/locales/client'
+import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type VillageGuardianGameResult = {
   xp: number
@@ -101,7 +103,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   useEffect(() => {
     if (gamePhase !== 'playing') return
@@ -152,6 +154,9 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT)
   }, [dimensions])
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT })
+
   const handleDPadInput = useCallback((input: { dx: number; dy: number }) => {
     inputRef.current = input
   }, [])
@@ -187,23 +192,23 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
-          gameTitle="Village Guardian"
-          gameSubtitle="Defend the Innocent"
+          gameTitle={tx("Village Guardian")}
+          gameSubtitle={tx("Defend the Innocent")}
           vocabulary={vocabulary}
           instructions={[
-            { step: 1, text: 'Rescue villagers with word bubbles in the correct order to form the sentence.', icon: BookOpen },
-            { step: 2, text: 'The translation is shown at the top - find the words!', icon: BookOpen },
-            { step: 3, text: 'Avoid monsters! Collisions lose villagers. Wrong words add time penalty.', icon: AlertTriangle },
+            { step: 1, text: tx("Rescue villagers with word bubbles in the correct order to form the sentence."), icon: BookOpen },
+            { step: 2, text: tx("The translation is shown at the top - find the words!"), icon: BookOpen },
+            { step: 3, text: tx("Avoid monsters! Collisions lose villagers. Wrong words add time penalty."), icon: AlertTriangle },
           ]}
-          proTip="The target villager glows gold! Lead all rescued villagers to the sanctuary to win!"
+          proTip={tx("The target villager glows gold! Lead all rescued villagers to the sanctuary to win!")}
           controls={[
-            { label: 'Move', keys: 'Arrow Keys / WASD', color: 'bg-amber-500' },
-            { label: 'DPad', keys: 'Touch & Drag', color: 'bg-orange-500' },
+            { label: tx("Move"), keys: tx("Arrow Keys / WASD"), color: 'bg-amber-500' },
+            { label: tx("DPad"), keys: tx("Touch & Drag"), color: 'bg-orange-500' },
           ]}
-          startButtonText="Defend the Village"
+          startButtonText={tx("Defend the Village")}
           icon={Shield}
           onStart={() => {
             resetGame()
@@ -212,30 +217,30 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
         >
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-white/50">Difficulty:</span>
+              <span className="text-xs uppercase tracking-wider text-white/50">{tx("Difficulty:")}</span>
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value as Difficulty)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
-                aria-label="Difficulty"
+                aria-label={tx("Difficulty")}
               >
-                <option value="easy">Scout Party</option>
-                <option value="normal">War Band</option>
-                <option value="hard">Full Siege</option>
-                <option value="extreme">Apocalypse</option>
+                <option value="easy">{tx("Scout Party")}</option>
+                <option value="normal">{tx("War Band")}</option>
+                <option value="hard">{tx("Full Siege")}</option>
+                <option value="extreme">{tx("Apocalypse")}</option>
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-white/50">Opponent:</span>
+              <span className="text-xs uppercase tracking-wider text-white/50">{tx("Opponent:")}</span>
               <select
                 value={selectedOpponent}
                 onChange={(e) => setSelectedOpponent(e.target.value as OpponentType)}
                 className="bg-slate-800 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-400"
-                aria-label="Opponent"
+                aria-label={tx("Opponent")}
               >
-                <option value="bandits">Bandits (Wander)</option>
-                <option value="goblins">Goblins (Chase)</option>
-                <option value="dragons">Dragons (Hunt)</option>
+                <option value="bandits">{tx("Bandits (Wander)")}</option>
+                <option value="goblins">{tx("Goblins (Chase)")}</option>
+                <option value="dragons">{tx("Dragons (Hunt)")}</option>
               </select>
             </div>
           </div>
@@ -248,7 +253,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
     <div
       ref={containerRef}
       style={{ minHeight: '400px' }}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
     >
       {gamePhase === 'playing' && gameState && (
         <>
@@ -258,7 +263,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
             style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
           >
             <Layer>
-              <Group scale={{ x: scale, y: scale }} offsetX={0} offsetY={0}>
+              <Group scale={{ x: scale, y: scale }} x={boardOffset.x} y={boardOffset.y}>
                 <Rect
                   x={0}
                   y={0}
@@ -301,7 +306,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
                 <Text
                   x={10}
                   y={52}
-                  text={`Words: ${gameState.collectedWords.length}/${gameState.words.length}`}
+                  text={tx("Words: {length}/{length1}", { length: gameState.collectedWords.length, length1: gameState.words.length })}
                   fontSize={getEffectiveTextSize(14)}
                   fill="#a3a3a3"
                   width={GAME_WIDTH - 20}
@@ -319,7 +324,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
                 <Text
                   x={gameState.sanctuary.x - 30}
                   y={gameState.sanctuary.y - 8}
-                  text="SAFE"
+                  text={tx("SAFE")}
                   fontSize={getEffectiveTextSize(16)}
                   fill="#22c55e"
                   fontStyle="bold"
@@ -427,7 +432,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
                   <Text
                     x={5}
                     y={2}
-                    text={`Time: ${Math.ceil(gameState.timer / 1000)}s`}
+                    text={tx("Time: {timer}s", { timer: Math.ceil(gameState.timer / 1000) })}
                     fontSize={getEffectiveTextSize(14)}
                     fill="white"
                     fontStyle="bold"
@@ -454,7 +459,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
                   <Text
                     x={5}
                     y={2}
-                    text={`Lives: ${gameState.knight.lives}`}
+                    text={tx("Lives: {lives}", { lives: gameState.knight.lives })}
                     fontSize={getEffectiveTextSize(14)}
                     fill="white"
                     fontStyle="bold"
@@ -464,7 +469,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
                 <Text
                   x={GAME_WIDTH - 60}
                   y={GAME_HEIGHT - 35}
-                  text={`Score: ${gameState.correctAnswers * 10}`}
+                  text={tx("Score: {p0}", { p0: gameState.correctAnswers * 10 })}
                   fontSize={getEffectiveTextSize(16)}
                   fill="white"
                   fontStyle="bold"
@@ -473,7 +478,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
                 <Text
                   x={GAME_WIDTH / 2 - 30}
                   y={GAME_HEIGHT - 35}
-                  text={`Level ${gameState.level}`}
+                  text={tx("Level {level}", { level: gameState.level })}
                   fontSize={getEffectiveTextSize(16)}
                   fill="#fbbf24"
                   fontStyle="bold"
@@ -491,15 +496,15 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
       {gamePhase === 'ended' && gameState && results && (
         <GameEndScreen
           status="defeat"
-          title="Village Overrun!"
-          subtitle={`The monsters were too strong... You reached level ${gameState.level}.`}
+          title={tx("Village Overrun!")}
+          subtitle={tx("The monsters were too strong... You reached level {level}.", { level: gameState.level })}
           score={gameState.correctAnswers * 10}
           xp={results.xp}
           accuracy={results.accuracy}
           customStats={[
-            { label: 'Levels Survived', value: gameState.level, icon: Users },
-            { label: 'Villagers Saved', value: gameState.correctAnswers, icon: Users },
-            { label: 'Lives Left', value: gameState.knight.lives, icon: Heart },
+            { label: tx("Levels Survived"), value: gameState.level, icon: Users },
+            { label: tx("Villagers Saved"), value: gameState.correctAnswers, icon: Users },
+            { label: tx("Lives Left"), value: gameState.knight.lives, icon: Heart },
           ]}
           onRestart={() => {
             resetGame()

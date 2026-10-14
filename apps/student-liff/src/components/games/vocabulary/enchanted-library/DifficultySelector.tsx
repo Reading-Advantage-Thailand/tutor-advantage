@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Zap, Shield, Flame, Skull } from "lucide-react";
 import type { Difficulty } from "@/lib/games/enchantedLibrary";
 import { useScopedI18n } from "@/locales/client";
+import { tx } from "@/lib/games/gameText";
 
 interface DifficultySelectorProps {
   selected: Difficulty;
@@ -21,28 +22,28 @@ const DIFFICULTY_INFO: Record<
   }
 > = {
   easy: {
-    label: "Easy",
+    label: tx("Easy"),
     xpMultiplier: 1.0,
     icon: Zap,
     color: "text-green-400",
     glowColor: "shadow-green-500/20",
   },
   normal: {
-    label: "Normal",
+    label: tx("Normal"),
     xpMultiplier: 1.5,
     icon: Shield,
     color: "text-blue-400",
     glowColor: "shadow-blue-500/20",
   },
   hard: {
-    label: "Hard",
+    label: tx("Hard"),
     xpMultiplier: 2.0,
     icon: Flame,
     color: "text-orange-400",
     glowColor: "shadow-orange-500/20",
   },
   extreme: {
-    label: "Extreme",
+    label: tx("Extreme"),
     xpMultiplier: 3.0,
     icon: Skull,
     color: "text-red-400",
@@ -78,7 +79,7 @@ export function DifficultySelector({
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              title={`${info.label} - ${info.xpMultiplier}x XP`}
+              title={tx("{label} - {xpMultiplier}x XP", { label: info.label, xpMultiplier: info.xpMultiplier })}
             >
               <div className="flex items-center gap-1.5">
                 <Icon

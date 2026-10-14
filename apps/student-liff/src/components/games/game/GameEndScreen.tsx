@@ -7,6 +7,7 @@ import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
 import { Button } from "@/components/ui/button";
+import { tx } from "@/lib/games/gameText";
 
 export interface GameStat {
   label: React.ReactNode;
@@ -43,8 +44,8 @@ const STATUS_STYLES: Record<
   }
 > = {
   victory: {
-    title: "Victory!",
-    subtitle: "Objectives reached.",
+    title: tx("Victory!"),
+    subtitle: tx("Objectives reached."),
     icon: Trophy,
     containerBorder: "border-border",
     iconShell: "bg-foreground text-background",
@@ -52,8 +53,8 @@ const STATUS_STYLES: Record<
     xpShell: "border-border bg-secondary text-foreground",
   },
   defeat: {
-    title: "Failure",
-    subtitle: "System offline.",
+    title: tx("Failure"),
+    subtitle: tx("System offline."),
     icon: Swords,
     containerBorder: "border-destructive/30",
     iconShell: "bg-destructive text-white",
@@ -61,8 +62,8 @@ const STATUS_STYLES: Record<
     xpShell: "border-destructive/20 bg-destructive/10 text-destructive",
   },
   complete: {
-    title: "Complete",
-    subtitle: "Process finalized.",
+    title: tx("Complete"),
+    subtitle: tx("Process finalized."),
     icon: Shield,
     containerBorder: "border-border",
     iconShell: "bg-foreground text-background",
@@ -81,7 +82,7 @@ export function GameEndScreen({
   customStats,
   title,
   subtitle,
-  restartButtonText = "Restart",
+  restartButtonText = tx("Restart"),
   showLeaderboardLink = false,
   gameId,
   gameName,
@@ -102,8 +103,8 @@ export function GameEndScreen({
   }, [xp, gameId, gameName, score, safeAccuracy, recordSession]);
 
   const statCards: GameStat[] = [
-    { label: "Score", value: score, icon: Trophy },
-    { label: "Accuracy", value: `${accuracyPercent}%`, icon: Target },
+    { label: tx("Score"), value: score, icon: Trophy },
+    { label: tx("Accuracy"), value: `${accuracyPercent}%`, icon: Target },
     ...extraStats,
   ];
 
@@ -153,7 +154,7 @@ export function GameEndScreen({
           <div
             className={`sm:col-span-2 rounded-lg border p-4 text-center font-semibold ${statusStyle.xpShell}`}
           >
-            XP Earned: {xp}
+            {tx("XP Earned:")} {xp}
           </div>
         </div>
 
@@ -170,7 +171,7 @@ export function GameEndScreen({
               onClick={onExit}
               className="flex-1 h-12 rounded-lg"
             >
-              Exit
+              {tx("Exit")}
             </Button>
           ) : null}
         </div>
@@ -180,7 +181,7 @@ export function GameEndScreen({
               href="/student/leaderboard"
               className="text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider"
             >
-              View Leaderboard
+              {tx("View Leaderboard")}
             </Link>
           </div>
         ) : null}

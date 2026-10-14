@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { battleEnemies } from "@/lib/games/rpgBattleSelection";
 import { Sprite } from "./Sprite";
 import { useScopedI18n } from "@/locales/client";
+import { tx } from "@/lib/games/gameText";
 
 interface StartScreenProps {
   vocabulary: VocabularyItem[];
@@ -83,7 +84,7 @@ export function StartScreen({ vocabulary, onStart }: StartScreenProps) {
         {/* Header Section */}
         <div className="px-6 py-4 flex-none">
           <div className="text-xs uppercase tracking-[0.3em] text-purple-300/60 mb-1 font-bold">
-            RPG Battle
+            {tx("RPG Battle")}
           </div>
           <div className="flex items-center justify-between">
             <div>
@@ -243,7 +244,7 @@ export function StartScreen({ vocabulary, onStart }: StartScreenProps) {
                         <Sprite
                           src={enemy.sprite}
                           pose="idle"
-                          alt={enemy.label}
+                          alt={tx(enemy.label)}
                           size={48}
                           className={cn(
                             "transition-transform duration-300",
@@ -257,7 +258,7 @@ export function StartScreen({ vocabulary, onStart }: StartScreenProps) {
                           isSelected ? "text-white" : "text-slate-400",
                         )}
                       >
-                        {enemy.label}
+                        {tx(enemy.label)}
                       </span>
                     </button>
                   );
@@ -270,7 +271,7 @@ export function StartScreen({ vocabulary, onStart }: StartScreenProps) {
                   <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-400 font-bold">
                     <Trophy className="h-3 w-3" />
                     {t("rpgBattle.topWarriors")} -{" "}
-                    {battleEnemies.find((e) => e.id === selectedEnemy)?.label}
+                    {tx(battleEnemies.find((e) => e.id === selectedEnemy)?.label ?? "")}
                   </div>
                 </div>
 

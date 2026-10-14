@@ -8,7 +8,6 @@ import {
   requestLoggerMiddleware,
   requestIdMiddleware,
   errorHandlerMiddleware,
-  areDevRoutesEnabled,
   assertProductionSecurityConfig,
   getAllowedOrigins,
   isOriginAllowed,
@@ -90,6 +89,7 @@ import {
   devSeedFullProgress,
   devSeedClassAllProgress,
 } from "./controllers/devController";
+import { registerDevRoutes } from "./routes/devRoutes";
 
 const app = express();
 const port = process.env.PORT || 3002;
@@ -206,7 +206,8 @@ app.post("/v1/voice-sessions/:sessionId/connected", authMiddleware, connectVoice
 app.post("/v1/voice-sessions/:sessionId/end", authMiddleware, endVoiceSession);
 app.post("/v1/voice-sessions/:sessionId/reading-intent", authMiddleware, submitReadingIntent);
 app.get("/v1/classes/:classId/voice-practice-summary", authMiddleware, getClassVoiceSummary);
-app.get("/v1/admin/voice-operations", authMiddleware, getVoiceOperationsMetrics);
+// Route-level role guard (defence in depth; the controller re-checks ADMIN).
+app.get("/v1/admin/voice-operations", authMiddleware, requireRoles("ADMIN"), getVoiceOperationsMetrics);
 
 // Protected Chat Routes
 app.get("/v1/chat/conversations", authMiddleware, getConversations);
@@ -252,14 +253,16 @@ app.post("/v1/classes/:classId/apply-coupon", authMiddleware, applyCouponToClass
 // Public LINE OA webhook
 app.post("/v1/line/webhook", handleLineWebhook);
 
-if (areDevRoutesEnabled()) {
-  const adminOnly = requireRoles("ADMIN");
-  app.post("/v1/dev/seed/lesson-history", authMiddleware, adminOnly, devSeedLessonHistory);
-  app.delete("/v1/dev/seed/lesson-history", authMiddleware, adminOnly, devPurgeLessonHistory);
-  app.post("/v1/dev/seed/full-progress", authMiddleware, adminOnly, devSeedFullProgress);
-  app.post("/v1/dev/seed/enrollments/activate", authMiddleware, adminOnly, devActivateEnrollments);
-  app.post("/v1/dev/seed/class-all-progress", authMiddleware, adminOnly, devSeedClassAllProgress);
-}
+// DEV-ONLY seed routes: mounted (and re-checked per request) only when
+// NODE_ENV !== "production" && ENABLE_DEV_ROUTES === "true". Self-scoped seeds
+// accept the caller's own token (dev student toolbar); class-wide stays ADMIN.
+registerDevRoutes(app, authMiddleware, {
+  seedLessonHistory: devSeedLessonHistory,
+  purgeLessonHistory: devPurgeLessonHistory,
+  seedFullProgress: devSeedFullProgress,
+  activateEnrollments: devActivateEnrollments,
+  seedClassAllProgress: devSeedClassAllProgress,
+});
 
 // Apply error handler last
 app.use(openApiValidationErrorHandler);

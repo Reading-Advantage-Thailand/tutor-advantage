@@ -1,73 +1,61 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
-import { devRoutesEnabled, getJwtSecret } from "@/lib/security";
+import { prisma } from "@tutor-advantage/database";
+import { isAdminRole } from "@/lib/routes";
+import { devRoutesEnabled, setAdminSessionCookies } from "@/lib/security";
 
-const DEV_IDENTITIES = {
-  ADMIN: {
-    userId: "00000000-0000-4000-8000-000000000001",
-    email: "dev-admin@localhost",
-  },
-  FINANCE_CHECKER: {
-    userId: "00000000-0000-4000-8000-000000000002",
-    email: "dev-finance-checker@localhost",
-  },
-} as const;
+/**
+ * Dev-only login: signs an admin-console session for a REAL user that has
+ * the requested role (the backend re-reads the user from the DB, so a
+ * made-up id only produces 401s). Enabled only when NODE_ENV !== "production"
+ * AND ENABLE_DEV_ROUTES === "true".
+ *
+ * Picks the first active user with the role, preferring the well-known local
+ * accounts (admin@example.com / checker@example.com).
+ */
+const PREFERRED_EMAIL: Record<string, string> = {
+  ADMIN: "admin@example.com",
+  FINANCE_CHECKER: "checker@example.com",
+};
 
 export async function POST(req: Request) {
   if (!devRoutesEnabled()) {
-    return NextResponse.json(
-      { error: "Endpoint disabled in production" },
-      { status: 403 }
-    );
+    return NextResponse.json({ error: { code: "NOT_FOUND", message: "Not found" } }, { status: 404 });
+  }
+
+  let role: unknown;
+  try {
+    ({ role } = await req.json());
+  } catch {
+    role = undefined;
+  }
+  if (!isAdminRole(role)) {
+    return NextResponse.json({ error: { code: "BAD_REQUEST", message: "Invalid role" } }, { status: 400 });
   }
 
   try {
-    const { role } = await req.json();
+    const select = { userId: true, email: true, displayName: true, profilePictureUrl: true } as const;
+    const user =
+      (await prisma.user.findFirst({ where: { email: PREFERRED_EMAIL[role], role, isActive: true }, select })) ??
+      (await prisma.user.findFirst({ where: { role, isActive: true }, orderBy: { createdAt: "asc" }, select }));
 
-    if (role !== "ADMIN" && role !== "FINANCE_CHECKER") {
-      return NextResponse.json({ error: "Invalid mock role" }, { status: 400 });
+    if (!user) {
+      return NextResponse.json(
+        { error: { code: "DEV_USER_NOT_FOUND", message: `No active ${role} user exists. Seed one first.` } },
+        { status: 409 },
+      );
     }
 
-    const identity = DEV_IDENTITIES[role as keyof typeof DEV_IDENTITIES];
-    const token = jwt.sign(
-      { userId: identity.userId, email: identity.email, role, iss: "admin-console" },
-      getJwtSecret(),
-      { expiresIn: "12h" }
-    );
-
-    // Token goes only into httpOnly cookie — not returned in response body
-    const response = NextResponse.json({ success: true, role });
-
-    response.cookies.set("admin_token", token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      maxAge: 60 * 60 * 12,
-      path: "/",
+    const response = NextResponse.json({ success: true, role, userId: user.userId });
+    await setAdminSessionCookies(response, {
+      userId: user.userId,
+      role,
+      email: user.email,
+      name: user.displayName || user.email,
+      picture: user.profilePictureUrl,
     });
-
-    response.cookies.set("admin_role", role, {
-      httpOnly: false,
-      secure: false,
-      sameSite: "lax",
-      maxAge: 60 * 60 * 12,
-      path: "/",
-    });
-
-    response.cookies.set("admin_email", identity.email, {
-      httpOnly: false,
-      secure: false,
-      sameSite: "lax",
-      maxAge: 60 * 60 * 12,
-      path: "/",
-    });
-
     return response;
   } catch (error) {
     console.error("Dev login error:", error);
-    return NextResponse.json(
-      { error: "Failed to generate dev token" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: { code: "INTERNAL_SERVER_ERROR", message: "Dev login failed" } }, { status: 500 });
   }
 }

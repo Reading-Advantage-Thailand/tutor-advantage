@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Check, ChevronLeft, ChevronRight, MousePointer2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { t } from "@/lib/i18n";
+import { fill } from "../../_lib/articles";
 
 export type TutorGuideStep = {
   target: string;
@@ -141,7 +143,7 @@ export default function TutorGuideOverlay({
         left: "50%",
         top: "50%",
         transform: "translate(-50%, -50%)",
-        maxHeight: `calc(100vh - ${viewportPadding * 2}px)`,
+        maxHeight: `calc(100dvh - ${viewportPadding * 2}px)`,
       };
     }
 
@@ -161,7 +163,7 @@ export default function TutorGuideOverlay({
     return {
       left,
       top: clampedTop,
-      maxHeight: `calc(100vh - ${viewportPadding * 2}px)`,
+      maxHeight: `calc(100dvh - ${viewportPadding * 2}px)`,
     };
   }, [coachmarkHeight, targetRect]);
 
@@ -169,17 +171,17 @@ export default function TutorGuideOverlay({
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[200]">
-      {!targetRect && <div className="pointer-events-auto absolute inset-0 bg-slate-950/65" aria-hidden="true" />}
+      {!targetRect && <div className="pointer-events-auto absolute inset-0 bg-(--scrim)" aria-hidden="true" />}
 
       {targetRect && (
         <>
           <div
-            className="pointer-events-auto absolute inset-x-0 top-0 bg-slate-950/68"
+            className="pointer-events-auto absolute inset-x-0 top-0 bg-(--scrim)"
             style={{ height: Math.max(0, targetRect.top - 8) }}
             aria-hidden="true"
           />
           <div
-            className="pointer-events-auto absolute bottom-0 left-0 bg-slate-950/68"
+            className="pointer-events-auto absolute bottom-0 left-0 bg-(--scrim)"
             style={{
               top: targetRect.top + targetRect.height + 8,
               right: 0,
@@ -187,7 +189,7 @@ export default function TutorGuideOverlay({
             aria-hidden="true"
           />
           <div
-            className="pointer-events-auto absolute bottom-0 left-0 bg-slate-950/68"
+            className="pointer-events-auto absolute bottom-0 left-0 bg-(--scrim)"
             style={{
               top: Math.max(0, targetRect.top - 8),
               width: Math.max(0, targetRect.left - 8),
@@ -195,7 +197,7 @@ export default function TutorGuideOverlay({
             aria-hidden="true"
           />
           <div
-            className="pointer-events-auto absolute right-0 bottom-0 bg-slate-950/68"
+            className="pointer-events-auto absolute right-0 bottom-0 bg-(--scrim)"
             style={{
               top: Math.max(0, targetRect.top - 8),
               left: targetRect.left + targetRect.width + 8,
@@ -203,7 +205,7 @@ export default function TutorGuideOverlay({
             aria-hidden="true"
           />
           <div
-            className="pointer-events-none absolute rounded-2xl border-2 border-violet-300 shadow-[0_0_0_6px_rgba(167,139,250,0.2)] transition-all duration-300"
+            className="pointer-events-none absolute rounded-xl border-2 border-brand-solid ring-4 ring-brand-solid/30 transition-all duration-300"
             style={{
               top: targetRect.top - 8,
               left: targetRect.left - 8,
@@ -217,81 +219,82 @@ export default function TutorGuideOverlay({
 
       <section
         ref={coachmarkRef}
-        className="pointer-events-auto fixed w-[min(380px,calc(100vw-32px))] max-h-[calc(100vh-32px)] overflow-y-auto rounded-3xl border border-violet-300/40 bg-card shadow-2xl shadow-violet-950/30"
+        className="pointer-events-auto fixed w-[min(380px,calc(100vw-32px))] max-h-[calc(100dvh-32px)] overflow-y-auto rounded-xl border border-hairline bg-surface-elevated shadow-popover"
         style={coachmarkStyle}
-        aria-label="Tutor guided tour"
+        aria-label={t("lesson.preflow.guide.label")}
       >
-        <div className="flex items-start gap-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-4 text-white">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-xl bg-white/15">
-              <MousePointer2 className="size-4" />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-100">
-                ขั้นตอน {stepIndex + 1} / {totalSteps}
-              </p>
-              <h2 className="mt-1 text-base font-black leading-tight">{step.title}</h2>
-            </div>
+        <div className="flex items-start gap-3 border-b border-hairline px-4 py-3">
+          <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand-fg">
+            <MousePointer2 aria-hidden="true" className="size-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs text-fg-muted tabular">
+              {fill(t("lesson.preflow.guide.stepCount"), { n: stepIndex + 1, total: totalSteps })}
+            </p>
+            <h2 className="mt-0.5 text-base font-semibold text-fg">{step.title}</h2>
           </div>
         </div>
+        <div
+          aria-hidden="true"
+          className="h-1 bg-brand-vivid transition-[width] duration-300"
+          style={{ width: `${Math.round(((stepIndex + 1) / Math.max(1, totalSteps)) * 100)}%` }}
+        />
 
-        <div className="p-5">
-          <p className="text-sm leading-relaxed text-foreground">{step.description}</p>
+        <div className="p-4">
+          <p className="text-sm text-fg">{step.description}</p>
           {step.tip && (
-            <div className="mt-4 rounded-2xl border border-amber-400/25 bg-amber-400/10 px-3.5 py-3 text-xs leading-relaxed text-amber-800 dark:text-amber-200">
-              <span className="font-black">เคล็ดลับสำหรับติวเตอร์: </span>
+            <div className="mt-3 rounded-lg border border-warning-border bg-warning-bg px-3 py-2.5 text-[0.8125rem] text-warning-fg">
+              <span className="font-semibold">{t("lesson.preflow.guide.tipPrefix")} </span>
               {step.tip}
             </div>
           )}
 
           {step.action === "click" && (
-            <div className={`mt-4 flex items-center gap-2 text-xs font-bold ${actionComplete ? "text-emerald-600 dark:text-emerald-400" : "text-violet-600 dark:text-violet-300"}`}>
-              {actionComplete ? <Check className="size-4" /> : <MousePointer2 className="size-4 animate-pulse" />}
+            <div role="status" className={`mt-3 flex items-center gap-2 text-[0.8125rem] font-medium ${actionComplete ? "text-success-fg" : "text-brand-fg"}`}>
+              {actionComplete ? <Check aria-hidden="true" className="size-4" /> : <MousePointer2 aria-hidden="true" className="size-4 animate-pulse" />}
               {targetUnavailable
-                ? "จุดควบคุมนี้ไม่มีในข้อมูลบทเรียน จึงข้ามขั้นตอนนี้ได้"
+                ? t("lesson.preflow.guide.targetMissingClick")
                 : actionComplete
-                  ? "ทำขั้นตอนนี้แล้ว ไปต่อได้เลย"
-                  : "ลองกดจุดที่มีกรอบไฮไลต์ก่อน"}
+                  ? t("lesson.preflow.guide.actionDone")
+                  : t("lesson.preflow.guide.actionPending")}
             </div>
           )}
 
           {targetUnavailable && step.action !== "click" && (
-            <div className="mt-4 rounded-2xl border border-amber-400/25 bg-amber-400/10 px-3.5 py-3 text-xs leading-relaxed text-amber-800 dark:text-amber-200">
-              จุดนี้ไม่มีในข้อมูลบทเรียน จะแสดงคำอธิบายแทนและไปต่อได้
+            <div className="mt-3 rounded-lg border border-neutral-border bg-neutral-bg px-3 py-2.5 text-[0.8125rem] text-neutral-fg">
+              {t("lesson.preflow.guide.targetMissing")}
             </div>
           )}
 
           {(step.waitForMockAnswers || step.waitForMockVotes || step.waitForGameResults) && !canAdvance && (
-            <div className="mt-4 flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-300">
-              <span className="size-2 animate-pulse rounded-full bg-amber-400" />
+            <div role="status" className="mt-3 flex items-center gap-2 text-[0.8125rem] font-medium text-warning-fg">
+              <span aria-hidden="true" className="size-2 animate-pulse rounded-full bg-warning-solid" />
               {step.waitForMockVotes
-                ? "รอ Mock นักเรียนโหวตครบก่อนปิดโหวต..."
+                ? t("lesson.preflow.guide.waitVotes")
                 : step.waitForGameResults
-                  ? "รอ Mock นักเรียนเล่นจบทีละคนก่อนเปิดหน้าสรุปผล..."
-                  : "รอ Mock นักเรียนตอบครบก่อนเปิดหน้าสรุปผล..."}
+                  ? t("lesson.preflow.guide.waitResults")
+                  : t("lesson.preflow.guide.waitAnswers")}
             </div>
           )}
 
-          <div className="mt-5 flex items-center justify-between gap-2">
+          <div className="mt-4 flex items-center justify-between gap-2">
             <Button
               type="button"
               variant="ghost"
               size="sm"
               onClick={onPrevious}
               disabled={stepIndex === 0}
-              className="gap-1.5"
             >
-              <ChevronLeft className="size-4" /> ย้อนกลับ
+              <ChevronLeft aria-hidden="true" /> {t("lesson.preflow.guide.previous")}
             </Button>
             <Button
               type="button"
               size="sm"
               onClick={onNext}
               disabled={!canNext}
-              className="gap-1.5 bg-violet-600 text-white hover:bg-violet-700"
             >
-              {stepIndex === totalSteps - 1 ? "เสร็จสิ้น" : "ถัดไป"}
-              <ChevronRight className="size-4" />
+              {stepIndex === totalSteps - 1 ? t("lesson.preflow.guide.finish") : t("lesson.preflow.guide.next")}
+              <ChevronRight aria-hidden="true" />
             </Button>
           </div>
         </div>

@@ -1,17 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { ConfirmDialog as AppConfirmDialog } from "@/components/app/ConfirmDialog";
 
+/**
+ * @deprecated Legacy API kept for unmigrated pages. Use `ConfirmDialog`
+ * from "@/components/app" (tone, requireText, reason, details).
+ *
+ * Behaviour kept: the dialog closes after `onConfirm` settles, even when it
+ * throws (old pages show their own toast).
+ */
 interface ConfirmDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -33,52 +30,23 @@ export function ConfirmDialog({
   cancelLabel = "ยกเลิก",
   variant = "default",
   onConfirm,
-  icon,
 }: ConfirmDialogProps) {
-  const [loading, setLoading] = useState(false);
-
-  const handleConfirm = async () => {
-    setLoading(true);
-    try {
-      await onConfirm();
-    } finally {
-      setLoading(false);
-      onOpenChange(false);
-    }
-  };
-
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-base font-bold">
-            {icon}
-            {title}
-          </DialogTitle>
-          <DialogDescription className="text-sm pt-1">
-            {description}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="pt-2">
-          <Button
-            variant="outline"
-            className="rounded-xl font-bold"
-            onClick={() => onOpenChange(false)}
-            disabled={loading}
-          >
-            {cancelLabel}
-          </Button>
-          <Button
-            variant={variant === "destructive" ? "destructive" : "default"}
-            className="rounded-xl font-bold"
-            onClick={handleConfirm}
-            disabled={loading}
-          >
-            {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-            {confirmLabel}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <AppConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title={title}
+      description={description}
+      confirmLabel={confirmLabel}
+      cancelLabel={cancelLabel}
+      tone={variant === "destructive" ? "danger" : "brand"}
+      onConfirm={async () => {
+        try {
+          await onConfirm();
+        } catch {
+          // legacy pages report their own errors
+        }
+      }}
+    />
   );
 }

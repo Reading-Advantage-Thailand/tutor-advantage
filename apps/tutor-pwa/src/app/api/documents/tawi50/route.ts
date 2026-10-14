@@ -7,7 +7,6 @@
 
 import { prisma } from "@tutor-advantage/database";
 import { NextRequest, NextResponse } from "next/server";
-import { generateTawi50Pdf } from "@/lib/tawi50Pdf";
 import { getMissingTawi50Fields } from "@/lib/tawi50Requirements";
 import { getActiveTutorSession } from "@/lib/tutor-session";
 
@@ -81,6 +80,8 @@ export async function GET(req: NextRequest) {
   const withholdingTax = Number(payoutDocument.withholdingTaxMinor) / 100;
 
   try {
+    // pdf-lib + fontkit load only when a certificate is actually generated.
+    const { generateTawi50Pdf } = await import("@/lib/tawi50Pdf");
     const pdfBytes = await generateTawi50Pdf({
       companyName,
       companyTaxId,

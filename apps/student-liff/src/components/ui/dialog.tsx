@@ -1,7 +1,9 @@
 "use client"
 
 import * as React from "react"
+import { X } from "lucide-react"
 
+import { t } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 
 type DialogContextValue = {
@@ -32,7 +34,8 @@ function DialogContent({ className, children, ...props }: React.ComponentProps<"
   if (!context?.open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    // z = --z-overlay (60): above the TabBar (50), which comes later in the DOM.
+    <div className="fixed inset-0 z-[var(--z-overlay)] flex items-center justify-center bg-black/50 p-4">
       <div
         role="dialog"
         aria-modal="true"
@@ -45,11 +48,11 @@ function DialogContent({ className, children, ...props }: React.ComponentProps<"
       >
         <button
           type="button"
-          className="absolute right-3 top-3 rounded-md px-2 py-1 text-sm text-muted-foreground hover:bg-muted"
+          className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-full text-muted-foreground hover:bg-muted active:bg-muted"
           onClick={() => context.onOpenChange?.(false)}
-          aria-label="Close"
+          aria-label={t("common.close")}
         >
-          x
+          <X className="size-4" aria-hidden="true" />
         </button>
         {children}
       </div>

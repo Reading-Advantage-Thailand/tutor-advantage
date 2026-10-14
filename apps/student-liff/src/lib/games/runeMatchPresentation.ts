@@ -1,47 +1,38 @@
+import { fitText, type MeasureText } from "./textFit";
+
 export type RuneLabelMetrics = {
   fontSize: number;
   lineHeight: number;
 };
 
-export function formatRuneLabel(text: string): string {
-  const characters = Array.from(text.trim());
-  if (characters.length <= 6 || text.includes(" ")) return text;
-
-  const lineCount = characters.length > 14 ? 3 : 2;
-  const chunkSize = Math.ceil(characters.length / lineCount);
-  const lines: string[] = [];
-  for (let index = 0; index < characters.length; index += chunkSize) {
-    lines.push(characters.slice(index, index + chunkSize).join(""));
-  }
-  return lines.join("\n");
-}
+export type RuneLabelPresentation = RuneLabelMetrics & { text: string };
 
 /**
- * Keeps bilingual rune labels legible without letting long Thai translations
- * spill outside the stone. This is presentation-only and does not affect the
- * matching key or any game rules.
+ * Fits a rune's word (English or Thai) inside its stone: the font shrinks
+ * until the label fits and lines only break between words, never inside one
+ * ("forest" stays "forest", not "fores" or "fo/rest"). The label box matches
+ * the Text node in RuneMatchGame (rune = cell - 4, box = rune - 8 wide and
+ * 80% of the rune tall). Presentation only; matching keys are unaffected.
  */
-export function getRuneLabelMetrics(
+export function fitRuneLabel(
   text: string,
   cellSize: number,
   textSizeMultiplier = 1,
-): RuneLabelMetrics {
-  const characterCount = Array.from(text.trim()).length;
-  const sizeRatio =
-    characterCount <= 6
-      ? 0.31
-      : characterCount <= 10
-        ? 0.27
-        : characterCount <= 16
-          ? 0.23
-          : 0.2;
-  const naturalSize = cellSize * sizeRatio * textSizeMultiplier;
-  const maximumSize = Math.min(24, cellSize * 0.34);
-
-  return {
-    fontSize: Math.round(Math.max(12, Math.min(maximumSize, naturalSize))),
-    lineHeight: characterCount > 10 ? 1.05 : 1.1,
-  };
+  measure?: MeasureText,
+): RuneLabelPresentation {
+  const runeSize = cellSize - 4;
+  const maximumSize = Math.min(24, cellSize * 0.34) * Math.max(1, textSizeMultiplier);
+  const fit = fitText(text, {
+    width: Math.max(8, runeSize - 14),
+    height: Math.max(8, runeSize * 0.8 - 8),
+    maxFontSize: Math.min(maximumSize, Math.min(24, cellSize * 0.4)),
+    minFontSize: 10,
+    lineHeight: 1.05,
+    measure,
+    fontFamily: "Sarabun, Arial",
+    fontStyle: "bold",
+  });
+  return { text: fit.text, fontSize: fit.fontSize, lineHeight: fit.lineHeight };
 }
 
 export function getTimePresentation(currentMs: number, maxMs: number) {

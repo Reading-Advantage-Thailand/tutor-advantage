@@ -3,6 +3,7 @@ import { Group, Rect, Text, Image as KonvaImage } from "react-konva";
 import { usePotionRushStore, Cauldron } from "@/store/usePotionRushStore";
 import { withBasePath } from "@/lib/games/basePath";
 import { useSound } from "@/hooks/useSound";
+import { tx } from "@/lib/games/gameText";
 
 interface LayoutConfig {
   trashX: number;
@@ -161,7 +162,7 @@ function SingleCauldron({
 
       {cauldron.state === "COMPLETED" && (
         <Text
-          text="DONE!"
+          text={tx("DONE!")}
           fontSize={24}
           fontStyle="bold"
           fill="#facc15"
@@ -173,7 +174,7 @@ function SingleCauldron({
       )}
       {cauldron.state === "WARNING" && (
         <Text
-          text="RUINED!"
+          text={tx("RUINED!")}
           fontSize={18}
           fontStyle="bold"
           fill="#ef4444"
