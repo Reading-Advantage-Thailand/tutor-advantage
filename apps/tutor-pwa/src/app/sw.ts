@@ -35,7 +35,9 @@ const serwist = new Serwist({
   },
   skipWaiting: true,
   clientsClaim: true,
-  navigationPreload: true,
+  // Preload fires a second request for the same navigation. For /api/auth/*
+  // that means two random oauth_state values and a state_mismatch on callback.
+  navigationPreload: false,
   runtimeCaching: [
     {
       // Authenticated JSON/data routes are never cached by the worker.
@@ -66,6 +68,14 @@ const serwist = new Serwist({
     },
     ...defaultCache,
   ],
+});
+
+// navigationPreload is persisted on the registration, so omitting enable() does
+// not turn it off for browsers that already have it on. Disable it explicitly.
+self.addEventListener("activate", (event) => {
+  if (self.registration.navigationPreload) {
+    event.waitUntil(self.registration.navigationPreload.disable());
+  }
 });
 
 serwist.addEventListeners();

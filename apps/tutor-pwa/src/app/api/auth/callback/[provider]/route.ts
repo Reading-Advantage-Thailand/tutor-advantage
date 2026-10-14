@@ -31,6 +31,22 @@ export async function GET(
   }
 
   if (!state || !storedState || state !== storedState) {
+    const reason = !state
+      ? "missing_state_param"
+      : !storedState
+        ? "missing_state_cookie"
+        : "state_mismatch";
+    console.warn("OAuth invalid_state", {
+      provider,
+      reason,
+      requestHost: request.headers.get("host"),
+      forwardedHost: request.headers.get("x-forwarded-host"),
+      publicBase,
+      hasAnyCookie: cookieStore.getAll().length > 0,
+      cookieNames: cookieStore.getAll().map((c) => c.name),
+      referer: request.headers.get("referer"),
+      userAgent: request.headers.get("user-agent"),
+    });
     return NextResponse.redirect(new URL("/?error=invalid_state", publicBase));
   }
 
