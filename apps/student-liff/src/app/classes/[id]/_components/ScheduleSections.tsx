@@ -1,13 +1,14 @@
 "use client";
 
 import type { Liff } from "@line/liff";
-import { CalendarClock, CalendarDays, CalendarPlus, CalendarRange, ExternalLink } from "lucide-react";
+import { CalendarClock, CalendarDays, CalendarPlus, CalendarRange, ExternalLink, Video } from "lucide-react";
 import { toast } from "sonner";
 import { BottomSheet, IconTile, ListGroup, ListRow, SectionHeader, Surface } from "@/components/mobile";
 import { Button } from "@/components/ui/button";
 import { buildClassIcs, buildGoogleCalendarUrl, downloadIcsFile, icsFileName } from "@/lib/classCalendar";
 import { formatThaiDate, keepTimesTogether } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { safeMeetingUrl } from "./meetingLink";
 import type { ClassDetail } from "./types";
 
 /** ["เปิดคลาส: 28 ก.ย. 2569", "ปิดคลาส: 12 ต.ค. 2569"] (only the dates the class has). */
@@ -49,9 +50,31 @@ export function ScheduleSection({ cls, onAddToCalendar }: { cls: ClassDetail; on
   );
 }
 
+/** Meet/Zoom open in the external browser so the phone can hand off to the app. */
+function openExternal(liff: Liff | null, url: string) {
+  try {
+    if (liff?.isInClient()) {
+      liff.openWindow({ url, external: true });
+      return;
+    }
+  } catch {
+    // Fall through to a normal new tab.
+  }
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
 /** Enrolled layout: the next lesson, front and centre. */
-export function NextSessionCard({ cls, onAddToCalendar }: { cls: ClassDetail; onAddToCalendar: () => void }) {
+export function NextSessionCard({
+  cls,
+  liff,
+  onAddToCalendar,
+}: {
+  cls: ClassDetail;
+  liff: Liff | null;
+  onAddToCalendar: () => void;
+}) {
   const dates = classDatesLine(cls);
+  const meetingUrl = safeMeetingUrl(cls.meetingUrl);
   const nextSession = cls.nextSession || t("classes.detail.tba");
   return (
     <Surface>
@@ -66,7 +89,13 @@ export function NextSessionCard({ cls, onAddToCalendar }: { cls: ClassDetail; on
           {dates ? <p className="mt-1 text-[13px] leading-[1.5] text-fg-muted">{dates}</p> : null}
         </div>
       </div>
-      <Button variant="brandSoft" size="touch" className="mt-4 w-full" onClick={onAddToCalendar}>
+      {meetingUrl ? (
+        <Button variant="brand" size="touch" className="mt-4 w-full" onClick={() => openExternal(liff, meetingUrl)}>
+          <Video aria-hidden="true" />
+          {t("classes.detail.joinOnlineClass")}
+        </Button>
+      ) : null}
+      <Button variant="brandSoft" size="touch" className={meetingUrl ? "mt-2 w-full" : "mt-4 w-full"} onClick={onAddToCalendar}>
         <CalendarPlus aria-hidden="true" />
         {t("classes.detail.addToCalendar")}
       </Button>
@@ -101,15 +130,7 @@ export function CalendarSheet({
   const handleGoogle = () => {
     const url = buildGoogleCalendarUrl(calendarClass);
     onOpenChange(false);
-    try {
-      if (liff?.isInClient()) {
-        liff.openWindow({ url, external: true });
-        return;
-      }
-    } catch {
-      // Fall through to a normal new tab.
-    }
-    window.open(url, "_blank", "noopener,noreferrer");
+    openExternal(liff, url);
   };
 
   return (

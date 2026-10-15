@@ -204,7 +204,7 @@ export default function ClassDetailPage({ params }: PageProps) {
               />
             ) : null}
 
-            <NextSessionCard cls={cls} onAddToCalendar={openCalendar} />
+            <NextSessionCard cls={cls} liff={liff} onAddToCalendar={openCalendar} />
 
             <LessonsSection
               cls={cls}

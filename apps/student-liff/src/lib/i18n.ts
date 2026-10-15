@@ -1192,6 +1192,7 @@ export const th = {
       enterClass: "เข้าห้องเรียน",
       studying: "เรียนอยู่",
       nextSessionTitle: "คาบถัดไป",
+      joinOnlineClass: "เข้าห้องเรียนออนไลน์",
       tba: "ยังไม่กำหนด",
       calendarSheetTitle: "เพิ่มตารางเรียนลงปฏิทิน",
       calendarSheetDescription: "เลือกปฏิทินที่ใช้อยู่ จะได้ไม่พลาดคาบเรียน",

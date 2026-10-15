@@ -42,6 +42,8 @@ export interface ClassDetail extends ClassAccessSource {
   startsAt?: string | null;
   endsAt?: string | null;
   bookCycles?: ClassBookCycle[];
+  /** Meet/Zoom link; the API sends "" unless the student is actively enrolled. */
+  meetingUrl?: string;
 }
 
 /** GET /classes/:id/articles → `articles[]`. Primary books send `cefrLevel: null`. */
