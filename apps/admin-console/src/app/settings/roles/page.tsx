@@ -1,13 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus, ShieldCheck, ShieldOff, UserCog, Users } from "lucide-react";
+import { Plus, ShieldCheck, ShieldOff, UserCog, UserPlus, Users } from "lucide-react";
 import {
   AdminStatusChip,
   Card,
   CardHeader,
   Chip,
   ConfirmDialog,
+  CopyButton,
   DataTable,
   DescriptionList,
   EmptyState,
@@ -65,6 +66,61 @@ function changeKind(change: RoleChange): "provision" | "revoke" | "restore" | "c
 
 function grantsAdmin(change: RoleChange) {
   return change.active && change.role === "ADMIN" && !(change.current?.role === "ADMIN" && change.current.isActive);
+}
+
+/** One-time invite for a tutor with no upline (identity POST /v1/admin/tutor-invites). */
+function TopTutorInviteCard() {
+  const [open, setOpen] = useState(false);
+  const [requestKey, setRequestKey] = useState("");
+  const [invite, setInvite] = useState<{ inviteUrl: string; expiresAt: string } | null>(null);
+
+  return (
+    <Card>
+      <CardHeader
+        title={t("roles.topTutorTitle")}
+        description={t("roles.topTutorBody")}
+        action={
+          <Button
+            variant="outline"
+            onClick={() => {
+              setRequestKey(newIdempotencyKey());
+              setOpen(true);
+            }}
+          >
+            <UserPlus aria-hidden="true" /> {t("roles.topTutorCreate")}
+          </Button>
+        }
+      />
+      {invite ? (
+        <Notice tone="warning" title={t("roles.topTutorLinkTitle")}>
+          <span className="flex flex-col gap-2">
+            <span className="flex items-center gap-2 break-all font-mono text-[0.8125rem]">
+              {invite.inviteUrl}
+              <CopyButton value={invite.inviteUrl} />
+            </span>
+            <span>{t("roles.topTutorLinkHint", { date: formatThaiDate(invite.expiresAt) })}</span>
+          </span>
+        </Notice>
+      ) : null}
+      <ConfirmDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={t("roles.topTutorConfirmTitle")}
+        description={t("roles.topTutorConfirmBody")}
+        confirmLabel={t("roles.topTutorCreate")}
+        tone="danger"
+        reason={{ label: t("roles.reasonLabel"), placeholder: t("roles.topTutorReasonPlaceholder"), minLength: 5 }}
+        onConfirm={async ({ reason }) => {
+          const created = await api.post<{ inviteUrl: string; expiresAt: string }>(
+            "/v1/admin/tutor-invites",
+            { reason },
+            { idempotencyKey: requestKey },
+          );
+          setInvite(created);
+        }}
+      />
+    </Card>
+  );
 }
 
 export default function RolesPage() {
@@ -245,6 +301,8 @@ export default function RolesPage() {
       </Grid>
 
       {data && activeAdmins <= 1 ? <Notice tone="warning">{t("roles.lastAdminNotice")}</Notice> : null}
+
+      <TopTutorInviteCard />
 
       <FilterBar search={{ value: search, onValueChange: setSearch, placeholder: t("roles.searchPlaceholder") }} isFiltered={search !== ""} onReset={() => setSearch("")} />
 

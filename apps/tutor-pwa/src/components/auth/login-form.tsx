@@ -35,9 +35,9 @@ const serverSearch = () => "";
 /** Message for the `?error=` the OAuth callback redirects back with. */
 export function loginErrorMessageKey(error: string | null) {
   if (!error) return null;
-  return error === "tutor_invite_required"
-    ? ("app.loginErrorTutorInviteRequired" as const)
-    : ("app.loginErrorGeneric" as const);
+  if (error === "tutor_invite_required") return "app.loginErrorTutorInviteRequired" as const;
+  if (error === "invite_invalid") return "app.loginErrorInviteInvalid" as const;
+  return "app.loginErrorGeneric" as const;
 }
 
 export function LoginForm() {
@@ -45,7 +45,7 @@ export function LoginForm() {
   const search = useSyncExternalStore(subscribeNever, readSearch, serverSearch);
   const params = new URLSearchParams(search);
   const errorKey = loginErrorMessageKey(params.get("error"));
-  const invited = Boolean(params.get("sponsor"));
+  const invited = Boolean(params.get("sponsor") || params.get("invite"));
 
   // Unchanged flow: full-page redirect to the OAuth route, forwarding ?sponsor= from the entry URL.
   const handleOAuth = async (provider: "google") => {

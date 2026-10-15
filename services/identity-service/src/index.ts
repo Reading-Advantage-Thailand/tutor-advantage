@@ -24,6 +24,7 @@ dotenv.config({
   override: process.env.NODE_ENV !== "production",
 });
 import { handleOAuthCallback } from "./controllers/authController";
+import { createTutorInvite } from "./controllers/tutorInviteController";
 import { handleDevLogin } from "./controllers/devAuthController";
 import { getSession, issueSocketToken } from "./controllers/sessionController";
 import { getGuardianConsentStatus, submitGuardianConsent, submitUserConsent } from "./controllers/consentController";
@@ -126,6 +127,7 @@ app.post("/v1/users/me/consents", authMiddleware, submitUserConsent);
 // Admin Routes
 app.get("/v1/admin/roles", authMiddleware, requireRoles("ADMIN"), getSystemRoles);
 app.post("/v1/admin/roles", authMiddleware, requireRoles("ADMIN"), upsertSystemRole);
+app.post("/v1/admin/tutor-invites", authMiddleware, requireRoles("ADMIN"), createTutorInvite);
 
 // Root API
 app.get("/", (_req: Request, res: Response) => {

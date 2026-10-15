@@ -119,6 +119,7 @@ export const audit = {
     USER_PII_REVEAL: "เปิดดูข้อมูลส่วนบุคคล",
     ROLE_CHANGE: "เปลี่ยนสิทธิ์ผู้ใช้",
     ROLE_PROVISION: "เพิ่มผู้ดูแลใหม่",
+    TUTOR_INVITE_CREATE: "สร้างลิงก์เชิญติวเตอร์บนสุด",
     ROLE_REVOKE: "ถอนสิทธิ์ผู้ดูแล",
     FRAUD_CLEAR: "ปิดเคสความเสี่ยง",
     FRAUD_MONITOR: "เฝ้าระวังความเสี่ยง",

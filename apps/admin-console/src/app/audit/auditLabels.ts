@@ -49,6 +49,7 @@ export const AUDIT_CATEGORIES: { id: AuditCategory; label: string; actions: stri
       "ROLE_CHANGE",
       "ROLE_PROVISION",
       "ROLE_REVOKE",
+      "TUTOR_INVITE_CREATE",
     ],
   },
   {

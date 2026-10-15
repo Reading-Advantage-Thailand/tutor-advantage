@@ -58,6 +58,22 @@ model User {
   @@schema("identity")
 }
 
+/// One-time invite an admin issues for a tutor with no upline (top of a network).
+model TutorInvite {
+  tutorInviteId String    @id @default(dbgenerated("gen_random_uuid()")) @map("tutor_invite_id") @db.Uuid
+  /// sha256 of the token; the token itself is only shown once to the admin.
+  tokenHash     String    @unique @map("token_hash")
+  createdBy     String    @map("created_by")
+  reason        String
+  expiresAt     DateTime  @map("expires_at") @db.Timestamptz
+  usedAt        DateTime? @map("used_at") @db.Timestamptz
+  usedByUserId  String?   @map("used_by_user_id") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("tutor_invites")
+  @@schema("identity")
+}
+
 model OAuthIdentity {
   identityId      String   @id @default(dbgenerated("gen_random_uuid()")) @map("identity_id") @db.Uuid
   userId          String   @map("user_id") @db.Uuid

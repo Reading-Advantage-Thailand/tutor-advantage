@@ -17,6 +17,10 @@ const prisma = vi.hoisted(() => ({
   userConsent: {
     findFirst: vi.fn(),
   },
+  tutorInvite: {
+    findUnique: vi.fn(),
+    updateMany: vi.fn(),
+  },
 }));
 
 vi.mock("@tutor-advantage/database", () => ({ prisma }));
@@ -385,6 +389,63 @@ describe("tutor onboarding by invite", () => {
     const result = await processOAuthLogin("google", "s-4", "e@example.com", "Existing", "", "tutor-1");
 
     expect(prisma.user.update).not.toHaveBeenCalledWith(expect.objectContaining({ data: { role: "TUTOR" } }));
+    expect(result.user.role).toBe("STUDENT");
+  });
+});
+
+describe("top-level tutor invite", () => {
+  const TOKEN = "a".repeat(43);
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    prisma.oAuthIdentity.count.mockResolvedValue(0);
+    prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.findFirst.mockResolvedValue(null);
+    prisma.user.create.mockImplementation(({ data }: { data: { role: string } }) =>
+      Promise.resolve({ userId: "new-1", displayName: "New", role: data.role, sponsorTutorId: null, sponsorLockedAt: null }),
+    );
+    prisma.user.update.mockImplementation(({ data }: { data: Record<string, unknown> }) =>
+      Promise.resolve({ userId: "new-1", displayName: "New", role: "TUTOR", sponsorTutorId: null, sponsorLockedAt: null, ...data }),
+    );
+  });
+
+  it("creates a tutor with no upline and consumes the invite", async () => {
+    prisma.tutorInvite.findUnique.mockResolvedValue({ usedAt: null, expiresAt: new Date(Date.now() + 60_000) });
+    prisma.tutorInvite.updateMany.mockResolvedValue({ count: 1 });
+
+    const result = await processOAuthLogin("google", "g-1", "root@example.com", "Root", "", null, undefined, TOKEN);
+
+    expect(prisma.user.create).toHaveBeenCalledWith({ data: expect.objectContaining({ role: "TUTOR", sponsorTutorId: null }) });
+    expect(prisma.tutorInvite.updateMany).toHaveBeenCalledWith({
+      where: expect.objectContaining({ usedAt: null }),
+      data: expect.objectContaining({ usedByUserId: "new-1" }),
+    });
+    expect(result.user.role).toBe("TUTOR");
+  });
+
+  it("ignores a used or expired invite", async () => {
+    prisma.tutorInvite.findUnique.mockResolvedValue({ usedAt: new Date(), expiresAt: new Date(Date.now() + 60_000) });
+
+    const result = await processOAuthLogin("google", "g-2", "late@example.com", "Late", "", null, undefined, TOKEN);
+
+    expect(result.user.role).toBe("STUDENT");
+    expect(prisma.tutorInvite.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("falls back to student when another login used the invite first", async () => {
+    prisma.tutorInvite.findUnique.mockResolvedValue({ usedAt: null, expiresAt: new Date(Date.now() + 60_000) });
+    prisma.tutorInvite.updateMany.mockResolvedValue({ count: 0 });
+
+    const result = await processOAuthLogin("google", "g-3", "race@example.com", "Race", "", null, undefined, TOKEN);
+
+    expect(prisma.user.update).toHaveBeenLastCalledWith({ where: { userId: "new-1" }, data: { role: "STUDENT" } });
+    expect(result.user.role).toBe("STUDENT");
+  });
+
+  it("is never honoured for a LINE login", async () => {
+    const result = await processOAuthLogin("line", "l-1", "s@example.com", "S", "", null, undefined, TOKEN);
+    expect(prisma.tutorInvite.findUnique).not.toHaveBeenCalled();
     expect(result.user.role).toBe("STUDENT");
   });
 });

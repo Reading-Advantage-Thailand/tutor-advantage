@@ -1,4 +1,5 @@
 import { prisma } from "@tutor-advantage/database";
+import { claimTutorInvite, isUsableTutorInvite } from "./tutorInvite";
 import jwt from "jsonwebtoken";
 import {
   CONSENT_STATUS_GRANTED,
@@ -27,6 +28,7 @@ export async function processOAuthLogin(
   picture: string = "",
   sponsorTutorId?: string | null,
   verifiedPhoneNumber?: string,
+  tutorInviteToken?: string | null,
 ): Promise<AuthResult> {
   return processLogin(
     provider,
@@ -37,7 +39,7 @@ export async function processOAuthLogin(
     sponsorTutorId,
     verifiedPhoneNumber,
     "STUDENT",
-    { tutorViaInvite: provider !== "line" },
+    { tutorViaInvite: provider !== "line", tutorInviteToken: provider !== "line" ? tutorInviteToken : null },
   );
 }
 
@@ -73,10 +75,11 @@ async function processLogin(
   sponsorTutorId: string | null | undefined,
   verifiedPhoneNumber: string | undefined,
   requestedRole: "STUDENT" | "TUTOR",
-  options: { tutorViaInvite?: boolean } = {},
+  options: { tutorViaInvite?: boolean; tutorInviteToken?: string | null } = {},
 ): Promise<AuthResult> {
   let user;
   let roleUpgraded = false;
+  let createdNew = false;
   const normalizedEmail = (email && email.trim() !== "") ? email.trim() : null;
   // Only LINE's verified profile may supply a phone number. No other caller
   // can use an arbitrary phone number to discover or attach to an account.
@@ -91,7 +94,13 @@ async function processLogin(
   // Tutor onboarding: a tutor-app (non-LINE) login that carries a valid
   // invite from an active tutor makes the account a tutor. The role is
   // decided here from the server-checked invite, never taken from the client.
-  const joinsAsTutor = Boolean(options.tutorViaInvite && invitedSponsorId);
+  // A one-time admin invite makes a top-level tutor (no upline) and wins
+  // over a sponsor invite. It is consumed once the account is known.
+  const topLevelInvite =
+    options.tutorInviteToken && (await isUsableTutorInvite(options.tutorInviteToken))
+      ? options.tutorInviteToken
+      : null;
+  const joinsAsTutor = Boolean(options.tutorViaInvite && (invitedSponsorId || topLevelInvite));
 
   // 1. Check if OAuth Identity already exists
   const existingIdentity = await prisma.oAuthIdentity.findUnique({
@@ -136,6 +145,7 @@ async function processLogin(
 
     // 3. If still no user, create a new one.
     if (!user) {
+      createdNew = true;
       // Create user and link identity in one transaction
       user = await prisma.user.create({
         data: {
@@ -187,6 +197,7 @@ async function processLogin(
 
   if (
     provider !== "line" &&
+    !topLevelInvite &&
     invitedSponsorId &&
     user.userId !== invitedSponsorId &&
     !user.sponsorTutorId &&
@@ -220,6 +231,33 @@ async function processLogin(
       data: { role: "TUTOR" },
     });
     roleUpgraded = true;
+  }
+
+  // Consume the top-level invite for the account it just made a tutor. If a
+  // concurrent login already used it (and no sponsor invite applies), the
+  // account stays a student.
+  if (topLevelInvite && user.role === "TUTOR" && (createdNew || roleUpgraded)) {
+    const claimed = await claimTutorInvite(topLevelInvite, user.userId);
+    if (!claimed && !invitedSponsorId) {
+      user = await prisma.user.update({
+        where: { userId: user.userId },
+        data: { role: "STUDENT" },
+      });
+      roleUpgraded = false;
+    } else if (
+      !claimed &&
+      invitedSponsorId &&
+      user.userId !== invitedSponsorId &&
+      !user.sponsorTutorId &&
+      !user.sponsorLockedAt &&
+      !(await wouldCreateSponsorCycle(user.userId, invitedSponsorId))
+    ) {
+      // Fall back to the sponsor invite that was set aside for the top-level one.
+      user = await prisma.user.update({
+        where: { userId: user.userId },
+        data: { sponsorTutorId: invitedSponsorId, sponsorLockedAt: new Date() },
+      });
+    }
   }
 
   // Generate JWT token

@@ -118,6 +118,7 @@ describe("handleOAuthCallback", () => {
       "avatar.png",
       "tutor-1",
       undefined,
+      null,
     );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ sessionToken: "session-token" }));
@@ -205,6 +206,7 @@ describe("handleOAuthCallback", () => {
       "line-avatar.png",
       null,
       "+66899999999",
+      null,
     );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ sessionToken: "session-token-line" }));

@@ -56,6 +56,8 @@ export async function GET(
 
   // Sponsor comes from the invite cookie, not the state param
   const sponsorTutorId = cookieStore.get("tutor_invite_sponsor")?.value || null;
+  // One-time top-level invite from an admin (identity checks and consumes it)
+  const tutorInviteToken = cookieStore.get("tutor_top_invite")?.value || null;
 
   // PKCE: read stored verifier (only used for google)
   const codeVerifier = cookieStore.get("pkce_verifier")?.value || null;
@@ -70,6 +72,7 @@ export async function GET(
       redirectUri: `${publicBase}/api/auth/callback/${provider}`,
     };
     if (sponsorTutorId) callbackBody.sponsorTutorId = sponsorTutorId;
+    if (tutorInviteToken) callbackBody.tutorInviteToken = tutorInviteToken;
     if (codeVerifier) callbackBody.codeVerifier = codeVerifier;
 
     const response = await fetch(`${identityServiceUrl}/v1/auth/callback`, {
@@ -101,6 +104,7 @@ export async function GET(
       const back = NextResponse.redirect(new URL("/?error=tutor_invite_required", publicBase));
       back.cookies.delete("oauth_state");
       back.cookies.delete("pkce_verifier");
+      back.cookies.delete("tutor_top_invite");
       return back;
     }
 
@@ -120,6 +124,7 @@ export async function GET(
     redirect.cookies.delete("oauth_state");
     redirect.cookies.delete("pkce_verifier");
     redirect.cookies.delete("tutor_invite_sponsor");
+    redirect.cookies.delete("tutor_top_invite");
 
     return redirect;
   } catch (error) {
