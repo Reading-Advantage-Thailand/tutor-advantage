@@ -32,6 +32,7 @@ import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatPeriodMonth, formatSatang, formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { PayoutLinesTable } from "./PayoutLinesTable";
+import { uncollectedClawback } from "../ownerDecisions";
 import { bankLabel, satangNumber, type PayoutLineRow, type SettlementDetailResponse, type TimelineEntry } from "../types";
 import "@/locales/th/settlements";
 
@@ -134,6 +135,7 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
   if (isLoading || !data || !run || !plan) return <PageSkeleton variant="table" />;
 
   const status = run.status;
+  const uncollected = uncollectedClawback(data.lines);
   const canRefresh =
     isAdmin && (["DRAFT", "REJECTED", "ADJUSTMENT_PENDING"].includes(status) || (status === "SUBMITTED" && isStale));
   const canSubmit = isAdmin && status === "DRAFT";
@@ -287,6 +289,14 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
       {/* Stale / empty / pending-adjustment blocks already have their own notice above. */}
       {(canApprove || canDevApprove) && plan.missingRecipientCount > 0 && !isStale && !isEmpty && pendingAdjustments === 0 ? (
         <Notice tone="warning">{approveBlockedReason}</Notice>
+      ) : null}
+      {uncollected.count > 0 ? (
+        <Notice tone="warning" title={t("settlements.ownerDecisionTitle")}>
+          {t("settlements.uncollectedClawbackBody", {
+            count: formatNumber(uncollected.count),
+            amount: formatSatang(Number(uncollected.totalSatang)),
+          })}
+        </Notice>
       ) : null}
       {canDevApprove ? (
         <Notice tone="warning" title={t("settlements.devOverrideTitle")}>

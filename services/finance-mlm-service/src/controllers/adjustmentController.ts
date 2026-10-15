@@ -138,6 +138,7 @@ export async function getAdjustments(req: AuthenticatedRequest, res: Response) {
       settlementRunId: adj.settlementRunId,
       settlementRunStatus: runStatusMap.get(adj.settlementRunId) ?? null,
       amountSatang: Number(adj.amountMinor),
+      volumeSatang: adj.volumeMinor === null || adj.volumeMinor === undefined ? null : Number(adj.volumeMinor),
       reason: adj.reason,
       status: adj.status,
       createdByUserId: adj.createdBy,

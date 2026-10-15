@@ -210,6 +210,9 @@ export const settlements = {
   colDocument: "เลขที่เอกสาร",
   colTransfer: "การโอน",
   noName: "ไม่มีชื่อ",
+  ownerDecisionTitle: "รอเจ้าของตัดสินใจ: ยอดหักคืนที่เก็บไม่ได้",
+  uncollectedClawbackBody:
+    "ครู {count} คนมียอดรวมติดลบ (หักคืนมากกว่ารายได้) ระบบจ่าย 0 และไม่ยกยอด {amount} ไปหักรอบถัดไป ตามกฎเดิมที่ยังรอเจ้าของตัดสินใจ",
 } as const;
 
 registerMessages("settlements", settlements);
