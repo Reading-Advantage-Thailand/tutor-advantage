@@ -1170,9 +1170,13 @@ async function recordNegativePaymentOutcome(
 
   // Same period: the settlement still counts this payment, so removing its
   // volume is enough and the commission is recalculated. Clawing commission
-  // as well would deduct the refund twice. A later period reclaims the
-  // commission that was (or will be) paid for the original period.
-  const amountMinor = run!.periodMonth === paidPeriodMonth
+  // as well would deduct the refund twice.
+  // Later period (owner decision 2026-10-15): reclaim only the commission
+  // paid for the original period. The volume belonged to that period, so the
+  // new period's volume (and rate) is left alone; upline overrides on the
+  // refunded sale are absorbed by the company.
+  const samePeriod = run!.periodMonth === paidPeriodMonth;
+  const amountMinor = samePeriod
     ? 0n
     : await estimatePaidCommissionMinor(
       intent,
@@ -1241,9 +1245,7 @@ async function recordNegativePaymentOutcome(
         settlementRunId: run!.settlementRunId,
         tutorUserId: intent.earningTutorUserId ?? enrollment.class.tutorUserId,
         amountMinor: -amountMinor,
-        // Volume must be reduced by the refunded charge, not only by the
-        // commission clawback used for the tutor's payout line.
-        volumeMinor: -intent.amountMinor,
+        volumeMinor: samePeriod ? -intent.amountMinor : 0n,
         reason,
         status: "PENDING",
         createdBy: "payment-webhook",

@@ -112,9 +112,6 @@ export const adjustments = {
   cancel: "ยกเลิก",
   confirmCreateTitle: "สร้างรายการปรับยอดนี้?",
   confirmCreateBody: "รายการจะมีสถานะ “รออนุมัติ” จนกว่าผู้ตรวจอีกคนจะอนุมัติ",
-  ownerDecisionChip: "รอเจ้าของตัดสินใจ",
-  crossPeriodRefundNote:
-    "คืนเงินข้ามรอบ: รายการนี้หักค่าคอมคืนและลดยอดขายของรอบนี้ด้วย ซึ่งอาจหักซ้ำ — ยังไม่มีข้อสรุปจากเจ้าของ",
 } as const;
 
 registerMessages("adjustments", adjustments);

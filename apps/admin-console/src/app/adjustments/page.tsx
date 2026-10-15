@@ -5,7 +5,6 @@ import Link from "next/link";
 import { CheckCircle2, Plus, XCircle } from "lucide-react";
 import {
   AdminStatusChip,
-  Chip,
   ConfirmDialog,
   DataTable,
   DescriptionList,
@@ -36,7 +35,6 @@ import { statusLabel, statusOptions } from "@/lib/status";
 import { t } from "@/lib/i18n";
 import { TutorPicker, type PickedTutor } from "./TutorPicker";
 import { parseBahtToSatang } from "./money";
-import { isCrossPeriodRefundClawback } from "../settlements/ownerDecisions";
 import "@/locales/th/adjustments";
 
 interface Adjustment {
@@ -171,16 +169,7 @@ function AdjustmentsView() {
       header: t("adjustments.colReason"),
       label: t("adjustments.colReason"),
       mobile: "field",
-      cell: (row) => (
-        <span className="flex max-w-72 flex-col items-start gap-1">
-          <span className="line-clamp-3 text-[0.8125rem]">{row.reason}</span>
-          {isCrossPeriodRefundClawback(row) ? (
-            <Chip tone="warning" title={t("adjustments.crossPeriodRefundNote")}>
-              {t("adjustments.ownerDecisionChip")}
-            </Chip>
-          ) : null}
-        </span>
-      ),
+      cell: (row) => <span className="line-clamp-3 max-w-72 text-[0.8125rem]">{row.reason}</span>,
     },
     {
       key: "maker",
@@ -250,9 +239,6 @@ function AdjustmentsView() {
           }`,
         },
         { label: t("adjustments.colReason"), value: decisionRow.reason, wide: true },
-        ...(isCrossPeriodRefundClawback(decisionRow)
-          ? [{ label: t("adjustments.ownerDecisionChip"), value: t("adjustments.crossPeriodRefundNote"), wide: true }]
-          : []),
         { label: t("adjustments.colMaker"), value: decisionRow.createdByName },
       ]}
     />

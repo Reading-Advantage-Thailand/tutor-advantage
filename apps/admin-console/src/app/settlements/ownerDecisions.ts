@@ -28,20 +28,3 @@ export function uncollectedClawback(lines: Array<{ grossPayoutSatang: string }>)
   }
   return { count, totalSatang: total.toString() };
 }
-
-/**
- * A refund/chargeback clawback in a later period both reclaims commission
- * and lowers that period's volume, which may claw the same refund twice.
- */
-export function isCrossPeriodRefundClawback(adjustment: {
-  reason: string;
-  amountSatang: number;
-  volumeSatang?: number | null;
-}): boolean {
-  return (
-    /(refund|chargeback)/i.test(adjustment.reason) &&
-    adjustment.amountSatang !== 0 &&
-    typeof adjustment.volumeSatang === "number" &&
-    adjustment.volumeSatang !== 0
-  );
-}

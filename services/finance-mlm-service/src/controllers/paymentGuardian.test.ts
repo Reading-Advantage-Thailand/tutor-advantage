@@ -586,7 +586,8 @@ describe("payment intent reconciliation", () => {
       data: expect.objectContaining({
         settlementRunId: "run-sep",
         amountMinor: -50000n,
-        volumeMinor: -250000n,
+        // Later period: commission only, the new month's volume is untouched.
+        volumeMinor: 0n,
         reason: "refund:pi-1",
       }),
     });
