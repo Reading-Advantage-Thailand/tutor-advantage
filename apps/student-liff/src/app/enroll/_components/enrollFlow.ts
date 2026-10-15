@@ -103,6 +103,16 @@ export function requestFreeEnrollment(
     : api.enrollClass(classId, referralToken as string | undefined);
 }
 
+/**
+ * Free classes activate on enroll, so the server asks for a date of birth
+ * and (under 18) guardian consent first; the page then shows the age check.
+ */
+export function isGuardianGateError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const { code } = error as { code?: unknown };
+  return code === "DATE_OF_BIRTH_REQUIRED" || code === "GUARDIAN_CONSENT_REQUIRED";
+}
+
 export type EnrollErrorKind = "classFull" | "classClosed" | "linkInvalid" | "demoExpired" | "notFound" | "ownClass" | "generic";
 
 /**

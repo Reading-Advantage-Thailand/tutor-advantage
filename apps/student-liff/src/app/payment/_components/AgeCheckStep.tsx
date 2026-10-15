@@ -8,6 +8,11 @@ import { t } from "@/lib/i18n";
 export interface AgeCheckStepProps {
   dateOfBirth: string;
   onDateOfBirthChange: (value: string) => void;
+  /** Already saved on the server: students cannot change it themselves. */
+  dateOfBirthLocked?: boolean;
+  /** Free-class join reuses this step with its own wording. */
+  subtitle?: string;
+  submitLabel?: string;
   /** Minor without recorded consent: guardian fields are shown and required. */
   needsGuardian: boolean;
   guardianName: string;
@@ -24,6 +29,9 @@ export interface AgeCheckStepProps {
 export function AgeCheckStep({
   dateOfBirth,
   onDateOfBirthChange,
+  dateOfBirthLocked = false,
+  subtitle,
+  submitLabel,
   needsGuardian,
   guardianName,
   onGuardianNameChange,
@@ -51,7 +59,7 @@ export function AgeCheckStep({
           <IconTile icon={ShieldCheck} tone="brand" size="lg" />
           <div className="min-w-0">
             <h2 className="text-[17px] leading-[1.45] font-bold text-fg">{t("payment.ageCheck.pdpaTitle")}</h2>
-            <p className="text-[13px] leading-[1.5] text-fg-muted">{t("payment.ageCheck.pdpaSubtitle")}</p>
+            <p className="text-[13px] leading-[1.5] text-fg-muted">{subtitle ?? t("payment.ageCheck.pdpaSubtitle")}</p>
           </div>
         </div>
 
@@ -59,10 +67,14 @@ export function AgeCheckStep({
           <TextField
             type="date"
             label={t("payment.ageCheck.dateOfBirthLabel")}
-            hint={t("payment.ageCheck.dateOfBirthHint")}
+            hint={dateOfBirthLocked ? t("payment.ageCheck.dateOfBirthLockedHint") : t("payment.ageCheck.dateOfBirthHint")}
             value={dateOfBirth}
             max={today}
-            onChange={(event) => onDateOfBirthChange(event.target.value)}
+            readOnly={dateOfBirthLocked}
+            aria-readonly={dateOfBirthLocked || undefined}
+            onChange={(event) => {
+              if (!dateOfBirthLocked) onDateOfBirthChange(event.target.value);
+            }}
             enterKeyHint="next"
           />
 
@@ -106,7 +118,7 @@ export function AgeCheckStep({
           disabled={!canSubmit}
           loading={loading}
         >
-          {loading ? t("payment.ageCheck.saving") : t("payment.ageCheck.continuePayment")}
+          {loading ? t("payment.ageCheck.saving") : (submitLabel ?? t("payment.ageCheck.continuePayment"))}
         </Button>
       </BottomActionBar>
     </Screen>

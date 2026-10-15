@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 // Relative imports: the root vitest config maps "@" to another app.
 import { useLiff } from "../../../components/providers/LiffProvider";
-import { studentApi } from "../../../lib/api";
+import { StudentApiError, studentApi } from "../../../lib/api";
 import { invalidateResource } from "../../../lib/cachedResource";
 import { t } from "../../../lib/i18n";
 import {
@@ -121,6 +121,8 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
   // ── Age / guardian ──
   const [profileStatus, setProfileStatus] = useState<LoadStatus>("loading");
   const [dateOfBirth, setDateOfBirth] = useState("");
+  // Once saved, the server refuses changes (DATE_OF_BIRTH_LOCKED).
+  const [dateOfBirthLocked, setDateOfBirthLocked] = useState(false);
   const [guardianName, setGuardianName] = useState("");
   const [guardianRelation, setGuardianRelation] = useState("");
   const [consentAlreadyGiven, setConsentAlreadyGiven] = useState(false);
@@ -206,7 +208,10 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
     Promise.all([studentApi.getCurrentUser(), studentApi.checkGuardianConsent()])
       .then(([user, consent]) => {
         if (!active) return;
-        if (user?.user?.dateOfBirth) setDateOfBirth(user.user.dateOfBirth);
+        if (user?.user?.dateOfBirth) {
+          setDateOfBirth(user.user.dateOfBirth);
+          setDateOfBirthLocked(true);
+        }
         setConsentAlreadyGiven(Boolean(consent?.hasConsent));
         setProfileStatus("ready");
       })
@@ -461,10 +466,15 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
         await studentApi.submitGuardianConsent(guardianName, guardianRelation);
         setConsentAlreadyGiven(true);
       }
+      setDateOfBirthLocked(true);
       next = paymentStepForMethod(method);
     } catch (error) {
       console.error("Error saving consent:", error);
-      toast.error(t("payment.errors.consentFailed"));
+      toast.error(
+        error instanceof StudentApiError && error.code === "DATE_OF_BIRTH_LOCKED"
+          ? t("payment.errors.dateOfBirthLocked")
+          : t("payment.errors.consentFailed"),
+      );
     } finally {
       busyRef.current = false;
       setLoading(false);
@@ -588,6 +598,7 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
 
     ageCheck: {
       ...ageCheckFields,
+      dateOfBirthLocked,
       needsGuardian: needsGuardianConsent(dateOfBirth, consentAlreadyGiven),
       canSubmit: canSubmitAgeCheck(ageCheckFields),
       setDateOfBirth,

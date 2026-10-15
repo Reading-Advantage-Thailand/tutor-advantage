@@ -3,6 +3,7 @@ import {
   buildEnrollLoginRedirect,
   buildEnrollPaymentHref,
   classifyEnrollError,
+  isGuardianGateError,
   getEnrollCtaKind,
   getEnrollSeatState,
   isRetryableEnrollLoadError,
@@ -127,5 +128,14 @@ describe("CTA and retry rules", () => {
     expect(getEnrollCtaKind(true, 0)).toBe("full");
     expect(getEnrollCtaKind(false, 0)).toBe("free");
     expect(getEnrollCtaKind(false, 2500)).toBe("continue");
+  });
+});
+
+describe("isGuardianGateError", () => {
+  it("detects the free-class guardian gate codes only", () => {
+    expect(isGuardianGateError({ status: 400, code: "DATE_OF_BIRTH_REQUIRED" })).toBe(true);
+    expect(isGuardianGateError({ status: 403, code: "GUARDIAN_CONSENT_REQUIRED" })).toBe(true);
+    expect(isGuardianGateError({ status: 400, code: "CLASS_FULL" })).toBe(false);
+    expect(isGuardianGateError(null)).toBe(false);
   });
 });

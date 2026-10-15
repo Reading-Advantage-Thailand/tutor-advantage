@@ -20,13 +20,15 @@ import {
 } from "@/components/mobile";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { studentApi } from "@/lib/api";
+import { StudentApiError, studentApi } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { getLevelTone } from "@/lib/cefr";
 import { classDetailResourceKey } from "@/lib/classAccess";
 import { formatTHB, noOrphan } from "@/lib/format";
 import { t, type I18nKey } from "@/lib/i18n";
+import { canSubmitAgeCheck, needsGuardianConsent } from "@/lib/paymentFlow";
 import { cn } from "@/lib/utils";
+import { AgeCheckStep } from "../payment/_components/AgeCheckStep";
 import { EnrollAppBar, EnrollSkeleton } from "./_components/EnrollSkeleton";
 import { InfoRow } from "./_components/InfoRow";
 import {
@@ -35,6 +37,7 @@ import {
   classifyEnrollError,
   getEnrollCtaKind,
   getEnrollSeatState,
+  isGuardianGateError,
   isRetryableEnrollLoadError,
   mapEnrollClassDetails,
   requestFreeEnrollment,
@@ -50,6 +53,15 @@ const ENROLL_ERROR_COPY: Record<EnrollErrorKind, I18nKey> = {
   ownClass: "enroll.enrollErrors.ownClass",
   generic: "enroll.enrollErrors.generic",
 };
+
+interface AgeCheckState {
+  dateOfBirth: string;
+  locked: boolean;
+  guardianName: string;
+  guardianRelation: string;
+  consentAlreadyGiven: boolean;
+  saving: boolean;
+}
 
 type EnrollDetailsResponse = { class: Parameters<typeof mapEnrollClassDetails>[0] };
 
@@ -94,23 +106,86 @@ function EnrollContent() {
     }
   }, [isReady, profile, router, searchParams]);
 
+  // Free classes: age check (date of birth + guardian consent for under-18s)
+  // shown when the server's guardian gate refuses the enrollment.
+  const [ageCheck, setAgeCheck] = useState<AgeCheckState | null>(null);
+
+  const openAgeCheck = async () => {
+    const [user, consent] = await Promise.all([
+      studentApi.getCurrentUser().catch(() => null),
+      studentApi.checkGuardianConsent().catch(() => null),
+    ]);
+    const saved = user?.user?.dateOfBirth ?? "";
+    setAgeCheck({
+      dateOfBirth: saved,
+      locked: Boolean(saved),
+      guardianName: "",
+      guardianRelation: "",
+      consentAlreadyGiven: Boolean(consent?.hasConsent),
+      saving: false,
+    });
+  };
+
+  /** Returns true when the student was sent on (or to the age check). */
+  const enrollFree = async (classIdToJoin: string): Promise<boolean> => {
+    try {
+      const enrollment = await requestFreeEnrollment(studentApi, classIdToJoin, referralToken);
+      if (enrollment.status === "ACTIVE") {
+        // Home, Classes and Progress must show the new class right away.
+        if (profile) invalidateResource(`${profile.userId}:`);
+        router.replace("/dashboard");
+        return true;
+      }
+      return false;
+    } catch (err) {
+      if (isGuardianGateError(err)) {
+        await openAgeCheck();
+        return true;
+      }
+      console.warn("Enrollment failed:", err);
+      toast.error(t(ENROLL_ERROR_COPY[classifyEnrollError(err)]));
+      return true;
+    }
+  };
+
+  const submitAgeCheck = async () => {
+    if (!ageCheck || !classDetails || ageCheck.saving) return;
+    setAgeCheck({ ...ageCheck, saving: true });
+    try {
+      let needsGuardian = needsGuardianConsent(ageCheck.dateOfBirth, ageCheck.consentAlreadyGiven);
+      if (!ageCheck.locked) {
+        const user = await studentApi.updateProfile(ageCheck.dateOfBirth);
+        needsGuardian = Boolean(user?.user?.requiresGuardian);
+      }
+      if (needsGuardian) {
+        await studentApi.submitGuardianConsent(ageCheck.guardianName, ageCheck.guardianRelation);
+      }
+    } catch (err) {
+      console.warn("Age check failed:", err);
+      toast.error(
+        err instanceof StudentApiError && err.code === "DATE_OF_BIRTH_LOCKED"
+          ? t("payment.errors.dateOfBirthLocked")
+          : t("payment.errors.consentFailed"),
+      );
+      setAgeCheck((current) => (current ? { ...current, saving: false } : current));
+      return;
+    }
+    setAgeCheck(null);
+    enrollingRef.current = true;
+    setEnrolling(true);
+    await enrollFree(classDetails.classId);
+    enrollingRef.current = false;
+    setEnrolling(false);
+  };
+
   const handleAction = async () => {
     if (!classDetails || enrollingRef.current) return;
 
     if (classDetails.price === 0) {
       enrollingRef.current = true;
       setEnrolling(true);
-      try {
-        const enrollment = await requestFreeEnrollment(studentApi, classDetails.classId, referralToken);
-        if (enrollment.status === "ACTIVE") {
-          // Home, Classes and Progress must show the new class right away.
-          if (profile) invalidateResource(`${profile.userId}:`);
-          router.replace("/dashboard");
-          return;
-        }
-      } catch (err) {
-        console.warn("Enrollment failed:", err);
-        toast.error(t(ENROLL_ERROR_COPY[classifyEnrollError(err)]));
+      const handled = await enrollFree(classDetails.classId);
+      if (handled) {
         enrollingRef.current = false;
         setEnrolling(false);
         return;
@@ -125,6 +200,33 @@ function EnrollContent() {
   /* ── Start-up / sign-in / loading ── */
   if (!isReady) return <EnrollSkeleton label={t("enroll.loadingPreparing")} />;
   if (!profile) return <EnrollSkeleton label={t("enroll.redirectingLogin")} />;
+
+  if (ageCheck) {
+    const fields = {
+      dateOfBirth: ageCheck.dateOfBirth,
+      guardianName: ageCheck.guardianName,
+      guardianRelation: ageCheck.guardianRelation,
+      consentAlreadyGiven: ageCheck.consentAlreadyGiven,
+    };
+    return (
+      <AgeCheckStep
+        dateOfBirth={ageCheck.dateOfBirth}
+        onDateOfBirthChange={(dateOfBirth) => setAgeCheck({ ...ageCheck, dateOfBirth })}
+        dateOfBirthLocked={ageCheck.locked}
+        subtitle={t("payment.ageCheck.joinSubtitle")}
+        submitLabel={t("payment.ageCheck.continueJoin")}
+        needsGuardian={needsGuardianConsent(ageCheck.dateOfBirth, ageCheck.consentAlreadyGiven)}
+        guardianName={ageCheck.guardianName}
+        onGuardianNameChange={(guardianName) => setAgeCheck({ ...ageCheck, guardianName })}
+        guardianRelation={ageCheck.guardianRelation}
+        onGuardianRelationChange={(guardianRelation) => setAgeCheck({ ...ageCheck, guardianRelation })}
+        canSubmit={canSubmitAgeCheck(fields) && !ageCheck.saving}
+        loading={ageCheck.saving}
+        onSubmit={() => void submitAgeCheck()}
+        onBack={() => setAgeCheck(null)}
+      />
+    );
+  }
 
   if (!classId && !referralToken) {
     return (

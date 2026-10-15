@@ -44,6 +44,7 @@ function PaymentFlowScreen(params: PaymentFlowParams) {
         <AgeCheckStep
           dateOfBirth={flow.ageCheck.dateOfBirth}
           onDateOfBirthChange={flow.ageCheck.setDateOfBirth}
+          dateOfBirthLocked={flow.ageCheck.dateOfBirthLocked}
           needsGuardian={flow.ageCheck.needsGuardian}
           guardianName={flow.ageCheck.guardianName}
           onGuardianNameChange={flow.ageCheck.setGuardianName}
