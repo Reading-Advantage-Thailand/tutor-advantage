@@ -69,6 +69,7 @@ import {
   suspendUser,
   anonymizeUser,
   updateOmiseRecipient,
+  updateUserDateOfBirth,
   getUserPayments,
   getUserAuditEvents,
 } from "./controllers/userController";
@@ -364,6 +365,7 @@ app.post("/v1/users/:id/verify", authMiddleware, adminOnly, verifyUser);
 app.post("/v1/users/:id/suspend", authMiddleware, adminOnly, suspendUser);
 app.post("/v1/users/:id/anonymize", authMiddleware, adminOnly, anonymizeUser);
 app.patch("/v1/users/:id/omise-recipient", authMiddleware, adminOnly, updateOmiseRecipient);
+app.patch("/v1/users/:id/date-of-birth", authMiddleware, adminOnly, updateUserDateOfBirth);
 
 // ── Fraud Routes ───────────────────────────────────────────────────────────
 app.get("/v1/fraud-flags", authMiddleware, financeStaffOnly, getFraudFlags);

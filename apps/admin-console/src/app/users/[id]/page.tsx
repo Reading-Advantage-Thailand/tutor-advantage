@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Power, ShieldCheck, Trash2 } from "lucide-react";
+import { CalendarDays, Power, ShieldCheck, Trash2 } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -11,6 +11,7 @@ import {
   ListGroup,
   ListRow,
   Section,
+  TextField,
   useHasRole,
 } from "@/components/app";
 import { toast } from "@/components/app/toastStore";
@@ -24,6 +25,71 @@ import "@/locales/th/userDetail";
 import "@/locales/th/userHeader";
 
 const PROVIDER_LABELS: Record<string, string> = { line: "LINE", google: "Google", LINE: "LINE", GOOGLE: "Google" };
+
+/** Under 18 today (ICT), same rule as the backend guardian gate. */
+function isMinorDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [year, month, day] = value.split("-").map(Number);
+  const nowIct = new Date(Date.now() + 7 * 60 * 60 * 1000);
+  const today = Date.UTC(nowIct.getUTCFullYear(), nowIct.getUTCMonth(), nowIct.getUTCDate());
+  return Date.UTC(year + 18, month - 1, day) > today;
+}
+
+/** Support correction of a student's date of birth (students can set it only once). */
+function DateOfBirthAction({ user, adminId }: { user: UserDetailV2; adminId: string }) {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
+  const today = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const valid = /^\d{4}-\d{2}-\d{2}$/.test(value) && value <= today;
+
+  const start = () => {
+    setValue(user.dateOfBirth?.slice(0, 10) ?? "");
+    setOpen(true);
+  };
+
+  const submit = async ({ reason }: { reason: string }) => {
+    if (!valid) throw new Error(t("userDetail.dobInvalid"));
+    await api.patch(`/v1/users/${user.id}/date-of-birth`, { dateOfBirth: value, reason });
+    toast.success(t("userDetail.dobUpdatedToast"));
+    invalidateUser(adminId, user.id);
+  };
+
+  return (
+    <Section title={t("userDetail.dobEditTitle")}>
+      <ListGroup>
+        <ListRow
+          leading={<CalendarDays aria-hidden="true" className="size-5 text-fg-muted" />}
+          title={formatThaiDate(user.dateOfBirth)}
+          subtitle={t("userDetail.dobEditBody")}
+          lines={2}
+          trailing={
+            <Button size="sm" variant="outline" onClick={start}>
+              {t("userDetail.dobEditAction")}
+            </Button>
+          }
+        />
+      </ListGroup>
+      <ConfirmDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={t("userDetail.dobEditConfirmTitle", { name: displayName(user) })}
+        confirmLabel={t("userDetail.dobEditConfirm")}
+        reason={{ label: t("userDetail.reasonLabel"), placeholder: t("userDetail.dobEditReasonPlaceholder") }}
+        onConfirm={submit}
+      >
+        <TextField
+          type="date"
+          label={t("userDetail.dobEditFieldLabel")}
+          value={value}
+          max={today}
+          onChange={(event) => setValue(event.target.value)}
+          hint={valid && isMinorDate(value) ? t("userDetail.dobEditMinorHint") : undefined}
+          error={value && !valid ? t("userDetail.dobInvalid") : undefined}
+        />
+      </ConfirmDialog>
+    </Section>
+  );
+}
 
 function AccountActions({ user, adminId }: { user: UserDetailV2; adminId: string }) {
   const [dialog, setDialog] = useState<"suspend" | "anonymize" | null>(null);
@@ -219,6 +285,10 @@ export default function UserProfileTab() {
           <p className="text-sm text-fg-muted">{t("userDetail.consentNone")}</p>
         )}
       </Section>
+
+      {isAdmin && user.role === "STUDENT" && user.accountStatus !== "ANONYMIZED" ? (
+        <DateOfBirthAction user={user} adminId={me.userId} />
+      ) : null}
 
       {isAdmin ? <AccountActions user={user} adminId={me.userId} /> : null}
     </>

@@ -115,6 +115,7 @@ export const audit = {
     USER_UNSUSPEND: "เปิดใช้บัญชีอีกครั้ง",
     USER_ANONYMIZE: "ลบข้อมูลส่วนบุคคล",
     USER_OMISE_RECIPIENT_UPDATE: "แก้ไขบัญชีรับเงิน Omise",
+    USER_DOB_UPDATE: "แก้ไขวันเกิดผู้เรียน",
     USER_PII_REVEAL: "เปิดดูข้อมูลส่วนบุคคล",
     ROLE_CHANGE: "เปลี่ยนสิทธิ์ผู้ใช้",
     ROLE_PROVISION: "เพิ่มผู้ดูแลใหม่",

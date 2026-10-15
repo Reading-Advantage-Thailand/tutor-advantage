@@ -1,4 +1,4 @@
-import { logger } from "@tutor-advantage/shared-config";
+import { isUnderGuardianAge, logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma, type Prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -903,6 +903,78 @@ export const suspendUser = async (req: AuthenticatedRequest, res: Response) => {
   } catch (error) {
     logger.error("Suspend User Error:", error);
     return sendError(res, 500, "INTERNAL_SERVER_ERROR", "Could not update user status");
+  }
+};
+
+/* ─── Date of birth (support correction) ──────────────────────────────── */
+
+/** Strict YYYY-MM-DD, a real calendar date, not in the future. */
+export function parseDateOfBirth(value: unknown): Date | null {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  if (
+    Number.isNaN(parsed.getTime()) ||
+    parsed.toISOString().slice(0, 10) !== value ||
+    parsed.getTime() > Date.now()
+  ) {
+    return null;
+  }
+  return parsed;
+}
+
+/**
+ * Students set their date of birth once (identity locks it); a wrong date is
+ * corrected here by an admin, with a mandatory reason. The audit payload
+ * keeps the guardian requirement before/after, never the dates themselves.
+ */
+export const updateUserDateOfBirth = async (req: AuthenticatedRequest, res: Response) => {
+  if (req.user?.role !== "ADMIN") {
+    return sendError(res, 403, "FORBIDDEN", "Requires Admin privileges");
+  }
+  const { id } = req.params;
+  if (!isUuid(id)) return sendError(res, 404, "USER_NOT_FOUND", "User not found");
+
+  const dateOfBirth = parseDateOfBirth(req.body?.dateOfBirth);
+  if (!dateOfBirth) {
+    return sendError(res, 400, "INVALID_DATE_OF_BIRTH", "dateOfBirth must be a valid YYYY-MM-DD date not in the future");
+  }
+  const reason = cleanReason(req.body?.reason);
+  if (!reason) return sendError(res, 400, "REASON_REQUIRED", "A reason is required");
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { userId: id },
+      select: { role: true, settings: true, dateOfBirth: true },
+    });
+    if (!user) return sendError(res, 404, "USER_NOT_FOUND", "User not found");
+    if (user.role !== "STUDENT") return sendError(res, 400, "NOT_A_STUDENT", "User is not a STUDENT");
+    if (isAnonymized(user.settings)) {
+      return sendError(res, 409, "USER_ANONYMIZED", "This account has been anonymized");
+    }
+    if (user.dateOfBirth?.getTime() === dateOfBirth.getTime()) {
+      return res.status(200).json({ dateOfBirth: req.body.dateOfBirth, unchanged: true });
+    }
+
+    const wasMinor = user.dateOfBirth ? isUnderGuardianAge(user.dateOfBirth) : null;
+    const isMinor = isUnderGuardianAge(dateOfBirth);
+
+    await prisma.$transaction([
+      prisma.user.update({ where: { userId: id }, data: { dateOfBirth } }),
+      prisma.auditEvent.create({
+        data: buildAuditEventData({
+          actorId: req.user.userId,
+          action: AUDIT_ACTIONS.USER_DOB_UPDATE,
+          entityType: AUDIT_ENTITY.USER,
+          entityId: id,
+          payload: { reason, wasSet: user.dateOfBirth !== null, wasMinor, isMinor },
+        }),
+      }),
+    ]);
+
+    return res.status(200).json({ dateOfBirth: req.body.dateOfBirth, isMinor });
+  } catch (error) {
+    logger.error("Update Date Of Birth Error:", error);
+    return sendError(res, 500, "INTERNAL_SERVER_ERROR", "Could not update date of birth");
   }
 };
 

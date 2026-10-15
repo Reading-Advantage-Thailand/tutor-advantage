@@ -44,6 +44,7 @@ export const AUDIT_CATEGORIES: { id: AuditCategory; label: string; actions: stri
       "USER_UNSUSPEND",
       "USER_ANONYMIZE",
       "USER_OMISE_RECIPIENT_UPDATE",
+      "USER_DOB_UPDATE",
       "USER_PII_REVEAL",
       "ROLE_CHANGE",
       "ROLE_PROVISION",

@@ -41,6 +41,7 @@ import {
   scrubSettings,
   settingsForRole,
   suspendUser,
+  updateUserDateOfBirth,
   verifyUser,
 } from "./userController";
 
@@ -287,6 +288,42 @@ describe("suspendUser", () => {
     );
     expect(res.statusCode).toBe(200);
     expect(res.body.unchanged).toBe(true);
+    expect(prismaMock.user.update).not.toHaveBeenCalled();
+  });
+});
+
+describe("updateUserDateOfBirth", () => {
+  const call = (body: unknown, user = ADMIN) => {
+    const res = createResponse();
+    return updateUserDateOfBirth({ params: { id: USER_ID }, user, body } as never, res as never).then(() => res);
+  };
+
+  it("corrects a student's date of birth with a reason and audits without the dates", async () => {
+    prismaMock.user.findUnique.mockResolvedValueOnce({
+      role: "STUDENT",
+      settings: {},
+      dateOfBirth: new Date("2000-01-01T00:00:00.000Z"),
+    });
+    const res = await call({ dateOfBirth: "2012-03-04", reason: "นักเรียนแจ้งว่ากรอกปีผิด" });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.isMinor).toBe(true);
+    expect(prismaMock.user.update).toHaveBeenCalledWith({
+      where: { userId: USER_ID },
+      data: { dateOfBirth: new Date("2012-03-04T00:00:00.000Z") },
+    });
+    const audit = prismaMock.auditEvent.create.mock.calls[0][0].data;
+    expect(audit.action).toBe("USER_DOB_UPDATE");
+    expect(audit.payload).toMatchObject({ wasMinor: false, isMinor: true, wasSet: true });
+    expect(JSON.stringify(audit.payload)).not.toContain("2012");
+  });
+
+  it("requires admin, a reason, a valid date and a student account", async () => {
+    expect((await call({ dateOfBirth: "2012-03-04", reason: "x" }, CHECKER)).statusCode).toBe(403);
+    expect((await call({ dateOfBirth: "2012-03-04", reason: "  " })).body.error.code).toBe("REASON_REQUIRED");
+    expect((await call({ dateOfBirth: "2012-02-30", reason: "x" })).body.error.code).toBe("INVALID_DATE_OF_BIRTH");
+    prismaMock.user.findUnique.mockResolvedValueOnce({ role: "TUTOR", settings: {}, dateOfBirth: null });
+    expect((await call({ dateOfBirth: "2000-01-01", reason: "x" })).body.error.code).toBe("NOT_A_STUDENT");
     expect(prismaMock.user.update).not.toHaveBeenCalled();
   });
 });
