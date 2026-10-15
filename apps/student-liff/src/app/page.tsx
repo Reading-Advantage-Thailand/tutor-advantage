@@ -11,11 +11,11 @@ import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { BrandSplash } from "./_components/BrandSplash";
 import { LiffErrorScreen } from "./_components/LiffErrorScreen";
-import { decideLandingView, hasLiffStateParam, isLineInAppBrowser } from "./_components/landingView";
+import { DEFAULT_LOGIN_REDIRECT } from "./(auth)/login/_components/loginRedirect";
+import { decideLandingView, getLandingTarget, hasLiffStateParam, isLineInAppBrowser } from "./_components/landingView";
 import { getLiffErrorKind, safeIsLoggedIn } from "./_components/liffErrors";
 import { useLiffRecovery } from "./_components/useLiffRecovery";
 
-const DASHBOARD_PATH = "/dashboard";
 
 // The marketing page is only for regular browsers: inside LINE the entry only
 // ships the splash. Browsers start downloading it while LIFF starts (below).
@@ -29,6 +29,8 @@ const subscribeNever = () => () => {};
 const readInLine = () => isLineInAppBrowser(navigator.userAgent);
 const readLiffState = () => hasLiffStateParam(window.location.search);
 const serverFalse = () => false;
+const readLandingTarget = () => getLandingTarget(window.location.search);
+const serverDefaultTarget = () => DEFAULT_LOGIN_REDIRECT;
 
 export default function LandingPage() {
   const router = useRouter();
@@ -36,7 +38,8 @@ export default function LandingPage() {
   // Client-only facts; the server snapshot is false (the server always renders the splash anyway).
   const inLine = useSyncExternalStore(subscribeNever, readInLine, serverFalse);
   const hasLiffState = useSyncExternalStore(subscribeNever, readLiffState, serverFalse);
-  const recover = useLiffRecovery(DASHBOARD_PATH);
+  const target = useSyncExternalStore(subscribeNever, readLandingTarget, serverDefaultTarget);
+  const recover = useLiffRecovery(target);
   const [retrying, setRetrying] = useState(false);
 
   const isLoggedIn = isReady && safeIsLoggedIn(liff);
@@ -49,11 +52,11 @@ export default function LandingPage() {
     hasLiffState,
   });
 
-  // Logged in → dashboard. replace (not push): "/" must not stay in history,
-  // otherwise Android back returns here and bounces to the dashboard again.
+  // Logged in → deep-link target (default /dashboard). replace (not push): "/" must
+  // not stay in history, otherwise Android back returns here and bounces again.
   useEffect(() => {
-    if (view === "redirect") router.replace(DASHBOARD_PATH);
-  }, [view, router]);
+    if (view === "redirect") router.replace(target);
+  }, [view, router, target]);
 
   // Regular browsers will most likely see the marketing page: fetch its chunk now.
   useEffect(() => {
@@ -84,7 +87,7 @@ export default function LandingPage() {
         <BrandSplash
           action={
             <Link
-              href="/login"
+              href={target === DEFAULT_LOGIN_REDIRECT ? "/login" : `/login?redirect=${encodeURIComponent(target)}`}
               className={cn(
                 buttonVariants({ size: "cta" }),
                 "w-full bg-white font-bold text-brand-700 shadow-[0_6px_20px_-8px_rgb(0_0_0/0.45)] active:scale-[0.97] active:bg-white/90",

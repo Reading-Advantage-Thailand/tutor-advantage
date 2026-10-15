@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decideLandingView, hasLiffStateParam, isLineInAppBrowser, type LandingState } from "./landingView";
+import { decideLandingView, getLandingTarget, hasLiffStateParam, isLineInAppBrowser, type LandingState } from "./landingView";
 
 const base: LandingState = {
   isReady: true,
@@ -66,5 +66,24 @@ describe("hasLiffStateParam", () => {
     expect(hasLiffStateParam("?redirect=/dashboard")).toBe(false);
     expect(hasLiffStateParam("")).toBe(false);
     expect(hasLiffStateParam(null)).toBe(false);
+  });
+});
+
+describe("getLandingTarget", () => {
+  it("follows a LINE push deep link", () => {
+    expect(getLandingTarget("?redirect=%2Fchat%2Fabc")).toBe("/chat/abc");
+    expect(getLandingTarget("?redirect=%2Fpayment%3FclassId%3D1")).toBe("/payment?classId=1");
+  });
+
+  it("defaults to /dashboard and never loops back to /", () => {
+    expect(getLandingTarget("")).toBe("/dashboard");
+    expect(getLandingTarget("?redirect=/")).toBe("/dashboard");
+    expect(getLandingTarget("?redirect=%2F%3Fredirect%3D%2F")).toBe("/dashboard");
+    expect(getLandingTarget("?redirect=/#top")).toBe("/dashboard");
+  });
+
+  it("rejects open redirects", () => {
+    expect(getLandingTarget("?redirect=https://evil.example")).toBe("/dashboard");
+    expect(getLandingTarget("?redirect=//evil.example")).toBe("/dashboard");
   });
 });

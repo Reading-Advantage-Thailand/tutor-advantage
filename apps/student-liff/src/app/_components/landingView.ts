@@ -3,6 +3,8 @@
  * No imports from "@/…": vitest maps "@" to another app.
  */
 
+import { DEFAULT_LOGIN_REDIRECT, getSafeRedirect } from "../(auth)/login/_components/loginRedirect";
+
 /**
  * - "splash": LIFF is still starting — branded splash, never the marketing page.
  * - "redirect": logged in — splash while router.replace("/dashboard") runs.
@@ -44,4 +46,15 @@ export function hasLiffStateParam(search: string | null | undefined): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Where a logged-in user goes from "/". LINE pushes open `LIFF_URL?redirect=/path`,
+ * which lands here as `/?redirect=/path` after liff.init. Same-origin paths only
+ * (see getSafeRedirect), and never "/" itself, which would loop.
+ */
+export function getLandingTarget(search: string | null | undefined): string {
+  const target = getSafeRedirect(search);
+  const path = target.split(/[?#]/, 1)[0];
+  return path === "/" ? DEFAULT_LOGIN_REDIRECT : target;
 }
