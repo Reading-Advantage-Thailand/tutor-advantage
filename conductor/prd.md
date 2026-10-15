@@ -31,7 +31,7 @@ Web/LIFF sequence after backend completion:
 
 ### 2.2 Core Commercial Model
 
-- Tutor creates class packages (one class package = one book in V1, approx. 25 hours for ~2500 THB).
+- Tutor creates class packages (one class package = one book in V1, approx. 25 hours for ~3000 THB (2500 THB until 2026-10-15)).
 - Value proposition: Tutors project a 15-step scripted lesson plan, providing them a low-prep system and fair pay, while students receive quality instruction with additional time in the student app.
 - Tutor shares class-bound referral links/QR codes via their own channels (Facebook/LINE).
 - Student or guardian creates account/signs in, pays company directly on the company website, then enrollment activates.

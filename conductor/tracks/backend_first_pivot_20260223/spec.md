@@ -35,7 +35,7 @@ Each service exposes REST APIs and owns its domain model within separate Cloud S
 ### FR3. Class and Enrollment Flow
 
 - Tutors create and own classes.
-- Each class package maps to exactly one book (approx. 25 hours for ~2500 THB).
+- Each class package maps to exactly one book (approx. 25 hours for ~3000 THB).
 - Tutors schedule class hours on the system calendar based on client availability.
 - Students enroll via class-bound referral link/QR.
 - Payment is 100% upfront before enrollment activation.

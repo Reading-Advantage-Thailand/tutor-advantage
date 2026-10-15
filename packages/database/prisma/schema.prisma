@@ -181,7 +181,7 @@ model Class {
   bookId        String                 @map("book_id") @db.Uuid
   title         String
   capacity      Int
-  packagePriceMinor BigInt                 @default(250000) @map("package_price_minor")
+  packagePriceMinor BigInt                 @default(300000) @map("package_price_minor")
   freeHours     Int                    @default(0) @map("free_hours")
   enrolledCount Int                    @default(0) @map("enrolled_count")
   status              String
@@ -215,7 +215,7 @@ model ClassBookCycle {
   bookId            String    @map("book_id") @db.Uuid
   sequence          Int
   status            String    @default("OPEN")
-  packagePriceMinor BigInt    @default(250000) @map("package_price_minor")
+  packagePriceMinor BigInt    @default(300000) @map("package_price_minor")
   openedAt          DateTime  @default(now()) @map("opened_at") @db.Timestamptz
   closedAt          DateTime? @map("closed_at") @db.Timestamptz
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz

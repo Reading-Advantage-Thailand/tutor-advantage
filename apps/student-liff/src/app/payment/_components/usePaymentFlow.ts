@@ -172,7 +172,7 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
   );
 
   // E1: class details (with the book-cycle override). A failure now shows an
-  // error with retry instead of silently keeping the 2,500 fallback on screen.
+  // error with retry instead of silently keeping the 3,000 fallback on screen.
   useEffect(() => {
     if (!classId) return;
     let active = true;

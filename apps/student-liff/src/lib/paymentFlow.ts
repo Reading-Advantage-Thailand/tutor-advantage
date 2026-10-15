@@ -73,7 +73,8 @@ export type PaymentStatusResponse = {
   checkout: CheckoutDetails | null;
 };
 
-const DEFAULT_PRICE_SATANG = 250_000;
+// ฿3,000 — same as DEFAULT_PACKAGE_PRICE_SATANG in shared-config.
+const DEFAULT_PRICE_SATANG = 300_000;
 
 export function createDefaultOrderSummary(classId: string): OrderSummary {
   return {
@@ -244,7 +245,7 @@ export type PaymentClassDetails = ClassDetailsLike & {
   bookCycles?: PaymentClassBookCycle[] | null;
 };
 
-/** What the screens show. `priceSatang` is null when the API gave no price (never the 2,500 fallback). */
+/** What the screens show. `priceSatang` is null when the API gave no price (never the 3,000 fallback). */
 export type OrderDisplay = {
   name: string;
   tutor: string;

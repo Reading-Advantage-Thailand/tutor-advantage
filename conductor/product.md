@@ -56,7 +56,7 @@ Tutor Advantage is pivoting to a backend-first tutoring ecosystem with a Thai-lo
 - Student-pay model
 - Tutors create class-bound referral links/QR codes
 - Referral link purpose: place student into specific class flow
-- Billing unit: class package tied to exactly one book (approximately 25 hours of instruction for ~2500 THB)
+- Billing unit: class package tied to exactly one book (approximately 25 hours of instruction for ~3000 THB (2500 THB until 2026-10-15))
 - Tutor schedules the class hours in the system calendar based on client availability; no changes until the next course.
 - Collection schedule: 100% upfront before enrollment activation
 - **Checkout Location:** All payments are processed seamlessly within the student's LINE LIFF portal. There is no native student app, entirely avoiding App Store/Play Store billing mandates.
