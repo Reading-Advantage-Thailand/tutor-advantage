@@ -163,6 +163,14 @@ app.post("/v1/classes", authMiddleware, createClass);
 app.post("/v1/classes/:classId/close", authMiddleware, closeClass);
 app.get("/v1/classes", authMiddleware, getClasses);
 app.get("/v1/classes/available", authMiddleware, getAvailableClasses);
+// Protected Auction Routes — registered before /v1/classes/:classId, which
+// would otherwise capture "auction" as a class ID.
+app.get("/v1/classes/auction", authMiddleware, getAuctionClasses);
+app.post(
+  "/v1/classes/auction/:transferId/claim",
+  authMiddleware,
+  claimAuctionClass,
+);
 app.get("/v1/classes/:classId", authMiddleware, getClassById);
 app.delete("/v1/classes/:classId", authMiddleware, deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware, updateMeetingUrl);
@@ -225,14 +233,6 @@ app.post(
   "/v1/chat/initiate",
   authMiddleware,
   initiateChat,
-);
-
-// Protected Auction Routes
-app.get("/v1/classes/auction", authMiddleware, getAuctionClasses);
-app.post(
-  "/v1/classes/auction/:transferId/claim",
-  authMiddleware,
-  claimAuctionClass,
 );
 
 // Protected Performance Route
