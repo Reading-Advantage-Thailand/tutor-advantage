@@ -8,7 +8,11 @@ import {
   formatIctPeriodMonth,
   getIctMonthWindow,
 } from "../services/commissionService";
-import { SettlementService } from "../services/settlementService";
+import {
+  SettlementService,
+  applyCarryForward,
+  isCarryForwardReason,
+} from "../services/settlementService";
 
 type EarningsNode = {
   userId: string;
@@ -93,10 +97,29 @@ export async function getEarningsHistory(
       },
     });
 
-    const currentClawbackTHB = currentAdjustments.reduce(
-      (sum, adj) => sum + Number(adj.amountMinor) / 100,
-      0,
-    );
+    // Carried clawback debt is repaid from at most half of a period's payout,
+    // so it is projected through the same rule as the settlement.
+    const ordinaryAdjustments = currentAdjustments.filter((adj) => !isCarryForwardReason(adj.reason));
+    const openCarry = await prisma.adjustment.findMany({
+      where: {
+        tutorUserId: userId,
+        status: "APPROVED",
+        settlementRun: { status: { in: ["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"] } },
+      },
+      select: { reason: true, amountMinor: true },
+    });
+    const carryBucketMinor = openCarry
+      .filter((adj) => isCarryForwardReason(adj.reason))
+      .reduce((sum, adj) => sum + adj.amountMinor, 0n);
+    const ordinaryMinor = ordinaryAdjustments.reduce((sum, adj) => sum + adj.amountMinor, 0n);
+    const carry = applyCarryForward({
+      preCarryMinor: BigInt(Math.round(projection.totalPayoutTHB * 100)) + ordinaryMinor,
+      carryBucketMinor,
+      canRepay: true,
+    });
+    const carryRepayTHB = Number(carry.deductedMinor) / 100;
+
+    const currentClawbackTHB = Number(ordinaryMinor) / 100 - carryRepayTHB;
 
     // Lifetime badges are not an audited, period-scoped finance ledger.
     // Keep them visible elsewhere, but never include them in cash projections.
@@ -107,11 +130,16 @@ export async function getEarningsHistory(
       networkBonus: projection.networkBonusTHB,
       badgeBonus: badgeBonusTHB,
       clawback: currentClawbackTHB,
-      adjustments: currentAdjustments.map(a => ({
-        reason: a.reason,
-        amount: Number(a.amountMinor) / 100
-      })),
+      adjustments: [
+        ...ordinaryAdjustments.map(a => ({
+          reason: a.reason,
+          amount: Number(a.amountMinor) / 100
+        })),
+        ...(carryRepayTHB > 0 ? [{ reason: "carry-forward-repayment", amount: -carryRepayTHB }] : []),
+      ],
       total: projection.totalPayoutTHB + badgeBonusTHB + currentClawbackTHB,
+      /** Clawback debt still owed from earlier periods (before this period's repayment). */
+      carryForwardOutstanding: carryBucketMinor < 0n ? Number(-carryBucketMinor) / 100 : 0,
     };
 
     // 2. Past History
@@ -130,6 +158,8 @@ export async function getEarningsHistory(
     const clawbackByRun = new Map<string, number>();
     
     for (const adjustment of approvedAdjustments) {
+      // Carried debt shows as what the line actually repaid (below).
+      if (isCarryForwardReason(adjustment.reason)) continue;
       const current = clawbackByRun.get(adjustment.settlementRunId) || 0;
       clawbackByRun.set(
         adjustment.settlementRunId,
@@ -152,7 +182,8 @@ export async function getEarningsHistory(
         totalAmount,
         Math.max(0, periodProjection.networkBonusTHB),
       );
-      const clawback = clawbackByRun.get(line.settlementRunId) || 0;
+      const carryRepaid = Number(line.carryForwardDeductedMinor) / 100;
+      const clawback = (clawbackByRun.get(line.settlementRunId) || 0) - carryRepaid;
       const badgeBonus = Number(line.badgeBonusMinor) / 100;
       return {
         date: line.settlementRun.periodMonth,
@@ -162,10 +193,14 @@ export async function getEarningsHistory(
         network: networkAmount,
         badgeBonus,
         clawback: clawback,
-        adjustments: (adjustmentsByRun.get(line.settlementRunId) || []).map(a => ({
-          reason: a.reason,
-          amount: Number(a.amountMinor) / 100
-        })),
+        adjustments: [
+          ...(adjustmentsByRun.get(line.settlementRunId) || []).map(a => ({
+            reason: a.reason,
+            amount: Number(a.amountMinor) / 100
+          })),
+          ...(carryRepaid > 0 ? [{ reason: "carry-forward-repayment", amount: -carryRepaid }] : []),
+        ],
+        carryForwardOut: Number(line.carryForwardOutMinor) / 100,
         withholdingTax: Number(line.withholdingTaxMinor) / 100,
         netPayout: Number(line.netPayoutMinor) / 100,
         payoutDocument: line.payoutDocument
@@ -184,7 +219,7 @@ export async function getEarningsHistory(
     }));
 
     // 3. Clawbacks (Adjustments)
-    const clawbacks = approvedAdjustments.map((adj) => ({
+    const clawbacks = approvedAdjustments.filter((adj) => !isCarryForwardReason(adj.reason)).map((adj) => ({
       date: adj.createdAt.toLocaleDateString("th-TH", {
         month: "short",
         year: "numeric",

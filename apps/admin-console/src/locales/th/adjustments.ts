@@ -112,6 +112,15 @@ export const adjustments = {
   cancel: "ยกเลิก",
   confirmCreateTitle: "สร้างรายการปรับยอดนี้?",
   confirmCreateBody: "รายการจะมีสถานะ “รออนุมัติ” จนกว่าผู้ตรวจอีกคนจะอนุมัติ",
+  carryForwardSince: "ยกยอดมาตั้งแต่ {period} ({months} เดือน)",
+  carryForwardWriteOffSuggested: "ครบ {months} เดือนแล้ว ควรพิจารณาตัดหนี้สูญ",
+  writeOff: "ตัดหนี้สูญ",
+  writeOffTitle: "ตัดหนี้สูญ {amount} ของ {name}",
+  writeOffBody:
+    "ระบบจะสร้างรายการปรับยอดบวกเพื่อยกเลิกหนี้นี้ ต้องให้ผู้ตรวจอีกคนอนุมัติก่อนจึงจะมีผล",
+  writeOffReasonLabel: "เหตุผลที่ตัดหนี้สูญ (บันทึกในประวัติ)",
+  writeOffReasonPlaceholder: "เช่น ครูเลิกทำแล้ว หรือค้างเกิน 6 เดือน",
+  writeOffDone: "ส่งรายการตัดหนี้สูญแล้ว รอผู้ตรวจอนุมัติ",
 } as const;
 
 registerMessages("adjustments", adjustments);

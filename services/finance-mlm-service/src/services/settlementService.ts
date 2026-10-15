@@ -40,6 +40,61 @@ function isRefundAdjustment(reason: string) {
   return /(refund|chargeback)/i.test(reason);
 }
 
+/**
+ * Clawback carry-forward (owner decision 2026-10-15). A negative period total
+ * is not dropped: on approval it becomes a `carry-forward:origin=YYYY-MM`
+ * adjustment in the next period. A later period repays it from at most
+ * CARRY_FORWARD_MAX_SHARE of that period's positive payout. Finance writes
+ * off a debt (e.g. after CARRY_FORWARD_WRITE_OFF_MONTHS, or when the tutor
+ * has left) with a maker-checker adjustment whose reason starts with
+ * `carry-forward-writeoff`, which cancels it.
+ */
+export const CARRY_FORWARD_REASON_PREFIX = "carry-forward";
+export const CARRY_FORWARD_WRITE_OFF_PREFIX = "carry-forward-writeoff";
+export const CARRY_FORWARD_MAX_SHARE_PERCENT = 50n;
+export const CARRY_FORWARD_WRITE_OFF_MONTHS = 6;
+
+export function isCarryForwardReason(reason: string) {
+  return reason.trim().toLowerCase().startsWith(CARRY_FORWARD_REASON_PREFIX);
+}
+
+export function carryForwardReason(originPeriodMonth: string) {
+  return `${CARRY_FORWARD_REASON_PREFIX}:origin=${originPeriodMonth}`;
+}
+
+export function carryForwardOriginOf(reason: string): string | null {
+  return /origin=(\d{4}-\d{2})/.exec(reason)?.[1] ?? null;
+}
+
+/**
+ * One tutor's line after carry-forward. `preCarryMinor` is the period total
+ * before any carried debt (commission + other adjustments + bonus);
+ * `carryBucketMinor` is the net of carry-forward debts (negative) and
+ * write-offs (positive) in this period.
+ */
+export function applyCarryForward(input: {
+  preCarryMinor: bigint;
+  carryBucketMinor: bigint;
+  canRepay: boolean;
+}) {
+  const debt = input.carryBucketMinor < 0n ? -input.carryBucketMinor : 0n;
+  const cap =
+    input.canRepay && input.preCarryMinor > 0n
+      ? (input.preCarryMinor * CARRY_FORWARD_MAX_SHARE_PERCENT) / 100n
+      : 0n;
+  const deducted = debt < cap ? debt : cap;
+  const payoutMinor = input.preCarryMinor - deducted;
+  const carryOutMinor = debt - deducted + (payoutMinor < 0n ? -payoutMinor : 0n);
+  return { payoutMinor, deductedMinor: deducted, carryOutMinor };
+}
+
+function followingPeriodMonth(periodMonth: string) {
+  const [year, month] = periodMonth.split("-").map(Number);
+  const nextYear = month === 12 ? year + 1 : year;
+  const nextMonth = month === 12 ? 1 : month + 1;
+  return `${nextYear}-${String(nextMonth).padStart(2, "0")}`;
+}
+
 function getOmiseRecipientId(settings: unknown) {
   if (!settings || typeof settings !== "object" || Array.isArray(settings)) {
     return null;
@@ -186,6 +241,9 @@ export interface ComputedPayoutLine {
   eligibilityStatus: string;
   payoutIdentityVersion: number;
   recipientSnapshot: string | null;
+  carryForwardDeductedMinor: bigint;
+  carryForwardOutMinor: bigint;
+  carryForwardOrigin: string | null;
 }
 
 export interface ComputedSettlement {
@@ -226,6 +284,8 @@ type FingerprintLine = {
   eligibilityStatus: string;
   payoutIdentityVersion: number;
   recipientSnapshot: string | null;
+  carryForwardDeductedMinor?: bigint;
+  carryForwardOutMinor?: bigint;
 };
 
 function lineKey(line: FingerprintLine) {
@@ -241,6 +301,8 @@ function lineKey(line: FingerprintLine) {
     line.eligibilityStatus,
     String(line.payoutIdentityVersion ?? 0),
     line.recipientSnapshot ?? "",
+    (line.carryForwardDeductedMinor ?? 0n).toString(),
+    (line.carryForwardOutMinor ?? 0n).toString(),
   ].join("|");
 }
 
@@ -274,6 +336,40 @@ export class SettlementStaleError extends Error {
   constructor(public readonly freshness: SettlementFreshness) {
     super(`SETTLEMENT_STALE:${freshness.changedTutorUserIds.join(",")}`);
   }
+}
+
+type RunClient = Pick<typeof prisma, "settlementRun">;
+
+/**
+ * The open run for a period (DRAFT / ADJUSTMENT_PENDING / REJECTED), moving
+ * forward past submitted/approved periods; creates an ADJUSTMENT_PENDING
+ * holder when the period has no run yet (the monthly preview refreshes it).
+ */
+async function findOrCreateMutableRunId(client: RunClient, periodMonth: string): Promise<string> {
+  let period = periodMonth;
+  for (let i = 0; i < 24; i += 1) {
+    const existing = await client.settlementRun.findFirst({
+      where: { periodMonth: period },
+      orderBy: { createdAt: "desc" },
+    });
+    if (existing && ["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"].includes(existing.status)) {
+      return existing.settlementRunId;
+    }
+    if (existing) {
+      period = followingPeriodMonth(period);
+      continue;
+    }
+    const created = await client.settlementRun.create({
+      data: {
+        periodMonth: period,
+        status: "ADJUSTMENT_PENDING",
+        createdBy: "settlement-carry-forward",
+        previewPayload: {},
+      },
+    });
+    return created.settlementRunId;
+  }
+  throw new Error("NO_OPEN_SETTLEMENT_PERIOD");
 }
 
 export class SettlementService {
@@ -349,7 +445,19 @@ export class SettlementService {
 
     const adjustmentTotals = new Map<string, bigint>();
     const volumeAdjustmentTotals = new Map<string, bigint>();
+    const carryBuckets = new Map<string, bigint>();
+    const carryOrigins = new Map<string, string>();
     for (const adjustment of approvedAdjustments) {
+      if (isCarryForwardReason(adjustment.reason)) {
+        carryBuckets.set(
+          adjustment.tutorUserId,
+          (carryBuckets.get(adjustment.tutorUserId) || 0n) + adjustment.amountMinor,
+        );
+        const origin = carryForwardOriginOf(adjustment.reason);
+        const known = carryOrigins.get(adjustment.tutorUserId);
+        if (origin && (!known || origin < known)) carryOrigins.set(adjustment.tutorUserId, origin);
+        continue;
+      }
       adjustmentTotals.set(
         adjustment.tutorUserId,
         (adjustmentTotals.get(adjustment.tutorUserId) || 0n) +
@@ -424,7 +532,7 @@ export class SettlementService {
       });
     }
 
-    for (const [tutorUserId] of adjustmentTotals) {
+    for (const tutorUserId of [...adjustmentTotals.keys(), ...carryBuckets.keys()]) {
       if (!nodes.has(tutorUserId)) {
         nodes.set(tutorUserId, {
           userId: tutorUserId,
@@ -615,8 +723,22 @@ export class SettlementService {
         ? (badgeBonusMap.get(node.userId) ?? 0n)
         : 0n;
 
-      const adjustedPayoutMinor =
-        node.payoutAmountMinor + effectiveAdjustment + effectiveBadgeBonus;
+      const carry = applyCarryForward({
+        preCarryMinor: node.payoutAmountMinor + effectiveAdjustment + effectiveBadgeBonus,
+        carryBucketMinor: carryBuckets.get(node.userId) || 0n,
+        canRepay: node.verified,
+      });
+      const adjustedPayoutMinor = carry.payoutMinor;
+      // Debt still owed from earlier periods keeps its oldest origin;
+      // a shortfall that starts now dates from this period.
+      const carriedIn = -(carryBuckets.get(node.userId) || 0n);
+      const oldDebtLeft = carriedIn - carry.deductedMinor > 0n;
+      const carryForwardOrigin =
+        carry.carryOutMinor === 0n
+          ? null
+          : oldDebtLeft
+            ? (carryOrigins.get(node.userId) ?? periodMonth)
+            : periodMonth;
 
       // Include in payout lines if: has volume, has actual payout,
       // or had a BLOCKED adjustment (for audit visibility — shows adjustment was withheld)
@@ -626,13 +748,14 @@ export class SettlementService {
       const hasActivity =
         adjustedPayoutMinor !== 0n ||
         node.groupVolumeMinor > 0n ||
-        blockedAdjustment !== 0n;
+        blockedAdjustment !== 0n ||
+        carry.deductedMinor !== 0n ||
+        carry.carryOutMinor !== 0n;
 
       if (!hasActivity) continue;
 
-      // BUSINESS RULE (pending owner decision, unchanged): a negative total
-      // (clawback larger than earnings) is paid out as 0 with no WHT and no
-      // carry-forward to the next period.
+      // A negative total (clawback larger than earnings) is paid out as 0 with
+      // no WHT; the shortfall is carried forward (carryForwardOutMinor).
       const tax =
         adjustedPayoutMinor > 0n
           ? calculateWithholdingTax(adjustedPayoutMinor)
@@ -643,7 +766,8 @@ export class SettlementService {
 
       // Only mark as _ADJUSTED if the tutor is verified and actually received extras
       const eligibilityStatus =
-        node.verified && (effectiveAdjustment !== 0n || effectiveBadgeBonus !== 0n)
+        node.verified &&
+        (effectiveAdjustment !== 0n || effectiveBadgeBonus !== 0n || carry.deductedMinor !== 0n)
           ? `${node.eligibilityStatus}_ADJUSTED`
           : node.eligibilityStatus;
 
@@ -658,6 +782,9 @@ export class SettlementService {
         eligibilityStatus,
         payoutIdentityVersion: node.payoutIdentityVersion,
         recipientSnapshot: node.recipientId,
+        carryForwardDeductedMinor: carry.deductedMinor,
+        carryForwardOutMinor: carry.carryOutMinor,
+        carryForwardOrigin,
       });
     }
 
@@ -818,6 +945,9 @@ export class SettlementService {
               eligibilityStatus: line.eligibilityStatus,
               payoutIdentityVersion: line.payoutIdentityVersion,
               recipientSnapshot: line.recipientSnapshot,
+              carryForwardDeductedMinor: line.carryForwardDeductedMinor,
+              carryForwardOutMinor: line.carryForwardOutMinor,
+              carryForwardOrigin: line.carryForwardOrigin,
             })),
           });
         }
@@ -868,6 +998,8 @@ export class SettlementService {
           eligibilityStatus: true,
           payoutIdentityVersion: true,
           recipientSnapshot: true,
+          carryForwardDeductedMinor: true,
+          carryForwardOutMinor: true,
         },
       }),
       SettlementService.computeSettlement(run.periodMonth),
@@ -1111,6 +1243,27 @@ export class SettlementService {
           },
         });
         payoutDocumentByLineId.set(line.payoutLineId, payoutDocument);
+      }
+
+      // Carry each unpaid clawback into the next open period.
+      const carryLines = approvedRun.payoutLines.filter((line) => line.carryForwardOutMinor > 0n);
+      if (carryLines.length > 0) {
+        const nextRunId = await findOrCreateMutableRunId(tx, followingPeriodMonth(approvedRun.periodMonth));
+        for (const line of carryLines) {
+          await tx.adjustment.create({
+            data: {
+              settlementRunId: nextRunId,
+              tutorUserId: line.tutorUserId,
+              amountMinor: -line.carryForwardOutMinor,
+              volumeMinor: null,
+              reason: carryForwardReason(line.carryForwardOrigin ?? approvedRun.periodMonth),
+              status: "APPROVED",
+              createdBy: "settlement-carry-forward",
+              approvedBy: approvedBy,
+              approvedAt: new Date(),
+            },
+          });
+        }
       }
 
       const finalizedRun = await tx.settlementRun.updateMany({

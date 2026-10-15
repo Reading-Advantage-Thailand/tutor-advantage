@@ -726,6 +726,12 @@ model PayoutLine {
   eligibilityStatus   String   @map("eligibility_status")
   payoutIdentityVersion Int    @default(0) @map("payout_identity_version")
   recipientSnapshot  String?   @map("recipient_snapshot")
+  /// Clawback debt carried in from earlier periods that this line repaid (>= 0).
+  carryForwardDeductedMinor BigInt @default(0) @map("carry_forward_deducted_minor")
+  /// Debt this line leaves for the next period (>= 0); becomes a carry-forward adjustment on approval.
+  carryForwardOutMinor BigInt @default(0) @map("carry_forward_out_minor")
+  /// Oldest period (YYYY-MM) the outstanding debt dates from.
+  carryForwardOrigin String? @map("carry_forward_origin")
   createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   settlementRun SettlementRun @relation(fields: [settlementRunId], references: [settlementRunId])

@@ -7,6 +7,7 @@ import {
   DataTable,
   EmptyState,
   Grid,
+  Notice,
   Page,
   PageHeader,
   ProgressBar,
@@ -266,6 +267,15 @@ export default async function EarningsPage() {
         description={t("dashboardEarnings.pageDescription")}
         actions={<SalesCsvDownloadButton periodMonth={periodMonth} label={t("dashboardEarnings.downloadCsv")} />}
       />
+
+      {(earnings.carryForwardOutstanding ?? 0) > 0 ? (
+        <Notice
+          tone="warning"
+          title={t("dashboardEarnings.carryForwardTitle").replace("{amount}", money(earnings.carryForwardOutstanding ?? 0))}
+        >
+          {t("dashboardEarnings.carryForwardBody")}
+        </Notice>
+      ) : null}
 
       <Grid cols={4} className="grid-cols-2">
         <StatCard

@@ -32,7 +32,7 @@ import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatPeriodMonth, formatSatang, formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { PayoutLinesTable } from "./PayoutLinesTable";
-import { uncollectedClawback } from "../ownerDecisions";
+import { carryForwardSummary } from "../carryForward";
 import { bankLabel, satangNumber, type PayoutLineRow, type SettlementDetailResponse, type TimelineEntry } from "../types";
 import "@/locales/th/settlements";
 
@@ -135,7 +135,7 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
   if (isLoading || !data || !run || !plan) return <PageSkeleton variant="table" />;
 
   const status = run.status;
-  const uncollected = uncollectedClawback(data.lines);
+  const carried = carryForwardSummary(data.lines);
   const canRefresh =
     isAdmin && (["DRAFT", "REJECTED", "ADJUSTMENT_PENDING"].includes(status) || (status === "SUBMITTED" && isStale));
   const canSubmit = isAdmin && status === "DRAFT";
@@ -290,11 +290,11 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
       {(canApprove || canDevApprove) && plan.missingRecipientCount > 0 && !isStale && !isEmpty && pendingAdjustments === 0 ? (
         <Notice tone="warning">{approveBlockedReason}</Notice>
       ) : null}
-      {uncollected.count > 0 ? (
-        <Notice tone="warning" title={t("settlements.ownerDecisionTitle")}>
-          {t("settlements.uncollectedClawbackBody", {
-            count: formatNumber(uncollected.count),
-            amount: formatSatang(Number(uncollected.totalSatang)),
+      {carried.count > 0 ? (
+        <Notice tone="info" title={t("settlements.carryForwardTitle")} href="/adjustments?status=APPROVED">
+          {t("settlements.carryForwardBody", {
+            count: formatNumber(carried.count),
+            amount: formatSatang(Number(carried.totalSatang)),
           })}
         </Notice>
       ) : null}

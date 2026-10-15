@@ -313,6 +313,70 @@ describe("SettlementService", () => {
     });
   });
 
+  describe("clawback carry-forward", () => {
+    const tutor = {
+      userId: "tutor-1",
+      sponsorTutorId: null,
+      verificationStatus: "VERIFIED",
+      payoutIdentityVersion: 0,
+      settings: { omiseRecipientId: "recp_1" },
+    };
+
+    it("repays carried debt from at most half of this period's payout", async () => {
+      prismaMock.paymentIntent.findMany.mockResolvedValue([
+        { enrollmentId: "en-1", amountMinor: 1_000_000n, earningTutorUserId: "tutor-1" },
+      ]);
+      prismaMock.enrollment.findMany.mockResolvedValue([]);
+      prismaMock.user.findMany.mockResolvedValue([tutor]);
+      prismaMock.adjustment.findMany.mockResolvedValue([
+        { adjustmentId: "cf-1", tutorUserId: "tutor-1", amountMinor: -400_000n, volumeMinor: null, reason: "carry-forward:origin=2026-02" },
+      ]);
+
+      const result = await SettlementService.computeSettlement("2026-05");
+      const line = result.lines[0];
+
+      // ฿10,000 sale → ฿4,500 commission; repay ฿2,250 (50%), ฿1,750 stays owed.
+      expect(line.carryForwardDeductedMinor).toBe(225_000n);
+      expect(line.payoutAmountMinor).toBe(225_000n);
+      expect(line.carryForwardOutMinor).toBe(175_000n);
+      expect(line.carryForwardOrigin).toBe("2026-02");
+      expect(line.eligibilityStatus).toBe("ELIGIBLE_ADJUSTED");
+    });
+
+    it("carries a new shortfall forward from this period", async () => {
+      prismaMock.paymentIntent.findMany.mockResolvedValue([]);
+      prismaMock.enrollment.findMany.mockResolvedValue([]);
+      prismaMock.user.findMany.mockResolvedValue([tutor]);
+      prismaMock.adjustment.findMany.mockResolvedValue([
+        { adjustmentId: "refund-1", tutorUserId: "tutor-1", amountMinor: -50_000n, volumeMinor: 0n, reason: "refund:pi-1" },
+      ]);
+
+      const line = (await SettlementService.computeSettlement("2026-05")).lines[0];
+
+      expect(line.netPayoutMinor).toBe(0n);
+      expect(line.carryForwardOutMinor).toBe(50_000n);
+      expect(line.carryForwardOrigin).toBe("2026-05");
+    });
+
+    it("a write-off cancels the carried debt", async () => {
+      prismaMock.paymentIntent.findMany.mockResolvedValue([
+        { enrollmentId: "en-1", amountMinor: 1_000_000n, earningTutorUserId: "tutor-1" },
+      ]);
+      prismaMock.enrollment.findMany.mockResolvedValue([]);
+      prismaMock.user.findMany.mockResolvedValue([tutor]);
+      prismaMock.adjustment.findMany.mockResolvedValue([
+        { adjustmentId: "cf-1", tutorUserId: "tutor-1", amountMinor: -400_000n, volumeMinor: null, reason: "carry-forward:origin=2025-10" },
+        { adjustmentId: "wo-1", tutorUserId: "tutor-1", amountMinor: 400_000n, volumeMinor: null, reason: "carry-forward-writeoff: ครูเลิกทำแล้ว" },
+      ]);
+
+      const line = (await SettlementService.computeSettlement("2026-05")).lines[0];
+
+      expect(line.payoutAmountMinor).toBe(450_000n);
+      expect(line.carryForwardDeductedMinor).toBe(0n);
+      expect(line.carryForwardOutMinor).toBe(0n);
+    });
+  });
+
   it("isolates a closed sponsor cycle instead of stopping the whole settlement", async () => {
     prismaMock.paymentIntent.findMany.mockResolvedValue([]);
     prismaMock.adjustment.findMany.mockResolvedValue([]);
@@ -664,6 +728,58 @@ describe("SettlementService", () => {
     expect(result.status).toBe("APPROVED");
     expect(prismaMock.$executeRaw).toHaveBeenCalledTimes(2);
     expect(omiseMock.createOmiseTransfer).not.toHaveBeenCalled();
+  });
+
+  it("turns an approved line's unpaid debt into a carry-forward adjustment next period", async () => {
+    const payoutLines = [
+      {
+        payoutLineId: "line-debt",
+        tutorUserId: "tutor-2",
+        payoutAmountMinor: -50_000n,
+        withholdingTaxMinor: 0n,
+        netPayoutMinor: 0n,
+        carryForwardOutMinor: 50_000n,
+        carryForwardOrigin: "2026-04",
+      },
+    ];
+    prismaMock.settlementRun.findUnique.mockResolvedValue({ settlementRunId: "run-may", status: "SUBMITTED" });
+    prismaMock.payoutLine.findMany.mockResolvedValue([]);
+    const adjustmentCreate = vi.fn().mockResolvedValue({});
+    const runCreate = vi.fn().mockResolvedValue({ settlementRunId: "run-jun" });
+    prismaMock.$transaction.mockImplementation(async (callback) =>
+      callback({
+        settlementRun: {
+          updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+          findUnique: vi.fn().mockResolvedValue({
+            settlementRunId: "run-may",
+            periodMonth: "2026-05",
+            status: "APPROVING",
+            payoutLines,
+          }),
+          findFirst: vi.fn().mockResolvedValue(null),
+          create: runCreate,
+        },
+        adjustment: { create: adjustmentCreate },
+        payoutDocument: { upsert: vi.fn() },
+        user: { findMany: vi.fn().mockResolvedValue([]) },
+      }),
+    );
+
+    await SettlementService.approveSettlement("run-may", "checker-1");
+
+    expect(runCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({ periodMonth: "2026-06", status: "ADJUSTMENT_PENDING" }),
+    });
+    expect(adjustmentCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        settlementRunId: "run-jun",
+        tutorUserId: "tutor-2",
+        amountMinor: -50_000n,
+        reason: "carry-forward:origin=2026-04",
+        status: "APPROVED",
+        createdBy: "settlement-carry-forward",
+      }),
+    });
   });
 
   it("validates approval status and Omise recipients before approval", async () => {

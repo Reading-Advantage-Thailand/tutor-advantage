@@ -4,6 +4,7 @@ import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import {
   SettlementService,
   SettlementStaleError,
+  isCarryForwardReason,
   isDevMakerCheckerOverrideEnabled,
   type SettlementFreshness,
 } from "../services/settlementService";
@@ -630,12 +631,14 @@ export async function exportSettlementCsv(
     // สร้าง CSV
     const approvedAdjustments = await prisma.adjustment.findMany({
       where: { settlementRunId: snapshotId, status: "APPROVED" },
-      select: { adjustmentId: true, tutorUserId: true, amountMinor: true },
+      select: { adjustmentId: true, tutorUserId: true, amountMinor: true, reason: true },
     });
     const includedAdjustmentIds = includedAdjustmentIdsOf(run);
     const adjustmentMap = new Map<string, bigint>();
     for (const adjustment of approvedAdjustments) {
       if (includedAdjustmentIds && !includedAdjustmentIds.has(adjustment.adjustmentId)) continue;
+      // Carried debt is repaid only up to a cap: shown via carryForwardDeductedMinor.
+      if (isCarryForwardReason(adjustment.reason)) continue;
       adjustmentMap.set(
         adjustment.tutorUserId,
         (adjustmentMap.get(adjustment.tutorUserId) ?? 0n) +
@@ -644,19 +647,21 @@ export async function exportSettlementCsv(
     }
 
     const header =
-      "tutor_user_id,gross_volume_thb,payout_rate,base_payout_thb,adjustment_thb,badge_bonus_thb,gross_payout_thb,wht_3pct_thb,net_payout_thb,eligibility_status";
+      "tutor_user_id,gross_volume_thb,payout_rate,base_payout_thb,adjustment_thb,badge_bonus_thb,carry_forward_repaid_thb,gross_payout_thb,wht_3pct_thb,net_payout_thb,carry_forward_out_thb,eligibility_status";
     const rows = run.payoutLines.map((line) => {
       const grossTHB = (Number(line.grossVolumeMinor) / 100).toFixed(2);
       const adjustmentMinor = adjustmentMap.get(line.tutorUserId) ?? 0n;
       const basePayoutMinor =
-        line.payoutAmountMinor - line.badgeBonusMinor - adjustmentMinor;
+        line.payoutAmountMinor - line.badgeBonusMinor - adjustmentMinor + line.carryForwardDeductedMinor;
       const basePayoutTHB = (Number(basePayoutMinor) / 100).toFixed(2);
       const adjustmentTHB = (Number(adjustmentMinor) / 100).toFixed(2);
       const payoutTHB = (Number(line.payoutAmountMinor) / 100).toFixed(2);
       const badgeTHB = (Number(line.badgeBonusMinor) / 100).toFixed(2);
       const whtTHB = (Number(line.withholdingTaxMinor) / 100).toFixed(2);
       const netTHB = (Number(line.netPayoutMinor) / 100).toFixed(2);
-      return `${line.tutorUserId},${grossTHB},${line.payoutRate},${basePayoutTHB},${adjustmentTHB},${badgeTHB},${payoutTHB},${whtTHB},${netTHB},${line.eligibilityStatus}`;
+      const repaidTHB = (Number(line.carryForwardDeductedMinor) / 100).toFixed(2);
+      const carryOutTHB = (Number(line.carryForwardOutMinor) / 100).toFixed(2);
+      return `${line.tutorUserId},${grossTHB},${line.payoutRate},${basePayoutTHB},${adjustmentTHB},${badgeTHB},${repaidTHB},${payoutTHB},${whtTHB},${netTHB},${carryOutTHB},${line.eligibilityStatus}`;
     });
     const csv = [header, ...rows].join("\n");
 
@@ -794,6 +799,7 @@ export async function getSettlementLines(
           adjustmentId: true,
           tutorUserId: true,
           amountMinor: true,
+          reason: true,
         },
       }),
       prisma.adjustment.count({
@@ -807,6 +813,7 @@ export async function getSettlementLines(
     const adjustmentMap = new Map<string, bigint>();
     for (const adjustment of approvedAdjustments) {
       if (includedAdjustmentIds && !includedAdjustmentIds.has(adjustment.adjustmentId)) continue;
+      if (isCarryForwardReason(adjustment.reason)) continue;
       adjustmentMap.set(
         adjustment.tutorUserId,
         (adjustmentMap.get(adjustment.tutorUserId) ?? 0n) +
@@ -829,7 +836,7 @@ export async function getSettlementLines(
       const transfer = transferMap.get(l.payoutLineId);
       const adjustmentMinor = adjustmentMap.get(l.tutorUserId) ?? 0n;
       const basePayoutMinor =
-        l.payoutAmountMinor - l.badgeBonusMinor - adjustmentMinor;
+        l.payoutAmountMinor - l.badgeBonusMinor - adjustmentMinor + l.carryForwardDeductedMinor;
       const hasOmiseRecipientId = Boolean(getOmiseRecipientIdFromSettings(tutor?.settings));
       const transferStatus = transfer?.transfer_status ?? null;
 
@@ -870,6 +877,9 @@ export async function getSettlementLines(
         badgeBonusSatang: l.badgeBonusMinor.toString(),
         whtSatang: l.withholdingTaxMinor.toString(),
         netPayoutSatang: l.netPayoutMinor.toString(),
+        carryForwardDeductedSatang: l.carryForwardDeductedMinor.toString(),
+        carryForwardOutSatang: l.carryForwardOutMinor.toString(),
+        carryForwardOrigin: l.carryForwardOrigin ?? null,
         eligibilityStatus: l.eligibilityStatus,
         hasRecipientSnapshot: Boolean(l.recipientSnapshot),
         // Masked payout destination for confirmation dialogs (never the full number).

@@ -13,6 +13,9 @@ export const dashboardEarnings = {
   directCommission: "ค่าคอมมิชชันจากยอดชำระ",
   networkBonus: "โบนัสเครือข่าย",
   clawback: "ยอดปรับหักคืน",
+  carryForwardTitle: "ยอดค้างหักจากรอบก่อน {amount}",
+  carryForwardBody:
+    "เกิดจากยอดหักคืน (เช่น นักเรียนขอคืนเงิน) ที่มากกว่ารายได้ในรอบนั้น ระบบจะทยอยหักจากรายได้รอบถัดไป ไม่เกิน 50% ต่อรอบ",
   currentCommission: "คอมมิชชันปัจจุบัน",
   rateTargetPrefix: "เป้าหมาย",
   rateTargetSuffix: "เพื่อปรับเรท",

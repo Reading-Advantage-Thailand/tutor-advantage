@@ -249,7 +249,10 @@ Decision 2026-10-15: earlier wording subtracted `sum(Payout(child))` (the childr
 - **THB-only ledger using Satang (Integers).**
 - High precision internal calculations; round only at final tutor-period output.
 - No reserve/holdback in V1 (company accepts chargeback risk to ensure immediate tutor profitability).
-- Refund/chargeback clawback next period.
+- Refund/chargeback clawback next period. Decisions 2026-10-15:
+  - Same-period refund: the payment's volume is removed and commission is recalculated (no separate clawback).
+  - Later-period refund: only the commission paid for that sale is reclaimed from the selling tutor; the later period's volume is not reduced and upline overrides are absorbed by the company.
+  - A negative period total is carried forward and repaid from at most 50% of each later period's payout. After 6 months (or when the tutor leaves) Finance may write it off via a maker-checker adjustment.
 - **10% Re-up Discount:** Modeled as a price override where the tutor absorbs 7% of the discount and the company absorbs 3%.
 - Finance approval gate with Makers-Checkers validation required before payout release.
 

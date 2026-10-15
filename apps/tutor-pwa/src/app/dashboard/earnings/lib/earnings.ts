@@ -37,6 +37,8 @@ export type EarningsProjection = {
   clawback: number;
   adjustments?: EarningsAdjustment[];
   total: number;
+  /** Clawback debt still owed from earlier periods. */
+  carryForwardOutstanding?: number;
 };
 
 export type RateInfo = { rate: number; volume: number; nextTarget: number };
@@ -97,12 +99,18 @@ export function historyGross(item: EarningsHistoryItem): number {
  * Adjustment lines to show: explicit adjustments when present, otherwise the
  * legacy single clawback line (only when non-zero).
  */
+/** System reasons shown in plain Thai (others are the admin's own words). */
+export function adjustmentReasonLabel(reason: string | undefined): string {
+  if (reason === "carry-forward-repayment") return "หักยอดค้างจากรอบก่อน (ไม่เกิน 50% ของรายได้รอบนี้)";
+  return reason ?? "";
+}
+
 export function adjustmentLines(
   source: { adjustments?: EarningsAdjustment[]; clawback: number },
   fallbackReason: string,
 ): EarningsAdjustment[] {
   if (source.adjustments && source.adjustments.length > 0) {
-    return source.adjustments.map((adj) => ({ amount: adj.amount, reason: adj.reason || fallbackReason }));
+    return source.adjustments.map((adj) => ({ amount: adj.amount, reason: adjustmentReasonLabel(adj.reason) || fallbackReason }));
   }
   return source.clawback !== 0 ? [{ amount: source.clawback, reason: fallbackReason }] : [];
 }

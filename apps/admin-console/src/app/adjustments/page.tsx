@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CheckCircle2, Plus, XCircle } from "lucide-react";
 import {
   AdminStatusChip,
+  Chip,
   ConfirmDialog,
   DataTable,
   DescriptionList,
@@ -35,6 +36,12 @@ import { statusLabel, statusOptions } from "@/lib/status";
 import { t } from "@/lib/i18n";
 import { TutorPicker, type PickedTutor } from "./TutorPicker";
 import { parseBahtToSatang } from "./money";
+import {
+  CARRY_FORWARD_WRITE_OFF_PREFIX,
+  WRITE_OFF_SUGGESTED_MONTHS,
+  carryForwardDebt,
+  monthsBetween,
+} from "../settlements/carryForward";
 import "@/locales/th/adjustments";
 
 interface Adjustment {
@@ -109,6 +116,7 @@ function AdjustmentsView() {
 
   const [decision, setDecision] = useState<{ row: Adjustment; kind: "approve" | "reject"; key: string } | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const [writeOff, setWriteOff] = useState<{ row: Adjustment; key: string } | null>(null);
 
   const afterChange = async () => {
     if (me) {
@@ -169,7 +177,22 @@ function AdjustmentsView() {
       header: t("adjustments.colReason"),
       label: t("adjustments.colReason"),
       mobile: "field",
-      cell: (row) => <span className="line-clamp-3 max-w-72 text-[0.8125rem]">{row.reason}</span>,
+      cell: (row) => {
+        const debt = carryForwardDebt(row);
+        const months = debt?.origin ? monthsBetween(debt.origin, currentBangkokMonth()) : null;
+        return (
+          <span className="flex max-w-72 flex-col items-start gap-1">
+            <span className="line-clamp-3 text-[0.8125rem]">{row.reason}</span>
+            {debt?.origin && months !== null ? (
+              <Chip tone={months >= WRITE_OFF_SUGGESTED_MONTHS ? "warning" : "neutral"}>
+                {months >= WRITE_OFF_SUGGESTED_MONTHS
+                  ? t("adjustments.carryForwardWriteOffSuggested", { months: WRITE_OFF_SUGGESTED_MONTHS })
+                  : t("adjustments.carryForwardSince", { period: formatPeriodMonth(debt.origin), months })}
+              </Chip>
+            ) : null}
+          </span>
+        );
+      },
     },
     {
       key: "maker",
@@ -205,6 +228,18 @@ function AdjustmentsView() {
       mobile: "field",
       alwaysVisible: true,
       cell: (row) => {
+        if (
+          canCreate &&
+          row.status === "APPROVED" &&
+          carryForwardDebt(row) &&
+          !LOCKED_RUN_STATUSES.includes(row.settlementRunStatus ?? "")
+        ) {
+          return (
+            <Button size="sm" variant="outline" onClick={() => setWriteOff({ row, key: newIdempotencyKey() })}>
+              {t("adjustments.writeOff")}
+            </Button>
+          );
+        }
         if (row.status !== "PENDING" || !canCheck) return null;
         if (row.createdByUserId === me?.userId) {
           return <span className="text-[0.8125rem] text-fg-muted">{t("adjustments.selfBlockedShort")}</span>;
@@ -352,6 +387,38 @@ function AdjustmentsView() {
           if (!decision) return;
           await api.post(`/v1/adjustments/${decision.row.adjustmentId}/reject`, { reason }, { idempotencyKey: decision.key });
           toast.success(t("adjustments.rejectedDone"));
+          await afterChange();
+        }}
+      />
+
+      <ConfirmDialog
+        open={writeOff !== null}
+        onOpenChange={(open) => !open && setWriteOff(null)}
+        tone="danger"
+        title={
+          writeOff
+            ? t("adjustments.writeOffTitle", {
+                amount: formatSatang(-writeOff.row.amountSatang),
+                name: writeOff.row.tutorName,
+              })
+            : ""
+        }
+        description={t("adjustments.writeOffBody")}
+        confirmLabel={t("adjustments.writeOff")}
+        reason={{ label: t("adjustments.writeOffReasonLabel"), placeholder: t("adjustments.writeOffReasonPlaceholder") }}
+        onConfirm={async ({ reason }) => {
+          if (!writeOff) return;
+          await api.post(
+            "/v1/adjustments",
+            {
+              tutorUserId: writeOff.row.tutorUserId,
+              periodMonth: writeOff.row.periodMonth,
+              amountSatang: -writeOff.row.amountSatang,
+              reason: `${CARRY_FORWARD_WRITE_OFF_PREFIX}: ${reason.trim()}`,
+            },
+            { idempotencyKey: writeOff.key },
+          );
+          toast.success(t("adjustments.writeOffDone"));
           await afterChange();
         }}
       />

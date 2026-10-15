@@ -106,6 +106,9 @@ export interface PayoutLineRow {
   badgeBonusSatang: string;
   whtSatang: string;
   netPayoutSatang: string;
+  carryForwardDeductedSatang?: string;
+  carryForwardOutSatang?: string;
+  carryForwardOrigin?: string | null;
   eligibilityStatus: string;
   hasRecipientSnapshot: boolean;
   bankBrand: string | null;
