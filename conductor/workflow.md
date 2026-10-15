@@ -32,6 +32,7 @@
 - Use conventional commit messages.
 - Keep one logical change per commit.
 - Include migration notes when changing settlement or payout behavior.
+- Do not add a `Claude-Session:` trailer to commit messages (keeps history clean). A `Co-Authored-By:` trailer is fine.
 
 ## Verification Expectations
 
