@@ -6,6 +6,7 @@ const prisma = vi.hoisted(() => ({
   oAuthIdentity: {
     findUnique: vi.fn(),
     create: vi.fn(),
+    count: vi.fn(),
   },
   user: {
     findFirst: vi.fn(),
@@ -29,6 +30,8 @@ describe("processOAuthLogin", () => {
     prisma.user.create.mockReset();
     prisma.user.update.mockReset();
     prisma.userConsent.findFirst.mockReset();
+    prisma.oAuthIdentity.count.mockReset();
+    prisma.oAuthIdentity.count.mockResolvedValue(0);
   });
 
   it("returns an existing OAuth user and signs a session token", async () => {
@@ -91,14 +94,14 @@ describe("processOAuthLogin", () => {
     });
   });
 
-  it("creates a new student and links a valid non-LINE sponsor", async () => {
+  it("creates a tutor from a valid tutor-app invite and links the sponsor", async () => {
     prisma.user.findFirst.mockResolvedValue({ userId: "tutor-1" });
     prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
     prisma.user.findUnique.mockResolvedValue(null);
     prisma.user.create.mockResolvedValue({
       userId: "student-1",
       displayName: "New Student",
-      role: "STUDENT",
+      role: "TUTOR",
       sponsorTutorId: null,
       sponsorLockedAt: null,
     });
@@ -125,7 +128,7 @@ describe("processOAuthLogin", () => {
     });
     expect(prisma.user.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
-        role: "STUDENT",
+        role: "TUTOR",
         displayName: "New Student",
         email: "student@example.com",
         oauthIdentities: {
@@ -325,6 +328,64 @@ describe("processOAuthLogin", () => {
     ).rejects.toThrow("SPONSOR_TREE_CYCLE");
 
     expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+});
+
+describe("tutor onboarding by invite", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    prisma.oAuthIdentity.count.mockResolvedValue(0);
+    prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.create.mockImplementation(({ data }: { data: { role: string } }) =>
+      Promise.resolve({ userId: "new-1", displayName: "New", role: data.role, sponsorTutorId: null, sponsorLockedAt: null }),
+    );
+    prisma.user.update.mockImplementation(({ data }: { data: Record<string, unknown> }) =>
+      Promise.resolve({ userId: "existing-1", displayName: "Existing", role: "STUDENT", sponsorTutorId: null, sponsorLockedAt: null, ...data }),
+    );
+  });
+
+  it("does not make a tutor without a valid invite", async () => {
+    prisma.user.findFirst.mockResolvedValue(null); // sponsor not an active tutor
+    const result = await processOAuthLogin("google", "s-1", "a@example.com", "A", "", "not-a-tutor");
+    expect(prisma.user.create).toHaveBeenCalledWith({ data: expect.objectContaining({ role: "STUDENT" }) });
+    expect(result.user.role).toBe("STUDENT");
+
+    await processOAuthLogin("google", "s-2", "b@example.com", "B", "");
+    expect(prisma.user.create).toHaveBeenLastCalledWith({ data: expect.objectContaining({ role: "STUDENT" }) });
+  });
+
+  it("never makes a tutor from a LINE login, even with a sponsor", async () => {
+    prisma.user.findFirst.mockResolvedValue({ userId: "tutor-1" });
+    await processOAuthLogin("line", "line-1", "c@example.com", "C", "", "tutor-1");
+    expect(prisma.user.create).toHaveBeenCalledWith({ data: expect.objectContaining({ role: "STUDENT" }) });
+    expect(prisma.user.findFirst).not.toHaveBeenCalled();
+  });
+
+  it("upgrades a Google-only student account that comes back with an invite", async () => {
+    prisma.user.findFirst.mockResolvedValue({ userId: "tutor-1" });
+    prisma.oAuthIdentity.findUnique.mockResolvedValue({
+      user: { userId: "existing-1", displayName: "Existing", role: "STUDENT", sponsorTutorId: null, sponsorLockedAt: null, profilePictureUrl: "x" },
+    });
+
+    const result = await processOAuthLogin("google", "s-3", "d@example.com", "Existing", "", "tutor-1");
+
+    expect(prisma.user.update).toHaveBeenCalledWith({ where: { userId: "existing-1" }, data: { role: "TUTOR" } });
+    expect(result.roleUpgraded).toBe(true);
+    expect(result.user.role).toBe("TUTOR");
+  });
+
+  it("keeps a real (LINE) student a student", async () => {
+    prisma.user.findFirst.mockResolvedValue({ userId: "tutor-1" });
+    prisma.oAuthIdentity.count.mockResolvedValue(1);
+    prisma.oAuthIdentity.findUnique.mockResolvedValue({
+      user: { userId: "existing-1", displayName: "Existing", role: "STUDENT", sponsorTutorId: "tutor-9", sponsorLockedAt: new Date(), profilePictureUrl: "x" },
+    });
+
+    const result = await processOAuthLogin("google", "s-4", "e@example.com", "Existing", "", "tutor-1");
+
+    expect(prisma.user.update).not.toHaveBeenCalledWith(expect.objectContaining({ data: { role: "TUTOR" } }));
+    expect(result.user.role).toBe("STUDENT");
   });
 });
 

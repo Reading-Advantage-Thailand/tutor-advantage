@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 
@@ -28,8 +28,24 @@ function GoogleMark() {
   );
 }
 
+const subscribeNever = () => () => {};
+const readSearch = () => window.location.search;
+const serverSearch = () => "";
+
+/** Message for the `?error=` the OAuth callback redirects back with. */
+export function loginErrorMessageKey(error: string | null) {
+  if (!error) return null;
+  return error === "tutor_invite_required"
+    ? ("app.loginErrorTutorInviteRequired" as const)
+    : ("app.loginErrorGeneric" as const);
+}
+
 export function LoginForm() {
   const [loading, setLoading] = useState<"google" | null>(null);
+  const search = useSyncExternalStore(subscribeNever, readSearch, serverSearch);
+  const params = new URLSearchParams(search);
+  const errorKey = loginErrorMessageKey(params.get("error"));
+  const invited = Boolean(params.get("sponsor"));
 
   // Unchanged flow: full-page redirect to the OAuth route, forwarding ?sponsor= from the entry URL.
   const handleOAuth = async (provider: "google") => {
@@ -41,6 +57,13 @@ export function LoginForm() {
 
   return (
     <div className="grid gap-3">
+      {errorKey ? (
+        <p role="alert" className="rounded-xl border border-danger-fg/30 bg-danger-bg p-3 text-sm text-danger-fg">
+          {t(errorKey)}
+        </p>
+      ) : invited ? (
+        <p className="rounded-xl border border-hairline bg-surface p-3 text-sm text-fg">{t("app.loginInviteNotice")}</p>
+      ) : null}
       <Button
         id="btn-google-login"
         variant="outline"

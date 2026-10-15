@@ -37,6 +37,7 @@ export async function processOAuthLogin(
     sponsorTutorId,
     verifiedPhoneNumber,
     "STUDENT",
+    { tutorViaInvite: provider !== "line" },
   );
 }
 
@@ -72,6 +73,7 @@ async function processLogin(
   sponsorTutorId: string | null | undefined,
   verifiedPhoneNumber: string | undefined,
   requestedRole: "STUDENT" | "TUTOR",
+  options: { tutorViaInvite?: boolean } = {},
 ): Promise<AuthResult> {
   let user;
   let roleUpgraded = false;
@@ -86,6 +88,10 @@ async function processLogin(
     provider !== "line" && sponsorTutorId
       ? await resolveActiveTutorSponsorId(sponsorTutorId)
       : null;
+  // Tutor onboarding: a tutor-app (non-LINE) login that carries a valid
+  // invite from an active tutor makes the account a tutor. The role is
+  // decided here from the server-checked invite, never taken from the client.
+  const joinsAsTutor = Boolean(options.tutorViaInvite && invitedSponsorId);
 
   // 1. Check if OAuth Identity already exists
   const existingIdentity = await prisma.oAuthIdentity.findUnique({
@@ -133,7 +139,7 @@ async function processLogin(
       // Create user and link identity in one transaction
       user = await prisma.user.create({
         data: {
-          role: requestedRole,
+          role: joinsAsTutor ? "TUTOR" : requestedRole,
           displayName: name,
           email: normalizedEmail,
           phoneNumber: normalizedPhone,
@@ -199,6 +205,23 @@ async function processLogin(
     });
   }
 
+  // An existing STUDENT account accepted into the tutor network by invite.
+  // Real students sign in with LINE, so an account with a LINE identity is
+  // never converted; a Google-only "student" is a tutor who signed up before
+  // invites worked.
+  if (
+    joinsAsTutor &&
+    user.role === "STUDENT" &&
+    user.userId !== invitedSponsorId &&
+    !(await hasLineIdentity(user.userId))
+  ) {
+    user = await prisma.user.update({
+      where: { userId: user.userId },
+      data: { role: "TUTOR" },
+    });
+    roleUpgraded = true;
+  }
+
   // Generate JWT token
   const sessionToken = jwt.sign(
     { userId: user.userId, role: user.role },
@@ -255,6 +278,13 @@ async function wouldCreateSponsorCycle(userId: string, sponsorTutorId: string) {
   }
 
   return false;
+}
+
+async function hasLineIdentity(userId: string) {
+  const count = await prisma.oAuthIdentity.count({
+    where: { userId, provider: "line" },
+  });
+  return count > 0;
 }
 
 async function resolveActiveTutorSponsorId(sponsorTutorId: string) {

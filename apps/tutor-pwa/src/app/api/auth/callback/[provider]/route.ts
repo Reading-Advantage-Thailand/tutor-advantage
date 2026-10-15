@@ -95,6 +95,15 @@ export async function GET(
       );
     }
 
+    // Only tutors may use this app. A login without a valid invite yields a
+    // non-tutor account: send them back with a clear message, no session.
+    if (data.user?.role !== "TUTOR") {
+      const back = NextResponse.redirect(new URL("/?error=tutor_invite_required", publicBase));
+      back.cookies.delete("oauth_state");
+      back.cookies.delete("pkce_verifier");
+      return back;
+    }
+
     const dashboardUrl = new URL("/dashboard", publicBase);
     if (data.roleUpgraded) dashboardUrl.searchParams.set("role_upgraded", "true");
     const redirect = NextResponse.redirect(dashboardUrl);

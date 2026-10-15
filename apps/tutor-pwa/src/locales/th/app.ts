@@ -26,6 +26,10 @@ export const app = {
   termsDescription: "ข้อตกลงและเงื่อนไขการใช้บริการระบบจัดการครูผู้สอน Tutor Advantage",
   lastUpdated: "ปรับปรุงล่าสุด: 11 มีนาคม 2569",
   signInWithGoogle: "เข้าสู่ระบบด้วย Google",
+  loginInviteNotice: "คุณได้รับคำเชิญเข้าร่วมเป็นติวเตอร์ เข้าสู่ระบบด้วย Google เพื่อเริ่มต้น",
+  loginErrorTutorInviteRequired:
+    "บัญชีนี้ยังไม่ได้เป็นติวเตอร์ ขอลิงก์เชิญจากติวเตอร์ที่แนะนำคุณ แล้วเปิดลิงก์นั้นก่อนเข้าสู่ระบบ",
+  loginErrorGeneric: "เข้าสู่ระบบไม่สำเร็จ ลองอีกครั้ง",
   signInWithFacebook: "เข้าสู่ระบบด้วย Facebook",
   toggleTheme: "สลับธีม",
   navOverview: "ภาพรวม",
