@@ -531,26 +531,33 @@ export class SettlementService {
       node.payoutRate = myRate;
 
       const children = childMap.get(userId) || [];
-      let childPayouts = 0n;
-
+      // Differential payout: a node earns R(own GV) × GV minus everything
+      // already allotted inside its children's subtrees (R(child) × GV(child)
+      // for each eligible child) — not minus the children's own payouts, which
+      // would hand the grandchildren's share up again and can pay out more
+      // than the network's volume.
+      let allottedBelow = 0n;
       for (const childId of children) {
-        childPayouts += calculatePayouts(childId, new Set(visiting));
+        allottedBelow += calculatePayouts(childId, new Set(visiting));
       }
 
-      let payoutForMe =
-        calculatePayoutMinor(node.groupVolumeMinor, myRate) - childPayouts;
-
+      const myAllotment = calculatePayoutMinor(node.groupVolumeMinor, myRate);
+      let payoutForMe = myAllotment - allottedBelow;
       if (payoutForMe < 0n) payoutForMe = 0n;
 
       if (node.personalVolumeMinor === 0n && children.length > 0) {
+        // Inactive this period: compressed. It earns nothing and its
+        // subtree's allotment passes straight to the next active upline.
         node.eligibilityStatus = "INELIGIBLE_NO_PV";
-        payoutForMe = 0n;
-      } else if (payoutForMe > 0n) {
+        node.payoutAmountMinor = 0n;
+        return allottedBelow;
+      }
+      if (payoutForMe > 0n) {
         node.eligibilityStatus = "ELIGIBLE";
       }
 
       node.payoutAmountMinor = payoutForMe;
-      return payoutForMe;
+      return myAllotment > allottedBelow ? myAllotment : allottedBelow;
     };
 
     // Find roots again and start the top-down payout calculation

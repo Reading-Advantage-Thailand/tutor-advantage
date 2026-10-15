@@ -265,6 +265,54 @@ describe("SettlementService", () => {
     expect(prismaMock.paymentIntent.findMany).not.toHaveBeenCalled();
   });
 
+  describe("differential payout tree", () => {
+    const mockChain = (ids: string[], volumes: Record<string, bigint>) => {
+      prismaMock.paymentIntent.findMany.mockResolvedValue(
+        Object.entries(volumes).map(([tutor, amountMinor]) => ({
+          enrollmentId: `en-${tutor}`,
+          amountMinor,
+          earningTutorUserId: tutor,
+        })),
+      );
+      prismaMock.enrollment.findMany.mockResolvedValue([]);
+      prismaMock.adjustment.findMany.mockResolvedValue([]);
+      prismaMock.user.findMany.mockResolvedValue(
+        ids.map((userId, index) => ({
+          userId,
+          sponsorTutorId: index === 0 ? null : ids[index - 1],
+          verificationStatus: "VERIFIED",
+        })),
+      );
+    };
+
+    it("never pays a chain more than R(top GV) x GV in total", async () => {
+      const ids = ["t1", "t2", "t3", "t4", "t5"];
+      mockChain(ids, Object.fromEntries(ids.map((id) => [id, 1_000_000n])));
+
+      const result = await SettlementService.computeSettlement("2026-05");
+
+      const total = result.lines.reduce((sum, line) => sum + line.payoutAmountMinor, 0n);
+      // 5 x ฿10,000 = ฿50,000 → rate ≈ 60.6%; the old formula paid ≈ 103%.
+      expect(total).toBeLessThanOrEqual(5_000_000n);
+      expect(Number(total) / 5_000_000).toBeCloseTo(0.606, 2);
+      const leaf = result.lines.find((line) => line.tutorUserId === "t5")!;
+      expect(leaf.payoutAmountMinor).toBe(450_000n); // 45% of own ฿10,000
+    });
+
+    it("compresses a tutor with no sales so the upline earns the gap", async () => {
+      // top (฿10k) -> idle (no sales) -> seller (฿10k)
+      mockChain(["top", "idle", "seller"], { top: 1_000_000n, seller: 1_000_000n });
+
+      const result = await SettlementService.computeSettlement("2026-05");
+      const byId = new Map(result.lines.map((line) => [line.tutorUserId, line]));
+
+      expect(byId.get("idle")?.payoutAmountMinor ?? 0n).toBe(0n);
+      expect(byId.get("seller")!.payoutAmountMinor).toBe(450_000n);
+      // top: R(฿20k)=50% x ฿20k = ฿10,000 minus seller's ฿4,500
+      expect(byId.get("top")!.payoutAmountMinor).toBe(550_000n);
+    });
+  });
+
   it("isolates a closed sponsor cycle instead of stopping the whole settlement", async () => {
     prismaMock.paymentIntent.findMany.mockResolvedValue([]);
     prismaMock.adjustment.findMany.mockResolvedValue([]);

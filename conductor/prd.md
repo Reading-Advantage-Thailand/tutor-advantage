@@ -238,7 +238,11 @@ Use bottom-up payout:
 1. `PV(node)` = direct class sales volume for node in settlement period.
 2. `GV(node)` = `PV(node) + sum(GV(child))`.
 3. `R(node)` = rate function output for node's qualifying volume basis.
-4. `Payout(node)` = `max(0, R(node)*GV(node) - sum(Payout(child)))`.
+4. `Allotted(node)` = `R(node)*GV(node)` — everything paid inside the node's subtree, the node included.
+5. `Payout(node)` = `max(0, Allotted(node) - sum(Allotted(child)))`.
+6. A node with no personal sales in the period is compressed: it earns nothing and passes `sum(Allotted(child))` up unchanged.
+
+Decision 2026-10-15: earlier wording subtracted `sum(Payout(child))` (the children's own payouts only), which re-pays the grandchildren's share at every level (≈103% of volume at 5 levels). Total payout is now capped by `R(top)*GV(top)` (< 71.4% of volume).
 
 ## 7.3 Settlement Integrity Constraints
 

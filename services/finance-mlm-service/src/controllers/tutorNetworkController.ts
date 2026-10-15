@@ -138,17 +138,23 @@ export async function getTutorNetwork(
     const calculateDifferentialPayout = (
       node: TutorNode,
       seen = new Set<string>(),
-    ) => {
+    ): bigint => {
       if (seen.has(node.userId)) throw new Error("SPONSOR_TREE_CYCLE");
       seen.add(node.userId);
-      const childPayouts = node.children.reduce(
+      // Same rule as SettlementService.computeSettlement: subtract what is
+      // allotted inside each child's subtree, and compress inactive nodes.
+      const allottedBelow: bigint = node.children.reduce(
         (sum, child) => sum + calculateDifferentialPayout(child, new Set(seen)),
         0n,
       );
-      const grossPayout = calculatePayoutMinor(node.groupVolumeMinor, node.rate);
+      const myAllotment = calculatePayoutMinor(node.groupVolumeMinor, node.rate);
+      if (node.personalVolumeMinor === 0n && node.children.length > 0) {
+        node.estimatedPayoutMinor = 0n;
+        return allottedBelow;
+      }
       node.estimatedPayoutMinor =
-        grossPayout > childPayouts ? grossPayout - childPayouts : 0n;
-      return node.estimatedPayoutMinor;
+        myAllotment > allottedBelow ? myAllotment - allottedBelow : 0n;
+      return myAllotment > allottedBelow ? myAllotment : allottedBelow;
     };
 
     for (const node of nodes.values()) {
