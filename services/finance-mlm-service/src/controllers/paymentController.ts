@@ -10,6 +10,7 @@ import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import crypto from "crypto";
 import { buildReceiptNumber } from "../services/taxService";
+import { classifyOmiseEvent, disputeTakesFunds, refundState } from "../services/omiseEvents";
 import {
   calculateCommissionInfo,
   calculatePayoutMinor,
@@ -22,6 +23,7 @@ import {
   getOmisePublicKey,
   isOmiseConfigured,
   retrieveOmiseCharge,
+  type OmiseCharge,
 } from "../services/omiseService";
 
 export async function createPaymentIntent(
@@ -827,19 +829,20 @@ export async function handleWebhook(req: Request, res: Response) {
       return res.status(401).send("Invalid webhook signature");
     }
 
-    // Mocking an Omise-like structured event payload
-    const eventType = payload.key || payload.type || "charge.complete";
-    const providerRef = payload.data?.id || payload.id;
+    // Charge events carry the charge in `data`; refund/dispute events carry a
+    // refund/dispute object that points at the charge (see omiseEvents.ts).
+    const event = classifyOmiseEvent(payload);
+    const eventType = event.eventType;
+    const providerRef = event.chargeId;
     const providerEventId = getWebhookEventId(payload, providerRef);
-    const paymentIntentId = payload.data?.metadata?.paymentIntentId;
+    const isRefundOrChargeback = event.kind !== "charge";
     const payloadStatus = payload.data?.status || payload.status;
     const isSuccessful =
-      payload.data?.status === "successful" ||
-      payload.status === "successful" ||
-      payload.data?.paid === true ||
-      payload.paid === true;
-    const isRefundOrChargeback =
-      eventType.includes("refund") || eventType.includes("chargeback");
+      !isRefundOrChargeback &&
+      (payload.data?.status === "successful" ||
+        payload.status === "successful" ||
+        payload.data?.paid === true ||
+        payload.paid === true);
     const isNegativeOutcome =
       isRefundOrChargeback ||
       ["failed", "expired", "reversed"].includes(payloadStatus);
@@ -853,7 +856,28 @@ export async function handleWebhook(req: Request, res: Response) {
       }
     }
 
+    // Refund and dispute objects have no metadata: find the intent by charge.
+    let paymentIntentId = event.metadataPaymentIntentId;
+    if (!paymentIntentId && isRefundOrChargeback && providerRef) {
+      const byCharge = await prisma.paymentIntent.findFirst({
+        where: { providerRef },
+        select: { paymentIntentId: true },
+      });
+      paymentIntentId = byCharge?.paymentIntentId ?? null;
+    }
+
     if (!paymentIntentId) {
+      if (isRefundOrChargeback) {
+        // Money left the account for a charge we cannot match: Finance must look.
+        await prisma.exception.create({
+          data: {
+            type: "ORPHAN_PAYMENT_EVENT",
+            provider: "omise",
+            amountMinor: toAmountMinor(payload.data?.amount),
+            errorDetail: `${eventType} for unknown charge ${providerRef ?? "(none)"}`,
+          },
+        });
+      }
       // If we don't know what intent this belongs to, just ack it to prevent retries
       await prisma.paymentEvent.create({
         data: {
@@ -877,7 +901,7 @@ export async function handleWebhook(req: Request, res: Response) {
         : null;
 
     if (isRefundOrChargeback && verifiedCharge) {
-      await recordNegativePaymentOutcome(paymentIntentId, verifiedCharge.id, eventType);
+      await applyChargeReversal(paymentIntentId, verifiedCharge, event);
     } else if (verifiedCharge && (verifiedCharge.paid || verifiedCharge.status === "successful")) {
       await fulfillPaymentIntent(paymentIntentId, verifiedCharge.id);
     } else if (
@@ -996,6 +1020,62 @@ export async function markPaymentIntentFailed(
   });
 }
 
+function toAmountMinor(value: unknown): bigint | null {
+  return typeof value === "number" && Number.isSafeInteger(value) ? BigInt(value) : null;
+}
+
+/**
+ * Refund/dispute on a verified charge. Only a full refund or a dispute that
+ * takes the money claws back automatically; a partial refund or a won dispute
+ * is raised as an exception for Finance to adjust by hand.
+ */
+async function applyChargeReversal(
+  paymentIntentId: string,
+  charge: OmiseCharge,
+  event: ReturnType<typeof classifyOmiseEvent>,
+) {
+  const intent = await prisma.paymentIntent.findUnique({
+    where: { paymentIntentId },
+    select: { studentUserId: true, status: true },
+  });
+
+  if (event.kind === "refund") {
+    const state = refundState(charge);
+    if (state === "full") {
+      return recordNegativePaymentOutcome(paymentIntentId, charge.id, "refund");
+    }
+    if (state === "partial") {
+      await prisma.exception.create({
+        data: {
+          type: "PARTIAL_REFUND",
+          studentUserId: intent?.studentUserId ?? null,
+          provider: "omise",
+          amountMinor: toAmountMinor(charge.refunded_amount),
+          errorDetail: `${event.eventType}: charge ${charge.id} partially refunded (${charge.refunded_amount}/${charge.amount} satang); adjust commission manually`,
+        },
+      });
+    }
+    return null;
+  }
+
+  const disputeStatus = charge.dispute?.status ?? event.disputeStatus;
+  if (disputeTakesFunds(disputeStatus)) {
+    return recordNegativePaymentOutcome(paymentIntentId, charge.id, "chargeback");
+  }
+  if (intent?.status === "CHARGEBACKED") {
+    await prisma.exception.create({
+      data: {
+        type: "DISPUTE_WON",
+        studentUserId: intent.studentUserId,
+        provider: "omise",
+        amountMinor: toAmountMinor(charge.amount),
+        errorDetail: `${event.eventType}: dispute on charge ${charge.id} was won; the earlier clawback may need reversing`,
+      },
+    });
+  }
+  return null;
+}
+
 async function recordNegativePaymentOutcome(
   paymentIntentId: string,
   providerRef: string | null | undefined,
@@ -1088,11 +1168,17 @@ async function recordNegativePaymentOutcome(
     }
   }
 
-  const amountMinor = await estimatePaidCommissionMinor(
-    intent,
-    intent.earningTutorUserId ?? enrollment.class.tutorUserId,
-    paidPeriodMonth,
-  );
+  // Same period: the settlement still counts this payment, so removing its
+  // volume is enough and the commission is recalculated. Clawing commission
+  // as well would deduct the refund twice. A later period reclaims the
+  // commission that was (or will be) paid for the original period.
+  const amountMinor = run!.periodMonth === paidPeriodMonth
+    ? 0n
+    : await estimatePaidCommissionMinor(
+      intent,
+      intent.earningTutorUserId ?? enrollment.class.tutorUserId,
+      paidPeriodMonth,
+    );
   const negativeStatus = /chargeback/i.test(eventType)
     ? "CHARGEBACKED"
     : "REFUNDED";

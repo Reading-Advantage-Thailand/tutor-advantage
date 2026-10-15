@@ -287,9 +287,13 @@ export class SettlementService {
     const { start: startOfMonth, end: endOfMonth } =
       getIctMonthWindow(periodMonth);
 
+    // Payments refunded/charged back later still count for the period they
+    // were paid in; the refund's adjustment removes their volume (and, in a
+    // later period, reclaims the commission). Dropping them here as well
+    // would deduct a refund twice.
     const payments = await prisma.paymentIntent.findMany({
       where: {
-        status: "SUCCESS",
+        status: { in: ["SUCCESS", "REFUNDED", "CHARGEBACKED"] },
         paidAt: {
           gte: startOfMonth,
           lte: endOfMonth,

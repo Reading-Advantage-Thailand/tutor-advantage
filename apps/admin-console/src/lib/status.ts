@@ -99,6 +99,8 @@ export const ADMIN_STATUS = {
     ORPHAN_PAYMENT_EVENT: { label: "รับเงินแต่ไม่พบรายการ", tone: "warning" },
     ENROLLMENT_ACTIVATION_FAILED: { label: "เปิดสิทธิ์เรียนไม่สำเร็จ", tone: "danger" },
     REFUND_REQUESTED: { label: "ขอคืนเงิน", tone: "info" },
+    PARTIAL_REFUND: { label: "คืนเงินบางส่วน (ปรับค่าคอมเอง)", tone: "warning" },
+    DISPUTE_WON: { label: "ชนะข้อพิพาท (ตรวจการหักคืน)", tone: "warning" },
     PAYMENT_TIMEOUT: { label: "ชำระเงินหมดเวลา", tone: "neutral" },
     // G3: legacy seed / older producers
     WEBHOOK_FAILED: { label: "ประมวลผล webhook ไม่สำเร็จ", tone: "danger" },

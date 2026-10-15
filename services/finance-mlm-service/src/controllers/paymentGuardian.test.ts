@@ -41,6 +41,7 @@ const prisma = vi.hoisted(() => ({
     create: vi.fn(),
   },
   payoutLine: { findFirst: vi.fn() },
+  exception: { create: vi.fn() },
   $transaction: vi.fn(),
 }));
 
@@ -503,10 +504,11 @@ describe("payment intent reconciliation", () => {
       }),
     });
     const adjustment = prisma.adjustment.create.mock.calls[0][0].data;
-    expect(typeof adjustment.amountMinor).toBe("bigint");
-    expect(adjustment.amountMinor).toBeLessThan(0n);
-    expect(adjustment.amountMinor).toBeGreaterThan(-250000n);
+    // Same (still open) period: removing the volume is enough; the
+    // commission is recalculated, so no separate commission clawback.
+    expect(adjustment.amountMinor).toBe(0n);
     expect(adjustment.volumeMinor).toBe(-250000n);
+    expect(adjustment.reason).toBe("refund:pi-1");
     expect(prisma.paymentIntent.update).toHaveBeenCalledWith({
       where: { paymentIntentId: "pi-1" },
       data: {
@@ -515,6 +517,160 @@ describe("payment intent reconciliation", () => {
       },
     });
     expect(prisma.paymentEvent.create).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  function mockPaidIntentForReversal() {
+    prisma.paymentIntent.findFirst.mockResolvedValue({ paymentIntentId: "pi-1" });
+    prisma.paymentIntent.findUnique.mockResolvedValue(
+      paymentIntent({ status: "SUCCESS", paidAt: new Date("2026-08-13T00:00:00.000Z") }),
+    );
+    prisma.enrollment.findUnique.mockResolvedValue({
+      enrollmentId: "enrollment-1",
+      classId: "class-1",
+      class: { tutorUserId: "tutor-1", enrolledCount: 1 },
+    });
+    prisma.adjustment.findFirst.mockResolvedValue(null);
+    prisma.enrollment.updateMany.mockResolvedValue({ count: 1 });
+    prisma.enrollmentPackage.updateMany.mockResolvedValue({ count: 1 });
+    prisma.class.update.mockResolvedValue({});
+    prisma.adjustment.create.mockResolvedValue({ adjustmentId: "adj-1" });
+  }
+
+  function omiseCharge(overrides: Record<string, unknown> = {}) {
+    return {
+      id: "chrg_1",
+      amount: 250000,
+      currency: "THB",
+      metadata: { paymentIntentId: "pi-1" },
+      status: "successful",
+      paid: true,
+      refunded_amount: 0,
+      dispute: null,
+      ...overrides,
+    };
+  }
+
+  it("claws back paid commission in the next period for a real Omise refund.create event", async () => {
+    mockPaidIntentForReversal();
+    prisma.settlementRun.findFirst
+      .mockResolvedValueOnce({ settlementRunId: "run-aug", periodMonth: "2026-08", status: "APPROVED" })
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({ settlementRunId: "run-aug", periodMonth: "2026-08", status: "APPROVED" });
+    prisma.settlementRun.create.mockResolvedValue({
+      settlementRunId: "run-sep",
+      status: "ADJUSTMENT_PENDING",
+      periodMonth: "2026-09",
+    });
+    prisma.payoutLine.findFirst.mockResolvedValue({ payoutAmountMinor: 50000n, grossVolumeMinor: 250000n });
+    omiseMock.retrieveOmiseCharge.mockResolvedValue(omiseCharge({ refunded_amount: 250000 }));
+
+    const req = {
+      body: {
+        object: "event",
+        id: "evnt_refund_1",
+        key: "refund.create",
+        data: { object: "refund", id: "rfnd_1", amount: 250000, charge: "chrg_1" },
+      },
+      headers: {},
+    };
+    const res = response();
+
+    await handleWebhook(req as never, res as never);
+
+    expect(prisma.paymentIntent.findFirst).toHaveBeenCalledWith({
+      where: { providerRef: "chrg_1" },
+      select: { paymentIntentId: true },
+    });
+    expect(prisma.adjustment.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        settlementRunId: "run-sep",
+        amountMinor: -50000n,
+        volumeMinor: -250000n,
+        reason: "refund:pi-1",
+      }),
+    });
+    expect(prisma.paymentIntent.update).toHaveBeenCalledWith({
+      where: { paymentIntentId: "pi-1" },
+      data: { status: "REFUNDED", providerRef: "chrg_1" },
+    });
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  it("raises an exception instead of clawing back a partial refund", async () => {
+    mockPaidIntentForReversal();
+    omiseMock.retrieveOmiseCharge.mockResolvedValue(omiseCharge({ refunded_amount: 100000 }));
+
+    const req = {
+      body: {
+        id: "evnt_refund_2",
+        key: "refund.create",
+        data: { object: "refund", id: "rfnd_2", amount: 100000, charge: "chrg_1" },
+      },
+      headers: {},
+    };
+    const res = response();
+
+    await handleWebhook(req as never, res as never);
+
+    expect(prisma.adjustment.create).not.toHaveBeenCalled();
+    expect(prisma.paymentIntent.update).not.toHaveBeenCalled();
+    expect(prisma.exception.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ type: "PARTIAL_REFUND", amountMinor: 100000n }),
+    });
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  it("marks a disputed charge as charged back", async () => {
+    mockPaidIntentForReversal();
+    prisma.settlementRun.findFirst.mockResolvedValue(null);
+    prisma.settlementRun.create.mockResolvedValue({
+      settlementRunId: "run-aug",
+      status: "ADJUSTMENT_PENDING",
+      periodMonth: "2026-08",
+    });
+    omiseMock.retrieveOmiseCharge.mockResolvedValue(omiseCharge({ dispute: { id: "dspt_1", status: "open" } }));
+
+    const req = {
+      body: {
+        id: "evnt_dispute_1",
+        key: "dispute.create",
+        data: { object: "dispute", id: "dspt_1", status: "open", amount: 250000, charge: "chrg_1" },
+      },
+      headers: {},
+    };
+    const res = response();
+
+    await handleWebhook(req as never, res as never);
+
+    expect(prisma.paymentIntent.update).toHaveBeenCalledWith({
+      where: { paymentIntentId: "pi-1" },
+      data: { status: "CHARGEBACKED", providerRef: "chrg_1" },
+    });
+    expect(prisma.adjustment.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ reason: "chargeback:pi-1" }),
+    });
+  });
+
+  it("records an exception for a refund on an unknown charge", async () => {
+    prisma.paymentIntent.findFirst.mockResolvedValue(null);
+
+    const req = {
+      body: {
+        id: "evnt_refund_3",
+        key: "refund.create",
+        data: { object: "refund", id: "rfnd_3", amount: 99000, charge: "chrg_unknown" },
+      },
+      headers: {},
+    };
+    const res = response();
+
+    await handleWebhook(req as never, res as never);
+
+    expect(prisma.exception.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ type: "ORPHAN_PAYMENT_EVENT", amountMinor: 99000n }),
+    });
+    expect(omiseMock.retrieveOmiseCharge).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(200);
   });
 

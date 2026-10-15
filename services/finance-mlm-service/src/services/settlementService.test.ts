@@ -168,13 +168,13 @@ describe("SettlementService", () => {
       }));
   });
 
-  it("removes refunded payment volume before calculating MLM payouts", async () => {
+  it("counts a same-period refund once: payment included, volume removed by its adjustment", async () => {
     prismaMock.paymentIntent.findMany.mockResolvedValue([
       {
         paymentIntentId: "pi-refunded",
         enrollmentId: "en-refunded",
         amountMinor: 100_000n,
-        status: "SUCCESS",
+        status: "REFUNDED",
         paidAt: new Date("2026-05-10T00:00:00.000Z"),
         events: [],
       },
@@ -186,7 +186,7 @@ describe("SettlementService", () => {
       {
         adjustmentId: "adj-refund",
         tutorUserId: "tutor-1",
-        amountMinor: -2_500n,
+        amountMinor: 0n,
         volumeMinor: -100_000n,
         reason: "refund:pi-refunded",
       },
@@ -207,11 +207,13 @@ describe("SettlementService", () => {
 
     await SettlementService.previewSettlement("2026-05", "admin-1");
 
-    expect(createdLines()).toContainEqual(expect.objectContaining({
-        tutorUserId: "tutor-1",
-        grossVolumeMinor: 0n,
-        payoutAmountMinor: -2_500n,
-      }));
+    // Volume nets to zero and nothing is clawed twice: no payout line at all.
+    expect(createdLines()).not.toContainEqual(expect.objectContaining({ tutorUserId: "tutor-1" }));
+    expect(prismaMock.paymentIntent.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({
+        status: { in: ["SUCCESS", "REFUNDED", "CHARGEBACKED"] },
+      }),
+    }));
   });
 
   it("adds approved positive adjustments before withholding tax", async () => {
@@ -466,7 +468,7 @@ describe("SettlementService", () => {
 
     const paymentQuery = prismaMock.paymentIntent.findMany.mock.calls[0][0];
     expect(paymentQuery.where).toEqual({
-      status: "SUCCESS",
+      status: { in: ["SUCCESS", "REFUNDED", "CHARGEBACKED"] },
       paidAt: {
         gte: expect.any(Date),
         lte: expect.any(Date),

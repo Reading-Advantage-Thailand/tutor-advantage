@@ -12,6 +12,9 @@ export type OmiseCharge = {
   status: OmiseChargeStatus;
   paid: boolean;
   metadata?: Record<string, string>;
+  /** Satang refunded so far (Omise sends 0 when nothing was refunded). */
+  refunded_amount?: number | null;
+  dispute?: { id?: string; status?: string } | null;
   authorize_uri?: string | null;
   failure_code?: string | null;
   failure_message?: string | null;
