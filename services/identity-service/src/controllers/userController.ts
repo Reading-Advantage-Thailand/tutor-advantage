@@ -126,6 +126,25 @@ export async function updateCurrentUserProfile(
       });
     }
 
+    // The date of birth decides whether guardian consent is needed, so a
+    // student sets it once; changing it later goes through support/admin.
+    const current = await prisma.user.findUnique({
+      where: { userId },
+      select: { dateOfBirth: true },
+    });
+    if (
+      current?.dateOfBirth &&
+      current.dateOfBirth.getTime() !== dateOfBirth.getTime()
+    ) {
+      return res.status(409).json({
+        error: {
+          code: "DATE_OF_BIRTH_LOCKED",
+          message: "Date of birth is already set; contact support to change it",
+          requestId: req.id,
+        },
+      });
+    }
+
     const user = await prisma.user.update({
       where: { userId },
       data: { dateOfBirth },

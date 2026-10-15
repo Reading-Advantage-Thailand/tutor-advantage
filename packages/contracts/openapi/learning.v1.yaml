@@ -461,7 +461,13 @@ paths:
                     type: string
                     enum: [PRIMARY, FALLBACK]
         "400":
-          description: Invalid token or full class without fallback
+          description: Invalid token, full class without fallback, or date of birth required before a free class (DATE_OF_BIRTH_REQUIRED)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: Own class, non-student account, or guardian consent required before a free class (GUARDIAN_CONSENT_REQUIRED)
           content:
             application/json:
               schema:

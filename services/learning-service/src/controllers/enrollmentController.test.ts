@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { directEnroll } from "./enrollmentController";
 
 const prisma = vi.hoisted(() => ({
@@ -26,6 +26,8 @@ const prisma = vi.hoisted(() => ({
   referral: {
     findUnique: vi.fn(),
   },
+  user: { findUnique: vi.fn() },
+  userConsent: { findFirst: vi.fn() },
 }));
 
 vi.mock("@tutor-advantage/database", () => ({ prisma }));
@@ -212,6 +214,80 @@ describe("direct enrollment safety", () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(prisma.enrollment.create).toHaveBeenCalledWith({
       data: expect.objectContaining({ referralToken: "valid-referral" }),
+    });
+  });
+
+  describe("free classes and the guardian gate", () => {
+    const demoClass = {
+      classId: "class-1",
+      tutorUserId: "tutor-1",
+      status: "OPEN",
+      enrolledCount: 0,
+      capacity: 5,
+      isDemo: true,
+      expiresAt: null,
+      packagePriceMinor: 0n,
+      freeHours: 0,
+      bookId: "book-1",
+    };
+
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-10-15T00:00:00.000Z"));
+      prisma.class.findUnique.mockResolvedValue(demoClass);
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("blocks a free class for a minor without guardian consent", async () => {
+      prisma.user.findUnique.mockResolvedValue({ dateOfBirth: new Date("2013-05-01T00:00:00.000Z") });
+      prisma.userConsent.findFirst.mockResolvedValue(null);
+      const res = response();
+
+      await directEnroll(request("student-1", "STUDENT") as never, res as never);
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({
+        error: expect.objectContaining({ code: "GUARDIAN_CONSENT_REQUIRED" }),
+      });
+      expect(prisma.enrollment.create).not.toHaveBeenCalled();
+    });
+
+    it("asks for a date of birth before a free class", async () => {
+      prisma.user.findUnique.mockResolvedValue({ dateOfBirth: null });
+      const res = response();
+
+      await directEnroll(request("student-1", "STUDENT") as never, res as never);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        error: expect.objectContaining({ code: "DATE_OF_BIRTH_REQUIRED" }),
+      });
+      expect(prisma.enrollment.create).not.toHaveBeenCalled();
+    });
+
+    it("activates a free class for an adult", async () => {
+      prisma.user.findUnique.mockResolvedValue({ dateOfBirth: new Date("2000-01-01T00:00:00.000Z") });
+      const res = response();
+
+      await directEnroll(request("student-1", "STUDENT") as never, res as never);
+
+      expect(prisma.enrollment.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({ status: "ACTIVE" }),
+      });
+      expect(prisma.userConsent.findFirst).not.toHaveBeenCalled();
+    });
+
+    it("does not check the guardian gate for a paid class (payment does)", async () => {
+      prisma.class.findUnique.mockResolvedValue({ ...demoClass, isDemo: false, packagePriceMinor: 250000n });
+      const res = response();
+
+      await directEnroll(request("student-1", "STUDENT") as never, res as never);
+
+      expect(prisma.user.findUnique).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
     });
   });
 });

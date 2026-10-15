@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { parseDateOnly, updateCurrentUserProfile } from "./userController";
 
 const prisma = vi.hoisted(() => ({
-  user: { update: vi.fn() },
+  user: { update: vi.fn(), findUnique: vi.fn() },
   userConsent: { findFirst: vi.fn() },
 }));
 
@@ -18,6 +18,8 @@ function response() {
 describe("date of birth profile validation", () => {
   beforeEach(() => {
     prisma.user.update.mockReset();
+    prisma.user.findUnique.mockReset();
+    prisma.user.findUnique.mockResolvedValue({ dateOfBirth: null });
     prisma.userConsent.findFirst.mockReset();
   });
 
@@ -59,5 +61,47 @@ describe("date of birth profile validation", () => {
         requiresGuardian: true,
       },
     });
+  });
+
+  it("refuses to change a date of birth that is already set", async () => {
+    prisma.user.findUnique.mockResolvedValue({
+      dateOfBirth: new Date("2012-01-01T00:00:00.000Z"),
+    });
+    const req = {
+      id: "req-2",
+      user: { userId: "student-1", role: "STUDENT" },
+      body: { dateOfBirth: "2000-01-01" },
+    };
+    const res = response();
+
+    await updateCurrentUserProfile(req as never, res as never);
+
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.json).toHaveBeenCalledWith({
+      error: expect.objectContaining({ code: "DATE_OF_BIRTH_LOCKED" }),
+    });
+    expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+
+  it("accepts re-sending the same date of birth", async () => {
+    prisma.user.findUnique.mockResolvedValue({
+      dateOfBirth: new Date("2012-01-01T00:00:00.000Z"),
+    });
+    prisma.user.update.mockResolvedValue({
+      userId: "student-1",
+      role: "STUDENT",
+      dateOfBirth: new Date("2012-01-01T00:00:00.000Z"),
+    });
+    prisma.userConsent.findFirst.mockResolvedValue({ userConsentId: "c-1" });
+    const req = {
+      id: "req-3",
+      user: { userId: "student-1", role: "STUDENT" },
+      body: { dateOfBirth: "2012-01-01" },
+    };
+    const res = response();
+
+    await updateCurrentUserProfile(req as never, res as never);
+
+    expect(res.status).toHaveBeenCalledWith(200);
   });
 });

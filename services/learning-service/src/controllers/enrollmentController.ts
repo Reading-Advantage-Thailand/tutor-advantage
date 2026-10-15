@@ -2,6 +2,7 @@ import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { getGuardianBlock, guardianBlockResponse, type GuardianBlock } from "../services/guardianGate";
 
 const PAYMENT_HOLD_MINUTES = 30;
 
@@ -340,6 +341,12 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
       const isFreeClass =
         BigInt(targetClass.packagePriceMinor) === BigInt(0) &&
         (targetClass.isDemo || targetClass.freeHours > 0);
+      if (isFreeClass) {
+        // Paid classes pass the guardian gate at payment; free ones activate
+        // here, so check it now (an ACTIVE enrollment opens tutor chat).
+        const block = await getGuardianBlock(userId, tx);
+        if (block) throw new Error(block);
+      }
       const enrollmentStatus = isFreeClass ? "ACTIVE" : "PENDING_PAYMENT";
 
       const enrollment = await tx.enrollment.create({
@@ -420,6 +427,13 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
           message: "Tutors cannot enroll in their own classes",
           requestId: req.id,
         },
+      });
+    }
+
+    if (isGuardianBlock(error.message)) {
+      const { status, message } = guardianBlockResponse(error.message);
+      return res.status(status).json({
+        error: { code: error.message, message, requestId: req.id },
       });
     }
 
@@ -592,6 +606,10 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
       const isFreeClass =
         BigInt(enrolledClass.packagePriceMinor) === BigInt(0) &&
         (enrolledClass.isDemo || enrolledClass.freeHours > 0);
+      if (isFreeClass) {
+        const block = await getGuardianBlock(userId, tx);
+        if (block) throw new Error(block);
+      }
       const enrollment = await tx.enrollment.create({
         data: {
           classId: targetClassId,
@@ -650,6 +668,13 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
         },
       });
     }
+
+    if (isGuardianBlock(error.message)) {
+      const { status, message } = guardianBlockResponse(error.message);
+      return res.status(status).json({
+        error: { code: error.message, message, requestId: req.id },
+      });
+    }
     return res.status(code === "BAD_REQUEST" ? 400 : 500).json({
       error: {
         code,
@@ -658,4 +683,8 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
       }
     });
   }
+}
+
+function isGuardianBlock(value: string): value is GuardianBlock {
+  return value === "DATE_OF_BIRTH_REQUIRED" || value === "GUARDIAN_CONSENT_REQUIRED";
 }
