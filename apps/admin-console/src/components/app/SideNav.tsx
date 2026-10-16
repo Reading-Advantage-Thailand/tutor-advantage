@@ -66,6 +66,7 @@ function AccountMenu() {
   const roleLabel = user ? labelForRole(user.role) : "";
   return (
     <Dropdown
+      id="account-menu-panel"
       label={t("shell.account")}
       placement="right-end"
       panelClassName="w-72"

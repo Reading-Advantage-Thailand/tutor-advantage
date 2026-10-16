@@ -29,6 +29,12 @@ export interface DropdownProps {
   placement?: DropdownPlacement;
   /** Accessible name of the panel. */
   label: string;
+  /**
+   * Stable panel id. Pass one for menus rendered in the server-rendered app
+   * shell: a generated useId() can differ between server and client there
+   * (hydration mismatch on aria-controls).
+   */
+  id?: string;
   className?: string;
   panelClassName?: string;
 }
@@ -39,11 +45,12 @@ export interface DropdownProps {
  * outside press, Escape (focus returns to the trigger) and route changes made
  * through `close()`. Keeps the app shell's initial JS small.
  */
-export function Dropdown({ trigger, children, placement = "bottom-end", label, className, panelClassName }: DropdownProps) {
+export function Dropdown({ trigger, children, placement = "bottom-end", label, id, className, panelClassName }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
-  const panelId = useId();
+  const generatedId = useId();
+  const panelId = id ?? generatedId;
 
   const close = useCallback(() => setOpen(false), []);
 
