@@ -54,6 +54,17 @@ function hidden(user: UserDetailV2, value: string | null | undefined, has?: bool
   return <span className="text-fg-muted">{t("userDetail.notProvided")}</span>;
 }
 
+/** "United Kingdom (GB)" from an ISO code; falls back to the code. */
+function countryName(code: string | null | undefined): string {
+  if (!code) return PLACEHOLDER;
+  try {
+    const name = new Intl.DisplayNames(["th"], { type: "region" }).of(code);
+    return name && name !== code ? `${name} (${code})` : code;
+  } catch {
+    return code;
+  }
+}
+
 function expiryValue(date: string | null | undefined, expired: boolean | undefined): ReactNode {
   if (!date) return <span className="text-fg-muted">{t("userDetail.notProvided")}</span>;
   return (
@@ -84,9 +95,9 @@ function fieldData(user: UserDetailV2, field: VerificationField) {
       if (identity && isPassportHolder(user)) {
         return [
           { label: t("userDetail.idType"), value: t("userDetail.idTypePassport") },
-          { label: t("userDetail.taxName"), value: hidden(user, s.taxName) },
+          { label: t("userDetail.passportName"), value: hidden(user, s.taxName) },
           { label: t("userDetail.passportNumber"), value: <span className="tabular">{identity.passportNumberMasked ?? PLACEHOLDER}</span> },
-          { label: t("userDetail.passportNationality"), value: identity.passportNationality ?? PLACEHOLDER },
+          { label: t("userDetail.passportNationality"), value: countryName(identity.passportNationality) },
           { label: t("userDetail.passportExpiresOn"), value: expiryValue(identity.passportExpiresOn, identity.passportExpired) },
           {
             label: t("userDetail.teachingLocation"),

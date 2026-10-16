@@ -190,6 +190,7 @@ export const userDetail = {
   idTypeThaiId: "บัตรประชาชนไทย",
   idTypePassport: "หนังสือเดินทาง (ชาวต่างชาติ)",
   passportNumber: "เลขหนังสือเดินทาง (แสดงบางส่วน)",
+  passportName: "ชื่อตามหนังสือเดินทาง (ใช้เป็นชื่อบัญชีรับเงิน)",
   passportNationality: "สัญชาติ",
   passportExpiresOn: "วันหมดอายุหนังสือเดินทาง",
   documentExpired: "หมดอายุแล้ว",

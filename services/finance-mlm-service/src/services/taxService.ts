@@ -15,8 +15,10 @@ export function buildReceiptNumber(paymentIntentId: string, issuedAt = new Date(
   return `RCT-${formatDatePart(issuedAt)}-${paymentIntentId.slice(0, 8)}`;
 }
 
-export function buildPayoutDocumentNumber(payoutLineId: string, issuedAt = new Date()) {
-  return `50TAWI-${formatDatePart(issuedAt)}-${payoutLineId.slice(0, 8)}`;
+/** 50TAWI-… for residents (50 ทวิ certificate), PND54-… for non-residents. */
+export function buildPayoutDocumentNumber(payoutLineId: string, issuedAt = new Date(), taxResidency = "RESIDENT") {
+  const prefix = taxResidency === "NON_RESIDENT" ? "PND54" : "50TAWI";
+  return `${prefix}-${formatDatePart(issuedAt)}-${payoutLineId.slice(0, 8)}`;
 }
 
 function formatDatePart(date: Date) {

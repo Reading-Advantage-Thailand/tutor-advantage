@@ -110,6 +110,15 @@ describe("validation", () => {
     expect(validateTaxInfoDraft({ ...passportDraft, rightToWorkConfirmed: false }, now)).toBe("rightToWorkRequired");
   });
 
+  it("lets a saved passport holder leave the number blank and keeps earlier consents", () => {
+    const now = new Date("2026-10-16T05:00:00Z");
+    const saved = { hasNumber: true, privacyAccepted: true, rightToWorkConfirmed: true };
+    const edit = { ...passportDraft, passportNumber: "", privacyNoticeAccepted: false, rightToWorkConfirmed: false };
+    expect(validateTaxInfoDraft(edit, now, saved)).toBeNull();
+    expect(validateTaxInfoDraft(edit, now)).toBe("passportNumberInvalid");
+    expect(validateTaxInfoDraft({ ...edit, passportNumber: "A1" }, now, saved)).toBe("passportNumberInvalid");
+  });
+
   it("adds the work permit step only when the server says it is required", () => {
     expect(verificationSteps(user)).not.toContain("workPermit");
     expect(verificationSteps({ identity: { idType: "PASSPORT", workPermitRequired: true } })).toContain("workPermit");

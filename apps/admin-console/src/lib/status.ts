@@ -76,6 +76,10 @@ export const ADMIN_STATUS = {
     INELIGIBLE_NOT_VERIFIED: { label: "ยังไม่ยืนยันตัวตน", tone: "warning" },
     INELIGIBLE_NO_PV: { label: "ไม่มียอดขาย", tone: "neutral" },
     INELIGIBLE_SPONSOR_CYCLE: { label: "สายงานวนซ้ำ", tone: "danger" },
+    // Foreign tutors: payout paused while a document has expired or is missing
+    INELIGIBLE_PASSPORT_EXPIRED: { label: "ระงับ: หนังสือเดินทางหมดอายุ", tone: "danger" },
+    INELIGIBLE_WORK_PERMIT_EXPIRED: { label: "ระงับ: ใบอนุญาตทำงานหมดอายุ", tone: "danger" },
+    INELIGIBLE_WORK_PERMIT_MISSING: { label: "ระงับ: ไม่มีใบอนุญาตทำงาน", tone: "danger" },
     // G2 additions
     ELIGIBLE_ADJUSTED: { label: "มีสิทธิ์รับเงิน (มีปรับยอด)", tone: "success" },
     INELIGIBLE_NO_PV_ADJUSTED: { label: "ไม่มียอดขาย (มีปรับยอด)", tone: "neutral" },

@@ -164,7 +164,7 @@ export function VerificationSection({ user }: { user: SettingsUser }) {
                   >
                     {steps[step] ? <Check className="size-3" /> : null}
                   </span>
-                  {STEP_LABELS[step]}
+                  {step === "idCard" && user.identity?.idType === "PASSPORT" ? t("dashboardSettings.stepPassport") : STEP_LABELS[step]}
                 </li>
               ))}
             </ol>

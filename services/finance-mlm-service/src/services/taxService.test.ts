@@ -19,5 +19,6 @@ describe("taxService", () => {
 
     expect(buildReceiptNumber("pi_1234567890", issuedAt)).toBe("RCT-20260514-pi_12345");
     expect(buildPayoutDocumentNumber("line_abcdefghi", issuedAt)).toBe("50TAWI-20260514-line_abc");
+    expect(buildPayoutDocumentNumber("line_abcdefghi", issuedAt, "NON_RESIDENT")).toBe("PND54-20260514-line_abc");
   });
 });

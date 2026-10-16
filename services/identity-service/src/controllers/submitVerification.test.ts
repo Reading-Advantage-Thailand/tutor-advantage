@@ -136,6 +136,35 @@ describe("submitVerification identity documents", () => {
     expect(data.settings.verification.workPermit.status).toBe("PENDING");
   });
 
+  it("keeps the stored passport number and earlier consents when a passport holder edits other details", async () => {
+    prisma.user.findUnique.mockResolvedValue({
+      settings: { taxName: "John Smith" },
+      idType: "PASSPORT",
+      teachingLocation: "THAILAND",
+      passportNumberEnc: "v1:stored",
+      rightToWorkConfirmedAt: new Date("2026-10-01"),
+      userConsents: [{ userConsentId: "c1" }],
+    });
+    const res = await submit({
+      ...passportBody,
+      passportNumber: "",
+      teachingLocation: "ABROAD",
+      privacyNoticeAccepted: false,
+      rightToWorkConfirmed: false,
+    });
+    expect(res.statusCode).toBe(200);
+    const data = prisma.user.update.mock.calls[0][0].data;
+    expect(data).not.toHaveProperty("passportNumberEnc");
+    expect(data).not.toHaveProperty("rightToWorkConfirmedAt");
+    expect(data.teachingLocation).toBe("ABROAD");
+    expect(prisma.userConsent.create).not.toHaveBeenCalled();
+  });
+
+  it("still requires a passport number and consents the first time", async () => {
+    const res = await submit({ ...passportBody, passportNumber: "" });
+    expect(res.body.error.code).toBe("INVALID_PASSPORT_NUMBER");
+  });
+
   it("drops the work permit when a passport holder switches to teaching from abroad", async () => {
     prisma.user.findUnique.mockResolvedValue({
       settings: { verification: { workPermit: { status: "VERIFIED" } } },

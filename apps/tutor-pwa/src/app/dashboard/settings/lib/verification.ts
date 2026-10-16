@@ -18,6 +18,7 @@ export type TutorIdentity = {
   workPermitImageUrl?: string | null;
   workPermitExpiresOn?: string | null;
   rightToWorkConfirmedAt?: string | null;
+  privacyNoticeAcceptedAt?: string | null;
   taxResidency?: "RESIDENT" | "NON_RESIDENT";
   payoutBlock?: "PASSPORT_EXPIRED" | "WORK_PERMIT_EXPIRED" | "WORK_PERMIT_MISSING" | null;
 };
@@ -174,16 +175,34 @@ export type TaxInfoProblem =
   | "privacyNoticeRequired"
   | "rightToWorkRequired";
 
+/** What a passport holder already has on file (so it need not be re-entered). */
+export type SavedPassport = { hasNumber: boolean; privacyAccepted: boolean; rightToWorkConfirmed: boolean };
+
+export function savedPassportOf(user: SettingsUser | null | undefined): SavedPassport {
+  const identity = user?.identity;
+  const isPassport = identity?.idType === "PASSPORT";
+  return {
+    hasNumber: isPassport && Boolean(identity?.passportNumberMasked),
+    privacyAccepted: isPassport && Boolean(identity?.privacyNoticeAcceptedAt),
+    rightToWorkConfirmed: isPassport && Boolean(identity?.rightToWorkConfirmedAt),
+  };
+}
+
 /** First problem with the identity/tax draft, or null when it can be submitted. */
-export function validateTaxInfoDraft(draft: TaxInfoDraft, now: Date = new Date()): TaxInfoProblem | null {
+export function validateTaxInfoDraft(
+  draft: TaxInfoDraft,
+  now: Date = new Date(),
+  saved: SavedPassport = { hasNumber: false, privacyAccepted: false, rightToWorkConfirmed: false },
+): TaxInfoProblem | null {
   if (!draft.taxName.trim()) return "taxNameRequired";
   if (draft.idType === "THAI_ID") return isValidThaiId(draft.nationalId) ? null : "nationalIdInvalid";
-  if (!isValidPassportNumber(draft.passportNumber)) return "passportNumberInvalid";
+  // Blank keeps the saved number; anything typed must be valid.
+  if (!(saved.hasNumber && !draft.passportNumber) && !isValidPassportNumber(draft.passportNumber)) return "passportNumberInvalid";
   if (!/^[A-Za-z]{2,3}$/.test(draft.passportNationality.trim())) return "nationalityRequired";
   if (!isFutureDate(draft.passportExpiresOn, now)) return "passportExpiryInvalid";
   if (!draft.teachingLocation) return "teachingLocationRequired";
-  if (!draft.privacyNoticeAccepted) return "privacyNoticeRequired";
-  if (!draft.rightToWorkConfirmed) return "rightToWorkRequired";
+  if (!draft.privacyNoticeAccepted && !saved.privacyAccepted) return "privacyNoticeRequired";
+  if (!draft.rightToWorkConfirmed && !saved.rightToWorkConfirmed) return "rightToWorkRequired";
   return null;
 }
 

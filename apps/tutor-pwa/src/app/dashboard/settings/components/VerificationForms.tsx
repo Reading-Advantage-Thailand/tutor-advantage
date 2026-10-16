@@ -40,6 +40,7 @@ import {
   isTaxInfoChanged,
   isValidPassportNumber,
   sanitizeDigitsAndDashes,
+  savedPassportOf,
   validateBankDraft,
   validateTaxInfoDraft,
   type IdType,
@@ -243,7 +244,7 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
   const [passportNationality, setPassportNationality] = useState<string>(identity.passportNationality || "");
   const [passportExpiresOn, setPassportExpiresOn] = useState<string>(identity.passportExpiresOn || "");
   const [teachingLocation, setTeachingLocation] = useState<TeachingLocation | "">(identity.teachingLocation || "");
-  const [privacyNoticeAccepted, setPrivacyNoticeAccepted] = useState(false);
+  const [privacyNoticeAccepted, setPrivacyNoticeAccepted] = useState(Boolean(identity.privacyNoticeAcceptedAt));
   const [rightToWorkConfirmed, setRightToWorkConfirmed] = useState(Boolean(identity.rightToWorkConfirmedAt));
   const [taxInfoSaved, setTaxInfoSaved] = useState(false);
   const [taxInfoPending, setTaxInfoPending] = useState(false);
@@ -377,7 +378,8 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
     privacyNoticeAccepted,
     rightToWorkConfirmed,
   };
-  const taxProblem = validateTaxInfoDraft(taxDraft);
+  const savedPassport = savedPassportOf(user);
+  const taxProblem = validateTaxInfoDraft(taxDraft, new Date(), savedPassport);
   const taxInfoValid = taxProblem === null;
   const taxInfoDirty = !taxInfoSaved && isTaxInfoChanged(user, taxDraft);
 
@@ -688,13 +690,13 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
               placeholder={identity.passportNumberMasked || t("dashboardSettings.passportNumberPlaceholder")}
               value={passportNumber}
               error={passportNumber && !isValidPassportNumber(passportNumber) ? t("dashboardSettings.passportNumberInvalid") : undefined}
-              hint={identity.passportNumberMasked && !passportNumber ? t("dashboardSettings.passportNumberKeep") : undefined}
+              hint={savedPassport.hasNumber && !passportNumber ? t("dashboardSettings.passportNumberKeep") : undefined}
               onChange={(event) => {
                 setPassportNumber(event.target.value.toUpperCase());
                 setTaxInfoSaved(false);
               }}
               disabled={busy}
-              required
+              required={!savedPassport.hasNumber}
             />
           ) : (
             <TextField
@@ -771,8 +773,8 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
               <p className="text-[0.8125rem] text-fg-muted">{t("dashboardSettings.privacyNoticeBody")}</p>
               <ConsentCheckbox
                 id="privacy-notice-consent"
-                checked={privacyNoticeAccepted}
-                disabled={busy}
+                checked={privacyNoticeAccepted || savedPassport.privacyAccepted}
+                disabled={busy || savedPassport.privacyAccepted}
                 onChange={(value) => {
                   setPrivacyNoticeAccepted(value);
                   setTaxInfoSaved(false);
@@ -782,8 +784,8 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
               </ConsentCheckbox>
               <ConsentCheckbox
                 id="right-to-work-consent"
-                checked={rightToWorkConfirmed}
-                disabled={busy}
+                checked={rightToWorkConfirmed || savedPassport.rightToWorkConfirmed}
+                disabled={busy || savedPassport.rightToWorkConfirmed}
                 onChange={(value) => {
                   setRightToWorkConfirmed(value);
                   setTaxInfoSaved(false);

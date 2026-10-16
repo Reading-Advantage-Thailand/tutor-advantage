@@ -107,6 +107,15 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
           })
         : null;
 
+    const privacyNotice =
+      user.idType === "PASSPORT"
+        ? await prisma.userConsent.findFirst({
+            where: { userId: user.userId, consentType: FOREIGN_PRIVACY_NOTICE_CONSENT_TYPE, status: "ACCEPTED" },
+            orderBy: { effectiveAt: "desc" },
+            select: { effectiveAt: true },
+          })
+        : null;
+
     const {
       idType,
       passportNumberLast4,
@@ -136,6 +145,7 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
           workPermitImageUrl,
           workPermitExpiresOn: workPermitExpiresOn?.toISOString().slice(0, 10) ?? null,
           rightToWorkConfirmedAt: rightToWorkConfirmedAt?.toISOString() ?? null,
+          privacyNoticeAcceptedAt: privacyNotice?.effectiveAt.toISOString() ?? null,
           taxResidency,
           payoutBlock: payoutDocumentBlock(user),
         },
@@ -332,6 +342,33 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
       });
     }
 
+    // Load current user settings and documents
+    const currentUser = await prisma.user.findUnique({
+      where: { userId },
+      select: {
+        settings: true,
+        idCardImageUrl: true,
+        bankBookImageUrl: true,
+        idType: true,
+        teachingLocation: true,
+        workPermitImageUrl: true,
+        workPermitExpiresOn: true,
+        passportNumberEnc: true,
+        rightToWorkConfirmedAt: true,
+        userConsents: {
+          where: { consentType: FOREIGN_PRIVACY_NOTICE_CONSENT_TYPE, status: "ACCEPTED" },
+          select: { userConsentId: true },
+          take: 1,
+        },
+      },
+    });
+    const isSavedPassport = currentUser?.idType === "PASSPORT";
+    // A passport holder editing other details keeps the stored (encrypted)
+    // number and earlier consents instead of re-entering them.
+    const keepsSavedPassport = !normalizedPassport && isSavedPassport && Boolean(currentUser?.passportNumberEnc);
+    const privacyAlreadyAccepted = isSavedPassport && (currentUser?.userConsents?.length ?? 0) > 0;
+    const rightToWorkAlreadyConfirmed = isSavedPassport && Boolean(currentUser?.rightToWorkConfirmedAt);
+
     // ── Identity document validation (before anything is written) ──
     let passportExpiry: Date | null = null;
     if (submitsTaxInfo) {
@@ -343,7 +380,7 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
           return badRequest(res, req, "INVALID_THAI_ID", "Thai national ID must be 13 digits with a valid check digit");
         }
       } else {
-        if (!isValidPassportNumber(normalizedPassport)) {
+        if (!keepsSavedPassport && !isValidPassportNumber(normalizedPassport)) {
           return badRequest(res, req, "INVALID_PASSPORT_NUMBER", "Passport number must be 6–20 letters or digits");
         }
         if (!isValidNationality(passportNationality)) {
@@ -356,13 +393,13 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
         if (!isTeachingLocation(teachingLocation)) {
           return badRequest(res, req, "INVALID_TEACHING_LOCATION", "teachingLocation must be THAILAND or ABROAD");
         }
-        if (privacyNoticeAccepted !== true) {
+        if (privacyNoticeAccepted !== true && !privacyAlreadyAccepted) {
           return badRequest(res, req, "PRIVACY_NOTICE_REQUIRED", "The privacy notice must be accepted");
         }
-        if (rightToWorkConfirmed !== true) {
+        if (rightToWorkConfirmed !== true && !rightToWorkAlreadyConfirmed) {
           return badRequest(res, req, "RIGHT_TO_WORK_REQUIRED", "You must confirm you have the legal right to work");
         }
-        if (!isPiiEncryptionConfigured()) {
+        if (normalizedPassport && !isPiiEncryptionConfigured()) {
           logger.error("Submit Verification: PII_ENCRYPTION_KEY is not configured");
           return res.status(503).json({
             error: { code: "PASSPORT_UNAVAILABLE", message: "Passport submission is temporarily unavailable", requestId: req.id },
@@ -370,20 +407,6 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
         }
       }
     }
-
-    // Load current user settings and documents
-    const currentUser = await prisma.user.findUnique({
-      where: { userId },
-      select: {
-        settings: true,
-        idCardImageUrl: true,
-        bankBookImageUrl: true,
-        idType: true,
-        teachingLocation: true,
-        workPermitImageUrl: true,
-        workPermitExpiresOn: true,
-      },
-    });
 
     // The identity the tutor will have after this request.
     const nextIdentity = {
@@ -449,13 +472,20 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
         updatedData.teachingLocation = null;
       } else {
         delete currentSettings.nationalId;
-        updatedData.passportNumberEnc = encryptPii(normalizedPassport);
-        updatedData.passportNumberLast4 = normalizedPassport.slice(-4);
+        if (normalizedPassport) {
+          updatedData.passportNumberEnc = encryptPii(normalizedPassport);
+          updatedData.passportNumberLast4 = normalizedPassport.slice(-4);
+        }
         updatedData.passportNationality = normalizeNationality(passportNationality);
         updatedData.passportExpiresOn = passportExpiry;
         updatedData.teachingLocation = teachingLocation as string;
-        updatedData.rightToWorkConfirmedAt = new Date();
-        consentTypes.push(FOREIGN_PRIVACY_NOTICE_CONSENT_TYPE, RIGHT_TO_WORK_CONSENT_TYPE);
+        if (privacyNoticeAccepted === true && !privacyAlreadyAccepted) {
+          consentTypes.push(FOREIGN_PRIVACY_NOTICE_CONSENT_TYPE);
+        }
+        if (rightToWorkConfirmed === true && !rightToWorkAlreadyConfirmed) {
+          updatedData.rightToWorkConfirmedAt = new Date();
+          consentTypes.push(RIGHT_TO_WORK_CONSENT_TYPE);
+        }
       }
       // No work permit needed any more: drop the old one and its review.
       if (!requiresWorkPermit(nextIdentity)) {

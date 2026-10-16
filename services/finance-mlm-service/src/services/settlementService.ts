@@ -1145,7 +1145,7 @@ export class SettlementService {
           create: {
             payoutLineId: line.payoutLineId,
             tutorUserId: line.tutorUserId,
-            documentNumber: buildPayoutDocumentNumber(line.payoutLineId),
+            documentNumber: buildPayoutDocumentNumber(line.payoutLineId, new Date(), line.taxResidency),
             // Residents get a 50 ทวิ certificate; non-residents are reported on PND.54.
             documentType: line.taxResidency === "NON_RESIDENT" ? "PAY_SLIP_PND54" : "PAY_SLIP_50_TAWI",
             grossAmountMinor: line.payoutAmountMinor,
