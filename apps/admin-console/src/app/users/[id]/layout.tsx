@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { UserX } from "lucide-react";
 import {
   AdminStatusChip,
@@ -99,7 +99,9 @@ export default function UserDetailLayout({ children }: { children: ReactNode }) 
       {user.piiMasked ? <Notice tone="info">{t("userHeader.piiMaskedNotice")}</Notice> : null}
 
       <TabNav items={tabs} aria-label={t("userHeader.tabsLabel")} />
-      {children}
+      {/* Next passes route `children` as a React.lazy node; next to its siblings React 19 dev
+          warns "unique key" for it. A keyed Fragment makes it a single, validated child. */}
+      <Fragment key="route">{children}</Fragment>
     </Page>
   );
 }

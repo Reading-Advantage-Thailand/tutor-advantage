@@ -10,6 +10,7 @@
     "test": "vitest run --root ../.. services/finance-mlm-service/src"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.19.0",
     "@tutor-advantage/database": "*",
     "@tutor-advantage/shared-config": "*",
     "cors": "^2.8.5",

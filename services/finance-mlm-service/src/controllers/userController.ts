@@ -14,6 +14,7 @@ import { prisma, type Prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { createOmiseRecipient, isOmiseConfigured } from "../services/omiseService";
 import { AUDIT_ACTIONS, AUDIT_ENTITY, buildAuditEventData } from "../services/auditService";
+import { signVerificationDocument } from "../lib/documentUrl";
 
 /*
  * Admin user directory, verification review, suspension and PDPA erasure.
@@ -437,6 +438,14 @@ export const getUserDetails = async (req: AuthenticatedRequest, res: Response) =
           }));
 
     const settings = settingsForRole(user.settings, viewerRole);
+    // Stored values are object keys; the browser needs short-lived signed URLs (ADMIN only).
+    const [idCardImageUrl, bankBookImageUrl, workPermitImageUrl] = isAdmin
+      ? await Promise.all([
+          signVerificationDocument(user.idCardImageUrl, user.userId),
+          signVerificationDocument(user.bankBookImageUrl, user.userId),
+          signVerificationDocument(user.workPermitImageUrl, user.userId),
+        ])
+      : [null, null, null];
 
     res.status(200).json({
       user: {
@@ -452,14 +461,14 @@ export const getUserDetails = async (req: AuthenticatedRequest, res: Response) =
         joinedAt: user.createdAt.toISOString(),
         profilePictureUrl: user.profilePictureUrl ?? null,
         // Document images are identity documents: ADMIN only.
-        idCardImageUrl: isAdmin ? user.idCardImageUrl : null,
-        bankBookImageUrl: isAdmin ? user.bankBookImageUrl : null,
+        idCardImageUrl,
+        bankBookImageUrl,
         hasIdCardImage: Boolean(user.idCardImageUrl),
         hasBankBookImage: Boolean(user.bankBookImageUrl),
         verificationStatus: user.verificationStatus,
         verificationComment: user.verificationComment,
         settings,
-        identity: identityForRole(user, viewerRole),
+        identity: { ...identityForRole(user, viewerRole), workPermitImageUrl },
         piiMasked: settings.masked,
         sponsor: sponsor ? { id: sponsor.userId, name: sponsor.displayName } : null,
         loginProviders: user.oauthIdentities.map((identity) => identity.provider),
