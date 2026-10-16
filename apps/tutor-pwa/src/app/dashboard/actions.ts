@@ -116,31 +116,68 @@ export async function uploadFileAction(formData: FormData) {
   }
 }
 
-export async function saveTaxInfoAction(taxName: string, nationalId: string) {
+export type TaxInfoPayload = {
+  idType: "THAI_ID" | "PASSPORT";
+  taxName: string;
+  nationalId?: string;
+  passportNumber?: string;
+  passportNationality?: string;
+  passportExpiresOn?: string;
+  teachingLocation?: "THAILAND" | "ABROAD";
+  privacyNoticeAccepted?: boolean;
+  rightToWorkConfirmed?: boolean;
+};
+
+/** Result instead of a throw so the form can show the server's reason (thrown messages are hidden in production). */
+export type VerificationActionResult = { ok: true } | { ok: false; code: string };
+
+async function postVerification(body: Record<string, unknown>): Promise<VerificationActionResult> {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;
-  if (!token) throw new Error("Unauthorized");
+  if (!token) return { ok: false, code: "UNAUTHORIZED" };
 
-  const normalizedId = nationalId.replace(/\D/g, "");
   const res = await fetch(`${IDENTITY_URL}/v1/users/me/verification`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      taxName: taxName.trim(),
-      nationalId: normalizedId,
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.error?.message || "Failed to submit tax info verification");
+    const error = await res.json().catch(() => null);
+    return { ok: false, code: error?.error?.code || "SUBMIT_FAILED" };
   }
   const { revalidatePath } = await import("next/cache");
   revalidatePath("/dashboard/settings");
-  return res.json();
+  return { ok: true };
+}
+
+/** Identity/tax step: Thai ID or passport (with teaching location and consents). */
+export async function saveTaxInfoAction(payload: TaxInfoPayload) {
+  if (payload.idType === "PASSPORT") {
+    return postVerification({
+      idType: "PASSPORT",
+      taxName: payload.taxName.trim(),
+      passportNumber: (payload.passportNumber ?? "").replace(/[\s-]/g, "").toUpperCase(),
+      passportNationality: (payload.passportNationality ?? "").trim().toUpperCase(),
+      passportExpiresOn: payload.passportExpiresOn,
+      teachingLocation: payload.teachingLocation,
+      privacyNoticeAccepted: payload.privacyNoticeAccepted === true,
+      rightToWorkConfirmed: payload.rightToWorkConfirmed === true,
+    });
+  }
+  return postVerification({
+    idType: "THAI_ID",
+    taxName: payload.taxName.trim(),
+    nationalId: (payload.nationalId ?? "").replace(/\D/g, ""),
+  });
+}
+
+/** Work permit (passport holders teaching from Thailand). */
+export async function submitWorkPermitAction(workPermitImageUrl: string, workPermitExpiresOn: string) {
+  return postVerification({ workPermitImageUrl, workPermitExpiresOn });
 }
 
 export async function getCurrentUserAction() {

@@ -39,6 +39,7 @@ import {
   approveSettlement,
   rejectSettlement,
   exportSettlementCsv,
+  exportPnd54Csv,
   getSettlementLines,
   getSettlementSummary,
   getSettlements,
@@ -69,6 +70,7 @@ import {
   suspendUser,
   anonymizeUser,
   updateOmiseRecipient,
+  updateTaxResidency,
   getUserPayments,
   getUserAuditEvents,
 } from "./controllers/userController";
@@ -311,6 +313,9 @@ app.get(
   exportSettlementCsv,
 );
 
+// PND.54 file for non-resident tutors (full passport numbers): ADMIN only.
+app.get("/v1/settlements/:snapshotId/pnd54", authMiddleware, adminOnly, exportPnd54Csv);
+
 // ── Adjustment Routes ──────────────────────────────────────────────────────
 app.get("/v1/adjustments", authMiddleware, adjustmentStaffOnly, getAdjustments);
 app.post("/v1/adjustments", authMiddleware, adjustmentStaffOnly, createAdjustment);
@@ -364,6 +369,7 @@ app.post("/v1/users/:id/verify", authMiddleware, adminOnly, verifyUser);
 app.post("/v1/users/:id/suspend", authMiddleware, adminOnly, suspendUser);
 app.post("/v1/users/:id/anonymize", authMiddleware, adminOnly, anonymizeUser);
 app.patch("/v1/users/:id/omise-recipient", authMiddleware, adminOnly, updateOmiseRecipient);
+app.patch("/v1/users/:id/tax-residency", authMiddleware, adminOnly, updateTaxResidency);
 
 // ── Fraud Routes ───────────────────────────────────────────────────────────
 app.get("/v1/fraud-flags", authMiddleware, financeStaffOnly, getFraudFlags);

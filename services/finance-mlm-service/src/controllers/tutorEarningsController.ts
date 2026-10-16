@@ -167,6 +167,7 @@ export async function getEarningsHistory(
           amount: Number(a.amountMinor) / 100
         })),
         withholdingTax: Number(line.withholdingTaxMinor) / 100,
+        withholdingRatePercent: line.withholdingRatePercent,
         netPayout: Number(line.netPayoutMinor) / 100,
         payoutDocument: line.payoutDocument
           ? {

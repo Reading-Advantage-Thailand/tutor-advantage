@@ -28,10 +28,11 @@ function DocumentThumb({ url, alt }: { url?: string | null; alt: string }) {
 /** Read-only view of the submitted verification data (verified tutors). */
 export function VerificationSummary({ user }: { user: SettingsUser }) {
   const settings = user.settings ?? {};
+  const identity = user.identity;
   return (
     <ListGroup header={t("dashboardSettings.viewTitle")}>
       <ListRow
-        title={t("dashboardSettings.idCardStep")}
+        title={user.identity?.idType === "PASSPORT" ? t("dashboardSettings.passportStep") : t("dashboardSettings.idCardStep")}
         trailing={<FieldStatusChip user={user} field="idCard" />}
         meta={<DocumentThumb url={user.idCardImageUrl} alt={t("dashboardSettings.uploadedAlt")} />}
       />
@@ -53,15 +54,43 @@ export function VerificationSummary({ user }: { user: SettingsUser }) {
         subtitle={settings.address || t("dashboardSettings.notUploaded")}
         trailing={<FieldStatusChip user={user} field="address" />}
       />
-      <ListRow
-        title={t("dashboardSettings.taxInfoStep")}
-        subtitle={
-          settings.taxName || settings.nationalId
-            ? `${settings.taxName || "–"} · ${settings.nationalId || "–"}`
-            : t("dashboardSettings.notUploaded")
-        }
-        trailing={<FieldStatusChip user={user} field="taxInfo" />}
-      />
+      {identity?.idType === "PASSPORT" ? (
+        <ListRow
+          title={t("dashboardSettings.passportTaxInfoStep")}
+          subtitle={[
+            settings.taxName || "–",
+            `${t("dashboardSettings.passportSummary")} ${identity.passportNumberMasked || "–"}`,
+            identity.passportNationality || "",
+            identity.passportExpiresOn ? `${t("dashboardSettings.expiresOn")} ${identity.passportExpiresOn}` : "",
+            identity.teachingLocation === "THAILAND"
+              ? t("dashboardSettings.teachingFromThailand")
+              : identity.teachingLocation === "ABROAD"
+                ? t("dashboardSettings.teachingFromAbroad")
+                : "",
+          ]
+            .filter(Boolean)
+            .join(" · ")}
+          trailing={<FieldStatusChip user={user} field="taxInfo" />}
+        />
+      ) : (
+        <ListRow
+          title={t("dashboardSettings.taxInfoStep")}
+          subtitle={
+            settings.taxName || settings.nationalId
+              ? `${settings.taxName || "–"} · ${settings.nationalId || "–"}`
+              : t("dashboardSettings.notUploaded")
+          }
+          trailing={<FieldStatusChip user={user} field="taxInfo" />}
+        />
+      )}
+      {identity?.workPermitRequired ? (
+        <ListRow
+          title={t("dashboardSettings.workPermitStep")}
+          subtitle={identity.workPermitExpiresOn ? `${t("dashboardSettings.expiresOn")} ${identity.workPermitExpiresOn}` : undefined}
+          trailing={<FieldStatusChip user={user} field="workPermit" />}
+          meta={<DocumentThumb url={identity.workPermitImageUrl} alt={t("dashboardSettings.uploadedAlt")} />}
+        />
+      ) : null}
     </ListGroup>
   );
 }

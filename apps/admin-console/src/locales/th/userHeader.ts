@@ -24,6 +24,9 @@ export const userHeader = {
   idCard: "สำเนาบัตรประชาชน",
   taxInfo: "ข้อมูลภาษีสำหรับใบ 50 ทวิ",
   unnamed: "ไม่ระบุชื่อ",
+  passport: "สำเนาหนังสือเดินทาง",
+  passportTaxInfo: "ข้อมูลหนังสือเดินทางและภาษี",
+  workPermit: "ใบอนุญาตทำงาน (Work permit)",
 } as const;
 
 registerMessages("userHeader", userHeader);

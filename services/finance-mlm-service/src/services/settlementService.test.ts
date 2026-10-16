@@ -252,6 +252,90 @@ describe("SettlementService", () => {
       }));
   });
 
+  function previewWithOneAdjustedTutor(tutor: Record<string, unknown>) {
+    prismaMock.paymentIntent.findMany.mockResolvedValue([]);
+    prismaMock.enrollment.findMany.mockResolvedValue([]);
+    prismaMock.adjustment.findMany.mockResolvedValue([
+      { adjustmentId: "adj-1", tutorUserId: "tutor-1", amountMinor: 10000n, reason: "manual_bonus" },
+    ]);
+    prismaMock.user.findMany.mockResolvedValue([
+      { userId: "tutor-1", sponsorTutorId: null, verificationStatus: "VERIFIED", ...tutor },
+    ]);
+    prismaMock.settlementRun.create.mockResolvedValue({ settlementRunId: "run-1", periodMonth: "2026-05", status: "DRAFT" });
+    return SettlementService.previewSettlement("2026-05", "admin-1");
+  }
+
+  it("withholds 15% from a non-resident tutor and records the rate on the line", async () => {
+    await previewWithOneAdjustedTutor({
+      taxResidency: "NON_RESIDENT",
+      idType: "PASSPORT",
+      teachingLocation: "ABROAD",
+      passportExpiresOn: new Date("2099-01-01"),
+    });
+    expect(createdLines()).toContainEqual(expect.objectContaining({
+      payoutAmountMinor: 10000n,
+      withholdingTaxMinor: 1500n,
+      netPayoutMinor: 8500n,
+      withholdingRatePercent: 15,
+      taxResidency: "NON_RESIDENT",
+    }));
+  });
+
+  it("records the 3% resident rate for existing Thai ID tutors", async () => {
+    await previewWithOneAdjustedTutor({});
+    expect(createdLines()).toContainEqual(expect.objectContaining({
+      withholdingTaxMinor: 300n,
+      withholdingRatePercent: 3,
+      taxResidency: "RESIDENT",
+    }));
+  });
+
+  it("pauses the payout of a verified tutor whose passport has expired", async () => {
+    await previewWithOneAdjustedTutor({
+      idType: "PASSPORT",
+      teachingLocation: "ABROAD",
+      passportExpiresOn: new Date("2020-01-01"),
+    });
+    expect(createdLines()).toContainEqual(expect.objectContaining({
+      payoutAmountMinor: 0n,
+      eligibilityStatus: "INELIGIBLE_PASSPORT_EXPIRED",
+    }));
+  });
+
+  it("pauses the payout when the work permit of a tutor teaching from Thailand has expired", async () => {
+    await previewWithOneAdjustedTutor({
+      idType: "PASSPORT",
+      teachingLocation: "THAILAND",
+      passportExpiresOn: new Date("2099-01-01"),
+      workPermitExpiresOn: new Date("2020-01-01"),
+    });
+    expect(createdLines()).toContainEqual(expect.objectContaining({
+      payoutAmountMinor: 0n,
+      eligibilityStatus: "INELIGIBLE_WORK_PERMIT_EXPIRED",
+    }));
+  });
+
+  it("keeps fingerprints of resident lines unchanged by the new tax fields", () => {
+    const base = {
+      tutorUserId: "t",
+      grossVolumeMinor: 1n,
+      payoutRate: 0.1,
+      payoutAmountMinor: 1n,
+      withholdingTaxMinor: 0n,
+      netPayoutMinor: 1n,
+      badgeBonusMinor: 0n,
+      eligibilityStatus: "ELIGIBLE",
+      payoutIdentityVersion: 1,
+      recipientSnapshot: null,
+    };
+    expect(fingerprintPayoutLines([{ ...base, withholdingRatePercent: 3, taxResidency: "RESIDENT" }])).toBe(
+      fingerprintPayoutLines([base]),
+    );
+    expect(fingerprintPayoutLines([{ ...base, withholdingRatePercent: 15, taxResidency: "NON_RESIDENT" }])).not.toBe(
+      fingerprintPayoutLines([base]),
+    );
+  });
+
   it("rejects a concurrent preview for an active period", async () => {
     prismaMock.settlementRun.findFirst.mockResolvedValue({
       settlementRunId: "run-existing",

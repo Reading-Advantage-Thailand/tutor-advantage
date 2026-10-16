@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { VERIFICATION_STEPS, stepCompletion, type SettingsUser, type VerificationField } from "../lib/verification";
+import { stepCompletion, verificationSteps, type SettingsUser, type TutorIdentity, type VerificationField } from "../lib/verification";
 import { VerificationSummary } from "./VerificationSummary";
 
 // The upload/edit forms only load when they are shown (never for a verified
@@ -30,7 +30,15 @@ export const STEP_LABELS: Record<VerificationField, string> = {
   bankBook: t("dashboardSettings.stepBank"),
   address: t("dashboardSettings.stepAddress"),
   taxInfo: t("dashboardSettings.stepTax"),
+  workPermit: t("dashboardSettings.stepWorkPermit"),
 };
+
+function payoutBlockText(block: TutorIdentity["payoutBlock"]) {
+  if (block === "PASSPORT_EXPIRED") return t("dashboardSettings.payoutBlockedPassportExpired");
+  if (block === "WORK_PERMIT_EXPIRED") return t("dashboardSettings.payoutBlockedWorkPermitExpired");
+  if (block === "WORK_PERMIT_MISSING") return t("dashboardSettings.payoutBlockedWorkPermitMissing");
+  return null;
+}
 
 function statusText(status: string | undefined) {
   if (status === "VERIFIED") return t("dashboardSettings.verifiedStatusRow");
@@ -84,7 +92,9 @@ export function VerificationSection({ user }: { user: SettingsUser }) {
   }, []);
 
   const steps = stepCompletion(user);
+  const VERIFICATION_STEPS = verificationSteps(user);
   const doneCount = VERIFICATION_STEPS.filter((step) => steps[step]).length;
+  const blockText = payoutBlockText(user.identity?.payoutBlock);
 
   return (
     <Section
@@ -94,6 +104,12 @@ export function VerificationSection({ user }: { user: SettingsUser }) {
       className="scroll-mt-20"
     >
       <div ref={sectionRef} className="flex scroll-mt-24 flex-col gap-3">
+        {blockText ? (
+          <Notice tone="danger" role="alert">
+            {blockText}
+          </Notice>
+        ) : null}
+
         {highlighted ? (
           <Notice tone="brand" role="status">
             {t("dashboardSettings.highlightHint")}

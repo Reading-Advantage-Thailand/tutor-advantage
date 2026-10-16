@@ -44,6 +44,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
   }
 
+  // Non-resident payouts (15%) are reported on PND.54, not on a 50 ทวิ.
+  if (payoutDocument.payoutLine.taxResidency === "NON_RESIDENT") {
+    return NextResponse.json(
+      { error: "NOT_APPLICABLE", message: "Form 50 Tawi is not issued for non-resident payouts" },
+      { status: 409 },
+    );
+  }
+
   const { user } = session;
   const settings = (user.settings as Record<string, unknown>) ?? {};
   const tutorName = (settings.taxName as string) || (user.displayName as string) || "";

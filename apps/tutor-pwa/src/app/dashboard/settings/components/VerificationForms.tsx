@@ -7,6 +7,7 @@ import {
   CardHeader,
   Field,
   Notice,
+  SegmentedControl,
   SelectField,
   StickyActions,
   Surface,
@@ -15,29 +16,87 @@ import {
   toast,
 } from "@/components/app";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { saveTaxInfoAction, submitVerificationAction, uploadFileAction } from "../../actions";
+import {
+  saveTaxInfoAction,
+  submitVerificationAction,
+  submitWorkPermitAction,
+  uploadFileAction,
+  type VerificationActionResult,
+} from "../../actions";
+import { nationalityOptions } from "../lib/countries";
 import {
   ACCEPTED_DOCUMENT_TYPES,
   BANK_BRANDS,
+  bangkokToday,
   canSubmitAddress,
   digitsOnly,
   getRejectionComment,
+  isFutureDate,
   isPdfFile,
   isPdfUrl,
   isTaxInfoChanged,
-  isTaxInfoValid,
+  isValidPassportNumber,
   sanitizeDigitsAndDashes,
   validateBankDraft,
+  validateTaxInfoDraft,
+  type IdType,
   type SettingsUser,
+  type TaxInfoDraft,
+  type TeachingLocation,
   type VerificationField,
 } from "../lib/verification";
 import { FieldStatusChip } from "./FieldStatusChip";
 
 type DocField = "idCard" | "bankBook" | "address";
 
+const SERVER_ERRORS: Record<string, string> = {
+  INVALID_THAI_ID: t("dashboardSettings.serverError_INVALID_THAI_ID"),
+  INVALID_PASSPORT_NUMBER: t("dashboardSettings.serverError_INVALID_PASSPORT_NUMBER"),
+  INVALID_NATIONALITY: t("dashboardSettings.serverError_INVALID_NATIONALITY"),
+  PASSPORT_EXPIRED: t("dashboardSettings.serverError_PASSPORT_EXPIRED"),
+  INVALID_WORK_PERMIT: t("dashboardSettings.serverError_INVALID_WORK_PERMIT"),
+  PASSPORT_UNAVAILABLE: t("dashboardSettings.serverError_PASSPORT_UNAVAILABLE"),
+  PRIVACY_NOTICE_REQUIRED: t("dashboardSettings.privacyNoticeRequired"),
+  RIGHT_TO_WORK_REQUIRED: t("dashboardSettings.rightToWorkRequired"),
+  INVALID_TEACHING_LOCATION: t("dashboardSettings.teachingLocationRequired"),
+};
+
+function serverErrorMessage(result: VerificationActionResult, fallback: string): string | null {
+  if (result.ok) return null;
+  return SERVER_ERRORS[result.code] ?? fallback;
+}
+
 /* ─── Building blocks ─────────────────────────────────────────────────── */
+
+function ConsentCheckbox({
+  id,
+  checked,
+  disabled,
+  onChange,
+  children,
+}: {
+  id: string;
+  checked: boolean;
+  disabled?: boolean;
+  onChange: (checked: boolean) => void;
+  children: ReactNode;
+}) {
+  return (
+    <label htmlFor={id} className="flex cursor-pointer items-start gap-3 text-sm text-fg">
+      <Checkbox
+        id={id}
+        className="mt-0.5"
+        checked={checked}
+        disabled={disabled}
+        onCheckedChange={(value) => onChange(value === true)}
+      />
+      <span>{children}</span>
+    </label>
+  );
+}
 
 function StepCard({
   user,
@@ -175,12 +234,29 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
   const [idCardError, setIdCardError] = useState<string | null>(null);
   const [bankBookError, setBankBookError] = useState<string | null>(null);
   const [addressError, setAddressError] = useState<string | null>(null);
+  const identity = user.identity ?? {};
   const [taxName, setTaxName] = useState<string>(settings.taxName || "");
   const [nationalId, setNationalId] = useState<string>(settings.nationalId || "");
+  const [idType, setIdType] = useState<IdType>(identity.idType ?? "THAI_ID");
+  // The saved passport number is never sent to the browser; it is re-entered to change it.
+  const [passportNumber, setPassportNumber] = useState("");
+  const [passportNationality, setPassportNationality] = useState<string>(identity.passportNationality || "");
+  const [passportExpiresOn, setPassportExpiresOn] = useState<string>(identity.passportExpiresOn || "");
+  const [teachingLocation, setTeachingLocation] = useState<TeachingLocation | "">(identity.teachingLocation || "");
+  const [privacyNoticeAccepted, setPrivacyNoticeAccepted] = useState(false);
+  const [rightToWorkConfirmed, setRightToWorkConfirmed] = useState(Boolean(identity.rightToWorkConfirmedAt));
   const [taxInfoSaved, setTaxInfoSaved] = useState(false);
   const [taxInfoPending, setTaxInfoPending] = useState(false);
   const [taxInfoError, setTaxInfoError] = useState<string | null>(null);
+  const [workPermitFile, setWorkPermitFile] = useState<File | null>(null);
+  const [workPermitPreview, setWorkPermitPreview] = useState<string | null>(null);
+  const [submittedWorkPermitUrl, setSubmittedWorkPermitUrl] = useState<string | null>(identity.workPermitImageUrl || null);
+  const [workPermitExpiresOn, setWorkPermitExpiresOn] = useState<string>(identity.workPermitExpiresOn || "");
+  const [workPermitError, setWorkPermitError] = useState<string | null>(null);
+  const [workPermitPending, setWorkPermitPending] = useState(false);
   const [savingAll, setSavingAll] = useState(false);
+  const isPassport = idType === "PASSPORT";
+  const needsWorkPermit = isPassport && teachingLocation === "THAILAND";
 
   // Keep in sync with fresh server data after router.refresh().
   useEffect(() => {
@@ -191,6 +267,12 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
     if (user.settings?.bankBrand) setBankBrand(user.settings.bankBrand);
     if (user.settings?.taxName) setTaxName(user.settings.taxName);
     if (user.settings?.nationalId) setNationalId(user.settings.nationalId);
+    setSubmittedWorkPermitUrl(user.identity?.workPermitImageUrl || null);
+    if (user.identity?.idType) setIdType(user.identity.idType);
+    if (user.identity?.passportNationality) setPassportNationality(user.identity.passportNationality);
+    if (user.identity?.passportExpiresOn) setPassportExpiresOn(user.identity.passportExpiresOn);
+    if (user.identity?.teachingLocation) setTeachingLocation(user.identity.teachingLocation);
+    if (user.identity?.workPermitExpiresOn) setWorkPermitExpiresOn(user.identity.workPermitExpiresOn);
   }, [user]);
 
   // Release object URLs of replaced previews.
@@ -203,7 +285,7 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
   };
 
   const isPending = activeField !== null;
-  const busy = isPending || taxInfoPending || savingAll;
+  const busy = isPending || taxInfoPending || workPermitPending || savingAll;
 
   const setFieldError = (field: DocField, msg: string | null) => {
     if (field === "idCard") setIdCardError(msg);
@@ -284,13 +366,45 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
     if (await submitField(field)) toast.success(t("dashboardSettings.submitSuccess"));
   };
 
+  const taxDraft: TaxInfoDraft = {
+    idType,
+    taxName,
+    nationalId,
+    passportNumber,
+    passportNationality,
+    passportExpiresOn,
+    teachingLocation,
+    privacyNoticeAccepted,
+    rightToWorkConfirmed,
+  };
+  const taxProblem = validateTaxInfoDraft(taxDraft);
+  const taxInfoValid = taxProblem === null;
+  const taxInfoDirty = !taxInfoSaved && isTaxInfoChanged(user, taxDraft);
+
   const submitTaxInfo = async (): Promise<boolean> => {
-    if (!isTaxInfoValid(taxName, nationalId)) return false;
+    if (!taxInfoValid) return false;
     setTaxInfoPending(true);
     setTaxInfoError(null);
     try {
-      await saveTaxInfoAction(taxName, nationalId);
+      const result = await saveTaxInfoAction({
+        idType,
+        taxName,
+        nationalId,
+        passportNumber,
+        passportNationality,
+        passportExpiresOn,
+        teachingLocation: teachingLocation || undefined,
+        privacyNoticeAccepted,
+        rightToWorkConfirmed,
+      });
+      const message = serverErrorMessage(result, t("dashboardSettings.taxInfoFailed"));
+      if (message) {
+        setTaxInfoError(message);
+        return false;
+      }
       setTaxInfoSaved(true);
+      setPassportNumber("");
+      router.refresh();
       return true;
     } catch {
       setTaxInfoError(t("dashboardSettings.taxInfoFailed"));
@@ -300,12 +414,58 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
     }
   };
 
+  const workPermitReady = needsWorkPermit && Boolean(workPermitFile) && isFutureDate(workPermitExpiresOn);
+
+  const submitWorkPermit = async (): Promise<boolean> => {
+    setWorkPermitError(null);
+    if (!workPermitFile) {
+      setWorkPermitError(t("dashboardSettings.selectWorkPermitFile"));
+      return false;
+    }
+    if (!isFutureDate(workPermitExpiresOn)) {
+      setWorkPermitError(t("dashboardSettings.passportExpiryInvalid"));
+      return false;
+    }
+    // The server accepts a work permit only once the passport + "teaching
+    // from Thailand" answer is saved, so send unsaved identity info first.
+    if (!user.identity?.workPermitRequired || taxInfoDirty) {
+      if (!(await submitTaxInfo())) {
+        setWorkPermitError(t("dashboardSettings.taxInfoFailed"));
+        return false;
+      }
+    }
+    setWorkPermitPending(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", workPermitFile);
+      const upload = await uploadFileAction(formData);
+      if (!upload.success || !upload.objectKey) throw new Error(upload.error);
+      const result = await submitWorkPermitAction(upload.objectKey, workPermitExpiresOn);
+      const message = serverErrorMessage(result, t("dashboardSettings.submitDocumentsFailed"));
+      if (message) {
+        setWorkPermitError(message);
+        return false;
+      }
+      if (workPermitPreview) setSubmittedWorkPermitUrl(workPermitPreview);
+      setWorkPermitFile(null);
+      setWorkPermitPreview(null);
+      router.refresh();
+      return true;
+    } catch (err) {
+      setWorkPermitError(err instanceof Error && err.message ? err.message : t("dashboardSettings.submitDocumentsFailed"));
+      return false;
+    } finally {
+      setWorkPermitPending(false);
+    }
+  };
+
   const nationalIdDigits = digitsOnly(nationalId).length;
   const ready = {
     idCard: Boolean(idCardFile),
     bankBook: validateBankDraft({ file: bankBookFile, accountNumber: bankAccountNumber, brand: bankBrand }) === null,
     address: canSubmitAddress(address, settings.address),
-    taxInfo: isTaxInfoValid(taxName, nationalId) && !taxInfoSaved && isTaxInfoChanged(user, taxName, nationalId),
+    taxInfo: taxInfoValid && taxInfoDirty,
+    workPermit: workPermitReady,
   };
   const readyCount = Object.values(ready).filter(Boolean).length;
 
@@ -316,12 +476,17 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
       for (const field of ["idCard", "bankBook", "address"] as const) {
         if (ready[field]) ok = (await submitField(field)) && ok;
       }
+      // Identity before the work permit: the permit needs the saved passport answer.
       if (ready.taxInfo) ok = (await submitTaxInfo()) && ok;
+      if (ready.workPermit) ok = (await submitWorkPermit()) && ok;
     } finally {
       setSavingAll(false);
     }
     if (ok) toast.success(t("dashboardSettings.submitSuccess"));
   };
+
+  const taxFieldError = (problem: typeof taxProblem, shown: boolean) =>
+    shown && taxProblem === problem ? t(`dashboardSettings.${problem}` as "dashboardSettings.taxNameRequired") : undefined;
 
   return (
     <div className="flex flex-col gap-3">
@@ -338,11 +503,11 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
         </Notice>
       ) : null}
 
-      {/* 1. ID card */}
+      {/* 1. ID card / passport photo page */}
       <StepCard
         user={user}
         field="idCard"
-        title={t("dashboardSettings.idCardStep")}
+        title={isPassport ? t("dashboardSettings.passportStep") : t("dashboardSettings.idCardStep")}
         footer={
           <Button
             onClick={() => void submitOne("idCard")}
@@ -356,8 +521,8 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
       >
         <FilePicker
           id="id-card-input"
-          label={t("dashboardSettings.idCard")}
-          hint={t("dashboardSettings.idCardHint")}
+          label={isPassport ? t("dashboardSettings.idTypePassport") : t("dashboardSettings.idCard")}
+          hint={isPassport ? t("dashboardSettings.passportHint") : t("dashboardSettings.idCardHint")}
           error={idCardError}
           file={idCardFile}
           previewUrl={idCardPreview}
@@ -387,6 +552,7 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
           </Button>
         }
       >
+        {isPassport ? <Notice tone="info">{t("dashboardSettings.bankNameMustMatchId")}</Notice> : null}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <SelectField
             id="bank-brand"
@@ -458,17 +624,17 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
         />
       </StepCard>
 
-      {/* 4. Tax info */}
+      {/* 4. Identity document + tax info */}
       <StepCard
         user={user}
         field="taxInfo"
-        title={t("dashboardSettings.taxInfoStep")}
-        description={t("dashboardSettings.taxInfoHint")}
+        title={isPassport ? t("dashboardSettings.passportTaxInfoStep") : t("dashboardSettings.taxInfoStep")}
+        description={isPassport ? t("dashboardSettings.passportTaxInfoHint") : t("dashboardSettings.taxInfoHint")}
         footer={
           <Button
             variant={taxInfoSaved ? "soft" : "default"}
             onClick={() => void submitTaxInfo()}
-            disabled={!isTaxInfoValid(taxName, nationalId) || busy}
+            disabled={!taxInfoValid || busy}
             loading={taxInfoPending}
             className="w-full sm:w-auto"
           >
@@ -481,11 +647,28 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
         }
       >
         {taxInfoError ? <Notice tone="danger">{taxInfoError}</Notice> : null}
+        <Field id="id-type" label={t("dashboardSettings.idTypeLabel")}>
+          {() => (
+            <SegmentedControl<IdType>
+              aria-label={t("dashboardSettings.idTypeLabel")}
+              fullWidth
+              value={idType}
+              onValueChange={(value) => {
+                setIdType(value);
+                setTaxInfoSaved(false);
+              }}
+              items={[
+                { value: "THAI_ID", label: t("dashboardSettings.idTypeThaiId"), disabled: busy },
+                { value: "PASSPORT", label: t("dashboardSettings.idTypePassport"), disabled: busy },
+              ]}
+            />
+          )}
+        </Field>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField
             id="tax-name"
-            label={t("dashboardSettings.taxNameLabel")}
-            placeholder={t("dashboardSettings.taxNamePlaceholder")}
+            label={isPassport ? t("dashboardSettings.passportNameLabel") : t("dashboardSettings.taxNameLabel")}
+            placeholder={isPassport ? "John Smith" : t("dashboardSettings.taxNamePlaceholder")}
             autoComplete="name"
             value={taxName}
             onChange={(event) => {
@@ -495,24 +678,169 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
             disabled={busy}
             required
           />
+          {isPassport ? (
+            <TextField
+              id="passport-number"
+              label={t("dashboardSettings.passportNumberLabel")}
+              autoComplete="off"
+              autoCapitalize="characters"
+              spellCheck={false}
+              placeholder={identity.passportNumberMasked || t("dashboardSettings.passportNumberPlaceholder")}
+              value={passportNumber}
+              error={passportNumber && !isValidPassportNumber(passportNumber) ? t("dashboardSettings.passportNumberInvalid") : undefined}
+              hint={identity.passportNumberMasked && !passportNumber ? t("dashboardSettings.passportNumberKeep") : undefined}
+              onChange={(event) => {
+                setPassportNumber(event.target.value.toUpperCase());
+                setTaxInfoSaved(false);
+              }}
+              disabled={busy}
+              required
+            />
+          ) : (
+            <TextField
+              id="national-id"
+              label={t("dashboardSettings.nationalIdLabel")}
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder={t("dashboardSettings.nationalIdPlaceholder")}
+              value={nationalId}
+              error={
+                nationalIdDigits > 13 || (nationalIdDigits === 13 && taxProblem === "nationalIdInvalid")
+                  ? t("dashboardSettings.nationalIdInvalid")
+                  : undefined
+              }
+              hint={nationalIdDigits > 0 && nationalIdDigits < 13 ? `${nationalIdDigits} / 13` : undefined}
+              onChange={(event) => {
+                setNationalId(sanitizeDigitsAndDashes(event.target.value));
+                setTaxInfoSaved(false);
+              }}
+              disabled={busy}
+              required
+            />
+          )}
+        </div>
+        {isPassport ? (
+          <>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <SelectField
+                id="passport-nationality"
+                label={t("dashboardSettings.nationalityLabel")}
+                placeholder={t("dashboardSettings.nationalityPlaceholder")}
+                options={nationalityOptions()}
+                value={passportNationality}
+                onChange={(event) => {
+                  setPassportNationality(event.target.value);
+                  setTaxInfoSaved(false);
+                }}
+                disabled={busy}
+                required
+              />
+              <TextField
+                id="passport-expiry"
+                type="date"
+                label={t("dashboardSettings.passportExpiryLabel")}
+                min={bangkokToday()}
+                value={passportExpiresOn}
+                error={taxFieldError("passportExpiryInvalid", Boolean(passportExpiresOn))}
+                onChange={(event) => {
+                  setPassportExpiresOn(event.target.value);
+                  setTaxInfoSaved(false);
+                }}
+                disabled={busy}
+                required
+              />
+            </div>
+            <Field id="teaching-location" label={t("dashboardSettings.teachingLocationLabel")} hint={t("dashboardSettings.teachingFromThailandHint")}>
+              {() => (
+                <SegmentedControl<TeachingLocation>
+                  aria-label={t("dashboardSettings.teachingLocationLabel")}
+                  fullWidth
+                  value={(teachingLocation || "") as TeachingLocation}
+                  onValueChange={(value) => {
+                    setTeachingLocation(value);
+                    setTaxInfoSaved(false);
+                  }}
+                  items={[
+                    { value: "THAILAND", label: t("dashboardSettings.teachingFromThailand"), disabled: busy },
+                    { value: "ABROAD", label: t("dashboardSettings.teachingFromAbroad"), disabled: busy },
+                  ]}
+                />
+              )}
+            </Field>
+            <div className="flex flex-col gap-3 rounded-lg border border-hairline p-3">
+              <p className="text-[0.8125rem] text-fg-muted">{t("dashboardSettings.privacyNoticeBody")}</p>
+              <ConsentCheckbox
+                id="privacy-notice-consent"
+                checked={privacyNoticeAccepted}
+                disabled={busy}
+                onChange={(value) => {
+                  setPrivacyNoticeAccepted(value);
+                  setTaxInfoSaved(false);
+                }}
+              >
+                {t("dashboardSettings.privacyNoticeConsent")}
+              </ConsentCheckbox>
+              <ConsentCheckbox
+                id="right-to-work-consent"
+                checked={rightToWorkConfirmed}
+                disabled={busy}
+                onChange={(value) => {
+                  setRightToWorkConfirmed(value);
+                  setTaxInfoSaved(false);
+                }}
+              >
+                {t("dashboardSettings.rightToWorkConsent")}
+              </ConsentCheckbox>
+            </div>
+          </>
+        ) : null}
+      </StepCard>
+
+      {/* 5. Work permit (passport holders teaching from Thailand) */}
+      {needsWorkPermit ? (
+        <StepCard
+          user={user}
+          field="workPermit"
+          title={t("dashboardSettings.workPermitStep")}
+          footer={
+            <Button
+              onClick={() => void submitWorkPermit().then((ok) => ok && toast.success(t("dashboardSettings.submitSuccess")))}
+              disabled={!workPermitReady || (!user.identity?.workPermitRequired && !taxInfoValid) || busy}
+              loading={workPermitPending}
+              className="w-full sm:w-auto"
+            >
+              {workPermitPending ? t("dashboardSettings.uploading") : t("dashboardSettings.uploadWorkPermit")}
+            </Button>
+          }
+        >
           <TextField
-            id="national-id"
-            label={t("dashboardSettings.nationalIdLabel")}
-            inputMode="numeric"
-            autoComplete="off"
-            placeholder={t("dashboardSettings.nationalIdPlaceholder")}
-            value={nationalId}
-            error={nationalIdDigits > 13 ? t("dashboardSettings.nationalIdInvalid") : undefined}
-            hint={nationalIdDigits > 0 && nationalIdDigits < 13 ? `${nationalIdDigits} / 13` : undefined}
-            onChange={(event) => {
-              setNationalId(sanitizeDigitsAndDashes(event.target.value));
-              setTaxInfoSaved(false);
-            }}
+            id="work-permit-expiry"
+            type="date"
+            label={t("dashboardSettings.workPermitExpiryLabel")}
+            min={bangkokToday()}
+            value={workPermitExpiresOn}
+            error={workPermitExpiresOn && !isFutureDate(workPermitExpiresOn) ? t("dashboardSettings.passportExpiryInvalid") : undefined}
+            onChange={(event) => setWorkPermitExpiresOn(event.target.value)}
             disabled={busy}
             required
           />
-        </div>
-      </StepCard>
+          <FilePicker
+            id="work-permit-input"
+            label={t("dashboardSettings.workPermitFile")}
+            hint={t("dashboardSettings.workPermitHint")}
+            error={workPermitError}
+            file={workPermitFile}
+            previewUrl={workPermitPreview}
+            submittedUrl={submittedWorkPermitUrl}
+            disabled={busy}
+            onSelect={(file) => {
+              setWorkPermitFile(file);
+              setWorkPermitPreview(makePreview(file));
+              setWorkPermitError(null);
+            }}
+          />
+        </StepCard>
+      ) : null}
 
       {readyCount > 0 ? (
         <StickyActions className="justify-between">

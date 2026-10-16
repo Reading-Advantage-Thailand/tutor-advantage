@@ -11,6 +11,11 @@ import {
   calculateWithholdingTax,
 } from "./taxService";
 import {
+  payoutDocumentBlock,
+  whtRatePercentFor,
+  type TaxResidency,
+} from "@tutor-advantage/shared-config";
+import {
   createOmiseTransfer,
   listOmiseTransfers,
   retrieveOmiseTransfer,
@@ -29,6 +34,9 @@ export interface PayoutNode {
   verified: boolean;
   payoutIdentityVersion: number;
   recipientId: string | null;
+  /** Set when an expired/missing passport or work permit blocks the payout. */
+  documentBlock?: string | null;
+  taxResidency?: string;
 }
 
 // Badge records are currently lifetime achievements without a period-scoped,
@@ -153,6 +161,10 @@ function validatePayoutIdentitySnapshots(
     verificationStatus: string;
     payoutIdentityVersion: number;
     settings: unknown;
+    idType?: string | null;
+    teachingLocation?: string | null;
+    passportExpiresOn?: Date | null;
+    workPermitExpiresOn?: Date | null;
   }>,
 ) {
   const tutorById = new Map(tutors.map((tutor) => [tutor.userId, tutor]));
@@ -160,6 +172,11 @@ function validatePayoutIdentitySnapshots(
   for (const line of lines) {
     const tutor = tutorById.get(line.tutorUserId);
     if (!tutor || !tutor.isActive || tutor.verificationStatus !== "VERIFIED") {
+      throw new Error(`PAYOUT_ELIGIBILITY_CHANGED:${line.tutorUserId}`);
+    }
+    // A passport or work permit that expired after the run was calculated
+    // pauses the payout right before money moves.
+    if (payoutDocumentBlock(tutor)) {
       throw new Error(`PAYOUT_ELIGIBILITY_CHANGED:${line.tutorUserId}`);
     }
     if (!line.recipientSnapshot) {
@@ -174,6 +191,14 @@ function validatePayoutIdentitySnapshots(
   }
 }
 
+/** Identity-document columns needed to decide whether a payout is paused. */
+const PAYOUT_DOCUMENT_SELECT = {
+  idType: true,
+  teachingLocation: true,
+  passportExpiresOn: true,
+  workPermitExpiresOn: true,
+} as const;
+
 /** One payout line as calculated (before it is persisted). */
 export interface ComputedPayoutLine {
   tutorUserId: string;
@@ -186,6 +211,8 @@ export interface ComputedPayoutLine {
   eligibilityStatus: string;
   payoutIdentityVersion: number;
   recipientSnapshot: string | null;
+  withholdingRatePercent: number;
+  taxResidency: TaxResidency;
 }
 
 export interface ComputedSettlement {
@@ -226,10 +253,17 @@ type FingerprintLine = {
   eligibilityStatus: string;
   payoutIdentityVersion: number;
   recipientSnapshot: string | null;
+  withholdingRatePercent?: number;
+  taxResidency?: string;
 };
 
 function lineKey(line: FingerprintLine) {
   const rate = Number(String(line.payoutRate ?? 0));
+  // Only non-default tax settings extend the key, so fingerprints of runs
+  // calculated before tax residency existed (all 3% RESIDENT) stay valid.
+  const taxResidency = line.taxResidency ?? "RESIDENT";
+  const whtRate = line.withholdingRatePercent ?? 3;
+  const taxPart = whtRate !== 3 || taxResidency !== "RESIDENT" ? [`${taxResidency}@${whtRate}`] : [];
   return [
     line.tutorUserId,
     line.grossVolumeMinor.toString(),
@@ -241,6 +275,7 @@ function lineKey(line: FingerprintLine) {
     line.eligibilityStatus,
     String(line.payoutIdentityVersion ?? 0),
     line.recipientSnapshot ?? "",
+    ...taxPart,
   ].join("|");
 }
 
@@ -383,6 +418,8 @@ export class SettlementService {
         verificationStatus: true,
         settings: true,
         payoutIdentityVersion: true,
+        taxResidency: true,
+        ...PAYOUT_DOCUMENT_SELECT,
       },
     });
 
@@ -405,7 +442,9 @@ export class SettlementService {
     };
 
     const nodes = new Map<string, PayoutNode>();
+    const asOf = new Date();
     for (const u of allUsers.filter((user) => user.isActive !== false)) {
+      const documentBlock = payoutDocumentBlock(u, asOf);
       nodes.set(u.userId, {
         userId: u.userId,
         sponsorId: resolveEffectiveSponsor(u.userId),
@@ -414,9 +453,11 @@ export class SettlementService {
         payoutRate: 0,
         payoutAmountMinor: 0n,
         eligibilityStatus: "ELIGIBLE_BASE",
-        verified: u.verificationStatus === "VERIFIED",
+        verified: u.verificationStatus === "VERIFIED" && !documentBlock,
         payoutIdentityVersion: u.payoutIdentityVersion ?? 0,
         recipientId: getOmiseRecipientId(u.settings),
+        documentBlock,
+        taxResidency: u.taxResidency,
       });
     }
 
@@ -560,7 +601,9 @@ export class SettlementService {
     for (const node of nodes.values()) {
       if (!node.verified) {
         node.payoutAmountMinor = 0n;
-        node.eligibilityStatus = "INELIGIBLE_NOT_VERIFIED";
+        node.eligibilityStatus = node.documentBlock
+          ? `INELIGIBLE_${node.documentBlock}`
+          : "INELIGIBLE_NOT_VERIFIED";
       }
     }
 
@@ -622,9 +665,11 @@ export class SettlementService {
       // BUSINESS RULE (pending owner decision, unchanged): a negative total
       // (clawback larger than earnings) is paid out as 0 with no WHT and no
       // carry-forward to the next period.
+      const taxResidency: TaxResidency = node.taxResidency === "NON_RESIDENT" ? "NON_RESIDENT" : "RESIDENT";
+      const withholdingRatePercent = whtRatePercentFor(taxResidency);
       const tax =
         adjustedPayoutMinor > 0n
-          ? calculateWithholdingTax(adjustedPayoutMinor)
+          ? calculateWithholdingTax(adjustedPayoutMinor, withholdingRatePercent)
           : { withholdingTaxMinor: 0n, netPayoutMinor: 0n };
 
       totalPayoutSatang += adjustedPayoutMinor;
@@ -647,6 +692,8 @@ export class SettlementService {
         eligibilityStatus,
         payoutIdentityVersion: node.payoutIdentityVersion,
         recipientSnapshot: node.recipientId,
+        withholdingRatePercent,
+        taxResidency,
       });
     }
 
@@ -807,6 +854,8 @@ export class SettlementService {
               eligibilityStatus: line.eligibilityStatus,
               payoutIdentityVersion: line.payoutIdentityVersion,
               recipientSnapshot: line.recipientSnapshot,
+              withholdingRatePercent: line.withholdingRatePercent,
+              taxResidency: line.taxResidency,
             })),
           });
         }
@@ -857,6 +906,8 @@ export class SettlementService {
           eligibilityStatus: true,
           payoutIdentityVersion: true,
           recipientSnapshot: true,
+          withholdingRatePercent: true,
+          taxResidency: true,
         },
       }),
       SettlementService.computeSettlement(run.periodMonth),
@@ -1028,6 +1079,7 @@ export class SettlementService {
           verificationStatus: true,
           payoutIdentityVersion: true,
           settings: true,
+          ...PAYOUT_DOCUMENT_SELECT,
         },
       });
 
@@ -1077,6 +1129,7 @@ export class SettlementService {
             verificationStatus: true,
             payoutIdentityVersion: true,
             settings: true,
+            ...PAYOUT_DOCUMENT_SELECT,
           },
         });
         validatePayoutIdentitySnapshots(approvedPositiveLines, approvedTutors);
@@ -1093,7 +1146,8 @@ export class SettlementService {
             payoutLineId: line.payoutLineId,
             tutorUserId: line.tutorUserId,
             documentNumber: buildPayoutDocumentNumber(line.payoutLineId),
-            documentType: "PAY_SLIP_50_TAWI",
+            // Residents get a 50 ทวิ certificate; non-residents are reported on PND.54.
+            documentType: line.taxResidency === "NON_RESIDENT" ? "PAY_SLIP_PND54" : "PAY_SLIP_50_TAWI",
             grossAmountMinor: line.payoutAmountMinor,
             withholdingTaxMinor: line.withholdingTaxMinor,
             netAmountMinor: line.netPayoutMinor,
@@ -1231,6 +1285,7 @@ export class SettlementService {
         verificationStatus: true,
         payoutIdentityVersion: true,
         settings: true,
+        ...PAYOUT_DOCUMENT_SELECT,
       },
     });
     validatePayoutIdentitySnapshots(

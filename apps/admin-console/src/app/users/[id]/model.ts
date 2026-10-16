@@ -7,8 +7,27 @@ import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { t } from "@/lib/i18n";
 import "@/locales/th/userHeader";
 
-export type VerificationField = "idCard" | "bankBook" | "address" | "taxInfo";
-export const VERIFICATION_FIELDS: VerificationField[] = ["idCard", "bankBook", "address", "taxInfo"];
+export type VerificationField = "idCard" | "bankBook" | "address" | "taxInfo" | "workPermit";
+export const VERIFICATION_FIELDS: VerificationField[] = ["idCard", "bankBook", "address", "taxInfo", "workPermit"];
+
+/** Identity document (GET /v1/users/:id). The passport number is always masked. */
+export interface UserIdentity {
+  idType: "THAI_ID" | "PASSPORT";
+  passportNumberMasked: string | null;
+  passportNationality: string | null;
+  passportExpiresOn: string | null;
+  passportExpired: boolean;
+  teachingLocation: "THAILAND" | "ABROAD" | null;
+  workPermitRequired: boolean;
+  workPermitImageUrl: string | null;
+  hasWorkPermitImage: boolean;
+  workPermitExpiresOn: string | null;
+  workPermitExpired: boolean;
+  rightToWorkConfirmedAt: string | null;
+  taxResidency: "RESIDENT" | "NON_RESIDENT";
+  payoutBlock: "PASSPORT_EXPIRED" | "WORK_PERMIT_EXPIRED" | "WORK_PERMIT_MISSING" | null;
+  requiredFields: VerificationField[];
+}
 
 export interface VerificationItem {
   status?: string;
@@ -38,6 +57,7 @@ export interface UserDetailV2 {
   verificationStatus: string;
   verificationComment: string | null;
   piiMasked: boolean;
+  identity?: UserIdentity;
   settings: {
     address: string | null;
     hasAddress?: boolean;
@@ -98,13 +118,29 @@ export function displayName(user: Pick<UserDetailV2, "name">) {
   return user.name || t("userHeader.unnamed");
 }
 
-export function fieldLabel(field: VerificationField) {
+export function isPassportHolder(user: Pick<UserDetailV2, "identity">) {
+  return user.identity?.idType === "PASSPORT";
+}
+
+export function fieldLabel(field: VerificationField, user?: Pick<UserDetailV2, "identity">) {
+  const passport = user ? isPassportHolder(user) : false;
   return {
-    idCard: t("userHeader.idCard"),
+    idCard: passport ? t("userHeader.passport") : t("userHeader.idCard"),
     bankBook: t("userHeader.bankBook"),
     address: t("userHeader.deliveryAddress"),
-    taxInfo: t("userHeader.taxInfo"),
+    taxInfo: passport ? t("userHeader.passportTaxInfo") : t("userHeader.taxInfo"),
+    workPermit: t("userHeader.workPermit"),
   }[field];
+}
+
+/** Fields shown for this tutor (work permit only when required or already submitted). */
+export function visibleFields(user: UserDetailV2): VerificationField[] {
+  return VERIFICATION_FIELDS.filter(
+    (field) =>
+      field !== "workPermit" ||
+      user.identity?.workPermitRequired ||
+      Boolean(user.settings.verification?.workPermit?.status),
+  );
 }
 
 export const BANK_LABELS: Record<string, string> = {

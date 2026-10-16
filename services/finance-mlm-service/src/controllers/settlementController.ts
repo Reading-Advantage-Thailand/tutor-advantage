@@ -1,4 +1,4 @@
-import { logger } from "@tutor-advantage/shared-config";
+import { decryptPii, logger } from "@tutor-advantage/shared-config";
 import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import {
@@ -644,7 +644,7 @@ export async function exportSettlementCsv(
     }
 
     const header =
-      "tutor_user_id,gross_volume_thb,payout_rate,base_payout_thb,adjustment_thb,badge_bonus_thb,gross_payout_thb,wht_3pct_thb,net_payout_thb,eligibility_status";
+      "tutor_user_id,gross_volume_thb,payout_rate,base_payout_thb,adjustment_thb,badge_bonus_thb,gross_payout_thb,wht_thb,net_payout_thb,eligibility_status,wht_rate_percent,tax_residency";
     const rows = run.payoutLines.map((line) => {
       const grossTHB = (Number(line.grossVolumeMinor) / 100).toFixed(2);
       const adjustmentMinor = adjustmentMap.get(line.tutorUserId) ?? 0n;
@@ -656,7 +656,7 @@ export async function exportSettlementCsv(
       const badgeTHB = (Number(line.badgeBonusMinor) / 100).toFixed(2);
       const whtTHB = (Number(line.withholdingTaxMinor) / 100).toFixed(2);
       const netTHB = (Number(line.netPayoutMinor) / 100).toFixed(2);
-      return `${line.tutorUserId},${grossTHB},${line.payoutRate},${basePayoutTHB},${adjustmentTHB},${badgeTHB},${payoutTHB},${whtTHB},${netTHB},${line.eligibilityStatus}`;
+      return `${line.tutorUserId},${grossTHB},${line.payoutRate},${basePayoutTHB},${adjustmentTHB},${badgeTHB},${payoutTHB},${whtTHB},${netTHB},${line.eligibilityStatus},${line.withholdingRatePercent},${line.taxResidency}`;
     });
     const csv = [header, ...rows].join("\n");
 
@@ -690,6 +690,124 @@ export async function exportSettlementCsv(
         message: "Could not export CSV",
         requestId: req.id,
       },
+    });
+  }
+}
+
+function csvCell(value: unknown): string {
+  const text = value === null || value === undefined ? "" : String(value);
+  // Neutralise spreadsheet formulas and quote everything.
+  const safe = /^[=+\-@\t\r]/.test(text) ? `'${text}` : text;
+  return `"${safe.replace(/"/g, '""')}"`;
+}
+
+const satangToThb = (minor: bigint) => (Number(minor) / 100).toFixed(2);
+
+/**
+ * GET /v1/settlements/:snapshotId/pnd54 — ADMIN only.
+ * Monthly PND.54 working file: every non-resident payout line of an APPROVED
+ * run (15% withholding). Contains the full passport number, so it is
+ * decrypted only here, the export is audited, and the audit payload carries
+ * no identity numbers.
+ */
+export async function exportPnd54Csv(req: AuthenticatedRequest, res: Response) {
+  try {
+    const { snapshotId } = req.params;
+    const run = await prisma.settlementRun.findUnique({
+      where: { settlementRunId: snapshotId },
+      include: {
+        payoutLines: {
+          where: { taxResidency: "NON_RESIDENT", payoutAmountMinor: { gt: 0n } },
+          include: { payoutDocument: { select: { documentNumber: true } } },
+        },
+      },
+    });
+    if (!run) {
+      return res.status(404).json({
+        error: { code: "NOT_FOUND", message: "Settlement run not found", requestId: req.id },
+      });
+    }
+    if (run.status !== "APPROVED") {
+      return res.status(409).json({
+        error: { code: "SETTLEMENT_NOT_APPROVED", message: "PND.54 is only available for approved runs", requestId: req.id },
+      });
+    }
+
+    const tutorIds = [...new Set(run.payoutLines.map((line) => line.tutorUserId))];
+    const tutors = await prisma.user.findMany({
+      where: { userId: { in: tutorIds } },
+      select: { userId: true, settings: true, passportNumberEnc: true, passportNationality: true },
+    });
+    const tutorById = new Map(tutors.map((tutor) => [tutor.userId, tutor]));
+
+    const header = [
+      "period_month",
+      "payment_date",
+      "document_number",
+      "tutor_user_id",
+      "payee_name",
+      "passport_number",
+      "nationality",
+      "address",
+      "income_type",
+      "gross_thb",
+      "wht_rate_percent",
+      "wht_thb",
+      "net_thb",
+    ].join(",");
+    let missingPassport = 0;
+    const rows = run.payoutLines.map((line) => {
+      const tutor = tutorById.get(line.tutorUserId);
+      const settings = (tutor?.settings ?? {}) as Record<string, unknown>;
+      let passportNumber = "";
+      if (tutor?.passportNumberEnc) {
+        try {
+          passportNumber = decryptPii(tutor.passportNumberEnc);
+        } catch {
+          missingPassport += 1;
+        }
+      } else {
+        missingPassport += 1;
+      }
+      return [
+        run.periodMonth,
+        run.approvedAt?.toISOString().slice(0, 10) ?? "",
+        line.payoutDocument?.documentNumber ?? "",
+        line.tutorUserId,
+        settings.taxName ?? "",
+        passportNumber,
+        tutor?.passportNationality ?? "",
+        settings.address ?? "",
+        "40(2)",
+        satangToThb(line.payoutAmountMinor),
+        line.withholdingRatePercent,
+        satangToThb(line.withholdingTaxMinor),
+        satangToThb(line.netPayoutMinor),
+      ]
+        .map(csvCell)
+        .join(",");
+    });
+
+    const filename = `pnd54-${run.periodMonth}-${snapshotId.slice(0, 8)}.csv`;
+    await prisma.auditEvent.create({
+      data: {
+        actorId: req.user?.userId || "SYSTEM",
+        action: "EXPORT_PND54",
+        entityType: "SettlementRun",
+        entityId: snapshotId,
+        payload: { filename, rowCount: rows.length, missingPassport },
+      },
+    });
+
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.setHeader("Cache-Control", "no-store");
+    // BOM so Excel opens Thai text as UTF-8.
+    return res.status(200).send(`﻿${[header, ...rows].join("\n")}`);
+  } catch (error) {
+    logger.error("Export PND.54 Error:", error);
+    return res.status(500).json({
+      error: { code: "INTERNAL_SERVER_ERROR", message: "Could not export PND.54", requestId: req.id },
     });
   }
 }
@@ -871,6 +989,8 @@ export async function getSettlementLines(
         whtSatang: l.withholdingTaxMinor.toString(),
         netPayoutSatang: l.netPayoutMinor.toString(),
         eligibilityStatus: l.eligibilityStatus,
+        withholdingRatePercent: l.withholdingRatePercent,
+        taxResidency: l.taxResidency,
         hasRecipientSnapshot: Boolean(l.recipientSnapshot),
         // Masked payout destination for confirmation dialogs (never the full number).
         bankBrand: bankOf(tutor?.settings).brand,

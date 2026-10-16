@@ -1,4 +1,14 @@
-import { logger } from "@tutor-advantage/shared-config";
+import {
+  ALL_VERIFICATION_FIELDS,
+  computeTutorVerificationStatus,
+  isExpired,
+  isTaxResidency,
+  logger,
+  payoutDocumentBlock,
+  requiredVerificationFields,
+  requiresWorkPermit,
+  type TutorIdentityState,
+} from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma, type Prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -19,7 +29,8 @@ import { AUDIT_ACTIONS, AUDIT_ENTITY, buildAuditEventData } from "../services/au
 
 const ACTIVE_CLASS_STATUSES = ["ACTIVE", "OPEN", "IN_PROGRESS", "PUBLISHED"];
 const ACTIVE_ENROLLMENT_STATUSES = ["ACTIVE", "CONFIRMED", "PAID"];
-export const VERIFICATION_FIELDS = ["idCard", "bankBook", "address", "taxInfo"] as const;
+// workPermit is only required for passport holders teaching from Thailand.
+export const VERIFICATION_FIELDS = ALL_VERIFICATION_FIELDS;
 export type VerificationField = (typeof VERIFICATION_FIELDS)[number];
 const LISTED_ROLES = ["TUTOR", "STUDENT"];
 const STAFF_ROLES = ["ADMIN", "FINANCE_CHECKER"];
@@ -33,6 +44,7 @@ const fieldLabels: Record<VerificationField, string> = {
   bankBook: "Bank book",
   address: "Address",
   taxInfo: "Tax info",
+  workPermit: "Work permit",
 };
 
 type Settings = Record<string, any>;
@@ -119,6 +131,43 @@ export function settingsForRole(settingsValue: unknown, role: string | undefined
     nationalId: null,
     hasNationalId: Boolean(settings.nationalId),
     masked: true,
+  };
+}
+
+type IdentityColumns = TutorIdentityState & {
+  passportNumberLast4?: string | null;
+  passportNationality?: string | null;
+  workPermitImageUrl?: string | null;
+  rightToWorkConfirmedAt?: Date | null;
+  taxResidency?: string | null;
+};
+
+const isoDay = (value: Date | string | null | undefined) =>
+  value ? (typeof value === "string" ? value.slice(0, 10) : value.toISOString().slice(0, 10)) : null;
+
+/**
+ * Identity document as staff see it. The passport number is never decrypted
+ * for display: everyone (ADMIN included) sees only the last 4 characters.
+ * The work permit image is ADMIN only, like the other documents.
+ */
+export function identityForRole(user: IdentityColumns, role: string | undefined, asOf: Date = new Date()) {
+  const isPassport = user.idType === "PASSPORT";
+  return {
+    idType: isPassport ? "PASSPORT" : "THAI_ID",
+    passportNumberMasked: isPassport && user.passportNumberLast4 ? `••••${user.passportNumberLast4}` : null,
+    passportNationality: isPassport ? user.passportNationality ?? null : null,
+    passportExpiresOn: isPassport ? isoDay(user.passportExpiresOn) : null,
+    passportExpired: isPassport ? isExpired(user.passportExpiresOn, asOf) : false,
+    teachingLocation: isPassport ? user.teachingLocation ?? null : null,
+    workPermitRequired: requiresWorkPermit(user),
+    workPermitImageUrl: role === "ADMIN" ? user.workPermitImageUrl ?? null : null,
+    hasWorkPermitImage: Boolean(user.workPermitImageUrl),
+    workPermitExpiresOn: isoDay(user.workPermitExpiresOn),
+    workPermitExpired: isExpired(user.workPermitExpiresOn, asOf),
+    rightToWorkConfirmedAt: user.rightToWorkConfirmedAt?.toISOString() ?? null,
+    taxResidency: user.taxResidency === "NON_RESIDENT" ? "NON_RESIDENT" : "RESIDENT",
+    payoutBlock: payoutDocumentBlock(user, asOf),
+    requiredFields: requiredVerificationFields(user),
   };
 }
 
@@ -410,6 +459,7 @@ export const getUserDetails = async (req: AuthenticatedRequest, res: Response) =
         verificationStatus: user.verificationStatus,
         verificationComment: user.verificationComment,
         settings,
+        identity: identityForRole(user, viewerRole),
         piiMasked: settings.masked,
         sponsor: sponsor ? { id: sponsor.userId, name: sponsor.displayName } : null,
         loginProviders: user.oauthIdentities.map((identity) => identity.provider),
@@ -571,11 +621,21 @@ export const getUserAuditEvents = async (req: AuthenticatedRequest, res: Respons
 
 /* ─── Verification ────────────────────────────────────────────────────── */
 
+type VerifiableUser = {
+  idCardImageUrl?: string | null;
+  bankBookImageUrl?: string | null;
+  settings?: unknown;
+  idType?: string | null;
+  teachingLocation?: string | null;
+  passportNumberEnc?: string | null;
+  passportNationality?: string | null;
+  passportExpiresOn?: Date | null;
+  workPermitImageUrl?: string | null;
+  workPermitExpiresOn?: Date | null;
+};
+
 /** True when the data behind a verification field is actually on file. */
-export function hasSubmittedData(
-  field: VerificationField,
-  user: { idCardImageUrl?: string | null; bankBookImageUrl?: string | null; settings?: unknown },
-) {
+export function hasSubmittedData(field: VerificationField, user: VerifiableUser) {
   const settings = asSettings(user.settings);
   switch (field) {
     case "idCard":
@@ -585,16 +645,21 @@ export function hasSubmittedData(
     case "address":
       return Boolean(settings.address);
     case "taxInfo":
+      if (user.idType === "PASSPORT") {
+        return Boolean(settings.taxName && user.passportNumberEnc && user.passportNationality && user.passportExpiresOn);
+      }
       return Boolean(settings.taxName && settings.nationalId);
+    case "workPermit":
+      return Boolean(user.workPermitImageUrl && user.workPermitExpiresOn);
   }
 }
 
-export function computeVerificationStatus(verification: Record<string, { status?: string } | undefined>) {
-  const statuses = VERIFICATION_FIELDS.map((field) => verification[field]?.status);
-  if (statuses.every((status) => status === "VERIFIED")) return "VERIFIED";
-  if (statuses.some((status) => status === "REJECTED")) return "REJECTED";
-  if (statuses.some((status) => status === "PENDING")) return "PENDING";
-  return "UNVERIFIED";
+/** Overall status; only the fields this tutor needs (work permit or not) count. */
+export function computeVerificationStatus(
+  verification: Record<string, { status?: string } | undefined>,
+  user: TutorIdentityState = {},
+) {
+  return computeTutorVerificationStatus(verification, user);
 }
 
 export type VerificationPlan =
@@ -612,7 +677,8 @@ export function planVerification(input: {
   field?: unknown;
   fields?: unknown;
   status: "VERIFIED" | "REJECTED";
-  user: { idCardImageUrl?: string | null; bankBookImageUrl?: string | null; settings?: unknown };
+  user: VerifiableUser;
+  asOf?: Date;
 }): VerificationPlan {
   const verification = asSettings(input.user.settings).verification || {};
   const pending = VERIFICATION_FIELDS.filter((field) => verification[field]?.status === "PENDING");
@@ -662,6 +728,38 @@ export function planVerification(input: {
         details: { fields: missing },
       };
     }
+    // An expired passport or work permit cannot be approved.
+    const asOf = input.asOf ?? new Date();
+    const expired = targets.filter(
+      (field) =>
+        (field === "taxInfo" && input.user.idType === "PASSPORT" && isExpired(input.user.passportExpiresOn, asOf)) ||
+        (field === "workPermit" && isExpired(input.user.workPermitExpiresOn, asOf)),
+    );
+    if (expired.length > 0) {
+      return {
+        ok: false,
+        status: 409,
+        code: "VERIFICATION_DOCUMENT_EXPIRED",
+        message: "The passport or work permit has expired",
+        details: { fields: expired },
+      };
+    }
+    // The payout account name must match the ID. For passport holders the
+    // name on the passport (taxName) must be on file before the bank account
+    // can be approved; the Thai ID flow keeps its existing order.
+    if (
+      targets.includes("bankBook") &&
+      input.user.idType === "PASSPORT" &&
+      !asSettings(input.user.settings).taxName
+    ) {
+      return {
+        ok: false,
+        status: 409,
+        code: "BANK_NAME_ID_MISSING",
+        message: "The name on the ID must be on file before the bank account can be approved",
+        details: { fields: ["bankBook"] },
+      };
+    }
   }
   return { ok: true, targets };
 }
@@ -700,6 +798,13 @@ export const verifyUser = async (req: AuthenticatedRequest, res: Response) => {
         bankBookImageUrl: true,
         payoutIdentityVersion: true,
         verificationStatus: true,
+        idType: true,
+        teachingLocation: true,
+        passportNumberEnc: true,
+        passportNationality: true,
+        passportExpiresOn: true,
+        workPermitImageUrl: true,
+        workPermitExpiresOn: true,
       },
     });
 
@@ -736,7 +841,7 @@ export const verifyUser = async (req: AuthenticatedRequest, res: Response) => {
       };
     }
 
-    const nextStatus = computeVerificationStatus(verification);
+    const nextStatus = computeVerificationStatus(verification, user);
     const nextSettings = { ...currentSettings, verification };
     const rejectionSummary =
       status === "REJECTED" ? targets.map((target) => getCommentForField(target)).join(" / ") : null;
@@ -797,6 +902,7 @@ export const verifyUser = async (req: AuthenticatedRequest, res: Response) => {
             email: user.email || undefined,
             bankAccountBrand: bankBrand,
             bankAccountNumber: accountNumber,
+            // Account name must match the ID: the name on the ID when on file.
             bankAccountName: currentSettings.taxName || user.displayName || `Tutor ${id}`,
           });
           omiseRecipientId = recipient.id;
@@ -978,6 +1084,65 @@ export const updateOmiseRecipient = async (req: AuthenticatedRequest, res: Respo
   }
 };
 
+/* ─── Tax residency ───────────────────────────────────────────────────── */
+
+/**
+ * ADMIN sets a tutor's tax residency. RESIDENT: 3% withholding with 50 ทวิ;
+ * NON_RESIDENT: 15% reported on PND.54. Bumps payoutIdentityVersion so an
+ * open settlement run calculated at the old rate cannot be approved as-is.
+ */
+export const updateTaxResidency = async (req: AuthenticatedRequest, res: Response) => {
+  if (req.user?.role !== "ADMIN") {
+    return sendError(res, 403, "FORBIDDEN", "Requires Admin privileges");
+  }
+  const { id } = req.params;
+  if (!isUuid(id)) return sendError(res, 404, "USER_NOT_FOUND", "User not found");
+  const { taxResidency } = req.body ?? {};
+  const reason = cleanReason(req.body?.reason);
+  if (!isTaxResidency(taxResidency)) {
+    return sendError(res, 400, "INVALID_TAX_RESIDENCY", "taxResidency must be RESIDENT or NON_RESIDENT");
+  }
+  if (reason.length < 3) {
+    return sendError(res, 400, "REASON_REQUIRED", "A reason is required");
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { userId: id },
+      select: { role: true, settings: true, taxResidency: true },
+    });
+    if (!user) return sendError(res, 404, "USER_NOT_FOUND", "User not found");
+    if (user.role !== "TUTOR") return sendError(res, 400, "NOT_A_TUTOR", "User is not a TUTOR");
+    if (isAnonymized(user.settings)) {
+      return sendError(res, 409, "USER_ANONYMIZED", "This account has been anonymized");
+    }
+    if (user.taxResidency === taxResidency) {
+      return res.status(200).json({ taxResidency, unchanged: true });
+    }
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { userId: id },
+        data: { taxResidency, payoutIdentityVersion: { increment: 1 } },
+      }),
+      prisma.auditEvent.create({
+        data: buildAuditEventData({
+          actorId: req.user.userId,
+          action: AUDIT_ACTIONS.USER_TAX_RESIDENCY_UPDATE,
+          entityType: AUDIT_ENTITY.USER,
+          entityId: id,
+          payload: { from: user.taxResidency, to: taxResidency, reason },
+        }),
+      }),
+    ]);
+
+    return res.status(200).json({ taxResidency });
+  } catch (error) {
+    logger.error("Update Tax Residency Error:", error);
+    return sendError(res, 500, "INTERNAL_SERVER_ERROR", "Could not update tax residency");
+  }
+};
+
 /* ─── Anonymize (PDPA right to erasure) ───────────────────────────────── */
 
 /**
@@ -1025,6 +1190,8 @@ export const anonymizeUser = async (req: AuthenticatedRequest, res: Response) =>
         bankBookImageUrl: true,
         verificationComment: true,
         isActive: true,
+        passportNumberEnc: true,
+        workPermitImageUrl: true,
       },
     });
     if (!user) return sendError(res, 404, "USER_NOT_FOUND", "User not found");
@@ -1075,6 +1242,8 @@ export const anonymizeUser = async (req: AuthenticatedRequest, res: Response) =>
         ["idCardImageUrl", user.idCardImageUrl],
         ["bankBookImageUrl", user.bankBookImageUrl],
         ["verificationComment", user.verificationComment],
+        ["passportNumberEnc", user.passportNumberEnc],
+        ["workPermitImageUrl", user.workPermitImageUrl],
       ] as const
     )
       .filter(([, value]) => Boolean(value))
@@ -1111,6 +1280,12 @@ export const anonymizeUser = async (req: AuthenticatedRequest, res: Response) =>
           bankBookImageUrl: null,
           verificationComment: null,
           verificationStatus: "UNVERIFIED",
+          passportNumberEnc: null,
+          passportNumberLast4: null,
+          passportNationality: null,
+          passportExpiresOn: null,
+          workPermitImageUrl: null,
+          workPermitExpiresOn: null,
           settings: scrubbed.settings,
           isActive: false,
           // Invalidates any settlement review that still references this payout identity.

@@ -43,6 +43,8 @@ export const PROXY_RULES: readonly ProxyRule[] = [
   { methods: ["POST"], path: "/v1/settlements/preview", service: "finance" },
   { methods: ["POST"], path: "/v1/settlements/:id/(refresh|submit|approve|reject)", service: "finance" },
   { methods: ["GET"], path: "/v1/settlements/:id/(lines|export)", service: "finance" },
+  // PND.54 carries full passport numbers: ADMIN only.
+  { methods: ["GET"], path: "/v1/settlements/:id/pnd54", service: "finance", roles: ADMIN },
   { methods: ["POST"], path: "/v1/settlements/:id/lines/:lineId/(transfer|sync-transfer)", service: "finance" },
   { methods: ["GET", "POST"], path: "/v1/adjustments", service: "finance" },
   { methods: ["POST"], path: "/v1/adjustments/:id/(approve|reject)", service: "finance" },
@@ -64,6 +66,7 @@ export const PROXY_RULES: readonly ProxyRule[] = [
   { methods: ["POST"], path: "/v1/users/:id/verify", service: "finance", roles: ADMIN },
   { methods: ["POST"], path: "/v1/users/:id/(suspend|anonymize)", service: "finance", roles: ADMIN },
   { methods: ["PATCH"], path: "/v1/users/:id/omise-recipient", service: "finance", roles: ADMIN },
+  { methods: ["PATCH"], path: "/v1/users/:id/tax-residency", service: "finance", roles: ADMIN },
   { methods: ["GET", "POST"], path: "/v1/admin/roles", service: "identity", roles: ADMIN },
   { methods: ["GET"], path: "/v1/users/:id/payments", service: "finance" },
   { methods: ["GET"], path: "/v1/users/:id/audit", service: "finance", roles: ADMIN },

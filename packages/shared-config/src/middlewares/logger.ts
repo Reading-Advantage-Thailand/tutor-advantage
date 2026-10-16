@@ -7,7 +7,9 @@ const BEARER_TOKEN_PATTERN = /\bBearer\s+[A-Za-z0-9._~+/=-]+/gi;
 const COOKIE_TOKEN_PATTERN = /\b((?:student-session|tutor_session|session|token)=)[^;\s]+/gi;
 const SENSITIVE_QUERY_PARAMETER_PATTERN = /([?&](?:access_token|authorization|code|id_token|password|referralToken|secret|signature|state|token)=)[^&#\s]*/gi;
 
-const SENSITIVE_KEY_PATTERN = /(?:access|api|auth|cookie|database|password|private|refresh|secret|token)/i;
+const SENSITIVE_KEY_PATTERN = /(?:access|api|auth|cookie|database|password|private|refresh|secret|token|passport|nationalid|workpermit)/i;
+// Passport-number-like tokens in free text: 1-3 letters followed by 6+ digits (e.g. AA1234567).
+const PASSPORT_TEXT_PATTERN = /\b[A-Z]{1,3}\d{6,17}\b/g;
 const IDENTIFIER_KEYS = new Set([
   "articleid",
   "bookid",
@@ -60,7 +62,8 @@ export function redactSensitiveText(value: string): string {
     .replace(DATABASE_URL_PATTERN, "[REDACTED_DATABASE_URL]")
     .replace(BEARER_TOKEN_PATTERN, "Bearer [REDACTED]")
     .replace(COOKIE_TOKEN_PATTERN, "$1[REDACTED]")
-    .replace(SENSITIVE_QUERY_PARAMETER_PATTERN, "$1[REDACTED]");
+    .replace(SENSITIVE_QUERY_PARAMETER_PATTERN, "$1[REDACTED]")
+    .replace(PASSPORT_TEXT_PATTERN, "[REDACTED_DOCUMENT_NUMBER]");
 }
 
 /** Recursively redacts structured log metadata using the same policy as messages. */

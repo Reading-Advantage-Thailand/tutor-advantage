@@ -106,6 +106,7 @@ export const settlements = {
   notFoundTitle: "ไม่พบรอบจ่ายเงินนี้",
   notFoundDescription: "รอบนี้อาจถูกลบ หรือลิงก์ไม่ถูกต้อง",
   exportCsv: "ดาวน์โหลด CSV",
+  exportPnd54: "ดาวน์โหลด ภ.ง.ด.54 (ครูต่างชาติ)",
   recalculate: "คำนวณใหม่",
   submitForReview: "ส่งให้ผู้ตรวจสอบ",
   cancelDraft: "ยกเลิกฉบับร่าง",

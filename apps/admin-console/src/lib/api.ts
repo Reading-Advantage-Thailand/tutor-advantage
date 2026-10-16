@@ -49,6 +49,10 @@ export const ERROR_MESSAGES: Record<string, string> = {
   SETTLEMENT_IMMUTABLE: "รอบจ่ายเงินนี้ถูกล็อกแล้ว แก้ไขไม่ได้",
   SETTLEMENT_ALREADY_CLAIMED: "มีผู้ดำเนินการกับรอบจ่ายเงินนี้อยู่แล้ว กรุณารีเฟรช",
   SETTLEMENT_NOT_APPROVED: "รอบจ่ายเงินนี้ยังไม่ได้รับอนุมัติ",
+  // Foreign tutors (passport)
+  VERIFICATION_DOCUMENT_EXPIRED: "หนังสือเดินทางหรือใบอนุญาตทำงานหมดอายุแล้ว อนุมัติไม่ได้",
+  BANK_NAME_ID_MISSING: "ยังไม่มีชื่อตามหนังสือเดินทาง จึงตรวจว่าชื่อบัญชีตรงกับเอกสารไม่ได้",
+  INVALID_TAX_RESIDENCY: "สถานะภาษีไม่ถูกต้อง",
   SETTLEMENT_PERIOD_MISMATCH: "เดือนของรอบจ่ายเงินไม่ตรงกับข้อมูลที่เลือก",
   INVALID_PERIOD_MONTH: "รูปแบบเดือนไม่ถูกต้อง",
   NOT_SETTLEMENT_DAY: "ยังไม่ถึงวันคำนวณรอบจ่ายเงิน",

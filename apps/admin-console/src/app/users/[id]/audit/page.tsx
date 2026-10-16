@@ -39,7 +39,7 @@ function summary(item: AuditItem): string {
   if (Array.isArray(p.fields)) {
     const labels = (p.fields as string[])
       .filter((f): f is VerificationField => (VERIFICATION_FIELDS as string[]).includes(f))
-      .map(fieldLabel);
+      .map((field) => fieldLabel(field));
     if (labels.length) parts.push(`${t("userDetail.auditFields")}: ${labels.join(", ")}`);
   }
   if (typeof p.toRole === "string") {

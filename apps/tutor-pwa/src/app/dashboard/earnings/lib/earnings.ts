@@ -25,6 +25,8 @@ export type EarningsHistoryItem = {
   clawback: number;
   adjustments?: EarningsAdjustment[];
   withholdingTax?: number;
+  /** Rate actually applied (3 resident / 15 non-resident). */
+  withholdingRatePercent?: number;
   netPayout?: number;
   payoutDocument?: PayoutDocumentSummary | null;
   status: string;
@@ -61,12 +63,12 @@ export const EMPTY_RATE_INFO: RateInfo = { rate: 0, volume: 0, nextTarget: 0 };
 
 /**
  * WHT for the current projection, satang-precise to mirror the backend
- * calculateWithholdingTax: (grossMinor * 3 + 50) / 100 with integer (floor)
- * division, matching BigInt arithmetic.
+ * calculateWithholdingTax: (grossMinor * rate + 50) / 100 with integer (floor)
+ * division, matching BigInt arithmetic. Rate: 3 resident, 15 non-resident.
  */
-export function projectWithholding(gross: number): { gross: number; wht: number; net: number } {
+export function projectWithholding(gross: number, ratePercent = 3): { gross: number; wht: number; net: number } {
   const grossMinor = Math.round(gross * 100);
-  const whtMinor = grossMinor > 0 ? Math.floor((grossMinor * 3 + 50) / 100) : 0;
+  const whtMinor = grossMinor > 0 ? Math.floor((grossMinor * ratePercent + 50) / 100) : 0;
   return { gross, wht: whtMinor / 100, net: (grossMinor - whtMinor) / 100 };
 }
 
@@ -109,7 +111,13 @@ export function adjustmentLines(
 
 /** Whether the tax certificate (50 ทวิ) can be offered for this payout row. */
 export function canOfferTawi50(item: EarningsHistoryItem): boolean {
-  return Boolean(item.payoutDocument) && item.status === "approved" && (item.withholdingTax ?? 0) > 0;
+  return (
+    Boolean(item.payoutDocument) &&
+    item.status === "approved" &&
+    (item.withholdingTax ?? 0) > 0 &&
+    // Non-resident payouts are filed on PND.54; no 50 ทวิ is issued.
+    item.payoutDocument?.documentType !== "PAY_SLIP_PND54"
+  );
 }
 
 /** Transfer statuses that are not final yet: keep syncing until they settle. */

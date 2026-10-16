@@ -42,6 +42,7 @@ import { TransferStatusBadge, TransferStatusProvider } from "./transfer-status-b
 
 type TutorProfile = {
   verificationStatus?: string;
+  identity?: { taxResidency?: "RESIDENT" | "NON_RESIDENT" };
   settings?: {
     taxName?: string;
     nationalId?: string;
@@ -151,7 +152,8 @@ export default async function EarningsPage() {
   const periodMonth = response?.periodMonth || "";
   const periodLabel = formatPeriodMonth(periodMonth) || "–";
 
-  const projection = projectWithholding(earnings.total);
+  const nonResident = user?.identity?.taxResidency === "NON_RESIDENT";
+  const projection = projectWithholding(earnings.total, nonResident ? 15 : 3);
   const ratePercent = commissionPercent(rateInfo.rate);
   const progressPercent = rateProgressPercent(rateInfo);
   const projectionAdjustments = adjustmentLines(earnings, t("dashboardEarnings.clawback"));
@@ -273,7 +275,7 @@ export default async function EarningsPage() {
           value={money(projection.net)}
           icon={Wallet}
           tone="brand"
-          hint={t("dashboardEarnings.stats.afterWHT")}
+          hint={nonResident ? t("dashboardEarnings.stats.afterWHTNonResident") : t("dashboardEarnings.stats.afterWHT")}
         />
         <StatCard
           label={t("dashboardEarnings.stats.direct")}
@@ -306,7 +308,7 @@ export default async function EarningsPage() {
         <Surface padding="lg">
           <CardHeader
             title={t("dashboardEarnings.projectionTitle")}
-            description={t("dashboardEarnings.projectionWHTNote")}
+            description={nonResident ? t("dashboardEarnings.projectionWHTNoteNonResident") : t("dashboardEarnings.projectionWHTNote")}
             action={<Chip tone="neutral">{periodLabel}</Chip>}
           />
           <dl className="mt-3 divide-y divide-hairline">
@@ -326,7 +328,7 @@ export default async function EarningsPage() {
             <AmountRow label={t("dashboardEarnings.grossBeforeWHT")} value={money(projection.gross)} />
             {projection.wht > 0 ? (
               <AmountRow
-                label={t("dashboardEarnings.withholdingTaxEstimated")}
+                label={nonResident ? t("dashboardEarnings.withholdingTaxEstimatedNonResident") : t("dashboardEarnings.withholdingTaxEstimated")}
                 value={money(-projection.wht)}
                 tone="negative"
               />

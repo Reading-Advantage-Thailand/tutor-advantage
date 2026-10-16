@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState, type ReactNode } from "react";
-import { CheckCircle2, CreditCard, FileImage, IdCard, MapPin, Pencil, Receipt, XCircle } from "lucide-react";
+import { Briefcase, CheckCircle2, CreditCard, FileImage, IdCard, Landmark, MapPin, Pencil, Receipt, XCircle } from "lucide-react";
 import {
   AdminStatusChip,
   Card,
@@ -28,9 +28,10 @@ import {
   displayName,
   fieldLabel,
   invalidateUser,
+  isPassportHolder,
   pendingFields,
   useUserDetail,
-  VERIFICATION_FIELDS,
+  visibleFields,
   type UserDetailV2,
   type VerificationField,
 } from "../model";
@@ -39,7 +40,7 @@ import "@/locales/th/userHeader";
 
 const DocumentViewer = dynamic(() => import("../components/DocumentViewer").then((m) => m.DocumentViewer), { ssr: false });
 
-const FIELD_ICONS = { idCard: IdCard, bankBook: CreditCard, address: MapPin, taxInfo: Receipt } as const;
+const FIELD_ICONS = { idCard: IdCard, bankBook: CreditCard, address: MapPin, taxInfo: Receipt, workPermit: Briefcase } as const;
 
 type DialogState =
   | { mode: "approveAll"; fields: VerificationField[] }
@@ -53,9 +54,20 @@ function hidden(user: UserDetailV2, value: string | null | undefined, has?: bool
   return <span className="text-fg-muted">{t("userDetail.notProvided")}</span>;
 }
 
+function expiryValue(date: string | null | undefined, expired: boolean | undefined): ReactNode {
+  if (!date) return <span className="text-fg-muted">{t("userDetail.notProvided")}</span>;
+  return (
+    <span className={expired ? "font-semibold text-danger-fg" : "tabular"}>
+      {date}
+      {expired ? ` · ${t("userDetail.documentExpired")}` : ""}
+    </span>
+  );
+}
+
 /** The submitted data for one field, as label/value pairs. */
 function fieldData(user: UserDetailV2, field: VerificationField) {
   const s = user.settings;
+  const identity = user.identity;
   switch (field) {
     case "idCard":
       return [];
@@ -63,13 +75,43 @@ function fieldData(user: UserDetailV2, field: VerificationField) {
       return [
         { label: t("userDetail.bankBrand"), value: s.bankBrand ? (BANK_LABELS[s.bankBrand] ?? s.bankBrand) : hidden(user, null) },
         { label: t("userDetail.bankAccountNumber"), value: <span className="tabular">{hidden(user, s.bankAccountNumber)}</span> },
+        // Payout account name must match the name on the ID document.
+        { label: t("userDetail.bankNameMustMatch"), value: hidden(user, s.taxName), wide: true },
       ];
     case "address":
       return [{ label: t("userHeader.deliveryAddress"), value: hidden(user, s.address, s.hasAddress), wide: true }];
     case "taxInfo":
+      if (identity && isPassportHolder(user)) {
+        return [
+          { label: t("userDetail.idType"), value: t("userDetail.idTypePassport") },
+          { label: t("userDetail.taxName"), value: hidden(user, s.taxName) },
+          { label: t("userDetail.passportNumber"), value: <span className="tabular">{identity.passportNumberMasked ?? PLACEHOLDER}</span> },
+          { label: t("userDetail.passportNationality"), value: identity.passportNationality ?? PLACEHOLDER },
+          { label: t("userDetail.passportExpiresOn"), value: expiryValue(identity.passportExpiresOn, identity.passportExpired) },
+          {
+            label: t("userDetail.teachingLocation"),
+            value:
+              identity.teachingLocation === "THAILAND"
+                ? t("userDetail.teachingFromThailand")
+                : identity.teachingLocation === "ABROAD"
+                  ? t("userDetail.teachingFromAbroad")
+                  : PLACEHOLDER,
+          },
+          {
+            label: t("userDetail.rightToWork"),
+            value: identity.rightToWorkConfirmedAt
+              ? t("userDetail.rightToWorkAt", { date: formatThaiDateTime(identity.rightToWorkConfirmedAt) })
+              : PLACEHOLDER,
+          },
+        ];
+      }
       return [
         { label: t("userDetail.taxName"), value: hidden(user, s.taxName) },
         { label: t("userDetail.nationalId"), value: <span className="tabular">{hidden(user, s.nationalId, s.hasNationalId)}</span> },
+      ];
+    case "workPermit":
+      return [
+        { label: t("userDetail.workPermitExpiresOn"), value: expiryValue(identity?.workPermitExpiresOn, identity?.workPermitExpired) },
       ];
   }
 }
@@ -77,7 +119,72 @@ function fieldData(user: UserDetailV2, field: VerificationField) {
 function documentFor(user: UserDetailV2, field: VerificationField) {
   if (field === "idCard") return { url: user.idCardImageUrl, has: user.hasIdCardImage };
   if (field === "bankBook") return { url: user.bankBookImageUrl, has: user.hasBankBookImage };
+  if (field === "workPermit") return { url: user.identity?.workPermitImageUrl ?? null, has: Boolean(user.identity?.hasWorkPermitImage) };
   return null;
+}
+
+function payoutBlockText(block: NonNullable<UserDetailV2["identity"]>["payoutBlock"] | undefined) {
+  if (block === "PASSPORT_EXPIRED") return t("userDetail.payoutBlockedPassportExpired");
+  if (block === "WORK_PERMIT_EXPIRED") return t("userDetail.payoutBlockedWorkPermitExpired");
+  if (block === "WORK_PERMIT_MISSING") return t("userDetail.payoutBlockedWorkPermitMissing");
+  return null;
+}
+
+/** ADMIN sets resident (3%, 50 ทวิ) or non-resident (15%, PND.54). */
+function TaxResidencyCard({ user, adminId, canEdit }: { user: UserDetailV2; adminId: string; canEdit: boolean }) {
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [idempotencyKey, setIdempotencyKey] = useState("");
+  const current = user.identity?.taxResidency ?? "RESIDENT";
+  const next = current === "RESIDENT" ? "NON_RESIDENT" : "RESIDENT";
+  const label = (value: string) =>
+    value === "NON_RESIDENT" ? t("userDetail.taxResidencyNonResident") : t("userDetail.taxResidencyResident");
+
+  return (
+    <Card padding="md">
+      <CardHeader
+        icon={<IconTile icon={Landmark} tone="neutral" size="sm" />}
+        title={t("userDetail.taxResidencyTitle")}
+        description={label(current)}
+        action={
+          canEdit ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setIdempotencyKey(newIdempotencyKey());
+                setConfirmOpen(true);
+              }}
+            >
+              <Pencil aria-hidden="true" />{" "}
+              {next === "NON_RESIDENT" ? t("userDetail.taxResidencySetNonResident") : t("userDetail.taxResidencySetResident")}
+            </Button>
+          ) : null
+        }
+      />
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t("userDetail.taxResidencyConfirmTitle", { name: displayName(user) })}
+        description={t("userDetail.taxResidencyConfirmBody")}
+        confirmLabel={next === "NON_RESIDENT" ? t("userDetail.taxResidencySetNonResident") : t("userDetail.taxResidencySetResident")}
+        tone="danger"
+        reason={{ label: t("userDetail.reasonLabel"), minLength: 3 }}
+        details={
+          <DescriptionList
+            items={[
+              { label: t("userDetail.taxResidencyFrom"), value: label(current) },
+              { label: t("userDetail.taxResidencyTo"), value: label(next) },
+            ]}
+          />
+        }
+        onConfirm={async ({ reason }) => {
+          await api.patch(`/v1/users/${user.id}/tax-residency`, { taxResidency: next, reason }, { idempotencyKey });
+          toast.success(t("userDetail.taxResidencySaved"));
+          invalidateUser(adminId, user.id);
+        }}
+      />
+    </Card>
+  );
 }
 
 function FieldCard({
@@ -107,7 +214,7 @@ function FieldCard({
     <Card padding="md" className="flex flex-col">
       <CardHeader
         icon={<IconTile icon={Icon} tone={tone} size="sm" />}
-        title={fieldLabel(field)}
+        title={fieldLabel(field, user)}
         description={
           status === "UNVERIFIED"
             ? t("userDetail.fieldNotSubmitted")
@@ -123,7 +230,7 @@ function FieldCard({
           doc.url ? (
             <button
               type="button"
-              onClick={() => onView(doc.url!, fieldLabel(field))}
+              onClick={() => onView(doc.url!, fieldLabel(field, user))}
               className="group relative flex h-40 items-center justify-center overflow-hidden rounded-lg border border-hairline bg-surface-muted outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary document URL */}
@@ -290,9 +397,15 @@ export default function UserVerificationTab() {
   };
 
   const bankBookIn = (fields: VerificationField[]) => fields.includes("bankBook") && !user.settings.omiseRecipientId;
+  const blockText = payoutBlockText(user.identity?.payoutBlock);
 
   return (
     <>
+      {blockText ? (
+        <Notice tone="danger" role="alert">
+          {blockText}
+        </Notice>
+      ) : null}
       <Card padding="md" tone={pending.length ? "warning" : "default"}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
@@ -313,7 +426,7 @@ export default function UserVerificationTab() {
 
       <Section>
         <Grid cols={2}>
-          {VERIFICATION_FIELDS.map((field) => (
+          {visibleFields(user).map((field) => (
             <FieldCard
               key={field}
               user={user}
@@ -326,6 +439,8 @@ export default function UserVerificationTab() {
           ))}
         </Grid>
       </Section>
+
+      {!anonymized ? <TaxResidencyCard user={user} adminId={me.userId} canEdit={isAdmin} /> : null}
 
       {isAdmin && !anonymized ? <OmiseRecipientCard user={user} adminId={me.userId} /> : null}
 
@@ -343,7 +458,7 @@ export default function UserVerificationTab() {
               <ul className="flex flex-col gap-1 text-sm text-fg">
                 {dialog.fields.map((field) => (
                   <li key={field} className="flex items-center gap-2">
-                    <CheckCircle2 aria-hidden="true" className="size-4 text-success-fg" /> {fieldLabel(field)}
+                    <CheckCircle2 aria-hidden="true" className="size-4 text-success-fg" /> {fieldLabel(field, user)}
                   </li>
                 ))}
               </ul>
@@ -364,7 +479,7 @@ export default function UserVerificationTab() {
       <ConfirmDialog
         open={dialog?.mode === "approve"}
         onOpenChange={(open) => !open && setDialog(null)}
-        title={dialog?.mode === "approve" ? t("userDetail.approveFieldTitle", { field: fieldLabel(dialog.field) }) : ""}
+        title={dialog?.mode === "approve" ? t("userDetail.approveFieldTitle", { field: fieldLabel(dialog.field, user) }) : ""}
         description={t("userDetail.approveFieldBody", { name })}
         confirmLabel={t("userDetail.approveAction")}
         details={
@@ -382,7 +497,7 @@ export default function UserVerificationTab() {
       <ConfirmDialog
         open={dialog?.mode === "reject"}
         onOpenChange={(open) => !open && setDialog(null)}
-        title={dialog?.mode === "reject" ? t("userDetail.rejectFieldTitle", { field: fieldLabel(dialog.field) }) : ""}
+        title={dialog?.mode === "reject" ? t("userDetail.rejectFieldTitle", { field: fieldLabel(dialog.field, user) }) : ""}
         description={t("userDetail.rejectFieldBody")}
         confirmLabel={t("userDetail.rejectAction")}
         tone="danger"

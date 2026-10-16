@@ -1,12 +1,14 @@
-const WHT_RATE_PERCENT = 3n;
+import { calculateWithholdingAtRate, WHT_RATE_PERCENT_BY_RESIDENCY } from "@tutor-advantage/shared-config";
 
-export function calculateWithholdingTax(grossPayoutMinor: bigint) {
-  const withholdingTaxMinor = (grossPayoutMinor * WHT_RATE_PERCENT + 50n) / 100n;
-  return {
-    grossPayoutMinor,
-    withholdingTaxMinor,
-    netPayoutMinor: grossPayoutMinor - withholdingTaxMinor,
-  };
+/**
+ * Withholding tax on a tutor payout. Residents: 3% (50 ทวิ); non-residents:
+ * 15% (PND.54). Defaults to the resident rate.
+ */
+export function calculateWithholdingTax(
+  grossPayoutMinor: bigint,
+  ratePercent: number = WHT_RATE_PERCENT_BY_RESIDENCY.RESIDENT,
+) {
+  return calculateWithholdingAtRate(grossPayoutMinor, ratePercent);
 }
 
 export function buildReceiptNumber(paymentIntentId: string, issuedAt = new Date()) {

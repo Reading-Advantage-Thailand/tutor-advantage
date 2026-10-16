@@ -49,6 +49,7 @@ export const AUDIT_ACTIONS = {
   USER_ANONYMIZE: "USER_ANONYMIZE",
   USER_OMISE_RECIPIENT_UPDATE: "USER_OMISE_RECIPIENT_UPDATE",
   USER_PII_REVEAL: "USER_PII_REVEAL",
+  USER_TAX_RESIDENCY_UPDATE: "USER_TAX_RESIDENCY_UPDATE",
   ROLE_CHANGE: "ROLE_CHANGE",
   // Coupons (G5)
   COUPON_CREATE: "COUPON_CREATE",
@@ -72,7 +73,7 @@ export const AUDIT_ENTITY = {
 
 export const SYSTEM_ACTOR = "SYSTEM";
 
-const SENSITIVE_KEY = /(password|token|secret|cvv|cardnumber|^pan$|bankaccount|accountnumber|privatekey|nationalid|idcardnumber|taxid)/i;
+const SENSITIVE_KEY = /(password|token|secret|cvv|cardnumber|^pan$|bankaccount|accountnumber|privatekey|nationalid|idcardnumber|taxid|passport|workpermitnumber)/i;
 const MAX_STRING = 2000;
 const MAX_DEPTH = 5;
 

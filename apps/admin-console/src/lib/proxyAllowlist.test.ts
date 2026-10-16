@@ -25,6 +25,8 @@ describe("proxy allowlist", () => {
       ["POST", "/v1/reconciliation/orphan-events/abc/dismiss", "finance"],
       ["POST", "/v1/fraud-flags/abc/action", "finance"],
       ["PATCH", "/v1/users/abc/omise-recipient", "finance"],
+      ["PATCH", "/v1/users/abc/tax-residency", "finance"],
+      ["GET", "/v1/settlements/abc/pnd54", "finance"],
       ["GET", "/v1/admin/roles", "identity"],
       ["POST", "/v1/admin/roles", "identity"],
       ["GET", "/v1/admin/voice-operations", "learning"],
@@ -58,6 +60,11 @@ describe("proxy allowlist", () => {
       expect(match.ok, path).toBe(false);
       if (!match.ok && path !== "/v1/users/me") expect(match.status, path).toBe(403);
     }
+  });
+
+  it("keeps PND.54 (full passport numbers) and tax residency changes ADMIN-only", () => {
+    expect(matchProxyRequest(seg("/v1/settlements/abc/pnd54"), "GET", checker).ok).toBe(false);
+    expect(matchProxyRequest(seg("/v1/users/abc/tax-residency"), "PATCH", checker).ok).toBe(false);
   });
 
   it("rejects disallowed methods with 405", () => {

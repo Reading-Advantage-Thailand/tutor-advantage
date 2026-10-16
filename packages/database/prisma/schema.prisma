@@ -34,6 +34,20 @@ model User {
   verificationStatus String                  @default("UNVERIFIED") @map("verification_status")
   verificationComment String?                 @map("verification_comment")
 
+  // Identity document (foreign tutors, phase 1). Thai ID stays in settings.nationalId.
+  idType              String                  @default("THAI_ID") @map("id_type")
+  /// AES-256-GCM ciphertext (shared-config encryptPii); never log or return it.
+  passportNumberEnc   String?                 @map("passport_number_enc")
+  passportNumberLast4 String?                 @map("passport_number_last4")
+  passportNationality String?                 @map("passport_nationality")
+  passportExpiresOn   DateTime?               @map("passport_expires_on") @db.Date
+  teachingLocation    String?                 @map("teaching_location")
+  workPermitImageUrl  String?                 @map("work_permit_image_url")
+  workPermitExpiresOn DateTime?               @map("work_permit_expires_on") @db.Date
+  rightToWorkConfirmedAt DateTime?            @map("right_to_work_confirmed_at") @db.Timestamptz
+  /// Set by an admin; drives the withholding rate (RESIDENT 3%, NON_RESIDENT 15%).
+  taxResidency        String                  @default("RESIDENT") @map("tax_residency")
+
   createdAt         DateTime                  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime                  @default(now()) @map("updated_at") @db.Timestamptz
   oauthIdentities   OAuthIdentity[]
@@ -726,6 +740,9 @@ model PayoutLine {
   eligibilityStatus   String   @map("eligibility_status")
   payoutIdentityVersion Int    @default(0) @map("payout_identity_version")
   recipientSnapshot  String?   @map("recipient_snapshot")
+  /// Withholding rate actually applied to this line, and the residency it came from.
+  withholdingRatePercent Int    @default(3) @map("withholding_rate_percent")
+  taxResidency        String   @default("RESIDENT") @map("tax_residency")
   createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   settlementRun SettlementRun @relation(fields: [settlementRunId], references: [settlementRunId])

@@ -10,9 +10,13 @@ import {
   isTaxInfoChanged,
   isTaxInfoValid,
   sanitizeDigitsAndDashes,
+  isValidThaiId,
   stepCompletion,
   validateBankDraft,
+  validateTaxInfoDraft,
+  verificationSteps,
   type SettingsUser,
+  type TaxInfoDraft,
 } from "./verification";
 
 const user: SettingsUser = {
@@ -20,7 +24,7 @@ const user: SettingsUser = {
   settings: {
     address: "1 ถนนหลัก",
     taxName: "ครู ทดสอบ",
-    nationalId: "1234567890123",
+    nationalId: "1234567890121",
     verification: {
       idCard: { status: "VERIFIED" },
       bankBook: { status: "REJECTED", comment: "ภาพไม่ชัด" },
@@ -42,8 +46,8 @@ describe("field status", () => {
     expect(getRejectionComment(user, "address")).toBe("");
   });
   it("computes step completion like the old progress bar", () => {
-    expect(stepCompletion(user)).toEqual({ idCard: true, bankBook: true, address: true, taxInfo: true });
-    expect(stepCompletion({})).toEqual({ idCard: false, bankBook: false, address: false, taxInfo: false });
+    expect(stepCompletion(user)).toEqual({ idCard: true, bankBook: true, address: true, taxInfo: true, workPermit: false });
+    expect(stepCompletion({})).toEqual({ idCard: false, bankBook: false, address: false, taxInfo: false, workPermit: false });
   });
 });
 
@@ -59,12 +63,56 @@ describe("validation", () => {
     expect(canSubmitAddress("1 ถนนหลัก", "1 ถนนหลัก")).toBe(false);
     expect(canSubmitAddress("2 ถนนรอง", "1 ถนนหลัก")).toBe(true);
   });
-  it("requires a name and 13 digits for tax info", () => {
-    expect(isTaxInfoValid("ครู", "1-2345-67890-12-3")).toBe(true);
+  const thaiDraft: TaxInfoDraft = {
+    idType: "THAI_ID",
+    taxName: "ครู ทดสอบ",
+    nationalId: "1234567890121",
+    passportNumber: "",
+    passportNationality: "",
+    passportExpiresOn: "",
+    teachingLocation: "",
+    privacyNoticeAccepted: false,
+    rightToWorkConfirmed: false,
+  };
+  const passportDraft: TaxInfoDraft = {
+    ...thaiDraft,
+    idType: "PASSPORT",
+    taxName: "John Smith",
+    nationalId: "",
+    passportNumber: "AA1234567",
+    passportNationality: "GB",
+    passportExpiresOn: "2099-01-01",
+    teachingLocation: "THAILAND",
+    privacyNoticeAccepted: true,
+    rightToWorkConfirmed: true,
+  };
+
+  it("requires a name and a Thai ID with a valid check digit", () => {
+    expect(isValidThaiId("1-2345-67890-12-1")).toBe(true);
+    expect(isValidThaiId("1234567890123")).toBe(false);
+    expect(isTaxInfoValid("ครู", "1-2345-67890-12-1")).toBe(true);
     expect(isTaxInfoValid("ครู", "123")).toBe(false);
-    expect(isTaxInfoValid(" ", "1234567890123")).toBe(false);
-    expect(isTaxInfoChanged(user, "ครู ทดสอบ", "1234567890123")).toBe(false);
-    expect(isTaxInfoChanged(user, "ครู ใหม่", "1234567890123")).toBe(true);
+    expect(isTaxInfoValid(" ", "1234567890121")).toBe(false);
+    expect(validateTaxInfoDraft({ ...thaiDraft, nationalId: "1234567890123" })).toBe("nationalIdInvalid");
+    expect(isTaxInfoChanged(user, thaiDraft)).toBe(false);
+    expect(isTaxInfoChanged(user, { ...thaiDraft, taxName: "ครู ใหม่" })).toBe(true);
+    expect(isTaxInfoChanged(user, passportDraft)).toBe(true);
+  });
+
+  it("validates a passport draft field by field", () => {
+    const now = new Date("2026-10-16T05:00:00Z");
+    expect(validateTaxInfoDraft(passportDraft, now)).toBeNull();
+    expect(validateTaxInfoDraft({ ...passportDraft, passportNumber: "A1" }, now)).toBe("passportNumberInvalid");
+    expect(validateTaxInfoDraft({ ...passportDraft, passportNationality: "" }, now)).toBe("nationalityRequired");
+    expect(validateTaxInfoDraft({ ...passportDraft, passportExpiresOn: "2026-10-16" }, now)).toBe("passportExpiryInvalid");
+    expect(validateTaxInfoDraft({ ...passportDraft, teachingLocation: "" }, now)).toBe("teachingLocationRequired");
+    expect(validateTaxInfoDraft({ ...passportDraft, privacyNoticeAccepted: false }, now)).toBe("privacyNoticeRequired");
+    expect(validateTaxInfoDraft({ ...passportDraft, rightToWorkConfirmed: false }, now)).toBe("rightToWorkRequired");
+  });
+
+  it("adds the work permit step only when the server says it is required", () => {
+    expect(verificationSteps(user)).not.toContain("workPermit");
+    expect(verificationSteps({ identity: { idType: "PASSPORT", workPermitRequired: true } })).toContain("workPermit");
   });
   it("filters digits", () => {
     expect(digitsOnly("12-3a")).toBe("123");

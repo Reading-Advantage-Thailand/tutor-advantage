@@ -6,7 +6,8 @@ import { AuthenticatedRequest } from "./authMiddleware";
 const SENSITIVE_FIELDS = new Set([
   "password", "token", "secret", "cvv", "cardNumber", "pan",
   "bankAccount", "accountNumber", "privateKey", "accessToken", "refreshToken",
-]);
+  "nationalId", "passportNumber", "passportNumberEnc",
+].map((field) => field.toLowerCase()));
 
 function sanitizeBody(body: unknown): unknown {
   if (!body || typeof body !== "object" || Array.isArray(body)) return body;

@@ -76,6 +76,7 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
   const [transferLine, setTransferLine] = useState<PayoutLineRow | null>(null);
   const [syncLine, setSyncLine] = useState<PayoutLineRow | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [exportingPnd54, setExportingPnd54] = useState(false);
 
   const openAction = (next: RunAction) => {
     setActionKey(newIdempotencyKey());
@@ -340,6 +341,27 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
               >
                 <Download aria-hidden="true" />
                 {t("settlements.exportCsv")}
+              </Button>
+            ) : null}
+            {!isEmpty && isAdmin && status === "APPROVED" ? (
+              <Button
+                variant="outline"
+                size="sm"
+                loading={exportingPnd54}
+                onClick={async () => {
+                  setExportingPnd54(true);
+                  try {
+                    await api.download(`/v1/settlements/${id}/pnd54`, `pnd54-${run.periodMonth}.csv`);
+                    toast.success(t("settlements.exportSuccess"));
+                  } catch (err) {
+                    toast.error(err instanceof Error ? err.message : t("settlements.errorTitle"));
+                  } finally {
+                    setExportingPnd54(false);
+                  }
+                }}
+              >
+                <Download aria-hidden="true" />
+                {t("settlements.exportPnd54")}
               </Button>
             ) : null}
           </span>

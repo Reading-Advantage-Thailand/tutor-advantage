@@ -36,11 +36,13 @@ import {
   computeVerificationStatus,
   getUserDetails,
   getUsers,
+  identityForRole,
   maskTail,
   planVerification,
   scrubSettings,
   settingsForRole,
   suspendUser,
+  updateTaxResidency,
   verifyUser,
 } from "./userController";
 
@@ -199,7 +201,7 @@ describe("getUsers", () => {
     expect(where.AND[0]).toEqual({ role: "STUDENT" });
     expect(where.AND[1].OR[1]).toEqual({ email: { contains: "may", mode: "insensitive" } });
     expect(where.AND).toContainEqual({ isActive: true });
-    expect(where.AND[3].OR).toHaveLength(4);
+    expect(where.AND[3].OR).toHaveLength(5);
   });
 
   it("paginates and never returns settings", async () => {
@@ -386,5 +388,103 @@ describe("verifyUser permissions", () => {
     );
     expect(res.statusCode).toBe(403);
     expect(prismaMock.user.findUnique).not.toHaveBeenCalled();
+  });
+});
+
+describe("foreign tutors (passport)", () => {
+  const passportTutor = {
+    ...pendingTutor,
+    idType: "PASSPORT",
+    teachingLocation: "THAILAND",
+    passportNumberEnc: "v1:x:y:z",
+    passportNationality: "GB",
+    passportExpiresOn: new Date("2099-01-01"),
+    workPermitImageUrl: "verification/u/wp.png",
+    workPermitExpiresOn: new Date("2099-01-01"),
+    settings: {
+      ...pendingTutor.settings,
+      taxName: "John Smith",
+      verification: {
+        taxInfo: { status: "PENDING" },
+        workPermit: { status: "PENDING" },
+        bankBook: { status: "PENDING" },
+      },
+    },
+  };
+
+  it("approves passport tax info and work permit while they are valid", () => {
+    const plan = planVerification({ field: "ALL", status: "VERIFIED", user: passportTutor, asOf: new Date("2026-10-16") });
+    expect(plan).toEqual({ ok: true, targets: ["bankBook", "taxInfo", "workPermit"] });
+  });
+
+  it("refuses to approve an expired passport or work permit", () => {
+    const plan = planVerification({
+      field: "ALL",
+      status: "VERIFIED",
+      user: { ...passportTutor, passportExpiresOn: new Date("2026-01-01"), workPermitExpiresOn: new Date("2026-01-01") },
+      asOf: new Date("2026-10-16"),
+    });
+    expect(plan).toMatchObject({ ok: false, code: "VERIFICATION_DOCUMENT_EXPIRED", details: { fields: ["taxInfo", "workPermit"] } });
+  });
+
+  it("needs the name on the passport before the bank account can be approved", () => {
+    const user = { ...passportTutor, settings: { ...passportTutor.settings, taxName: undefined } };
+    const plan = planVerification({ field: "bankBook", status: "VERIFIED", user });
+    expect(plan).toMatchObject({ ok: false, code: "BANK_NAME_ID_MISSING" });
+  });
+
+  it("counts the work permit only for passport holders teaching from Thailand", () => {
+    const verified = { status: "VERIFIED" };
+    const four = { idCard: verified, bankBook: verified, address: verified, taxInfo: verified };
+    expect(computeVerificationStatus(four)).toBe("VERIFIED");
+    expect(computeVerificationStatus(four, { idType: "PASSPORT", teachingLocation: "THAILAND" })).toBe("UNVERIFIED");
+    expect(computeVerificationStatus(four, { idType: "PASSPORT", teachingLocation: "ABROAD" })).toBe("VERIFIED");
+  });
+
+  it("shows the passport number masked to every staff role and the work permit to admins only", () => {
+    const user = { ...passportTutor, passportNumberLast4: "4567", taxResidency: "NON_RESIDENT" };
+    const forAdmin = identityForRole(user, "ADMIN", new Date("2026-10-16"));
+    const forChecker = identityForRole(user, "FINANCE_CHECKER", new Date("2026-10-16"));
+    expect(forAdmin.passportNumberMasked).toBe("••••4567");
+    expect(forChecker.passportNumberMasked).toBe("••••4567");
+    expect(JSON.stringify(forAdmin)).not.toContain("v1:x:y:z");
+    expect(forAdmin.workPermitImageUrl).toBe("verification/u/wp.png");
+    expect(forChecker.workPermitImageUrl).toBeNull();
+    expect(forAdmin.taxResidency).toBe("NON_RESIDENT");
+    expect(forAdmin.payoutBlock).toBeNull();
+  });
+});
+
+describe("updateTaxResidency", () => {
+  it("sets the residency, bumps the payout identity and audits the change", async () => {
+    prismaMock.user.findUnique.mockResolvedValueOnce({ role: "TUTOR", settings: {}, taxResidency: "RESIDENT" });
+    prismaMock.user.update.mockResolvedValueOnce({});
+    prismaMock.auditEvent.create.mockResolvedValueOnce({});
+    const res = createResponse();
+    await updateTaxResidency(
+      { params: { id: USER_ID }, user: ADMIN, body: { taxResidency: "NON_RESIDENT", reason: "Lives in UK" } } as never,
+      res as never,
+    );
+    expect(res.statusCode).toBe(200);
+    expect(prismaMock.user.update).toHaveBeenCalledWith({
+      where: { userId: USER_ID },
+      data: { taxResidency: "NON_RESIDENT", payoutIdentityVersion: { increment: 1 } },
+    });
+    expect(prismaMock.auditEvent.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ action: "USER_TAX_RESIDENCY_UPDATE", payload: expect.objectContaining({ from: "RESIDENT", to: "NON_RESIDENT" }) }),
+    });
+  });
+
+  it("rejects unknown values, missing reasons and non-admins", async () => {
+    for (const [user, body, status] of [
+      [ADMIN, { taxResidency: "MARS", reason: "abc" }, 400],
+      [ADMIN, { taxResidency: "RESIDENT" }, 400],
+      [CHECKER, { taxResidency: "RESIDENT", reason: "abc" }, 403],
+    ] as const) {
+      const res = createResponse();
+      await updateTaxResidency({ params: { id: USER_ID }, user, body } as never, res as never);
+      expect(res.statusCode).toBe(status);
+    }
+    expect(prismaMock.user.update).not.toHaveBeenCalled();
   });
 });
