@@ -84,6 +84,7 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
     missedQuestion,
     submitAnswer,
     kicked,
+    removedByTutor,
     flagCounts,
     flagSentence,
     submitGameVote,
@@ -272,9 +273,22 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
         <StatusScreen
           icon={DoorOpen}
           tone="neutral"
-          title={kicked}
-          description={t("interactivePlay.lessonEnded")}
-          primaryAction={homeLink}
+          title={removedByTutor ? t("interactivePlay.removedTitle") : kicked}
+          description={removedByTutor ? t("interactivePlay.removedDescription") : t("interactivePlay.lessonEnded")}
+          primaryAction={
+            removedByTutor ? (
+              <Button variant="brand" size="cta" className="w-full" onClick={onReconnect}>
+                {t("interactivePlay.rejoin")}
+              </Button>
+            ) : homeLink
+          }
+          secondaryAction={
+            removedByTutor ? (
+              <Link href="/dashboard" className={cn(buttonVariants({ variant: "ghost", size: "cta" }), "w-full text-fg-muted")}>
+                {t("interactivePlay.backHome")}
+              </Link>
+            ) : undefined
+          }
         />
       </Screen>
     );

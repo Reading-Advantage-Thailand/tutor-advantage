@@ -118,6 +118,25 @@ export interface LessonSession {
   // In-memory checkpoints for safe tutor-only phase rewind. These are scoped
   // to the live session and are discarded with the session.
   phaseSnapshots: Map<number, PhaseSnapshot>;
+  // Students the tutor removed from the room (e.g. a frozen phone). They are
+  // kept aside so a DB/snapshot restore cannot bring them back as a ghost the
+  // class waits for, and so their score resumes when they rejoin themselves.
+  kickedParticipants?: Map<string, KickedParticipant>;
+}
+
+export interface KickedParticipant {
+  participant: SessionParticipant;
+  phaseVersion: number;
+}
+
+export interface KickParticipantResult {
+  session: LessonSession;
+  participant: SessionParticipant;
+  /** The game moved to results because the kicked student was the last one playing. */
+  gameCompleted: boolean;
+  /** Every remaining student has answered the current question. */
+  allAnswered: boolean;
+  flagsChanged: boolean;
 }
 
 export interface RestoredLiveSessionState {
@@ -423,10 +442,12 @@ class LessonSessionService {
     session.resumePhase = snapshot.resumePhase;
     session.status = snapshot.status;
     session.participants = new Map(
-      snapshot.participants.map((participant) => [
-        participant.studentId,
-        cloneJson(participant),
-      ]),
+      snapshot.participants
+        .filter((participant) => !session.kickedParticipants?.has(participant.studentId))
+        .map((participant) => [
+          participant.studentId,
+          cloneJson(participant),
+        ]),
     );
     session.activeSentenceIndex = snapshot.activeSentenceIndex;
     session.phaseSelectedIndices = cloneJson(snapshot.phaseSelectedIndices);
@@ -538,15 +559,22 @@ class LessonSessionService {
     if (!session) return undefined;
 
     const existing = session.participants.get(studentId);
+    // A kicked student rejoining resumes their score; their answer only counts
+    // if the class is still on the phase they were removed from.
+    const kicked = existing ? undefined : session.kickedParticipants?.get(studentId);
+    session.kickedParticipants?.delete(studentId);
+    const previous = existing ?? kicked?.participant;
+    const samePhase = !kicked || kicked.phaseVersion === session.phaseVersion;
     session.participants.set(studentId, {
       studentId,
-      resolvedUserId: resolvedUserId ?? existing?.resolvedUserId,
+      resolvedUserId: resolvedUserId ?? previous?.resolvedUserId,
       name,
       pictureUrl,
       socketId,
-      score: existing ? existing.score : 0,
-      hasAnsweredCurrentPhase: existing ? existing.hasAnsweredCurrentPhase : false,
-      isReady: existing ? existing.isReady : false
+      score: previous ? previous.score : 0,
+      hasAnsweredCurrentPhase: previous && samePhase ? previous.hasAnsweredCurrentPhase : false,
+      latestAnswer: previous && samePhase ? previous.latestAnswer : undefined,
+      isReady: previous ? previous.isReady : false
     });
 
     return session;
@@ -565,6 +593,7 @@ class LessonSessionService {
 
     const existing = session.participants.get(studentId);
     if (!existing) {
+      if (session.kickedParticipants?.has(studentId)) return session;
       return this.joinSessionByClassId(
         session.classId || "",
         studentId,
@@ -591,6 +620,56 @@ class LessonSessionService {
       participant.isReady = !participant.isReady;
     }
     return session;
+  }
+
+  /**
+   * Remove a student the tutor kicked so the rest of the class stops waiting
+   * for them. A slow phone that never finishes a game would otherwise block
+   * the whole room, because games and questions wait for every participant.
+   */
+  kickParticipant(sessionId: string, studentId: string): KickParticipantResult | undefined {
+    const session = this.sessions.get(sessionId);
+    const participant = session?.participants.get(studentId);
+    if (!session || !participant) return undefined;
+
+    session.participants.delete(studentId);
+    if (!session.kickedParticipants) session.kickedParticipants = new Map();
+    session.kickedParticipants.set(studentId, {
+      participant: cloneJson(participant),
+      phaseVersion: session.phaseVersion,
+    });
+
+    let flagsChanged = false;
+    for (const [index, voters] of session.sentenceFlags?.entries() || []) {
+      if (!voters.delete(studentId)) continue;
+      flagsChanged = true;
+      if (voters.size === 0) session.sentenceFlags?.delete(index);
+    }
+
+    const gameState = session.gameState;
+    let gameCompleted = false;
+    let allAnswered = false;
+    if (!session.phaseRestored) {
+      if (
+        gameState?.status === "playing" &&
+        !gameState.results[studentId] &&
+        this.hasEveryParticipantSubmittedGame(session, gameState)
+      ) {
+        gameState.status = "results";
+        gameCompleted = true;
+      } else if (!gameState && !participant.hasAnsweredCurrentPhase && session.participants.size > 0) {
+        allAnswered = Array.from(session.participants.values()).every((p) => p.hasAnsweredCurrentPhase);
+      }
+    }
+
+    return { session, participant, gameCompleted, allAnswered, flagsChanged };
+  }
+
+  private hasEveryParticipantSubmittedGame(session: LessonSession, gameState: GamePhaseState): boolean {
+    for (const studentId of session.participants.keys()) {
+      if (!gameState.results[studentId]) return false;
+    }
+    return true;
   }
 
   removeParticipantBySocketId(socketId: string) {
@@ -698,6 +777,7 @@ class LessonSessionService {
     const restoredParticipants = new Map<string, SessionParticipant>();
 
     for (const saved of snapshot.participants) {
+      if (session.kickedParticipants?.has(saved.studentId)) continue;
       const liveParticipant = currentParticipants.get(saved.studentId);
       restoredParticipants.set(saved.studentId, {
         ...cloneJson(saved),
@@ -905,7 +985,7 @@ class LessonSessionService {
         session,
         gameState: this.getGameStatePayload(session)!,
         accepted: false,
-        allSubmitted: Object.keys(gameState.results).length >= session.participants.size,
+        allSubmitted: this.hasEveryParticipantSubmittedGame(session, gameState),
       };
     }
     const participant = session.participants.get(studentId);
@@ -951,7 +1031,9 @@ class LessonSessionService {
     // Keep the game mounted for students who have not submitted yet. The
     // tutor can still monitor partial results, while the shared results view
     // only becomes final once every current participant has submitted.
-    const allSubmitted = Object.keys(gameState.results).length >= session.participants.size;
+    // Count current participants only: a kicked student's earlier result
+    // stays on the board but must not stand in for someone still playing.
+    const allSubmitted = this.hasEveryParticipantSubmittedGame(session, gameState);
     gameState.status = allSubmitted ? "results" : "playing";
     return {
       session,
@@ -1042,10 +1124,24 @@ class LessonSessionService {
       return;
     }
 
+    if (event === "kicked") {
+      if (isRecord(payload) && typeof payload.studentId === "string") {
+        this.kickParticipant(sessionId, payload.studentId);
+      }
+      return;
+    }
+
     if (event === "participants_updated" || event === "participant_joined" || event === "participant_left") {
       if (!isRecord(payload) || !Array.isArray(payload.participants)) return;
       for (const raw of payload.participants) {
         if (!isRecord(raw) || typeof raw.studentId !== "string") continue;
+        const kicked = session.kickedParticipants?.get(raw.studentId);
+        if (kicked) {
+          // The same socket means a stale list sent before the kick arrived;
+          // a new socket means the student rejoined on another instance.
+          if (raw.socketId === kicked.participant.socketId) continue;
+          session.kickedParticipants?.delete(raw.studentId);
+        }
         const existing = session.participants.get(raw.studentId);
         const hasLatestAnswer = Object.prototype.hasOwnProperty.call(raw, "latestAnswer");
         const hasAnswered = Object.prototype.hasOwnProperty.call(raw, "hasAnsweredCurrentPhase");

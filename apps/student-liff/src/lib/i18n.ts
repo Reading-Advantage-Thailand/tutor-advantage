@@ -419,6 +419,9 @@ export const th = {
     paymentRequired: "กรุณาชำระเงินให้สำเร็จก่อนเข้าเรียน",
     preparingTitle: "กำลังเตรียมห้องเรียน",
     contactTutorIfMistake: "กรุณาติดต่อคุณครูหากนี่เป็นข้อผิดพลาด",
+    removedTitle: "คุณครูนำคุณออกจากห้องชั่วคราว",
+    removedDescription: "อาจเป็นเพราะเครื่องช้าหรือหลุดการเชื่อมต่อ กดเข้าห้องอีกครั้งเพื่อเรียนต่อ คะแนนของคุณยังอยู่ครบ",
+    rejoin: "เข้าห้องอีกครั้ง",
     backHome: "กลับหน้าหลัก",
     classNotFoundTitle: "ไม่พบข้อมูลคลาส",
     classNotFoundDescription:
@@ -581,6 +584,9 @@ export const th = {
   },
   interactivePlay: {
     lessonEnded: "บทเรียนสิ้นสุดลงแล้ว",
+    removedTitle: "คุณครูนำคุณออกจากห้องชั่วคราว",
+    removedDescription: "อาจเป็นเพราะเครื่องช้าหรือหลุดการเชื่อมต่อ กดเข้าห้องอีกครั้งเพื่อเรียนต่อ คะแนนของคุณยังอยู่ครบ",
+    rejoin: "เข้าห้องอีกครั้ง",
     backHome: "กลับหน้าหลัก",
     connectingLesson: "กำลังเชื่อมต่อบทเรียน",
     defaultQuestion: "เลือกคำตอบที่ถูกต้อง",

@@ -319,6 +319,7 @@ export default function TutorLobbyClient({
           lockGameVote={lockGameVote}
           startGameIntro={startGameIntro}
           advanceGameIntro={advanceGameIntro}
+          kickStudent={kickStudent}
           bypassEmptyStudentGuard={bypassEmptyStudentGuard}
           onFinishSession={() => {
             void handleFinishAndNavigate();

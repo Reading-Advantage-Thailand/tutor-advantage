@@ -340,12 +340,13 @@ export function GamePhaseStage({
   }
 
   return (
-    <div data-tour-target={tour(`phase-${currentPhase}-game`)} className="flex min-h-0 flex-1 gap-4">
+    <div data-tour-target={tour(`phase-${currentPhase}-game`)} className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
       <div className={cn("flex min-w-0 flex-1 flex-col", isFullscreen ? "min-h-0 overflow-hidden" : "gap-4")}>
         {header}
         {body}
       </div>
-      {!isFullscreen ? <div className="hidden lg:flex">{roster}</div> : null}
+      {/* Below lg the roster stacks under the game so the tutor can still remove a stuck student. */}
+      {!isFullscreen ? <div className="flex">{roster}</div> : null}
     </div>
   );
 }

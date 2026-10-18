@@ -357,6 +357,82 @@ describe("lessonSessionService", () => {
     expect(session.gameState?.results).toEqual({});
   });
 
+  it("finishes a game when the tutor kicks the last student still playing", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    service.joinSessionByClassId("class-1", "student-2", "Bob", "socket-b");
+    service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
+    service.lockGameVote(session.sessionId);
+    service.markGamePlaying(session.sessionId);
+    service.submitGameResult(session.sessionId, "student-1", { gameId: "dragon-flight", score: 8 });
+
+    const kicked = service.kickParticipant(session.sessionId, "student-2");
+
+    expect(kicked).toMatchObject({ gameCompleted: true, allAnswered: false });
+    expect(session.gameState?.status).toBe("results");
+    expect(session.participants.has("student-2")).toBe(false);
+    expect(service.kickParticipant(session.sessionId, "student-2")).toBeUndefined();
+  });
+
+  it("does not let a kicked student's result stand in for someone still playing", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    for (const [id, socketId] of [["student-1", "socket-a"], ["student-2", "socket-b"], ["student-3", "socket-c"]]) {
+      service.joinSessionByClassId("class-1", id, id, socketId);
+    }
+    service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
+    service.lockGameVote(session.sessionId);
+    service.markGamePlaying(session.sessionId);
+    service.submitGameResult(session.sessionId, "student-1", { gameId: "dragon-flight", score: 8 });
+
+    expect(service.kickParticipant(session.sessionId, "student-1")?.gameCompleted).toBe(false);
+    const second = service.submitGameResult(session.sessionId, "student-2", { gameId: "dragon-flight", score: 5 });
+
+    expect(second?.allSubmitted).toBe(false);
+    expect(session.gameState?.status).toBe("playing");
+  });
+
+  it("reports all answered when the kicked student was the only one left to answer", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    service.joinSessionByClassId("class-1", "student-2", "Bob", "socket-b");
+    service.setPhase(session.sessionId, COMPREHENSION_PHASE);
+    service.reserveAnswer(session.sessionId, "student-1");
+    service.completeReservedAnswer(session.sessionId, "student-1", "A");
+
+    expect(service.kickParticipant(session.sessionId, "student-2")).toMatchObject({
+      allAnswered: true,
+      gameCompleted: false,
+    });
+  });
+
+  it("keeps a kicked student out of restores until they rejoin with their score", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    session.participants.get("student-1")!.score = 12;
+    service.kickParticipant(session.sessionId, "student-1");
+
+    // Another student's reconnect merges DB participants; the kicked one stays out.
+    service.mergePersistedParticipant(session.sessionId, "student-1", "Ada", undefined, 12);
+    expect(session.participants.has("student-1")).toBe(false);
+    // A stale list from another instance (same old socket) does not re-add them.
+    service.applyRemoteEvent(session.sessionId, "participants_updated", {
+      participants: [{ studentId: "student-1", name: "Ada", socketId: "socket-a" }],
+    });
+    expect(session.participants.has("student-1")).toBe(false);
+
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-new");
+    expect(session.participants.get("student-1")).toMatchObject({ socketId: "socket-new", score: 12 });
+  });
+
+  it("applies a kick received from another instance", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+
+    service.applyRemoteEvent(session.sessionId, "kicked", { studentId: "student-1" });
+
+    expect(session.participants.has("student-1")).toBe(false);
+  });
+
   it("falls back to default games when no one votes", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
 

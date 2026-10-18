@@ -97,7 +97,9 @@ function LessonLobby({ classId, onReconnect }: { classId: string; onReconnect: (
     paymentRequired,
     toggleReady,
     nudgeMessage,
-    kicked
+    kicked,
+    removedByTutor,
+    rejoin,
   } = useLessonSocket(classInfo?.isEnrolled ? classId : undefined, studentId, studentName, pictureUrl);
   const assessment = useLiveAssessment(socket, sessionData?.sessionId, sessionData?.currentPhase);
 
@@ -194,10 +196,23 @@ function LessonLobby({ classId, onReconnect }: { classId: string; onReconnect: (
         <AppBar title={t("lessonLobby.lobbyTitle")} back fallbackHref="/dashboard" />
         <StatusScreen
           icon={DoorOpen}
-          tone="red"
-          title={kicked}
-          description={t("lessonLobby.contactTutorIfMistake")}
-          primaryAction={homeLink}
+          tone={removedByTutor ? "neutral" : "red"}
+          title={removedByTutor ? t("lessonLobby.removedTitle") : kicked}
+          description={removedByTutor ? t("lessonLobby.removedDescription") : t("lessonLobby.contactTutorIfMistake")}
+          primaryAction={
+            removedByTutor ? (
+              <Button variant="brand" size="cta" className="w-full" onClick={rejoin}>
+                {t("lessonLobby.rejoin")}
+              </Button>
+            ) : homeLink
+          }
+          secondaryAction={
+            removedByTutor ? (
+              <Link href="/dashboard" className={cn(buttonVariants({ variant: "ghost", size: "cta" }), "w-full text-fg-muted")}>
+                {t("lessonLobby.backHome")}
+              </Link>
+            ) : undefined
+          }
         />
       </Screen>
     );

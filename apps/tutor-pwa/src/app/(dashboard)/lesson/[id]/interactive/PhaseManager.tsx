@@ -18,7 +18,7 @@ import { AlertTriangle, Users } from "lucide-react";
 import { ArticleDisplay } from "./ArticleDisplay";
 import { playSound } from "@/lib/sounds";
 import { t } from "@/lib/i18n";
-import { Chip } from "@/components/app";
+import { Chip, ConfirmDialog } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import type { Participant, TutorSessionData, AnswerData, ArticleData, GamePhaseState, LessonPair } from "@/lib/lesson-types";
 import { getGamesByCategory } from "@/lib/liveLessonGames";
@@ -89,6 +89,8 @@ interface PhaseManagerProps {
   lockGameVote: () => void;
   startGameIntro: (options: { tutorialEnabled: boolean; teacherDemoEnabled: boolean }) => void;
   advanceGameIntro: (durationMs?: number) => void;
+  /** Removes a student from the live room; they can rejoin on their own. */
+  kickStudent?: (studentId: string) => void;
   sessionData?: TutorSessionData;
   onFinishSession?: () => void;
   flagCounts?: Record<number, number>;
@@ -118,6 +120,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   lockGameVote,
   startGameIntro,
   advanceGameIntro,
+  kickStudent,
   sessionData,
   onFinishSession,
   flagCounts,
@@ -137,6 +140,14 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const phaseChangeRequestIdRef = React.useRef(0);
   const [canProceedDelayed, setCanProceedDelayed] = React.useState(false);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
+  // Keep the target after closing so the dialog title does not lose the
+  // student's name while it animates out.
+  const [kickTarget, setKickTarget] = React.useState<Participant | null>(null);
+  const [kickConfirmOpen, setKickConfirmOpen] = React.useState(false);
+  const requestKick = React.useCallback((participant: Participant) => {
+    setKickTarget(participant);
+    setKickConfirmOpen(true);
+  }, []);
   const [isToolbarHidden, setIsToolbarHidden] = React.useState(false);
   const [tutorialEnabled, setTutorialEnabled] = React.useState(true);
   const [teacherDemoEnabled, setTeacherDemoEnabled] = React.useState(false);
@@ -635,6 +646,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       }
       preparationMode={preparationMode}
       preparationFreeExplore={preparationFreeExplore}
+      // The confirm dialog is portaled to <body>, which the browser hides in real fullscreen.
+      onRemoveStudent={!preparationMode && !isFullscreen && kickStudent ? requestKick : undefined}
     />
   );
   const questionContext = {
@@ -1077,6 +1090,19 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           </div>
         </div>
       ) : null}
+      <ConfirmDialog
+        open={kickConfirmOpen}
+        onOpenChange={setKickConfirmOpen}
+        title={`${t("lesson.live.removeConfirmTitle")} ${kickTarget?.name ?? ""}`.trim()}
+        description={t("lesson.live.removeConfirmDescription")}
+        confirmLabel={t("lesson.live.removeConfirm")}
+        cancelLabel={t("lesson.live.removeCancel")}
+        tone="danger"
+        onConfirm={() => {
+          if (kickTarget) kickStudent?.(kickTarget.studentId);
+          setKickConfirmOpen(false);
+        }}
+      />
       {guideOverlay}
     </div>
   );

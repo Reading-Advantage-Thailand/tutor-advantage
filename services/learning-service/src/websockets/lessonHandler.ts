@@ -1666,17 +1666,55 @@ export const setupLessonSocket = (io: Server) => {
         return;
       }
 
-      if (session) {
-        const participant = session.participants.get(studentId);
-        if (participant) {
-          io.to(participant.socketId).emit("kicked", { message: "คุณถูกเชิญออกจากห้องเรียนโดยติวเตอร์" });
-          session.participants.delete(studentId);
-          broadcastSession(sessionId, "participants_updated", {
-            participants: Array.from(session.participants.values())
-          });
-          logger.info(`Tutor kicked student ${studentId}`);
-        }
+      const kicked = typeof studentId === "string"
+        ? lessonSessionService.kickParticipant(sessionId, studentId)
+        : undefined;
+      if (!kicked) return;
+
+      // Tell every socket of the student (this instance and, through the bus,
+      // others) to leave. They can rejoin on their own with a fresh join_class.
+      const kickedPayload = { studentId, message: "คุณครูนำคุณออกจากห้องชั่วคราว" };
+      for (const studentSocket of io.sockets.sockets.values()) {
+        if (studentSocket.data.actor?.userId !== studentId) continue;
+        studentSocket.emit("kicked", kickedPayload);
+        studentSocket.leave(sessionId);
       }
+      publishLessonEvent(sessionId, "kicked", kickedPayload, studentId);
+
+      const { session: updatedSession, gameCompleted, allAnswered, flagsChanged } = kicked;
+      const remaining = Array.from(updatedSession.participants.values());
+      broadcastSession(sessionId, "participants_updated", { participants: remaining });
+      if (flagsChanged) {
+        broadcastSession(sessionId, "flags_updated", {
+          flagCounts: lessonSessionService.getFlagCounts(updatedSession),
+        });
+      }
+
+      // The class may have been waiting only for this student.
+      if (gameCompleted) {
+        broadcastSession(sessionId, "game_results_updated", {
+          gameState: lessonSessionService.getGameStatePayload(updatedSession),
+        });
+        broadcastSession(sessionId, "all_answered_broadcast", { totalParticipants: remaining.length });
+      }
+      if (!updatedSession.gameState) {
+        // Recount so the tutor's answered counter no longer includes this student.
+        broadcastToTutor(updatedSession, "participant_answered", {
+          studentId,
+          totalAnswered: remaining.filter((p) => p.hasAnsweredCurrentPhase).length,
+          totalParticipants: remaining.length,
+        });
+      }
+      if (allAnswered) {
+        broadcastToTutor(updatedSession, "all_answered", {
+          answers: remaining.map((p) => ({ studentId: p.studentId, answer: p.latestAnswer })),
+        });
+        broadcastSession(sessionId, "all_answered_broadcast", { totalParticipants: remaining.length });
+      }
+      logger.info(
+        `[Socket] Tutor kicked student ${studentId} from session ${sessionId}` +
+          (gameCompleted ? " (game completed)" : allAnswered ? " (all answered)" : ""),
+      );
     });
 
     // Tutor deletes session

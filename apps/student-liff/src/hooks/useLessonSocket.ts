@@ -156,6 +156,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const [isEveryoneReady, setIsEveryoneReady] = useState(false);
   const [nudgeMessage, setNudgeMessage] = useState<string | null>(null);
   const [kicked, setKicked] = useState<string | null>(null);
+  // True when the tutor removed this student (they may rejoin); false when the room closed.
+  const [removedByTutor, setRemovedByTutor] = useState(false);
   const [flagCounts, setFlagCounts] = useState<Record<number, number>>({});
   const [languageAnswer, setLanguageAnswer] = useState<{ question: string; answer: string } | null>(null);
   const [phaseReadOnly, setPhaseReadOnly] = useState(false);
@@ -270,11 +272,13 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
 
     newSocket.on('kicked', (data: { message: string }) => {
       setKicked(data.message);
+      setRemovedByTutor(true);
       newSocket.disconnect();
     });
 
     newSocket.on('session_deleted', (data: { message: string }) => {
       setKicked(data.message);
+      setRemovedByTutor(false);
       newSocket.disconnect();
     });
 
@@ -445,6 +449,14 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     }
   };
 
+  // Reconnect after the tutor removed this student: the `connect` handler
+  // sends a fresh join_class, which puts them back with their score.
+  const rejoin = () => {
+    setKicked(null);
+    setRemovedByTutor(false);
+    socketRef.current?.connect();
+  };
+
   return {
     socket,
     sessionData,
@@ -459,6 +471,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     aiFeedback,
     nudgeMessage,
     kicked,
+    removedByTutor,
+    rejoin,
     flagCounts,
     languageAnswer,
     submissionError,

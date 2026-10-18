@@ -5,8 +5,9 @@
  * answered the current question / submitted the game, and their score.
  * (Replaces the old dark "Leaderboard" sidebar.)
  */
-import { Check, Clock3, Users } from "lucide-react";
+import { Check, Clock3, UserMinus, Users } from "lucide-react";
 import { Chip, UserAvatar } from "@/components/app";
+import { Button } from "@/components/ui/button";
 import type { Participant } from "@/lib/lesson-types";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,8 @@ export interface StudentRosterPanelProps {
   preparationFreeExplore?: boolean;
   /** Wording for the status line, e.g. votes or game submissions. Defaults to answers. */
   statusLabels?: { done: string; waiting: string; count: string };
+  /** Shows a remove button per student (e.g. to stop waiting for a frozen phone). */
+  onRemoveStudent?: (participant: Participant) => void;
   className?: string;
 }
 
@@ -31,6 +34,7 @@ export function StudentRosterPanel({
   preparationMode = false,
   preparationFreeExplore = false,
   statusLabels,
+  onRemoveStudent,
   className,
 }: StudentRosterPanelProps) {
   const labels = statusLabels ?? {
@@ -98,6 +102,18 @@ export function StudentRosterPanel({
                   <span className="block text-lg font-bold tabular-nums text-fg">{p.score || 0}</span>
                   <span className="text-xs text-fg-subtle">{t("lesson.live.pointsShort")}</span>
                 </p>
+                {onRemoveStudent ? (
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => onRemoveStudent(p)}
+                    aria-label={`${t("lesson.live.removeTitle")} ${p.name}`}
+                    title={t("lesson.live.removeTitle")}
+                    className="-mr-2 shrink-0 text-fg-subtle hover:text-danger-fg"
+                  >
+                    <UserMinus aria-hidden="true" />
+                  </Button>
+                ) : null}
               </li>
             );
           })}
