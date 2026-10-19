@@ -21,6 +21,7 @@ import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   saveTaxInfoAction,
+  scanPassportAction,
   submitVerificationAction,
   submitWorkPermitAction,
   uploadFileAction,
@@ -39,17 +40,21 @@ import {
   isPdfUrl,
   isTaxInfoChanged,
   isValidPassportNumber,
+  MAX_DOCUMENT_BYTES,
+  passportScanPatch,
   sanitizeDigitsAndDashes,
   savedPassportOf,
   validateBankDraft,
   validateTaxInfoDraft,
   type IdType,
+  type PassportScanField,
   type SettingsUser,
   type TaxInfoDraft,
   type TeachingLocation,
   type VerificationField,
 } from "../lib/verification";
 import { FieldStatusChip } from "./FieldStatusChip";
+import { PassportScanPanel, type PassportScanState } from "./PassportScanPanel";
 
 type DocField = "idCard" | "bankBook" | "address";
 
@@ -63,6 +68,14 @@ const SERVER_ERRORS: Record<string, string> = {
   PRIVACY_NOTICE_REQUIRED: t("dashboardSettings.privacyNoticeRequired"),
   RIGHT_TO_WORK_REQUIRED: t("dashboardSettings.rightToWorkRequired"),
   INVALID_TEACHING_LOCATION: t("dashboardSettings.teachingLocationRequired"),
+};
+
+const SCAN_ERRORS: Record<string, string> = {
+  PASSPORT_NOT_READABLE: t("dashboardSettings.scanError_PASSPORT_NOT_READABLE"),
+  PASSPORT_SCAN_UNAVAILABLE: t("dashboardSettings.scanError_PASSPORT_SCAN_UNAVAILABLE"),
+  RATE_LIMITED: t("dashboardSettings.scanError_RATE_LIMITED"),
+  INVALID_VERIFICATION_FILE: t("dashboardSettings.scanError_INVALID_VERIFICATION_FILE"),
+  FILE_TOO_LARGE: t("dashboardSettings.scanError_FILE_TOO_LARGE"),
 };
 
 function serverErrorMessage(result: VerificationActionResult, fallback: string): string | null {
@@ -256,6 +269,12 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
   const [workPermitError, setWorkPermitError] = useState<string | null>(null);
   const [workPermitPending, setWorkPermitPending] = useState(false);
   const [savingAll, setSavingAll] = useState(false);
+  const [scanState, setScanState] = useState<PassportScanState>("idle");
+  const [scanError, setScanError] = useState<string | null>(null);
+  // Fields last filled by a scan and not edited since (they show a "check this" hint).
+  const [scanFilled, setScanFilled] = useState<PassportScanField[]>([]);
+  const [scanConfirmed, setScanConfirmed] = useState<PassportScanField[]>([]);
+  const scanRunRef = useRef(0);
   const isPassport = idType === "PASSPORT";
   const needsWorkPermit = isPassport && teachingLocation === "THAILAND";
 
@@ -286,7 +305,54 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
   };
 
   const isPending = activeField !== null;
-  const busy = isPending || taxInfoPending || workPermitPending || savingAll;
+  const scanning = scanState === "scanning";
+  const busy = isPending || taxInfoPending || workPermitPending || savingAll || scanning;
+
+  /** Reads the passport photo page and fills the passport fields with what it found. */
+  const scanPassport = async (file: File) => {
+    const run = ++scanRunRef.current;
+    const fail = (code: string) => {
+      if (run !== scanRunRef.current) return;
+      setScanState("error");
+      setScanError(SCAN_ERRORS[code] ?? t("dashboardSettings.scanFailed"));
+    };
+    if (file.size > MAX_DOCUMENT_BYTES) return fail("FILE_TOO_LARGE");
+    setScanState("scanning");
+    setScanError(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const result = await scanPassportAction(formData);
+      if (run !== scanRunRef.current) return;
+      if (!result.ok) return fail(result.code);
+      const { patch, filled } = passportScanPatch(result, nationalityOptions().map((option) => option.value));
+      if (filled.length === 0) return fail("PASSPORT_NOT_READABLE");
+      if (patch.taxName !== undefined) setTaxName(patch.taxName);
+      if (patch.passportNumber !== undefined) setPassportNumber(patch.passportNumber);
+      if (patch.passportNationality !== undefined) setPassportNationality(patch.passportNationality);
+      if (patch.passportExpiresOn !== undefined) setPassportExpiresOn(patch.passportExpiresOn);
+      setTaxInfoSaved(false);
+      setScanFilled(filled);
+      setScanConfirmed(result.confirmed.filter((field) => filled.includes(field)));
+      setScanState("done");
+    } catch {
+      fail("PASSPORT_SCAN_FAILED");
+    }
+  };
+
+  const clearScanHint = (field: PassportScanField) => setScanFilled((fields) => fields.filter((f) => f !== field));
+  const scanHint = (field: PassportScanField) =>
+    scanFilled.includes(field)
+      ? scanConfirmed.includes(field)
+        ? t("dashboardSettings.scanFilledConfirmed")
+        : t("dashboardSettings.scanFilledCheck")
+      : undefined;
+
+  const selectIdCardFile = (file: File) => {
+    setIdCardFile(file);
+    setIdCardPreview(makePreview(file));
+    setIdCardError(null);
+  };
 
   const setFieldError = (field: DocField, msg: string | null) => {
     if (field === "idCard") setIdCardError(msg);
@@ -406,6 +472,9 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
       }
       setTaxInfoSaved(true);
       setPassportNumber("");
+      // Saved values are no longer "from the photo".
+      setScanFilled([]);
+      setScanState((state) => (state === "done" ? "idle" : state));
       router.refresh();
       return true;
     } catch {
@@ -531,9 +600,8 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
           submittedUrl={submittedIdCardUrl}
           disabled={busy}
           onSelect={(file) => {
-            setIdCardFile(file);
-            setIdCardPreview(makePreview(file));
-            setIdCardError(null);
+            selectIdCardFile(file);
+            if (isPassport) void scanPassport(file);
           }}
         />
       </StepCard>
@@ -666,6 +734,20 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
             />
           )}
         </Field>
+        {isPassport ? (
+          <PassportScanPanel
+            state={scanState}
+            error={scanError}
+            filledCount={scanFilled.length}
+            hasPhoto={Boolean(idCardFile)}
+            disabled={busy}
+            onScanPhoto={() => idCardFile && void scanPassport(idCardFile)}
+            onPickPhoto={(file) => {
+              selectIdCardFile(file);
+              void scanPassport(file);
+            }}
+          />
+        ) : null}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField
             id="tax-name"
@@ -673,9 +755,11 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
             placeholder={isPassport ? "John Smith" : t("dashboardSettings.taxNamePlaceholder")}
             autoComplete="name"
             value={taxName}
+            hint={isPassport ? scanHint("fullName") : undefined}
             onChange={(event) => {
               setTaxName(event.target.value);
               setTaxInfoSaved(false);
+              clearScanHint("fullName");
             }}
             disabled={busy}
             required
@@ -690,10 +774,14 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
               placeholder={identity.passportNumberMasked || t("dashboardSettings.passportNumberPlaceholder")}
               value={passportNumber}
               error={passportNumber && !isValidPassportNumber(passportNumber) ? t("dashboardSettings.passportNumberInvalid") : undefined}
-              hint={savedPassport.hasNumber && !passportNumber ? t("dashboardSettings.passportNumberKeep") : undefined}
+              hint={
+                scanHint("passportNumber") ??
+                (savedPassport.hasNumber && !passportNumber ? t("dashboardSettings.passportNumberKeep") : undefined)
+              }
               onChange={(event) => {
                 setPassportNumber(event.target.value.toUpperCase());
                 setTaxInfoSaved(false);
+                clearScanHint("passportNumber");
               }}
               disabled={busy}
               required={!savedPassport.hasNumber}
@@ -730,9 +818,11 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
                 placeholder={t("dashboardSettings.nationalityPlaceholder")}
                 options={nationalityOptions()}
                 value={passportNationality}
+                hint={scanHint("nationality")}
                 onChange={(event) => {
                   setPassportNationality(event.target.value);
                   setTaxInfoSaved(false);
+                  clearScanHint("nationality");
                 }}
                 disabled={busy}
                 required
@@ -744,9 +834,11 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
                 min={bangkokToday()}
                 value={passportExpiresOn}
                 error={taxFieldError("passportExpiryInvalid", Boolean(passportExpiresOn))}
+                hint={scanHint("expiresOn")}
                 onChange={(event) => {
                   setPassportExpiresOn(event.target.value);
                   setTaxInfoSaved(false);
+                  clearScanHint("expiresOn");
                 }}
                 disabled={busy}
                 required

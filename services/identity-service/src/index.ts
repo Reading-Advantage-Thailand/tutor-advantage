@@ -30,6 +30,7 @@ import { getGuardianConsentStatus, submitGuardianConsent, submitUserConsent } fr
 import { getCurrentUser, submitVerification, updateCurrentUserProfile } from "./controllers/userController";
 import { getSettings, updateSettings } from "./controllers/settingController";
 import { uploadFile } from "./controllers/uploadController";
+import { scanPassportPhoto } from "./controllers/passportScanController";
 import { authMiddleware, requireRoles } from "./middlewares/authMiddleware";
 import multer from "multer";
 
@@ -62,6 +63,13 @@ const authLimiter = rateLimit({
 const uploadLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 20,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+});
+// Each passport scan is a paid model call.
+const passportScanLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
   standardHeaders: "draft-8",
   legacyHeaders: false,
 });
@@ -119,6 +127,14 @@ app.get("/v1/users/me/settings", authMiddleware, getSettings);
 app.patch("/v1/users/me/settings", authMiddleware, updateSettings);
 app.post("/v1/users/me/verification", authMiddleware, submitVerification);
 app.post("/v1/upload", uploadLimiter, authMiddleware, upload.single("file"), uploadFile);
+app.post(
+  "/v1/users/me/passport-scan",
+  passportScanLimiter,
+  authMiddleware,
+  requireRoles("TUTOR"),
+  upload.single("file"),
+  scanPassportPhoto,
+);
 app.get("/v1/guardian/consent", authMiddleware, getGuardianConsentStatus);
 app.post("/v1/guardian/consent", authMiddleware, submitGuardianConsent);
 app.post("/v1/users/me/consents", authMiddleware, submitUserConsent);

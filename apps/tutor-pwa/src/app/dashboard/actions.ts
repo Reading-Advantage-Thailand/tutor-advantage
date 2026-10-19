@@ -175,6 +175,35 @@ export async function saveTaxInfoAction(payload: TaxInfoPayload) {
   });
 }
 
+export type PassportScanField = "fullName" | "passportNumber" | "nationality" | "expiresOn";
+
+export type PassportScanActionResult =
+  | { ok: true; fields: Partial<Record<PassportScanField, string>>; confirmed: PassportScanField[] }
+  | { ok: false; code: string };
+
+/** Reads a passport photo page into suggested form values (nothing is stored). */
+export async function scanPassportAction(formData: FormData): Promise<PassportScanActionResult> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value;
+  if (!token) return { ok: false, code: "UNAUTHORIZED" };
+
+  try {
+    const res = await fetch(`${IDENTITY_URL}/v1/users/me/passport-scan`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+      cache: "no-store",
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok || !data?.scan) {
+      return { ok: false, code: res.status === 429 ? "RATE_LIMITED" : data?.error?.code || "PASSPORT_SCAN_FAILED" };
+    }
+    return { ok: true, fields: data.scan.fields ?? {}, confirmed: data.scan.confirmed ?? [] };
+  } catch {
+    return { ok: false, code: "PASSPORT_SCAN_FAILED" };
+  }
+}
+
 /** Work permit (passport holders teaching from Thailand). */
 export async function submitWorkPermitAction(workPermitImageUrl: string, workPermitExpiresOn: string) {
   return postVerification({ workPermitImageUrl, workPermitExpiresOn });

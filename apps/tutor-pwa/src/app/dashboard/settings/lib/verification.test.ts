@@ -9,6 +9,7 @@ import {
   isPdfUrl,
   isTaxInfoChanged,
   isTaxInfoValid,
+  passportScanPatch,
   sanitizeDigitsAndDashes,
   isValidThaiId,
   stepCompletion,
@@ -140,5 +141,39 @@ describe("misc", () => {
     expect(isPdfFile(file())).toBe(false);
     expect(isPdfUrl("https://x/y/id.pdf?sig=1")).toBe(true);
     expect(isPdfUrl("blob:abc")).toBe(false);
+  });
+});
+
+describe("passportScanPatch", () => {
+  const codes = ["GB", "US", "DE"];
+
+  it("maps scanned values onto the passport form fields", () => {
+    expect(
+      passportScanPatch(
+        {
+          fields: { fullName: " JOHN  WILLIAM SMITH ", passportNumber: "5334 01372", nationality: "gb", expiresOn: "2032-09-30" },
+          confirmed: ["passportNumber"],
+        },
+        codes,
+      ),
+    ).toEqual({
+      patch: { taxName: "JOHN WILLIAM SMITH", passportNumber: "533401372", passportNationality: "GB", passportExpiresOn: "2032-09-30" },
+      filled: ["fullName", "passportNumber", "nationality", "expiresOn"],
+    });
+  });
+
+  it("skips values the form would not accept", () => {
+    expect(
+      passportScanPatch(
+        { fields: { fullName: "  ", passportNumber: "12/45", nationality: "TH", expiresOn: "30/09/2032" }, confirmed: [] },
+        codes,
+      ),
+    ).toEqual({ patch: {}, filled: [] });
+  });
+
+  it("still fills an expired date so the form can flag it", () => {
+    expect(passportScanPatch({ fields: { expiresOn: "2020-01-01" }, confirmed: [] }, codes).patch).toEqual({
+      passportExpiresOn: "2020-01-01",
+    });
   });
 });

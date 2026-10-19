@@ -8,3 +8,4 @@ export * from "./middlewares/openapi";
 export type { AssessmentMode, AssessmentControl, AssessmentQuestion, LiveAssessmentState } from "./assessmentTypes";
 export * from "./tutorIdentity";
 export * from "./piiCrypto";
+export * from "./passportMrz";

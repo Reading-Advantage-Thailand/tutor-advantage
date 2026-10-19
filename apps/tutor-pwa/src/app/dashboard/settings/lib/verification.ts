@@ -226,6 +226,46 @@ export function isTaxInfoChanged(user: SettingsUser | null | undefined, draft: T
   );
 }
 
+export type PassportScanField = "fullName" | "passportNumber" | "nationality" | "expiresOn";
+export type PassportScan = { fields: Partial<Record<PassportScanField, string>>; confirmed: PassportScanField[] };
+export type PassportScanPatch = Partial<Pick<TaxInfoDraft, "taxName" | "passportNumber" | "passportNationality" | "passportExpiresOn">>;
+
+/** Largest file the identity service accepts (same as uploads). */
+export const MAX_DOCUMENT_BYTES = 5 * 1024 * 1024;
+
+/**
+ * Form values from a passport photo scan. Only values the form accepts are
+ * used (the nationality must be one of the picker's codes, so a Thai
+ * passport fills no nationality); `filled` lists the fields set.
+ */
+export function passportScanPatch(
+  scan: PassportScan,
+  nationalityCodes: readonly string[],
+): { patch: PassportScanPatch; filled: PassportScanField[] } {
+  const patch: PassportScanPatch = {};
+  const filled: PassportScanField[] = [];
+  const { fullName, passportNumber, nationality, expiresOn } = scan.fields;
+  if (fullName?.trim()) {
+    patch.taxName = fullName.replace(/\s+/g, " ").trim();
+    filled.push("fullName");
+  }
+  if (passportNumber && isValidPassportNumber(passportNumber)) {
+    patch.passportNumber = normalizePassportNumber(passportNumber);
+    filled.push("passportNumber");
+  }
+  const code = nationality?.trim().toUpperCase();
+  if (code && nationalityCodes.includes(code)) {
+    patch.passportNationality = code;
+    filled.push("nationality");
+  }
+  // An expired date is still filled so the form can say the passport has expired.
+  if (expiresOn && /^\d{4}-\d{2}-\d{2}$/.test(expiresOn)) {
+    patch.passportExpiresOn = expiresOn;
+    filled.push("expiresOn");
+  }
+  return { patch, filled };
+}
+
 export function isPdfFile(file: File | null | undefined): boolean {
   return Boolean(file && (file.type === "application/pdf" || /\.pdf$/i.test(file.name)));
 }
