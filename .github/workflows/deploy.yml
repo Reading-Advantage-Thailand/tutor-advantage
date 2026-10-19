@@ -275,6 +275,13 @@ jobs:
             )
           fi
 
+          # Passport photo auto-fill reads the photo with Gemini (same key as learning-service).
+          if [[ "${{ matrix.service }}" == "identity-service" ]]; then
+            DEPLOY_FLAGS+=(
+              "--update-secrets=GOOGLE_GENERATIVE_AI_API_KEY=ta-google_generative_ai_api_key:latest"
+            )
+          fi
+
           gcloud run deploy ${{ matrix.service }} \
             --image=${{ env.REGISTRY }}/${{ matrix.service }}:${DEPLOY_SHA} \
             --region=${{ env.REGION }} \

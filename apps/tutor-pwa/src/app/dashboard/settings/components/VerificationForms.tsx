@@ -601,7 +601,8 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
           disabled={busy}
           onSelect={(file) => {
             selectIdCardFile(file);
-            if (isPassport) void scanPassport(file);
+            // Not read automatically: the scan panel asks first (the photo goes to Google Gemini).
+            if (isPassport) setScanState((state) => (state === "scanning" ? state : "idle"));
           }}
         />
       </StepCard>

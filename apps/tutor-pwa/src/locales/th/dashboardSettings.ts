@@ -151,8 +151,10 @@ export const dashboardSettings = {
   teachingFromThailandHint: "ผู้ที่สอนจากประเทศไทยต้องอัปโหลดใบอนุญาตทำงาน · Teaching from Thailand requires a work permit",
   privacyNoticeConsent:
     "ข้าพเจ้ายอมรับประกาศความเป็นส่วนตัวฉบับปรับปรุงสำหรับข้อมูลหนังสือเดินทาง · I accept the updated privacy notice for passport data",
-  // TODO(privacy): replace with the final privacy-notice text when legal provides it.
-  privacyNoticeBody: "ข้อความประกาศความเป็นส่วนตัวฉบับปรับปรุงจะแสดงที่นี่ · The updated privacy notice text will appear here.",
+  // TODO(privacy): legal still has to write the full passport privacy notice; keep the
+  // Google Gemini disclosure (passport photo auto-fill) in the final text.
+  privacyNoticeBody:
+    "เราเก็บชื่อ สัญชาติ วันหมดอายุ และรูปหน้าพาสปอร์ตเพื่อยืนยันตัวตนและออกเอกสารภาษี เลขพาสปอร์ตถูกเข้ารหัส แอดมินเห็นเฉพาะ 4 ตัวท้าย หากคุณใช้ \"กรอกข้อมูลอัตโนมัติจากรูปพาสปอร์ต\" รูปนั้นจะถูกส่งให้ Google Gemini อ่านเพื่อกรอกข้อมูลให้ การอ่านรูปไม่ได้บันทึกข้อมูลใดในระบบของเรา ข้อมูลจะถูกบันทึกเมื่อคุณกดบันทึกเท่านั้น · We keep your name, nationality, expiry date and passport photo page to verify your identity and issue tax documents. The passport number is encrypted; admins see only its last 4 characters. If you use \"Auto-fill from passport photo\", that photo is sent to Google Gemini to read your details. The scan stores nothing in our system; your details are saved only when you press save.",
   rightToWorkConsent:
     "ข้าพเจ้ายืนยันว่ามีสิทธิทำงานโดยชอบด้วยกฎหมาย · I confirm I have the legal right to work",
   taxNameRequired: "กรุณากรอกชื่อตามเอกสาร · Name is required",
@@ -183,6 +185,7 @@ export const dashboardSettings = {
   // Passport photo scan (auto-fill)
   scanTitle: "กรอกข้อมูลอัตโนมัติจากรูปพาสปอร์ต · Auto-fill from passport photo",
   scanIdle: "ใช้รูปหน้าที่มีรูปถ่าย ระบบจะกรอกชื่อ เลขพาสปอร์ต สัญชาติ และวันหมดอายุให้ · We fill in your name, passport number, nationality and expiry from the photo page",
+  scanDisclosure: "รูปจะถูกส่งให้ Google Gemini อ่าน ไม่มีการบันทึกจนกว่าคุณจะกดบันทึก · The photo is sent to Google Gemini to read. Nothing is saved until you press save.",
   scanScanning: "กำลังอ่านข้อมูลจากรูป… · Reading your passport…",
   scanDone: "กรอกให้แล้ว {count} ช่อง โปรดตรวจสอบให้ตรงกับพาสปอร์ตก่อนบันทึก · Filled {count} fields. Check them against your passport before saving",
   scanPickPhoto: "เลือกรูปพาสปอร์ต · Choose photo",

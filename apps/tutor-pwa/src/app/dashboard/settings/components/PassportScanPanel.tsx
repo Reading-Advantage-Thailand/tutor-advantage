@@ -11,7 +11,8 @@ export type PassportScanState = "idle" | "scanning" | "done" | "error";
 /**
  * Offers to fill the passport fields from the photo page. Uses the photo
  * chosen in step 1 when there is one; otherwise the photo picked here also
- * becomes the step 1 document.
+ * becomes the step 1 document. A photo is only read when the tutor presses
+ * a button here, next to the note that it goes to Google Gemini.
  */
 export function PassportScanPanel({
   state,
@@ -60,6 +61,7 @@ export function PassportScanPanel({
           >
             {message}
           </p>
+          <p className="mt-1 text-xs text-fg-subtle">{t("dashboardSettings.scanDisclosure")}</p>
         </div>
       </div>
       {hasPhoto ? (

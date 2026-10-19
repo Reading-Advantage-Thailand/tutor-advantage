@@ -25,6 +25,8 @@ const storage = new Storage({
 
 const bucketName = process.env.GCS_BUCKET_NAME || "tutor-advantage-verification";
 const bucket = storage.bucket(bucketName);
+// Where documents go: a local STORAGE_EMULATOR_HOST (scripts/fake-gcs.mjs) keeps tests off the real bucket.
+logger.info("Verification document storage", { endpoint: storage.apiEndpoint, bucket: bucketName });
 
 const MAX_VERIFICATION_FILE_BYTES = 5 * 1024 * 1024;
 const VERIFICATION_KEY = /^verification\/([A-Za-z0-9_-]+)\/([0-9a-f-]{36})\.(jpg|png|webp|pdf)$/i;
