@@ -451,7 +451,7 @@ export const devAddVolume = async (req: Request, res: Response) => {
           bookId: book.bookId,
           title: "[DEV] Test Class",
           capacity: 999,
-          packagePriceMinor: 250000n,
+          packagePriceMinor: 300000n,
           status: "ACTIVE",
         },
       });

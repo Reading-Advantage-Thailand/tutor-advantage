@@ -84,7 +84,7 @@ export function ArticleSelector({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [newBookId, setNewBookId] = useState("");
-  const [newBookPrice, setNewBookPrice] = useState(250000);
+  const [newBookPrice, setNewBookPrice] = useState(300000);
   const [creatingCycle, setCreatingCycle] = useState(false);
   const [openBookDialogOpen, setOpenBookDialogOpen] = useState(false);
   const [articleSearch, setArticleSearch] = useState("");

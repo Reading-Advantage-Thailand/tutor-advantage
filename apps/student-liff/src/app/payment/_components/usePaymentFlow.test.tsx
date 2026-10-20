@@ -359,7 +359,7 @@ describe("usePaymentFlow", () => {
     await settle();
     expect(api.enrollByReferral).toHaveBeenCalledWith("tok");
     expect(api.createPaymentIntent).toHaveBeenCalledWith(
-      expect.objectContaining({ amountSatang: 250000, returnUri: "http://localhost:3000/payment?referralToken=tok" }),
+      expect.objectContaining({ amountSatang: 300000, returnUri: "http://localhost:3000/payment?referralToken=tok" }),
     );
     // Once the intent exists its own amount is shown.
     expect(flow.amountSatang).toBe(320000);

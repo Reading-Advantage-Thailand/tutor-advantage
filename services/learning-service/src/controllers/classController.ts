@@ -128,7 +128,7 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
     // A coupon or demo class makes the class free for students — price is forced to 0.
     const isCouponClass = typeof couponCode === "string" && couponCode.trim().length > 0;
     const isDemoClass = isDemo === true;
-    const packagePriceSatang = (isCouponClass || isDemoClass) ? 0 : (req.body.packagePriceSatang ?? 250000);
+    const packagePriceSatang = (isCouponClass || isDemoClass) ? 0 : (req.body.packagePriceSatang ?? 300000);
 
     if (!userId || role !== "TUTOR") {
       return res.status(401).json({
@@ -1557,7 +1557,7 @@ export async function createClassBookCycle(req: AuthenticatedRequest, res: Respo
     const userId = req.user?.userId;
     const { classId } = req.params;
     const { bookId } = req.body;
-    const packagePriceSatang = req.body.packagePriceSatang ?? 250000;
+    const packagePriceSatang = req.body.packagePriceSatang ?? 300000;
 
     if (!userId || req.user?.role !== "TUTOR") {
       return res.status(401).json({

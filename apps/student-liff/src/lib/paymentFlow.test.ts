@@ -67,8 +67,8 @@ describe("paymentFlow helpers", () => {
   it("builds default and API-backed order summaries", () => {
     expect(createDefaultOrderSummary("class-1")).toMatchObject({
       id: "class-1",
-      price: 2500,
-      priceSatang: 250000,
+      price: 3000,
+      priceSatang: 300000,
     });
 
     expect(
@@ -210,7 +210,7 @@ describe("paymentFlow helpers", () => {
 
     // No price from the API: the payload keeps the old fallback, the screen shows none.
     const noPrice = buildPaymentOrder({ ...cls, packagePriceSatang: null }, "c1", "");
-    expect(noPrice.order.priceSatang).toBe(250000);
+    expect(noPrice.order.priceSatang).toBe(300000);
     expect(noPrice.display.priceSatang).toBeNull();
     expect(createUnknownOrderDisplay().priceSatang).toBeNull();
   });
