@@ -236,6 +236,24 @@ export function LandingMarketing({ isLoggedIn }: LandingMarketingProps) {
           </HScroll>
         </section>
 
+        <section aria-labelledby="product-service-details">
+          <SectionHeader title={t("app.productDetailsTitle")} />
+          <Surface as="article" padding="md">
+            <h3 id="product-service-details" className="text-base font-bold text-fg">
+              {t("app.productDetailsName")}
+            </h3>
+            <p className="mt-2 text-sm leading-[1.7] text-fg-muted">
+              {t("app.productDetailsDescription")}
+            </p>
+            <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-[1.7] text-fg-muted">
+              <li>{t("app.productDetailsCourse")}</li>
+              <li>{t("app.productDetailsMaterials")}</li>
+              <li>{t("app.productDetailsPrice")}</li>
+              <li>{t("app.productDetailsPayment")}</li>
+            </ul>
+          </Surface>
+        </section>
+
         {/* ── Bottom CTA ── */}
         <Surface
           padding="lg"

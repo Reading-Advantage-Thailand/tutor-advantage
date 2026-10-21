@@ -50,6 +50,18 @@ export const th = {
     stepStartTitle: "เริ่มเรียนได้ทันที",
     stepStartDesc: "เข้าถึงบทเรียนผ่านแอปนี้",
     availableCourses: "หลักสูตรที่เปิดสอน",
+    productDetailsTitle: "รายละเอียดสินค้าและบริการ",
+    productDetailsName: "คลาสเรียนภาษาอังกฤษ Reading Advantage",
+    productDetailsDescription:
+      "บริการคลาสเรียนภาษาอังกฤษกับติวเตอร์ ผู้เรียนสมัครตามคลาสที่เปิดรับและเรียนตามตารางของคลาส พร้อมเข้าถึงบทเรียนผ่าน Student LIFF Portal",
+    productDetailsCourse:
+      "ระดับที่เปิดรับขณะนี้: A1 Reading 3.1 มีบทอ่านภาษาอังกฤษ 14 เรื่อง พร้อมเนื้อหาหลากหลายประเภท",
+    productDetailsMaterials:
+      "แพ็กเกจประกอบด้วยการเรียนตามคลาสและสิทธิ์เข้าถึง Reading Materials และ Assignments ของหนังสือที่เลือก",
+    productDetailsPrice:
+      "ราคาเริ่มต้น 3,000 บาทต่อผู้เรียนต่อแพ็กเกจหนังสือ โดยราคาจริงจะแสดงในรายละเอียดคลาสก่อนชำระเงิน",
+    productDetailsPayment:
+      "ชำระผ่าน PromptPay หรือบัตรเครดิต/เดบิต โดยระบบชำระเงิน Omise",
     haveTutorLink: "มีลิงก์สมัครเรียนจากติวเตอร์แล้ว?",
     continueAfterLogin: "เข้าสู่ระบบเพื่อดำเนินการต่อได้เลย",
     secureOmiseLine:
