@@ -21,6 +21,7 @@ import {
 } from "@/components/mobile";
 import { BrandMark } from "@/components/icons/BrandMark";
 import { LineIcon } from "@/components/icons/LineIcon";
+import { BusinessContactCard } from "@/components/legal/BusinessContactCard";
 import { buttonVariants } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -267,6 +268,7 @@ export function LandingMarketing({ isLoggedIn }: LandingMarketingProps) {
 
         {/* ── Footer ── */}
         <footer className="flex flex-col items-center gap-1 pb-2 text-center">
+          <BusinessContactCard />
           <nav
             aria-label={t("entry.legalLinksAria")}
             className="flex items-center gap-1"

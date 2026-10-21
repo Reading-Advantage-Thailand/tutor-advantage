@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { MessageCircle, Shield } from "lucide-react";
-import { Notice } from "@/components/mobile/Feedback";
+import { Shield } from "lucide-react";
+import { BusinessContactCard } from "@/components/legal/BusinessContactCard";
 import { DocumentPage } from "@/components/legal/DocumentPage";
 import { studentLegalCopy } from "@/lib/content/legal";
 import { t } from "@/lib/i18n";
@@ -17,20 +17,7 @@ export default function PrivacyPage() {
       tone="brand"
       intro={copy.intro}
       sections={copy.sections}
-      footer={
-        <Notice
-          tone="brand"
-          icon={MessageCircle}
-          title={copy.contactTitle}
-          description={
-            <>
-              {t("legal.lineOfficial")}
-              <br />
-              {copy.contactName}
-            </>
-          }
-        />
-      }
+      footer={<BusinessContactCard />}
     />
   );
 }

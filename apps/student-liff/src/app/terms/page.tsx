@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FileText } from "lucide-react";
+import { BusinessContactCard } from "@/components/legal/BusinessContactCard";
 import { DocumentPage } from "@/components/legal/DocumentPage";
 import { studentLegalCopy } from "@/lib/content/legal";
 import { t } from "@/lib/i18n";
@@ -16,7 +17,12 @@ export default function TermsPage() {
       tone="blue"
       intro={copy.intro}
       sections={copy.sections}
-      footer={<p className="px-2 text-center text-xs leading-[1.6] text-fg-muted">{copy.footer}</p>}
+      footer={
+        <div className="flex flex-col gap-4">
+          <p className="px-2 text-center text-xs leading-[1.6] text-fg-muted">{copy.footer}</p>
+          <BusinessContactCard />
+        </div>
+      }
     />
   );
 }

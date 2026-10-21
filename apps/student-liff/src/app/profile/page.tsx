@@ -40,13 +40,12 @@ import { formatLevelLabel, getPrimaryClass, type DashboardSummary } from "@/lib/
 import { t } from "@/lib/i18n";
 import { dashboardResourceKey, fetchDashboardSummary } from "@/lib/resourceKeys";
 import { copyTextToClipboard } from "../dashboard/_components/clipboard";
+import { businessContact } from "@/lib/businessContact";
 import { LiffErrorState } from "../dashboard/_components/LiffErrorState";
 import { ProfileSkeleton } from "./_components/ProfileSkeleton";
 import { useNotificationSound } from "./_components/useNotificationSound";
 
 type ThemeChoice = "light" | "dark" | "system";
-
-const LINE_OA_URL = "https://lin.ee/R7Dccj9";
 
 export default function ProfilePage() {
   const { isReady, profile: liffProfile, logout } = useLiff();
@@ -176,7 +175,7 @@ export default function ProfilePage() {
 
         <ListGroup header={t("profile.help")}>
           <ListRow
-            href={LINE_OA_URL}
+            href={businessContact.lineUrl}
             chevron={false}
             leading={<IconTile icon={MessageCircle} tone="blue" />}
             title={t("profile.contactTeam")}

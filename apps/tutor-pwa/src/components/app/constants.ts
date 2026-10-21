@@ -8,7 +8,7 @@
 export const SIDEBAR_COOKIE = "tutor_sidebar";
 
 /** LINE OA help link used in the account menus. */
-export const HELP_URL = "https://lin.ee/R7Dccj9";
+export const HELP_URL = "https://lin.ee/5LRn0YM";
 
 /** Shared form-control styling (40px, 44px on touch). Use for custom controls. */
 export const fieldControlClass =

@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import type { OrderDisplay, PaymentMethod } from "@/lib/paymentFlow";
 import { cn } from "@/lib/utils";
+import { businessContact } from "@/lib/businessContact";
 import { OrderSummaryCard } from "./OrderSummaryCard";
 import type { LoadStatus } from "./usePaymentFlow";
 
-const LINE_CONTACT_URL = "https://lin.ee/R7Dccj9";
+const LINE_CONTACT_URL = businessContact.lineUrl;
 
 type MethodOption = {
   /** Kept from the old page (QA/analytics may target them). */
