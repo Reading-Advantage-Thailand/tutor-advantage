@@ -40,6 +40,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Public catalogue server components fetch at runtime (rewrites are build-time only).
+ARG LEARNING_SERVICE_URL=https://learning-service-1090865515742.asia-southeast1.run.app
+ENV LEARNING_SERVICE_URL=$LEARNING_SERVICE_URL
+
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 

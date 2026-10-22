@@ -94,9 +94,10 @@ describe("usePaymentFlow", () => {
 
   /** Lets resolved mocks and their promise chains settle (real timers). */
   const settle = () => act(() => new Promise<void>((resolve) => setTimeout(resolve, 0)));
-  const render = async (props: PaymentFlowParams = params()) => {
+  const render = async (props: PaymentFlowParams = params(), acceptPolicy = true) => {
     await act(async () => root.render(<Probe {...props} />));
     await settle();
+    if (acceptPolicy) await act(async () => flow.actions.acceptPolicy(true));
   };
 
   beforeEach(() => {
@@ -128,6 +129,46 @@ describe("usePaymentFlow", () => {
     act(() => root.unmount());
     container.remove();
     vi.useRealTimers();
+  });
+
+  it("requires policy acceptance before any new enrollment, token or charge", async () => {
+    await render(params(), false);
+    expect(flow.policyAccepted).toBe(false);
+    await act(async () => flow.actions.proceed());
+    await act(async () => flow.actions.confirmPayment());
+    await act(async () => flow.actions.selectMethod("card"));
+    await act(async () => flow.actions.proceed());
+    await act(async () => flow.actions.confirmPayment());
+    expect(flow.step).toBe("select");
+    expect(api.enrollClass).not.toHaveBeenCalled();
+    expect(api.createPaymentIntent).not.toHaveBeenCalled();
+    expect(omise.createOmiseCardToken).not.toHaveBeenCalled();
+    await act(async () => flow.actions.acceptPolicy(true));
+    await act(async () => flow.actions.acceptPolicy(false));
+    await act(async () => flow.actions.submitAgeCheck());
+    expect(api.updateProfile).not.toHaveBeenCalled();
+  });
+
+  it("resumes an existing QR without accepting again, but blocks a new QR", async () => {
+    await render(params({ returnedPaymentIntentId: "pi1" }), false);
+    expect(flow.step).toBe("qr");
+    await act(async () => flow.actions.confirmPayment());
+    expect(api.getPaymentStatus).toHaveBeenCalledWith("pi1");
+    expect(api.createPaymentIntent).not.toHaveBeenCalled();
+    await act(async () => flow.actions.regenerateQr());
+    expect(flow.step).toBe("select");
+    expect(api.enrollClass).not.toHaveBeenCalled();
+    expect(api.createPaymentIntent).not.toHaveBeenCalled();
+  });
+
+  it("resumes a card result without acknowledgement and requires it before retry", async () => {
+    api.getPaymentStatus.mockResolvedValue(intentResponse({ method: "card", status: "FAILED" }));
+    await render(params({ returnedPaymentIntentId: "pi1" }), false);
+    expect(flow.step).toBe("result");
+    await act(async () => flow.actions.checkCardResult());
+    await act(async () => flow.actions.retryCard());
+    expect(flow.step).toBe("select");
+    expect(api.createPaymentIntent).not.toHaveBeenCalled();
   });
 
   it("loads the class and saved birthday before allowing proceed", async () => {
@@ -386,6 +427,7 @@ describe("usePaymentFlow", () => {
     const renderAndCreateQr = async () => {
       await act(async () => root.render(<Probe {...params()} />));
       await advance(0);
+      await act(async () => flow.actions.acceptPolicy(true));
       await act(async () => flow.actions.proceed());
       await advance(0);
       expect(flow.qr.polling).toBe(true);

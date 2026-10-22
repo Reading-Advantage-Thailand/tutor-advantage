@@ -43,6 +43,7 @@ import {
   notifyClassLobby,
 } from "./controllers/classController";
 import { getDemoLessonCatalog } from "./controllers/demoController";
+import { getPublicClass, getPublicClasses } from "./controllers/publicClassController";
 import { getAssessment, startAssessment, submitAssessment, getAssessmentReport, openPostAssessment, commentAssessment } from "./controllers/assessmentController";
 import { generateReferral } from "./controllers/referralController";
 import {
@@ -155,6 +156,10 @@ app.get("/health", async (_req: Request, res: Response) => {
 app.get("/version", (_req: Request, res: Response) => {
   res.status(200).json({ version: "1.0.0", service: "learning-service" });
 });
+
+// Public sales information only; enrollment and learning routes remain protected.
+app.get("/v1/public/classes", getPublicClasses);
+app.get("/v1/public/classes/:classId", getPublicClass);
 
 // Protected Class Routes
 app.get("/v1/books", authMiddleware, getBooks);

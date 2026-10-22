@@ -3,6 +3,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import liff from "@line/liff";
 import type { Liff } from "@line/liff";
+import { usePathname } from "next/navigation";
+import { isPublicInformationPath } from "../../lib/publicCourses";
 // Relative (like AssessmentPanel) so vitest, whose "@" alias points at another app, can load this file.
 import { clearResourceCache } from "../../lib/cachedResource";
 import { markSessionReady, resetSessionProbe } from "../../lib/cookieUtils";
@@ -194,6 +196,7 @@ async function exchangeIdToken(idToken: string, report: Reporter): Promise<Excha
 }
 
 export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
+  const publicInformation = isPublicInformationPath(usePathname());
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<LiffErrorCode | null>(null);
@@ -203,7 +206,9 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
   const initStartedRef = useRef(false);
 
   useEffect(() => {
+    if (publicInformation) { setIsReady(true); return; }
     if (initStartedRef.current) return;
+    setIsReady(false);
     initStartedRef.current = true;
 
     const debugTelemetry = isLiffDebugEnabled();
@@ -404,7 +409,7 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     init();
-  }, []);
+  }, [publicInformation]);
 
   /**
    * Log the student out: forget the confirmed session and every cached

@@ -37,12 +37,12 @@ function withSecurityHeaders(response: NextResponse, request?: NextRequest) {
 
   const cspHeader = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.line-scdn.net https://liffsdk.line-scdn.net https://*.line-scdn.net",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.line-scdn.net https://liffsdk.line-scdn.net https://*.line-scdn.net https://cdn.omise.co",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' blob: data: https://profile.line-scdn.net https://*.line-scdn.net https://*.line.me https://api.dicebear.com https://lh3.googleusercontent.com https://*.googleusercontent.com https://storage.googleapis.com",
     "font-src 'self' data: https://fonts.gstatic.com",
-    "connect-src 'self' https://api.line.me https://access.line.me https://liff.line.me https://liff-shortcut.line.me https://*.line-apps.com https://*.line.me https://liffsdk.line-scdn.net https://*.line-scdn.net http://localhost:3001 http://localhost:3002 ws://localhost:3001 ws://localhost:3002 https://*.ngrok-free.app wss://*.ngrok-free.app https://*.ngrok-free.dev wss://*.ngrok-free.dev",
-    "frame-src 'self' https://liff.line.me https://*.line.me",
+    "connect-src 'self' https://api.line.me https://access.line.me https://liff.line.me https://liff-shortcut.line.me https://*.line-apps.com https://*.line.me https://liffsdk.line-scdn.net https://*.line-scdn.net https://vault.omise.co https://api.omise.co http://localhost:3001 http://localhost:3002 ws://localhost:3001 ws://localhost:3002 https://*.ngrok-free.app wss://*.ngrok-free.app https://*.ngrok-free.dev wss://*.ngrok-free.dev",
+    "frame-src 'self' https://liff.line.me https://*.line.me https://cdn.omise.co",
     "media-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",

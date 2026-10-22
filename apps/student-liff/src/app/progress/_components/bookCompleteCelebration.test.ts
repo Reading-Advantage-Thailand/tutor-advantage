@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BOOK_CELEBRATED_KEY_PREFIX, claimBookCelebration } from "./bookCompleteCelebration";
+import { BOOK_CELEBRATED_KEY_PREFIX, claimBookCelebration } from "./bookCelebrationState";
 
 function memoryStorage() {
   const map = new Map<string, string>();

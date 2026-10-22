@@ -26,6 +26,29 @@ function createRequest(path: string, token?: string, headers?: HeadersInit) {
 }
 
 describe("student LIFF middleware", () => {
+  it("allows the official Omise script and tokenization hosts without a wildcard", async () => {
+    const response = await middleware(createRequest("/courses"));
+    const csp = response.headers.get("content-security-policy") || "";
+    const directives = new Map(csp.split("; ").map((entry) => [entry.split(" ")[0], entry]));
+    expect(directives.get("script-src")).toContain("https://cdn.omise.co");
+    expect(directives.get("connect-src")).toContain("https://vault.omise.co");
+    expect(directives.get("connect-src")).toContain("https://api.omise.co");
+    expect(directives.get("frame-src")).toContain("https://cdn.omise.co");
+    expect(csp).not.toContain("*.omise.co");
+    expect(directives.get("object-src")).toBe("object-src 'none'");
+  });
+  it("serves public information anonymously while enrollment and checkout remain private", async () => {
+    for (const path of ["/courses", "/courses/12345678-1234-4234-8234-123456789abc", "/privacy", "/terms"]) {
+      const response = await middleware(createRequest(path));
+      expect(response.status).toBe(200);
+      expect(response.headers.get("location")).toBeNull();
+    }
+    for (const path of ["/classes", "/enroll", "/payment"]) {
+      const response = await middleware(createRequest(path));
+      expect(response.status).toBe(307);
+      expect(response.headers.get("location")).toContain("/login?redirect=");
+    }
+  });
   it("redirects protected routes without a session to login with a return path", async () => {
     const response = await middleware(createRequest("/dashboard?tab=classes"));
 

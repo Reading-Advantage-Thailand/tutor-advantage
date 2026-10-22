@@ -7,6 +7,7 @@ import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import { LineNotificationService } from "../services/LineNotificationService";
 import { redeemCoupon, validateCoupon, CouponError } from "../services/couponService";
+import { originalPackagePrice } from "../services/classPackagePrice";
 
 // Maximum live-teaching hours allowed per class schedule
 const MAX_CLASS_HOURS = 22;
@@ -875,6 +876,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
     const bookArticleCount = cls.isDemo ? 1 : (cls.book?.articleCount || cls.book?.articles?.length || 0);
     const status = mapClassStatus(cls.status, activeOrPendingStudents, cls.capacity);
     const firstArticle = cls.book?.articles?.[0];
+    const enrollmentPrice = Number(originalPackagePrice(cls, bookCycles));
     const mapped = {
       id: cls.classId,
       name: cls.title || cls.book?.title || "Untitled Class",
@@ -887,8 +889,8 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       maxStudents: cls.capacity,
       enrolled: activeOrPendingStudents,
       capacity: cls.capacity,
-      price: Number(cls.packagePriceMinor) / 100,
-      packagePriceSatang: Number(cls.packagePriceMinor),
+      price: enrollmentPrice / 100,
+      packagePriceSatang: enrollmentPrice,
       cefr,
       level: cls.book?.levelNumber || 1,
       seriesColor: getSeriesColor(cefr),

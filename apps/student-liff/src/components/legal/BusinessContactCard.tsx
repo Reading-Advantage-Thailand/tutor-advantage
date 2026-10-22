@@ -20,7 +20,7 @@ export function BusinessContactCard() {
           <div>
             <dt className="font-semibold text-fg">อีเมล</dt>
             <dd>
-              <a className="break-all font-semibold text-brand-700 underline underline-offset-2" href={businessContact.emailHref}>
+              <a className="break-all font-semibold text-brand-fg underline underline-offset-2" href={businessContact.emailHref}>
                 {businessContact.email}
               </a>
             </dd>
@@ -38,7 +38,7 @@ export function BusinessContactCard() {
           <div>
             <dt className="font-semibold text-fg">โทรศัพท์</dt>
             <dd>
-              <a className="font-semibold text-brand-700 underline underline-offset-2" href={businessContact.phoneHref}>
+              <a className="font-semibold text-brand-fg underline underline-offset-2" href={businessContact.phoneHref}>
                 {businessContact.phone}
               </a>
             </dd>
@@ -50,7 +50,7 @@ export function BusinessContactCard() {
             <dt className="font-semibold text-fg">LINE Official</dt>
             <dd>
               <a
-                className="font-semibold text-brand-700 underline underline-offset-2"
+                className="font-semibold text-brand-fg underline underline-offset-2"
                 href={businessContact.lineUrl}
                 target="_blank"
                 rel="noreferrer"

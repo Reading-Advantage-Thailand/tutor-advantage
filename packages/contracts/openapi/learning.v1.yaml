@@ -7,6 +7,47 @@ servers:
   - url: http://localhost:3002
     description: Local development server
 paths:
+  /v1/public/classes:
+    get:
+      summary: Read the public sales catalogue without enrollment or student information
+      security: []
+      responses:
+        "200":
+          description: Paid, open, unexpired, non-demo classes (including full classes)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [classes]
+                additionalProperties: false
+                properties:
+                  classes: { type: array, items: { $ref: "#/components/schemas/PublicCourse" } }
+        "503":
+          description: Catalogue temporarily unavailable
+          content: { application/json: { schema: { $ref: "#/components/schemas/PublicCourseError" } } }
+  /v1/public/classes/{classId}:
+    get:
+      summary: Read one publicly advertised class without creating a book cycle
+      security: []
+      parameters:
+        - { name: classId, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Public sales information for one class
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [class]
+                additionalProperties: false
+                properties:
+                  class: { $ref: "#/components/schemas/PublicCourse" }
+        "404":
+          description: Class unavailable or not public
+          content: { application/json: { schema: { $ref: "#/components/schemas/PublicCourseError" } } }
+        "503":
+          description: Catalogue temporarily unavailable
+          content: { application/json: { schema: { $ref: "#/components/schemas/PublicCourseError" } } }
   /v1/book-cycles/{cycleId}/voice-entitlement:
     get:
       summary: Get the student's metered AI voice entitlement for a purchased book
@@ -474,6 +515,39 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    PublicCourseError:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          additionalProperties: false
+          properties:
+            code: { type: string }
+            message: { type: string }
+    PublicCourse:
+      type: object
+      additionalProperties: false
+      required: [id, name, bookId, bookCode, book, program, cefr, articleCount, lessonTitles, tutor, packagePriceSatang, currency, schedule, startsAt, endsAt, full]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        bookId: { type: string, format: uuid }
+        bookCode: { type: string }
+        book: { type: string }
+        program: { type: string, enum: [Reading Advantage, Primary Advantage] }
+        cefr: { type: string }
+        articleCount: { type: integer, minimum: 0 }
+        lessonTitles: { type: array, items: { type: string } }
+        tutor: { type: [string, "null"] }
+        packagePriceSatang: { type: integer, minimum: 1 }
+        currency: { type: string, enum: [THB] }
+        schedule: { type: [string, "null"] }
+        startsAt: { type: [string, "null"], format: date-time }
+        endsAt: { type: [string, "null"], format: date-time }
+        full: { type: boolean }
     VoiceEntitlement:
       type: object
       required: [enabled, totalSeconds, unlockedSeconds, usedSeconds, remainingSeconds, completedArticles, eligibleArticles]

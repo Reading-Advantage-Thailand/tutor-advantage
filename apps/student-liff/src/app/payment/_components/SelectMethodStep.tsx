@@ -9,6 +9,7 @@ import { t } from "@/lib/i18n";
 import type { OrderDisplay, PaymentMethod } from "@/lib/paymentFlow";
 import { cn } from "@/lib/utils";
 import { businessContact } from "@/lib/businessContact";
+import { PaymentPolicyNotice } from "@/components/legal/PaymentPolicyNotice";
 import { OrderSummaryCard } from "./OrderSummaryCard";
 import type { LoadStatus } from "./usePaymentFlow";
 
@@ -141,6 +142,8 @@ function TrustBadges() {
 }
 
 export interface SelectMethodStepProps {
+  policyAccepted: boolean;
+  onPolicyAcceptedChange: (accepted: boolean) => void;
   /** Back target when there is no in-app history (deep link). */
   backHref: string;
   classStatus: LoadStatus;
@@ -156,6 +159,8 @@ export interface SelectMethodStepProps {
 
 /** Step 1: order summary + choose PromptPay or card. */
 export function SelectMethodStep({
+  policyAccepted,
+  onPolicyAcceptedChange,
   backHref,
   classStatus,
   display,
@@ -171,6 +176,7 @@ export function SelectMethodStep({
       <AppBar title={t("payment.select.title")} back fallbackHref={backHref} />
       <div className="flex flex-col gap-6 px-4 pt-3 pb-6">
         <OrderSummaryCard status={classStatus} display={display} onRetry={onRetryClass} />
+        <PaymentPolicyNotice accepted={policyAccepted} onAcceptedChange={onPolicyAcceptedChange} />
 
         <section className="flex flex-col gap-3">
           <h2 id="payment-method-heading" className="text-[17px] leading-[1.5] font-bold text-fg">
@@ -203,7 +209,7 @@ export function SelectMethodStep({
           variant="brand"
           size="cta"
           className="flex-1"
-          disabled={!canProceed && !proceedLoading}
+          disabled={!canProceed || !policyAccepted}
           loading={proceedLoading}
           onClick={onProceed}
         >

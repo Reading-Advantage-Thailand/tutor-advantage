@@ -29,11 +29,11 @@ export const th = {
       "ต้องได้รับความยินยอมจากผู้ปกครองก่อนชำระเงินและใช้งานช่องทางติดต่อ",
     securePaymentLine: "ชำระเงินปลอดภัยโดย Omise / PromptPay และบัตรเครดิต",
     close: "ปิด",
-    programBadge: "โปรแกรมภาษาอังกฤษ Reading",
+    programBadge: "Reading Advantage · Primary Advantage",
     heroTitleLine1: "เรียนภาษาอังกฤษ",
     heroTitleLine2: "กับติวเตอร์ที่คุณ",
     heroTitleLine3: "ไว้วางใจ",
-    heroSubtitleLine1: "ระบบเรียนรู้ 15 ขั้นตอน รองรับทุกระดับ A1-C1",
+    heroSubtitleLine1: "หลักสูตรภาษาอังกฤษพร้อมบทอ่านและแบบฝึกหัด",
     heroSubtitleLine2: "สมัครง่าย จ่ายสะดวก ผ่าน LINE โดยตรง",
     goDashboard: "ไปที่หน้าหลัก",
     browseClasses: "ดูคลาสเรียนทั้งหมด",
@@ -51,21 +51,21 @@ export const th = {
     stepStartDesc: "เข้าถึงบทเรียนผ่านแอปนี้",
     availableCourses: "หลักสูตรที่เปิดสอน",
     productDetailsTitle: "รายละเอียดสินค้าและบริการ",
-    productDetailsName: "คลาสเรียนภาษาอังกฤษ Reading Advantage",
+    productDetailsName: "คลาสเรียนภาษาอังกฤษ Reading และ Primary Advantage",
     productDetailsDescription:
-      "บริการคลาสเรียนภาษาอังกฤษกับติวเตอร์ ผู้เรียนสมัครตามคลาสที่เปิดรับและเรียนตามตารางของคลาส พร้อมเข้าถึงบทเรียนผ่าน Student LIFF Portal",
+      "บริการคลาสเรียนภาษาอังกฤษ Reading Advantage และ Primary Advantage กับติวเตอร์ ผู้เรียนเลือกคลาสที่เปิดขายและเรียนตามตาราง พร้อมเข้าถึงบทเรียนผ่าน Student LIFF Portal",
     productDetailsCourse:
-      "ระดับที่เปิดรับขณะนี้: A1 Reading 3.1 มีบทอ่านภาษาอังกฤษ 14 เรื่อง พร้อมเนื้อหาหลากหลายประเภท",
+      "หนังสือ ระดับ จำนวนบทอ่าน ชื่อติวเตอร์ และตารางเรียนแสดงตามข้อมูลจริงของคลาสที่เปิดขาย",
     productDetailsMaterials:
-      "แพ็กเกจประกอบด้วยการเรียนตามคลาสและสิทธิ์เข้าถึง Reading Materials และ Assignments ของหนังสือที่เลือก",
+      "หนึ่งแพ็กเกจรวมการเรียน สิทธิ์เข้าถึง Reading Materials และ Assignments ของหนังสือที่เลือก และหนังสือจริงหนึ่งเล่ม รับจากติวเตอร์ในคาบแรก",
     productDetailsPrice:
-      "ราคาเริ่มต้น 3,000 บาทต่อผู้เรียนต่อแพ็กเกจหนังสือ โดยราคาจริงจะแสดงในรายละเอียดคลาสก่อนชำระเงิน",
+      "คิดราคาเป็นเงินบาทต่อผู้เรียนต่อแพ็กเกจหนังสือ ดูยอดจริงได้ในหน้าคลาสและตรวจสอบอีกครั้งก่อนยืนยันชำระเงิน",
     productDetailsPayment:
       "ชำระผ่าน PromptPay หรือบัตรเครดิต/เดบิต โดยระบบชำระเงิน Omise",
     haveTutorLink: "มีลิงก์สมัครเรียนจากติวเตอร์แล้ว?",
     continueAfterLogin: "เข้าสู่ระบบเพื่อดำเนินการต่อได้เลย",
     secureOmiseLine:
-      "ชำระเงินผ่าน PromptPay หรือบัตรเครดิต / ปลอดภัย 100% โดย Omise",
+      "ชำระเงินผ่าน PromptPay หรือบัตรเครดิต/เดบิต โดย Omise",
   },
   // Shared copy for the mobile design system (components/mobile/**).
   // Plain, friendly Thai that a 10-year-old understands.
@@ -155,7 +155,7 @@ export const th = {
   },
   // Privacy, terms and "my consents" screens (components/legal/**).
   legal: {
-    lastUpdated: "ปรับปรุงล่าสุด: 10 พฤษภาคม 2569",
+    lastUpdated: "ปรับปรุงล่าสุด: 22 ตุลาคม 2569",
     lineOfficial: "LINE Official: @readingadvantage",
     privacyMetaTitle: "นโยบายความเป็นส่วนตัว - Tutor Advantage",
     termsMetaTitle: "เงื่อนไขการใช้งาน - Tutor Advantage",

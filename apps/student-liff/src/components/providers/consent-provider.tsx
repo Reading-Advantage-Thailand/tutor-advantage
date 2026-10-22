@@ -1,6 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
+import { isPublicInformationPath } from "../../lib/publicCourses";
 
 /**
  * The PDPA gate UI is only downloaded when this student has not accepted the
@@ -19,7 +21,8 @@ interface ConsentProviderProps {
 
 /** Renders the app when consent is granted, otherwise only the full-screen consent gate. */
 export function ConsentProvider({ children, hasConsent }: ConsentProviderProps) {
-  if (hasConsent) {
+  const pathname = usePathname();
+  if (hasConsent || isPublicInformationPath(pathname)) {
     return <>{children}</>;
   }
   return <ConsentGate />;

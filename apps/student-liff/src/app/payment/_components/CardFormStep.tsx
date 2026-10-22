@@ -7,6 +7,7 @@ import { formatSatang } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { hasAllCardFields, type CardFields } from "@/lib/paymentFlow";
 import { AmountCard } from "./AmountCard";
+import { PaymentPolicyNotice } from "@/components/legal/PaymentPolicyNotice";
 
 export interface CardFormStepProps {
   amountSatang: number | null;
@@ -114,6 +115,7 @@ export function CardFormStep({
           title={t("payment.card.securityTitle")}
           description={t("payment.card.securityDescription")}
         />
+        <PaymentPolicyNotice />
       </form>
 
       <BottomActionBar>

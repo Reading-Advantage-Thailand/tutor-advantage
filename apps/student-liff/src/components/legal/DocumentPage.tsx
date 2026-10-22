@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { AppBar } from "@/components/mobile/AppBar";
 import { IconTile, type IconTileTone } from "@/components/mobile/IconTile";
 import { Screen } from "@/components/mobile/Screen";
-import { t } from "@/lib/i18n";
+import { checkoutPolicy } from "@/lib/content/legal";
 import { LegalSections, type LegalSection } from "./LegalSections";
 
 export interface DocumentPageProps {
@@ -32,7 +32,7 @@ export function DocumentPage({ title, icon, tone = "brand", intro, sections, foo
         <div className="rounded-[var(--radius-card)] border border-hairline bg-surface p-5 shadow-[var(--shadow-card)]">
           <div className="flex items-center gap-3">
             <IconTile icon={icon} tone={tone} size="lg" />
-            <p className="text-[13px] leading-[1.5] font-medium text-fg-muted">{t("legal.lastUpdated")}</p>
+            <p className="text-[13px] leading-[1.5] font-medium text-fg-muted">{checkoutPolicy.lastUpdated}</p>
           </div>
           <p className="mt-4 text-base leading-[1.7] font-medium text-fg">{intro}</p>
           <hr className="my-6 border-hairline" />

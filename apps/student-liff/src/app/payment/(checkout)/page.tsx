@@ -89,6 +89,8 @@ function PaymentFlowScreen(params: PaymentFlowParams) {
     default:
       return (
         <SelectMethodStep
+          policyAccepted={flow.policyAccepted}
+          onPolicyAcceptedChange={actions.acceptPolicy}
           backHref={params.classId ? `/classes/${params.classId}` : "/classes"}
           classStatus={flow.classStatus}
           display={flow.display}

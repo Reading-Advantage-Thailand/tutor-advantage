@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Confetti } from "@/components/celebrate/Confetti";
-import { claimBookCelebration } from "./bookCompleteCelebration";
+import { claimBookCelebration } from "./bookCelebrationState";
 
 /** One-time confetti the first time a finished book is shown on Progress. */
 export function BookCompleteCelebration({

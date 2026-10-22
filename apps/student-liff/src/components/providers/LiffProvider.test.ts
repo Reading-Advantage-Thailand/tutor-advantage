@@ -4,6 +4,7 @@ import React, { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 
 const mocks = vi.hoisted(() => ({
+  pathname: vi.fn(() => "/dashboard"),
   liff: {
     use: vi.fn(),
     init: vi.fn<(config: unknown) => Promise<void>>(),
@@ -20,6 +21,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@line/liff", () => ({ default: mocks.liff }));
+vi.mock("next/navigation", () => ({ usePathname: mocks.pathname }));
 vi.mock("../../lib/cookieUtils", () => ({
   markSessionReady: mocks.markSessionReady,
   resetSessionProbe: mocks.resetSessionProbe,
@@ -75,6 +77,7 @@ const beaconStages = () =>
   beacon.mock.calls.map(([, blob]) => (blob as Blob & { __body?: string }).__body ?? "").map((body) => JSON.parse(body).stage);
 
 beforeEach(() => {
+  mocks.pathname.mockReturnValue("/dashboard");
   Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
   vi.stubEnv("NEXT_PUBLIC_LIFF_ID", "liff-test");
   vi.stubEnv("NEXT_PUBLIC_LIFF_DEBUG", "");
@@ -120,6 +123,19 @@ afterEach(async () => {
 });
 
 describe("LiffProvider start-up", () => {
+  it("renders public information without the SDK or login, then starts normally on private navigation", async () => {
+    mocks.pathname.mockReturnValue("/courses");
+    await mount();
+    expect(ctx.isReady).toBe(true);
+    expect(mocks.liff.init).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+    mocks.pathname.mockReturnValue("/dashboard");
+    await mount();
+    await flush();
+    expect(mocks.liff.init).toHaveBeenCalledTimes(1);
+    expect(ctx.isReady).toBe(true);
+    expect(ctx.profile?.displayName).toBe("Nong");
+  });
   it("runs getProfile and the session exchange in parallel; ready only after both settle", async () => {
     const profile = deferred<{ userId: string; displayName: string }>();
     const exchange = deferred<Response>();

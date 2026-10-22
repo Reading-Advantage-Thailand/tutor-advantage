@@ -2,64 +2,26 @@
 
 import Link from "next/link";
 import {
-  BookOpen,
   ChevronRight,
-  Clock,
-  FileText,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import {
   Chip,
-  HScroll,
   ListGroup,
   ListRow,
   Screen,
   SectionHeader,
-  StatTile,
   Surface,
 } from "@/components/mobile";
 import { BrandMark } from "@/components/icons/BrandMark";
 import { LineIcon } from "@/components/icons/LineIcon";
+import { PublicCatalogPreview } from "@/components/courses/PublicCatalogPreview";
 import { BusinessContactCard } from "@/components/legal/BusinessContactCard";
 import { buttonVariants } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ENTRY_HERO_BG } from "./BrandSplash";
-
-/** Reading series shown on the landing page (only the first one is open). */
-const COURSES = [
-  { cefr: "A1", levels: "3.1", open: true },
-  { cefr: "A1", levels: "1-3.2", open: false },
-  { cefr: "A2", levels: "4-6", open: false },
-  { cefr: "B1", levels: "7-9", open: false },
-  { cefr: "B2", levels: "10-12", open: false },
-  { cefr: "C1", levels: "13-15", open: false },
-] as const;
-
-const STATS = [
-  {
-    value: "32",
-    unit: "app.statBookUnit",
-    label: "app.statBooks",
-    icon: BookOpen,
-    tone: "brand",
-  },
-  {
-    value: "448",
-    unit: "app.statArticleUnit",
-    label: "app.statArticles",
-    icon: FileText,
-    tone: "blue",
-  },
-  {
-    value: "1,150+",
-    unit: null,
-    label: "app.statHours",
-    icon: Clock,
-    tone: "purple",
-  },
-] as const;
 
 const STEPS = [
   {
@@ -143,7 +105,7 @@ export function LandingMarketing({ isLoggedIn }: LandingMarketingProps) {
               <LineIcon size={22} />
               {ctaLabel}
             </Link>
-            <Link href="/classes" className={heroSecondaryCta}>
+            <Link href="/courses" className={heroSecondaryCta}>
               {t("app.browseClasses")}
               <ChevronRight aria-hidden="true" />
             </Link>
@@ -153,28 +115,8 @@ export function LandingMarketing({ isLoggedIn }: LandingMarketingProps) {
 
       <div className="mx-auto flex w-full max-w-xl flex-col gap-7 px-4 pt-5 pb-[calc(24px+var(--safe-bottom))]">
         {/* ── Stats ── */}
-        <div className="grid grid-cols-3 gap-2.5">
-          {STATS.map((stat) => (
-            <StatTile
-              key={stat.label}
-              icon={stat.icon}
-              tone={stat.tone}
-              value={
-                <>
-                  {stat.value}
-                  {stat.unit ? (
-                    <span className="ml-1 text-xs font-semibold text-fg-muted">
-                      {t(stat.unit)}
-                    </span>
-                  ) : null}
-                </>
-              }
-              label={t(stat.label)}
-            />
-          ))}
-        </div>
+        <PublicCatalogPreview />
 
-        {/* ── How it works ── */}
         <section>
           <SectionHeader title={t("app.howItWorksTitle")} />
           <ListGroup>
@@ -200,42 +142,6 @@ export function LandingMarketing({ isLoggedIn }: LandingMarketingProps) {
         </section>
 
         {/* ── Courses ── */}
-        <section>
-          <SectionHeader title={t("app.availableCourses")} />
-          <HScroll snap gap={12} aria-label={t("app.availableCourses")}>
-            {COURSES.map((course) => (
-              <div
-                key={`${course.cefr}-${course.levels}`}
-                className={cn(
-                  "flex w-[150px] shrink-0 snap-start flex-col rounded-[var(--radius-card)] border p-4",
-                  course.open
-                    ? cn(ENTRY_HERO_BG, "border-transparent text-hero-fg")
-                    : "border-hairline bg-surface text-fg shadow-[var(--shadow-card)]",
-                )}
-              >
-                <span
-                  className={cn(
-                    "text-xs leading-[1.5] font-bold",
-                    course.open ? "text-hero-fg-muted" : "text-fg-muted",
-                  )}
-                >
-                  {course.cefr} · {t("entry.courseLevel")} {course.levels}
-                </span>
-                <span className="mt-1 text-lg leading-[1.4] font-extrabold">
-                  {t("entry.courseReading")}
-                </span>
-                <Chip
-                  tone={course.open ? "onBrand" : "neutral"}
-                  size="sm"
-                  className="mt-3 self-start"
-                >
-                  {course.open ? t("entry.courseOpen") : t("entry.courseSoon")}
-                </Chip>
-              </div>
-            ))}
-          </HScroll>
-        </section>
-
         <section aria-labelledby="product-service-details">
           <SectionHeader title={t("app.productDetailsTitle")} />
           <Surface as="article" padding="md">

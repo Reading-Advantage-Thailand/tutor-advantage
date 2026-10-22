@@ -124,6 +124,12 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
   const [guardianName, setGuardianName] = useState("");
   const [guardianRelation, setGuardianRelation] = useState("");
   const [consentAlreadyGiven, setConsentAlreadyGiven] = useState(false);
+  const [policyAccepted, setPolicyAccepted] = useState(false);
+  const policyAcceptedRef = useRef(false);
+  const acceptPolicy = (accepted: boolean) => {
+    policyAcceptedRef.current = accepted;
+    setPolicyAccepted(accepted);
+  };
 
   const setIntent = useCallback((intent: IntentLike | null) => {
     intentIdRef.current = intent?.paymentIntentId ?? null;
@@ -394,6 +400,11 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
     if (busyRef.current || redirectingRef.current) return;
     const intentId = intentIdRef.current;
     const verifying = method === "promptpay" && intentId !== null;
+    if (!verifying && !policyAcceptedRef.current) {
+      setStep("select");
+      toast.error("กรุณาอ่านและยอมรับเงื่อนไขการยกเลิกและคืนเงินก่อนชำระ");
+      return;
+    }
     qr.stopPolling(); // no automatic check while checking by hand
     busyRef.current = true;
     setLoading(true);
@@ -434,7 +445,7 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
   const canProceed = classStatus === "ready" && profileStatus !== "loading" && !resuming;
 
   const proceed = () => {
-    if (!canProceed || busyRef.current) return;
+    if (!canProceed || busyRef.current || !policyAcceptedRef.current) return;
     const next = getProceedStep(dateOfBirth, consentAlreadyGiven, method);
     showStep(next);
     // PromptPay: create the QR right away (one tap instead of two).
@@ -442,6 +453,7 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
   };
 
   const submitAgeCheck = async () => {
+    if (!policyAcceptedRef.current) { setStep("select"); return; }
     if (!isValidDateOfBirth(dateOfBirth)) {
       toast.error(t("payment.errors.dateOfBirthRequired"));
       return;
@@ -528,7 +540,7 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
     forgetIntent();
     setCardResult("pending");
     setMethod("card");
-    showStep("card-form");
+    showStep(policyAcceptedRef.current ? "card-form" : "select");
   };
 
   /** Back to the method screen. The QR check keeps running (a payment in flight can still finish). */
@@ -568,6 +580,7 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
     retryClass,
     profileLoading: profileStatus === "loading",
     canProceed,
+    policyAccepted,
     /** Intent amount once an intent exists, otherwise the class/cycle price (null = unknown). */
     amountSatang: getDisplayAmountSatang(intentAmountSatang, display.priceSatang),
 
@@ -604,6 +617,7 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
     },
 
     actions: {
+      acceptPolicy,
       selectMethod,
       proceed,
       submitAgeCheck,
