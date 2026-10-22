@@ -37,6 +37,9 @@ jobs:
   changes:
     name: Detect changes
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
       (github.event.workflow_run.head_branch == 'main' ||
@@ -52,11 +55,23 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
-          fetch-depth: 2
+          fetch-depth: 0
+      # Compare with the commit of the last SUCCESSFUL deploy, not just the
+      # previous commit: a push with several commits must deploy every service
+      # changed in any of them (2026-10-22: a 3-commit push skipped the apps).
       - name: Resolve comparison commit
         id: refs
         shell: bash
-        run: echo "base=$(git rev-parse HEAD^)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          base=$(gh api "repos/${{ github.repository }}/actions/workflows/deploy.yml/runs?branch=${{ github.event.workflow_run.head_branch }}&status=success&per_page=1" --jq '.workflow_runs[0].head_sha // empty' 2>/dev/null || true)
+          if [[ -z "$base" ]] || ! git cat-file -e "${base}^{commit}" 2>/dev/null || ! git merge-base --is-ancestor "$base" HEAD; then
+            echo "No usable last-deploy commit; falling back to HEAD^"
+            base=$(git rev-parse HEAD^)
+          fi
+          echo "Comparing ${base} .. $(git rev-parse HEAD)"
+          echo "base=${base}" >> "$GITHUB_OUTPUT"
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -278,6 +293,8 @@ jobs:
           if [[ "${{ matrix.service }}" == "finance-mlm-service" ]]; then
             DEPLOY_FLAGS+=(
               "--update-secrets=OMISE_WEBHOOK_SECRET=ta-omise_webhook_secret:latest"
+              # Shared key for Cloud Scheduler internal routes (daily dispute sync).
+              "--update-secrets=INTERNAL_API_KEY=ta-internal_api_key:latest"
               "--update-env-vars=PAYOUT_HOLD_DAYS_CARD=${PAYOUT_HOLD_DAYS_CARD},PAYOUT_HOLD_DAYS_OTHER=${PAYOUT_HOLD_DAYS_OTHER},RISK_NEW_TUTOR_DAYS=${RISK_NEW_TUTOR_DAYS},RISK_NEW_TUTOR_CARD_LIMIT_THB=${RISK_NEW_TUTOR_CARD_LIMIT_THB},RISK_MAX_STUDENTS_PER_CARD=${RISK_MAX_STUDENTS_PER_CARD}"
             )
           fi

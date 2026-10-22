@@ -106,6 +106,20 @@ override with GitHub repository variables of the same name).
 | `RISK_DISPUTE_WINDOW_DAYS` | 90 | window for dispute escalation |
 | `OMISE_VAULT_BASE_URL` | https://vault.omise.co | token lookup (card fingerprint before charging) |
 
+## Production setup (done 2026-10-22)
+
+- Secret Manager `ta-internal_api_key` (random, created 2026-10-22) is mounted
+  as `INTERNAL_API_KEY` on finance-mlm-service by `deploy.yml`; the compute
+  service account has `secretAccessor` on it. Rotate: add a new secret
+  version, redeploy, then update the scheduler job header.
+- Cloud Scheduler job `ta-daily-dispute-sync` (06:15 Asia/Bangkok) calls the
+  daily sync with that key in the `X-Internal-Key` header.
+- `deploy.yml` now detects changed services against the last successful
+  deploy (previously only the last commit of a push, which skipped services).
+- Note: the monthly `/v1/internal/settlement/auto-run` scheduler job from
+  `settlement-cron.yaml` has never been created in production; settlements
+  are previewed manually from the admin console.
+
 ## Deployment checklist
 
 1. Run the migration `20261022120000_chargeback_protection` (adds 4 columns +
