@@ -98,7 +98,7 @@ override with GitHub repository variables of the same name).
 | Variable | Default | Meaning |
 |---|---|---|
 | `PAYOUT_HOLD_DAYS_CARD` | 60 | hold before card commission is paid |
-| `PAYOUT_HOLD_DAYS_OTHER` | 7 | hold for PromptPay / other |
+| `PAYOUT_HOLD_DAYS_OTHER` | 7 | hold for PromptPay only (any letter case); every other or unknown method uses the card hold (fail-safe) |
 | `RISK_MAX_STUDENTS_PER_CARD` | 3 | students per card; the next one is refused |
 | `RISK_NEW_TUTOR_DAYS` | 90 | tutor account age counted as "new" |
 | `RISK_NEW_TUTOR_CARD_LIMIT_THB` | 30000 | card sales per 30 days for a new tutor |

@@ -17,6 +17,7 @@ import { logger } from "@tutor-advantage/shared-config";
 import { prisma } from "@tutor-advantage/database";
 import {
   DAY_IN_MS,
+  PROMPTPAY_METHOD_FILTER,
   PAYOUT_HOLD_FLAG_SEVERITIES,
   PAYOUT_HOLD_FLAG_STATUSES,
   getRiskConfig,
@@ -201,7 +202,8 @@ export async function checkCardPaymentRisk(input: {
       const recent = await prisma.paymentIntent.aggregate({
         where: {
           earningTutorUserId: tutorId,
-          method: "card",
+          // Any non-PromptPay method counts as card (fail-safe, any letter case).
+          NOT: { method: PROMPTPAY_METHOD_FILTER },
           status: { in: ["SUCCESS", "DISPUTED"] },
           paidAt: { gte: since },
         },

@@ -122,5 +122,21 @@ work). What we stopped is **paying commission on money that later disappears**.
   `docs/chargeback-protection-messages.md`.
 - Tests after these changes: **200 test files, 1,552 tests, all passing**;
   TypeScript (finance service, admin console, tutor app) and lint: no errors.
+- **Fail-safe payment method check:** old data stores PromptPay as both
+  "promptpay" and "PROMPTPAY". Now only PromptPay (any letter case) gets the
+  short 7-day hold; every other or unknown method waits 60 days like a card.
+- **Dry run on a copy of the local production clone** (anonymised, data up to
+  2026-09-28): the migration applies cleanly; the new settlement counts every
+  payment once across months; the copy was deleted afterwards.
+- Screens checked with real components (admin "card payments" card, tutor
+  hold-period notice).
+
+## 9. Note for the owner (existing rule, not changed)
+
+In the clone, one tutor has about **80,000 THB of paid sales but is not
+verified**. The existing rule pays unverified tutors **nothing and does not
+keep it for later**: once that month is approved, the commission is gone for
+good. If you prefer to *hold* it until the tutor is verified (like the fraud
+hold), tell us — it is a small change.
 
 Technical details: `docs/runbooks/chargeback-protection.md`.

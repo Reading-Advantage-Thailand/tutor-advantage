@@ -6,7 +6,10 @@
  *
  *  PAYOUT_HOLD_DAYS_CARD            days a card payment waits before its
  *                                    commission is paid (default 60)
- *  PAYOUT_HOLD_DAYS_OTHER           same for PromptPay / other methods (default 7)
+ *  PAYOUT_HOLD_DAYS_OTHER           same for PromptPay (default 7). Fail-safe: only
+ *                                    PromptPay (any letter case) gets this short
+ *                                    hold; every other or unknown method waits as
+ *                                    long as a card.
  *  RISK_MAX_STUDENTS_PER_CARD       how many different students may use one
  *                                    card (default 3; the 4th is refused)
  *  RISK_NEW_TUTOR_DAYS              a tutor account younger than this is "new"
@@ -31,11 +34,19 @@ function intEnv(name: string, fallback: number, min = 0, max = 3650) {
   return value;
 }
 
-export function getPayoutHoldDays(method?: string | null) {
-  return method === "card"
-    ? intEnv("PAYOUT_HOLD_DAYS_CARD", 60)
-    : intEnv("PAYOUT_HOLD_DAYS_OTHER", 7);
+/** PromptPay (bank push payment, no card chargeback) is the only short-hold method. */
+export function isShortHoldMethod(method?: string | null) {
+  return (method ?? "").trim().toLowerCase() === "promptpay";
 }
+
+export function getPayoutHoldDays(method?: string | null) {
+  return isShortHoldMethod(method)
+    ? intEnv("PAYOUT_HOLD_DAYS_OTHER", 7)
+    : intEnv("PAYOUT_HOLD_DAYS_CARD", 60);
+}
+
+/** Prisma filter for PromptPay in any letter case (legacy rows use "PROMPTPAY"). */
+export const PROMPTPAY_METHOD_FILTER = { equals: "promptpay", mode: "insensitive" } as const;
 
 /** When the commission of a payment may first be paid. */
 export function commissionMaturityDate(paidAt: Date, method?: string | null) {
@@ -59,10 +70,10 @@ export function buildSettlementPaymentWhere(
   ownRunId?: string | null,
 ): Prisma.PaymentIntentWhereInput {
   const { end } = getIctMonthWindow(periodMonth);
-  const matured = {
+  const matured: Prisma.PaymentIntentWhereInput = {
     OR: [
-      { method: "card", paidAt: { lte: maturedPaidAtCutoff(end, "card") } },
-      { method: { not: "card" }, paidAt: { lte: maturedPaidAtCutoff(end, "other") } },
+      { method: PROMPTPAY_METHOD_FILTER, paidAt: { lte: maturedPaidAtCutoff(end, "promptpay") } },
+      { NOT: { method: PROMPTPAY_METHOD_FILTER }, paidAt: { lte: maturedPaidAtCutoff(end, "card") } },
     ],
   };
   return {

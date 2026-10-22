@@ -499,6 +499,11 @@ describe("hold period policy", () => {
   it("uses 60 days for cards and 7 for PromptPay, configurable by env", () => {
     expect(getPayoutHoldDays("card")).toBe(60);
     expect(getPayoutHoldDays("promptpay")).toBe(7);
+    // Legacy upper-case rows and unknown methods: fail-safe.
+    expect(getPayoutHoldDays("PROMPTPAY")).toBe(7);
+    expect(getPayoutHoldDays("CARD")).toBe(60);
+    expect(getPayoutHoldDays("mock")).toBe(60);
+    expect(getPayoutHoldDays(null)).toBe(60);
     vi.stubEnv("PAYOUT_HOLD_DAYS_CARD", "90");
     vi.stubEnv("PAYOUT_HOLD_DAYS_OTHER", "abc");
     expect(getPayoutHoldDays("card")).toBe(90);

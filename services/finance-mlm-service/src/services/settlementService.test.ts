@@ -566,8 +566,8 @@ describe("SettlementService", () => {
             { commissionSettlementRunId: null },
             {
               OR: [
-                { method: "card", paidAt: { lte: new Date("2026-04-01T16:59:59.999Z") } },
-                { method: { not: "card" }, paidAt: { lte: new Date("2026-05-24T16:59:59.999Z") } },
+                { method: { equals: "promptpay", mode: "insensitive" }, paidAt: { lte: new Date("2026-05-24T16:59:59.999Z") } },
+                { NOT: { method: { equals: "promptpay", mode: "insensitive" } }, paidAt: { lte: new Date("2026-04-01T16:59:59.999Z") } },
               ],
             },
           ],
