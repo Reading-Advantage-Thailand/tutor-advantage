@@ -43,13 +43,39 @@ export type EarningsProjection = {
 
 export type RateInfo = { rate: number; volume: number; nextTarget: number };
 
+export type PayoutPolicy = { cardHoldDays: number; otherHoldDays: number };
+
 export type EarningsResponse = {
   periodMonth: string;
   currentProjection: EarningsProjection;
   history: EarningsHistoryItem[];
   clawbacks: { date: string; amount: number; reason: string }[];
   rateInfo: RateInfo;
+  /** Days before commission is paid (chargeback protection). */
+  payoutPolicy?: PayoutPolicy;
 };
+
+/** Defaults used when an older finance service does not send the policy. */
+export const DEFAULT_PAYOUT_POLICY: PayoutPolicy = { cardHoldDays: 60, otherHoldDays: 7 };
+
+/** Readable names for system adjustment reasons (refund:..., chargeback:..., ...). */
+export type AdjustmentReasonLabels = {
+  refund: string;
+  chargeback: string;
+  chargebackReversal: string;
+  carryForward: string;
+  heldCarryForward: string;
+};
+
+export function friendlyAdjustmentReason(reason: string, labels?: AdjustmentReasonLabels): string {
+  if (!labels) return reason;
+  if (reason.startsWith("chargeback-reversal:")) return labels.chargebackReversal;
+  if (reason.startsWith("chargeback:")) return labels.chargeback;
+  if (reason.startsWith("refund:")) return labels.refund;
+  if (reason.startsWith("held-carry-forward:")) return labels.heldCarryForward;
+  if (reason.startsWith("carry-forward:")) return labels.carryForward;
+  return reason;
+}
 
 export const EMPTY_PROJECTION: EarningsProjection = {
   directSales: 0,
@@ -102,9 +128,13 @@ export function historyGross(item: EarningsHistoryItem): number {
 export function adjustmentLines(
   source: { adjustments?: EarningsAdjustment[]; clawback: number },
   fallbackReason: string,
+  labels?: AdjustmentReasonLabels,
 ): EarningsAdjustment[] {
   if (source.adjustments && source.adjustments.length > 0) {
-    return source.adjustments.map((adj) => ({ amount: adj.amount, reason: adj.reason || fallbackReason }));
+    return source.adjustments.map((adj) => ({
+      amount: adj.amount,
+      reason: adj.reason ? friendlyAdjustmentReason(adj.reason, labels) : fallbackReason,
+    }));
   }
   return source.clawback !== 0 ? [{ amount: source.clawback, reason: fallbackReason }] : [];
 }

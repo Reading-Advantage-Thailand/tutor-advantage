@@ -67,6 +67,8 @@ export interface UserDetailV2 {
     nationalId: string | null;
     hasNationalId?: boolean;
     omiseRecipientId: string | null;
+    /** Exempt from the new-tutor card limit (chargeback protection). */
+    cardPaymentsTrusted?: boolean;
     verification: Partial<Record<VerificationField, VerificationItem>>;
   };
   sponsor: { id: string; name: string | null } | null;

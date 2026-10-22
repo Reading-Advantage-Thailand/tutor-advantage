@@ -238,7 +238,7 @@ Use bottom-up payout:
 1. `PV(node)` = direct class sales volume for node in settlement period.
 2. `GV(node)` = `PV(node) + sum(GV(child))`.
 3. `R(node)` = rate function output for node's qualifying volume basis.
-4. `Payout(node)` = `max(0, R(node)*GV(node) - sum(Payout(child)))`.
+4. `Payout(node)` = `max(0, R(node)*GV(node) - sum(OrgPayout(child)))`, where `OrgPayout(child)` is the total paid to the child and its whole downline (classic differential; the tree total is `R(root)*GV(root)`). Clarified 2026-10-22 (owner): subtracting only the direct child's own payout over-paid chains of 3+ levels (70.6% instead of 55.6% in a 3×10,000 THB example).
 
 ## 7.3 Settlement Integrity Constraints
 

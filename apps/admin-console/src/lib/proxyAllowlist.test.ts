@@ -26,6 +26,7 @@ describe("proxy allowlist", () => {
       ["POST", "/v1/fraud-flags/abc/action", "finance"],
       ["PATCH", "/v1/users/abc/omise-recipient", "finance"],
       ["PATCH", "/v1/users/abc/tax-residency", "finance"],
+      ["PATCH", "/v1/users/abc/card-payments-trust", "finance"],
       ["GET", "/v1/settlements/abc/pnd54", "finance"],
       ["GET", "/v1/admin/roles", "identity"],
       ["POST", "/v1/admin/roles", "identity"],

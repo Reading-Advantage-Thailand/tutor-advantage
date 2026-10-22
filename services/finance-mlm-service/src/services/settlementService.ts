@@ -631,18 +631,22 @@ export class SettlementService {
       node.payoutRate = myRate;
 
       const children = childMap.get(userId) || [];
-      let childPayouts = 0n;
+      // Total paid in each child's whole organisation (classic differential:
+      // a node earns its rate on its group volume minus what its downline
+      // organisation already earns). The tree total is R(GV_root) * GV_root.
+      let downlinePaid = 0n;
 
       for (const childId of children) {
-        childPayouts += calculatePayouts(childId, new Set(visiting));
+        downlinePaid += calculatePayouts(childId, new Set(visiting));
       }
 
       let payoutForMe =
-        calculatePayoutMinor(node.groupVolumeMinor, myRate) - childPayouts;
+        calculatePayoutMinor(node.groupVolumeMinor, myRate) - downlinePaid;
 
       if (payoutForMe < 0n) payoutForMe = 0n;
 
       if (node.personalVolumeMinor === 0n && children.length > 0) {
+        // No own sales: this node's share rolls up to its sponsor.
         node.eligibilityStatus = "INELIGIBLE_NO_PV";
         payoutForMe = 0n;
       } else if (payoutForMe > 0n) {
@@ -650,7 +654,7 @@ export class SettlementService {
       }
 
       node.payoutAmountMinor = payoutForMe;
-      return payoutForMe;
+      return payoutForMe + downlinePaid;
     };
 
     // Find roots again and start the top-down payout calculation

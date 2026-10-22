@@ -72,11 +72,28 @@ it is paid as soon as an admin sets the flag to `MONITORING` or `CLEARED`.
 Clawbacks are netted against it first.
 
 **Trusted tutors:** an admin can exempt an established tutor from the
-new-tutor card limit: `PATCH /v1/users/:id/card-payments-trust`
-`{ "trusted": true, "reason": "..." }` (ADMIN, audited), or list ids in
-`RISK_CARD_TRUSTED_TUTOR_IDS`. (No admin-console button yet.)
+new-tutor card limit in the admin console: Users → tutor → Verification tab →
+card **"การรับชำระด้วยบัตร"** → "ตั้งเป็นครูที่เชื่อใจ" (reason required,
+audited). API: `PATCH /v1/users/:id/card-payments-trust`
+`{ "trusted": true, "reason": "..." }` (ADMIN), or list ids in
+`RISK_CARD_TRUSTED_TUTOR_IDS`.
+
+**Tutor app:** the earnings page shows a notice with the hold days (from
+`GET /v1/tutors/earnings/history` → `payoutPolicy`) and readable names for
+`refund:` / `chargeback:` / `carry-forward:` adjustments.
+
+## Network payout formula (classic differential, 2026-10-22)
+
+`Payout(node) = max(0, R(GV) * GV - total paid in each child's organisation)`.
+The tree is paid exactly `R(GV_root) * GV_root`; a node without own sales
+(`INELIGIBLE_NO_PV`) passes its share up. Implemented identically in
+`settlementService.computeSettlement`, `tutorEarningsController`,
+`tutorNetworkController` and `clawbackService`.
 
 ## Settings (environment variables, finance-mlm-service)
+
+Set on every deploy by `.github/workflows/deploy.yml` (confirmed values;
+override with GitHub repository variables of the same name).
 
 | Variable | Default | Meaning |
 |---|---|---|

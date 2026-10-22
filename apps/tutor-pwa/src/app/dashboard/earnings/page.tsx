@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
 import { cookies } from "next/headers";
-import { BadgePercent, Coins, Network, Wallet } from "lucide-react";
+import { BadgePercent, Coins, Network, ShieldCheck, Wallet } from "lucide-react";
 import {
   CardHeader,
   Chip,
   DataTable,
   EmptyState,
   Grid,
+  Notice,
   Page,
   PageHeader,
   ProgressBar,
@@ -23,9 +24,11 @@ import { t } from "@/lib/i18n";
 import { getActiveTutorSession } from "@/lib/tutor-session";
 import { cn } from "@/lib/utils";
 import {
+  DEFAULT_PAYOUT_POLICY,
   EMPTY_PROJECTION,
   EMPTY_RATE_INFO,
   adjustmentLines,
+  type AdjustmentReasonLabels,
   canOfferTawi50,
   commissionPercent,
   formatPeriodMonth,
@@ -73,6 +76,14 @@ const payoutStatus: Record<string, { label: string; tone: Tone }> = {
 
 const money = (value: number, signed = false) => formatTHB(value, { fractionDigits: 2, signed });
 
+const ADJUSTMENT_LABELS: AdjustmentReasonLabels = {
+  refund: t("dashboardEarnings.adjustmentReasons.refund"),
+  chargeback: t("dashboardEarnings.adjustmentReasons.chargeback"),
+  chargebackReversal: t("dashboardEarnings.adjustmentReasons.chargebackReversal"),
+  carryForward: t("dashboardEarnings.adjustmentReasons.carryForward"),
+  heldCarryForward: t("dashboardEarnings.adjustmentReasons.heldCarryForward"),
+};
+
 /** One label/amount line of a breakdown. */
 function AmountRow({
   label,
@@ -105,7 +116,7 @@ function AmountRow({
 }
 
 function AdjustmentList({ item }: { item: EarningsHistoryItem }) {
-  const lines = adjustmentLines(item, t("dashboardEarnings.clawback"));
+  const lines = adjustmentLines(item, t("dashboardEarnings.clawback"), ADJUSTMENT_LABELS);
   if (lines.length === 0) return <span className="text-fg-subtle">–</span>;
   return (
     <ul className="flex flex-col gap-0.5">
@@ -156,7 +167,11 @@ export default async function EarningsPage() {
   const projection = projectWithholding(earnings.total, nonResident ? 15 : 3);
   const ratePercent = commissionPercent(rateInfo.rate);
   const progressPercent = rateProgressPercent(rateInfo);
-  const projectionAdjustments = adjustmentLines(earnings, t("dashboardEarnings.clawback"));
+  const projectionAdjustments = adjustmentLines(earnings, t("dashboardEarnings.clawback"), ADJUSTMENT_LABELS);
+  const payoutPolicy = response?.payoutPolicy ?? DEFAULT_PAYOUT_POLICY;
+  const holdNotice = t("dashboardEarnings.holdNoticeBody")
+    .replace("{card}", String(payoutPolicy.cardHoldDays))
+    .replace("{other}", String(payoutPolicy.otherHoldDays));
   const badgeBonus = earnings.badgeBonus ?? 0;
 
   const isVerified = user?.verificationStatus === "VERIFIED";
@@ -268,6 +283,10 @@ export default async function EarningsPage() {
         description={t("dashboardEarnings.pageDescription")}
         actions={<SalesCsvDownloadButton periodMonth={periodMonth} label={t("dashboardEarnings.downloadCsv")} />}
       />
+
+      <Notice tone="info" icon={ShieldCheck} title={t("dashboardEarnings.holdNoticeTitle")}>
+        {holdNotice}
+      </Notice>
 
       <Grid cols={4} className="grid-cols-2">
         <StatCard

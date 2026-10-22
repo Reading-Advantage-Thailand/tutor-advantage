@@ -57,17 +57,20 @@ A fake tutor registers 20 "students" and pays 3,000 THB each with stolen cards
 The chargeback itself still costs us the payment (that is how card networks
 work). What we stopped is **paying commission on money that later disappears**.
 
-## 4. Decisions for you
+## 4. Decisions (confirmed 2026-10-22)
 
-1. **Hold period:** card 60 days / PromptPay 7 days is a good default. Shorter
-   = happier tutors, more risk. (Settings, no code change.)
-2. **New tutor card limit:** 30,000 THB / 30 days for the first 90 days. Tell
-   us which established teachers should be "trusted" from day one.
-3. **Tutor communication:** commission on card payments now arrives about 2
-   months later; PromptPay about 1 week later. Encouraging PromptPay (already
-   the default) is the cheapest protection: it has no card chargebacks.
+1. **Hold period:** card 60 days / PromptPay 7 days — **confirmed**, set in
+   the deployment config (`.github/workflows/deploy.yml`, repo variables can
+   override without a code change).
+2. **New tutor card limit:** 30,000 THB / 30 days for the first 90 days —
+   **confirmed**. Admins mark established teachers as trusted with the new
+   **"การรับชำระด้วยบัตร" card** on the tutor's verification page.
+3. **Tutor communication:** the earnings page now explains the hold period;
+   a ready-to-send announcement is in `docs/chargeback-protection-messages.md`.
 4. **Tutor contract:** add a clause that commission on refunded or charged-back
    payments is recovered from future earnings.
+5. **Network payout = classic differential (55.6% in the example below) —
+   confirmed and implemented** (see section 7).
 
 ## 5. Steps before taking real payments
 
@@ -86,22 +89,38 @@ work). What we stopped is **paying commission on money that later disappears**.
   full/partial, upline clawback amounts, no double clawback, carry-forward,
   held payouts, card rules, new-tutor limit, 3DS flag, daily sync, end-to-end
   webhook).
-- Whole project: **200 test files, 1,547 tests, all passing.** TypeScript
-  build of the finance service and admin console: no errors. API contract
-  check: OK.
+- Whole project: **200 test files, 1,552 tests, all passing** (after the
+  section 8 additions). TypeScript build of the finance service, admin console
+  and tutor app: no errors. API contract check: OK.
 - Database migration: applied to a fresh PostgreSQL 16 database (no drift);
   the backfill marks already-settled payments correctly so nobody is paid twice.
 
-## 7. Other things we noticed (not changed)
+## 7. Network payout formula (fixed, owner decision 2026-10-22)
 
-- **The network payout formula pays more than the top rate when a chain has 3+
-  levels.** The PRD formula subtracts only the *direct* children's payout. In a
-  3-level chain with 10,000 THB sales each (30,000 THB total) the company pays
-  about 21,180 THB (70.6%) instead of about 16,680 THB (55.6%) under a classic
-  differential plan. If 55.6% was the intention, this is a separate
-  money leak worth checking with you before launch.
-- The tutor dashboard still shows earnings by payment date; it does not yet
-  explain the hold period. An admin button for "trusted tutor" does not exist
-  yet (the API does).
+- **Before:** the formula subtracted only the *direct* children's own payout,
+  so chains of 3+ levels were paid more than the top rate. Example: 3 tutors
+  in a chain, 10,000 THB sales each (30,000 THB): the company paid about
+  21,180 THB (70.6%).
+- **Now (classic differential):** each tutor earns their rate on their group
+  volume minus what their downline organisation already earns. The whole tree
+  is paid exactly the rate of the top volume: **16,681.93 THB (55.6%)** in the
+  same example (child 4,500 · middle 5,500 · top 6,681.93). A sponsor without
+  own sales passes their share up to the next sponsor.
+- Same formula in the settlement, the tutor earnings page, the network page
+  and the clawback calculation (tests prove the clawback equals a full
+  recalculation).
+
+## 8. Added after the first report
+
+- Admin console: "การรับชำระด้วยบัตร" card on the tutor verification page to
+  trust / untrust a tutor (reason required, audited).
+- Tutor app: the earnings page explains the hold period (values come from the
+  server) and shows readable names for refund / chargeback / carry-forward
+  adjustments.
+- Deployment config sets the confirmed limits.
+- Ready-to-send texts: tutor announcement (TH/EN) and Omise email (EN/TH) in
+  `docs/chargeback-protection-messages.md`.
+- Tests after these changes: **200 test files, 1,552 tests, all passing**;
+  TypeScript (finance service, admin console, tutor app) and lint: no errors.
 
 Technical details: `docs/runbooks/chargeback-protection.md`.

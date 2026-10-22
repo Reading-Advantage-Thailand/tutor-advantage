@@ -67,6 +67,7 @@ export const PROXY_RULES: readonly ProxyRule[] = [
   { methods: ["POST"], path: "/v1/users/:id/(suspend|anonymize)", service: "finance", roles: ADMIN },
   { methods: ["PATCH"], path: "/v1/users/:id/omise-recipient", service: "finance", roles: ADMIN },
   { methods: ["PATCH"], path: "/v1/users/:id/tax-residency", service: "finance", roles: ADMIN },
+  { methods: ["PATCH"], path: "/v1/users/:id/card-payments-trust", service: "finance", roles: ADMIN },
   { methods: ["GET", "POST"], path: "/v1/admin/roles", service: "identity", roles: ADMIN },
   { methods: ["GET"], path: "/v1/users/:id/payments", service: "finance" },
   { methods: ["GET"], path: "/v1/users/:id/audit", service: "finance", roles: ADMIN },

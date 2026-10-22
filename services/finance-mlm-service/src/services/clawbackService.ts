@@ -6,9 +6,9 @@
  * dispute simply removes them from the next settlement.
  *
  * The amount is estimated from the approved run itself: the tutor's group
- * volume is reduced by the lost amount and the payout formula
- * (Payout = max(0, R(GV) * GV - sum(direct children payouts))) is re-applied
- * up the sponsor chain. Each tutor is charged at most what they were paid.
+ * volume is reduced by the lost amount and the classic differential formula
+ * (Payout = max(0, R(GV) * GV - total paid in the downline organisations))
+ * is re-applied up the sponsor chain. Each tutor is charged at most what they were paid.
  * The upline share is clawed back too, so a fake downline cannot keep the
  * override commission.
  */
@@ -89,8 +89,9 @@ export async function estimateCommissionClawbacks(input: {
   }
 
   const items: ClawbackItem[] = [];
-  let childOldBase: bigint | null = null;
-  let childNewBase: bigint | null = null;
+  // Total paid in the previous chain node's organisation, before / after.
+  let childOldOrg: bigint | null = null;
+  let childNewOrg: bigint | null = null;
 
   for (const tutorUserId of chain) {
     const line = lineByTutor.get(tutorUserId)!;
@@ -103,11 +104,12 @@ export async function estimateCommissionClawbacks(input: {
     const gv = line.grossVolumeMinor;
     const newGv = max0(gv - lossMinor);
 
-    const oldChildren = max0(payoutAtVolume(gv) - oldBase);
-    const newChildren =
-      childOldBase === null || childNewBase === null
+    // What the downline organisations were paid (R(GV)*GV - own payout).
+    const oldChildren: bigint = max0(payoutAtVolume(gv) - oldBase);
+    const newChildren: bigint =
+      childOldOrg === null || childNewOrg === null
         ? oldChildren
-        : max0(oldChildren - childOldBase + childNewBase);
+        : max0(oldChildren - childOldOrg + childNewOrg);
 
     let newBase = max0(payoutAtVolume(newGv) - newChildren);
     if (oldBase === 0n) newBase = 0n; // not paid (ineligible / clamped)
@@ -116,8 +118,8 @@ export async function estimateCommissionClawbacks(input: {
     const claw = oldBase - newBase;
     if (claw > 0n) items.push({ tutorUserId, amountMinor: claw });
 
-    childOldBase = oldBase;
-    childNewBase = newBase;
+    childOldOrg = oldChildren + oldBase;
+    childNewOrg = newChildren + newBase;
   }
 
   return items;

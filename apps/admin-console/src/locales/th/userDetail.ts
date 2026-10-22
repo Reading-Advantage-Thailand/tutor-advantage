@@ -214,6 +214,17 @@ export const userDetail = {
   taxResidencyFrom: "จาก",
   taxResidencyTo: "เป็น",
   taxResidencySaved: "บันทึกสถานะภาษีแล้ว",
+  // Chargeback protection: new-tutor card limit
+  cardTrustTitle: "การรับชำระด้วยบัตร",
+  cardTrustOn: "ครูที่เชื่อใจ · รับชำระด้วยบัตรได้ไม่จำกัด",
+  cardTrustOff: "ปกติ · ครูใหม่ (90 วันแรก) รับบัตรได้ไม่เกิน 30,000 บาท ต่อ 30 วัน ส่วน PromptPay ไม่จำกัด",
+  cardTrustEnable: "ตั้งเป็นครูที่เชื่อใจ",
+  cardTrustDisable: "ยกเลิกการเชื่อใจ",
+  cardTrustConfirmTitle: "เปลี่ยนสิทธิ์รับบัตรของ {name}",
+  cardTrustConfirmBody: "ครูที่เชื่อใจจะไม่ติดเพดานรับบัตรของครูใหม่ กฎกันโกงอื่นยังทำงานตามปกติ (บัตรใบเดียวหลายนักเรียน, บัตรที่เคยถูกเรียกเงินคืน, พักเงินเมื่อมีการโต้แย้งรายการ)",
+  cardTrustFrom: "จาก",
+  cardTrustTo: "เป็น",
+  cardTrustSaved: "บันทึกสิทธิ์รับบัตรแล้ว",
 } as const;
 
 registerMessages("userDetail", userDetail);

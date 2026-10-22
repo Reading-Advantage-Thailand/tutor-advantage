@@ -616,3 +616,71 @@ describe("settlement with chargeback protection", () => {
     ]);
   });
 });
+
+describe("MLM classic differential payout (owner decision 2026-10-22: 55.6%)", () => {
+  function chainUsers(pvOfParent = true) {
+    return [
+      { userId: "gp", sponsorTutorId: null, isActive: true, verificationStatus: "VERIFIED", payoutIdentityVersion: 0, settings: {} },
+      { userId: "p", sponsorTutorId: "gp", isActive: true, verificationStatus: "VERIFIED", payoutIdentityVersion: 0, settings: {} },
+      { userId: "c", sponsorTutorId: "p", isActive: true, verificationStatus: "VERIFIED", payoutIdentityVersion: 0, settings: {} },
+    ].map((user) => ({ ...user, _pv: user.userId !== "p" || pvOfParent }));
+  }
+
+  function sale(tutor: string) {
+    return {
+      paymentIntentId: `pi-${tutor}`, enrollmentId: `en-${tutor}`, earningTutorUserId: tutor,
+      amountMinor: 1_000_000n, refundedAmountMinor: 0n, method: "promptpay", status: "SUCCESS",
+      paidAt: new Date("2026-05-01T00:00:00.000Z"), events: [],
+    };
+  }
+
+  beforeEach(() => {
+    prismaMock.enrollment.findMany.mockResolvedValue([]);
+  });
+
+  it("pays a 3-level chain with 10,000 THB each exactly R(30,000) = 55.6% in total", async () => {
+    prismaMock.paymentIntent.findMany.mockResolvedValue([sale("gp"), sale("p"), sale("c")]);
+    prismaMock.user.findMany.mockResolvedValue(chainUsers());
+
+    const result = await SettlementService.computeSettlement("2026-05");
+    const byTutor = Object.fromEntries(result.lines.map((line) => [line.tutorUserId, line.payoutAmountMinor]));
+
+    expect(byTutor).toEqual({ c: 450_000n, p: 550_000n, gp: 668_193n });
+    expect(result.totalPayoutSatang).toBe(1_668_193n); // 16,681.93 THB of 30,000 THB = 55.6%
+  });
+
+  it("rolls the share of a sponsor without own sales up to the next sponsor", async () => {
+    prismaMock.paymentIntent.findMany.mockResolvedValue([sale("gp"), sale("c")]);
+    prismaMock.user.findMany.mockResolvedValue(chainUsers(false));
+
+    const result = await SettlementService.computeSettlement("2026-05");
+    const byTutor = Object.fromEntries(result.lines.map((line) => [line.tutorUserId, line]));
+
+    expect(byTutor.c.payoutAmountMinor).toBe(450_000n);
+    expect(byTutor.p).toMatchObject({ payoutAmountMinor: 0n, eligibilityStatus: "INELIGIBLE_NO_PV" });
+    expect(byTutor.gp.payoutAmountMinor).toBe(550_000n);
+    expect(result.totalPayoutSatang).toBe(1_000_000n); // R(20,000) = 50% of 20,000 THB
+  });
+
+  it("claws back exactly what a full recalculation would remove, up a 3-level chain", async () => {
+    prismaMock.payoutLine.findMany.mockResolvedValue([
+      { tutorUserId: "c", grossVolumeMinor: 1_000_000n, payoutAmountMinor: 450_000n, badgeBonusMinor: 0n },
+      { tutorUserId: "p", grossVolumeMinor: 2_000_000n, payoutAmountMinor: 550_000n, badgeBonusMinor: 0n },
+      { tutorUserId: "gp", grossVolumeMinor: 3_000_000n, payoutAmountMinor: 668_193n, badgeBonusMinor: 0n },
+    ]);
+    prismaMock.user.findUnique.mockImplementation(async ({ where }: { where: { userId: string } }) => ({
+      sponsorTutorId: where.userId === "c" ? "p" : where.userId === "p" ? "gp" : null,
+    }));
+
+    const items = await estimateCommissionClawbacks({
+      settlementRunId: "run-may", earningTutorUserId: "c", lossMinor: 300_000n,
+    });
+
+    // Recalculating the tree with c at 7,000 THB pays 145,500 / 30,000 / 26,352 satang less.
+    expect(items).toEqual([
+      { tutorUserId: "c", amountMinor: 145_500n },
+      { tutorUserId: "p", amountMinor: 30_000n },
+      { tutorUserId: "gp", amountMinor: 26_352n },
+    ]);
+  });
+});

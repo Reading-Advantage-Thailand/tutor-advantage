@@ -15,6 +15,12 @@ env:
   REGISTRY: asia-southeast1-docker.pkg.dev/reading-advantage/tutor-advantage
   AI_VOICE_ENABLED: ${{ vars.AI_VOICE_ENABLED || 'false' }}
   AI_VOICE_MODEL: gpt-realtime-2.1-mini
+  # Chargeback protection (owner decision 2026-10-22). Override with repo variables.
+  PAYOUT_HOLD_DAYS_CARD: ${{ vars.PAYOUT_HOLD_DAYS_CARD || '60' }}
+  PAYOUT_HOLD_DAYS_OTHER: ${{ vars.PAYOUT_HOLD_DAYS_OTHER || '7' }}
+  RISK_NEW_TUTOR_DAYS: ${{ vars.RISK_NEW_TUTOR_DAYS || '90' }}
+  RISK_NEW_TUTOR_CARD_LIMIT_THB: ${{ vars.RISK_NEW_TUTOR_CARD_LIMIT_THB || '30000' }}
+  RISK_MAX_STUDENTS_PER_CARD: ${{ vars.RISK_MAX_STUDENTS_PER_CARD || '3' }}
   ALLOWED_ORIGINS: >-
     https://student-liff-1090865515742.asia-southeast1.run.app,
     https://student-liff-hxamzdhgwa-as.a.run.app,
@@ -272,6 +278,7 @@ jobs:
           if [[ "${{ matrix.service }}" == "finance-mlm-service" ]]; then
             DEPLOY_FLAGS+=(
               "--update-secrets=OMISE_WEBHOOK_SECRET=ta-omise_webhook_secret:latest"
+              "--update-env-vars=PAYOUT_HOLD_DAYS_CARD=${PAYOUT_HOLD_DAYS_CARD},PAYOUT_HOLD_DAYS_OTHER=${PAYOUT_HOLD_DAYS_OTHER},RISK_NEW_TUTOR_DAYS=${RISK_NEW_TUTOR_DAYS},RISK_NEW_TUTOR_CARD_LIMIT_THB=${RISK_NEW_TUTOR_CARD_LIMIT_THB},RISK_MAX_STUDENTS_PER_CARD=${RISK_MAX_STUDENTS_PER_CARD}"
             )
           fi
 

@@ -138,17 +138,19 @@ export async function getTutorNetwork(
     const calculateDifferentialPayout = (
       node: TutorNode,
       seen = new Set<string>(),
-    ) => {
+    ): bigint => {
       if (seen.has(node.userId)) throw new Error("SPONSOR_TREE_CYCLE");
       seen.add(node.userId);
-      const childPayouts = node.children.reduce(
-        (sum, child) => sum + calculateDifferentialPayout(child, new Set(seen)),
+      // Classic differential (same as settlementService): subtract what each
+      // child's whole organisation earns; return this node's organisation total.
+      const downlinePaid: bigint = node.children.reduce(
+        (sum: bigint, child: TutorNode): bigint => sum + calculateDifferentialPayout(child, new Set(seen)),
         0n,
       );
       const grossPayout = calculatePayoutMinor(node.groupVolumeMinor, node.rate);
       node.estimatedPayoutMinor =
-        grossPayout > childPayouts ? grossPayout - childPayouts : 0n;
-      return node.estimatedPayoutMinor;
+        grossPayout > downlinePaid ? grossPayout - downlinePaid : 0n;
+      return node.estimatedPayoutMinor + downlinePaid;
     };
 
     for (const node of nodes.values()) {

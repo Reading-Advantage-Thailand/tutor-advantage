@@ -9,6 +9,7 @@ import {
   getIctMonthWindow,
 } from "../services/commissionService";
 import { SettlementService } from "../services/settlementService";
+import { getPayoutHoldDays } from "../services/payoutPolicy";
 
 type EarningsNode = {
   userId: string;
@@ -205,6 +206,11 @@ export async function getEarningsHistory(
         personalVolume: projection.personalVolumeTHB,
         nextTarget: projection.nextTarget,
       },
+      // Chargeback protection: commission is paid after this many days.
+      payoutPolicy: {
+        cardHoldDays: getPayoutHoldDays("card"),
+        otherHoldDays: getPayoutHoldDays("promptpay"),
+      },
     });
   } catch (error_err) {
     const error = error_err as Error & { code?: string; details?: string; };
@@ -365,17 +371,19 @@ async function calculateTutorPeriodProjection(
   ): bigint => {
     if (seen.has(node.userId)) throw new Error("SPONSOR_TREE_CYCLE");
     seen.add(node.userId);
-    const childPayouts = node.children.reduce(
+    // Same classic differential as settlementService: subtract what each
+    // child's whole organisation earns; return this node's organisation total.
+    const downlinePaid = node.children.reduce(
       (sum, child) => sum + calculatePayout(child, new Set(seen)),
       0n,
     );
     const grossPayout = calculatePayoutMinor(node.groupVolumeMinor, node.rate);
     node.payoutAmountMinor =
-      grossPayout > childPayouts ? grossPayout - childPayouts : 0n;
+      grossPayout > downlinePaid ? grossPayout - downlinePaid : 0n;
     if (node.personalVolumeMinor === 0n && node.children.length > 0) {
       node.payoutAmountMinor = 0n;
     }
-    return node.payoutAmountMinor;
+    return node.payoutAmountMinor + downlinePaid;
   };
 
   for (const node of nodes.values()) {

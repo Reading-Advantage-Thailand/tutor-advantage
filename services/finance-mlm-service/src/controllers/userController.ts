@@ -110,6 +110,8 @@ export function settingsForRole(settingsValue: unknown, role: string | undefined
   const base = {
     bankBrand: settings.bankBrand ?? null,
     omiseRecipientId: settings.omiseRecipientId ?? null,
+    // Exempt from the new-tutor card limit (chargeback protection).
+    cardPaymentsTrusted: settings.cardPaymentsTrusted === true,
     verification,
     anonymizedAt: settings.anonymizedAt ?? null,
   };

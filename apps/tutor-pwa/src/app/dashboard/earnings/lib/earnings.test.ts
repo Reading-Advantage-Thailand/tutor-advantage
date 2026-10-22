@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  friendlyAdjustmentReason,
   adjustmentLines,
   canOfferTawi50,
   commissionPercent,
@@ -89,5 +90,31 @@ describe("misc", () => {
     expect(formatPeriodMonth("2026-01")).toBe("มกราคม 2569");
     expect(formatPeriodMonth("1 ต.ค. 69")).toBe("1 ต.ค. 69");
     expect(formatPeriodMonth("")).toBe("");
+  });
+});
+
+describe("system adjustment reasons (chargeback protection)", () => {
+  const labels = {
+    refund: "R",
+    chargeback: "C",
+    chargebackReversal: "CR",
+    carryForward: "CF",
+    heldCarryForward: "HCF",
+  };
+
+  it("shows readable names instead of internal ids", () => {
+    expect(friendlyAdjustmentReason("refund:pi-1:rfnd_1:t1", labels)).toBe("R");
+    expect(friendlyAdjustmentReason("chargeback:pi-1:dspt_1:t1", labels)).toBe("C");
+    expect(friendlyAdjustmentReason("chargeback-reversal:pi-1:dspt_1:t1", labels)).toBe("CR");
+    expect(friendlyAdjustmentReason("carry-forward:run-1:t1", labels)).toBe("CF");
+    expect(friendlyAdjustmentReason("held-carry-forward:run-1:t1", labels)).toBe("HCF");
+    expect(friendlyAdjustmentReason("ค่าเดินทาง", labels)).toBe("ค่าเดินทาง");
+    expect(friendlyAdjustmentReason("refund:x", undefined)).toBe("refund:x");
+  });
+
+  it("applies the names in adjustmentLines", () => {
+    expect(
+      adjustmentLines({ clawback: 0, adjustments: [{ amount: -100, reason: "chargeback:pi:dspt:t" }] }, "หักคืน", labels),
+    ).toEqual([{ amount: -100, reason: "C" }]);
   });
 });

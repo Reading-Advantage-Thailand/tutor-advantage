@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState, type ReactNode } from "react";
-import { Briefcase, CheckCircle2, CreditCard, FileImage, IdCard, Landmark, MapPin, Pencil, Receipt, XCircle } from "lucide-react";
+import { Briefcase, CheckCircle2, CreditCard, FileImage, IdCard, Landmark, MapPin, Pencil, Receipt, ShieldCheck, XCircle } from "lucide-react";
 import {
   AdminStatusChip,
   Card,
@@ -191,6 +191,59 @@ function TaxResidencyCard({ user, adminId, canEdit }: { user: UserDetailV2; admi
         onConfirm={async ({ reason }) => {
           await api.patch(`/v1/users/${user.id}/tax-residency`, { taxResidency: next, reason }, { idempotencyKey });
           toast.success(t("userDetail.taxResidencySaved"));
+          invalidateUser(adminId, user.id);
+        }}
+      />
+    </Card>
+  );
+}
+
+/** ADMIN exempts an established tutor from the new-tutor card limit. */
+function CardPaymentsTrustCard({ user, adminId }: { user: UserDetailV2; adminId: string }) {
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [idempotencyKey, setIdempotencyKey] = useState("");
+  const trusted = user.settings.cardPaymentsTrusted === true;
+  const label = (value: boolean) => (value ? t("userDetail.cardTrustOn") : t("userDetail.cardTrustOff"));
+  const actionLabel = trusted ? t("userDetail.cardTrustDisable") : t("userDetail.cardTrustEnable");
+
+  return (
+    <Card padding="md">
+      <CardHeader
+        icon={<IconTile icon={ShieldCheck} tone={trusted ? "brand" : "neutral"} size="sm" />}
+        title={t("userDetail.cardTrustTitle")}
+        description={label(trusted)}
+        action={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setIdempotencyKey(newIdempotencyKey());
+              setConfirmOpen(true);
+            }}
+          >
+            <Pencil aria-hidden="true" /> {actionLabel}
+          </Button>
+        }
+      />
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={t("userDetail.cardTrustConfirmTitle", { name: displayName(user) })}
+        description={t("userDetail.cardTrustConfirmBody")}
+        confirmLabel={actionLabel}
+        tone={trusted ? "brand" : "danger"}
+        reason={{ label: t("userDetail.reasonLabel"), minLength: 3 }}
+        details={
+          <DescriptionList
+            items={[
+              { label: t("userDetail.cardTrustFrom"), value: label(trusted) },
+              { label: t("userDetail.cardTrustTo"), value: label(!trusted) },
+            ]}
+          />
+        }
+        onConfirm={async ({ reason }) => {
+          await api.patch(`/v1/users/${user.id}/card-payments-trust`, { trusted: !trusted, reason }, { idempotencyKey });
+          toast.success(t("userDetail.cardTrustSaved"));
           invalidateUser(adminId, user.id);
         }}
       />
@@ -454,6 +507,8 @@ export default function UserVerificationTab() {
       {!anonymized ? <TaxResidencyCard user={user} adminId={me.userId} canEdit={isAdmin} /> : null}
 
       {isAdmin && !anonymized ? <OmiseRecipientCard user={user} adminId={me.userId} /> : null}
+
+      {isAdmin && !anonymized ? <CardPaymentsTrustCard user={user} adminId={me.userId} /> : null}
 
       <DocumentViewer open={viewer !== null} onOpenChange={(open) => !open && setViewer(null)} title={viewer?.title ?? ""} url={viewer?.url ?? null} />
 
