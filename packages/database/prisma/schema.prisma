@@ -663,6 +663,16 @@ model PaymentIntent {
   paidAt          DateTime? @map("paid_at") @db.Timestamptz
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamptz
+  /// Total refunded so far (Omise charge.refunded_amount). Settlement volume is
+  /// amountMinor - refundedAmountMinor; a full refund moves status to REFUNDED.
+  refundedAmountMinor BigInt @default(0) @map("refunded_amount_minor")
+  /// Omise card fingerprint (same card = same value). Used by the card-sharing rules.
+  cardFingerprint String?  @map("card_fingerprint")
+  /// Latest Omise dispute (chargeback) id for this charge, if any.
+  disputeId       String?  @map("dispute_id")
+  /// Settlement run that paid commission on this payment (stamped on approval).
+  /// Null = commission not paid yet, so a refund/dispute needs no clawback.
+  commissionSettlementRunId String? @map("commission_settlement_run_id") @db.Uuid
 
   events PaymentEvent[]
   receipt PaymentReceipt?
@@ -670,6 +680,8 @@ model PaymentIntent {
   @@index([enrollmentPackageId], map: "payment_intents_enrollment_package_id_idx")
   @@index([status, paidAt], map: "payment_intents_status_paid_at_idx")
   @@index([earningTutorUserId], map: "payment_intents_earning_tutor_user_id_idx")
+  @@index([cardFingerprint], map: "payment_intents_card_fingerprint_idx")
+  @@index([commissionSettlementRunId], map: "payment_intents_commission_settlement_run_id_idx")
   @@map("payment_intents")
   @@schema("finance_mlm")
 }
@@ -842,6 +854,7 @@ model FraudFlag {
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz
 
+  @@index([targetId, status], map: "fraud_flags_target_id_status_idx")
   @@map("fraud_flags")
   @@schema("finance_mlm")
 }

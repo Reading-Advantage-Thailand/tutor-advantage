@@ -11,18 +11,28 @@ import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import crypto from "crypto";
 import { buildReceiptNumber } from "../services/taxService";
 import {
-  calculateCommissionInfo,
-  calculatePayoutMinor,
-  formatIctPeriodMonth,
-  getIctMonthWindow,
-} from "../services/commissionService";
-import {
   createOmiseCharge,
   downloadOmiseDocumentAsDataUri,
   getOmisePublicKey,
   isOmiseConfigured,
   retrieveOmiseCharge,
+  retrieveOmiseToken,
 } from "../services/omiseService";
+import {
+  applyRefundedCharge,
+  classifyOmiseEvent,
+  handleDisputeOrRefundEvent,
+  retrieveAndVerifyOmiseCharge,
+} from "../services/paymentRiskService";
+import { checkCardPaymentRisk, recordCardChargeSignals } from "../services/fraudRules";
+
+// Kept here for existing importers (reconciliation, tests).
+export { retrieveAndVerifyOmiseCharge };
+
+/** A payment that already took the money (a new charge must not be made). */
+const PAID_INTENT_STATUSES = ["SUCCESS", "DISPUTED"];
+/** Final money states a late provider notification must never undo. */
+const SETTLED_NEGATIVE_STATUSES = ["REFUNDED", "CHARGEBACKED", "DISPUTED"];
 
 export async function createPaymentIntent(
   req: AuthenticatedRequest,
@@ -268,12 +278,12 @@ export async function createPaymentIntent(
         enrollmentId,
         enrollmentPackageId: enrollmentPackageId || null,
         studentUserId: userId,
-        status: { in: ["PENDING", "SUCCESS"] },
+        status: { in: ["PENDING", ...PAID_INTENT_STATUSES] },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    if (existingIntent?.status === "SUCCESS") {
+    if (existingIntent && PAID_INTENT_STATUSES.includes(existingIntent.status)) {
       return res.status(409).json({
         error: {
           code: "PAYMENT_ALREADY_COMPLETED",
@@ -353,6 +363,34 @@ export async function createPaymentIntent(
       }
     }
 
+    // Chargeback protection: check the card BEFORE any money moves.
+    let cardFingerprint: string | null = null;
+    const tutorUserId = enrollment.class?.tutorUserId ?? null;
+    if (method === "card") {
+      try {
+        const token = await retrieveOmiseToken(omiseToken);
+        cardFingerprint = token?.card?.fingerprint ?? null;
+      } catch (tokenError) {
+        // The fingerprint is still read from the charge afterwards.
+        logger.warn("Could not read the card token before charging:", tokenError);
+      }
+      const refusal = await checkCardPaymentRisk({
+        studentUserId: userId,
+        tutorUserId,
+        amountMinor: BigInt(amountSatang),
+        cardFingerprint,
+      });
+      if (refusal) {
+        return res.status(refusal.status).json({
+          error: {
+            code: refusal.code,
+            message: refusal.message,
+            requestId: req.id,
+          },
+        });
+      }
+    }
+
     const intent =
       existingIntent ||
       (await prisma.paymentIntent.create({
@@ -381,13 +419,24 @@ export async function createPaymentIntent(
       ip: getClientIp(req),
     });
 
+    const chargeFingerprint = charge.card?.fingerprint ?? cardFingerprint;
     const updatedIntent = await prisma.paymentIntent.update({
       where: { paymentIntentId: intent.paymentIntentId },
       data: {
         providerRef: charge.id,
         status: charge.status === "failed" ? "FAILED" : "PENDING",
+        ...(chargeFingerprint ? { cardFingerprint: chargeFingerprint } : {}),
       },
     });
+
+    if (method === "card") {
+      await recordCardChargeSignals({
+        tutorUserId,
+        studentUserId: userId,
+        paymentIntentId: intent.paymentIntentId,
+        charge,
+      });
+    }
 
     await prisma.paymentEvent.create({
       data: {
@@ -625,12 +674,18 @@ export async function fulfillPaymentIntent(paymentIntentId: string, providerRef?
       return existingIntent;
     }
 
+    // A refunded / charged-back / disputed payment must never be re-activated
+    // by a late "paid" notification for the same charge.
+    if (SETTLED_NEGATIVE_STATUSES.includes(existingIntent.status)) {
+      return existingIntent;
+    }
+
     const duplicateSuccess = await tx.paymentIntent.findFirst({
       where: {
         enrollmentId: existingIntent.enrollmentId,
         enrollmentPackageId: existingIntent.enrollmentPackageId,
         studentUserId: existingIntent.studentUserId,
-        status: "SUCCESS",
+        status: { in: PAID_INTENT_STATUSES },
         NOT: { paymentIntentId },
       },
     });
@@ -827,7 +882,6 @@ export async function handleWebhook(req: Request, res: Response) {
       return res.status(401).send("Invalid webhook signature");
     }
 
-    // Mocking an Omise-like structured event payload
     const eventType = payload.key || payload.type || "charge.complete";
     const providerRef = payload.data?.id || payload.id;
     const providerEventId = getWebhookEventId(payload, providerRef);
@@ -838,11 +892,7 @@ export async function handleWebhook(req: Request, res: Response) {
       payload.status === "successful" ||
       payload.data?.paid === true ||
       payload.paid === true;
-    const isRefundOrChargeback =
-      eventType.includes("refund") || eventType.includes("chargeback");
-    const isNegativeOutcome =
-      isRefundOrChargeback ||
-      ["failed", "expired", "reversed"].includes(payloadStatus);
+    const isNegativeOutcome = ["failed", "expired", "reversed"].includes(payloadStatus);
 
     if (providerEventId) {
       const existingEvent = await prisma.paymentEvent.findUnique({
@@ -851,6 +901,23 @@ export async function handleWebhook(req: Request, res: Response) {
       if (existingEvent) {
         return res.status(200).send("Webhook replay ignored");
       }
+    }
+
+    // Chargebacks (Omise "dispute.*") and refunds ("refund.*") carry a dispute
+    // / refund object that only points at our charge (data.charge).
+    const classified = classifyOmiseEvent(payload);
+    if (classified.kind !== "charge") {
+      const result = await handleDisputeOrRefundEvent(classified);
+      await prisma.paymentEvent.create({
+        data: {
+          paymentIntentId: result.paymentIntentId,
+          providerEventId: providerEventId || null,
+          eventType,
+          rawPayload: payload,
+          occurredAt: new Date(),
+        },
+      });
+      return res.status(200).send(`Webhook processed: ${result.outcome}`);
     }
 
     if (!paymentIntentId) {
@@ -876,10 +943,19 @@ export async function handleWebhook(req: Request, res: Response) {
         ? await retrieveAndVerifyOmiseCharge(paymentIntentId, providerRef)
         : null;
 
-    if (isRefundOrChargeback && verifiedCharge) {
-      await recordNegativePaymentOutcome(paymentIntentId, verifiedCharge.id, eventType);
-    } else if (verifiedCharge && (verifiedCharge.paid || verifiedCharge.status === "successful")) {
+    if (verifiedCharge && (verifiedCharge.paid || verifiedCharge.status === "successful")) {
       await fulfillPaymentIntent(paymentIntentId, verifiedCharge.id);
+      // A charge update can also report a refund made in the Omise dashboard.
+      if (Number(verifiedCharge.refunded_amount ?? 0) > 0) {
+        const current = await prisma.paymentIntent.findUnique({ where: { paymentIntentId } });
+        if (current) {
+          await applyRefundedCharge(
+            current,
+            verifiedCharge,
+            `charge-refunded:${verifiedCharge.refunded_amount}`,
+          );
+        }
+      }
     } else if (
       isNegativeOutcome &&
       verifiedCharge &&
@@ -925,8 +1001,7 @@ export async function markPaymentIntentFailed(
   // A late failure notification must never move a paid intent backwards.
   if (
     intent.status === "SUCCESS" ||
-    intent.status === "REFUNDED" ||
-    intent.status === "CHARGEBACKED"
+    SETTLED_NEGATIVE_STATUSES.includes(intent.status)
   ) {
     return intent;
   }
@@ -935,7 +1010,7 @@ export async function markPaymentIntentFailed(
     const claimed = await tx.paymentIntent.updateMany({
       where: {
         paymentIntentId,
-        status: { notIn: ["SUCCESS", "REFUNDED", "CHARGEBACKED"] },
+        status: { notIn: ["SUCCESS", ...SETTLED_NEGATIVE_STATUSES] },
       },
       data: { status: "FAILED", providerRef },
     });
@@ -994,210 +1069,6 @@ export async function markPaymentIntentFailed(
 
     return failedIntent;
   });
-}
-
-async function recordNegativePaymentOutcome(
-  paymentIntentId: string,
-  providerRef: string | null | undefined,
-  eventType: string,
-) {
-  const intent = await prisma.paymentIntent.findUnique({
-    where: { paymentIntentId },
-  });
-
-  if (!intent) throw new Error("PAYMENT_INTENT_NOT_FOUND");
-
-  if (intent.status !== "SUCCESS") return markPaymentIntentFailed(paymentIntentId, providerRef);
-
-  const enrollment = await prisma.enrollment.findUnique({
-    where: { enrollmentId: intent.enrollmentId },
-    include: { class: true },
-  });
-
-  if (!enrollment) throw new Error("ENROLLMENT_NOT_FOUND");
-
-  const reason = `${eventType}:${paymentIntentId}`;
-  const existingAdjustment = await prisma.adjustment.findFirst({
-    where: { reason },
-    select: { adjustmentId: true },
-  });
-  if (existingAdjustment) return intent;
-
-  const paidPeriodMonth = formatIctPeriodMonth(intent.paidAt ?? intent.updatedAt);
-  const paidRun = await prisma.settlementRun.findFirst({
-    where: { periodMonth: paidPeriodMonth },
-    orderBy: { createdAt: "desc" },
-  });
-
-  // If the original period is still being prepared, keep the clawback there.
-  // Once it has been submitted for checking, put the reclaim in a later
-  // mutable period instead of changing the reviewed run.
-  let clawbackPeriodMonth =
-    ["SUBMITTED", "APPROVED"].includes(paidRun?.status ?? "")
-      ? getFollowingIctPeriodMonth(paidPeriodMonth)
-      : paidPeriodMonth;
-  let run =
-    paidRun && paidPeriodMonth === clawbackPeriodMonth &&
-    ["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"].includes(paidRun.status)
-      ? paidRun
-      : null;
-
-  // Never attach a refund to a submitted/approved run. If the immediate
-  // following period is already final, keep moving forward until a mutable
-  // period or a new adjustment holder is available.
-  while (!run) {
-    const candidate = await prisma.settlementRun.findFirst({
-      where: { periodMonth: clawbackPeriodMonth },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (candidate && ["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"].includes(candidate.status)) {
-      run = candidate;
-      break;
-    }
-    if (candidate) {
-      clawbackPeriodMonth = getFollowingIctPeriodMonth(clawbackPeriodMonth);
-      continue;
-    }
-
-    // This holder is deliberately not DRAFT: it lets the monthly scheduler
-    // create the real preview instead of treating a webhook as a settlement.
-    try {
-      run = await prisma.settlementRun.create({
-        data: {
-          periodMonth: clawbackPeriodMonth,
-          status: "ADJUSTMENT_PENDING",
-          createdBy: "payment-webhook",
-          previewPayload: {},
-        },
-      });
-    } catch (error) {
-      // A second refund webhook may race the holder creation. The unique
-      // period constraint makes the winner canonical; reuse it only if it is
-      // still mutable. A final run is skipped and the loop advances.
-      if ((error as { code?: string }).code !== "P2002") throw error;
-      const racedRun = await prisma.settlementRun.findFirst({
-        where: { periodMonth: clawbackPeriodMonth },
-        orderBy: { createdAt: "desc" },
-      });
-      if (racedRun && ["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"].includes(racedRun.status)) {
-        run = racedRun;
-      } else {
-        clawbackPeriodMonth = getFollowingIctPeriodMonth(clawbackPeriodMonth);
-      }
-    }
-  }
-
-  const amountMinor = await estimatePaidCommissionMinor(
-    intent,
-    intent.earningTutorUserId ?? enrollment.class.tutorUserId,
-    paidPeriodMonth,
-  );
-  const negativeStatus = /chargeback/i.test(eventType)
-    ? "CHARGEBACKED"
-    : "REFUNDED";
-
-  await prisma.$transaction(async (tx) => {
-    await tx.paymentIntent.update({
-      where: { paymentIntentId },
-      data: { status: negativeStatus, providerRef },
-    });
-
-    if (intent.enrollmentPackageId) {
-      await tx.enrollmentPackage.updateMany({
-        where: {
-          enrollmentPackageId: intent.enrollmentPackageId,
-          status: { in: ["PENDING_PAYMENT", "ACTIVE"] },
-        },
-        data: { status: "REVOKED" },
-      });
-    } else {
-      const revoked = await tx.enrollment.updateMany({
-        where: {
-          enrollmentId: intent.enrollmentId,
-          status: { in: ["PENDING_PAYMENT", "ACTIVE"] },
-        },
-        data: {
-          status: "REVOKED",
-          paymentExpiresAt: null,
-        },
-      });
-
-      await tx.enrollmentPackage.updateMany({
-        where: {
-          enrollmentId: intent.enrollmentId,
-          status: { in: ["PENDING_PAYMENT", "ACTIVE"] },
-        },
-        data: { status: "REVOKED" },
-      });
-
-      if (revoked.count > 0) {
-        const currentEnrollment = await tx.enrollment.findUnique({
-          where: { enrollmentId: intent.enrollmentId },
-          select: { classId: true, class: { select: { enrolledCount: true } } },
-        });
-        if (currentEnrollment) {
-          await tx.class.update({
-            where: { classId: currentEnrollment.classId },
-            data: {
-              enrolledCount: Math.max(
-                0,
-                currentEnrollment.class.enrolledCount - revoked.count,
-              ),
-            },
-          });
-        }
-      }
-    }
-
-    await tx.adjustment.create({
-      data: {
-        settlementRunId: run!.settlementRunId,
-        tutorUserId: intent.earningTutorUserId ?? enrollment.class.tutorUserId,
-        amountMinor: -amountMinor,
-        // Volume must be reduced by the refunded charge, not only by the
-        // commission clawback used for the tutor's payout line.
-        volumeMinor: -intent.amountMinor,
-        reason,
-        status: "PENDING",
-        createdBy: "payment-webhook",
-      },
-    });
-  });
-
-  return intent;
-}
-
-async function estimatePaidCommissionMinor(
-  intent: { amountMinor: bigint },
-  tutorUserId: string,
-  paidPeriodMonth: string,
-) {
-  const settledRun = await prisma.settlementRun.findFirst({
-    where: { periodMonth: paidPeriodMonth, status: "APPROVED" },
-    orderBy: { createdAt: "desc" },
-  });
-
-  if (settledRun) {
-    const payoutLine = await prisma.payoutLine.findFirst({
-      where: {
-        settlementRunId: settledRun.settlementRunId,
-        tutorUserId,
-      },
-      select: { payoutAmountMinor: true, grossVolumeMinor: true },
-    });
-
-    if (payoutLine && payoutLine.grossVolumeMinor > 0n) {
-      return (payoutLine.payoutAmountMinor * intent.amountMinor) /
-        payoutLine.grossVolumeMinor;
-    }
-  }
-
-  // Before the period is settled there is no paid payout line to reference.
-  // Use the standalone commission for this charge as a conservative estimate;
-  // importantly, never claw back the student's full class price.
-  const rate = calculateCommissionInfo(Number(intent.amountMinor) / 100).rate;
-  return calculatePayoutMinor(intent.amountMinor, rate);
 }
 
 function verifyWebhookSignature(req: Request, payload: unknown) {
@@ -1266,47 +1137,6 @@ function getWebhookEventId(payload: unknown, providerRef: unknown) {
     .createHash("sha256")
     .update(serialized ?? "")
     .digest("hex")}`;
-}
-
-export async function retrieveAndVerifyOmiseCharge(
-  paymentIntentId: string,
-  providerRef: string,
-) {
-  const intent = await prisma.paymentIntent.findUnique({
-    where: { paymentIntentId },
-    select: {
-      paymentIntentId: true,
-      providerRef: true,
-      amountMinor: true,
-      currency: true,
-    },
-  });
-  if (!intent || !intent.providerRef || intent.providerRef !== providerRef) {
-    return null;
-  }
-
-  const charge = await retrieveOmiseCharge(providerRef);
-  let chargeAmount: bigint;
-  try {
-    chargeAmount = BigInt(charge.amount);
-  } catch {
-    return null;
-  }
-
-  if (
-    typeof charge.currency !== "string" ||
-    charge.id !== intent.providerRef ||
-    chargeAmount !== intent.amountMinor ||
-    charge.currency.toUpperCase() !== intent.currency.toUpperCase() ||
-    charge.metadata?.paymentIntentId !== intent.paymentIntentId
-  ) {
-    logger.warn(
-      `[PaymentWebhook] Omise charge ${providerRef} did not match payment intent ${paymentIntentId}`,
-    );
-    return null;
-  }
-
-  return charge;
 }
 
 function serializePaymentIntent(intent: {
@@ -1430,17 +1260,6 @@ export async function getPaymentGuardianGate(userId: string) {
     code: "GUARDIAN_CONSENT_REQUIRED",
     message: "Guardian consent is required before payment",
   } as const;
-}
-
-function getFollowingIctPeriodMonth(periodMonth: string) {
-  const [yearText, monthText] = periodMonth.split("-");
-  const year = Number(yearText);
-  const month = Number(monthText);
-  const nextYear = month === 12 ? year + 1 : year;
-  const nextMonth = month === 12 ? 1 : month + 1;
-  const nextPeriod = `${nextYear}-${String(nextMonth).padStart(2, "0")}`;
-  getIctMonthWindow(nextPeriod);
-  return nextPeriod;
 }
 
 export async function getPaymentHistory(req: AuthenticatedRequest, res: Response) {

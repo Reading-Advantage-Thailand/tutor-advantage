@@ -22,6 +22,16 @@ import {
   isOmiseConfigured,
   type OmiseTransfer,
 } from "./omiseService";
+import {
+  HELD_ELIGIBILITY_STATUS,
+  buildSettlementPaymentWhere,
+  isHeldEligibility,
+} from "./payoutPolicy";
+import { getPayoutHeldTutorIds } from "./fraudRules";
+import {
+  findOrCreateMutableRun,
+  getFollowingIctPeriodMonth,
+} from "./adjustmentRunService";
 
 export interface PayoutNode {
   userId: string;
@@ -46,6 +56,53 @@ const BADGE_CASH_BONUS_ENABLED = false;
 
 function isRefundAdjustment(reason: string) {
   return /(refund|chargeback)/i.test(reason);
+}
+
+/**
+ * After approval, money a tutor still owes (negative line) or money that was
+ * held for fraud review is moved to the next open period as an APPROVED
+ * adjustment, so debts are recovered from future earnings and held money is
+ * paid once the review clears. Runs inside the approval transaction.
+ */
+async function carryForwardUnpaidBalances(
+  tx: Prisma.TransactionClient,
+  run: {
+    settlementRunId: string;
+    periodMonth: string;
+    payoutLines: Array<{ tutorUserId: string; payoutAmountMinor: bigint; eligibilityStatus: string }>;
+  },
+  actor: string,
+) {
+  const lines = run.payoutLines.filter(
+    (line) =>
+      line.payoutAmountMinor < 0n ||
+      (isHeldEligibility(line.eligibilityStatus) && line.payoutAmountMinor > 0n),
+  );
+  if (lines.length === 0) return 0;
+
+  const target = await findOrCreateMutableRun(
+    tx,
+    getFollowingIctPeriodMonth(run.periodMonth),
+    "settlement-carry-forward",
+    { inTransaction: true },
+  );
+  const now = new Date();
+  for (const line of lines) {
+    const held = line.payoutAmountMinor > 0n;
+    await tx.adjustment.create({
+      data: {
+        settlementRunId: target.settlementRunId,
+        tutorUserId: line.tutorUserId,
+        amountMinor: line.payoutAmountMinor,
+        reason: `${held ? "held-carry-forward" : "carry-forward"}:${run.settlementRunId}:${line.tutorUserId}`,
+        status: "APPROVED",
+        createdBy: "SYSTEM:settlement",
+        approvedBy: actor,
+        approvedAt: now,
+      },
+    });
+  }
+  return lines.length;
 }
 
 function getOmiseRecipientId(settings: unknown) {
@@ -319,21 +376,23 @@ export class SettlementService {
    * This calculation uses a Bottom-Up approach for a unilevel or differential tree.
    */
   static async computeSettlement(periodMonth: string): Promise<ComputedSettlement> {
-    const { start: startOfMonth, end: endOfMonth } =
-      getIctMonthWindow(periodMonth);
+    // Validates the period (throws INVALID_PERIOD_MONTH).
+    getIctMonthWindow(periodMonth);
 
+    // Chargeback protection: a payment's commission is paid only after its
+    // hold period (card 60 days, PromptPay 7 days by default; payoutPolicy.ts)
+    // and only once (payments already paid by an approved run are stamped).
+    const ownRun = await prisma.settlementRun.findFirst({
+      where: { periodMonth },
+      select: { settlementRunId: true },
+    });
     const payments = await prisma.paymentIntent.findMany({
-      where: {
-        status: "SUCCESS",
-        paidAt: {
-          gte: startOfMonth,
-          lte: endOfMonth,
-        },
-      },
+      where: buildSettlementPaymentWhere(periodMonth, ownRun?.settlementRunId ?? null),
       include: {
         events: true, // Used for more granular audit if needed
       },
     });
+    const heldTutorIds = await getPayoutHeldTutorIds();
 
     // 2. Aggregate Personal Volume (PV) by student's class's tutor
     const tutorVolumes = new Map<string, bigint>();
@@ -358,8 +417,12 @@ export class SettlementService {
       const tutorId = payment.earningTutorUserId ?? enrollmentTutorMap.get(payment.enrollmentId);
       if (!tutorId) continue;
 
+      // Partial refunds reduce the volume; a full refund is not SUCCESS.
+      const refunded = (payment as { refundedAmountMinor?: bigint | null }).refundedAmountMinor ?? 0n;
+      const netAmount = payment.amountMinor - refunded;
+      if (netAmount <= 0n) continue;
       const currentVol = tutorVolumes.get(tutorId) || 0n;
-      tutorVolumes.set(tutorId, currentVol + payment.amountMinor);
+      tutorVolumes.set(tutorId, currentVol + netAmount);
     }
 
     const approvedAdjustments = await prisma.adjustment.findMany({
@@ -639,10 +702,13 @@ export class SettlementService {
     const lines: ComputedPayoutLine[] = [];
     for (const node of nodes.values()) {
       // Unverified tutors are blocked from ALL payouts — commission was already zeroed above.
-      // Also block badge bonuses and adjustments so unverified tutors receive nothing.
+      // Also block badge bonuses and positive adjustments so unverified tutors
+      // receive nothing. Money they OWE (clawbacks) is kept and carried forward,
+      // otherwise suspending a fraudster would wipe out their debt.
+      const rawAdjustment = adjustmentTotals.get(node.userId) || 0n;
       const effectiveAdjustment = node.verified
-        ? (adjustmentTotals.get(node.userId) || 0n)
-        : 0n;
+        ? rawAdjustment
+        : (rawAdjustment < 0n ? rawAdjustment : 0n);
       const effectiveBadgeBonus = BADGE_CASH_BONUS_ENABLED && node.verified
         ? (badgeBonusMap.get(node.userId) ?? 0n)
         : 0n;
@@ -652,8 +718,8 @@ export class SettlementService {
 
       // Include in payout lines if: has volume, has actual payout,
       // or had a BLOCKED adjustment (for audit visibility — shows adjustment was withheld)
-      const blockedAdjustment = !node.verified
-        ? (adjustmentTotals.get(node.userId) || 0n)
+      const blockedAdjustment = !node.verified && rawAdjustment > 0n
+        ? rawAdjustment
         : 0n;
       const hasActivity =
         adjustedPayoutMinor !== 0n ||
@@ -662,22 +728,25 @@ export class SettlementService {
 
       if (!hasActivity) continue;
 
-      // BUSINESS RULE (pending owner decision, unchanged): a negative total
-      // (clawback larger than earnings) is paid out as 0 with no WHT and no
-      // carry-forward to the next period.
+      // A negative total (clawback larger than earnings) is paid out as 0 with
+      // no WHT and carried forward to the next period on approval
+      // (carryForwardUnpaidBalances). A tutor with an unreviewed HIGH/CRITICAL
+      // fraud flag is HELD: nothing is paid now, the amount is carried forward.
+      const held = heldTutorIds.has(node.userId) && adjustedPayoutMinor > 0n;
       const taxResidency: TaxResidency = node.taxResidency === "NON_RESIDENT" ? "NON_RESIDENT" : "RESIDENT";
       const withholdingRatePercent = whtRatePercentFor(taxResidency);
       const tax =
-        adjustedPayoutMinor > 0n
+        adjustedPayoutMinor > 0n && !held
           ? calculateWithholdingTax(adjustedPayoutMinor, withholdingRatePercent)
           : { withholdingTaxMinor: 0n, netPayoutMinor: 0n };
 
-      totalPayoutSatang += adjustedPayoutMinor;
+      if (!held) totalPayoutSatang += adjustedPayoutMinor;
       totalNetPayoutSatang += tax.netPayoutMinor;
 
       // Only mark as _ADJUSTED if the tutor is verified and actually received extras
-      const eligibilityStatus =
-        node.verified && (effectiveAdjustment !== 0n || effectiveBadgeBonus !== 0n)
+      const eligibilityStatus = held
+        ? HELD_ELIGIBILITY_STATUS
+        : node.verified && (effectiveAdjustment !== 0n || effectiveBadgeBonus !== 0n)
           ? `${node.eligibilityStatus}_ADJUSTED`
           : node.eligibilityStatus;
 
@@ -1137,7 +1206,8 @@ export class SettlementService {
 
       const payoutDocumentByLineId = new Map<string, Awaited<ReturnType<typeof tx.payoutDocument.upsert>>>();
       for (const line of approvedRun.payoutLines) {
-        if (line.payoutAmountMinor <= 0n) continue;
+        // Held lines pay nothing now (carried forward below): no tax slip.
+        if (line.payoutAmountMinor <= 0n || isHeldEligibility(line.eligibilityStatus)) continue;
 
         const payoutDocument = await tx.payoutDocument.upsert({
           where: { payoutLineId: line.payoutLineId },
@@ -1163,6 +1233,14 @@ export class SettlementService {
       if (finalizedRun.count !== 1) {
         throw new Error("SETTLEMENT_ALREADY_CLAIMED");
       }
+
+      // These payments' commission is now paid by this run: a later refund or
+      // chargeback claws it back; until then they are never counted again.
+      await tx.paymentIntent.updateMany({
+        where: buildSettlementPaymentWhere(approvedRun.periodMonth, snapshotId),
+        data: { commissionSettlementRunId: snapshotId },
+      });
+      await carryForwardUnpaidBalances(tx, approvedRun, approvedBy);
 
       return {
         ...approvedRun,

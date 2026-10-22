@@ -1,0 +1,40 @@
+# Google Cloud Scheduler — Daily Omise dispute / refund sync (chargeback protection)
+#
+# Every day at 06:15 ICT the finance service pulls disputes (chargebacks) and
+# refunds from Omise for the last 45 days and re-checks every open dispute.
+# This is the safety net for a missed or failed webhook; it is idempotent.
+#
+# Deploy:
+#   gcloud scheduler jobs create http daily-dispute-sync \
+#     --schedule="15 6 * * *" \
+#     --time-zone="Asia/Bangkok" \
+#     --uri="https://<FINANCE_SERVICE_URL>/v1/internal/payments/sync-disputes" \
+#     --http-method=POST \
+#     --headers="X-Internal-Key=<INTERNAL_API_KEY>,Content-Type=application/json" \
+#     --message-body='{"sinceDays":45}' \
+#     --location=asia-southeast1 \
+#     --project=<GCP_PROJECT_ID>
+#
+# Also in the Omise dashboard (Webhooks) make sure the endpoint
+#   https://<FINANCE_SERVICE_URL>/v1/payments/webhook
+# receives: charge.*, refund.create, dispute.create, dispute.update,
+# dispute.accept, dispute.close.
+
+name: daily-dispute-sync
+description: "Pulls Omise disputes and refunds daily (chargeback protection)"
+schedule: "15 6 * * *"
+timeZone: "Asia/Bangkok"
+
+httpTarget:
+  uri: "https://<FINANCE_SERVICE_URL>/v1/internal/payments/sync-disputes"
+  httpMethod: POST
+  headers:
+    Content-Type: "application/json"
+    X-Internal-Key: "<INTERNAL_API_KEY>"  # from Secret Manager in production
+  body: '{"sinceDays":45}'
+
+retryConfig:
+  retryCount: 3
+  minBackoffDuration: "30s"
+  maxBackoffDuration: "3600s"
+  maxDoublings: 5

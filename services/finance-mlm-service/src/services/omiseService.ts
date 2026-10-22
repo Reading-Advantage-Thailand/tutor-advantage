@@ -15,6 +15,18 @@ export type OmiseCharge = {
   authorize_uri?: string | null;
   failure_code?: string | null;
   failure_message?: string | null;
+  /** Total refunded so far, in satang. */
+  refunded_amount?: number | null;
+  /** "3DS" or "PASSKEY" when the cardholder was authenticated; absent otherwise. */
+  authenticated_by?: string | null;
+  card?: {
+    id?: string;
+    fingerprint?: string | null;
+    brand?: string | null;
+    bank?: string | null;
+    country?: string | null;
+    last_digits?: string | null;
+  } | null;
   source?: {
     id?: string;
     scannable_code?: {
@@ -24,6 +36,51 @@ export type OmiseCharge = {
     };
   } | null;
 };
+
+/** Omise returns either an id string or an expanded object for references. */
+export type OmiseRef = string | { id?: string | null } | null | undefined;
+
+export function omiseRefId(ref: OmiseRef): string | null {
+  if (typeof ref === "string") return ref.trim() || null;
+  if (ref && typeof ref === "object" && typeof ref.id === "string") return ref.id.trim() || null;
+  return null;
+}
+
+export type OmiseDisputeStatus = "open" | "pending" | "won" | "lost" | "closed";
+
+export type OmiseDispute = {
+  object?: "dispute";
+  id: string;
+  amount: number;
+  currency: string;
+  status: OmiseDisputeStatus | string;
+  charge: OmiseRef;
+  reason_code?: string | null;
+  reason_message?: string | null;
+  created_at?: string | null;
+  closed_at?: string | null;
+  metadata?: Record<string, string>;
+};
+
+export type OmiseRefund = {
+  object?: "refund";
+  id: string;
+  amount: number;
+  currency: string;
+  charge: OmiseRef;
+  status?: string | null;
+  voided?: boolean;
+  created_at?: string | null;
+  metadata?: Record<string, string>;
+};
+
+export type OmiseToken = {
+  id: string;
+  used?: boolean;
+  card?: { fingerprint?: string | null; brand?: string | null; country?: string | null } | null;
+};
+
+type OmiseList<T> = { object?: "list"; data?: T[]; total?: number; offset?: number; limit?: number };
 
 export type OmiseTransfer = {
   id: string;
@@ -61,6 +118,7 @@ type CreateTransferInput = {
 };
 
 const OMISE_API_BASE_URL = process.env.OMISE_API_BASE_URL || "https://api.omise.co";
+const OMISE_VAULT_BASE_URL = process.env.OMISE_VAULT_BASE_URL || "https://vault.omise.co";
 
 export function getOmisePublicKey() {
   return process.env.OMISE_PUBLIC_KEY || "";
@@ -107,6 +165,64 @@ export async function retrieveOmiseCharge(chargeId: string) {
   return omiseRequest<OmiseCharge>(`/charges/${encodeURIComponent(chargeId)}`, {
     method: "GET",
   });
+}
+
+export async function retrieveOmiseDispute(disputeId: string) {
+  return omiseRequest<OmiseDispute>(`/disputes/${encodeURIComponent(disputeId)}`, {
+    method: "GET",
+  });
+}
+
+/**
+ * Reads a card token before charging it (vault API, public key) so the card
+ * fingerprint can be checked first. The token stays usable afterwards.
+ */
+export async function retrieveOmiseToken(tokenId: string): Promise<OmiseToken> {
+  const publicKey = process.env.OMISE_PUBLIC_KEY;
+  if (!publicKey) throw new Error("OMISE_PUBLIC_KEY_NOT_CONFIGURED");
+  const response = await fetch(
+    `${OMISE_VAULT_BASE_URL}/tokens/${encodeURIComponent(tokenId)}`,
+    {
+      method: "GET",
+      headers: { Authorization: `Basic ${Buffer.from(`${publicKey}:`).toString("base64")}` },
+    },
+  );
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(payload?.message || payload?.code || `Omise token request failed with status ${response.status}`);
+  }
+  return payload as OmiseToken;
+}
+
+async function listAll<T>(path: string, from: Date, maxPages = 20): Promise<T[]> {
+  const items: T[] = [];
+  const limit = 100;
+  for (let page = 0; page < maxPages; page += 1) {
+    const params = new URLSearchParams({
+      from: from.toISOString(),
+      limit: String(limit),
+      offset: String(page * limit),
+      order: "chronological",
+    });
+    const payload = await omiseRequest<OmiseList<T> | T[]>(`${path}?${params.toString()}`, {
+      method: "GET",
+    });
+    const data = Array.isArray(payload) ? payload : payload.data ?? [];
+    items.push(...data);
+    const total = Array.isArray(payload) ? data.length : payload.total ?? data.length;
+    if (data.length < limit || items.length >= total) break;
+  }
+  return items;
+}
+
+/** Disputes created since `from` (all statuses). */
+export async function listOmiseDisputes(from: Date) {
+  return listAll<OmiseDispute>("/disputes", from);
+}
+
+/** Refunds created since `from`. */
+export async function listOmiseRefunds(from: Date) {
+  return listAll<OmiseRefund>("/refunds", from);
 }
 
 type CreateRecipientInput = {

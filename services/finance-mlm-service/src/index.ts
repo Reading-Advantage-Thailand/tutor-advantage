@@ -112,6 +112,7 @@ import {
 } from "./controllers/devController";
 import { getEarningsSummary, getEarningsHistory, syncTutorTransfer } from "./controllers/tutorEarningsController";
 import { getTutorNetwork } from "./controllers/tutorNetworkController";
+import { syncDisputesInternal, updateCardPaymentsTrust } from "./controllers/riskController";
 
 const app = express();
 const port = process.env.PORT || 3003;
@@ -239,6 +240,8 @@ app.get("/v1/tutors/network", authMiddleware, getTutorNetwork);
 // ── Internal Routes (protected by X-Internal-Key, NOT JWT) ────────────────
 // Called by Google Cloud Scheduler — no authMiddleware
 app.post("/v1/internal/settlement/auto-run", autoRunSettlement);
+// Daily: pull Omise disputes (chargebacks) and refunds in case a webhook was missed.
+app.post("/v1/internal/payments/sync-disputes", syncDisputesInternal);
 
 // ── Settlement Routes ──────────────────────────────────────────────────────
 // NOTE: /summary ต้องอยู่ก่อน /:snapshotId เพื่อไม่ให้ express match "summary" เป็น param
@@ -370,6 +373,7 @@ app.post("/v1/users/:id/suspend", authMiddleware, adminOnly, suspendUser);
 app.post("/v1/users/:id/anonymize", authMiddleware, adminOnly, anonymizeUser);
 app.patch("/v1/users/:id/omise-recipient", authMiddleware, adminOnly, updateOmiseRecipient);
 app.patch("/v1/users/:id/tax-residency", authMiddleware, adminOnly, updateTaxResidency);
+app.patch("/v1/users/:id/card-payments-trust", authMiddleware, adminOnly, updateCardPaymentsTrust);
 
 // ── Fraud Routes ───────────────────────────────────────────────────────────
 app.get("/v1/fraud-flags", authMiddleware, financeStaffOnly, getFraudFlags);

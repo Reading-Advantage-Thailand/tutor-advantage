@@ -30,6 +30,7 @@ export const ADMIN_STATUS = {
     CANCELLED: { label: "ยกเลิก", tone: "neutral" },
     REFUNDED: { label: "คืนเงินแล้ว", tone: "info" },
     CHARGEBACKED: { label: "ถูกเรียกเงินคืน", tone: "danger" },
+    DISPUTED: { label: "ถูกโต้แย้งรายการ (รอผล)", tone: "danger", hint: "ลูกค้ายื่นเรียกเงินคืนกับธนาคาร ค่าคอมถูกกักไว้จนกว่าจะรู้ผล" },
   },
   /** learning.enrollments.status */
   enrollment: {
@@ -41,6 +42,7 @@ export const ADMIN_STATUS = {
     EXPIRED: { label: "หมดเวลาชำระ", tone: "neutral" },
     REFUNDED: { label: "คืนเงินแล้ว", tone: "info" },
     TRANSFERRED: { label: "ย้ายคลาสแล้ว", tone: "info" },
+    REVOKED: { label: "ถูกยกเลิกสิทธิ์ (คืนเงิน/เรียกเงินคืน)", tone: "danger" },
   },
   /** finance_mlm.settlement_runs.status */
   settlementRun: {
@@ -84,6 +86,7 @@ export const ADMIN_STATUS = {
     ELIGIBLE_ADJUSTED: { label: "มีสิทธิ์รับเงิน (มีปรับยอด)", tone: "success" },
     INELIGIBLE_NO_PV_ADJUSTED: { label: "ไม่มียอดขาย (มีปรับยอด)", tone: "neutral" },
     INELIGIBLE_SPONSOR_CYCLE_ADJUSTED: { label: "สายงานวนซ้ำ (มีปรับยอด)", tone: "danger" },
+    HELD_FRAUD_REVIEW: { label: "ระงับชั่วคราว: รอตรวจความเสี่ยง", tone: "danger", hint: "ยอดนี้ยกไปเดือนถัดไป จ่ายเมื่อเคลียร์ธงความเสี่ยงแล้ว" },
   },
   /** finance_mlm.adjustments.status */
   adjustment: {
@@ -129,6 +132,8 @@ export const ADMIN_STATUS = {
     MULTI_ACCOUNT: { label: "หลายบัญชี", tone: "neutral" },
     VELOCITY: { label: "ทำรายการถี่ผิดปกติ", tone: "neutral" },
     CHARGEBACK: { label: "ถูกเรียกเงินคืน", tone: "neutral" },
+    CARD_BLOCKED: { label: "ใช้บัตรที่เคยถูกเรียกเงินคืน", tone: "neutral" },
+    CARD_NO_3DS: { label: "ชำระบัตรโดยไม่ผ่าน 3DS", tone: "neutral" },
   },
   /** identity.users.verification_status and per-field verification */
   verification: {

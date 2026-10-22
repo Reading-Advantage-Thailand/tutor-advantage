@@ -16,12 +16,17 @@ const omiseMock = vi.hoisted(() => ({
 const prismaMock = vi.hoisted(() => ({
   paymentIntent: {
     findMany: vi.fn(),
+    updateMany: vi.fn(),
   },
   enrollment: {
     findMany: vi.fn(),
   },
   adjustment: {
     findMany: vi.fn(),
+    create: vi.fn(),
+  },
+  fraudFlag: {
+    findMany: vi.fn().mockResolvedValue([]),
   },
   user: {
     findMany: vi.fn(),
@@ -85,6 +90,9 @@ describe("SettlementService", () => {
     omiseMock.listOmiseTransfers.mockResolvedValue([]);
     prismaMock.settlementRun.findFirst.mockResolvedValue(null);
     prismaMock.tutorBadge.findMany.mockResolvedValue([]);
+    prismaMock.fraudFlag.findMany.mockResolvedValue([]);
+    prismaMock.paymentIntent.updateMany.mockResolvedValue({ count: 0 });
+    prismaMock.adjustment.create.mockResolvedValue({});
     prismaMock.payoutDocument.updateMany.mockResolvedValue({ count: 1 });
     // Preview persists inside prisma.$transaction; by default run the callback
     // against the same mock client (tests that need a separate tx override it).
@@ -535,7 +543,7 @@ describe("SettlementService", () => {
       }));
   });
 
-  it("selects successful payment volume by paidAt instead of updatedAt", async () => {
+  it("selects unpaid successful payments whose hold period ended by the month end (paidAt, not updatedAt)", async () => {
     prismaMock.paymentIntent.findMany.mockResolvedValue([]);
     prismaMock.enrollment.findMany.mockResolvedValue([]);
     prismaMock.adjustment.findMany.mockResolvedValue([]);
@@ -549,12 +557,22 @@ describe("SettlementService", () => {
     await SettlementService.previewSettlement("2026-05", "admin-1");
 
     const paymentQuery = prismaMock.paymentIntent.findMany.mock.calls[0][0];
+    // Month end 2026-05-31 23:59:59.999 ICT; card hold 60 days, PromptPay 7 days.
     expect(paymentQuery.where).toEqual({
       status: "SUCCESS",
-      paidAt: {
-        gte: expect.any(Date),
-        lte: expect.any(Date),
-      },
+      OR: [
+        {
+          AND: [
+            { commissionSettlementRunId: null },
+            {
+              OR: [
+                { method: "card", paidAt: { lte: new Date("2026-04-01T16:59:59.999Z") } },
+                { method: { not: "card" }, paidAt: { lte: new Date("2026-05-24T16:59:59.999Z") } },
+              ],
+            },
+          ],
+        },
+      ],
     });
     expect(paymentQuery.where.updatedAt).toBeUndefined();
   });
@@ -668,10 +686,12 @@ describe("SettlementService", () => {
           findUnique: vi.fn().mockResolvedValue({
             settlementRunId: "run-1",
             status: "APPROVING",
+            periodMonth: "2026-05",
             payoutLines,
           }),
           update: vi.fn(),
         },
+        paymentIntent: { updateMany: vi.fn().mockResolvedValue({ count: 0 }) },
         payoutDocument: {
           upsert: vi.fn().mockResolvedValue({
             payoutDocumentId: "doc-1",
@@ -795,10 +815,12 @@ describe("SettlementService", () => {
           updateMany: vi.fn().mockResolvedValue({ count: 1 }),
           findUnique: vi.fn().mockResolvedValue({
             status: "APPROVING",
+            periodMonth: "2026-05",
             payoutLines: [line],
           }),
           update: vi.fn(),
         },
+        paymentIntent: { updateMany: vi.fn().mockResolvedValue({ count: 0 }) },
         payoutDocument: {
           upsert: vi.fn().mockResolvedValue({
             payoutDocumentId: "doc-1",
@@ -885,9 +907,11 @@ describe("SettlementService", () => {
           findUnique: vi.fn().mockResolvedValue({
             settlementRunId: "run-race",
             status: "APPROVING",
+            periodMonth: "2026-05",
             payoutLines: [line],
           }),
         },
+        paymentIntent: { updateMany: vi.fn().mockResolvedValue({ count: 0 }) },
         payoutDocument: {
           upsert: vi.fn().mockResolvedValue({
             payoutDocumentId: "doc-race",

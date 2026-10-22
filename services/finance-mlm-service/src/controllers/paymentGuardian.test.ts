@@ -50,6 +50,12 @@ const omiseMock = vi.hoisted(() => ({
   getOmisePublicKey: vi.fn(),
   isOmiseConfigured: vi.fn(),
   retrieveOmiseCharge: vi.fn(),
+  retrieveOmiseToken: vi.fn(),
+  retrieveOmiseDispute: vi.fn(),
+  listOmiseDisputes: vi.fn(),
+  listOmiseRefunds: vi.fn(),
+  omiseRefId: (ref: unknown) =>
+    typeof ref === "string" ? ref : (ref as { id?: string } | null)?.id ?? null,
 }));
 
 vi.mock("@tutor-advantage/database", () => ({ prisma }));
@@ -443,44 +449,39 @@ describe("payment intent reconciliation", () => {
     expect(omiseMock.createOmiseCharge).not.toHaveBeenCalled();
   });
 
-  it("revokes access and creates a pending commission-only clawback for a refund", async () => {
-    prisma.paymentIntent.findUnique.mockResolvedValue(
-      paymentIntent({ status: "SUCCESS", paidAt: new Date("2026-08-13T00:00:00.000Z") }),
-    );
-    prisma.enrollment.findUnique.mockResolvedValue({
-      enrollmentId: "enrollment-1",
-      classId: "class-1",
-      class: { tutorUserId: "tutor-1", enrolledCount: 1 },
+  it("handles a real Omise refund.create event: revokes access, no clawback while commission is unpaid", async () => {
+    const intent = paymentIntent({
+      status: "SUCCESS",
+      paidAt: new Date("2026-08-13T00:00:00.000Z"),
+      refundedAmountMinor: 0n,
+      commissionSettlementRunId: null,
     });
-    prisma.adjustment.findFirst.mockResolvedValue(null);
-    prisma.settlementRun.findFirst.mockResolvedValue(null);
-    prisma.settlementRun.create.mockResolvedValue({
-      settlementRunId: "run-adjustment-holder",
-      status: "ADJUSTMENT_PENDING",
-      periodMonth: "2026-08",
-    });
+    prisma.paymentIntent.findFirst.mockResolvedValue(intent);
+    prisma.paymentIntent.findUnique.mockResolvedValue(intent);
     prisma.enrollment.updateMany.mockResolvedValue({ count: 1 });
     prisma.enrollmentPackage.updateMany.mockResolvedValue({ count: 1 });
+    prisma.enrollment.findUnique.mockResolvedValue({
+      classId: "class-1",
+      class: { enrolledCount: 1 },
+    });
     prisma.class.update.mockResolvedValue({});
-    prisma.adjustment.create.mockResolvedValue({ adjustmentId: "adj-1" });
     omiseMock.retrieveOmiseCharge.mockResolvedValue({
       id: "chrg_1",
       amount: 250000,
       currency: "THB",
       metadata: { paymentIntentId: "pi-1" },
-      status: "failed",
-      paid: false,
+      status: "successful",
+      paid: true,
+      refunded_amount: 250000,
     });
 
+    // Real Omise shape: data is a refund object pointing at the charge.
     const req = {
       body: {
-        type: "charge.refunded",
-        id: "evt-refund-1",
-        data: {
-          id: "chrg_1",
-          status: "failed",
-          metadata: { paymentIntentId: "pi-1" },
-        },
+        object: "event",
+        id: "evnt_refund_1",
+        key: "refund.create",
+        data: { object: "refund", id: "rfnd_1", amount: 250000, currency: "thb", charge: "chrg_1" },
       },
       headers: {},
     };
@@ -488,6 +489,13 @@ describe("payment intent reconciliation", () => {
 
     await handleWebhook(req as never, res as never);
 
+    expect(prisma.paymentIntent.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { providerRef: "chrg_1" } }),
+    );
+    expect(prisma.paymentIntent.update).toHaveBeenCalledWith({
+      where: { paymentIntentId: "pi-1" },
+      data: { refundedAmountMinor: 250000n, status: "REFUNDED" },
+    });
     expect(prisma.enrollment.updateMany).toHaveBeenCalledWith({
       where: {
         enrollmentId: "enrollment-1",
@@ -495,26 +503,11 @@ describe("payment intent reconciliation", () => {
       },
       data: { status: "REVOKED", paymentExpiresAt: null },
     });
-    expect(prisma.adjustment.create).toHaveBeenCalledWith({
-      data: expect.objectContaining({
-        settlementRunId: "run-adjustment-holder",
-        tutorUserId: "tutor-1",
-        status: "PENDING",
-      }),
+    // Commission not paid yet (inside hold period): nothing to claw back.
+    expect(prisma.adjustment.create).not.toHaveBeenCalled();
+    expect(prisma.paymentEvent.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ paymentIntentId: "pi-1", eventType: "refund.create" }),
     });
-    const adjustment = prisma.adjustment.create.mock.calls[0][0].data;
-    expect(typeof adjustment.amountMinor).toBe("bigint");
-    expect(adjustment.amountMinor).toBeLessThan(0n);
-    expect(adjustment.amountMinor).toBeGreaterThan(-250000n);
-    expect(adjustment.volumeMinor).toBe(-250000n);
-    expect(prisma.paymentIntent.update).toHaveBeenCalledWith({
-      where: { paymentIntentId: "pi-1" },
-      data: {
-        status: "REFUNDED",
-        providerRef: "chrg_1",
-      },
-    });
-    expect(prisma.paymentEvent.create).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
