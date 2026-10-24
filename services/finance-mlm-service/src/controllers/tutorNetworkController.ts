@@ -150,6 +150,10 @@ export async function getTutorNetwork(
       const grossPayout = calculatePayoutMinor(node.groupVolumeMinor, node.rate);
       node.estimatedPayoutMinor =
         grossPayout > downlinePaid ? grossPayout - downlinePaid : 0n;
+      if (node.personalVolumeMinor === 0n && node.children.length > 0) {
+        // No own sales: this node's share rolls up to its sponsor.
+        node.estimatedPayoutMinor = 0n;
+      }
       return node.estimatedPayoutMinor + downlinePaid;
     };
 
