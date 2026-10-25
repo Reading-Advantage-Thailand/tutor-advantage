@@ -126,6 +126,7 @@ function paymentIntent(overrides: Record<string, unknown> = {}) {
     enrollmentPackageId: null,
     studentUserId: "student-1",
     amountMinor: 250000n,
+    refundedAmountMinor: 0n,
     currency: "THB",
     method: "promptpay",
     status: "FAILED",
@@ -447,6 +448,31 @@ describe("payment intent reconciliation", () => {
     });
     expect(omiseMock.retrieveOmiseCharge).not.toHaveBeenCalled();
     expect(omiseMock.createOmiseCharge).not.toHaveBeenCalled();
+  });
+
+  it("serializes the refunded amount when returning an existing payment intent", async () => {
+    prisma.enrollment.findUnique.mockResolvedValue({
+      enrollmentId: "enrollment-1",
+      studentUserId: "student-1",
+      status: "PENDING_PAYMENT",
+      class: { packagePriceMinor: 250000n },
+    });
+    prisma.user.findUnique.mockResolvedValue({ dateOfBirth: new Date("2000-01-01T00:00:00.000Z") });
+    prisma.paymentIntent.findFirst.mockResolvedValue(paymentIntent({ status: "PENDING", refundedAmountMinor: 0n }));
+
+    const req = {
+      id: "req-existing-payment",
+      user: { userId: "student-1" },
+      body: { enrollmentId: "enrollment-1", amountSatang: 250000, method: "promptpay" },
+      headers: {},
+    };
+    const res = response();
+
+    await createPaymentIntent(req as never, res as never);
+
+    const responseBody = res.json.mock.calls[0][0];
+    expect(responseBody.intent).toMatchObject({ amountMinor: 250000, refundedAmountMinor: 0 });
+    expect(() => JSON.stringify(responseBody)).not.toThrow();
   });
 
   it("handles a real Omise refund.create event: revokes access, no clawback while commission is unpaid", async () => {

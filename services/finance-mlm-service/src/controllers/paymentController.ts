@@ -1145,6 +1145,7 @@ function serializePaymentIntent(intent: {
   enrollmentPackageId?: string | null;
   studentUserId: string;
   amountMinor: bigint;
+  refundedAmountMinor?: bigint | null;
   currency: string;
   method: string;
   status: string;
@@ -1157,6 +1158,7 @@ function serializePaymentIntent(intent: {
   return {
     ...intent,
     amountMinor: Number(intent.amountMinor),
+    refundedAmountMinor: Number(intent.refundedAmountMinor ?? 0n),
   };
 }
 
