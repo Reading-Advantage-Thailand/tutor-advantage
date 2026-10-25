@@ -2,7 +2,7 @@
 # docker build -f apps/student-liff/Dockerfile .
 # Requires --build-arg NEXT_PUBLIC_LIFF_ID (GitHub secret)
 # Service URLs are baked at build time because Next.js rewrites() runs at build time.
-FROM node:20-slim AS builder
+FROM node:22.23.4-slim AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -34,7 +34,7 @@ ENV FINANCE_SERVICE_URL=$FINANCE_SERVICE_URL
 RUN npm run build -w @tutor-advantage/shared-config
 RUN npm run build -w student-liff
 
-FROM node:20-slim AS runner
+FROM node:22.23.4-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
