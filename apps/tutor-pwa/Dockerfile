@@ -1,6 +1,6 @@
 # Build context: monorepo root
 # docker build -f apps/tutor-pwa/Dockerfile .
-FROM node:20-slim AS builder
+FROM node:22.23.4-slim AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -24,7 +24,7 @@ RUN npm run build -w @tutor-advantage/database
 RUN npm run build -w @tutor-advantage/shared-config
 RUN npm run build -w tutor-pwa
 
-FROM node:20-slim AS runner
+FROM node:22.23.4-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
