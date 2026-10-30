@@ -30,7 +30,7 @@ export default async function CoursePage({ params }: { params: Promise<{ classId
       </section>
       <section><h2 className="font-bold">สิ่งที่ได้รับและการส่งมอบ</h2><p className="mt-1 text-sm leading-relaxed">{checkoutPolicy.delivery}</p></section>
       <section><h2 className="font-bold">ยอดชำระต่อผู้เรียนต่อแพ็กเกจ</h2><p className="mt-2 text-3xl font-extrabold text-brand-fg">{formatSatang(course.packagePriceSatang)} <span className="text-sm">THB</span></p><p className="mt-2 text-sm text-fg-muted">ตรวจสอบยอดชำระอีกครั้งก่อนยืนยัน ชำระผ่าน PromptPay หรือบัตรเครดิต/เดบิต</p></section>
-      <section><h2 className="font-bold">การยกเลิกและคืนเงิน</h2><p className="mt-1 text-sm leading-relaxed">{checkoutPolicy.refund}</p><Link href="/terms" className="inline-block py-3 text-sm font-semibold text-brand-fg underline">อ่านเงื่อนไขและขั้นตอนคืนเงินทั้งหมด</Link></section>
+      <section><h2 className="font-bold">การยกเลิกและคืนเงิน</h2><p className="mt-1 text-sm leading-relaxed">{checkoutPolicy.cancellation}</p><p className="mt-1 text-sm leading-relaxed">{checkoutPolicy.refund}</p><Link href="/terms" className="inline-block py-3 text-sm font-semibold text-brand-fg underline">อ่านเงื่อนไขและขั้นตอนคืนเงินทั้งหมด</Link></section>
       {course.full ? <p className="rounded-xl bg-fill-muted p-4 text-center font-semibold">คลาสเต็มแล้ว</p> : <Link href={"/login?redirect=" + encodeURIComponent("/classes/" + course.id)} className="block rounded-xl bg-brand-solid px-4 py-4 text-center font-bold text-white">เข้าสู่ระบบ LINE เพื่อสมัครคลาสนี้</Link>}
     </article>
     <PublicFooter />
