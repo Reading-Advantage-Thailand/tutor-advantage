@@ -2,16 +2,20 @@ import { describe, expect, it } from "vitest";
 import type { AdminClass } from "../classes/classForm";
 import {
   isVoidable,
+  latestRedeemer,
   listQuery,
   readCreateRequest,
+  redeemerLabel,
+  redemptionPhone,
   validateDiscountCodeForm,
   withoutCreateParam,
+  type DiscountCodeRedeemer,
 } from "./discountCodeForm";
 
 const messages = {
   classRequired: "class",
   classDemo: "demo",
-  maxRedemptions: "max",
+  quantity: "quantity",
   noteTooLong: "note",
   expiryIncomplete: "incomplete",
   expiryInvalid: "invalid",
@@ -38,22 +42,22 @@ const englishClass: AdminClass = {
   createdAt: "2026-11-02T02:00:00.000Z",
   tutor: { userId: "t1", displayName: "T.นกเอี้ยง", email: "kasamphon63@gmail.com", pendingRegistration: true },
 };
-const base = { classOption: englishClass, maxRedemptions: "1", expiry: { day: "", month: "", yearBE: "" }, note: "" };
+const base = { classOption: englishClass, quantity: "1", expiry: { day: "", month: "", yearBE: "" }, note: "" };
 
 describe("validateDiscountCodeForm", () => {
-  it("builds the minimal body: one use, no expiry, no note", () => {
-    expect(validateDiscountCodeForm(base, messages, { now })).toEqual({ errors: {}, body: { classId, maxRedemptions: 1 } });
+  it("builds the minimal batch body: one code, no expiry, no note", () => {
+    expect(validateDiscountCodeForm(base, messages, { now })).toEqual({ errors: {}, body: { classId, quantity: 1 } });
   });
 
   it("sends the Bangkok end of day as expiry and a trimmed note", () => {
     const result = validateDiscountCodeForm(
-      { ...base, maxRedemptions: " 25 ", note: " โอนเงินแล้ว ", expiry: { day: "2", month: "11", yearBE: "2569" } },
+      { ...base, quantity: " 25 ", note: " โอนเงินแล้ว ", expiry: { day: "2", month: "11", yearBE: "2569" } },
       messages,
       { now },
     );
     expect(result.body).toEqual({
       classId,
-      maxRedemptions: 25,
+      quantity: 25,
       expiresAt: "2026-11-02T16:59:59.999Z",
       note: "โอนเงินแล้ว",
     });
@@ -69,11 +73,20 @@ describe("validateDiscountCodeForm", () => {
     );
   });
 
-  it("limits uses to whole numbers 1–500", () => {
-    for (const maxRedemptions of ["", "0", "1.5", "-1", "501", "abc"]) {
-      expect(validateDiscountCodeForm({ ...base, maxRedemptions }, messages, { now }).errors.maxRedemptions, maxRedemptions).toBe("max");
+  it("limits the number of codes to whole numbers 1–100", () => {
+    for (const quantity of ["", " ", "0", "00", "1.5", "-1", "101", "500", "1e2", "abc"]) {
+      const result = validateDiscountCodeForm({ ...base, quantity }, messages, { now });
+      expect(result.errors.quantity, quantity).toBe("quantity");
+      expect(result.body, quantity).toBeNull();
     }
-    expect(validateDiscountCodeForm({ ...base, maxRedemptions: "500" }, messages, { now }).body?.maxRedemptions).toBe(500);
+    expect(validateDiscountCodeForm({ ...base, quantity: "100" }, messages, { now }).body?.quantity).toBe(100);
+    expect(validateDiscountCodeForm({ ...base, quantity: "007" }, messages, { now }).body?.quantity).toBe(7);
+  });
+
+  it("never sends a per-code use count: every code in a batch is single-use", () => {
+    const body = validateDiscountCodeForm({ ...base, quantity: "20" }, messages, { now }).body;
+    expect(body).toEqual({ classId, quantity: 20 });
+    expect(body).not.toHaveProperty("maxRedemptions");
   });
 
   it("validates note length and expiry", () => {
@@ -97,6 +110,49 @@ describe("deep link from /classes", () => {
 
   it("drops only the create flag so the class filter stays", () => {
     expect(withoutCreateParam(`create=1&classId=${classId}&status=ACTIVE`)).toBe(`classId=${classId}&status=ACTIVE`);
+  });
+});
+
+const redeemer = (overrides: Partial<DiscountCodeRedeemer> = {}): DiscountCodeRedeemer => ({
+  studentUserId: "5eed0000-0000-4000-8000-0000000057d1",
+  studentName: "น้องมะลิ",
+  studentEmail: "mali@example.com",
+  studentPhone: "0812345678",
+  redeemedAt: "2026-11-02T05:30:00.000Z",
+  ...overrides,
+});
+
+describe("who used a code", () => {
+  it("names the student, falling back to email, then phone, then nothing", () => {
+    expect(redeemerLabel(redeemer())).toBe("น้องมะลิ");
+    expect(redeemerLabel(redeemer({ studentName: null }))).toBe("mali@example.com");
+    expect(redeemerLabel(redeemer({ studentName: "  ", studentEmail: null }))).toBe("0812345678");
+    expect(redeemerLabel(redeemer({ studentName: null, studentEmail: null, studentPhone: null }))).toBeNull();
+  });
+
+  it("shows the newest redeemer and counts the others for +n", () => {
+    const newest = redeemer({ studentUserId: "s3" });
+    expect(latestRedeemer({ redeemers: [], redeemedCount: 0 })).toEqual({ latest: null, others: 0 });
+    expect(latestRedeemer({ redeemers: [newest], redeemedCount: 1 })).toEqual({ latest: newest, others: 0 });
+    // Only the newest 3 come with the list; the count covers everyone.
+    expect(latestRedeemer({ redeemers: [newest, redeemer({ studentUserId: "s2" }), redeemer()], redeemedCount: 12 })).toEqual({
+      latest: newest,
+      others: 11,
+    });
+  });
+
+  it("tolerates a list row without redeemers (older finance version)", () => {
+    const legacy = { redeemedCount: 2 } as unknown as Parameters<typeof latestRedeemer>[0];
+    expect(latestRedeemer(legacy)).toEqual({ latest: null, others: 0 });
+    expect(redemptionPhone({ studentUserId: "s1" }, legacy as never)).toBeNull();
+  });
+
+  it("takes the phone from the redemption, else from the code's redeemers", () => {
+    const code = { redeemers: [redeemer({ studentUserId: "s1", studentPhone: "0899999999" })] };
+    expect(redemptionPhone({ studentUserId: "s1", studentPhone: "0811111111" }, code)).toBe("0811111111");
+    expect(redemptionPhone({ studentUserId: "s1" }, code)).toBe("0899999999");
+    expect(redemptionPhone({ studentUserId: "s2", studentPhone: null }, code)).toBeNull();
+    expect(redemptionPhone({ studentUserId: "s1" }, null)).toBeNull();
   });
 });
 

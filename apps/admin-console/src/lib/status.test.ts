@@ -16,6 +16,14 @@ describe("admin status map", () => {
     }
   });
 
+  it("labels a used single-use discount code ใช้แล้ว and keeps the other labels", () => {
+    expect(statusMeta("discountCode", "USED_UP")).toEqual({ label: "ใช้แล้ว", tone: "info" });
+    expect(statusLabel("discountCode", "ACTIVE")).toBe("ใช้งานได้");
+    expect(statusLabel("discountCode", "EXPIRED")).toBe("หมดอายุ");
+    expect(statusLabel("discountCode", "VOID")).toBe("ยกเลิกแล้ว");
+    expect(statusOptions("discountCode", { all: "ทุกสถานะ" })).toContainEqual({ value: "USED_UP", label: "ใช้แล้ว" });
+  });
+
   it("falls back to a neutral humanised label", () => {
     expect(statusMeta("coupon", "SOMETHING_NEW")).toEqual({ label: "Something new", tone: "neutral" });
     expect(statusLabel("coupon", null)).toBe("–");

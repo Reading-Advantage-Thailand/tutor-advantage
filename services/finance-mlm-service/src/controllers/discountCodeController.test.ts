@@ -16,6 +16,7 @@ const prisma = vi.hoisted(() => {
       findUnique: vi.fn(),
       findFirst: vi.fn(),
       findMany: vi.fn(),
+      groupBy: vi.fn(),
       create: vi.fn(),
     },
     enrollment: { findUnique: vi.fn(), findMany: vi.fn(), update: vi.fn(), updateMany: vi.fn() },
@@ -59,6 +60,7 @@ vi.mock("../services/omiseService", () => omiseMock);
 
 import {
   createDiscountCode,
+  createDiscountCodeBatch,
   getDiscountCodeRedemptions,
   getDiscountCodes,
   previewDiscountCode,
@@ -197,6 +199,8 @@ beforeEach(() => {
   prisma.discountCodeRedemption.findUnique.mockResolvedValue(null);
   prisma.discountCodeRedemption.findFirst.mockResolvedValue(null);
   prisma.discountCodeRedemption.create.mockResolvedValue({});
+  prisma.discountCodeRedemption.findMany.mockResolvedValue([]);
+  prisma.discountCodeRedemption.groupBy.mockResolvedValue([]);
   prisma.$executeRaw.mockResolvedValue(1);
 });
 
@@ -899,6 +903,353 @@ describe("discountCodeController.createDiscountCode", () => {
   });
 });
 
+describe("discountCodeController.createDiscountCodeBatch", () => {
+  const future = "2999-12-31T16:59:59.999Z";
+  const CODE_SHAPE = /^DC-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/;
+  const batchCodeId = (n: number) => `bbbbbbbb-bbbb-4bbb-8bbb-${String(n).padStart(12, "0")}`;
+
+  /** Rows already in finance_mlm.discount_codes (what findMany searches). */
+  let stored: Array<Record<string, any>>;
+  let nextId: number;
+
+  function uniqueViolation() {
+    return Object.assign(new Error("Unique constraint failed"), { code: "P2002" });
+  }
+
+  async function createBatch(body: Record<string, unknown>, headers: Record<string, unknown> = {}) {
+    const res = createResponse();
+    await createDiscountCodeBatch(adminRequest({ body, headers }) as never, res as never);
+    return res;
+  }
+
+  beforeEach(() => {
+    stored = [];
+    nextId = 1;
+    prisma.discountCode.findMany.mockImplementation(async ({ where }: { where: Record<string, any> }) => {
+      if (where.creationIdempotencyKey) {
+        const keys = where.creationIdempotencyKey.in as string[];
+        return stored.filter((row) => keys.includes(row.creationIdempotencyKey));
+      }
+      if (where.code) {
+        const wanted = where.code.in as string[];
+        return stored.filter((row) => wanted.includes(row.code)).map((row) => ({ code: row.code }));
+      }
+      return [];
+    });
+    prisma.discountCode.create.mockImplementation(async ({ data }: { data: Record<string, unknown> }) =>
+      discountCodeRow({ ...data, discountCodeId: batchCodeId(nextId++) }),
+    );
+    prisma.class.findUnique.mockResolvedValue({ classId: CLASS_ID, title: "English", isDemo: false });
+    prisma.class.findMany.mockResolvedValue([
+      { classId: CLASS_ID, title: "English", tutorUserId: TUTOR_ID, packagePriceMinor: 300000n, book: { bookCode: "PO2" } },
+    ]);
+    prisma.user.findMany.mockResolvedValue([
+      { userId: TUTOR_ID, displayName: "T.นกเอี้ยง", email: "tutor@example.test", phoneNumber: null },
+      { userId: ADMIN_ID, displayName: "แอดมิน", email: "admin@example.test", phoneNumber: null },
+    ]);
+  });
+
+  it("is admin only", async () => {
+    const res = createResponse();
+    await createDiscountCodeBatch(
+      adminRequest({ user: { userId: ADMIN_ID, role: "FINANCE_CHECKER" }, body: { classId: CLASS_ID, quantity: 2 } }) as never,
+      res as never,
+    );
+    expect(res.statusCode).toBe(403);
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [{ classId: "class-1", quantity: 2 }, "INVALID_CLASS_ID"],
+    [{ classId: CLASS_ID }, "INVALID_QUANTITY"],
+    [{ classId: CLASS_ID, quantity: 0 }, "INVALID_QUANTITY"],
+    [{ classId: CLASS_ID, quantity: 101 }, "INVALID_QUANTITY"],
+    [{ classId: CLASS_ID, quantity: 2.5 }, "INVALID_QUANTITY"],
+    [{ classId: CLASS_ID, quantity: "5" }, "INVALID_QUANTITY"],
+    [{ classId: CLASS_ID, quantity: 2, expiresAt: "2020-01-01T00:00:00Z" }, "INVALID_EXPIRY"],
+    [{ classId: CLASS_ID, quantity: 2, expiresAt: "tomorrow" }, "INVALID_EXPIRY"],
+    [{ classId: CLASS_ID, quantity: 2, note: "x".repeat(501) }, "INVALID_NOTE"],
+    [{ classId: CLASS_ID, quantity: 2, note: 5 }, "INVALID_NOTE"],
+  ])("rejects %o with %s", async (body, code) => {
+    const res = await createBatch(body);
+    expect(res.statusCode).toBe(400);
+    expect(errorCode(res)).toBe(code);
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("rejects an over-long Idempotency-Key", async () => {
+    const res = await createBatch({ classId: CLASS_ID, quantity: 2 }, { "idempotency-key": "k".repeat(201) });
+    expect(res.statusCode).toBe(400);
+    expect(errorCode(res)).toBe("INVALID_IDEMPOTENCY_KEY");
+  });
+
+  it("accepts the quantity bounds 1 and 100", async () => {
+    const one = await createBatch({ classId: CLASS_ID, quantity: 1 });
+    expect(one.statusCode).toBe(201);
+    expect(one.body.discountCodes).toHaveLength(1);
+
+    prisma.discountCode.create.mockClear();
+    const hundred = await createBatch({ classId: CLASS_ID, quantity: 100 });
+    expect(hundred.statusCode).toBe(201);
+    expect(hundred.body.discountCodes).toHaveLength(100);
+    const codes = prisma.discountCode.create.mock.calls.map(([arg]: [any]) => arg.data.code);
+    expect(new Set(codes).size).toBe(100);
+  });
+
+  it("requires an existing, non-demo class", async () => {
+    prisma.class.findUnique.mockResolvedValueOnce(null);
+    const res = await createBatch({ classId: CLASS_ID, quantity: 2 });
+    expect(res.statusCode).toBe(404);
+    expect(errorCode(res)).toBe("CLASS_NOT_FOUND");
+
+    prisma.class.findUnique.mockResolvedValueOnce({ classId: CLASS_ID, title: "Demo", isDemo: true });
+    const res2 = await createBatch({ classId: CLASS_ID, quantity: 2 });
+    expect(res2.statusCode).toBe(409);
+    expect(errorCode(res2)).toBe("CLASS_NOT_ELIGIBLE");
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+    expect(prisma.discountCode.create).not.toHaveBeenCalled();
+  });
+
+  it("issues N single-use codes in one transaction with one audit row each", async () => {
+    const res = await createBatch(
+      { classId: CLASS_ID, quantity: 3, expiresAt: future, note: "  ชำระเงินสด  " },
+      { "idempotency-key": "sheet-key-1" },
+    );
+
+    expect(res.statusCode).toBe(201);
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+    expect(prisma.$transaction).toHaveBeenCalledWith(expect.any(Function), { timeout: 30_000 });
+
+    const rows = prisma.discountCode.create.mock.calls.map(([arg]: [any]) => arg.data);
+    expect(rows).toHaveLength(3);
+    rows.forEach((data: Record<string, unknown>, position: number) => {
+      expect(data.code).toMatch(CODE_SHAPE);
+      expect(data).toEqual({
+        code: data.code,
+        classId: CLASS_ID,
+        maxRedemptions: 1,
+        note: "ชำระเงินสด",
+        createdByUserId: ADMIN_ID,
+        creationIdempotencyKey: `sheet-key-1#${position + 1}`,
+        expiresAt: new Date(future),
+      });
+    });
+    expect(new Set(rows.map((data: Record<string, unknown>) => data.code)).size).toBe(3);
+
+    expect(prisma.auditEvent.create).toHaveBeenCalledTimes(3);
+    prisma.auditEvent.create.mock.calls.forEach(([arg]: [any], position: number) => {
+      expect(arg.data).toMatchObject({
+        actorId: ADMIN_ID,
+        action: "DISCOUNT_CODE_CREATE",
+        entityType: "DiscountCode",
+        entityId: batchCodeId(position + 1),
+        payload: {
+          code: rows[position].code,
+          classId: CLASS_ID,
+          classTitle: "English",
+          maxRedemptions: 1,
+          expiresAt: future,
+          note: "ชำระเงินสด",
+          batchSize: 3,
+          batchIndex: position + 1,
+          requestId: "req-admin",
+        },
+      });
+    });
+
+    expect(res.body.discountCodes.map((view: { discountCodeId: string }) => view.discountCodeId)).toEqual([
+      batchCodeId(1),
+      batchCodeId(2),
+      batchCodeId(3),
+    ]);
+    expect(res.body.discountCodes[0]).toMatchObject({
+      code: rows[0].code,
+      classTitle: "English",
+      tutorName: "T.นกเอี้ยง",
+      maxRedemptions: 1,
+      redeemedCount: 0,
+      remaining: 1,
+      status: "ACTIVE",
+      note: "ชำระเงินสด",
+      expiresAt: future,
+      createdByName: "แอดมิน",
+      redeemers: [],
+      lastRedeemedAt: null,
+    });
+    // Class, tutor and creator are joined once for the whole batch.
+    expect(prisma.class.findMany).toHaveBeenCalledTimes(1);
+    expect(prisma.user.findMany).toHaveBeenCalledTimes(1);
+  });
+
+  it("writes the codes and their audit rows on the transaction client", async () => {
+    const txDiscountCode = {
+      create: vi.fn(async ({ data }: { data: Record<string, unknown> }) =>
+        discountCodeRow({ ...data, discountCodeId: batchCodeId(nextId++) }),
+      ),
+    };
+    const txAuditEvent = { create: vi.fn().mockResolvedValue({}) };
+    prisma.$transaction.mockImplementationOnce((fn: (tx: unknown) => unknown) =>
+      fn({ discountCode: txDiscountCode, auditEvent: txAuditEvent }),
+    );
+
+    const res = await createBatch({ classId: CLASS_ID, quantity: 2 });
+
+    expect(res.statusCode).toBe(201);
+    expect(txDiscountCode.create).toHaveBeenCalledTimes(2);
+    expect(txAuditEvent.create).toHaveBeenCalledTimes(2);
+    expect(prisma.discountCode.create).not.toHaveBeenCalled();
+    expect(prisma.auditEvent.create).not.toHaveBeenCalled();
+    // Without an Idempotency-Key there is no replay protection.
+    expect(txDiscountCode.create.mock.calls[0][0].data.creationIdempotencyKey).toBeNull();
+  });
+
+  it("fails the whole batch when an audit row cannot be written", async () => {
+    prisma.auditEvent.create.mockResolvedValueOnce({}).mockRejectedValueOnce(new Error("audit down"));
+    const res = await createBatch({ classId: CLASS_ID, quantity: 3 });
+    expect(res.statusCode).toBe(500);
+    expect(errorCode(res)).toBe("INTERNAL_SERVER_ERROR");
+    expect(prisma.discountCode.create).toHaveBeenCalledTimes(2);
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+  });
+
+  it("replays the same codes, in index order, for a repeated Idempotency-Key", async () => {
+    stored = [
+      discountCodeRow({ discountCodeId: batchCodeId(2), code: "DC-BBBB-BBBB", creationIdempotencyKey: "sheet-key-1#2" }),
+      discountCodeRow({ discountCodeId: batchCodeId(1), code: "DC-AAAA-AAAA", creationIdempotencyKey: "sheet-key-1#1" }),
+    ];
+    const res = await createBatch({ classId: CLASS_ID, quantity: 2 }, { "idempotency-key": "sheet-key-1" });
+
+    expect(res.statusCode).toBe(200);
+    // Exact keys (unique index, no LIKE); #3 would reveal a bigger earlier batch.
+    expect(prisma.discountCode.findMany).toHaveBeenCalledWith({
+      where: { creationIdempotencyKey: { in: ["sheet-key-1#1", "sheet-key-1#2", "sheet-key-1#3"] } },
+    });
+    expect(res.body.discountCodes.map((view: { code: string }) => view.code)).toEqual([
+      "DC-AAAA-AAAA",
+      "DC-BBBB-BBBB",
+    ]);
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+    expect(prisma.discountCode.create).not.toHaveBeenCalled();
+    expect(prisma.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["another class", { classId: OTHER_CLASS_ID }, 2],
+    ["another admin", { createdByUserId: TUTOR_ID }, 2],
+    ["a smaller batch", {}, 3],
+    ["a bigger batch", {}, 1],
+  ])("refuses an Idempotency-Key already used for %s", async (_label, overrides, quantity) => {
+    stored = [1, 2].map((index) =>
+      discountCodeRow({
+        discountCodeId: batchCodeId(index),
+        code: `DC-AAAA-AAA${index + 1}`,
+        creationIdempotencyKey: `sheet-key-1#${index}`,
+        ...overrides,
+      }),
+    );
+    const res = await createBatch({ classId: CLASS_ID, quantity }, { "idempotency-key": "sheet-key-1" });
+    expect(res.statusCode).toBe(409);
+    expect(errorCode(res)).toBe("IDEMPOTENCY_KEY_REUSED");
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("does not mistake another key that starts with the same text for this batch", async () => {
+    stored = [discountCodeRow({ code: "DC-AAAA-AAAA", creationIdempotencyKey: "sheet-key-1#x#1" })];
+    const res = await createBatch({ classId: CLASS_ID, quantity: 1 }, { "idempotency-key": "sheet-key-1" });
+    expect(res.statusCode).toBe(201);
+    expect(prisma.discountCode.create.mock.calls[0][0].data.creationIdempotencyKey).toBe("sheet-key-1#1");
+  });
+
+  it("replays a key with LIKE metacharacters by exact match", async () => {
+    const key = "50%_off\\batch";
+    stored = [discountCodeRow({ discountCodeId: batchCodeId(1), code: "DC-AAAA-AAAA", creationIdempotencyKey: `${key}#1` })];
+    const res = await createBatch({ classId: CLASS_ID, quantity: 1 }, { "idempotency-key": key });
+    expect(res.statusCode).toBe(200);
+    expect(prisma.discountCode.findMany).toHaveBeenCalledWith({
+      where: { creationIdempotencyKey: { in: [`${key}#1`, `${key}#2`] } },
+    });
+    expect(res.body.discountCodes.map((view: { code: string }) => view.code)).toEqual(["DC-AAAA-AAAA"]);
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("replaces generated codes that are already stored before inserting", async () => {
+    // The first candidate check reports every candidate as taken.
+    let checks = 0;
+    const takenCodes: string[] = [];
+    prisma.discountCode.findMany.mockImplementation(async ({ where }: { where: Record<string, any> }) => {
+      if (!where.code) return [];
+      checks += 1;
+      if (checks > 1) return [];
+      takenCodes.push(...(where.code.in as string[]));
+      return takenCodes.map((code) => ({ code }));
+    });
+
+    const res = await createBatch({ classId: CLASS_ID, quantity: 2 });
+
+    expect(res.statusCode).toBe(201);
+    expect(checks).toBe(2);
+    const inserted = prisma.discountCode.create.mock.calls.map(([arg]: [any]) => arg.data.code);
+    expect(inserted).toHaveLength(2);
+    expect(inserted.some((code: string) => takenCodes.includes(code))).toBe(false);
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+  });
+
+  it("retries the whole batch with new codes when an insert hits a unique violation", async () => {
+    prisma.discountCode.create.mockRejectedValueOnce(uniqueViolation());
+    const res = await createBatch({ classId: CLASS_ID, quantity: 2 }, { "idempotency-key": "sheet-key-1" });
+
+    expect(res.statusCode).toBe(201);
+    expect(prisma.$transaction).toHaveBeenCalledTimes(2);
+    const calls = prisma.discountCode.create.mock.calls.map(([arg]: [any]) => arg.data);
+    expect(calls).toHaveLength(3);
+    // The retry starts again from index 1 with freshly generated codes.
+    expect(calls.map((data: Record<string, unknown>) => data.creationIdempotencyKey)).toEqual([
+      "sheet-key-1#1",
+      "sheet-key-1#1",
+      "sheet-key-1#2",
+    ]);
+    expect(calls[1].code).not.toBe(calls[0].code);
+    expect(res.body.discountCodes).toHaveLength(2);
+  });
+
+  it("gives up after a few whole-batch attempts", async () => {
+    prisma.discountCode.create.mockRejectedValue(uniqueViolation());
+    const res = await createBatch({ classId: CLASS_ID, quantity: 2 });
+    expect(res.statusCode).toBe(500);
+    expect(errorCode(res)).toBe("INTERNAL_SERVER_ERROR");
+    expect(prisma.$transaction).toHaveBeenCalledTimes(3);
+  });
+
+  it("returns the racing request's codes when its Idempotency-Key insert won", async () => {
+    prisma.discountCode.create.mockImplementationOnce(async () => {
+      // Another request with the same key committed this batch meanwhile.
+      stored = [
+        discountCodeRow({ discountCodeId: batchCodeId(7), code: "DC-AAAA-AAAA", creationIdempotencyKey: "sheet-key-1#1" }),
+        discountCodeRow({ discountCodeId: batchCodeId(8), code: "DC-BBBB-BBBB", creationIdempotencyKey: "sheet-key-1#2" }),
+      ];
+      throw uniqueViolation();
+    });
+    const res = await createBatch({ classId: CLASS_ID, quantity: 2 }, { "idempotency-key": "sheet-key-1" });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.discountCodes.map((view: { discountCodeId: string }) => view.discountCodeId)).toEqual([
+      batchCodeId(7),
+      batchCodeId(8),
+    ]);
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+    expect(prisma.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("leaves the single-code endpoint unchanged", async () => {
+    prisma.discountCode.findUnique.mockResolvedValue(null);
+    const res = createResponse();
+    await createDiscountCode(adminRequest({ body: { classId: CLASS_ID, maxRedemptions: 3 } }) as never, res as never);
+    expect(res.statusCode).toBe(201);
+    expect(prisma.discountCode.create.mock.calls[0][0].data.maxRedemptions).toBe(3);
+    expect(res.body.discountCode).toMatchObject({ maxRedemptions: 3, redeemers: [], lastRedeemedAt: null });
+  });
+});
+
 describe("discountCodeController.getDiscountCodes", () => {
   beforeEach(() => {
     prisma.discountCode.count.mockResolvedValue(1);
@@ -992,6 +1343,145 @@ describe("discountCodeController.getDiscountCodes", () => {
     expect(res2.statusCode).toBe(400);
     expect(errorCode(res2)).toBe("INVALID_CLASS_ID");
   });
+  it("shows who used each code on the page with one redemptions query and one users query", async () => {
+    const OTHER_CODE_ID = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+    const UNUSED_CODE_ID = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+    const student = (n: number) => `dddddddd-dddd-4ddd-8ddd-00000000000${n}`;
+    const at = (hour: number) => new Date(`2026-11-02T0${hour}:00:00.000Z`);
+    prisma.discountCode.findMany.mockResolvedValue([
+      discountCodeRow({ maxRedemptions: 20, redeemedCount: 4 }),
+      discountCodeRow({ discountCodeId: OTHER_CODE_ID, code: "DC-JKLM-NPQR", redeemedCount: 1 }),
+      discountCodeRow({ discountCodeId: UNUSED_CODE_ID, code: "DC-STUV-WXYZ" }),
+    ]);
+    // Newest first, as the query orders them.
+    prisma.discountCodeRedemption.findMany.mockResolvedValue([
+      { discountCodeId: CODE_ID, studentUserId: student(4), createdAt: at(9) },
+      { discountCodeId: OTHER_CODE_ID, studentUserId: student(5), createdAt: at(8) },
+      { discountCodeId: CODE_ID, studentUserId: student(3), createdAt: at(7) },
+      { discountCodeId: CODE_ID, studentUserId: student(2), createdAt: at(6) },
+      { discountCodeId: CODE_ID, studentUserId: student(1), createdAt: at(5) },
+    ]);
+    prisma.user.findMany.mockResolvedValue([
+      { userId: TUTOR_ID, displayName: "T.นกเอี้ยง", email: "tutor@example.test", phoneNumber: null },
+      { userId: ADMIN_ID, displayName: "แอดมิน", email: "admin@example.test", phoneNumber: null },
+      { userId: student(4), displayName: "สมชาย ใจดี", email: "somchai@example.test", phoneNumber: "0812345678" },
+      { userId: student(3), displayName: null, email: null, phoneNumber: "0899999999" },
+      { userId: student(5), displayName: "สมหญิง", email: null, phoneNumber: null },
+      // student(2) has no user row any more.
+    ]);
+
+    const res = createResponse();
+    await getDiscountCodes(adminRequest() as never, res as never);
+
+    expect(res.statusCode).toBe(200);
+    expect(prisma.discountCodeRedemption.findMany).toHaveBeenCalledTimes(1);
+    expect(prisma.discountCodeRedemption.findMany).toHaveBeenCalledWith({
+      where: { discountCodeId: { in: [CODE_ID, OTHER_CODE_ID] } },
+      orderBy: [{ createdAt: "desc" }, { redemptionId: "desc" }],
+      select: { discountCodeId: true, studentUserId: true, createdAt: true },
+    });
+    expect(prisma.user.findMany).toHaveBeenCalledTimes(1);
+    const userIds = prisma.user.findMany.mock.calls[0][0].where.userId.in;
+    expect(userIds).toEqual(expect.arrayContaining([TUTOR_ID, ADMIN_ID, student(4), student(3), student(2), student(5)]));
+    // Only the 3 shown redeemers are looked up.
+    expect(userIds).not.toContain(student(1));
+
+    const [used, single, unused] = res.body.items;
+    expect(used.redeemers).toEqual([
+      {
+        studentUserId: student(4),
+        studentName: "สมชาย ใจดี",
+        studentEmail: "somchai@example.test",
+        studentPhone: "0812345678",
+        redeemedAt: "2026-11-02T09:00:00.000Z",
+      },
+      {
+        studentUserId: student(3),
+        studentName: null,
+        studentEmail: null,
+        studentPhone: "0899999999",
+        redeemedAt: "2026-11-02T07:00:00.000Z",
+      },
+      {
+        studentUserId: student(2),
+        studentName: null,
+        studentEmail: null,
+        studentPhone: null,
+        redeemedAt: "2026-11-02T06:00:00.000Z",
+      },
+    ]);
+    expect(used.lastRedeemedAt).toBe("2026-11-02T09:00:00.000Z");
+    expect(single.redeemers).toEqual([
+      expect.objectContaining({ studentUserId: student(5), studentName: "สมหญิง" }),
+    ]);
+    expect(single.lastRedeemedAt).toBe("2026-11-02T08:00:00.000Z");
+    expect(unused).toMatchObject({ redeemers: [], lastRedeemedAt: null });
+  });
+
+  it("skips the redemptions query when no code on the page was used", async () => {
+    prisma.discountCode.findMany.mockResolvedValue([discountCodeRow()]);
+    const res = createResponse();
+    await getDiscountCodes(adminRequest() as never, res as never);
+    expect(res.statusCode).toBe(200);
+    expect(prisma.discountCodeRedemption.findMany).not.toHaveBeenCalled();
+    // Without q there is no student search either.
+    expect(prisma.discountCodeRedemption.groupBy).not.toHaveBeenCalled();
+    expect(res.body.items[0]).toMatchObject({ redeemers: [], lastRedeemedAt: null });
+  });
+
+  it("also matches codes used by a student whose name, email or phone contains q", async () => {
+    const OTHER_STUDENT_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee";
+    prisma.discountCodeRedemption.groupBy.mockResolvedValue([
+      { studentUserId: STUDENT_ID },
+      { studentUserId: OTHER_STUDENT_ID },
+    ]);
+    // First users query is the search; the second presents the page.
+    prisma.user.findMany.mockResolvedValueOnce([{ userId: STUDENT_ID }]);
+
+    const res = createResponse();
+    await getDiscountCodes(adminRequest({ query: { q: " สมชาย " } }) as never, res as never);
+
+    expect(res.statusCode).toBe(200);
+    expect(prisma.discountCodeRedemption.groupBy).toHaveBeenCalledWith({ by: ["studentUserId"] });
+    expect(prisma.user.findMany.mock.calls[0][0]).toEqual({
+      where: {
+        userId: { in: [STUDENT_ID, OTHER_STUDENT_ID] },
+        OR: [
+          { displayName: { contains: "สมชาย", mode: "insensitive" } },
+          { email: { contains: "สมชาย", mode: "insensitive" } },
+          { phoneNumber: { contains: "สมชาย", mode: "insensitive" } },
+        ],
+      },
+      select: { userId: true },
+    });
+    const args = prisma.discountCode.findMany.mock.calls[0][0];
+    expect(args.where.AND[1].OR).toEqual([
+      { code: { contains: "สมชาย", mode: "insensitive" } },
+      { note: { contains: "สมชาย", mode: "insensitive" } },
+      { redemptions: { some: { studentUserId: { in: [STUDENT_ID] } } } },
+    ]);
+    expect(prisma.discountCode.count).toHaveBeenCalledWith({ where: args.where });
+  });
+
+  it("keeps code / note matching only when no student matches q", async () => {
+    prisma.discountCodeRedemption.groupBy.mockResolvedValue([{ studentUserId: STUDENT_ID }]);
+    prisma.user.findMany.mockResolvedValueOnce([]);
+    const res = createResponse();
+    await getDiscountCodes(adminRequest({ query: { q: "ไม่มีใคร" } }) as never, res as never);
+    const args = prisma.discountCode.findMany.mock.calls[0][0];
+    expect(args.where.AND[1].OR).toEqual([
+      { code: { contains: "ไม่มีใคร", mode: "insensitive" } },
+      { note: { contains: "ไม่มีใคร", mode: "insensitive" } },
+    ]);
+
+    // Nobody has used a code yet: no user search at all.
+    prisma.discountCodeRedemption.groupBy.mockResolvedValue([]);
+    prisma.user.findMany.mockClear();
+    const res2 = createResponse();
+    await getDiscountCodes(adminRequest({ query: { q: "ไม่มีใคร" } }) as never, res2 as never);
+    expect(prisma.user.findMany.mock.calls.every(([arg]: [any]) => !arg.where.OR)).toBe(true);
+  });
+
 });
 
 describe("discountCodeController.voidDiscountCode", () => {
@@ -1090,7 +1580,7 @@ describe("discountCodeController.getDiscountCodeRedemptions", () => {
       },
     ]);
     prisma.user.findMany.mockResolvedValue([
-      { userId: STUDENT_ID, displayName: "นักเรียน", email: "student@example.test" },
+      { userId: STUDENT_ID, displayName: "นักเรียน", email: "student@example.test", phoneNumber: "0812345678" },
     ]);
     prisma.enrollment.findMany.mockResolvedValue([{ enrollmentId: ENROLLMENT_ID, status: "ACTIVE" }]);
 
@@ -1109,6 +1599,7 @@ describe("discountCodeController.getDiscountCodeRedemptions", () => {
           studentUserId: STUDENT_ID,
           studentName: "นักเรียน",
           studentEmail: "student@example.test",
+          studentPhone: "0812345678",
           enrollmentId: ENROLLMENT_ID,
           enrollmentPackageId: null,
           enrollmentStatus: "ACTIVE",

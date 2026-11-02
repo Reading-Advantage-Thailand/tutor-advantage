@@ -15,7 +15,7 @@ import { api, errorMessage } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatSatang, formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
-import type { DiscountCode, DiscountCodeRedemption } from "../discountCodeForm";
+import { redemptionPhone, type DiscountCode, type DiscountCodeRedemption } from "../discountCodeForm";
 import "@/locales/th/discountCodes";
 
 export interface RedemptionsSheetProps {
@@ -57,7 +57,11 @@ export function RedemptionsSheet({ open, onOpenChange, code }: RedemptionsSheetP
             key={item.redemptionId}
             href={`/users/${encodeURIComponent(item.studentUserId)}`}
             title={item.studentName || t("discountCodes.studentUnnamed")}
-            subtitle={[item.studentEmail, t("discountCodes.redeemedOn", { date: formatThaiDateTime(item.createdAt) })]
+            subtitle={[
+              item.studentEmail,
+              redemptionPhone(item, code),
+              t("discountCodes.redeemedOn", { date: formatThaiDateTime(item.createdAt) }),
+            ]
               .filter(Boolean)
               .join(" · ")}
             meta={

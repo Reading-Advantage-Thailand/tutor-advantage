@@ -131,6 +131,7 @@ export const ERROR_MESSAGES: Record<string, string> = {
   CLASS_NOT_FOUND: "ไม่พบคลาสนี้ อาจถูกลบไปแล้ว กรุณารีเฟรช",
   CLASS_NOT_ELIGIBLE: "คลาสทดลองออกโค้ดส่วนลดไม่ได้ กรุณาเลือกคลาสอื่น",
   INVALID_MAX_REDEMPTIONS: "จำนวนครั้งที่ใช้ได้ต้องเป็นจำนวนเต็ม 1–500",
+  INVALID_QUANTITY: "จำนวนโค้ดต้องเป็นจำนวนเต็ม 1–100",
   INVALID_DISCOUNT_CODE_ID: "รหัสโค้ดส่วนลดไม่ถูกต้อง กรุณารีเฟรช",
   DISCOUNT_CODE_NOT_FOUND: "ไม่พบโค้ดส่วนลดนี้ กรุณารีเฟรช",
   DISCOUNT_CODE_VOID: "โค้ดนี้ถูกยกเลิกแล้ว",

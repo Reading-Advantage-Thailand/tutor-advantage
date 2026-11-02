@@ -101,6 +101,7 @@ describe("proxy allowlist", () => {
     const cases: [string, string, string][] = [
       ["GET", "/v1/discount-codes", "finance"],
       ["POST", "/v1/discount-codes", "finance"],
+      ["POST", "/v1/discount-codes/batch", "finance"],
       ["POST", `/v1/discount-codes/${id}/void`, "finance"],
       ["GET", `/v1/discount-codes/${id}/redemptions`, "finance"],
       ["GET", "/v1/admin/classes", "learning"],
@@ -117,6 +118,10 @@ describe("proxy allowlist", () => {
     }
     expect(matchProxyRequest(seg("/v1/discount-codes"), "DELETE", admin)).toMatchObject({ ok: false, status: 405 });
     expect(matchProxyRequest(seg(`/v1/discount-codes/${id}/void`), "GET", admin)).toMatchObject({ ok: false, status: 405 });
+    // Batch create is POST only (single-use codes, one per student).
+    for (const method of ["GET", "PATCH", "DELETE"]) {
+      expect(matchProxyRequest(seg("/v1/discount-codes/batch"), method, admin), method).toMatchObject({ ok: false, status: 405 });
+    }
     expect(matchProxyRequest(seg("/v1/books"), "POST", admin)).toMatchObject({ ok: false, status: 405 });
   });
 

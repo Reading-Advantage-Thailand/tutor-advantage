@@ -1,6 +1,7 @@
 "use client";
 
 import { Ban, CheckCircle2, Plus, TicketPercent, TicketX, UsersRound, X } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -33,8 +34,10 @@ import { DiscountCodeFormSheet } from "./components/DiscountCodeFormSheet";
 import { RedemptionsSheet } from "./components/RedemptionsSheet";
 import {
   isVoidable,
+  latestRedeemer,
   listQuery,
   readCreateRequest,
+  redeemerLabel,
   withoutCreateParam,
   type DiscountCode,
   type DiscountCodePage,
@@ -53,6 +56,44 @@ function ClassCell({ row }: { row: DiscountCode }) {
           {row.tutorName || row.tutorEmail || t("discountCodes.tutorUnnamed")}
         </span>
       ) : null}
+    </span>
+  );
+}
+
+/** "ใช้โดย": newest student who used the code (link to the user) + when; "+n คน" opens the full list. */
+function RedeemedByCell({ row, onShowAll }: { row: DiscountCode; onShowAll: () => void }) {
+  const { latest, others } = latestRedeemer(row);
+  if (!latest) {
+    // redeemedCount > 0 without redeemers only while an older finance version is deployed.
+    return (
+      <span className="whitespace-nowrap text-fg-muted">{row.redeemedCount > 0 ? "–" : t("discountCodes.redeemersNone")}</span>
+    );
+  }
+  const contact = [latest.studentEmail, latest.studentPhone].filter(Boolean).join(" · ");
+  const othersCount = formatNumber(others);
+  return (
+    <span className="flex min-w-0 flex-col">
+      <span className="flex min-w-0 items-center gap-1.5">
+        <Link
+          href={`/users/${encodeURIComponent(latest.studentUserId)}`}
+          className="block max-w-48 truncate text-fg hover:underline"
+          title={contact || undefined}
+        >
+          {redeemerLabel(latest) ?? t("discountCodes.redeemerUnknown")}
+        </Link>
+        {others > 0 ? (
+          <Button
+            size="xs"
+            variant="soft"
+            className="shrink-0"
+            aria-label={t("discountCodes.redeemersMoreLabel", { code: row.code, count: othersCount })}
+            onClick={onShowAll}
+          >
+            {t("discountCodes.redeemersMore", { count: othersCount })}
+          </Button>
+        ) : null}
+      </span>
+      <span className="text-[0.8125rem] whitespace-nowrap text-fg-muted">{formatThaiDateTime(latest.redeemedAt)}</span>
     </span>
   );
 }
@@ -141,6 +182,11 @@ export default function DiscountCodesPage() {
             {t("discountCodes.usedValue", { used: formatNumber(row.redeemedCount), max: formatNumber(row.maxRedemptions) })}
           </span>
         ),
+      },
+      {
+        key: "redeemedBy",
+        header: t("discountCodes.colRedeemedBy"),
+        cell: (row) => <RedeemedByCell row={row} onShowAll={() => setRedemptions({ open: true, code: row })} />,
       },
       {
         key: "expiresAt",

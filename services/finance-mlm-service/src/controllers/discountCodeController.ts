@@ -30,6 +30,17 @@ const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const MAX_REDEMPTIONS_LIMIT = 500;
+/** POST /v1/discount-codes/batch: single-use codes per request. */
+const BATCH_QUANTITY_LIMIT = 100;
+/** Whole-batch retries when a generated code loses a unique race. */
+const BATCH_CREATE_ATTEMPTS = 3;
+/** Rounds of "generate, then check which codes are already stored". */
+const CODE_GENERATION_ROUNDS = 5;
+// Up to 100 inserts + 100 audit rows on one connection: more than the 5 s
+// interactive-transaction default when the database is slow.
+const BATCH_TRANSACTION_TIMEOUT_MS = 30_000;
+/** Most recent students shown per code in the admin list. */
+const REDEEMERS_SHOWN = 3;
 const NOTE_MAX = 500;
 const REASON_MIN = 5;
 const REASON_MAX = 500;
@@ -450,30 +461,59 @@ function iso(value: Date | null | undefined) {
   return value ? value.toISOString() : null;
 }
 
-/** Admin view of codes: joins class, book, tutor and creator (Class has no User relation). */
+/**
+ * Admin view of codes: joins class, book, tutor, creator and the students who
+ * used each code (neither Class nor DiscountCodeRedemption has a User
+ * relation). One query each for classes, redemptions and users per page.
+ */
 async function presentDiscountCodes(codes: DiscountCode[], now: Date = new Date()) {
   const classIds = Array.from(new Set(codes.map((code) => code.classId)));
-  const classes = classIds.length
-    ? await prisma.class.findMany({
-        where: { classId: { in: classIds } },
-        select: {
-          classId: true,
-          title: true,
-          tutorUserId: true,
-          packagePriceMinor: true,
-          book: { select: { bookCode: true } },
-        },
-      })
-    : [];
+  // A code nobody used has no redemption rows (redeemedCount moves with them).
+  const redeemedCodeIds = codes.filter((code) => code.redeemedCount > 0).map((code) => code.discountCodeId);
+  const [classes, redemptions] = await Promise.all([
+    classIds.length
+      ? prisma.class.findMany({
+          where: { classId: { in: classIds } },
+          select: {
+            classId: true,
+            title: true,
+            tutorUserId: true,
+            packagePriceMinor: true,
+            book: { select: { bookCode: true } },
+          },
+        })
+      : [],
+    // At most maxRedemptions (<= 500) rows per code; trimmed per code below.
+    redeemedCodeIds.length
+      ? prisma.discountCodeRedemption.findMany({
+          where: { discountCodeId: { in: redeemedCodeIds } },
+          orderBy: [{ createdAt: "desc" }, { redemptionId: "desc" }],
+          select: { discountCodeId: true, studentUserId: true, createdAt: true },
+        })
+      : [],
+  ]);
   const classMap = new Map(classes.map((cls) => [cls.classId, cls]));
 
+  // Newest first (query order), REDEEMERS_SHOWN per code.
+  const redemptionsByCode = new Map<string, typeof redemptions>();
+  for (const redemption of redemptions) {
+    const list = redemptionsByCode.get(redemption.discountCodeId) ?? [];
+    if (list.length < REDEEMERS_SHOWN) list.push(redemption);
+    redemptionsByCode.set(redemption.discountCodeId, list);
+  }
+  const shownRedemptions = Array.from(redemptionsByCode.values()).flat();
+
   const userIds = Array.from(
-    new Set([...classes.map((cls) => cls.tutorUserId), ...codes.map((code) => code.createdByUserId)]),
+    new Set([
+      ...classes.map((cls) => cls.tutorUserId),
+      ...codes.map((code) => code.createdByUserId),
+      ...shownRedemptions.map((redemption) => redemption.studentUserId),
+    ]),
   );
   const users = userIds.length
     ? await prisma.user.findMany({
         where: { userId: { in: userIds } },
-        select: { userId: true, displayName: true, email: true },
+        select: { userId: true, displayName: true, email: true, phoneNumber: true },
       })
     : [];
   const userMap = new Map(users.map((user) => [user.userId, user]));
@@ -482,6 +522,16 @@ async function presentDiscountCodes(codes: DiscountCode[], now: Date = new Date(
     const cls = classMap.get(code.classId);
     const tutor = cls ? userMap.get(cls.tutorUserId) : undefined;
     const creator = userMap.get(code.createdByUserId);
+    const redeemers = (redemptionsByCode.get(code.discountCodeId) ?? []).map((redemption) => {
+      const student = userMap.get(redemption.studentUserId);
+      return {
+        studentUserId: redemption.studentUserId,
+        studentName: student?.displayName ?? null,
+        studentEmail: student?.email ?? null,
+        studentPhone: student?.phoneNumber ?? null,
+        redeemedAt: redemption.createdAt.toISOString(),
+      };
+    });
     return {
       discountCodeId: code.discountCodeId,
       code: code.code,
@@ -503,6 +553,8 @@ async function presentDiscountCodes(codes: DiscountCode[], now: Date = new Date(
       createdByName: creator?.displayName || creator?.email || null,
       voidedAt: iso(code.voidedAt),
       voidReason: code.voidReason,
+      redeemers,
+      lastRedeemedAt: redeemers[0]?.redeemedAt ?? null,
     };
   });
 }
@@ -541,6 +593,28 @@ function parseIdempotencyKey(raw: unknown): ParsedIdempotencyKey {
   return { ok: true, value: raw.trim() || null };
 }
 
+/**
+ * Students who used at least one code and whose name, email or phone number
+ * contains `q`. Only redeeming students can match, so their ids bound the
+ * user search: a broad term like "gmail" never pulls in every account.
+ */
+async function findRedeemingStudentIds(q: string): Promise<string[]> {
+  const redeemers = await prisma.discountCodeRedemption.groupBy({ by: ["studentUserId"] });
+  if (redeemers.length === 0) return [];
+  const students = await prisma.user.findMany({
+    where: {
+      userId: { in: redeemers.map((redeemer) => redeemer.studentUserId) },
+      OR: [
+        { displayName: { contains: q, mode: "insensitive" } },
+        { email: { contains: q, mode: "insensitive" } },
+        { phoneNumber: { contains: q, mode: "insensitive" } },
+      ],
+    },
+    select: { userId: true },
+  });
+  return students.map((student) => student.userId);
+}
+
 // GET /v1/discount-codes?page=&pageSize=&status=&q=&classId=&sort=&order= — admin lists codes
 export async function getDiscountCodes(req: AuthenticatedRequest, res: Response) {
   try {
@@ -574,11 +648,14 @@ export async function getDiscountCodes(req: AuthenticatedRequest, res: Response)
       discountCodeStatusWhere(status, prisma.discountCode.fields.maxRedemptions, now),
     ];
     if (q) {
+      const studentIds = await findRedeemingStudentIds(q);
       filters.push({
         OR: [
           { code: { contains: q, mode: "insensitive" } },
           { note: { contains: q, mode: "insensitive" } },
           ...(UUID_RE.test(q) ? [{ discountCodeId: q }, { classId: q }] : []),
+          // ...or a student who used the code (name / email / phone).
+          ...(studentIds.length ? [{ redemptions: { some: { studentUserId: { in: studentIds } } } }] : []),
         ],
       });
     }
@@ -786,6 +863,209 @@ export async function createDiscountCode(req: AuthenticatedRequest, res: Respons
   }
 }
 
+/** Code `index` (1-based) of a batch stores `<Idempotency-Key>#<index>`. */
+function batchIdempotencyKey(key: string, index: number) {
+  return `${key}#${index}`;
+}
+
+/**
+ * Codes an earlier batch request with this Idempotency-Key created, in index
+ * order. A batch is all-or-nothing, so an earlier batch of m codes stored
+ * exactly `<key>#1..<key>#m`: looking up `#1..#(quantity + 1)` by exact key
+ * (unique index, no LIKE, so `%`, `_` or `\` in the key cannot change the
+ * match) finds fewer than `quantity` rows when it was smaller and
+ * `quantity + 1` when it was larger.
+ */
+async function findBatchByKey(key: string, quantity: number) {
+  const keys = Array.from({ length: quantity + 1 }, (_, position) => batchIdempotencyKey(key, position + 1));
+  const rows = await prisma.discountCode.findMany({
+    where: { creationIdempotencyKey: { in: keys } },
+  });
+  return rows
+    .map((row) => ({ row, index: keys.indexOf(row.creationIdempotencyKey ?? "") + 1 }))
+    .filter(({ index }) => index > 0)
+    .sort((a, b) => a.index - b.index);
+}
+
+/** `quantity` distinct codes that no stored code uses yet. */
+async function generateFreeDiscountCodes(quantity: number): Promise<string[]> {
+  const codes = new Set<string>();
+  for (let round = 0; round < CODE_GENERATION_ROUNDS && codes.size < quantity; round++) {
+    const candidates = new Set<string>();
+    while (candidates.size < quantity - codes.size) {
+      const code = generateDiscountCode();
+      if (!codes.has(code)) candidates.add(code);
+    }
+    const taken = await prisma.discountCode.findMany({
+      where: { code: { in: Array.from(candidates) } },
+      select: { code: true },
+    });
+    const takenCodes = new Set(taken.map((row) => row.code));
+    for (const code of candidates) {
+      if (!takenCodes.has(code)) codes.add(code);
+    }
+  }
+  if (codes.size < quantity) throw new Error("Could not generate unique discount codes");
+  return Array.from(codes);
+}
+
+// POST /v1/discount-codes/batch { classId, quantity, expiresAt?, note? } — admin issues
+// `quantity` single-use codes (one per student, so a forwarded code cannot be reused)
+export async function createDiscountCodeBatch(req: AuthenticatedRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    if (!userId || req.user?.role !== "ADMIN") {
+      return forbidden(req, res, "Only admins can issue discount codes");
+    }
+
+    const { classId, quantity, expiresAt, note } = req.body ?? {};
+    if (!isUuid(classId)) {
+      return res.status(400).json(errorBody(req, "INVALID_CLASS_ID", "classId must be a valid UUID"));
+    }
+
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > BATCH_QUANTITY_LIMIT) {
+      return res
+        .status(400)
+        .json(
+          errorBody(req, "INVALID_QUANTITY", `quantity must be an integer from 1 to ${BATCH_QUANTITY_LIMIT}`),
+        );
+    }
+
+    const parsedExpiry = parseExpiry(expiresAt);
+    if (!parsedExpiry.ok) {
+      return res
+        .status(400)
+        .json(errorBody(req, "INVALID_EXPIRY", "expiresAt must be a valid date in the future"));
+    }
+
+    const parsedNote = parseNote(note);
+    if (!parsedNote.ok) {
+      return res
+        .status(400)
+        .json(errorBody(req, "INVALID_NOTE", `note must be text of at most ${NOTE_MAX} characters`));
+    }
+
+    const idempotencyKey = parseIdempotencyKey(req.headers["idempotency-key"]);
+    if (!idempotencyKey.ok) {
+      return res
+        .status(400)
+        .json(
+          errorBody(
+            req,
+            "INVALID_IDEMPOTENCY_KEY",
+            `Idempotency-Key must be text of at most ${IDEMPOTENCY_KEY_MAX} characters`,
+          ),
+        );
+    }
+    const key = idempotencyKey.value;
+
+    // A retried request (same Idempotency-Key) gets the codes it already
+    // created, but only when they are that whole batch for the same class.
+    const replay = async (existing: Awaited<ReturnType<typeof findBatchByKey>>) => {
+      const sameBatch =
+        existing.length === quantity &&
+        existing.every(
+          ({ row, index }, position) =>
+            index === position + 1 && row.classId === classId && row.createdByUserId === userId,
+        );
+      if (!sameBatch) {
+        return res
+          .status(409)
+          .json(
+            errorBody(req, "IDEMPOTENCY_KEY_REUSED", "Idempotency key is already bound to other discount codes"),
+          );
+      }
+      return res
+        .status(200)
+        .json({ discountCodes: await presentDiscountCodes(existing.map(({ row }) => row)) });
+    };
+
+    if (key) {
+      const existing = await findBatchByKey(key, quantity);
+      if (existing.length) return replay(existing);
+    }
+
+    const cls = await prisma.class.findUnique({
+      where: { classId },
+      select: { classId: true, title: true, isDemo: true },
+    });
+    if (!cls) {
+      return res.status(404).json(errorBody(req, "CLASS_NOT_FOUND", "Class not found"));
+    }
+    if (cls.isDemo) {
+      return res
+        .status(409)
+        .json(errorBody(req, "CLASS_NOT_ELIGIBLE", "Discount codes cannot be issued for a demo class"));
+    }
+
+    let created: DiscountCode[] | null = null;
+    for (let attempt = 1; !created; attempt++) {
+      const codes = await generateFreeDiscountCodes(quantity);
+      try {
+        // Every code and its audit row, or none of them.
+        created = await prisma.$transaction(
+          async (tx) => {
+            const rows: DiscountCode[] = [];
+            for (let position = 0; position < codes.length; position++) {
+              const batchIndex = position + 1;
+              const row = await tx.discountCode.create({
+                data: {
+                  code: codes[position],
+                  classId,
+                  maxRedemptions: 1,
+                  note: parsedNote.value,
+                  createdByUserId: userId,
+                  creationIdempotencyKey: key ? batchIdempotencyKey(key, batchIndex) : null,
+                  expiresAt: parsedExpiry.value,
+                },
+              });
+              await recordAuditEvent(
+                {
+                  actorId: userId,
+                  action: AUDIT_ACTIONS.DISCOUNT_CODE_CREATE,
+                  entityType: AUDIT_ENTITY.DISCOUNT_CODE,
+                  entityId: row.discountCodeId,
+                  payload: {
+                    code: row.code,
+                    classId,
+                    classTitle: cls.title,
+                    maxRedemptions: 1,
+                    expiresAt: iso(parsedExpiry.value),
+                    note: parsedNote.value,
+                    batchSize: quantity,
+                    batchIndex,
+                  },
+                  requestId: req.id,
+                },
+                { client: tx, strict: true },
+              );
+              rows.push(row);
+            }
+            return rows;
+          },
+          { timeout: BATCH_TRANSACTION_TIMEOUT_MS },
+        );
+      } catch (error) {
+        if (!isUniqueViolation(error)) throw error;
+        // The same Idempotency-Key raced in: answer with what that request made.
+        if (key) {
+          const raced = await findBatchByKey(key, quantity);
+          if (raced.length) return replay(raced);
+        }
+        // Otherwise a generated code was taken meanwhile; retry the whole batch.
+        if (attempt >= BATCH_CREATE_ATTEMPTS) throw error;
+      }
+    }
+
+    return res.status(201).json({ discountCodes: await presentDiscountCodes(created) });
+  } catch (error) {
+    logger.error("Create Discount Code Batch Error:", error);
+    return res
+      .status(500)
+      .json(errorBody(req, "INTERNAL_SERVER_ERROR", "Could not create discount codes"));
+  }
+}
+
 // POST /v1/discount-codes/:discountCodeId/void { reason? } — admin cancels a code
 export async function voidDiscountCode(req: AuthenticatedRequest, res: Response) {
   try {
@@ -894,7 +1174,7 @@ export async function getDiscountCodeRedemptions(req: AuthenticatedRequest, res:
       studentIds.length
         ? prisma.user.findMany({
             where: { userId: { in: studentIds } },
-            select: { userId: true, displayName: true, email: true },
+            select: { userId: true, displayName: true, email: true, phoneNumber: true },
           })
         : [],
       enrollmentIds.length
@@ -915,6 +1195,7 @@ export async function getDiscountCodeRedemptions(req: AuthenticatedRequest, res:
           studentUserId: r.studentUserId,
           studentName: student?.displayName ?? null,
           studentEmail: student?.email ?? null,
+          studentPhone: student?.phoneNumber ?? null,
           enrollmentId: r.enrollmentId,
           enrollmentPackageId: r.enrollmentPackageId,
           enrollmentStatus: enrollmentMap.get(r.enrollmentId)?.status ?? null,

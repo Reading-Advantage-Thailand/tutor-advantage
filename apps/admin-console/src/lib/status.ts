@@ -152,7 +152,7 @@ export const ADMIN_STATUS = {
   /** finance_mlm.discount_codes: effective status from the API (USED_UP / EXPIRED are derived) */
   discountCode: {
     ACTIVE: { label: "ใช้งานได้", tone: "success" },
-    USED_UP: { label: "ใช้ครบแล้ว", tone: "info" },
+    USED_UP: { label: "ใช้แล้ว", tone: "info" },
     EXPIRED: { label: "หมดอายุ", tone: "neutral" },
     VOID: { label: "ยกเลิกแล้ว", tone: "neutral" },
   },
