@@ -17,15 +17,16 @@ const SIGNED_URL_TTL_MS = 10 * 60 * 1000;
 let cachedBucket: Bucket | null = null;
 
 /**
- * The bucket must be configured explicitly (GCS_BUCKET_NAME, same value as
- * identity-service). We never guess a default: signing for the wrong bucket
- * would hand admins dead links. Returns null (document hidden) when unset.
+ * The bucket must be configured explicitly (VERIFICATION_BUCKET_NAME, same
+ * value as identity-service). We never guess a default: signing for the wrong
+ * bucket would hand admins dead links. Returns null (document hidden) when
+ * unset. GCS_BUCKET_NAME is the public content bucket and is never used here.
  */
 function getBucket(): Bucket | null {
   if (cachedBucket) return cachedBucket;
-  const bucketName = process.env.GCS_BUCKET_NAME;
+  const bucketName = process.env.VERIFICATION_BUCKET_NAME;
   if (!bucketName) {
-    logger.warn("GCS_BUCKET_NAME is not set: admin verification documents are hidden");
+    logger.warn("VERIFICATION_BUCKET_NAME is not set: admin verification documents are hidden");
     return null;
   }
   let keyFilename: string | undefined = process.env.GCP_KEY_FILEPATH || process.env.GOOGLE_APPLICATION_CREDENTIALS;

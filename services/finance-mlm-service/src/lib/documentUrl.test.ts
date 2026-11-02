@@ -23,7 +23,7 @@ vi.mock("@tutor-advantage/shared-config", () => ({
   logger: { warn: vi.fn(), error: vi.fn(), info: vi.fn() },
 }));
 
-process.env.GCS_BUCKET_NAME = "tutor-advantage-verification";
+process.env.VERIFICATION_BUCKET_NAME = "tutor-advantage-verification";
 
 import { signVerificationDocument, verificationObjectKey } from "./documentUrl";
 
@@ -72,16 +72,31 @@ describe("signVerificationDocument", () => {
     await expect(signVerificationDocument(KEY, OWNER)).resolves.toBeNull();
   });
 
-  it("fails closed (null, no signing) when GCS_BUCKET_NAME is not configured", async () => {
-    const saved = process.env.GCS_BUCKET_NAME;
-    delete process.env.GCS_BUCKET_NAME;
+  it("fails closed (null, no signing) when VERIFICATION_BUCKET_NAME is not configured", async () => {
+    const saved = process.env.VERIFICATION_BUCKET_NAME;
+    delete process.env.VERIFICATION_BUCKET_NAME;
     vi.resetModules();
     try {
       const fresh = await import("./documentUrl");
       await expect(fresh.signVerificationDocument(KEY, OWNER)).resolves.toBeNull();
       expect(gcs.getSignedUrl).not.toHaveBeenCalled();
     } finally {
-      process.env.GCS_BUCKET_NAME = saved;
+      process.env.VERIFICATION_BUCKET_NAME = saved;
+    }
+  });
+
+  it("never falls back to the public content bucket (GCS_BUCKET_NAME)", async () => {
+    const saved = process.env.VERIFICATION_BUCKET_NAME;
+    delete process.env.VERIFICATION_BUCKET_NAME;
+    process.env.GCS_BUCKET_NAME = "tutor_advantage_bucket";
+    vi.resetModules();
+    try {
+      const fresh = await import("./documentUrl");
+      await expect(fresh.signVerificationDocument(KEY, OWNER)).resolves.toBeNull();
+      expect(gcs.getSignedUrl).not.toHaveBeenCalled();
+    } finally {
+      process.env.VERIFICATION_BUCKET_NAME = saved;
+      delete process.env.GCS_BUCKET_NAME;
     }
   });
 });

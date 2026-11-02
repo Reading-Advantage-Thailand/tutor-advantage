@@ -21,6 +21,9 @@ env:
   RISK_NEW_TUTOR_DAYS: ${{ vars.RISK_NEW_TUTOR_DAYS || '90' }}
   RISK_NEW_TUTOR_CARD_LIMIT_THB: ${{ vars.RISK_NEW_TUTOR_CARD_LIMIT_THB || '30000' }}
   RISK_MAX_STUDENTS_PER_CARD: ${{ vars.RISK_MAX_STUDENTS_PER_CARD || '3' }}
+  # Private bucket (public access prevention enforced) for tutor identity
+  # documents. Not GCS_BUCKET_NAME: that bucket is publicly readable.
+  VERIFICATION_BUCKET_NAME: tutor-advantage-verification
   ALLOWED_ORIGINS: >-
     https://student-liff-1090865515742.asia-southeast1.run.app,
     https://student-liff-hxamzdhgwa-as.a.run.app,
@@ -300,7 +303,7 @@ jobs:
               "--update-secrets=OMISE_WEBHOOK_SECRET=ta-omise_webhook_secret:latest"
               # Shared key for Cloud Scheduler internal routes (daily dispute sync).
               "--update-secrets=INTERNAL_API_KEY=ta-internal_api_key:latest"
-              "--update-env-vars=PAYOUT_HOLD_DAYS_CARD=${PAYOUT_HOLD_DAYS_CARD},PAYOUT_HOLD_DAYS_OTHER=${PAYOUT_HOLD_DAYS_OTHER},RISK_NEW_TUTOR_DAYS=${RISK_NEW_TUTOR_DAYS},RISK_NEW_TUTOR_CARD_LIMIT_THB=${RISK_NEW_TUTOR_CARD_LIMIT_THB},RISK_MAX_STUDENTS_PER_CARD=${RISK_MAX_STUDENTS_PER_CARD}"
+              "--update-env-vars=PAYOUT_HOLD_DAYS_CARD=${PAYOUT_HOLD_DAYS_CARD},PAYOUT_HOLD_DAYS_OTHER=${PAYOUT_HOLD_DAYS_OTHER},RISK_NEW_TUTOR_DAYS=${RISK_NEW_TUTOR_DAYS},RISK_NEW_TUTOR_CARD_LIMIT_THB=${RISK_NEW_TUTOR_CARD_LIMIT_THB},RISK_MAX_STUDENTS_PER_CARD=${RISK_MAX_STUDENTS_PER_CARD},VERIFICATION_BUCKET_NAME=${VERIFICATION_BUCKET_NAME}"
             )
           fi
 
@@ -308,6 +311,7 @@ jobs:
           if [[ "${{ matrix.service }}" == "identity-service" ]]; then
             DEPLOY_FLAGS+=(
               "--update-secrets=GOOGLE_GENERATIVE_AI_API_KEY=ta-google_generative_ai_api_key:latest"
+              "--update-env-vars=VERIFICATION_BUCKET_NAME=${VERIFICATION_BUCKET_NAME}"
             )
           fi
 

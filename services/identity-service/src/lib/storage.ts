@@ -23,7 +23,9 @@ const storage = new Storage({
   ...(keyFilename ? { keyFilename } : {}),
 });
 
-const bucketName = process.env.GCS_BUCKET_NAME || "tutor-advantage-verification";
+// Identity documents get their own private bucket. Never read GCS_BUCKET_NAME
+// here: that names the public content bucket (articles, audio).
+const bucketName = process.env.VERIFICATION_BUCKET_NAME || "tutor-advantage-verification";
 const bucket = storage.bucket(bucketName);
 // Where documents go: a local STORAGE_EMULATOR_HOST (scripts/fake-gcs.mjs) keeps tests off the real bucket.
 logger.info("Verification document storage", { endpoint: storage.apiEndpoint, bucket: bucketName });
