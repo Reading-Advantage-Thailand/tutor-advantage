@@ -4,6 +4,14 @@ import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { LineNotificationService } from "../services/LineNotificationService";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** An optional id from the request body: absent, a UUID string, or invalid. */
+function readOptionalUuid(value: unknown): { ok: true; value?: string } | { ok: false } {
+  if (value === undefined || value === null || value === "") return { ok: true };
+  return typeof value === "string" && UUID_RE.test(value) ? { ok: true, value } : { ok: false };
+}
+
 // Get list of conversations for the current user
 export const getConversations = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
@@ -293,7 +301,7 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response): Pro
 export const initiateChat = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId;
-    const { classId, type, targetUserId } = req.body;
+    const { type } = req.body ?? {};
 
     if (!userId) {
       res.status(401).json({ error: "Unauthorized" });
@@ -304,6 +312,19 @@ export const initiateChat = async (req: AuthenticatedRequest, res: Response): Pr
       res.status(400).json({ error: "Invalid chat type" });
       return;
     }
+
+    // These ids go straight into Prisma `where` clauses, and /v1/chat/* is not
+    // covered by the OpenAPI validator. An object such as {"in": [own, other]}
+    // would be read as a filter: the ownership check passes on the caller's
+    // class while the conversation lookup returns another class's group chat.
+    const classIdInput = readOptionalUuid(req.body?.classId);
+    const targetUserIdInput = readOptionalUuid(req.body?.targetUserId);
+    if (!classIdInput.ok || !targetUserIdInput.ok) {
+      res.status(400).json({ error: "classId and targetUserId must be UUIDs" });
+      return;
+    }
+    const classId = classIdInput.value;
+    const targetUserId = targetUserIdInput.value;
 
     // Group conversation linked to a class
     if (type === 'GROUP') {
