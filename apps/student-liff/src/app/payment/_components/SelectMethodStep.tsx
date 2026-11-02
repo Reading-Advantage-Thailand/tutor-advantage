@@ -5,11 +5,13 @@ import type { LucideIcon } from "lucide-react";
 import { BadgeCheck, Check, ChevronRight, CreditCard, Lock, QrCode, ShieldCheck } from "lucide-react";
 import { AppBar, BottomActionBar, Chip, IconTile, Screen } from "@/components/mobile";
 import { Button } from "@/components/ui/button";
+import { formatSatang } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import type { OrderDisplay, PaymentMethod } from "@/lib/paymentFlow";
 import { cn } from "@/lib/utils";
 import { businessContact } from "@/lib/businessContact";
 import { PaymentPolicyNotice } from "@/components/legal/PaymentPolicyNotice";
+import { DiscountCodeCard, type DiscountCodeCardProps } from "./DiscountCodeCard";
 import { OrderSummaryCard } from "./OrderSummaryCard";
 import type { LoadStatus } from "./usePaymentFlow";
 
@@ -151,13 +153,17 @@ export interface SelectMethodStepProps {
   onRetryClass: () => void;
   method: PaymentMethod;
   onSelectMethod: (method: PaymentMethod) => void;
+  /** The code card (null when this checkout cannot take a code). */
+  discount: DiscountCodeCardProps | null;
+  /** An applied code leaves ฿0: no payment method to choose. */
+  free: boolean;
   canProceed: boolean;
   /** The saved birthday/consent is still loading (button shows a spinner). */
   proceedLoading: boolean;
   onProceed: () => void;
 }
 
-/** Step 1: order summary + choose PromptPay or card. */
+/** Step 1: order summary (+ discount code) + choose PromptPay or card. */
 export function SelectMethodStep({
   policyAccepted,
   onPolicyAcceptedChange,
@@ -167,6 +173,8 @@ export function SelectMethodStep({
   onRetryClass,
   method,
   onSelectMethod,
+  discount,
+  free,
   canProceed,
   proceedLoading,
   onProceed,
@@ -175,18 +183,26 @@ export function SelectMethodStep({
     <Screen>
       <AppBar title={t("payment.select.title")} back fallbackHref={backHref} />
       <div className="flex flex-col gap-6 px-4 pt-3 pb-6">
-        <OrderSummaryCard status={classStatus} display={display} onRetry={onRetryClass} />
+        <OrderSummaryCard
+          status={classStatus}
+          display={display}
+          discount={discount?.quote ?? null}
+          onRetry={onRetryClass}
+        />
+        {discount && classStatus === "ready" ? <DiscountCodeCard {...discount} /> : null}
         <PaymentPolicyNotice accepted={policyAccepted} onAcceptedChange={onPolicyAcceptedChange} />
 
-        <section className="flex flex-col gap-3">
-          <h2 id="payment-method-heading" className="text-[17px] leading-[1.5] font-bold text-fg">
-            {t("payment.select.selectMethod")}
-          </h2>
-          <MethodRadioGroup value={method} onChange={onSelectMethod} labelledBy="payment-method-heading" />
-        </section>
+        {free ? null : (
+          <section className="flex flex-col gap-3">
+            <h2 id="payment-method-heading" className="text-[17px] leading-[1.5] font-bold text-fg">
+              {t("payment.select.selectMethod")}
+            </h2>
+            <MethodRadioGroup value={method} onChange={onSelectMethod} labelledBy="payment-method-heading" />
+          </section>
+        )}
 
         <div className="flex flex-col items-center gap-2 text-center">
-          <TrustBadges />
+          {free ? null : <TrustBadges />}
           <p className="text-[13px] leading-[1.6] text-fg-muted">
             {t("payment.select.noExtraFee")}
             <br />
@@ -213,7 +229,7 @@ export function SelectMethodStep({
           loading={proceedLoading}
           onClick={onProceed}
         >
-          {t("payment.select.proceed")}
+          {free ? `${t("payment.discount.confirmPay")} ${formatSatang(0)}` : t("payment.select.proceed")}
           {proceedLoading ? null : <ChevronRight aria-hidden="true" />}
         </Button>
       </BottomActionBar>

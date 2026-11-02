@@ -87,16 +87,31 @@ describe("reconciliationController helpers (G3)", () => {
 
   it("offers activation only for successful payments that are not fulfilled", async () => {
     const { availablePaymentActions } = await import("./reconciliationController");
-    expect(availablePaymentActions({ status: "SUCCESS", providerRef: "chrg" }, "SUCCESS_NOT_ACTIVE")).toEqual([
+    const method = "promptpay";
+    expect(availablePaymentActions({ status: "SUCCESS", providerRef: "chrg", method }, "SUCCESS_NOT_ACTIVE")).toEqual([
       "ACTIVATE_ENROLLMENT",
     ]);
-    expect(availablePaymentActions({ status: "PENDING", providerRef: "chrg" }, "STALE_PENDING")).toEqual([
+    expect(availablePaymentActions({ status: "PENDING", providerRef: "chrg", method }, "STALE_PENDING")).toEqual([
       "VERIFY_WITH_PROVIDER",
     ]);
-    expect(availablePaymentActions({ status: "PENDING", providerRef: null }, "STALE_PENDING")).toEqual([]);
-    expect(availablePaymentActions({ status: "FAILED", providerRef: "chrg" }, "FAILED_ACTIVE")).toEqual([
+    expect(availablePaymentActions({ status: "PENDING", providerRef: null, method }, "STALE_PENDING")).toEqual([]);
+    expect(availablePaymentActions({ status: "FAILED", providerRef: "chrg", method }, "FAILED_ACTIVE")).toEqual([
       "VERIFY_WITH_PROVIDER",
     ]);
+    // Legacy upper-case method rows are still Omise charges.
+    expect(
+      availablePaymentActions({ status: "PENDING", providerRef: "chrg", method: "PROMPTPAY" }, "STALE_PENDING"),
+    ).toEqual(["VERIFY_WITH_PROVIDER"]);
+  });
+
+  it("never offers provider verification for a discount code payment", async () => {
+    const { availablePaymentActions } = await import("./reconciliationController");
+    expect(
+      availablePaymentActions(
+        { status: "FAILED", providerRef: "discount:6b1f8a52-0f2e-4c51-9d55-3f3c2a1c9e10", method: "DISCOUNT_CODE" },
+        "FAILED_ACTIVE",
+      ),
+    ).toEqual([]);
   });
 });
 

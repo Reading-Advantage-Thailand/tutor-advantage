@@ -1,17 +1,18 @@
 import { ErrorState, Skeleton } from "@/components/mobile";
 import { formatSatang, noOrphan } from "@/lib/format";
 import { t } from "@/lib/i18n";
-import type { OrderDisplay } from "@/lib/paymentFlow";
+import type { DiscountQuote, OrderDisplay } from "@/lib/paymentFlow";
+import { cn } from "@/lib/utils";
 import type { LoadStatus } from "./usePaymentFlow";
 
 const cardClass =
   "overflow-hidden rounded-[var(--radius-card)] border border-hairline bg-surface shadow-[var(--shadow-card)]";
 
-function SummaryRow({ label, value }: { label: string; value: string }) {
+function SummaryRow({ label, value, valueClassName }: { label: string; value: string; valueClassName?: string }) {
   return (
     <div className="flex items-baseline justify-between gap-3 text-[15px] leading-[1.5]">
       <span className="text-fg-muted">{label}</span>
-      <span className="text-right font-semibold text-fg tabular-nums">{value}</span>
+      <span className={cn("text-right font-semibold text-fg tabular-nums", valueClassName)}>{value}</span>
     </div>
   );
 }
@@ -47,11 +48,13 @@ export function OrderSummarySkeleton() {
 export interface OrderSummaryCardProps {
   status: LoadStatus;
   display: OrderDisplay;
+  /** An applied code: the rows use its amounts from the API (the total can be ฿0). */
+  discount?: DiscountQuote | null;
   onRetry: () => void;
 }
 
 /** Brand header with the class, then price rows. Never shows a made-up price. */
-export function OrderSummaryCard({ status, display, onRetry }: OrderSummaryCardProps) {
+export function OrderSummaryCard({ status, display, discount = null, onRetry }: OrderSummaryCardProps) {
   if (status === "loading") return <OrderSummarySkeleton />;
   if (status === "error") {
     return (
@@ -66,7 +69,9 @@ export function OrderSummaryCard({ status, display, onRetry }: OrderSummaryCardP
     );
   }
 
-  const price = display.priceSatang === null ? null : formatSatang(display.priceSatang);
+  const priceSatang = discount ? discount.originalAmountSatang : display.priceSatang;
+  const price = priceSatang === null ? null : formatSatang(priceSatang);
+  const total = discount ? formatSatang(discount.finalAmountSatang) : price;
 
   return (
     <section className={cardClass} aria-labelledby="payment-order-title">
@@ -81,12 +86,19 @@ export function OrderSummaryCard({ status, display, onRetry }: OrderSummaryCardP
       </div>
       <div className="flex flex-col gap-2.5 px-5 py-4">
         {price ? <SummaryRow label={t("payment.select.tuition")} value={price} /> : null}
+        {discount ? (
+          <SummaryRow
+            label={`${t("payment.select.discount")} (${discount.code})`}
+            value={`−${formatSatang(discount.discountSatang)}`}
+            valueClassName="text-success-fg"
+          />
+        ) : null}
         <SummaryRow label={t("payment.select.fee")} value={t("payment.select.noFee")} />
         <div className="my-1 h-px bg-hairline" />
         <div className="flex items-center justify-between gap-3">
           <span className="text-base leading-[1.5] font-bold text-fg">{t("payment.select.total")}</span>
-          {price ? (
-            <span className="text-2xl leading-[1.3] font-extrabold text-brand-fg tabular-nums">{price}</span>
+          {total ? (
+            <span className="text-2xl leading-[1.3] font-extrabold text-brand-fg tabular-nums">{total}</span>
           ) : (
             <span className="text-right text-sm leading-[1.5] text-fg-muted">{t("payment.select.priceLater")}</span>
           )}

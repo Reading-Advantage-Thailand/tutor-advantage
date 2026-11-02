@@ -96,6 +96,14 @@ import {
   searchCouponTutors,
 } from "./controllers/couponController";
 import {
+  createDiscountCode,
+  getDiscountCodeRedemptions,
+  getDiscountCodes,
+  previewDiscountCode,
+  redeemDiscountCode,
+  voidDiscountCode,
+} from "./controllers/discountCodeController";
+import {
   devListUsers,
   devCreateUser,
   devUpdateUser,
@@ -146,6 +154,17 @@ const ALLOWED_ORIGINS = getAllowedOrigins();
 const paymentLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 30,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    const userId = (req as AuthenticatedRequest).user?.userId;
+    return userId ? `user:${userId}` : `ip:${ipKeyGenerator(req.ip || "unknown")}`;
+  },
+});
+// Discount codes are bearer credentials: slow down guessing.
+const discountCodeLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  limit: 20,
   standardHeaders: "draft-8",
   legacyHeaders: false,
   keyGenerator: (req) => {
@@ -218,6 +237,21 @@ app.get("/v1/coupons", authMiddleware, adminOnly, getCoupons);
 app.get("/v1/coupons/tutors", authMiddleware, adminOnly, searchCouponTutors);
 app.patch("/v1/coupons/:couponId", authMiddleware, adminOnly, updateCoupon);
 app.post("/v1/coupons/:couponId/void", authMiddleware, adminOnly, voidCoupon);
+
+// ── Class Discount Code Routes ─────────────────────────────────────────────
+// Student checkout (static subpaths before the /:discountCodeId routes).
+app.post("/v1/discount-codes/preview", authMiddleware, discountCodeLimiter, previewDiscountCode);
+app.post("/v1/discount-codes/redeem", authMiddleware, discountCodeLimiter, redeemDiscountCode);
+// Admin
+app.get("/v1/discount-codes", authMiddleware, adminOnly, getDiscountCodes);
+app.post("/v1/discount-codes", authMiddleware, adminOnly, createDiscountCode);
+app.post("/v1/discount-codes/:discountCodeId/void", authMiddleware, adminOnly, voidDiscountCode);
+app.get(
+  "/v1/discount-codes/:discountCodeId/redemptions",
+  authMiddleware,
+  adminOnly,
+  getDiscountCodeRedemptions,
+);
 
 // ── Payment Routes ─────────────────────────────────────────────────────────
 app.post("/v1/payments/intent", authMiddleware, paymentLimiter, createPaymentIntent);

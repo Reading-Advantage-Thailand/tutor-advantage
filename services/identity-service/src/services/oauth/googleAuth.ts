@@ -3,6 +3,8 @@ import axios from "axios";
 export interface GoogleProfile {
   id: string;
   email: string;
+  /** Whether Google has verified that this account owns `email`. */
+  emailVerified: boolean;
   name: string;
   picture?: string;
 }
@@ -53,6 +55,8 @@ export async function verifyGoogleToken(
   return {
     id: profile.id,
     email: profile.email,
+    // Same rule as the admin console callback: only an explicit true counts.
+    emailVerified: profile.verified_email === true || profile.email_verified === true,
     name: profile.name,
     picture: profile.picture,
   };

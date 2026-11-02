@@ -858,6 +858,7 @@ export const th = {
     methods: {
       promptpay: "พร้อมเพย์",
       card: "บัตรเครดิต/เดบิต",
+      discountCode: "โค้ดส่วนลด",
     },
     errors: {
       loadOmiseScript: "เปิดระบบจ่ายด้วยบัตรไม่สำเร็จ ลองใหม่อีกครั้งนะ",
@@ -881,6 +882,7 @@ export const th = {
       title: "ชำระเงิน",
       orderSummary: "สรุปรายการ",
       tuition: "ค่าเรียน",
+      discount: "ส่วนลด",
       fee: "ค่าธรรมเนียม",
       noFee: "ไม่มี",
       total: "ยอดที่ต้องจ่าย",
@@ -898,6 +900,25 @@ export const th = {
       noExtraFee: "จ่ายครั้งเดียว ไม่มีค่าบริการเพิ่ม",
       contactPrefix: "มีคำถาม?",
       contactLine: "คุยกับทีมงานทาง LINE",
+    },
+    discount: {
+      title: "โค้ดส่วนลด",
+      placeholder: "DC-XXXX-XXXX",
+      apply: "ใช้โค้ด",
+      applied: "ใช้โค้ดแล้ว",
+      savePrefix: "ลด",
+      remove: "นำโค้ดออก",
+      confirmPay: "ยืนยันชำระเงิน",
+      errors: {
+        notFound: "ไม่พบโค้ดนี้ ตรวจสอบตัวอักษรอีกครั้ง",
+        expired: "โค้ดนี้หมดอายุแล้ว",
+        usedUp: "โค้ดนี้ถูกใช้ครบจำนวนแล้ว",
+        alreadyUsed: "คุณใช้โค้ดนี้ไปแล้ว",
+        void: "โค้ดนี้ถูกยกเลิกแล้ว",
+        wrongClass: "โค้ดนี้ใช้กับคลาสอื่น",
+        tooManyAttempts: "ลองหลายครั้งเกินไป กรุณารอสักครู่",
+        checkFailed: "ตรวจสอบโค้ดไม่สำเร็จ ลองใหม่อีกครั้งนะ",
+      },
     },
     ageCheck: {
       title: "ยืนยันข้อมูลผู้เรียน",
@@ -991,7 +1012,8 @@ export const th = {
       statusLabel: "สถานะ",
       confirmedStatus: "ยืนยันแล้ว",
       lineNotice: "เราจะแจ้งเตือนทาง LINE เมื่อคลาสพร้อมเริ่มเรียน",
-      dashboardCta: "ไปหน้าหลัก",
+      lessonCta: "เข้าห้องเรียน",
+      dashboardCta: "กลับหน้าหลัก",
     },
     history: {
       title: "ประวัติการชำระเงิน",

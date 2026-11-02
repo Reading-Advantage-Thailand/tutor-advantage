@@ -73,6 +73,30 @@ export type PaymentStatusResponse = {
   checkout: CheckoutDetails | null;
 };
 
+/** A discount code checked for one class (or book cycle). Amounts come from the API. */
+export type DiscountQuote = {
+  code: string;
+  discountCodeId: string;
+  classId: string;
+  cycleId: string | null;
+  originalAmountSatang: number;
+  discountSatang: number;
+  finalAmountSatang: number;
+};
+
+/** Response of POST /discount-codes/preview. */
+export type DiscountPreviewResponse = {
+  discount: DiscountQuote;
+};
+
+/** Response of POST /discount-codes/redeem: a SUCCESS intent of 0 THB, no checkout. */
+export type DiscountRedeemResponse = PaymentStatusResponse & {
+  discount: DiscountQuote;
+};
+
+/** Intent method of a checkout paid with a discount code. */
+export const DISCOUNT_CODE_METHOD = "DISCOUNT_CODE";
+
 const DEFAULT_PRICE_SATANG = 300_000;
 
 export function createDefaultOrderSummary(classId: string): OrderSummary {
@@ -190,20 +214,22 @@ export function paymentStepForMethod(method: PaymentMethod): "qr" | "card-form" 
 }
 
 /**
- * Where "proceed" goes from the method screen: adults and minors with consent
- * skip the age check; unknown/invalid DOBs and minors without consent see it.
+ * Adults and minors with consent skip the age check; unknown/invalid DOBs and
+ * minors without consent see it.
  */
+export function needsAgeCheck(dateOfBirth: string, consentAlreadyGiven: boolean, now: Date = new Date()): boolean {
+  const minor = isUnder18(dateOfBirth, now);
+  return !(minor === false || (minor === true && consentAlreadyGiven));
+}
+
+/** Where "proceed" goes from the method screen: the age check if needed, else the method's screen. */
 export function getProceedStep(
   dateOfBirth: string,
   consentAlreadyGiven: boolean,
   method: PaymentMethod,
   now: Date = new Date(),
 ): PaymentStep {
-  const minor = isUnder18(dateOfBirth, now);
-  if (minor === false || (minor === true && consentAlreadyGiven)) {
-    return paymentStepForMethod(method);
-  }
-  return "age-check";
+  return needsAgeCheck(dateOfBirth, consentAlreadyGiven, now) ? "age-check" : paymentStepForMethod(method);
 }
 
 /** Guardian fields are shown (and required) for minors without recorded consent. */
@@ -258,14 +284,16 @@ function knownSatang(value: unknown): number | null {
 }
 
 /**
- * Amount to show: the intent's own amount once an intent exists (it is what
- * the student is charged), otherwise the class/cycle price; null = unknown.
+ * Amount to show: the intent's own amount once a paid intent exists (it is
+ * what the student is charged), otherwise the applied code's final amount
+ * (฿0 is a real amount there), otherwise the class/cycle price; null = unknown.
  */
 export function getDisplayAmountSatang(
   intentAmountSatang: number | null | undefined,
   orderPriceSatang: number | null | undefined,
+  discount: Pick<DiscountQuote, "finalAmountSatang"> | null = null,
 ): number | null {
-  return knownSatang(intentAmountSatang) ?? knownSatang(orderPriceSatang);
+  return knownSatang(intentAmountSatang) ?? (discount ? discount.finalAmountSatang : knownSatang(orderPriceSatang));
 }
 
 /**
@@ -320,6 +348,68 @@ export function createUnknownOrderDisplay(): OrderDisplay {
     cefr: t("payment.defaultCefr"),
     priceSatang: null,
   };
+}
+
+// ─── Discount codes ────────────────────────────────────────────────────────
+
+/** The code as the API compares it: no spaces, upper case. */
+export function normalizeDiscountCode(value: string): string {
+  return value.trim().toUpperCase().replace(/\s+/g, "");
+}
+
+/** A quote only counts for the class (and book cycle) it was checked for. */
+export function isDiscountQuoteFor(
+  quote: Pick<DiscountQuote, "classId" | "cycleId">,
+  classId: string,
+  cycleId: string,
+): boolean {
+  return (
+    quote.classId.toLowerCase() === classId.toLowerCase() &&
+    (quote.cycleId ?? "").toLowerCase() === cycleId.toLowerCase()
+  );
+}
+
+/** Nothing left to pay: the checkout skips PromptPay/card and redeems the code. */
+export function isFreeWithDiscount(quote: Pick<DiscountQuote, "finalAmountSatang"> | null | undefined): boolean {
+  return quote != null && quote.finalAmountSatang === 0;
+}
+
+const DISCOUNT_ERROR_KEYS = new Map<string, I18nKey>([
+  ["DISCOUNT_CODE_NOT_FOUND", "payment.discount.errors.notFound"],
+  ["DISCOUNT_CODE_EXPIRED", "payment.discount.errors.expired"],
+  ["DISCOUNT_CODE_USED_UP", "payment.discount.errors.usedUp"],
+  ["DISCOUNT_CODE_ALREADY_USED", "payment.discount.errors.alreadyUsed"],
+  ["DISCOUNT_CODE_VOID", "payment.discount.errors.void"],
+  ["DISCOUNT_CODE_WRONG_CLASS", "payment.discount.errors.wrongClass"],
+  ["PAYMENT_IN_PROGRESS", "payment.errors.paymentInProgress"],
+  ["PAYMENT_ALREADY_COMPLETED", "payment.errors.alreadyPaid"],
+]);
+
+/**
+ * Message for the code field after a preview/redeem error, or null when the
+ * error is not about the code or the payment (enrollment, network…).
+ */
+export function getDiscountCodeErrorKey(err: unknown): I18nKey | null {
+  if (!err || typeof err !== "object") return null;
+  const { code, status } = err as { code?: unknown; status?: unknown };
+  const key = typeof code === "string" ? DISCOUNT_ERROR_KEYS.get(code) : undefined;
+  if (key) return key;
+  if (status === 429) return "payment.discount.errors.tooManyAttempts";
+  return null;
+}
+
+/** "ใช้โค้ด" failed: the code message, or a generic one (never raw API text). */
+export function getDiscountPreviewErrorKey(err: unknown): I18nKey {
+  const key = getDiscountCodeErrorKey(err);
+  if (key) return key;
+  if (err instanceof TypeError) return "common.networkError";
+  return "payment.discount.errors.checkFailed";
+}
+
+/** The code itself can no longer be used here, so its ฿0 quote is dropped. */
+export function isDiscountCodeRejected(err: unknown): boolean {
+  const code = err && typeof err === "object" ? (err as { code?: unknown }).code : undefined;
+  return typeof code === "string" && code.startsWith("DISCOUNT_CODE_");
 }
 
 // ─── PromptPay QR ──────────────────────────────────────────────────────────
@@ -570,8 +660,13 @@ export function getPaymentStatusDisplay(status: string | null | undefined): {
   }
 }
 
-/** Label key for a method; anything that is not PromptPay is a card (as before). */
+export function isDiscountCodeMethod(method: string | null | undefined): boolean {
+  return method?.trim().toUpperCase() === DISCOUNT_CODE_METHOD;
+}
+
+/** Label key for a method: PromptPay, a discount code, anything else is a card (as before). */
 export function getPaymentMethodLabelKey(method: string | null | undefined): I18nKey {
+  if (isDiscountCodeMethod(method)) return "payment.methods.discountCode";
   return normalizePaymentMethod(method) === "promptpay" ? "payment.methods.promptpay" : "payment.methods.card";
 }
 

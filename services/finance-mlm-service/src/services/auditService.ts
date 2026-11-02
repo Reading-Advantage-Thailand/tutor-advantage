@@ -54,6 +54,10 @@ export const AUDIT_ACTIONS = {
   // Coupons (G5)
   COUPON_CREATE: "COUPON_CREATE",
   COUPON_VOID: "COUPON_VOID",
+  // Class discount codes (admin issue / void, student redeem)
+  DISCOUNT_CODE_CREATE: "DISCOUNT_CODE_CREATE",
+  DISCOUNT_CODE_VOID: "DISCOUNT_CODE_VOID",
+  DISCOUNT_CODE_REDEEM: "DISCOUNT_CODE_REDEEM",
   // Audit log itself
   AUDIT_EXPORT: "AUDIT_EXPORT",
 } as const;
@@ -68,6 +72,7 @@ export const AUDIT_ENTITY = {
   EXCEPTION: "Exception",
   FRAUD_FLAG: "FraudFlag",
   COUPON: "Coupon",
+  DISCOUNT_CODE: "DiscountCode",
   AUDIT_LOG: "AuditLog",
 } as const;
 

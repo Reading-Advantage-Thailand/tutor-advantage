@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { t } from "@/lib/i18n";
 import { AgeCheckStep } from "../_components/AgeCheckStep";
 import { CardFormStep } from "../_components/CardFormStep";
 import { PaymentSkeleton } from "../_components/PaymentSkeleton";
@@ -25,7 +26,8 @@ function PaymentFlowScreen(params: PaymentFlowParams) {
           classTitle={flow.display.name}
           tutor={flow.display.tutor}
           amountSatang={flow.amountSatang}
-          method={flow.method}
+          method={flow.receiptMethod}
+          classId={flow.lessonClassId}
         />
       );
     case "result":
@@ -97,8 +99,24 @@ function PaymentFlowScreen(params: PaymentFlowParams) {
           onRetryClass={flow.retryClass}
           method={flow.method}
           onSelectMethod={actions.selectMethod}
+          discount={
+            flow.discount.available
+              ? {
+                  code: flow.discount.code,
+                  onCodeChange: flow.discount.setCode,
+                  quote: flow.discount.quote,
+                  error: flow.discount.errorKey ? t(flow.discount.errorKey) : null,
+                  applying: flow.discount.applying,
+                  disabled: flow.loading,
+                  onApply: actions.applyDiscountCode,
+                  onRemove: actions.removeDiscountCode,
+                }
+              : null
+          }
+          free={flow.discount.free}
           canProceed={flow.canProceed && !flow.loading}
-          proceedLoading={flow.profileLoading && flow.classStatus === "ready"}
+          // The ฿0 checkout runs on this screen (no QR/card step to show progress).
+          proceedLoading={(flow.profileLoading && flow.classStatus === "ready") || (flow.discount.free && flow.loading)}
           onProceed={actions.proceed}
         />
       );

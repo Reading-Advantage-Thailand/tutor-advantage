@@ -26,13 +26,8 @@ import {
   type WeeklyTemplate,
 } from "@/lib/tutorClassFlow";
 import { createClass, validateCoupon } from "../actions";
-import { groupBooksByProgram, type BookOption } from "../components/book-options";
+import { bookDisplayLabel, groupBooksByProgram, type BookOption } from "../components/book-options";
 import { ScheduleEditor } from "../components/ScheduleEditor";
-
-const bookLabel = (book: BookOption) =>
-  String(book.bookCode || "").startsWith("Primary ")
-    ? String(book.title || "").replace(/\s*\([A-C]\d\)$/i, "")
-    : book.title;
 
 export function NewClassForm({ books }: { books: BookOption[] }) {
   const router = useRouter();
@@ -190,7 +185,7 @@ export function NewClassForm({ books }: { books: BookOption[] }) {
               <optgroup label="Reading Advantage">
                 {booksByProgram.reading.map((book) => (
                   <option key={book.bookId} value={book.bookId}>
-                    {bookLabel(book)}
+                    {bookDisplayLabel(book)}
                   </option>
                 ))}
               </optgroup>
@@ -199,7 +194,7 @@ export function NewClassForm({ books }: { books: BookOption[] }) {
               <optgroup label="Primary Advantage">
                 {booksByProgram.primary.map((book) => (
                   <option key={book.bookId} value={book.bookId}>
-                    {bookLabel(book)}
+                    {bookDisplayLabel(book)}
                   </option>
                 ))}
               </optgroup>

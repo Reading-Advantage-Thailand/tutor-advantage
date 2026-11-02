@@ -23,6 +23,8 @@ export const shell = {
   navUsers: "ผู้ใช้งาน",
   navFraud: "ความเสี่ยงและทุจริต",
   navCoupons: "คูปองชั่วโมงสอน",
+  navClasses: "คลาสเรียน",
+  navDiscountCodes: "โค้ดส่วนลดคลาส",
   navVoice: "การฝึกเสียงกับรีดี้",
   navRoles: "สิทธิ์ผู้ดูแล",
   navDocs: "คู่มือระบบ",

@@ -452,3 +452,109 @@ export function splitPastSchedule(
 export function localDateToBangkokNoon(date: Date): string {
   return `${toLocalDateKey(date)}T12:00:00+07:00`;
 }
+
+/* ─── Admin-created class setup (POST /v1/classes/:classId/setup) ─────── */
+
+export const MAX_CLASS_TITLE_LENGTH = 120;
+
+/** Page where the tutor finishes a class an admin created for them. */
+export function classSetupHref(classId: string): string {
+  return `/dashboard/classes/${classId}/setup`;
+}
+
+export type ClassSetupDraft = {
+  name: string;
+  meetingUrl: string;
+  dates: Date[];
+  times: ScheduleTimes;
+};
+
+export type SetupClassRequest = {
+  title: string;
+  meetingUrl: string | null;
+  scheduleDescription: string;
+  scheduleData: DatedScheduleEntry[];
+  startsAt: string;
+  endsAt: string;
+  totalHours: number;
+};
+
+export type ClassSetupErrors = Partial<Record<"name" | "meetingUrl" | "schedule", string>>;
+
+/** http(s) link with a host (Google Meet, Zoom, ...). */
+export function isMeetingUrl(value: string): boolean {
+  try {
+    const url = new URL(value.trim());
+    return (url.protocol === "https:" || url.protocol === "http:") && Boolean(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Every selected day has a time that ends after it starts. The setup endpoint
+ * refuses anything else (INVALID_SCHEDULE); the editor can leave a start
+ * moved past its end.
+ */
+function hasValidSlots(dates: Date[], times: ScheduleTimes): boolean {
+  return dates.every((d) => {
+    const slot = times[toLocalDateKey(d)];
+    return Boolean(slot) && diffHours(slot.start, slot.end) > 0;
+  });
+}
+
+/** Field errors for the setup form; empty when it can be submitted. */
+export function validateClassSetup(draft: ClassSetupDraft, maxHours: number): ClassSetupErrors {
+  const errors: ClassSetupErrors = {};
+  const name = draft.name.trim();
+  if (!name) errors.name = t("tutorClass.form.nameRequired");
+  else if (name.length > MAX_CLASS_TITLE_LENGTH) errors.name = t("tutorClass.setup.nameTooLong");
+  if (draft.meetingUrl.trim() && !isMeetingUrl(draft.meetingUrl)) errors.meetingUrl = t("tutorClass.setup.meetingUrlInvalid");
+  if (draft.dates.length === 0) errors.schedule = t("tutorClass.form.scheduleRequired");
+  else if (!hasValidSlots(draft.dates, draft.times)) errors.schedule = t("tutorClass.setup.errorInvalidSchedule");
+  else if (totalScheduleHours(draft.dates, draft.times) > maxHours) errors.schedule = t("tutorClass.newClass.hoursOverLimit");
+  return errors;
+}
+
+/**
+ * Builds the setup payload in the browser: the schedule keys are local
+ * calendar dates, which would shift a day if Date objects crossed to the
+ * (UTC) server. startsAt/endsAt are the first and last teaching dates; an
+ * empty meeting link is sent as null.
+ */
+export function buildSetupClassRequest(draft: ClassSetupDraft): SetupClassRequest {
+  const scheduleData = buildScheduleEntries(draft.dates, draft.times);
+  return {
+    title: draft.name.trim(),
+    meetingUrl: draft.meetingUrl.trim() || null,
+    scheduleDescription: buildScheduleDescription(draft.dates, draft.times),
+    scheduleData,
+    startsAt: scheduleData[0]?.date ?? "",
+    endsAt: scheduleData[scheduleData.length - 1]?.date ?? "",
+    totalHours: totalScheduleHours(draft.dates, draft.times),
+  };
+}
+
+/** Thai message for a learning-service error code from the setup endpoint. */
+export function getClassSetupErrorMessage(code: string | null | undefined): string {
+  switch (code) {
+    case "CLASS_SETUP_NOT_REQUIRED":
+      return t("tutorClass.setup.alreadyDone");
+    case "INVALID_TITLE":
+      return t("tutorClass.setup.errorInvalidTitle");
+    case "HOURS_EXCEEDED":
+      return t("tutorClass.newClass.hoursOverLimit");
+    case "CLASS_NOT_FOUND":
+    case "NOT_FOUND":
+    case "FORBIDDEN":
+      return t("tutorClass.setup.errorNotFound");
+    case "UNAUTHORIZED":
+    case "UNAUTHORIZED_ROLE":
+      return t("tutorClass.setup.errorSession");
+  }
+  // Meeting-link and schedule checks are shared with the edit endpoints, so
+  // match their codes by subject word (INVALID_MEETING_URL, INVALID_SCHEDULE…).
+  if (code && /(^|_)URL(_|$)/.test(code)) return t("tutorClass.setup.meetingUrlInvalid");
+  if (code && /(^|_)(SCHEDULE|DATES?|TIMES?)(_|$)/.test(code)) return t("tutorClass.setup.errorInvalidSchedule");
+  return t("tutorClass.setup.errorFailed");
+}

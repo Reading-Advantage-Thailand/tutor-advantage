@@ -208,6 +208,22 @@ export const studentApi = {
     method: 'POST',
     body: JSON.stringify({ paymentIntentId }),
   }, FINANCE_API_BASE),
+  previewDiscountCode: (payload: {
+    code: string;
+    classId: string;
+    cycleId?: string;
+  }) => fetchWithAuth('/discount-codes/preview', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }, FINANCE_API_BASE),
+  redeemDiscountCode: (payload: {
+    code: string;
+    enrollmentId: string;
+    enrollmentPackageId?: string;
+  }) => fetchWithAuth('/discount-codes/redeem', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }, FINANCE_API_BASE),
 
   // Settings
   getSettings: () => fetchWithAuth('/users/me/settings', {}, IDENTITY_API_BASE),

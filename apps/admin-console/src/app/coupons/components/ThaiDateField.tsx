@@ -42,6 +42,8 @@ export interface ThaiDateFieldProps {
   onChange: (value: ThaiDateParts) => void;
   error?: string;
   disabled?: boolean;
+  /** Hint while no date is chosen (defaults to the coupon wording). */
+  noneHint?: string;
 }
 
 /**
@@ -49,7 +51,7 @@ export interface ThaiDateFieldProps {
  * selects (native, so phones get the OS wheel) + quick presets. Replaces
  * <input type="date">, which shows Gregorian "mm/dd/yyyy" to Thai admins.
  */
-export function ThaiDateField({ label, value, onChange, error, disabled }: ThaiDateFieldProps) {
+export function ThaiDateField({ label, value, onChange, error, disabled, noneHint }: ThaiDateFieldProps) {
   const currentYearBE = toBuddhistYear(Number(addDaysKey(0).slice(0, 4)));
   const years = Array.from({ length: 6 }, (_, index) => currentYearBE + index);
   if (value.yearBE && !years.includes(Number(value.yearBE))) years.unshift(Number(value.yearBE));
@@ -59,7 +61,7 @@ export function ThaiDateField({ label, value, onChange, error, disabled }: ThaiD
   const key = partsToDateKey(value);
   const none = isEmptyDate(value);
   const hint = none
-    ? t("coupons.expiryHintNone")
+    ? (noneHint ?? t("coupons.expiryHintNone"))
     : key
       ? t("coupons.expiryHintDate", { date: formatThaiDate(`${key}T12:00:00+07:00`, "long") })
       : undefined;

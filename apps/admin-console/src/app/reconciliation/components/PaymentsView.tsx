@@ -40,7 +40,7 @@ const issueHint = (type: IssueType) => t(`reconciliation.issueHints.${type}` as 
 
 function methodLabel(method: string) {
   const key = method.toUpperCase();
-  return key === "PROMPTPAY" || key === "CARD" ? t(`reconciliation.methods.${key}` as I18nKey) : method;
+  return key === "PROMPTPAY" || key === "CARD" || key === "DISCOUNT_CODE" ? t(`reconciliation.methods.${key}` as I18nKey) : method;
 }
 
 export function PaymentsView({

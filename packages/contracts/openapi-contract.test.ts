@@ -144,6 +144,81 @@ describe("finance OpenAPI contracts", () => {
   });
 });
 
+describe("finance discount code OpenAPI contract (student checkout)", () => {
+  const id = "11111111-2222-4333-8444-555555555555";
+  const quote = {
+    code: "DC-ABCD-EFGH",
+    discountCodeId: id,
+    classId: id,
+    cycleId: null,
+    originalAmountSatang: 300000,
+    discountSatang: 300000,
+    finalAmountSatang: 0,
+  };
+  const app = contractApp("finance-mlm.v1.yaml", (server) => {
+    server.post("/v1/discount-codes/preview", (_req, res) => {
+      res.status(200).json({ discount: quote });
+    });
+    server.post("/v1/discount-codes/redeem", (_req, res) => {
+      res.status(200).json({
+        intent: { paymentIntentId: id, status: "SUCCESS", amountMinor: 0, method: "DISCOUNT_CODE" },
+        checkout: null,
+        discount: quote,
+      });
+    });
+    // Admin CRUD is not documented, so it stays unvalidated.
+    server.post("/v1/discount-codes", (_req, res) => {
+      res.status(201).json({ discountCode: { discountCodeId: id } });
+    });
+  });
+
+  it("accepts the bodies the student app sends", async () => {
+    for (const body of [
+      { code: "dc-abcd-efgh", classId: id },
+      { code: "DC-ABCD-EFGH", classId: id, cycleId: id },
+      { code: "DC-ABCD-EFGH", classId: id, cycleId: null },
+    ]) {
+      await request(app).post("/v1/discount-codes/preview").send(body).expect(200);
+    }
+    for (const body of [
+      { code: "DC-ABCD-EFGH", enrollmentId: id },
+      { code: "DC-ABCD-EFGH", enrollmentId: id, enrollmentPackageId: id },
+      { code: "DC-ABCD-EFGH", enrollmentId: id, enrollmentPackageId: null },
+    ]) {
+      await request(app).post("/v1/discount-codes/redeem").send(body).expect(200);
+    }
+  });
+
+  it.each([
+    ["/v1/discount-codes/preview", { classId: id }],
+    ["/v1/discount-codes/preview", { code: "DC-ABCD-EFGH", classId: id, amountSatang: 0 }],
+    ["/v1/discount-codes/preview", { code: 12345678, classId: id }],
+    ["/v1/discount-codes/redeem", { code: "DC-ABCD-EFGH" }],
+    ["/v1/discount-codes/redeem", { code: "DC-ABCD-EFGH", enrollmentId: id, classId: id }],
+  ])("rejects POST %s %o", async (url, body) => {
+    const response = await request(app).post(url).send(body);
+    expect(response.status).toBe(400);
+    expect(response.body.error.code).toBe("OPENAPI_REQUEST_VALIDATION_FAILED");
+  });
+
+  it("leaves the admin create route unvalidated", async () => {
+    await request(app).post("/v1/discount-codes").send({ classId: id, anything: true }).expect(201);
+  });
+
+  it("catches a decimal amount in the discount quote", async () => {
+    const badApp = contractApp("finance-mlm.v1.yaml", (server) => {
+      server.post("/v1/discount-codes/preview", (_req, res) => {
+        res.status(200).json({ discount: { ...quote, originalAmountSatang: 3000.5 } });
+      });
+    });
+    const response = await request(badApp)
+      .post("/v1/discount-codes/preview")
+      .send({ code: "DC-ABCD-EFGH", classId: id });
+    expect(response.status).toBe(500);
+    expect(response.body.error.code).toBe("OPENAPI_RESPONSE_VALIDATION_FAILED");
+  });
+});
+
 describe("finance audit-log OpenAPI contract (admin G1)", () => {
   const app = contractApp("finance-mlm.v1.yaml", (server) => {
     server.get("/v1/audit-logs", (_req, res) => {

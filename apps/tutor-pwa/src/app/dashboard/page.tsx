@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { BookOpen, Calendar, Plus, Users, Wallet } from "lucide-react";
 import {
   Chip,
@@ -22,10 +23,12 @@ import { RoleUpgradeBanner } from "@/components/dashboard/role-upgrade-banner";
 import { formatNumber, formatTHB } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { RateGoalCard } from "./_home/RateGoalCard";
+import { SetupClassesNotice } from "./_home/SetupClassesNotice";
 import { formatRatePercent } from "./_shared/text";
 import {
   classStatusTone,
   computeRateGoal,
+  signInSetupRedirect,
   type FinanceSummary,
   type LearningSummary,
   type RecentClass,
@@ -59,11 +62,19 @@ const statusLabel = {
   closed: t("tutorClass.classes.statusClosed"),
 } as const;
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ signedIn?: string }> }) {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value || "";
 
-  const [learning, finance] = await Promise.all([getLearningData(token), getFinanceData(token)]);
+  const [learning, finance, { signedIn }] = await Promise.all([
+    getLearningData(token),
+    getFinanceData(token),
+    searchParams,
+  ]);
+
+  const classesNeedingSetup = learning?.classesNeedingSetup ?? [];
+  const setupRedirect = signInSetupRedirect(signedIn, classesNeedingSetup);
+  if (setupRedirect) redirect(setupRedirect);
 
   const weeklyCount = learning?.classesThisWeek ?? 0;
   const goal = computeRateGoal(finance);
@@ -79,6 +90,7 @@ export default async function DashboardPage() {
 
   return (
     <Page>
+      <SetupClassesNotice classes={classesNeedingSetup} />
       <Suspense>
         <RoleUpgradeBanner />
       </Suspense>

@@ -31,4 +31,8 @@ export const dashboardHome = {
   estimatedNet: "รายได้ประมาณการเดือนนี้",
   emptyClassesHint: "สร้างคลาสแรกเพื่อเริ่มรับนักเรียน",
   dataUnavailable: "โหลดข้อมูลบางส่วนไม่สำเร็จ ตัวเลขที่แสดงอาจยังไม่ครบ",
+  // Admin-created classes waiting for the tutor (2026-11)
+  setupNoticeTitle: "มีคลาสที่รอคุณตั้งค่า",
+  setupNoticePaidPrefix: "นักเรียนชำระเงินแล้ว",
+  setupNoticeAction: "ตั้งชื่อคลาส ตารางเรียน และลิงก์ห้องเรียน",
 } as const;

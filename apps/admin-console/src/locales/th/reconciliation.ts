@@ -124,6 +124,7 @@ export const reconciliation = {
   methods: {
     PROMPTPAY: "พร้อมเพย์",
     CARD: "บัตร",
+    DISCOUNT_CODE: "โค้ดส่วนลด",
   },
   noPaymentAttempt: "ไม่มีรายการชำระ",
   unknownStudent: "ไม่ทราบชื่อนักเรียน",

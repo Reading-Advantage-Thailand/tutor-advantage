@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CreditCard, QrCode, ReceiptText } from "lucide-react";
+import { CreditCard, QrCode, ReceiptText, TicketPercent } from "lucide-react";
 import { AppBar, Chip, EmptyState, ErrorState, IconTile, ListGroup, ListRow, Screen } from "@/components/mobile";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { buttonVariants } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
   getPaymentBookLabel,
   getPaymentStatusDisplay,
   groupByMonth,
+  isDiscountCodeMethod,
   normalizePaymentMethod,
   type PaymentHistoryRecord,
 } from "@/lib/paymentFlow";
@@ -28,13 +29,19 @@ async function fetchPaymentHistory(): Promise<PaymentHistoryRecord[]> {
 function PaymentRow({ payment, onOpen }: { payment: PaymentHistoryRecord; onOpen: () => void }) {
   const status = getPaymentStatusDisplay(payment.status);
   const isPromptPay = normalizePaymentMethod(payment.method) === "promptpay";
+  const isDiscountCode = isDiscountCodeMethod(payment.method);
   const book = getPaymentBookLabel(payment) ?? t("payment.history.otherExpense");
   const date = formatThaiDate(payment.createdAt, "short");
+  const icon = isDiscountCode ? (
+    <IconTile icon={TicketPercent} tone="brand" />
+  ) : (
+    <IconTile icon={isPromptPay ? QrCode : CreditCard} tone={isPromptPay ? "teal" : "amber"} />
+  );
 
   return (
     <ListRow
       onClick={onOpen}
-      leading={<IconTile icon={isPromptPay ? QrCode : CreditCard} tone={isPromptPay ? "teal" : "amber"} />}
+      leading={icon}
       title={payment.enrollment?.class?.title || t("payment.history.unnamedClass")}
       subtitle={date ? `${book} · ${date}` : book}
       trailing={

@@ -12,7 +12,7 @@ import { audit } from "@/locales/th/audit";
 const ACTION_LABELS: Record<string, string> = audit.actions;
 const ENTITY_LABELS: Record<string, string> = audit.entities;
 
-export type AuditCategory = "settlement" | "adjustment" | "user" | "payment" | "risk" | "coupon" | "system";
+export type AuditCategory = "settlement" | "adjustment" | "user" | "payment" | "risk" | "coupon" | "class" | "system";
 
 /** Filter groups: one option per category (all its actions) + one per action. */
 export const AUDIT_CATEGORIES: { id: AuditCategory; label: string; actions: string[] }[] = [
@@ -77,6 +77,11 @@ export const AUDIT_CATEGORIES: { id: AuditCategory; label: string; actions: stri
     ],
   },
   { id: "coupon", label: t("audit.catCoupon"), actions: ["COUPON_CREATE", "COUPON_UPDATE", "COUPON_VOID"] },
+  {
+    id: "class",
+    label: t("audit.catClass"),
+    actions: ["ADMIN_CLASS_CREATE", "ADMIN_TUTOR_PROVISION", "DISCOUNT_CODE_CREATE", "DISCOUNT_CODE_VOID", "DISCOUNT_CODE_REDEEM"],
+  },
   { id: "system", label: t("audit.catSystem"), actions: ["AUDIT_EXPORT"] },
 ];
 
@@ -111,6 +116,7 @@ export function auditCategory(action: string): AuditCategory {
   if (action.startsWith("FRAUD_") || action.startsWith("EXCEPTION_")) return "risk";
   if (action.startsWith("USER_") || action.startsWith("ROLE_")) return "user";
   if (action.startsWith("COUPON_")) return "coupon";
+  if (action.startsWith("DISCOUNT_CODE_") || action.startsWith("ADMIN_CLASS_")) return "class";
   if (action.startsWith("ADJUST")) return "adjustment";
   return "system";
 }
@@ -119,9 +125,9 @@ export function auditCategory(action: string): AuditCategory {
 export function auditActionTone(action: string): Tone {
   if (/(UNSUSPEND|UNFREEZE|RELEASE|VERIFY_APPROVE)/.test(action)) return "success";
   if (/(REJECT|SUSPEND$|FREEZE|ANONYMIZE|VOID|DISMISS|REVOKE)/.test(action)) return "danger";
-  if (/(APPROVE|UNSUSPEND|CLEAR|RESOLVE|ACTIVATE)/.test(action)) return "success";
+  if (/(APPROVE|UNSUSPEND|CLEAR|RESOLVE|ACTIVATE|REDEEM)/.test(action)) return "success";
   if (/(SUBMIT|ROLE_CHANGE|ROLE_PROVISION|OMISE|PII|RETRY|MONITOR)/.test(action)) return "warning";
-  if (/(CREATE|PREVIEW|REFRESH|VERIFY)/.test(action)) return "info";
+  if (/(CREATE|PREVIEW|REFRESH|VERIFY|TUTOR_PROVISION)/.test(action)) return "info";
   return "neutral";
 }
 
@@ -141,6 +147,10 @@ export function auditStatusDomain(entityType: string, action: string): StatusDom
       return "exception";
     case "Coupon":
       return "coupon";
+    case "DiscountCode":
+      return "discountCode";
+    case "Class":
+      return "classStatus";
     case "PaymentIntent":
       return "payment";
     case "PayoutLine":
@@ -158,10 +168,27 @@ export function auditEntityHref(entityType: string, entityId: string): string | 
       return `/users/${encodeURIComponent(entityId)}`;
     case "SettlementRun":
       return `/settlements/${encodeURIComponent(entityId)}`;
+    // Both lists accept an exact id in `q`.
+    case "DiscountCode":
+      return `/discount-codes?q=${encodeURIComponent(entityId)}`;
+    case "Class":
+      return `/classes?q=${encodeURIComponent(entityId)}`;
     default:
       return null;
   }
 }
 
 /** Entity types offered in the filter. */
-export const AUDIT_ENTITY_TYPES = ["SettlementRun", "Adjustment", "User", "PaymentIntent", "PaymentEvent", "FraudFlag", "Exception", "Coupon", "AuditLog"];
+export const AUDIT_ENTITY_TYPES = [
+  "SettlementRun",
+  "Adjustment",
+  "User",
+  "PaymentIntent",
+  "PaymentEvent",
+  "FraudFlag",
+  "Exception",
+  "Coupon",
+  "DiscountCode",
+  "Class",
+  "AuditLog",
+];

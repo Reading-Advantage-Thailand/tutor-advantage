@@ -15,10 +15,12 @@ import {
   History,
   LayoutDashboard,
   ReceiptText,
+  School,
   ShieldAlert,
   ShieldCheck,
   Terminal,
   Ticket,
+  TicketPercent,
   Users,
 } from "lucide-react";
 import { t } from "@/lib/i18n";
@@ -46,6 +48,8 @@ const NAV_META: Record<string, { label: string; icon: LucideIcon }> = {
   fraud: { label: t("shell.navFraud"), icon: ShieldAlert },
   users: { label: t("shell.navUsers"), icon: Users },
   coupons: { label: t("shell.navCoupons"), icon: Ticket },
+  classes: { label: t("shell.navClasses"), icon: School },
+  discountCodes: { label: t("shell.navDiscountCodes"), icon: TicketPercent },
   voice: { label: t("shell.navVoice"), icon: AudioLines },
   roles: { label: t("shell.navRoles"), icon: ShieldCheck },
   docs: { label: t("shell.navDocs"), icon: BookOpen },

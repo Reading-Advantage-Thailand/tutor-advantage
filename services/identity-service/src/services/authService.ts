@@ -27,6 +27,7 @@ export async function processOAuthLogin(
   picture: string = "",
   sponsorTutorId?: string | null,
   verifiedPhoneNumber?: string,
+  emailVerified?: boolean,
 ): Promise<AuthResult> {
   return processLogin(
     provider,
@@ -36,6 +37,7 @@ export async function processOAuthLogin(
     picture,
     sponsorTutorId,
     verifiedPhoneNumber,
+    emailVerified,
     "STUDENT",
   );
 }
@@ -59,6 +61,7 @@ export async function processDevLogin(
     "",
     null,
     undefined,
+    undefined,
     role,
   );
 }
@@ -71,6 +74,7 @@ async function processLogin(
   picture: string,
   sponsorTutorId: string | null | undefined,
   verifiedPhoneNumber: string | undefined,
+  emailVerified: boolean | undefined,
   requestedRole: "STUDENT" | "TUTOR",
 ): Promise<AuthResult> {
   let user;
@@ -119,9 +123,7 @@ async function processLogin(
   } else {
     // 2. If no identity, check if user exists by email, fallback to checking phone number
     if (normalizedEmail) {
-      user = await prisma.user.findUnique({
-        where: { email: normalizedEmail },
-      });
+      user = await findUserByEmail(normalizedEmail, emailVerified);
     } else if (normalizedPhone) {
       user = await prisma.user.findFirst({
         where: { phoneNumber: normalizedPhone },
@@ -149,7 +151,13 @@ async function processLogin(
         },
       });
     } else {
-      // User exists by email/phone, but new provider linkage
+      // User exists by email/phone, but new provider linkage.
+      // An unverified Google address proves nothing about who owns the
+      // mailbox, so it must not claim an existing (e.g. pre-provisioned) account.
+      if (provider === "google" && emailVerified === false) {
+        throw new Error("EMAIL_NOT_VERIFIED");
+      }
+
       // Optionally update picture, phone number, or displayName if they were placeholder/missing
       const updateData: Record<string, unknown> = {};
       if (picture && !user.profilePictureUrl) {
@@ -232,6 +240,34 @@ async function processLogin(
       ),
     },
   };
+}
+
+/**
+ * Finds the account an OAuth login should link to by email. Admin
+ * pre-provisioned accounts store the address lower-cased while Google may
+ * report it with other casing, so a provider-verified address that misses
+ * the exact match may also claim a not-yet-registered row (no OAuth
+ * identity) that differs only in case. Rows another login already owns are
+ * never merged this way.
+ */
+async function findUserByEmail(email: string, emailVerified: boolean | undefined) {
+  const exactMatch = await prisma.user.findUnique({ where: { email } });
+  if (exactMatch || emailVerified !== true) return exactMatch;
+
+  // Prisma runs an insensitive `equals` as ILIKE on Postgres, where `_` and
+  // `%` are wildcards, so compare again here and link only a single match.
+  // Two rows differing only in case are ambiguous: fall back to creating a
+  // new account, as before.
+  const candidates = await prisma.user.findMany({
+    where: {
+      email: { equals: email, mode: "insensitive" },
+      oauthIdentities: { none: {} },
+    },
+    take: 10,
+  });
+  const lowerCased = email.toLowerCase();
+  const matches = candidates.filter((candidate) => candidate.email?.toLowerCase() === lowerCased);
+  return matches.length === 1 ? matches[0] : null;
 }
 
 async function wouldCreateSponsorCycle(userId: string, sponsorTutorId: string) {

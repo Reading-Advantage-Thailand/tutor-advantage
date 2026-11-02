@@ -149,6 +149,13 @@ export const ADMIN_STATUS = {
     VOID: { label: "ยกเลิกแล้ว", tone: "neutral" },
     EXPIRED: { label: "หมดอายุ", tone: "neutral" },
   },
+  /** finance_mlm.discount_codes: effective status from the API (USED_UP / EXPIRED are derived) */
+  discountCode: {
+    ACTIVE: { label: "ใช้งานได้", tone: "success" },
+    USED_UP: { label: "ใช้ครบแล้ว", tone: "info" },
+    EXPIRED: { label: "หมดอายุ", tone: "neutral" },
+    VOID: { label: "ยกเลิกแล้ว", tone: "neutral" },
+  },
   /** identity.users.role (lib/statusRole.ts, shared with the shell) */
   userRole: USER_ROLE_STATUS,
   /** identity.users.is_active (pass "ACTIVE" / "SUSPENDED") */
@@ -167,6 +174,8 @@ export const ADMIN_STATUS = {
     IN_PROGRESS: { label: "กำลังสอน", tone: "success" },
     COMPLETED: { label: "จบแล้ว", tone: "neutral" },
     CANCELLED: { label: "ยกเลิก", tone: "neutral" },
+    /** Set when the tutor closes the class (learning closeClass); listed on /classes. */
+    CLOSED: { label: "ปิดคลาสแล้ว", tone: "neutral" },
   },
 } as const satisfies Record<string, Record<string, StatusMeta>>;
 

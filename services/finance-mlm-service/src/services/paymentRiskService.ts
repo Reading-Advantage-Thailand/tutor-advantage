@@ -34,6 +34,7 @@ import {
 import { createCommissionClawback, reverseCommissionClawback } from "./clawbackService";
 import { flagDispute } from "./fraudRules";
 import { DAY_IN_MS } from "./payoutPolicy";
+import { isOmiseIntent } from "./paymentMethods";
 
 type IntentRow = {
   paymentIntentId: string;
@@ -86,9 +87,14 @@ export async function retrieveAndVerifyOmiseCharge(paymentIntentId: string, prov
       providerRef: true,
       amountMinor: true,
       currency: true,
+      method: true,
     },
   });
   if (!intent || !intent.providerRef || intent.providerRef !== providerRef) {
+    return null;
+  }
+  // A discount code payment has no Omise charge behind its providerRef.
+  if (!isOmiseIntent(intent)) {
     return null;
   }
 

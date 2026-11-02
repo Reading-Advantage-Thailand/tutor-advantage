@@ -35,6 +35,7 @@ import {
   deleteClass,
   updateMeetingUrl,
   rescheduleClass,
+  setupClass,
   getAvailableClasses,
   getClassArticles,
   createClassBookCycle,
@@ -42,6 +43,7 @@ import {
   updateClassStatus,
   notifyClassLobby,
 } from "./controllers/classController";
+import { createAdminClass, getAdminClasses } from "./controllers/adminClassController";
 import { getDemoLessonCatalog } from "./controllers/demoController";
 import { getPublicClass, getPublicClasses } from "./controllers/publicClassController";
 import { getAssessment, startAssessment, submitAssessment, getAssessmentReport, openPostAssessment, commentAssessment } from "./controllers/assessmentController";
@@ -161,6 +163,10 @@ app.get("/version", (_req: Request, res: Response) => {
 app.get("/v1/public/classes", getPublicClasses);
 app.get("/v1/public/classes/:classId", getPublicClass);
 
+// Admin console: classes created on a tutor's behalf (route guard + in-handler ADMIN check).
+app.get("/v1/admin/classes", authMiddleware, requireRoles("ADMIN"), getAdminClasses);
+app.post("/v1/admin/classes", authMiddleware, requireRoles("ADMIN"), createAdminClass);
+
 // Protected Class Routes
 app.get("/v1/books", authMiddleware, getBooks);
 app.get("/v1/demo/lessons", authMiddleware, getDemoLessonCatalog);
@@ -172,6 +178,7 @@ app.get("/v1/classes/:classId", authMiddleware, getClassById);
 app.delete("/v1/classes/:classId", authMiddleware, deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware, updateMeetingUrl);
 app.patch("/v1/classes/:classId/schedule", authMiddleware, rescheduleClass);
+app.post("/v1/classes/:classId/setup", authMiddleware, setupClass);
 app.patch("/v1/classes/:classId/status", authMiddleware, updateClassStatus);
 app.post("/v1/classes/:classId/lobby-notifications", authMiddleware, notifyClassLobby);
 app.get("/v1/classes/:classId/articles", authMiddleware, getClassArticles);

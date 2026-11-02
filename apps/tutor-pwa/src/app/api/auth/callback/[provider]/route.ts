@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { identityCallbackErrorCode } from "@/components/auth/login-error";
 
 export async function GET(
   request: Request,
@@ -82,7 +83,7 @@ export async function GET(
       const errorData = await response.json().catch(() => ({}));
       console.error("Identity Service Error:", errorData);
       return NextResponse.redirect(
-        new URL("/?error=identity_service_error", publicBase)
+        new URL(`/?error=${identityCallbackErrorCode(errorData)}`, publicBase)
       );
     }
 
@@ -95,7 +96,9 @@ export async function GET(
       );
     }
 
+    // signedIn=1 lets the dashboard send a tutor with an admin-created class straight to its setup page.
     const dashboardUrl = new URL("/dashboard", publicBase);
+    dashboardUrl.searchParams.set("signedIn", "1");
     if (data.roleUpgraded) dashboardUrl.searchParams.set("role_upgraded", "true");
     const redirect = NextResponse.redirect(dashboardUrl);
 

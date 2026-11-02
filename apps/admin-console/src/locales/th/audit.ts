@@ -96,6 +96,7 @@ export const audit = {
   catCoupon: "คูปอง",
   catSystem: "อื่น ๆ",
   catPayment: "ตรวจสอบการชำระเงิน",
+  catClass: "คลาสและโค้ดส่วนลด",
   actions: {
     PREVIEW: "สร้างพรีวิวรอบจ่าย",
     PREVIEW_SETTLEMENT: "สร้างพรีวิวรอบจ่าย",
@@ -139,6 +140,11 @@ export const audit = {
     RECONCILIATION_ACTIVATE_ENROLLMENT: "เปิดสิทธิ์เรียนจากการตรวจชำระเงิน",
     RECONCILIATION_ORPHAN_LINK: "ผูกเหตุการณ์ชำระเงินกับรายการ",
     RECONCILIATION_ORPHAN_DISMISS: "ปิดเหตุการณ์ชำระเงินที่ไม่มีคู่",
+    DISCOUNT_CODE_CREATE: "ออกโค้ดส่วนลดคลาส",
+    DISCOUNT_CODE_VOID: "ยกเลิกโค้ดส่วนลดคลาส",
+    DISCOUNT_CODE_REDEEM: "นักเรียนใช้โค้ดส่วนลด",
+    ADMIN_CLASS_CREATE: "สร้างคลาสให้ครู",
+    ADMIN_TUTOR_PROVISION: "สร้างบัญชีครูรอลงทะเบียน",
   },
   entities: {
     SettlementRun: "รอบจ่ายเงิน",
@@ -152,6 +158,8 @@ export const audit = {
     general_action: "ทั่วไป",
     PaymentEvent: "เหตุการณ์ชำระเงิน",
     PaymentIntent: "รายการชำระเงิน",
+    DiscountCode: "โค้ดส่วนลดคลาส",
+    Class: "คลาสเรียน",
   },
 } as const;
 

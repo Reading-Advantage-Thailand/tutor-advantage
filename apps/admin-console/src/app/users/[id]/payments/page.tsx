@@ -48,6 +48,7 @@ const METHOD_LABELS: Record<string, string> = {
   card: "บัตร",
   COUPON: "คูปอง",
   MOCK: "ทดสอบ",
+  DISCOUNT_CODE: "โค้ดส่วนลด",
 };
 
 export default function UserPaymentsTab() {

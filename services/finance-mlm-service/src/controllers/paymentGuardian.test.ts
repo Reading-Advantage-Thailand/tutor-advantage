@@ -3,7 +3,9 @@ import {
   createPaymentIntent,
   getPaymentGuardianGate,
   getPaymentStatus,
+  getPromptPayQrCode,
   handleWebhook,
+  retrieveAndVerifyOmiseCharge,
 } from "./paymentController";
 
 const prisma = vi.hoisted(() => ({
@@ -564,5 +566,71 @@ describe("payment intent reconciliation", () => {
 
     expect(prisma.paymentIntent.update).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(200);
+  });
+});
+
+describe("discount code payments never reach Omise", () => {
+  const discountIntent = () =>
+    paymentIntent({
+      amountMinor: 0n,
+      method: "DISCOUNT_CODE",
+      status: "SUCCESS",
+      providerRef: "discount:6b1f8a52-0f2e-4c51-9d55-3f3c2a1c9e10",
+      paidAt: new Date("2026-11-02T03:00:00.000Z"),
+    });
+  const req = {
+    id: "req-discount",
+    user: { userId: "student-1" },
+    params: { paymentIntentId: "pi-1" },
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns the status without an Omise lookup or checkout details", async () => {
+    prisma.paymentIntent.findUnique.mockResolvedValue(discountIntent());
+    const res = response();
+
+    await getPaymentStatus(req as never, res as never);
+
+    expect(omiseMock.retrieveOmiseCharge).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      intent: expect.objectContaining({ status: "SUCCESS", amountMinor: 0, method: "DISCOUNT_CODE" }),
+      checkout: null,
+    });
+  });
+
+  it("does not poll Omise even for a FAILED discount intent", async () => {
+    prisma.paymentIntent.findUnique.mockResolvedValue({ ...discountIntent(), status: "FAILED" });
+    const res = response();
+
+    await getPaymentStatus(req as never, res as never);
+
+    expect(omiseMock.retrieveOmiseCharge).not.toHaveBeenCalled();
+    expect(prisma.paymentIntent.update).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  it("has no PromptPay QR code", async () => {
+    prisma.paymentIntent.findUnique.mockResolvedValue(discountIntent());
+    const res = response();
+
+    await getPromptPayQrCode(req as never, res as never);
+
+    expect(omiseMock.retrieveOmiseCharge).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      error: expect.objectContaining({ code: "QR_NOT_FOUND" }),
+    });
+  });
+
+  it("is never verified as an Omise charge (webhook, refund and dispute paths)", async () => {
+    const intent = discountIntent();
+    prisma.paymentIntent.findUnique.mockResolvedValue(intent);
+
+    await expect(retrieveAndVerifyOmiseCharge("pi-1", intent.providerRef)).resolves.toBeNull();
+    expect(omiseMock.retrieveOmiseCharge).not.toHaveBeenCalled();
   });
 });

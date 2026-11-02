@@ -54,6 +54,8 @@ export const ADMIN_ROUTES: readonly AdminRoute[] = [
   { id: "fraud", href: "/fraud", roles: BOTH, group: "operations", badge: "fraudFlags" },
   { id: "users", href: "/users", roles: ADMIN, group: "users", badge: "verifications" },
   { id: "coupons", href: "/coupons", roles: ADMIN, group: "users" },
+  { id: "classes", href: "/classes", roles: ADMIN, group: "users" },
+  { id: "discountCodes", href: "/discount-codes", roles: ADMIN, group: "users" },
   { id: "voice", href: "/voice-operations", roles: ADMIN, group: "users" },
   { id: "roles", href: "/settings/roles", roles: ADMIN, group: "settings" },
   { id: "docs", href: "/docs", roles: BOTH, group: "settings" },

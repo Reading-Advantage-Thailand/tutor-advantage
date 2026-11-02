@@ -8,6 +8,15 @@ describe("admin route map", () => {
     expect(findRoute("/users/5eed")?.id).toBe("users");
     expect(findRoute("/")?.id).toBe("overview");
     expect(findRoute("/settlementsX")).toBeNull();
+    expect(findRoute("/discount-codes")?.id).toBe("discountCodes");
+    expect(findRoute("/classes")?.id).toBe("classes");
+  });
+
+  it("keeps classes and discount codes ADMIN only", () => {
+    for (const path of ["/classes", "/discount-codes?create=1"]) {
+      expect(decideAccess(path, "ADMIN", { devRoutes: false }), path).toBe("allow");
+      expect(decideAccess(path, "FINANCE_CHECKER", { devRoutes: false }), path).toBe("forbidden");
+    }
   });
 
   it("decides access per role", () => {

@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { CheckCircle2, Clock, CreditCard, Home, RotateCw, ShieldCheck, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, CreditCard, DoorOpen, Home, RotateCw, ShieldCheck, XCircle } from "lucide-react";
 import {
   AppBar,
   BottomActionBar,
@@ -14,9 +14,10 @@ import {
 } from "@/components/mobile";
 import { Confetti } from "@/components/celebrate/Confetti";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { lessonLobbyHref } from "@/lib/classAccess";
 import { formatSatang } from "@/lib/format";
 import { t } from "@/lib/i18n";
-import { getChargeFailureKey, getPaymentMethodLabelKey, type PaymentMethod } from "@/lib/paymentFlow";
+import { getChargeFailureKey, getPaymentMethodLabelKey } from "@/lib/paymentFlow";
 import { cn } from "@/lib/utils";
 
 /* ─── Card result (3DS return: pending / failed) ─────────────────────────── */
@@ -82,7 +83,10 @@ export interface SuccessStepProps {
   classTitle: string;
   tutor: string;
   amountSatang: number | null;
-  method: PaymentMethod;
+  /** The intent's method ("promptpay", "card", "DISCOUNT_CODE"). */
+  method: string;
+  /** The class the enrollment is in (null = unknown: home only). */
+  classId: string | null;
 }
 
 function ReceiptRow({ label, children }: { label: string; children: ReactNode }) {
@@ -94,8 +98,8 @@ function ReceiptRow({ label, children }: { label: string; children: ReactNode })
   );
 }
 
-/** Receipt after a successful payment (or an already-active enrollment). */
-export function SuccessStep({ classTitle, tutor, amountSatang, method }: SuccessStepProps) {
+/** Receipt after a successful payment (or an already-active enrollment): the class is open now. */
+export function SuccessStep({ classTitle, tutor, amountSatang, method, classId }: SuccessStepProps) {
   return (
     <Screen>
       <Confetti intensity="big" origin={{ x: 0.5, y: 0.25 }} />
@@ -126,14 +130,35 @@ export function SuccessStep({ classTitle, tutor, amountSatang, method }: Success
         <p className="mt-4 text-[13px] leading-[1.6] text-fg-muted">{t("payment.success.lineNotice")}</p>
       </StatusScreen>
       <BottomActionBar>
-        <Link
-          href="/dashboard"
-          id="btn-go-dashboard"
-          className={cn(buttonVariants({ variant: "brand", size: "cta" }), "flex-1")}
-        >
-          <Home aria-hidden="true" />
-          {t("payment.success.dashboardCta")}
-        </Link>
+        {classId ? (
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <Link
+              href={lessonLobbyHref(classId)}
+              id="btn-enter-lesson"
+              className={cn(buttonVariants({ variant: "brand", size: "cta" }), "w-full")}
+            >
+              <DoorOpen aria-hidden="true" />
+              {t("payment.success.lessonCta")}
+            </Link>
+            <Link
+              href="/dashboard"
+              id="btn-go-dashboard"
+              className={cn(buttonVariants({ variant: "brandSoft", size: "touch" }), "w-full")}
+            >
+              <Home aria-hidden="true" />
+              {t("payment.success.dashboardCta")}
+            </Link>
+          </div>
+        ) : (
+          <Link
+            href="/dashboard"
+            id="btn-go-dashboard"
+            className={cn(buttonVariants({ variant: "brand", size: "cta" }), "flex-1")}
+          >
+            <Home aria-hidden="true" />
+            {t("payment.success.dashboardCta")}
+          </Link>
+        )}
       </BottomActionBar>
     </Screen>
   );

@@ -4,6 +4,7 @@ import { prisma } from "@tutor-advantage/database";
 import { Prisma } from "@prisma/client";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { buildReceiptNumber } from "../services/taxService";
+import { isOmiseIntent } from "../services/paymentMethods";
 import {
   fulfillPaymentIntent,
   markPaymentIntentFailed,
@@ -385,7 +386,7 @@ export async function getPaymentReconciliation(
 
 /** Which typed repair actions apply to a payment row (UI shows only these). */
 export function availablePaymentActions(
-  payment: { status: string; providerRef: string | null },
+  payment: { status: string; providerRef: string | null; method: string },
   issueType: string,
 ) {
   const actions: string[] = [];
@@ -395,7 +396,11 @@ export function availablePaymentActions(
   ) {
     actions.push("ACTIVATE_ENROLLMENT");
   }
-  if (payment.providerRef && ["PENDING", "FAILED"].includes(payment.status)) {
+  if (
+    payment.providerRef &&
+    isOmiseIntent(payment) &&
+    ["PENDING", "FAILED"].includes(payment.status)
+  ) {
     actions.push("VERIFY_WITH_PROVIDER");
   }
   return actions;
@@ -917,7 +922,7 @@ export async function verifyPaymentWithProvider(req: AuthenticatedRequest, res: 
     if (!UUID_RE.test(id)) return sendError(req, res, 400, "BAD_REQUEST", "Invalid payment id");
     const intent = await prisma.paymentIntent.findUnique({ where: { paymentIntentId: id } });
     if (!intent) return sendError(req, res, 404, "PAYMENT_INTENT_NOT_FOUND", "Payment intent not found");
-    if (!intent.providerRef) {
+    if (!intent.providerRef || !isOmiseIntent(intent)) {
       return sendError(req, res, 409, "NO_PROVIDER_REF", "This payment has no provider charge to verify");
     }
     if (!["PENDING", "FAILED"].includes(intent.status)) {

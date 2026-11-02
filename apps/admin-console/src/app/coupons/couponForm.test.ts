@@ -5,6 +5,7 @@ import {
   dateKeyToExpiryIso,
   dateKeyToParts,
   expiryIsoToDateKey,
+  parseExpiryParts,
   partsToDateKey,
   validateCouponForm,
 } from "./couponForm";
@@ -33,6 +34,14 @@ describe("coupon expiry (Buddhist era, Bangkok end of day)", () => {
     expect(dateKeyToExpiryIso("2026-10-31")).toBe("2026-10-31T16:59:59.999Z");
     expect(expiryIsoToDateKey("2026-10-31T16:59:59.999Z")).toBe("2026-10-31");
     expect(expiryIsoToDateKey(null)).toBeNull();
+  });
+
+  it("parses optional expiry parts (shared with discount codes)", () => {
+    expect(parseExpiryParts({ day: "", month: "", yearBE: "" }, messages, now)).toEqual({ expiresAt: null });
+    expect(parseExpiryParts({ day: "2", month: "10", yearBE: "2569" }, messages, now)).toEqual({
+      expiresAt: "2026-10-02T16:59:59.999Z",
+    });
+    expect(parseExpiryParts({ day: "1", month: "10", yearBE: "2569" }, messages, now)).toEqual({ error: "past" });
   });
 
   it("adds days in Bangkok time", () => {

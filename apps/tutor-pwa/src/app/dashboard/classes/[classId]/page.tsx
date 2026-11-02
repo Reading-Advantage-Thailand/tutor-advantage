@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { CalendarDays, Play, Users } from "lucide-react";
+import { CalendarDays, Play, Settings2, Users } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -17,7 +17,7 @@ import {
 import { formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { LEARNING_URL } from "@/lib/service-urls";
-import { sumScheduledHours } from "@/lib/tutorClassFlow";
+import { classSetupHref, sumScheduledHours } from "@/lib/tutorClassFlow";
 import type { BookOption } from "../components/book-options";
 import { ArticleSelector } from "./components/ArticleSelector";
 import { initialCycleId, type BookCycle } from "./components/book-cycles";
@@ -161,6 +161,12 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
           </Link>
         }
       />
+
+      {cls.setupRequired ? (
+        <Notice tone="warning" icon={Settings2} href={classSetupHref(classId)} title={t("tutorClass.setup.detailNoticeTitle")}>
+          {t("tutorClass.setup.detailNoticeBody")}
+        </Notice>
+      ) : null}
 
       <DetailTabs>
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-8">

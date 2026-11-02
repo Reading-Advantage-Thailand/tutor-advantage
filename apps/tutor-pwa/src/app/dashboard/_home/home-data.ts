@@ -4,6 +4,8 @@
  */
 
 import type { Tone } from "@/components/app";
+import { t } from "@/lib/i18n";
+import { classSetupHref } from "@/lib/tutorClassFlow";
 
 /** Subset of finance `/v1/tutors/earnings/summary` used by the home page. */
 export interface FinanceSummary {
@@ -19,6 +21,7 @@ export interface LearningSummary {
   totalStudents?: number;
   classesThisWeek?: number;
   recentClasses?: RecentClass[];
+  classesNeedingSetup?: ClassNeedingSetup[];
 }
 
 export interface RecentClass {
@@ -27,6 +30,34 @@ export interface RecentClass {
   status: string;
   students: number;
   nextSession: string;
+}
+
+/** A class an admin created for this tutor that still needs a schedule and meeting link. */
+export interface ClassNeedingSetup {
+  classId: string;
+  title: string;
+  bookTitle: string | null;
+  /** Students with an ACTIVE (paid) enrollment. */
+  activeStudents: number;
+  setupRequiredAt: string;
+}
+
+/**
+ * Right after sign-in (`/dashboard?signedIn=1`, set by the OAuth callback)
+ * the tutor lands on the first class waiting for setup, if any.
+ */
+export function signInSetupRedirect(
+  signedIn: string | string[] | undefined,
+  classes: ClassNeedingSetup[] | null | undefined,
+): string | null {
+  if (signedIn !== "1") return null;
+  const first = classes?.[0];
+  return first ? classSetupHref(first.classId) : null;
+}
+
+/** One line of the dashboard setup notice. */
+export function setupNoticeLine(cls: Pick<ClassNeedingSetup, "title" | "activeStudents">): string {
+  return `"${cls.title}" · ${t("dashboardHome.setupNoticePaidPrefix")} ${cls.activeStudents} ${t("dashboardHome.studentsUnit")} — ${t("dashboardHome.setupNoticeAction")}`;
 }
 
 /** Default target when finance data is missing (matches the previous UI). */

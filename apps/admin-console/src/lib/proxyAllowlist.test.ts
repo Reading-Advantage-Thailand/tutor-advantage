@@ -96,6 +96,42 @@ describe("proxy allowlist", () => {
     expect(matchProxyRequest(seg("/v1/coupons/abc"), "PATCH", checker)).toMatchObject({ ok: false, code: "PROXY_ROLE_NOT_ALLOWED" });
   });
 
+  it("allows the discount code and admin class endpoints for ADMIN only, on the right service", () => {
+    const id = "5eed0000-0000-4000-8000-000000000d01";
+    const cases: [string, string, string][] = [
+      ["GET", "/v1/discount-codes", "finance"],
+      ["POST", "/v1/discount-codes", "finance"],
+      ["POST", `/v1/discount-codes/${id}/void`, "finance"],
+      ["GET", `/v1/discount-codes/${id}/redemptions`, "finance"],
+      ["GET", "/v1/admin/classes", "learning"],
+      ["POST", "/v1/admin/classes", "learning"],
+      ["GET", "/v1/books", "learning"],
+    ];
+    for (const [method, path, service] of cases) {
+      const match = matchProxyRequest(seg(path), method, admin);
+      expect(match.ok && match.rule.service, `${method} ${path}`).toBe(service);
+      expect(matchProxyRequest(seg(path), method, checker), `${method} ${path}`).toMatchObject({
+        ok: false,
+        code: "PROXY_ROLE_NOT_ALLOWED",
+      });
+    }
+    expect(matchProxyRequest(seg("/v1/discount-codes"), "DELETE", admin)).toMatchObject({ ok: false, status: 405 });
+    expect(matchProxyRequest(seg(`/v1/discount-codes/${id}/void`), "GET", admin)).toMatchObject({ ok: false, status: 405 });
+    expect(matchProxyRequest(seg("/v1/books"), "POST", admin)).toMatchObject({ ok: false, status: 405 });
+  });
+
+  it("never forwards the student discount checkout endpoints", () => {
+    for (const path of ["/v1/discount-codes/preview", "/v1/discount-codes/redeem", "/v1/discount-codes/abc", "/v1/admin/classes/abc"]) {
+      for (const method of ["GET", "POST"]) {
+        expect(matchProxyRequest(seg(path), method, admin), `${method} ${path}`).toMatchObject({
+          ok: false,
+          status: 403,
+          code: "PROXY_PATH_NOT_ALLOWED",
+        });
+      }
+    }
+  });
+
   it("exposes dev endpoints only when dev routes are enabled", () => {
     expect(matchProxyRequest(seg("/v1/dev/actions/purge"), "POST", admin).ok).toBe(false);
     expect(matchProxyRequest(seg("/v1/dev/actions/purge"), "POST", { ...admin, devRoutes: true }).ok).toBe(true);

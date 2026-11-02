@@ -19,6 +19,11 @@ import {
   buildScheduleEntries,
   buildScheduleDescription,
   localDateToBangkokNoon,
+  buildSetupClassRequest,
+  classSetupHref,
+  getClassSetupErrorMessage,
+  isMeetingUrl,
+  validateClassSetup,
 } from "./tutorClassFlow";
 
 describe("tutorClassFlow helpers", () => {
@@ -154,5 +159,89 @@ describe("schedule data helpers", () => {
     expect(buildScheduleDescription([dates[1]], times)).toBe("5 ต.ค. 69 (18:00-20:00)");
     expect(buildScheduleDescription([], times)).toBe("");
     expect(localDateToBangkokNoon(dates[1])).toBe("2026-10-05T12:00:00+07:00");
+  });
+});
+
+describe("admin-created class setup", () => {
+  // 2026-10-05 (Mon) and 2026-10-07 (Wed), passed out of order.
+  const dates = [new Date(2026, 9, 7), new Date(2026, 9, 5)];
+  const times = {
+    "2026-10-05": { start: "18:00", end: "20:00" },
+    "2026-10-07": { start: "18:00", end: "19:30" },
+  };
+
+  it("links to the setup page of a class", () => {
+    expect(classSetupHref("class-1")).toBe("/dashboard/classes/class-1/setup");
+  });
+
+  it("builds the setup payload from the form draft", () => {
+    expect(
+      buildSetupClassRequest({ name: "  English ป.2  ", meetingUrl: " https://meet.google.com/abc-defg-hij ", dates, times }),
+    ).toEqual({
+      title: "English ป.2",
+      meetingUrl: "https://meet.google.com/abc-defg-hij",
+      scheduleDescription: "5 ต.ค. 69 - 7 ต.ค. 69 (รวม 2 วัน)",
+      scheduleData: [
+        { date: "2026-10-05", start: "18:00", end: "20:00" },
+        { date: "2026-10-07", start: "18:00", end: "19:30" },
+      ],
+      startsAt: "2026-10-05",
+      endsAt: "2026-10-07",
+      totalHours: 3.5,
+    });
+  });
+
+  it("sends an empty meeting link as null", () => {
+    const request = buildSetupClassRequest({ name: "English", meetingUrl: "   ", dates: [dates[1]], times });
+    expect(request.meetingUrl).toBeNull();
+    expect(request.startsAt).toBe("2026-10-05");
+    expect(request.endsAt).toBe("2026-10-05");
+  });
+
+  it("accepts only http(s) meeting links", () => {
+    expect(isMeetingUrl("https://meet.google.com/abc-defg-hij")).toBe(true);
+    expect(isMeetingUrl("http://zoom.us/j/123")).toBe(true);
+    expect(isMeetingUrl("meet.google.com/abc")).toBe(false);
+    expect(isMeetingUrl("javascript:alert(1)")).toBe(false);
+  });
+
+  it("validates name, meeting link and schedule", () => {
+    expect(validateClassSetup({ name: "English", meetingUrl: "", dates, times }, 22)).toEqual({});
+    expect(validateClassSetup({ name: "   ", meetingUrl: "not a link", dates: [], times: {} }, 22)).toEqual({
+      name: "กรุณาตั้งชื่อคลาส",
+      meetingUrl: "ลิงก์ห้องเรียนไม่ถูกต้อง เช่น https://meet.google.com/xxx-xxxx-xxx",
+      schedule: "กรุณาเลือกวันและเวลาสอน",
+    });
+    expect(validateClassSetup({ name: "x".repeat(121), meetingUrl: "", dates, times }, 22).name).toBe(
+      "ชื่อคลาสยาวได้ไม่เกิน 120 ตัวอักษร",
+    );
+    expect(validateClassSetup({ name: "English", meetingUrl: "", dates, times }, 3).schedule).toBe(
+      "ชั่วโมงสอนเกิน 22 ชม. ปรับวัน/เวลา/ช่วงวันที่ก่อน",
+    );
+  });
+
+  it("flags a day whose time does not end after it starts (the server refuses it)", () => {
+    const reversed = { ...times, "2026-10-07": { start: "21:00", end: "19:30" } };
+    expect(validateClassSetup({ name: "English", meetingUrl: "", dates, times: reversed }, 22).schedule).toBe(
+      "ตารางเรียนไม่ถูกต้อง ตรวจวันและเวลาอีกครั้ง",
+    );
+    const missing = { "2026-10-05": times["2026-10-05"] };
+    expect(validateClassSetup({ name: "English", meetingUrl: "", dates, times: missing }, 22).schedule).toBe(
+      "ตารางเรียนไม่ถูกต้อง ตรวจวันและเวลาอีกครั้ง",
+    );
+  });
+
+  it("maps setup error codes to Thai messages", () => {
+    expect(getClassSetupErrorMessage("CLASS_SETUP_NOT_REQUIRED")).toBe("คลาสนี้ตั้งค่าเรียบร้อยแล้ว");
+    expect(getClassSetupErrorMessage("INVALID_TITLE")).toBe("ชื่อคลาสต้องมี 1–120 ตัวอักษร");
+    expect(getClassSetupErrorMessage("FORBIDDEN")).toBe("ไม่พบคลาสนี้ หรือคุณไม่ได้เป็นครูของคลาสนี้");
+    expect(getClassSetupErrorMessage("UNAUTHORIZED_ROLE")).toBe("เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่");
+    expect(getClassSetupErrorMessage("INVALID_MEETING_URL")).toBe(
+      "ลิงก์ห้องเรียนไม่ถูกต้อง เช่น https://meet.google.com/xxx-xxxx-xxx",
+    );
+    expect(getClassSetupErrorMessage("INVALID_SCHEDULE")).toBe("ตารางเรียนไม่ถูกต้อง ตรวจวันและเวลาอีกครั้ง");
+    // "UPDATE_FAILED" contains "DATE" but is not a schedule error.
+    expect(getClassSetupErrorMessage("UPDATE_FAILED")).toBe("บันทึกไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+    expect(getClassSetupErrorMessage(undefined)).toBe("บันทึกไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
   });
 });

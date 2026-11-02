@@ -8,9 +8,14 @@ const jwtSecret = () => new TextEncoder().encode(getJwtSecret());
 const PROTECTED_ROUTES = ["/dashboard", "/lesson"];
 const IDENTITY_URL = process.env.IDENTITY_SERVICE_URL || "http://localhost:3001";
 
+/**
+ * `loginError` is the `/?error=` code the login page explains: a signed-in
+ * non-tutor (e.g. a Google account that was never registered as a tutor) or
+ * a suspended tutor. Expired/stale sessions have none and bounce silently.
+ */
 type SessionValidation =
   | { ok: true }
-  | { ok: false };
+  | { ok: false; loginError?: "not_tutor" | "account_suspended" };
 
 function withSecurityHeaders(response: NextResponse) {
   response.headers.set("X-Frame-Options", "DENY");
@@ -31,7 +36,7 @@ function withSecurityHeaders(response: NextResponse) {
 async function validateTutorSession(token: string): Promise<SessionValidation> {
   try {
     const { payload } = await jwtVerify(token, jwtSecret());
-    if (payload.role !== "TUTOR") return { ok: false };
+    if (payload.role !== "TUTOR") return { ok: false, loginError: "not_tutor" };
   } catch {
     return { ok: false };
   }
@@ -42,14 +47,21 @@ async function validateTutorSession(token: string): Promise<SessionValidation> {
       cache: "no-store",
     });
 
-    if (!res.ok) return { ok: false };
+    if (!res.ok) {
+      // Identity refuses an inactive user with 403 ACCOUNT_SUSPENDED instead of returning the profile.
+      if (res.status === 403) {
+        const body = (await res.json().catch(() => null)) as { error?: { code?: string } } | null;
+        if (body?.error?.code === "ACCOUNT_SUSPENDED") return { ok: false, loginError: "account_suspended" };
+      }
+      return { ok: false };
+    }
 
     const data = (await res.json()) as {
       user?: { role?: string; isActive?: boolean };
     };
 
-    if (data.user?.role !== "TUTOR") return { ok: false };
-    if (data.user?.isActive === false) return { ok: false };
+    if (data.user?.role !== "TUTOR") return { ok: false, loginError: "not_tutor" };
+    if (data.user?.isActive === false) return { ok: false, loginError: "account_suspended" };
 
     return { ok: true };
   } catch {
@@ -86,10 +98,17 @@ export async function middleware(request: NextRequest) {
     const validation = await validateTutorSession(sessionToken);
 
     if (!validation.ok) {
-      const response = isProtectedRoute
-        ? NextResponse.redirect(new URL("/", request.url))
-        : NextResponse.next();
-      return withSecurityHeaders(clearSession(response));
+      const { loginError } = validation;
+      const showLoginError =
+        loginError && request.nextUrl.searchParams.get("error") !== loginError;
+      if (!isProtectedRoute && !showLoginError) {
+        return withSecurityHeaders(clearSession(NextResponse.next()));
+      }
+      const loginUrl = new URL("/", request.url);
+      // On the login page keep the rest of the query (?sponsor= from an invite link).
+      if (isAuthPage) loginUrl.search = request.nextUrl.search;
+      if (loginError) loginUrl.searchParams.set("error", loginError);
+      return withSecurityHeaders(clearSession(NextResponse.redirect(loginUrl)));
     }
   }
 

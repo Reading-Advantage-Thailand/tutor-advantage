@@ -190,6 +190,9 @@ model Class {
   expiresAt           DateTime?              @map("expires_at") @db.Timestamptz
   startsAt            DateTime?              @map("starts_at") @db.Timestamptz
   endsAt              DateTime?              @map("ends_at") @db.Timestamptz
+  /// Set when an admin creates the class on a tutor's behalf (the tutor may not
+  /// have signed up yet). Cleared when the tutor completes the setup form.
+  setupRequiredAt     DateTime?              @map("setup_required_at") @db.Timestamptz
   createdAt     DateTime               @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime               @default(now()) @map("updated_at") @db.Timestamptz
   book          Book                   @relation(fields: [bookId], references: [bookId])
@@ -676,6 +679,7 @@ model PaymentIntent {
 
   events PaymentEvent[]
   receipt PaymentReceipt?
+  discountRedemption DiscountCodeRedemption?
 
   @@index([enrollmentPackageId], map: "payment_intents_enrollment_package_id_idx")
   @@index([status, paidAt], map: "payment_intents_status_paid_at_idx")
@@ -717,6 +721,58 @@ model PaymentReceipt {
   paymentIntent PaymentIntent @relation(fields: [paymentIntentId], references: [paymentIntentId])
 
   @@map("payment_receipts")
+  @@schema("finance_mlm")
+}
+
+// Admin-issued code that waives a class's tuition for a student (used for
+// manual / offline payment). A code belongs to one class; each student can use
+// a given code once. EXPIRED and USED_UP are derived, never stored.
+model DiscountCode {
+  discountCodeId         String    @id @default(dbgenerated("gen_random_uuid()")) @map("discount_code_id") @db.Uuid
+  code                   String    @unique
+  classId                String    @map("class_id") @db.Uuid
+  maxRedemptions         Int       @default(1) @map("max_redemptions")
+  redeemedCount          Int       @default(0) @map("redeemed_count")
+  status                 String    @default("ACTIVE") // ACTIVE | VOID
+  note                   String?
+  createdByUserId        String    @map("created_by_user_id") @db.Uuid
+  creationIdempotencyKey String?   @unique @map("creation_idempotency_key")
+  expiresAt              DateTime? @map("expires_at") @db.Timestamptz
+  voidedAt               DateTime? @map("voided_at") @db.Timestamptz
+  voidedByUserId         String?   @map("voided_by_user_id") @db.Uuid
+  voidReason             String?   @map("void_reason")
+  createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt              DateTime  @default(now()) @map("updated_at") @db.Timestamptz
+
+  redemptions DiscountCodeRedemption[]
+
+  @@index([classId])
+  @@index([status])
+  @@map("discount_codes")
+  @@schema("finance_mlm")
+}
+
+// One use of a DiscountCode: the 0 THB PaymentIntent that activated the
+// student's enrollment (or book-cycle package).
+model DiscountCodeRedemption {
+  redemptionId        String   @id @default(dbgenerated("gen_random_uuid()")) @map("redemption_id") @db.Uuid
+  discountCodeId      String   @map("discount_code_id") @db.Uuid
+  studentUserId       String   @map("student_user_id") @db.Uuid
+  classId             String   @map("class_id") @db.Uuid
+  enrollmentId        String   @map("enrollment_id") @db.Uuid
+  enrollmentPackageId String?  @map("enrollment_package_id") @db.Uuid
+  paymentIntentId     String   @unique @map("payment_intent_id") @db.Uuid
+  originalAmountMinor BigInt   @map("original_amount_minor")
+  discountAmountMinor BigInt   @map("discount_amount_minor")
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  discountCode  DiscountCode  @relation(fields: [discountCodeId], references: [discountCodeId])
+  paymentIntent PaymentIntent @relation(fields: [paymentIntentId], references: [paymentIntentId], onDelete: Cascade)
+
+  @@unique([discountCodeId, studentUserId])
+  @@index([enrollmentId])
+  @@index([studentUserId])
+  @@map("discount_code_redemptions")
   @@schema("finance_mlm")
 }
 

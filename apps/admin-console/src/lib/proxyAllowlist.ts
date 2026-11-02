@@ -78,6 +78,14 @@ export const PROXY_RULES: readonly ProxyRule[] = [
   { methods: ["GET"], path: "/v1/coupons/tutors", service: "finance", roles: ADMIN },
   { methods: ["PATCH"], path: "/v1/coupons/:id", service: "finance", roles: ADMIN },
 
+  // ── Class discount codes + classes created for tutors ──
+  // The student checkout endpoints (/v1/discount-codes/preview|redeem) are deliberately not listed.
+  { methods: ["GET", "POST"], path: "/v1/discount-codes", service: "finance", roles: ADMIN },
+  { methods: ["POST"], path: "/v1/discount-codes/:id/void", service: "finance", roles: ADMIN },
+  { methods: ["GET"], path: "/v1/discount-codes/:id/redemptions", service: "finance", roles: ADMIN },
+  { methods: ["GET", "POST"], path: "/v1/admin/classes", service: "learning", roles: ADMIN },
+  { methods: ["GET"], path: "/v1/books", service: "learning", roles: ADMIN },
+
   // ── Dev tools (G5 / DevToolbar), only with ENABLE_DEV_ROUTES=true ──
   { methods: ["GET", "POST"], path: "/v1/dev/users", service: "finance", roles: ADMIN, devOnly: true },
   { methods: ["PATCH", "DELETE"], path: "/v1/dev/users/:id", service: "finance", roles: ADMIN, devOnly: true },

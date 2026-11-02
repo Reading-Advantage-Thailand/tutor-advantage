@@ -160,6 +160,34 @@ async function getUnreadMessageCount(userId: string) {
   return Number(rows[0]?.count ?? 0);
 }
 
+/**
+ * Admin-created classes still waiting for the tutor to set the name, schedule
+ * and meeting link, oldest first, with how many students have already paid.
+ */
+async function getClassesNeedingSetup(
+  classes: Array<{ classId: string; title: string; setupRequiredAt: Date | null; book?: { title: string } | null }>,
+) {
+  const pending = classes
+    .filter((cls): cls is typeof cls & { setupRequiredAt: Date } => cls.setupRequiredAt !== null)
+    .sort((a, b) => a.setupRequiredAt.getTime() - b.setupRequiredAt.getTime());
+  if (pending.length === 0) return [];
+
+  const activeCounts = await prisma.enrollment.groupBy({
+    by: ["classId"],
+    where: { classId: { in: pending.map((cls) => cls.classId) }, status: "ACTIVE" },
+    _count: { _all: true },
+  });
+  const activeByClassId = new Map(activeCounts.map((row) => [row.classId, row._count._all]));
+
+  return pending.map((cls) => ({
+    classId: cls.classId,
+    title: cls.title,
+    bookTitle: cls.book?.title ?? null,
+    activeStudents: activeByClassId.get(cls.classId) ?? 0,
+    setupRequiredAt: cls.setupRequiredAt.toISOString(),
+  }));
+}
+
 async function getDashboardHistory(userId: string, from: Date, to: Date) {
   const participations = await prisma.sessionParticipant.findMany({
     where: {
@@ -405,7 +433,10 @@ export async function getDashboardSummary(
       nextSession: formatNextSession(c.scheduleDescription, (c as any).scheduleData),
     }));
 
-    const unreadMessages = await getUnreadMessageCount(userId);
+    const [unreadMessages, classesNeedingSetup] = await Promise.all([
+      getUnreadMessageCount(userId),
+      getClassesNeedingSetup(classes),
+    ]);
 
     const classesThisWeek = classes.length > 0 ? Math.min(classes.length, 5) : 0;
 
@@ -415,6 +446,7 @@ export async function getDashboardSummary(
       classesThisWeek,
       recentClasses,
       unreadMessages,
+      classesNeedingSetup,
     });
   } catch (error_err) {
     const error = error_err as Error & { code?: string; details?: string; };

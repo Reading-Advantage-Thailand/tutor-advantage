@@ -38,12 +38,14 @@ export async function handleOAuthCallback(req: Request, res: Response) {
     let name = "";
     let picture = "";
     let profilePhoneNumber: string | undefined = undefined;
+    let emailVerified: boolean | undefined = undefined;
 
     // Route to appropriate OAuth handler
     if (provider === "google") {
       const profile = await verifyGoogleToken(code, redirectUri, codeVerifier ?? undefined);
       providerSubject = profile.id;
       email = profile.email;
+      emailVerified = profile.emailVerified;
       name = profile.name;
       picture = profile.picture || "";
     } else if (provider === "line") {
@@ -72,6 +74,7 @@ export async function handleOAuthCallback(req: Request, res: Response) {
       picture,
       typeof sponsorTutorId === "string" ? sponsorTutorId : null,
       profilePhoneNumber,
+      emailVerified,
     );
 
     return res.status(200).json(authResult);

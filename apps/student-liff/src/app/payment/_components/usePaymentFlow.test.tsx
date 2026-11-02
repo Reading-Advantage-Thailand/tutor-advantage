@@ -16,6 +16,8 @@ const api = vi.hoisted(() => ({
   getPaymentStatus: vi.fn(),
   getPaymentQrCode: vi.fn(),
   createPaymentIntent: vi.fn(),
+  previewDiscountCode: vi.fn(),
+  redeemDiscountCode: vi.fn(),
 }));
 const router = vi.hoisted(() => ({ replace: vi.fn(), push: vi.fn(), back: vi.fn() }));
 const toast = vi.hoisted(() => ({ error: vi.fn(), info: vi.fn(), success: vi.fn() }));
@@ -36,6 +38,7 @@ vi.mock("../../../components/providers/LiffProvider", () => ({
 vi.mock("./omise", () => omise);
 
 import { usePaymentFlow, type PaymentFlow, type PaymentFlowParams } from "./usePaymentFlow";
+import { t } from "../../../lib/i18n";
 import { QR_LIFETIME_MS } from "../../../lib/paymentFlow";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -59,6 +62,24 @@ const CLASS = {
 const ADULT = { user: { dateOfBirth: "1990-01-01" } };
 const MINOR = { user: { dateOfBirth: "2014-03-03" } };
 const PENDING_ENROLLMENT = { status: "PENDING", enrollmentId: "e1", enrollmentPackageId: "p1", amountSatang: 320000 };
+const QUOTE = {
+  code: "DC-ABCD-2345",
+  discountCodeId: "dc1",
+  classId: "c1",
+  cycleId: null,
+  originalAmountSatang: 320000,
+  discountSatang: 320000,
+  finalAmountSatang: 0,
+};
+const REDEEMED = {
+  intent: { paymentIntentId: "pi-dc", status: "SUCCESS", method: "DISCOUNT_CODE", amountMinor: 0 },
+  checkout: null,
+  discount: QUOTE,
+};
+
+function apiError(status: number, code?: string) {
+  return Object.assign(new Error(code ?? `API Error ${status}`), { status, code });
+}
 
 function intentResponse(overrides: Record<string, unknown> = {}, checkout: Record<string, unknown> | null = {}) {
   return {
@@ -118,6 +139,8 @@ describe("usePaymentFlow", () => {
     api.getPaymentQrCode.mockResolvedValue({ chargeId: "ch1", dataUri: "data:image/png;base64,QR" });
     api.getPaymentStatus.mockResolvedValue(intentResponse());
     api.getPaymentConfig.mockResolvedValue({ configured: true, publicKey: "pkey_test" });
+    api.previewDiscountCode.mockResolvedValue({ discount: QUOTE });
+    api.redeemDiscountCode.mockResolvedValue(REDEEMED);
 
     window.history.replaceState(null, "", "/payment?classId=c1&extra=1");
     container = document.createElement("div");
@@ -415,6 +438,247 @@ describe("usePaymentFlow", () => {
     expect(toast.error).toHaveBeenCalledWith("มีรายการจ่ายเงินอื่นค้างอยู่ รอสักครู่แล้วลองใหม่ หรือติดต่อทีมงานนะ");
     expect(flow.qr.ctaMode).toBe("create");
     expect(flow.loading).toBe(false);
+  });
+
+  describe("discount code", () => {
+    const applyCode = async (code = "DC-ABCD-2345") => {
+      await act(async () => flow.discount.setCode(code));
+      await act(async () => flow.actions.applyDiscountCode());
+      await settle();
+    };
+
+    it("apply → ฿0 → enroll first, then redeem → success with the class to enter", async () => {
+      api.enrollClass.mockResolvedValue({ ...PENDING_ENROLLMENT, classId: "c1" });
+      await render();
+      expect(flow.discount.available).toBe(true);
+
+      await applyCode(" dc-abcd -2345 ");
+      expect(api.previewDiscountCode).toHaveBeenCalledWith({ code: "DC-ABCD-2345", classId: "c1", cycleId: undefined });
+      expect(flow.discount.quote).toEqual(QUOTE);
+      expect(flow.discount.code).toBe("DC-ABCD-2345");
+      expect(flow.discount.free).toBe(true);
+      expect(flow.amountSatang).toBe(0);
+      expect(api.enrollClass).not.toHaveBeenCalled(); // checking a code writes nothing
+
+      await act(async () => flow.actions.proceed());
+      await settle();
+
+      expect(api.enrollClass).toHaveBeenCalledWith("c1", null);
+      expect(api.redeemDiscountCode).toHaveBeenCalledWith({
+        code: "DC-ABCD-2345",
+        enrollmentId: "e1",
+        enrollmentPackageId: "p1",
+      });
+      expect(api.enrollClass.mock.invocationCallOrder[0]).toBeLessThan(
+        api.redeemDiscountCode.mock.invocationCallOrder[0],
+      );
+      expect(api.createPaymentIntent).not.toHaveBeenCalled();
+      expect(api.getPaymentQrCode).not.toHaveBeenCalled();
+      expect(flow.step).toBe("success");
+      expect(flow.amountSatang).toBe(0);
+      expect(flow.receiptMethod).toBe("DISCOUNT_CODE");
+      expect(flow.lessonClassId).toBe("c1");
+      expect(flow.loading).toBe(false);
+      expect(invalidateResource).toHaveBeenCalledWith("u1:");
+    });
+
+    it("book cycle: the quote and the redeem use the cycle package", async () => {
+      api.previewDiscountCode.mockResolvedValue({
+        discount: { ...QUOTE, cycleId: "cy1", originalAmountSatang: 180000, discountSatang: 180000 },
+      });
+      api.prepareClassBookCycleAccess.mockResolvedValue({ ...PENDING_ENROLLMENT, enrollmentPackageId: "p2" });
+      await render(params({ cycleId: "cy1" }));
+
+      await applyCode();
+      expect(api.previewDiscountCode).toHaveBeenCalledWith({ code: "DC-ABCD-2345", classId: "c1", cycleId: "cy1" });
+      expect(flow.discount.free).toBe(true);
+
+      await act(async () => flow.actions.proceed());
+      await settle();
+      expect(api.prepareClassBookCycleAccess).toHaveBeenCalledWith("c1", "cy1");
+      expect(api.redeemDiscountCode).toHaveBeenCalledWith(expect.objectContaining({ enrollmentPackageId: "p2" }));
+      expect(flow.step).toBe("success");
+      expect(flow.lessonClassId).toBe("c1");
+    });
+
+    it("a code rejected at redeem returns from the age check to select with the error on the field", async () => {
+      vi.spyOn(console, "warn").mockImplementation(() => {});
+      api.getCurrentUser.mockResolvedValue({ user: {} }); // no saved birthday → age check
+      api.updateProfile.mockResolvedValue({ user: { requiresGuardian: false } });
+      api.redeemDiscountCode.mockRejectedValue(apiError(409, "DISCOUNT_CODE_USED_UP"));
+      await render();
+      await applyCode();
+
+      await act(async () => flow.actions.proceed());
+      expect(flow.step).toBe("age-check");
+      expect(api.enrollClass).not.toHaveBeenCalled();
+
+      await act(async () => flow.ageCheck.setDateOfBirth("1990-01-01"));
+      await act(async () => flow.actions.submitAgeCheck());
+      await settle();
+
+      expect(api.updateProfile).toHaveBeenCalledWith("1990-01-01");
+      expect(api.enrollClass).toHaveBeenCalledTimes(1);
+      expect(api.redeemDiscountCode).toHaveBeenCalledTimes(1);
+      expect(flow.step).toBe("select");
+      expect(flow.discount.errorKey).toBe("payment.discount.errors.usedUp");
+      expect(t(flow.discount.errorKey ?? "payment.select.title")).toBe("โค้ดนี้ถูกใช้ครบจำนวนแล้ว");
+      // The code is no longer valid: back to the full price, keeping what was typed.
+      expect(flow.discount.quote).toBeNull();
+      expect(flow.discount.free).toBe(false);
+      expect(flow.discount.code).toBe("DC-ABCD-2345");
+      expect(flow.amountSatang).toBe(320000);
+      expect(flow.loading).toBe(false);
+      expect(toast.error).not.toHaveBeenCalled();
+
+      // Editing the field clears the error.
+      await act(async () => flow.discount.setCode("DC-ABCD-234"));
+      expect(flow.discount.errorKey).toBeNull();
+    });
+
+    it("a payment still in progress keeps the code applied and shows the message on the field", async () => {
+      vi.spyOn(console, "warn").mockImplementation(() => {});
+      api.redeemDiscountCode.mockRejectedValue(apiError(409, "PAYMENT_IN_PROGRESS"));
+      await render();
+      await applyCode();
+      await act(async () => flow.actions.proceed());
+      await settle();
+
+      expect(flow.step).toBe("select");
+      expect(flow.discount.errorKey).toBe("payment.errors.paymentInProgress");
+      expect(flow.discount.quote).toEqual(QUOTE);
+      expect(flow.discount.free).toBe(true);
+      expect(toast.error).not.toHaveBeenCalled();
+    });
+
+    it("other checkout errors keep the existing toast", async () => {
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      api.enrollClass.mockRejectedValue(apiError(409, "CLASS_FULL"));
+      await render();
+      await applyCode();
+      await act(async () => flow.actions.proceed());
+      await settle();
+
+      expect(api.redeemDiscountCode).not.toHaveBeenCalled();
+      expect(toast.error).toHaveBeenCalledWith(t("payment.errors.classFull"));
+      expect(flow.discount.errorKey).toBeNull();
+      expect(flow.discount.free).toBe(true);
+      expect(flow.step).toBe("select");
+    });
+
+    it("an already-active enrollment goes straight to success without using the code", async () => {
+      api.enrollClass.mockResolvedValue({ status: "ACTIVE", enrollmentId: "e1", classId: "c1" });
+      await render();
+      await applyCode();
+      await act(async () => flow.actions.proceed());
+      await settle();
+
+      expect(flow.step).toBe("success");
+      expect(api.redeemDiscountCode).not.toHaveBeenCalled();
+      expect(api.createPaymentIntent).not.toHaveBeenCalled();
+      expect(flow.amountSatang).toBe(0);
+      expect(flow.receiptMethod).toBe("DISCOUNT_CODE");
+    });
+
+    it("shows preview errors on the field and waits for the check before proceeding", async () => {
+      api.previewDiscountCode.mockRejectedValueOnce(apiError(404, "DISCOUNT_CODE_NOT_FOUND"));
+      await render();
+      await applyCode("DC-WRONG");
+      expect(flow.discount.errorKey).toBe("payment.discount.errors.notFound");
+      expect(flow.discount.quote).toBeNull();
+      expect(flow.discount.applying).toBe(false);
+
+      api.previewDiscountCode.mockRejectedValueOnce(apiError(429));
+      await applyCode("DC-WRONG");
+      expect(flow.discount.errorKey).toBe("payment.discount.errors.tooManyAttempts");
+
+      let resolvePreview: (value: unknown) => void = () => {};
+      api.previewDiscountCode.mockReturnValueOnce(new Promise((resolve) => (resolvePreview = resolve)));
+      await act(async () => flow.discount.setCode("DC-ABCD-2345"));
+      expect(flow.discount.errorKey).toBeNull();
+      await act(async () => void flow.actions.applyDiscountCode());
+      expect(flow.discount.applying).toBe(true);
+      expect(flow.canProceed).toBe(false);
+      await act(async () => flow.actions.proceed());
+      expect(api.enrollClass).not.toHaveBeenCalled();
+
+      await act(async () => resolvePreview({ discount: QUOTE }));
+      await settle();
+      expect(flow.discount.applying).toBe(false);
+      expect(flow.canProceed).toBe(true);
+      expect(flow.discount.free).toBe(true);
+
+      // × removes the code: the paid flow is back, unchanged.
+      await act(async () => flow.actions.removeDiscountCode());
+      expect(flow.discount.quote).toBeNull();
+      expect(flow.discount.code).toBe("");
+      expect(flow.amountSatang).toBe(320000);
+      await act(async () => flow.actions.proceed());
+      await settle();
+      expect(api.redeemDiscountCode).not.toHaveBeenCalled();
+      expect(api.createPaymentIntent).toHaveBeenCalledWith(
+        expect.objectContaining({ amountSatang: 320000, method: "promptpay" }),
+      );
+      expect(flow.step).toBe("qr");
+    });
+
+    it("checks a typed code that was not applied before any checkout starts", async () => {
+      await render();
+      await act(async () => flow.discount.setCode("dc-abcd-2345"));
+
+      // The main button with an unapplied code: the code is checked, nothing is paid yet.
+      await act(async () => flow.actions.proceed());
+      await settle();
+      expect(api.previewDiscountCode).toHaveBeenCalledWith({ code: "DC-ABCD-2345", classId: "c1", cycleId: undefined });
+      expect(api.enrollClass).not.toHaveBeenCalled();
+      expect(api.createPaymentIntent).not.toHaveBeenCalled();
+      expect(flow.step).toBe("select");
+      expect(flow.discount.free).toBe(true);
+
+      // The next tap is the ฿0 checkout.
+      await act(async () => flow.actions.proceed());
+      await settle();
+      expect(api.redeemDiscountCode).toHaveBeenCalledTimes(1);
+      expect(api.createPaymentIntent).not.toHaveBeenCalled();
+      expect(flow.step).toBe("success");
+    });
+
+    it("keeps a rejected typed code from falling through to a full-price checkout", async () => {
+      api.previewDiscountCode.mockRejectedValue(apiError(404, "DISCOUNT_CODE_NOT_FOUND"));
+      await render();
+      await act(async () => flow.discount.setCode("DC-WRONG"));
+      await act(async () => flow.actions.proceed());
+      await settle();
+
+      expect(flow.discount.errorKey).toBe("payment.discount.errors.notFound");
+      expect(api.enrollClass).not.toHaveBeenCalled();
+      expect(api.createPaymentIntent).not.toHaveBeenCalled();
+      expect(flow.step).toBe("select");
+
+      // Clearing the field brings back the paid checkout.
+      await act(async () => flow.discount.setCode(""));
+      await act(async () => flow.actions.proceed());
+      await settle();
+      expect(api.previewDiscountCode).toHaveBeenCalledTimes(1);
+      expect(api.createPaymentIntent).toHaveBeenCalledTimes(1);
+      expect(flow.step).toBe("qr");
+    });
+
+    it("ignores a quote for another class and offers no code on a referral-only link", async () => {
+      api.previewDiscountCode.mockResolvedValue({ discount: { ...QUOTE, classId: "c-other" } });
+      await render();
+      await applyCode();
+      expect(flow.discount.quote).toBeNull();
+      expect(flow.discount.errorKey).toBe("payment.discount.errors.checkFailed");
+      act(() => root.unmount());
+
+      root = createRoot(container);
+      await render(params({ classId: "", referralToken: "tok" }));
+      expect(flow.discount.available).toBe(false);
+      expect(flow.lessonClassId).toBeNull();
+      await applyCode();
+      expect(api.previewDiscountCode).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("with fake timers", () => {

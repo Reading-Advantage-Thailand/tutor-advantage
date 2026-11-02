@@ -87,6 +87,7 @@ describe("handleOAuthCallback", () => {
     verifyGoogleToken.mockResolvedValue({
       id: "google-subject",
       email: "ada@example.com",
+      emailVerified: true,
       name: "Ada",
       picture: "avatar.png",
     });
@@ -118,9 +119,45 @@ describe("handleOAuthCallback", () => {
       "avatar.png",
       "tutor-1",
       undefined,
+      true,
     );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ sessionToken: "session-token" }));
+  });
+
+  it("returns unauthorized when an unverified Google email would claim an existing account", async () => {
+    verifyGoogleToken.mockResolvedValue({
+      id: "google-subject",
+      email: "pending.tutor@example.com",
+      emailVerified: false,
+      name: "Someone",
+      picture: "",
+    });
+    processOAuthLogin.mockRejectedValue(new Error("EMAIL_NOT_VERIFIED"));
+    const req = { id: "req-unverified", body: { provider: "google", code: "code-1" } };
+    const res = createResponse();
+
+    await handleOAuthCallback(req as never, res as never);
+
+    expect(processOAuthLogin).toHaveBeenCalledWith(
+      "google",
+      "google-subject",
+      "pending.tutor@example.com",
+      "Someone",
+      "",
+      null,
+      undefined,
+      false,
+    );
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({
+      error: {
+        code: "UNAUTHORIZED",
+        message: "Invalid authorization code or provider error",
+        details: "EMAIL_NOT_VERIFIED",
+        requestId: "req-unverified",
+      },
+    });
   });
 
   it("maps OAuth verifier failures to unauthorized responses", async () => {
@@ -205,6 +242,7 @@ describe("handleOAuthCallback", () => {
       "line-avatar.png",
       null,
       "+66899999999",
+      undefined,
     );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ sessionToken: "session-token-line" }));

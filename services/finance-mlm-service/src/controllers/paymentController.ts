@@ -7,9 +7,11 @@ import {
 } from "@tutor-advantage/shared-config";
 import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
+import type { Prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import crypto from "crypto";
 import { buildReceiptNumber } from "../services/taxService";
+import { isOmiseIntent } from "../services/paymentMethods";
 import {
   createOmiseCharge,
   downloadOmiseDocumentAsDataUri,
@@ -264,7 +266,7 @@ export async function createPaymentIntent(
       }
 
       if (existingByKey?.providerRef) {
-        const checkout = await buildCheckoutDetails(existingByKey.providerRef);
+        const checkout = await buildCheckoutDetails(existingByKey);
         return res.status(200).json({
           message: "Existing payment intent returned by idempotency key",
           intent: serializePaymentIntent(existingByKey),
@@ -304,7 +306,7 @@ export async function createPaymentIntent(
     }
 
     if (existingIntent?.providerRef) {
-      const checkout = await buildCheckoutDetails(existingIntent.providerRef);
+      const checkout = await buildCheckoutDetails(existingIntent);
       return res.status(200).json({
         message: "Existing pending payment intent returned",
         intent: serializePaymentIntent(existingIntent),
@@ -325,7 +327,7 @@ export async function createPaymentIntent(
       orderBy: { updatedAt: "desc" },
     });
 
-    if (failedIntent?.providerRef) {
+    if (failedIntent?.providerRef && isOmiseIntent(failedIntent)) {
       let charge;
       try {
         charge = await retrieveOmiseCharge(failedIntent.providerRef);
@@ -537,9 +539,13 @@ export async function getPaymentStatus(
     }
 
     let currentIntent = intent;
-    let checkout = await buildCheckoutDetails(intent.providerRef);
+    let checkout = await buildCheckoutDetails(intent);
 
-    if (intent.providerRef && ["PENDING", "FAILED"].includes(intent.status)) {
+    if (
+      intent.providerRef &&
+      isOmiseIntent(intent) &&
+      ["PENDING", "FAILED"].includes(intent.status)
+    ) {
       const charge = await retrieveOmiseCharge(intent.providerRef);
       checkout = buildCheckoutDetailsFromCharge(charge);
 
@@ -626,6 +632,16 @@ export async function getPromptPayQrCode(
       });
     }
 
+    if (!isOmiseIntent(intent)) {
+      return res.status(404).json({
+        error: {
+          code: "QR_NOT_FOUND",
+          message: "This payment was not made with PromptPay and has no QR code",
+          requestId: req.id,
+        },
+      });
+    }
+
     const charge = await retrieveOmiseCharge(intent.providerRef);
     const downloadUri = charge.source?.scannable_code?.image?.download_uri;
 
@@ -661,117 +677,129 @@ export async function getPromptPayQrCode(
 }
 
 export async function fulfillPaymentIntent(paymentIntentId: string, providerRef?: string | null) {
-  return prisma.$transaction(async (tx) => {
-    const existingIntent = await tx.paymentIntent.findUnique({
-      where: { paymentIntentId },
-    });
+  return prisma.$transaction((tx) => fulfillPaymentIntentTx(tx, paymentIntentId, providerRef));
+}
 
-    if (!existingIntent) {
-      throw new Error("PAYMENT_INTENT_NOT_FOUND");
-    }
-
-    if (existingIntent.status === "SUCCESS") {
-      return existingIntent;
-    }
-
-    // A refunded / charged-back / disputed payment must never be re-activated
-    // by a late "paid" notification for the same charge.
-    if (SETTLED_NEGATIVE_STATUSES.includes(existingIntent.status)) {
-      return existingIntent;
-    }
-
-    const duplicateSuccess = await tx.paymentIntent.findFirst({
-      where: {
-        enrollmentId: existingIntent.enrollmentId,
-        enrollmentPackageId: existingIntent.enrollmentPackageId,
-        studentUserId: existingIntent.studentUserId,
-        status: { in: PAID_INTENT_STATUSES },
-        NOT: { paymentIntentId },
-      },
-    });
-
-    if (duplicateSuccess) {
-      return tx.paymentIntent.update({
-        where: { paymentIntentId },
-        data: { status: "FAILED", providerRef },
-      });
-    }
-
-    const fulfillmentEnrollment = await tx.enrollment.findUnique({
-      where: { enrollmentId: existingIntent.enrollmentId },
-      select: {
-        status: true,
-        classId: true,
-        class: { select: { tutorUserId: true } },
-      },
-    });
-    const earningTutorUserId = fulfillmentEnrollment?.class?.tutorUserId;
-    const cancelledEnrollment = !existingIntent.enrollmentPackageId
-      ? fulfillmentEnrollment
-      : null;
-
-    const intent = await tx.paymentIntent.update({
-      where: { paymentIntentId },
-      data: {
-        status: "SUCCESS",
-        providerRef,
-        paidAt: new Date(),
-        ...(earningTutorUserId ? { earningTutorUserId } : {}),
-      },
-    });
-
-    if (intent.enrollmentPackageId) {
-      await tx.enrollmentPackage.update({
-        where: { enrollmentPackageId: intent.enrollmentPackageId },
-        data: {
-          status: "ACTIVE",
-          paymentTransactionId: providerRef,
-        },
-      });
-    } else {
-      await tx.enrollment.update({
-        where: { enrollmentId: intent.enrollmentId },
-        data: {
-          status: "ACTIVE",
-          paymentTransactionId: providerRef,
-        },
-      });
-
-      if (cancelledEnrollment?.status === "CANCELLED") {
-        await tx.class.update({
-          where: { classId: cancelledEnrollment.classId },
-          data: { enrolledCount: { increment: 1 } },
-        });
-      }
-
-      await tx.enrollmentPackage.updateMany({
-        where: {
-          enrollmentId: intent.enrollmentId,
-          status: "PENDING_PAYMENT",
-        },
-        data: {
-          status: "ACTIVE",
-          paymentTransactionId: providerRef,
-        },
-      });
-    }
-
-    await tx.paymentReceipt.upsert({
-      where: { paymentIntentId },
-      update: {},
-      create: {
-        paymentIntentId,
-        studentUserId: intent.studentUserId,
-        receiptNumber: buildReceiptNumber(paymentIntentId),
-        grossAmountMinor: intent.amountMinor,
-        vatAmountMinor: 0n,
-        netAmountMinor: intent.amountMinor,
-        currency: intent.currency,
-      },
-    });
-
-    return intent;
+/**
+ * fulfillPaymentIntent() on a caller's transaction, so activation can commit
+ * or roll back together with other writes (discount code redemption). The
+ * returned intent is not SUCCESS when the payment was already settled or when
+ * another paid intent exists for the same target (this one is then FAILED).
+ */
+export async function fulfillPaymentIntentTx(
+  tx: Prisma.TransactionClient,
+  paymentIntentId: string,
+  providerRef?: string | null,
+) {
+  const existingIntent = await tx.paymentIntent.findUnique({
+    where: { paymentIntentId },
   });
+
+  if (!existingIntent) {
+    throw new Error("PAYMENT_INTENT_NOT_FOUND");
+  }
+
+  if (existingIntent.status === "SUCCESS") {
+    return existingIntent;
+  }
+
+  // A refunded / charged-back / disputed payment must never be re-activated
+  // by a late "paid" notification for the same charge.
+  if (SETTLED_NEGATIVE_STATUSES.includes(existingIntent.status)) {
+    return existingIntent;
+  }
+
+  const duplicateSuccess = await tx.paymentIntent.findFirst({
+    where: {
+      enrollmentId: existingIntent.enrollmentId,
+      enrollmentPackageId: existingIntent.enrollmentPackageId,
+      studentUserId: existingIntent.studentUserId,
+      status: { in: PAID_INTENT_STATUSES },
+      NOT: { paymentIntentId },
+    },
+  });
+
+  if (duplicateSuccess) {
+    return tx.paymentIntent.update({
+      where: { paymentIntentId },
+      data: { status: "FAILED", providerRef },
+    });
+  }
+
+  const fulfillmentEnrollment = await tx.enrollment.findUnique({
+    where: { enrollmentId: existingIntent.enrollmentId },
+    select: {
+      status: true,
+      classId: true,
+      class: { select: { tutorUserId: true } },
+    },
+  });
+  const earningTutorUserId = fulfillmentEnrollment?.class?.tutorUserId;
+  const cancelledEnrollment = !existingIntent.enrollmentPackageId
+    ? fulfillmentEnrollment
+    : null;
+
+  const intent = await tx.paymentIntent.update({
+    where: { paymentIntentId },
+    data: {
+      status: "SUCCESS",
+      providerRef,
+      paidAt: new Date(),
+      ...(earningTutorUserId ? { earningTutorUserId } : {}),
+    },
+  });
+
+  if (intent.enrollmentPackageId) {
+    await tx.enrollmentPackage.update({
+      where: { enrollmentPackageId: intent.enrollmentPackageId },
+      data: {
+        status: "ACTIVE",
+        paymentTransactionId: providerRef,
+      },
+    });
+  } else {
+    await tx.enrollment.update({
+      where: { enrollmentId: intent.enrollmentId },
+      data: {
+        status: "ACTIVE",
+        paymentTransactionId: providerRef,
+      },
+    });
+
+    if (cancelledEnrollment?.status === "CANCELLED") {
+      await tx.class.update({
+        where: { classId: cancelledEnrollment.classId },
+        data: { enrolledCount: { increment: 1 } },
+      });
+    }
+
+    await tx.enrollmentPackage.updateMany({
+      where: {
+        enrollmentId: intent.enrollmentId,
+        status: "PENDING_PAYMENT",
+      },
+      data: {
+        status: "ACTIVE",
+        paymentTransactionId: providerRef,
+      },
+    });
+  }
+
+  await tx.paymentReceipt.upsert({
+    where: { paymentIntentId },
+    update: {},
+    create: {
+      paymentIntentId,
+      studentUserId: intent.studentUserId,
+      receiptNumber: buildReceiptNumber(paymentIntentId),
+      grossAmountMinor: intent.amountMinor,
+      vatAmountMinor: 0n,
+      netAmountMinor: intent.amountMinor,
+      currency: intent.currency,
+    },
+  });
+
+  return intent;
 }
 
 export async function confirmMockPayment(
@@ -1139,7 +1167,7 @@ function getWebhookEventId(payload: unknown, providerRef: unknown) {
     .digest("hex")}`;
 }
 
-function serializePaymentIntent(intent: {
+export function serializePaymentIntent(intent: {
   paymentIntentId: string;
   enrollmentId: string;
   enrollmentPackageId?: string | null;
@@ -1166,15 +1194,16 @@ function isTerminalChargeStatus(status: string) {
   return ["failed", "expired", "reversed"].includes(status);
 }
 
-async function buildCheckoutDetails(providerRef?: string | null) {
-  if (!providerRef) return null;
+async function buildCheckoutDetails(intent: { method: string; providerRef: string | null }) {
+  // Only an Omise charge has checkout details (a discount code payment has none).
+  if (!intent.providerRef || !isOmiseIntent(intent)) return null;
 
   try {
-    const charge = await retrieveOmiseCharge(providerRef);
+    const charge = await retrieveOmiseCharge(intent.providerRef);
     return buildCheckoutDetailsFromCharge(charge);
   } catch (error) {
     logger.error("Could not retrieve Omise checkout details:", error);
-    return { providerRef };
+    return { providerRef: intent.providerRef };
   }
 }
 
@@ -1234,8 +1263,16 @@ function getClientIp(req: Request) {
   return req.ip;
 }
 
-export async function getPaymentGuardianGate(userId: string) {
-  const student = await prisma.user.findUnique({
+/**
+ * Age / guardian checks every payment needs. Pass `client` (a transaction)
+ * when calling from inside an interactive transaction, so the check does not
+ * wait for a second pool connection while the transaction holds one.
+ */
+export async function getPaymentGuardianGate(
+  userId: string,
+  client: Pick<Prisma.TransactionClient, "user" | "userConsent"> = prisma,
+) {
+  const student = await client.user.findUnique({
     where: { userId },
     select: { dateOfBirth: true },
   });
@@ -1248,7 +1285,7 @@ export async function getPaymentGuardianGate(userId: string) {
   }
   if (!isUnderGuardianAge(student.dateOfBirth)) return null;
 
-  const guardianConsent = await prisma.userConsent.findFirst({
+  const guardianConsent = await client.userConsent.findFirst({
     where: {
       userId,
       consentType: GUARDIAN_CONSENT_TYPE,

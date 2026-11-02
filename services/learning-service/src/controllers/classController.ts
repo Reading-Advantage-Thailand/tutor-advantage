@@ -13,7 +13,13 @@ import { originalPackagePrice } from "../services/classPackagePrice";
 const MAX_CLASS_HOURS = 22;
 // Keep a server-side ceiling on tutor-controlled prices. This is a fraud
 // guard; the client must not be able to turn a class into an unbounded charge.
-const MAX_PACKAGE_PRICE_SATANG = 1_000_000;
+export const MAX_PACKAGE_PRICE_SATANG = 1_000_000;
+const CLASS_TITLE_MAX = 120;
+const MEETING_URL_MAX = 2048;
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const SCHEDULE_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const SCHEDULE_TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 // Keep the legacy code until every deployed database has run the Reading rename migration.
 const AVAILABLE_BOOK_CODES = new Set(["Reading 3.1", "Origins 3.1"]);
 // Adventure 1 is being held back while Primary starts from Origins 2.
@@ -28,7 +34,7 @@ function isBookAvailable(book?: { bookCode?: string | null } | null) {
   );
 }
 
-function unavailableBookResponse(req: AuthenticatedRequest) {
+export function unavailableBookResponse(req: AuthenticatedRequest) {
   return {
     error: {
       code: "BOOK_UNAVAILABLE",
@@ -36,6 +42,86 @@ function unavailableBookResponse(req: AuthenticatedRequest) {
       requestId: req.id,
     },
   };
+}
+
+/**
+ * Book for a new class, matched by UUID or bookCode, that is currently open for
+ * new classes. Shared by tutor and admin class creation; each caller maps the
+ * failure to its own error response.
+ */
+export async function findClassBook(bookIdOrCode: string) {
+  const book = await prisma.book.findFirst({
+    where: UUID_RE.test(bookIdOrCode) ? { bookId: bookIdOrCode } : { bookCode: bookIdOrCode },
+  });
+  if (!book) return { book: null, error: "NOT_FOUND" as const };
+  if (!isBookAvailable(book)) return { book: null, error: "UNAVAILABLE" as const };
+  return { book, error: null };
+}
+
+/**
+ * 400 body when a schedule's hours pass the class limit: the base cap plus any
+ * coupon-granted free hours. A schedule without totalHours is not checked.
+ */
+function hoursExceededResponse(req: AuthenticatedRequest, totalHours: unknown, extraHours: number) {
+  const hoursLimit = MAX_CLASS_HOURS + extraHours;
+  if (!(typeof totalHours === "number" && totalHours > hoursLimit)) return null;
+  return {
+    error: {
+      code: "HOURS_EXCEEDED",
+      message: `Scheduled teaching hours (${totalHours}) exceed the ${hoursLimit}-hour limit`,
+      requestId: req.id,
+    },
+  };
+}
+
+/** Class name from a form: trimmed, 1-120 characters. Null when invalid. */
+export function parseClassTitle(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const title = raw.trim();
+  return title.length >= 1 && title.length <= CLASS_TITLE_MAX ? title : null;
+}
+
+/**
+ * Meeting link from the setup form: trimmed, and "" or null clears it. Links
+ * typed without a scheme (meet.google.com/...) are kept as typed, like
+ * updateMeetingUrl does; only non-web schemes such as javascript: are refused.
+ */
+export function parseMeetingUrl(raw: unknown): { ok: true; value: string | null } | { ok: false } {
+  if (raw === null) return { ok: true, value: null };
+  if (typeof raw !== "string" || raw.length > MEETING_URL_MAX) return { ok: false };
+  const url = raw.trim();
+  if (!url) return { ok: true, value: null };
+  // Read the scheme the way a browser does: it drops tabs/newlines anywhere and
+  // leading control characters, so "java\tscript:" is still javascript:.
+  const asParsed = url.replace(/[\t\n\r]/g, "").replace(/^[\u0000-\u0020]+/, "");
+  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(asParsed)?.[1]?.toLowerCase();
+  if (scheme && scheme !== "http" && scheme !== "https") return { ok: false };
+  return { ok: true, value: url };
+}
+
+/** Dated schedule from the tutor schedule editor: [{ date: "yyyy-MM-dd", start: "HH:mm", end: "HH:mm" }]. */
+export function isDatedSchedule(value: unknown): value is Array<{ date: string; start: string; end: string }> {
+  return (
+    Array.isArray(value) &&
+    value.length > 0 &&
+    value.every(
+      (entry) =>
+        Boolean(entry) &&
+        typeof entry === "object" &&
+        typeof entry.date === "string" &&
+        typeof entry.start === "string" &&
+        typeof entry.end === "string" &&
+        SCHEDULE_DATE_RE.test(entry.date) &&
+        SCHEDULE_TIME_RE.test(entry.start) &&
+        SCHEDULE_TIME_RE.test(entry.end) &&
+        // Zero-padded HH:mm compares correctly as text.
+        entry.start < entry.end,
+    )
+  );
+}
+
+function isValidDateInput(value: unknown): value is string {
+  return typeof value === "string" && value.trim() !== "" && !Number.isNaN(new Date(value).getTime());
 }
 
 const curatedArticleOrder = new Map<string, number>(
@@ -174,26 +260,13 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
       couponHours = validated.hours;
     }
 
-    const hoursLimit = MAX_CLASS_HOURS + couponHours;
-    if (typeof totalHours === "number" && totalHours > hoursLimit) {
-      return res.status(400).json({
-        error: {
-          code: "HOURS_EXCEEDED",
-          message: `Scheduled teaching hours (${totalHours}) exceed the ${hoursLimit}-hour limit`,
-          requestId: req.id,
-        },
-      });
+    const hoursError = hoursExceededResponse(req, totalHours, couponHours);
+    if (hoursError) {
+      return res.status(400).json(hoursError);
     }
 
-    const isUuid =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-        bookId,
-      );
-    let book = await prisma.book.findFirst({
-      where: isUuid ? { bookId: bookId } : { bookCode: bookId },
-    });
-
-    if (!book) {
+    const bookLookup = await findClassBook(bookId);
+    if (bookLookup.error === "NOT_FOUND") {
       return res.status(404).json({
         error: {
           code: "NOT_FOUND",
@@ -203,9 +276,10 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
       });
     }
 
-    if (!isBookAvailable(book)) {
+    if (bookLookup.error === "UNAVAILABLE") {
       return res.status(403).json(unavailableBookResponse(req));
     }
+    const book = bookLookup.book;
 
     // Demo classes always teach the book's first article (fixed content),
     // so the book must have at least one. They expire 24 hours after creation.
@@ -741,6 +815,8 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
       isDemo: (c as any).isDemo ?? false,
       expiresAt: (c as any).expiresAt ?? null,
       referralToken: (c as any).referrals?.[0]?.token ?? null,
+      // Admin-created class still waiting for the tutor's name/schedule/link setup.
+      setupRequired: Boolean(c.setupRequiredAt),
     }));
 
     return res.status(200).json({ classes: mappedClasses });
@@ -941,6 +1017,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       scheduleData: cls.scheduleData || null,
       meetingUrl:
         cls.tutorUserId === userId || isActiveEnrollment ? cls.meetingUrl || "" : "",
+      setupRequired: Boolean(cls.setupRequiredAt),
       tutor: {
         name: tutor?.displayName || "Unknown Tutor",
         initials: getInitials(tutor?.displayName),
@@ -1302,15 +1379,9 @@ export async function rescheduleClass(req: AuthenticatedRequest, res: Response) 
     }
 
     // Coupon-granted free hours extend the schedulable limit beyond the base cap.
-    const hoursLimit = MAX_CLASS_HOURS + (cls.freeHours || 0);
-    if (typeof totalHours === "number" && totalHours > hoursLimit) {
-      return res.status(400).json({
-        error: {
-          code: "HOURS_EXCEEDED",
-          message: `Scheduled teaching hours (${totalHours}) exceed the ${hoursLimit}-hour limit`,
-          requestId: req.id,
-        },
-      });
+    const hoursError = hoursExceededResponse(req, totalHours, cls.freeHours || 0);
+    if (hoursError) {
+      return res.status(400).json(hoursError);
     }
 
     const updated = await prisma.class.update({
@@ -1357,6 +1428,162 @@ export async function rescheduleClass(req: AuthenticatedRequest, res: Response) 
         requestId: req.id,
       },
     });
+  }
+}
+
+/**
+ * Tutor completes a class an admin created on their behalf (setupRequiredAt is
+ * set): class name, schedule and, optionally, the meeting link. Students may
+ * already have paid, so they get a "class is ready" LINE message instead of the
+ * "schedule changed" one rescheduleClass sends.
+ */
+export async function setupClass(req: AuthenticatedRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    const { classId } = req.params;
+    const body = req.body ?? {};
+    const { scheduleDescription, scheduleData, startsAt, endsAt, totalHours } = body;
+
+    if (!userId || req.user?.role !== "TUTOR") {
+      return res.status(401).json({
+        error: {
+          code: "UNAUTHORIZED_ROLE",
+          message: "Only tutors can set up classes",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const cls = UUID_RE.test(classId)
+      ? await prisma.class.findUnique({
+          where: { classId },
+          include: {
+            enrollments: {
+              where: { status: "ACTIVE" },
+              select: { studentUserId: true },
+            },
+          },
+        })
+      : null;
+
+    if (!cls) {
+      return res.status(404).json({
+        error: { code: "CLASS_NOT_FOUND", message: "Class not found", requestId: req.id },
+      });
+    }
+    if (cls.tutorUserId !== userId) {
+      return res.status(403).json({
+        error: { code: "FORBIDDEN", message: "You can only set up your own classes", requestId: req.id },
+      });
+    }
+    if (!cls.setupRequiredAt) {
+      return res.status(409).json({
+        error: { code: "CLASS_SETUP_NOT_REQUIRED", message: "This class is already set up", requestId: req.id },
+      });
+    }
+
+    const title = parseClassTitle(body.title);
+    if (!title) {
+      return res.status(400).json({
+        error: { code: "INVALID_TITLE", message: `title must be 1-${CLASS_TITLE_MAX} characters`, requestId: req.id },
+      });
+    }
+
+    const meetingUrl = body.meetingUrl === undefined ? null : parseMeetingUrl(body.meetingUrl);
+    if (meetingUrl && !meetingUrl.ok) {
+      return res.status(400).json({
+        error: { code: "INVALID_MEETING_URL", message: "meetingUrl must be a web link", requestId: req.id },
+      });
+    }
+
+    if (
+      !isDatedSchedule(scheduleData) ||
+      !isValidDateInput(startsAt) ||
+      !isValidDateInput(endsAt) ||
+      new Date(startsAt) > new Date(endsAt) ||
+      typeof totalHours !== "number" ||
+      !Number.isFinite(totalHours) ||
+      totalHours < 0 ||
+      (scheduleDescription !== undefined && scheduleDescription !== null && typeof scheduleDescription !== "string")
+    ) {
+      return res.status(400).json({
+        error: {
+          code: "INVALID_SCHEDULE",
+          message: "scheduleData, startsAt, endsAt and totalHours are required",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const hoursError = hoursExceededResponse(req, totalHours, cls.freeHours || 0);
+    if (hoursError) {
+      return res.status(400).json(hoursError);
+    }
+
+    const description = typeof scheduleDescription === "string" ? scheduleDescription.trim() : "";
+    // Guarded on setupRequiredAt (and the owner) so a double submit gets a 409
+    // instead of running setup and notifying students twice.
+    const { count } = await prisma.class.updateMany({
+      where: { classId, tutorUserId: userId, setupRequiredAt: { not: null } },
+      data: {
+        title,
+        scheduleDescription: description || null,
+        // Store only the schedule fields, not whatever else the client sent.
+        scheduleData: scheduleData.map(({ date, start, end }) => ({ date, start, end })),
+        startsAt: new Date(startsAt),
+        endsAt: new Date(endsAt),
+        ...(meetingUrl?.ok ? { meetingUrl: meetingUrl.value } : {}),
+        setupRequiredAt: null,
+        updatedAt: new Date(),
+      },
+    });
+    if (count === 0) {
+      return res.status(409).json({
+        error: { code: "CLASS_SETUP_NOT_REQUIRED", message: "This class is already set up", requestId: req.id },
+      });
+    }
+
+    notifyClassReady(classId, title, description, cls.enrollments.map((e) => e.studentUserId));
+
+    const updated = await prisma.class.findUniqueOrThrow({ where: { classId } });
+    return res.status(200).json({
+      message: "Class setup completed",
+      class: { ...serializeClass(updated), setupRequired: false },
+    });
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Setup Class Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not set up class",
+        requestId: req.id,
+      },
+    });
+  }
+}
+
+/** Best-effort LINE message to paid students; a LINE failure never fails the setup. */
+function notifyClassReady(classId: string, title: string, scheduleDescription: string, studentIds: string[]) {
+  if (studentIds.length === 0) return;
+  try {
+    const classLink = LineNotificationService.buildLiffDeepLink(`/classes/${classId}`);
+    const message = [
+      scheduleDescription
+        ? `คลาส "${title}" พร้อมเรียนแล้ว ครูตั้งตารางเรียนเรียบร้อย: ${scheduleDescription}`
+        : `คลาส "${title}" พร้อมเรียนแล้ว ครูตั้งตารางเรียนเรียบร้อย`,
+      classLink ? `ดูรายละเอียด: ${classLink}` : "",
+    ].filter(Boolean).join("\n");
+
+    Promise.allSettled(
+      studentIds.map((sid) =>
+        LineNotificationService.sendToUser(sid, message, {
+          type: "notifyClassReminders",
+        }),
+      ),
+    ).catch((e) => logger.error("Class Setup Notification Error:", e));
+  } catch (error) {
+    logger.error("Class Setup Notification Error:", error);
   }
 }
 

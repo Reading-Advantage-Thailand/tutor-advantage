@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useLiff } from "../../../components/providers/LiffProvider";
 import { studentApi } from "../../../lib/api";
 import { invalidateResource } from "../../../lib/cachedResource";
-import { t } from "../../../lib/i18n";
+import { t, type I18nKey } from "../../../lib/i18n";
 import {
   buildEnrollmentFirstPath,
   buildPaymentOrder,
@@ -15,19 +15,28 @@ import {
   canSubmitAgeCheck,
   createDefaultOrderSummary,
   createUnknownOrderDisplay,
+  DISCOUNT_CODE_METHOD,
   formatCardExpiry,
   formatCardNumber,
   getCardResultStatus,
   getChargeFailureKey,
+  getDiscountCodeErrorKey,
+  getDiscountPreviewErrorKey,
   getDisplayAmountSatang,
   getPaymentErrorKey,
   getProceedStep,
   getQrCtaMode,
   getReturnedPaymentStep,
+  isDiscountCodeMethod,
+  isDiscountCodeRejected,
+  isDiscountQuoteFor,
   isEnrollmentFirstError,
+  isFreeWithDiscount,
   isValidDateOfBirth,
   mergeCheckoutDetails,
+  needsAgeCheck,
   needsGuardianConsent,
+  normalizeDiscountCode,
   normalizePaymentMethod,
   PaymentFlowError,
   paymentStepForMethod,
@@ -36,6 +45,9 @@ import {
   withQrCodeDataUri,
   type CardFields,
   type CheckoutDetails,
+  type DiscountPreviewResponse,
+  type DiscountQuote,
+  type DiscountRedeemResponse,
   type OrderDisplay,
   type OrderSummary,
   type PaymentMethod,
@@ -66,6 +78,8 @@ const SUB_STEPS: ReadonlySet<PaymentStep> = new Set(["age-check", "qr", "card-fo
 
 const EMPTY_CARD: CardFields = { number: "", name: "", expiry: "", cvv: "" };
 
+const POLICY_REQUIRED_MESSAGE = "กรุณาอ่านและยอมรับเงื่อนไขการยกเลิกและคืนเงินก่อนชำระ";
+
 /**
  * The whole checkout state machine (select → age check → PromptPay QR or card
  * form → result/success) without any markup. Step components get its values
@@ -74,6 +88,10 @@ const EMPTY_CARD: CardFields = { number: "", name: "", expiry: "", cvv: "" };
  * API calls, payloads, the enrollment choice (cycle > referral > direct),
  * returnUri, the 3DS redirect and the amount fallback are the same as the
  * original page; the deliberate fixes are documented where they happen.
+ *
+ * A discount code that brings the total to ฿0 skips PromptPay/card: the
+ * same age check and enrollment, then the code is redeemed and the
+ * enrollment is active at once.
  */
 export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymentIntentId }: PaymentFlowParams) {
   const router = useRouter();
@@ -103,6 +121,7 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
   const intentIdRef = useRef<string | null>(returnedPaymentIntentId);
   /** The intent's own amount (satang) once an intent exists. */
   const [intentAmountSatang, setIntentAmountSatang] = useState<number | null>(null);
+  const [intentMethod, setIntentMethod] = useState<string | null>(null);
   const [checkout, setCheckout] = useState<CheckoutDetails | null>(null);
   const [cardResult, setCardResult] = useState<"pending" | "failed">("pending");
   const [qrFailed, setQrFailedState] = useState(false);
@@ -117,6 +136,21 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
   /** What the screens show; the price is null when unknown (never the fallback). */
   const [display, setDisplay] = useState<OrderDisplay>(createUnknownOrderDisplay);
   const [classAttempt, setClassAttempt] = useState(0);
+  /** The class to enter after paying (a referral can place the student in another class). */
+  const [lessonClassId, setLessonClassId] = useState<string | null>(classId || null);
+
+  // ── Discount code ──
+  const [discountCode, setDiscountCodeState] = useState("");
+  const [discountQuote, setDiscountQuote] = useState<DiscountQuote | null>(null);
+  const [discountError, setDiscountError] = useState<I18nKey | null>(null);
+  const [discountApplying, setDiscountApplying] = useState(false);
+  const discountApplyingRef = useRef(false);
+  /** Bumped by every check and removal, so a late "ใช้โค้ด" response is dropped. */
+  const discountRequestRef = useRef(0);
+  // The page remounts the flow for another class/cycle; this also guards a reused quote.
+  const activeQuote =
+    discountQuote && isDiscountQuoteFor(discountQuote, classId, cycleId) ? discountQuote : null;
+  const freeQuote = isFreeWithDiscount(activeQuote) ? activeQuote : null;
 
   // ── Age / guardian ──
   const [profileStatus, setProfileStatus] = useState<LoadStatus>("loading");
@@ -134,6 +168,7 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
   const setIntent = useCallback((intent: IntentLike | null) => {
     intentIdRef.current = intent?.paymentIntentId ?? null;
     setPaymentIntentId(intentIdRef.current);
+    setIntentMethod(intent?.method ?? null);
     if (!intent) setIntentAmountSatang(null);
     else if (typeof intent.amountMinor === "number") setIntentAmountSatang(intent.amountMinor);
   }, []);
@@ -330,13 +365,21 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
     toast.info(t("payment.errors.paymentPending"));
   };
 
-  /** Enroll (cycle > referral > direct) → intent → success / 3DS / QR. */
-  const createPayment = async () => {
+  /** Every checkout enrolls first: book cycle > referral > direct. */
+  const enroll = async () => {
     const enrollment = cycleId
       ? await studentApi.prepareClassBookCycleAccess(classId, cycleId)
       : referralToken
         ? await studentApi.enrollByReferral(referralToken)
         : await studentApi.enrollClass(classId, referralToken);
+    // Referral and direct enrollments say which class the student got.
+    if (typeof enrollment?.classId === "string" && enrollment.classId) setLessonClassId(enrollment.classId);
+    return enrollment;
+  };
+
+  /** Enroll (cycle > referral > direct) → intent → success / 3DS / QR. */
+  const createPayment = async () => {
+    const enrollment = await enroll();
     if (enrollment.status === "ACTIVE") {
       setStep("success");
       return;
@@ -402,7 +445,7 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
     const verifying = method === "promptpay" && intentId !== null;
     if (!verifying && !policyAcceptedRef.current) {
       setStep("select");
-      toast.error("กรุณาอ่านและยอมรับเงื่อนไขการยกเลิกและคืนเงินก่อนชำระ");
+      toast.error(POLICY_REQUIRED_MESSAGE);
       return;
     }
     qr.stopPolling(); // no automatic check while checking by hand
@@ -440,12 +483,85 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
     }
   };
 
+  /** A ฿0 checkout failed: back to the method screen; code and payment errors show on the code field. */
+  const failDiscountCheckout = (err: unknown) => {
+    const codeError = getDiscountCodeErrorKey(err);
+    if (codeError) {
+      console.warn("Discount code checkout failed:", err);
+      // The code cannot be used any more: drop its ฿0 quote, keep what was typed.
+      if (isDiscountCodeRejected(err)) setDiscountQuote(null);
+      setDiscountError(codeError);
+    } else {
+      handlePaymentError(err);
+      // A book cycle that needs the class paid first opens a new checkout.
+      if (cycleId && isEnrollmentFirstError(err)) return;
+    }
+    if (stepRef.current !== "select") {
+      setStep("select");
+      stepHistory.leaveSubStep();
+    }
+  };
+
+  /**
+   * ฿0 checkout with an applied code: the same enrollment call as a paid
+   * checkout, then the code is redeemed (the enrollment is active at once).
+   */
+  const runDiscountCheckout = async (quote: DiscountQuote) => {
+    if (busyRef.current || redirectingRef.current) return;
+    if (!policyAcceptedRef.current) {
+      setStep("select");
+      toast.error(POLICY_REQUIRED_MESSAGE);
+      return;
+    }
+    busyRef.current = true;
+    setLoading(true);
+    setDiscountError(null);
+    try {
+      const enrollment = await enroll();
+      if (enrollment.status === "ACTIVE") {
+        setStep("success");
+        return;
+      }
+      const result = (await studentApi.redeemDiscountCode({
+        code: quote.code,
+        enrollmentId: enrollment.enrollmentId,
+        enrollmentPackageId: enrollment.enrollmentPackageId,
+      })) as DiscountRedeemResponse;
+      if (result.intent.status !== "SUCCESS") {
+        throw new Error(`Discount code payment is ${result.intent.status}`);
+      }
+      // A PromptPay QR made before the code was applied is no longer needed.
+      qr.reset();
+      setQrFailed(false);
+      setIntent(result.intent);
+      setCheckout(null);
+      setStep("success");
+    } catch (err) {
+      failDiscountCheckout(err);
+    } finally {
+      busyRef.current = false;
+      setLoading(false);
+    }
+  };
+
   // ── Actions ──
 
-  const canProceed = classStatus === "ready" && profileStatus !== "loading" && !resuming;
+  const canProceed = classStatus === "ready" && profileStatus !== "loading" && !resuming && !discountApplying;
 
   const proceed = () => {
-    if (!canProceed || busyRef.current || !policyAcceptedRef.current) return;
+    if (!canProceed || busyRef.current || discountApplyingRef.current || !policyAcceptedRef.current) return;
+    // A typed code that was never applied is checked first instead of being
+    // skipped into a full-price checkout (a live charge would also block it).
+    if (!activeQuote && classId && normalizeDiscountCode(discountCode)) {
+      void applyDiscountCode();
+      return;
+    }
+    if (freeQuote) {
+      // Nothing to pay: the same age/guardian check (payments require it), then no payment screen.
+      if (needsAgeCheck(dateOfBirth, consentAlreadyGiven)) showStep("age-check");
+      else void runDiscountCheckout(freeQuote);
+      return;
+    }
     const next = getProceedStep(dateOfBirth, consentAlreadyGiven, method);
     showStep(next);
     // PromptPay: create the QR right away (one tap instead of two).
@@ -482,6 +598,10 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
       setLoading(false);
     }
     if (!next) return;
+    if (freeQuote) {
+      void runDiscountCheckout(freeQuote);
+      return;
+    }
     showStep(next);
     if (next === "qr" && !intentIdRef.current) void runCheckout();
   };
@@ -559,6 +679,56 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
     setMethod(next);
   };
 
+  /** Typing in the code field clears the last error. */
+  const setDiscountCode = (value: string) => {
+    setDiscountCodeState(value.toUpperCase());
+    setDiscountError(null);
+  };
+
+  /** "ใช้โค้ด": checks the code for this class/cycle (nothing is used up yet). */
+  const applyDiscountCode = async () => {
+    const code = normalizeDiscountCode(discountCode);
+    if (!classId || !code || discountApplyingRef.current || busyRef.current) return;
+    const request = ++discountRequestRef.current;
+    discountApplyingRef.current = true;
+    setDiscountApplying(true);
+    setDiscountError(null);
+    try {
+      const response = (await studentApi.previewDiscountCode({
+        code,
+        classId,
+        cycleId: cycleId || undefined,
+      })) as DiscountPreviewResponse;
+      if (request !== discountRequestRef.current) return;
+      const quote = response?.discount;
+      if (!quote || !isDiscountQuoteFor(quote, classId, cycleId)) {
+        setDiscountError("payment.discount.errors.checkFailed");
+        return;
+      }
+      setDiscountQuote(quote);
+      setDiscountCodeState(quote.code);
+    } catch (err) {
+      if (request !== discountRequestRef.current) return;
+      setDiscountError(getDiscountPreviewErrorKey(err));
+    } finally {
+      if (request === discountRequestRef.current) {
+        discountApplyingRef.current = false;
+        setDiscountApplying(false);
+      }
+    }
+  };
+
+  /** The × on an applied code: back to the full price. */
+  const removeDiscountCode = () => {
+    if (busyRef.current) return;
+    discountRequestRef.current += 1;
+    discountApplyingRef.current = false;
+    setDiscountApplying(false);
+    setDiscountQuote(null);
+    setDiscountError(null);
+    setDiscountCodeState("");
+  };
+
   const ageCheckFields = { dateOfBirth, guardianName, guardianRelation, consentAlreadyGiven };
   const qrCtaMode: QrCtaMode = getQrCtaMode({
     hasIntent: paymentIntentId !== null,
@@ -581,12 +751,32 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
     profileLoading: profileStatus === "loading",
     canProceed,
     policyAccepted,
-    /** Intent amount once an intent exists, otherwise the class/cycle price (null = unknown). */
-    amountSatang: getDisplayAmountSatang(intentAmountSatang, display.priceSatang),
+    /** Paid intent amount, else the applied code's final amount, else the class/cycle price (null = unknown). */
+    amountSatang: getDisplayAmountSatang(intentAmountSatang, display.priceSatang, activeQuote),
+    /** Method on the receipt: the discount code for a ฿0 checkout, otherwise the chosen method. */
+    receiptMethod:
+      isDiscountCodeMethod(intentMethod) || (paymentIntentId === null && freeQuote !== null)
+        ? DISCOUNT_CODE_METHOD
+        : method,
+    /** The class "เข้าห้องเรียน" opens after paying (null = unknown, e.g. a referral link back from 3DS). */
+    lessonClassId,
 
     paymentIntentId,
     checkout,
     cardResult,
+
+    discount: {
+      /** A class checkout (a referral-only link has no class to check a code against). */
+      available: Boolean(classId),
+      code: discountCode,
+      /** The applied code with the API's amounts, or null. */
+      quote: activeQuote,
+      errorKey: discountError,
+      applying: discountApplying,
+      /** The applied code leaves nothing to pay. */
+      free: freeQuote !== null,
+      setCode: setDiscountCode,
+    },
 
     qr: {
       ctaMode: qrCtaMode,
@@ -619,6 +809,8 @@ export function usePaymentFlow({ classId, cycleId, referralToken, returnedPaymen
     actions: {
       acceptPolicy,
       selectMethod,
+      applyDiscountCode,
+      removeDiscountCode,
       proceed,
       submitAgeCheck,
       confirmPayment: runCheckout,

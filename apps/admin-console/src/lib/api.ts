@@ -126,6 +126,31 @@ export const ERROR_MESSAGES: Record<string, string> = {
   FLAG_NOT_FROZEN: "รายการนี้ไม่ได้อยู่ในสถานะระงับ กรุณารีเฟรช",
   FRAUD_TARGET_NOT_USER: "เป้าหมายของรายการนี้ไม่ใช่บัญชีผู้ใช้ จึงระงับบัญชีไม่ได้",
   CANNOT_SUSPEND_STAFF: "ระงับบัญชีเจ้าหน้าที่จากหน้านี้ไม่ได้ ให้จัดการที่หน้าสิทธิ์การใช้งาน",
+  // Class discount codes
+  INVALID_CLASS_ID: "รหัสคลาสไม่ถูกต้อง กรุณาเลือกคลาสจากรายการ",
+  CLASS_NOT_FOUND: "ไม่พบคลาสนี้ อาจถูกลบไปแล้ว กรุณารีเฟรช",
+  CLASS_NOT_ELIGIBLE: "คลาสทดลองออกโค้ดส่วนลดไม่ได้ กรุณาเลือกคลาสอื่น",
+  INVALID_MAX_REDEMPTIONS: "จำนวนครั้งที่ใช้ได้ต้องเป็นจำนวนเต็ม 1–500",
+  INVALID_DISCOUNT_CODE_ID: "รหัสโค้ดส่วนลดไม่ถูกต้อง กรุณารีเฟรช",
+  DISCOUNT_CODE_NOT_FOUND: "ไม่พบโค้ดส่วนลดนี้ กรุณารีเฟรช",
+  DISCOUNT_CODE_VOID: "โค้ดนี้ถูกยกเลิกแล้ว",
+  DISCOUNT_CODE_EXPIRED: "โค้ดนี้หมดอายุแล้ว",
+  DISCOUNT_CODE_USED_UP: "โค้ดนี้ถูกใช้ครบจำนวนแล้ว",
+  DISCOUNT_CODE_ALREADY_USED: "นักเรียนคนนี้ใช้โค้ดนี้ไปแล้ว",
+  DISCOUNT_CODE_WRONG_CLASS: "โค้ดนี้ใช้กับคลาสอื่น",
+  ENROLLMENT_NOT_PENDING_PAYMENT: "การลงเรียนนี้ไม่ได้รอชำระเงินแล้ว",
+  PAYMENT_IN_PROGRESS: "มีรายการชำระเงินของการลงเรียนนี้กำลังดำเนินการอยู่",
+  PAYMENT_ALREADY_COMPLETED: "การลงเรียนนี้ชำระเงินเรียบร้อยแล้ว",
+  // Classes created for tutors (learning)
+  INVALID_DISPLAY_NAME: "ระบุชื่อที่แสดงของครู 1–100 ตัวอักษร",
+  INVALID_TITLE: "ระบุชื่อคลาส 1–120 ตัวอักษร",
+  INVALID_CAPACITY: "จำนวนที่นั่งต้องเป็นจำนวนเต็ม 1–100",
+  INVALID_PRICE: "ราคาคอร์สต้องมากกว่า 0 และไม่เกิน 10,000 บาท",
+  BOOK_NOT_FOUND: "ไม่พบหนังสือที่เลือก กรุณาเลือกใหม่",
+  BOOK_UNAVAILABLE: "หนังสือเล่มนี้ยังเปิดสอนไม่ได้ กรุณาเลือกเล่มอื่น",
+  TUTOR_SUSPENDED: "บัญชีครูของอีเมลนี้ถูกระงับอยู่ สร้างคลาสให้ไม่ได้",
+  EMAIL_NOT_TUTOR: "อีเมลนี้เป็นบัญชีนักเรียนหรือเจ้าหน้าที่ ไม่ใช่บัญชีครู กรุณาใช้อีเมลอื่น",
+  CLASS_SETUP_NOT_REQUIRED: "คลาสนี้ตั้งค่าเรียบร้อยแล้ว",
 };
 
 /* ─── ApiError ───────────────────────────────────────────────────────────── */

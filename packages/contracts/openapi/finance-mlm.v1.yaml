@@ -894,6 +894,105 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AdminErrorBody"
+  # ── Class discount codes: student checkout (admin CRUD is undocumented) ──
+  /v1/discount-codes/preview:
+    post:
+      summary: Check a class discount code for the signed-in student (STUDENT only, no writes)
+      description: >-
+        Quotes the class price (or the book cycle's price when cycleId is given)
+        with the code applied. Errors: 400 INVALID_REQUEST, 403 STUDENT_ROLE_REQUIRED,
+        404 CLASS_NOT_FOUND / DISCOUNT_CODE_NOT_FOUND, 409 DISCOUNT_CODE_VOID /
+        DISCOUNT_CODE_EXPIRED / DISCOUNT_CODE_USED_UP / DISCOUNT_CODE_ALREADY_USED /
+        DISCOUNT_CODE_WRONG_CLASS, 429 when rate limited.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [code, classId]
+              properties:
+                code:
+                  type: string
+                  maxLength: 200
+                  description: As typed; the server trims, upper-cases and removes spaces.
+                classId:
+                  type: string
+                  maxLength: 128
+                cycleId:
+                  type: [string, "null"]
+                  maxLength: 128
+      responses:
+        "200":
+          description: Discount quote
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [discount]
+                properties:
+                  discount:
+                    $ref: "#/components/schemas/DiscountQuote"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /v1/discount-codes/redeem:
+    post:
+      summary: Pay for an enrollment or book-cycle package with a class discount code (STUDENT only)
+      description: >-
+        Creates a 0 THB SUCCESS payment intent (method DISCOUNT_CODE) and activates
+        the enrollment / package in one transaction. Repeating a successful redeem
+        returns the same result. Errors: as preview, plus 400 DATE_OF_BIRTH_REQUIRED,
+        403 GUARDIAN_CONSENT_REQUIRED / FORBIDDEN, 404 ENROLLMENT_NOT_FOUND,
+        409 PAYMENT_ALREADY_COMPLETED / PAYMENT_IN_PROGRESS / ENROLLMENT_NOT_PENDING_PAYMENT.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [code, enrollmentId]
+              properties:
+                code:
+                  type: string
+                  maxLength: 200
+                enrollmentId:
+                  type: string
+                  maxLength: 128
+                enrollmentPackageId:
+                  type: [string, "null"]
+                  maxLength: 128
+      responses:
+        "200":
+          description: The successful 0 THB payment intent and the applied discount
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [intent, discount]
+                properties:
+                  intent:
+                    type: object
+                    description: Serialized payment intent (status SUCCESS, amountMinor 0, method DISCOUNT_CODE).
+                  checkout:
+                    type: "null"
+                  discount:
+                    $ref: "#/components/schemas/DiscountQuote"
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
 
 components:
   securitySchemes:
@@ -1168,6 +1267,26 @@ components:
       type: integer
       minimum: 0
       maximum: 9007199254740991
+    DiscountQuote:
+      type: object
+      description: A class discount code applied to one price. Codes waive the whole price.
+      required:
+        [code, discountCodeId, classId, cycleId, originalAmountSatang, discountSatang, finalAmountSatang]
+      properties:
+        code:
+          type: string
+        discountCodeId:
+          type: string
+        classId:
+          type: string
+        cycleId:
+          type: [string, "null"]
+        originalAmountSatang:
+          $ref: "#/components/schemas/NonNegativeSatang"
+        discountSatang:
+          $ref: "#/components/schemas/NonNegativeSatang"
+        finalAmountSatang:
+          $ref: "#/components/schemas/NonNegativeSatang"
     ErrorEnvelope:
       type: object
       properties:

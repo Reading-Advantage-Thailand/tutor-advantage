@@ -57,4 +57,13 @@ export const app = {
   notFoundTitle: "ไม่พบหน้าที่คุณต้องการ",
   notFoundBody: "ลิงก์อาจไม่ถูกต้องหรือหน้านี้ถูกย้ายแล้ว",
   notFoundAction: "กลับหน้าแรก",
+  // Sign-in errors (/?error=<code>) set by the OAuth callback and the middleware.
+  loginErrorNotTutor: "บัญชีนี้ยังไม่ได้ลงทะเบียนเป็นครู กรุณาเข้าสู่ระบบด้วยอีเมลที่แจ้งกับทีมงาน หรือติดต่อแอดมิน",
+  loginErrorSuspended: "บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อแอดมิน",
+  loginErrorExpired: "การเข้าสู่ระบบหมดเวลา กรุณากดเข้าสู่ระบบด้วย Google อีกครั้ง",
+  loginErrorCancelled: "เข้าสู่ระบบด้วย Google ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+  loginErrorRejected: "เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่ หรือติดต่อแอดมิน",
+  loginErrorEmailNotVerified: "อีเมลของบัญชี Google นี้ยังไม่ได้ยืนยัน กรุณายืนยันอีเมลกับ Google ก่อน หรือติดต่อแอดมิน",
+  loginErrorFacebook: "ปิดการเข้าสู่ระบบด้วย Facebook ชั่วคราว กรุณาใช้ Google",
+  loginErrorServer: "ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง",
 } as const;

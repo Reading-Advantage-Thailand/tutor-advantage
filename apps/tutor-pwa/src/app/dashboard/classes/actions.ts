@@ -7,6 +7,7 @@ import {
   buildCreateClassRequest,
   getClassActionErrorMessage,
   type CreateClassForm,
+  type SetupClassRequest,
 } from "@/lib/tutorClassFlow";
 import { t } from "@/lib/i18n";
 
@@ -36,6 +37,41 @@ export async function createClass(data: CreateClassForm) {
 
   revalidatePath("/dashboard/classes");
   return res.json();
+}
+
+/** Result instead of a throw so the form can show the server's reason (thrown messages are hidden in production). */
+export type SetupClassResult = { ok: true } | { ok: false; code: string };
+
+/** Completes a class an admin created for this tutor (name, schedule, meeting link). */
+export async function setupClass(classId: string, data: SetupClassRequest): Promise<SetupClassResult> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value;
+  if (!token) return { ok: false, code: "UNAUTHORIZED" };
+
+  try {
+    const res = await fetch(`${LEARNING_URL}/v1/classes/${encodeURIComponent(classId)}/setup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => null);
+      return { ok: false, code: err?.error?.code || "SETUP_FAILED" };
+    }
+  } catch (error) {
+    console.error("[setupClass] request failed:", error);
+    return { ok: false, code: "SETUP_FAILED" };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/classes");
+  revalidatePath(`/dashboard/classes/${classId}`);
+  return { ok: true };
 }
 
 export async function updateClassStatus(classId: string, status: "open" | "full" | "closed") {

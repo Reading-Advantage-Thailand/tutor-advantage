@@ -196,6 +196,13 @@ function sanitizeCoreValue({ schemaName, tableName, columnName, value, row, cont
   if (table === "finance_mlm.payment_receipts" && column === "receipt_number") {
     return localIdentifier("LOCAL-RECEIPT", row, uuidMap);
   }
+  // Discount codes waive tuition (bearer credentials); notes may name people.
+  if (table === "finance_mlm.discount_codes") {
+    if (column === "code") return localIdentifier("LOCAL-DISCOUNT", row, uuidMap);
+    if (column === "note") return "Local test discount code";
+    if (column === "void_reason") return value ? "Local test void reason" : null;
+    if (column === "creation_idempotency_key") return null;
+  }
   if (table === "finance_mlm.payout_documents") {
     if (column === "document_number") return localIdentifier("LOCAL-DOC", row, uuidMap);
     if (column === "provider_transfer_id") return null;

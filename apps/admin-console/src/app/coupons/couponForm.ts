@@ -104,6 +104,30 @@ export function addDaysKey(days: number, now: Date = new Date()): string {
   return toDateKey(new Date(now.getTime() + days * 86_400_000));
 }
 
+export interface ExpiryMessages {
+  expiryIncomplete: string;
+  expiryInvalid: string;
+  expiryPast: string;
+}
+
+/**
+ * Optional expiry picked with ThaiDateField: `{ expiresAt: null }` when no date
+ * is chosen, the Bangkok end-of-day ISO otherwise (today is allowed), or an error.
+ * Shared with the class discount code form.
+ */
+export function parseExpiryParts(
+  parts: ThaiDateParts,
+  messages: ExpiryMessages,
+  now: Date = new Date(),
+): { expiresAt: string | null } | { error: string } {
+  if (isEmptyDate(parts)) return { expiresAt: null };
+  if (!parts.day || !parts.month || !parts.yearBE) return { error: messages.expiryIncomplete };
+  const key = partsToDateKey(parts);
+  if (!key) return { error: messages.expiryInvalid };
+  if (key < toDateKey(now)) return { error: messages.expiryPast };
+  return { expiresAt: dateKeyToExpiryIso(key) };
+}
+
 export interface CouponFormValues {
   hours: string;
   note: string;
@@ -113,12 +137,9 @@ export interface CouponFormValues {
 
 export type CouponFormErrors = Partial<Record<"hours" | "note" | "expiry", string>>;
 
-export interface CouponFormMessages {
+export interface CouponFormMessages extends ExpiryMessages {
   hoursInteger: string;
   noteTooLong: string;
-  expiryIncomplete: string;
-  expiryInvalid: string;
-  expiryPast: string;
 }
 
 /**
@@ -148,16 +169,10 @@ export function validateCouponForm(
   else if (mode === "edit") body.note = note || null;
   else if (note) body.note = note;
 
-  if (isEmptyDate(values.expiry)) {
-    if (mode === "edit") body.expiresAt = null;
-  } else if (!values.expiry.day || !values.expiry.month || !values.expiry.yearBE) {
-    errors.expiry = messages.expiryIncomplete;
-  } else {
-    const key = partsToDateKey(values.expiry);
-    if (!key) errors.expiry = messages.expiryInvalid;
-    else if (key < toDateKey(now)) errors.expiry = messages.expiryPast;
-    else body.expiresAt = dateKeyToExpiryIso(key);
-  }
+  const expiry = parseExpiryParts(values.expiry, messages, now);
+  if ("error" in expiry) errors.expiry = expiry.error;
+  else if (expiry.expiresAt) body.expiresAt = expiry.expiresAt;
+  else if (mode === "edit") body.expiresAt = null;
 
   if (values.tutor) body.assignedTutorId = values.tutor.userId;
   else if (mode === "edit") body.assignedTutorId = null;

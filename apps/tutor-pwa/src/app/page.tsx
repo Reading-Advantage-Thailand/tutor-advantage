@@ -9,7 +9,9 @@ import {
 } from "lucide-react";
 import { BrandLockup } from "@/components/auth/BrandLockup";
 import { LoginForm } from "@/components/auth/login-form";
+import { getLoginError } from "@/components/auth/login-error";
 import { IconTile, type TileTone } from "@/components/app/Atoms";
+import { Notice } from "@/components/app/Feedback";
 import { ThemeToggle } from "@/components/app/ThemeToggle";
 import { HELP_URL } from "@/components/app/constants";
 import { t } from "@/lib/i18n";
@@ -66,9 +68,12 @@ function BenefitList({ variant }: { variant: "hero" | "card" }) {
  * Logged-out entry (middleware sends signed-in tutors to /dashboard).
  * Phones: compact mint hero, then the sign-in card, so the Google button sits
  * in the first viewport even at 360×640. lg+: split layout, benefits panel
- * on the left and the form centred on the right.
+ * on the left and the form centred on the right. `?error=` from a failed
+ * sign-in shows as a notice above the button.
  */
-export default function LoginPage() {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const loginError = getLoginError((await searchParams).error);
+
   return (
     <div className="min-h-dvh bg-app text-fg lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
       {/* Brand + value proposition */}
@@ -121,7 +126,12 @@ export default function LoginPage() {
               {t("app.loginSubtitle")}
             </p>
 
-            <div className="mt-5 lg:mt-8">
+            <div className="mt-5 grid gap-4 lg:mt-8">
+              {loginError ? (
+                <Notice tone={loginError.tone} role="alert">
+                  {loginError.message}
+                </Notice>
+              ) : null}
               <LoginForm />
             </div>
 

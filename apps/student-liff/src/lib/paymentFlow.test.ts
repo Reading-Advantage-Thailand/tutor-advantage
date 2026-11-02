@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { t } from "./i18n";
 import {
   buildEnrollmentFirstPath,
   buildEnrollPathFromInviteText,
@@ -14,6 +15,8 @@ import {
   formatCountdown,
   getCardResultStatus,
   getChargeFailureKey,
+  getDiscountCodeErrorKey,
+  getDiscountPreviewErrorKey,
   getDisplayAmountSatang,
   getPaymentBookLabel,
   getPaymentErrorKey,
@@ -26,11 +29,17 @@ import {
   getReturnedPaymentStep,
   groupByMonth,
   hasAllCardFields,
+  isDiscountCodeMethod,
+  isDiscountCodeRejected,
+  isDiscountQuoteFor,
   isEnrollmentFirstError,
+  isFreeWithDiscount,
   isUnder18,
   isValidDateOfBirth,
   mergeCheckoutDetails,
+  needsAgeCheck,
   needsGuardianConsent,
+  normalizeDiscountCode,
   normalizePaymentMethod,
   parseClassIdFromQrText,
   parseInviteEnrollParams,
@@ -166,6 +175,11 @@ describe("paymentFlow helpers", () => {
     expect(getProceedStep("2012-05-05", true, "card", now)).toBe("card-form");
     // Unknown birthday → age check.
     expect(getProceedStep("", true, "promptpay", now)).toBe("age-check");
+    // The same rule decides the age check of a ฿0 discount checkout.
+    expect(needsAgeCheck("1990-01-01", false, now)).toBe(false);
+    expect(needsAgeCheck("2012-05-05", false, now)).toBe(true);
+    expect(needsAgeCheck("2012-05-05", true, now)).toBe(false);
+    expect(needsAgeCheck("", true, now)).toBe(true);
   });
 
   it("requires guardian details only for minors without consent", () => {
@@ -220,6 +234,62 @@ describe("paymentFlow helpers", () => {
     expect(getDisplayAmountSatang(null, 320000)).toBe(320000);
     expect(getDisplayAmountSatang(undefined, null)).toBeNull();
     expect(getDisplayAmountSatang(0, 0)).toBeNull();
+  });
+
+  it("shows ฿0 for an applied code instead of falling back to the full price", () => {
+    const free = { finalAmountSatang: 0 };
+    expect(getDisplayAmountSatang(null, 320000, free)).toBe(0);
+    // The redeemed intent is 0 THB: still ฿0, not the class price.
+    expect(getDisplayAmountSatang(0, 320000, free)).toBe(0);
+    // A paid intent made before the code was applied keeps its own amount.
+    expect(getDisplayAmountSatang(320000, 320000, free)).toBe(320000);
+    // No code: unknown prices stay unknown.
+    expect(getDisplayAmountSatang(0, null, null)).toBeNull();
+  });
+
+  it("normalizes discount codes and ties a quote to its class and book cycle", () => {
+    expect(normalizeDiscountCode("  dc-ab cd-2345\t")).toBe("DC-ABCD-2345");
+    expect(normalizeDiscountCode("   ")).toBe("");
+
+    const quote = { classId: "C1-UUID", cycleId: null };
+    expect(isDiscountQuoteFor(quote, "c1-uuid", "")).toBe(true);
+    expect(isDiscountQuoteFor(quote, "c2-uuid", "")).toBe(false);
+    expect(isDiscountQuoteFor(quote, "c1-uuid", "cy1")).toBe(false);
+    expect(isDiscountQuoteFor({ classId: "c1", cycleId: "cy1" }, "c1", "cy1")).toBe(true);
+
+    expect(isFreeWithDiscount({ finalAmountSatang: 0 })).toBe(true);
+    expect(isFreeWithDiscount({ finalAmountSatang: 100 })).toBe(false);
+    expect(isFreeWithDiscount(null)).toBe(false);
+  });
+
+  it("maps discount code errors to the code field in Thai", () => {
+    const err = (code: string, status = 409) => Object.assign(new Error("x"), { code, status });
+    expect(getDiscountCodeErrorKey(err("DISCOUNT_CODE_NOT_FOUND", 404))).toBe("payment.discount.errors.notFound");
+    expect(getDiscountCodeErrorKey(err("DISCOUNT_CODE_WRONG_CLASS"))).toBe("payment.discount.errors.wrongClass");
+    expect(getDiscountCodeErrorKey(err("PAYMENT_IN_PROGRESS"))).toBe("payment.errors.paymentInProgress");
+    expect(getDiscountCodeErrorKey(err("PAYMENT_ALREADY_COMPLETED"))).toBe("payment.errors.alreadyPaid");
+    // The rate limiter answers 429 without an error code.
+    expect(getDiscountCodeErrorKey({ status: 429 })).toBe("payment.discount.errors.tooManyAttempts");
+    // Not about the code: the checkout toast handles it.
+    expect(getDiscountCodeErrorKey(err("CLASS_FULL"))).toBeNull();
+    expect(getDiscountCodeErrorKey(err("toString"))).toBeNull();
+    expect(getDiscountCodeErrorKey(null)).toBeNull();
+
+    expect(getDiscountPreviewErrorKey(err("DISCOUNT_CODE_EXPIRED"))).toBe("payment.discount.errors.expired");
+    expect(getDiscountPreviewErrorKey(new TypeError("Failed to fetch"))).toBe("common.networkError");
+    expect(getDiscountPreviewErrorKey(err("INVALID_REQUEST", 400))).toBe("payment.discount.errors.checkFailed");
+
+    expect(isDiscountCodeRejected(err("DISCOUNT_CODE_USED_UP"))).toBe(true);
+    expect(isDiscountCodeRejected(err("PAYMENT_IN_PROGRESS"))).toBe(false);
+    expect(isDiscountCodeRejected({ status: 429 })).toBe(false);
+
+    expect(t("payment.discount.errors.notFound")).toBe("ไม่พบโค้ดนี้ ตรวจสอบตัวอักษรอีกครั้ง");
+    expect(t("payment.discount.errors.expired")).toBe("โค้ดนี้หมดอายุแล้ว");
+    expect(t("payment.discount.errors.usedUp")).toBe("โค้ดนี้ถูกใช้ครบจำนวนแล้ว");
+    expect(t("payment.discount.errors.alreadyUsed")).toBe("คุณใช้โค้ดนี้ไปแล้ว");
+    expect(t("payment.discount.errors.void")).toBe("โค้ดนี้ถูกยกเลิกแล้ว");
+    expect(t("payment.discount.errors.wrongClass")).toBe("โค้ดนี้ใช้กับคลาสอื่น");
+    expect(t("payment.discount.errors.tooManyAttempts")).toBe("ลองหลายครั้งเกินไป กรุณารอสักครู่");
   });
 
   it("computes the QR deadline and countdown from timestamps", () => {
@@ -320,6 +390,11 @@ describe("paymentFlow helpers", () => {
     expect(getPaymentMethodLabelKey("PROMPTPAY")).toBe("payment.methods.promptpay");
     expect(getPaymentMethodLabelKey("card")).toBe("payment.methods.card");
     expect(getPaymentMethodLabelKey("anything")).toBe("payment.methods.card");
+    expect(getPaymentMethodLabelKey("DISCOUNT_CODE")).toBe("payment.methods.discountCode");
+    expect(t(getPaymentMethodLabelKey("DISCOUNT_CODE"))).toBe("โค้ดส่วนลด");
+    expect(isDiscountCodeMethod(" discount_code ")).toBe(true);
+    expect(isDiscountCodeMethod("promptpay")).toBe(false);
+    expect(isDiscountCodeMethod(null)).toBe(false);
 
     const enrollment = {
       enrollmentId: "e1",

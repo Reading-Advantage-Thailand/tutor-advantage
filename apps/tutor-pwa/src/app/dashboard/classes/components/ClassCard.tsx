@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { BookOpen, CalendarDays, ChevronRight, Users } from "lucide-react";
+import { BookOpen, CalendarDays, ChevronRight, Settings2, Users } from "lucide-react";
 import { Chip, IconTile, Surface } from "@/components/app";
 import { t } from "@/lib/i18n";
+import { classSetupHref } from "@/lib/tutorClassFlow";
 import { cn } from "@/lib/utils";
 import { classStatusInfo } from "./class-status";
 import { DeleteClassButton } from "./DeleteClassButton";
@@ -14,12 +15,14 @@ export type ClassListItem = {
   students?: number;
   maxStudents?: number;
   nextSession?: string;
+  /** Admin-created class the tutor still has to set up. */
+  setupRequired?: boolean;
 };
 
 /**
  * One class in the list. The title link stretches over the whole card
- * (::after overlay) so the optional DEV delete button can sit on top of it
- * without nesting interactive elements. Server component.
+ * (::after overlay) so the optional DEV delete button and the setup link can
+ * sit on top of it without nesting interactive elements. Server component.
  */
 export function ClassCard({ cls, showDevDelete }: { cls: ClassListItem; showDevDelete?: boolean }) {
   const status = classStatusInfo(cls.status);
@@ -43,6 +46,11 @@ export function ClassCard({ cls, showDevDelete }: { cls: ClassListItem; showDevD
             </Chip>
           </div>
           {cls.book ? <p className="mt-0.5 truncate text-[0.8125rem] text-fg-muted">{cls.book}</p> : null}
+          {cls.setupRequired ? (
+            <Chip tone="warning" size="sm" icon={Settings2} className="mt-2">
+              {t("tutorClass.setup.pendingChip")}
+            </Chip>
+          ) : null}
           <ul className="mt-3 flex flex-col gap-1.5 text-[0.8125rem] text-fg-muted">
             {cls.nextSession ? (
               <li className="flex min-w-0 items-start gap-2">
@@ -70,10 +78,20 @@ export function ClassCard({ cls, showDevDelete }: { cls: ClassListItem; showDevD
             <DeleteClassButton classId={cls.id} className={cls.name} />
           </div>
         ) : null}
-        <span aria-hidden="true" className="flex items-center gap-1 text-[0.8125rem] font-medium text-brand-fg">
-          {t("tutorClass.classes.manage")}
-          <ChevronRight className="size-4" />
-        </span>
+        {cls.setupRequired ? (
+          <Link
+            href={classSetupHref(cls.id)}
+            className="relative z-10 flex items-center gap-1 rounded-md text-[0.8125rem] font-medium text-brand-fg outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/40"
+          >
+            {t("tutorClass.setup.cardAction")}
+            <ChevronRight aria-hidden="true" className="size-4" />
+          </Link>
+        ) : (
+          <span aria-hidden="true" className="flex items-center gap-1 text-[0.8125rem] font-medium text-brand-fg">
+            {t("tutorClass.classes.manage")}
+            <ChevronRight className="size-4" />
+          </span>
+        )}
       </div>
     </Surface>
   );
