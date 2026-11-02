@@ -69,8 +69,70 @@ import {
 import { estimateCommissionClawbacks } from "./clawbackService";
 import { checkCardPaymentRisk, getPayoutHeldTutorIds, recordCardChargeSignals } from "./fraudRules";
 import { SettlementService } from "./settlementService";
-import { buildSettlementPaymentWhere, getPayoutHoldDays } from "./payoutPolicy";
+import { buildSettlementPaymentWhere, getPayoutHoldDays, isShortHoldMethod } from "./payoutPolicy";
 import { handleWebhook } from "../controllers/paymentController";
+
+type Row = Record<string, unknown>;
+
+function comparable(value: unknown) {
+  return value instanceof Date ? value.getTime() : value;
+}
+
+/** SQL ILIKE: `_` is any one character, `%` any run of characters. */
+function ilike(value: unknown, pattern: unknown) {
+  if (typeof value !== "string" || typeof pattern !== "string") return false;
+  const source = pattern
+    .split("")
+    .map((char) => (char === "_" ? "." : char === "%" ? ".*" : char.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")))
+    .join("");
+  return new RegExp(`^${source}$`, "is").test(value);
+}
+
+/**
+ * Evaluates the subset of a Prisma where clause that these queries use
+ * against an in-memory row, so tests check WHICH payments a query selects
+ * instead of its exact shape. An unsupported operator throws. Insensitive
+ * filters behave as Prisma renders them on PostgreSQL: `equals` becomes
+ * ILIKE (wildcards included), `in` becomes LOWER(column) IN (...).
+ */
+function matchesWhere(row: Row, where: unknown): boolean {
+  return Object.entries(where as Row).every(([key, condition]) => {
+    const list = Array.isArray(condition) ? condition : [condition];
+    if (key === "AND") return list.every((item) => matchesWhere(row, item));
+    if (key === "OR") return list.some((item) => matchesWhere(row, item));
+    if (key === "NOT") return list.every((item) => !matchesWhere(row, item));
+    return matchesField(row[key] ?? null, condition);
+  });
+}
+
+function matchesField(value: unknown, condition: unknown): boolean {
+  if (condition === null || typeof condition !== "object" || condition instanceof Date) {
+    return comparable(value) === comparable(condition);
+  }
+  const filter = condition as Row;
+  const fold = (item: unknown) =>
+    filter.mode === "insensitive" && typeof item === "string" ? item.toLowerCase() : comparable(item);
+  // SQL: comparing NULL is never true.
+  if (value === null) return false;
+  return Object.entries(filter).every(([operator, operand]) => {
+    const left = comparable(value) as number | bigint | string;
+    const right = comparable(operand) as number | bigint | string;
+    switch (operator) {
+      case "mode":
+        return true;
+      case "equals":
+        return filter.mode === "insensitive" ? ilike(value, operand) : comparable(value) === right;
+      case "in":
+        return (operand as unknown[]).some((item) => fold(item) === fold(value));
+      case "lte":
+        return left <= right;
+      case "gte":
+        return left >= right;
+      default:
+        throw new Error(`matchesWhere: unsupported operator ${operator}`);
+    }
+  });
+}
 
 function resetAllMocks() {
   for (const model of Object.values(prismaMock)) {
@@ -469,6 +531,45 @@ describe("fraud rules before a card is charged", () => {
     })).resolves.toBeNull();
   });
 
+  it("does not count discount code (bank transfer) or PromptPay sales towards the new-tutor card limit", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-10-22T00:00:00.000Z"));
+    prismaMock.user.findUnique.mockResolvedValue({
+      createdAt: new Date("2026-10-01T00:00:00.000Z"), settings: {}, displayName: "New tutor",
+    });
+    const paidAt = new Date("2026-10-20T00:00:00.000Z");
+    const sale = (method: string, amountMinor: bigint) => ({
+      earningTutorUserId: "tutor-new", status: "SUCCESS", paidAt, method, amountMinor,
+    });
+    const sales: Row[] = [
+      sale("DISCOUNT_CODE", 1_500_000n),
+      sale("discount_code", 1_500_000n),
+      sale("PROMPTPAY", 900_000n),
+      sale("card", 100_000n),
+    ];
+    prismaMock.paymentIntent.aggregate.mockImplementation(async ({ where }: { where: Row }) => ({
+      _sum: {
+        amountMinor: sales.filter((row) => matchesWhere(row, where)).reduce((sum, row) => sum + (row.amountMinor as bigint), 0n),
+      },
+    }));
+
+    // Only the 1,000 THB card sale counts: 1,000 + 3,000 is under the 30,000 THB
+    // limit (counting the 30,000 THB of discount code sales would refuse it).
+    await expect(checkCardPaymentRisk({
+      studentUserId: "s1", tutorUserId: "tutor-new", amountMinor: 300_000n, cardFingerprint: null,
+    })).resolves.toBeNull();
+
+    // Unknown methods still count as card (fail-safe), look-alikes of
+    // DISCOUNT_CODE included.
+    for (const method of ["mock", "DISCOUNT-CODE"]) {
+      sales.push(sale(method, 2_700_000n));
+      await expect(checkCardPaymentRisk({
+        studentUserId: "s1", tutorUserId: "tutor-new", amountMinor: 300_000n, cardFingerprint: null,
+      }), method).resolves.toMatchObject({ code: "CARD_LIMIT_REACHED" });
+      sales.pop();
+    }
+  });
+
   it("flags a card charge that was paid without 3-D Secure", async () => {
     await recordCardChargeSignals({
       tutorUserId: "tutor-1", studentUserId: "s1", paymentIntentId: "pi-1",
@@ -508,6 +609,51 @@ describe("hold period policy", () => {
     vi.stubEnv("PAYOUT_HOLD_DAYS_OTHER", "abc");
     expect(getPayoutHoldDays("card")).toBe(90);
     expect(getPayoutHoldDays("promptpay")).toBe(7);
+  });
+
+  it("gives a discount code payment (already paid by bank transfer) the short hold", () => {
+    expect(isShortHoldMethod("DISCOUNT_CODE")).toBe(true);
+    expect(isShortHoldMethod("discount_code")).toBe(true);
+    expect(isShortHoldMethod(" Discount_Code ")).toBe(true);
+    expect(getPayoutHoldDays("DISCOUNT_CODE")).toBe(7);
+    // Fail-safe: anything else is held like a card.
+    for (const method of ["card", "CARD", "DISCOUNT", "discount-code", "DEV", "", null, undefined]) {
+      expect(isShortHoldMethod(method), String(method)).toBe(false);
+      expect(getPayoutHoldDays(method), String(method)).toBe(60);
+    }
+    vi.stubEnv("PAYOUT_HOLD_DAYS_OTHER", "3");
+    expect(getPayoutHoldDays("DISCOUNT_CODE")).toBe(3);
+    expect(getPayoutHoldDays("promptpay")).toBe(3);
+  });
+
+  it("settles a discount code payment once its short hold is over (month end 2026-05-31 ICT)", () => {
+    const where = buildSettlementPaymentWhere("2026-05");
+    const row = (method: string, paidAt: string) => ({
+      method, paidAt: new Date(paidAt), status: "SUCCESS", commissionSettlementRunId: null,
+    });
+    const cases: Array<[string, string, boolean]> = [
+      // 7-day hold: paid by 2026-05-24 23:59:59.999 ICT.
+      ["DISCOUNT_CODE", "2026-05-24T16:59:59.999Z", true],
+      ["DISCOUNT_CODE", "2026-05-24T17:00:00.000Z", false],
+      ["discount_code", "2026-05-10T00:00:00.000Z", true],
+      ["PROMPTPAY", "2026-05-20T00:00:00.000Z", true],
+      // 60-day hold for cards and unknown methods, including look-alikes of
+      // DISCOUNT_CODE that an ILIKE 'discount_code' pattern would let through.
+      ["card", "2026-05-20T00:00:00.000Z", false],
+      ["mock", "2026-05-20T00:00:00.000Z", false],
+      ["DISCOUNT-CODE", "2026-05-20T00:00:00.000Z", false],
+      ["discount code", "2026-05-20T00:00:00.000Z", false],
+      ["card", "2026-04-01T16:59:59.999Z", true],
+    ];
+    for (const [method, paidAt, included] of cases) {
+      expect(matchesWhere(row(method, paidAt), where), `${method} ${paidAt}`).toBe(included);
+    }
+    // Not SUCCESS, or already paid by another run: never.
+    expect(matchesWhere({ ...row("DISCOUNT_CODE", "2026-05-10T00:00:00.000Z"), status: "REFUNDED" }, where)).toBe(false);
+    expect(matchesWhere({ ...row("DISCOUNT_CODE", "2026-05-10T00:00:00.000Z"), commissionSettlementRunId: "run-apr" }, where)).toBe(false);
+    // The one paid on 2026-05-28 waits for June.
+    expect(matchesWhere(row("DISCOUNT_CODE", "2026-05-28T00:00:00.000Z"), where)).toBe(false);
+    expect(matchesWhere(row("DISCOUNT_CODE", "2026-05-28T00:00:00.000Z"), buildSettlementPaymentWhere("2026-06"))).toBe(true);
   });
 
   it("keeps payments already stamped with this period's run", () => {
@@ -565,6 +711,30 @@ describe("settlement with chargeback protection", () => {
       }),
     ]);
     expect(result.totalPayoutSatang).toBe(0n);
+  });
+
+  it("pays commission on a discount code payment recorded at the offline-paid amount, after the short hold", async () => {
+    const rows: Row[] = [
+      // Matured (paid more than 7 days before the month end): counts.
+      payment({ paymentIntentId: "pi-dc", method: "DISCOUNT_CODE", amountMinor: 300_000n, paidAt: new Date("2026-05-20T00:00:00.000Z"), commissionSettlementRunId: null }),
+      // A free code: selected but adds no volume.
+      payment({ paymentIntentId: "pi-dc-free", method: "DISCOUNT_CODE", amountMinor: 0n, paidAt: new Date("2026-05-20T00:00:00.000Z"), commissionSettlementRunId: null }),
+      // Still in its 7-day hold: next month.
+      payment({ paymentIntentId: "pi-dc-new", method: "DISCOUNT_CODE", amountMinor: 500_000n, paidAt: new Date("2026-05-28T00:00:00.000Z"), commissionSettlementRunId: null }),
+      // A card paid the same day is still in its 60-day hold.
+      payment({ paymentIntentId: "pi-card", method: "card", amountMinor: 200_000n, paidAt: new Date("2026-05-20T00:00:00.000Z"), commissionSettlementRunId: null }),
+    ];
+    prismaMock.paymentIntent.findMany.mockImplementation(async ({ where }: { where: Row }) =>
+      rows.filter((row) => matchesWhere(row, where)),
+    );
+    prismaMock.user.findMany.mockResolvedValue([tutor()]);
+
+    const result = await SettlementService.computeSettlement("2026-05");
+
+    expect(result.lines).toHaveLength(1);
+    expect(result.lines[0]).toMatchObject({ tutorUserId: "tutor-1", grossVolumeMinor: 300_000n });
+    expect(result.lines[0].payoutAmountMinor).toBeGreaterThan(0n);
+    expect(result.totalPayoutSatang).toBeGreaterThan(0n);
   });
 
   it("counts only the non-refunded part of a partially refunded payment", async () => {

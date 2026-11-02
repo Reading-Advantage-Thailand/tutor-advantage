@@ -17,6 +17,7 @@ import {
   getChargeFailureKey,
   getDiscountCodeErrorKey,
   getDiscountPreviewErrorKey,
+  getDiscountRowLabelKey,
   getDisplayAmountSatang,
   getPaymentBookLabel,
   getPaymentErrorKey,
@@ -34,6 +35,7 @@ import {
   isDiscountQuoteFor,
   isEnrollmentFirstError,
   isFreeWithDiscount,
+  isPaidOfflineQuote,
   isUnder18,
   isValidDateOfBirth,
   mergeCheckoutDetails,
@@ -260,6 +262,27 @@ describe("paymentFlow helpers", () => {
     expect(isFreeWithDiscount({ finalAmountSatang: 0 })).toBe(true);
     expect(isFreeWithDiscount({ finalAmountSatang: 100 })).toBe(false);
     expect(isFreeWithDiscount(null)).toBe(false);
+  });
+
+  it("labels a code that records a payment made outside the app ชำระแล้วนอกระบบ, not ส่วนลด", () => {
+    expect(isPaidOfflineQuote({ offlinePaidSatang: 320000 })).toBe(true);
+    expect(getDiscountRowLabelKey({ offlinePaidSatang: 320000 })).toBe("payment.select.paidOffline");
+    expect(t("payment.select.paidOffline")).toBe("ชำระแล้วนอกระบบ");
+    // A free code (0/null) and an older finance version (no field) stay a discount.
+    for (const quote of [{ offlinePaidSatang: 0 }, { offlinePaidSatang: null }, {}, null]) {
+      expect(isPaidOfflineQuote(quote), JSON.stringify(quote)).toBe(false);
+      expect(getDiscountRowLabelKey(quote), JSON.stringify(quote)).toBe("payment.select.discount");
+    }
+    expect(t("payment.select.discount")).toBe("ส่วนลด");
+  });
+
+  it("shows the amount recorded on a redeemed code's payment on the receipt", () => {
+    const quote = { finalAmountSatang: 0 };
+    // Paid outside the app: the intent carries that amount.
+    expect(getDisplayAmountSatang(320000, 320000, quote)).toBe(320000);
+    expect(getDisplayAmountSatang(250000, 320000, quote)).toBe(250000);
+    // A free code's intent is ฿0.
+    expect(getDisplayAmountSatang(0, 320000, quote)).toBe(0);
   });
 
   it("maps discount code errors to the code field in Thai", () => {

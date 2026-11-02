@@ -1,7 +1,7 @@
 import { ErrorState, Skeleton } from "@/components/mobile";
 import { formatSatang, noOrphan } from "@/lib/format";
 import { t } from "@/lib/i18n";
-import type { DiscountQuote, OrderDisplay } from "@/lib/paymentFlow";
+import { getDiscountRowLabelKey, type DiscountQuote, type OrderDisplay } from "@/lib/paymentFlow";
 import { cn } from "@/lib/utils";
 import type { LoadStatus } from "./usePaymentFlow";
 
@@ -88,7 +88,7 @@ export function OrderSummaryCard({ status, display, discount = null, onRetry }: 
         {price ? <SummaryRow label={t("payment.select.tuition")} value={price} /> : null}
         {discount ? (
           <SummaryRow
-            label={`${t("payment.select.discount")} (${discount.code})`}
+            label={`${t(getDiscountRowLabelKey(discount))} (${discount.code})`}
             value={`−${formatSatang(discount.discountSatang)}`}
             valueClassName="text-success-fg"
           />

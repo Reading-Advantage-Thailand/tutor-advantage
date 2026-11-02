@@ -946,7 +946,9 @@ paths:
     post:
       summary: Pay for an enrollment or book-cycle package with a class discount code (STUDENT only)
       description: >-
-        Creates a 0 THB SUCCESS payment intent (method DISCOUNT_CODE) and activates
+        The student pays 0 THB here. Creates a SUCCESS payment intent (method
+        DISCOUNT_CODE) for the amount the student already paid outside the system
+        (the code's offlinePaidSatang; 0 for a free code) and activates
         the enrollment / package in one transaction. Repeating a successful redeem
         returns the same result. Errors: as preview, plus 400 DATE_OF_BIRTH_REQUIRED,
         403 GUARDIAN_CONSENT_REQUIRED / FORBIDDEN, 404 ENROLLMENT_NOT_FOUND,
@@ -973,7 +975,7 @@ paths:
                   maxLength: 128
       responses:
         "200":
-          description: The successful 0 THB payment intent and the applied discount
+          description: The successful payment intent and the applied discount
           content:
             application/json:
               schema:
@@ -982,7 +984,9 @@ paths:
                 properties:
                   intent:
                     type: object
-                    description: Serialized payment intent (status SUCCESS, amountMinor 0, method DISCOUNT_CODE).
+                    description: >-
+                      Serialized payment intent (status SUCCESS, method DISCOUNT_CODE,
+                      amountMinor = the offline-paid amount, 0 for a free code).
                   checkout:
                     type: "null"
                   discount:
@@ -1269,7 +1273,10 @@ components:
       maximum: 9007199254740991
     DiscountQuote:
       type: object
-      description: A class discount code applied to one price. Codes waive the whole price.
+      description: >-
+        A class discount code applied to one price. Codes waive the whole price
+        at checkout (finalAmountSatang 0). offlinePaidSatang is what the student
+        already paid outside the system (null for a free code).
       required:
         [code, discountCodeId, classId, cycleId, originalAmountSatang, discountSatang, finalAmountSatang]
       properties:
@@ -1287,6 +1294,10 @@ components:
           $ref: "#/components/schemas/NonNegativeSatang"
         finalAmountSatang:
           $ref: "#/components/schemas/NonNegativeSatang"
+        offlinePaidSatang:
+          type: [integer, "null"]
+          minimum: 0
+          maximum: 1000000
     ErrorEnvelope:
       type: object
       properties:

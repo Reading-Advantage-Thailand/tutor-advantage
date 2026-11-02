@@ -19,6 +19,7 @@ import {
   findUsableDiscountCode,
   generateDiscountCode,
   normalizeDiscountCode,
+  satangOrNull,
 } from "../services/discountCodeService";
 import {
   fulfillPaymentIntentTx,
@@ -42,6 +43,8 @@ const BATCH_TRANSACTION_TIMEOUT_MS = 30_000;
 /** Most recent students shown per code in the admin list. */
 const REDEEMERS_SHOWN = 3;
 const NOTE_MAX = 500;
+/** Most a student can have paid outside the system per code: 10,000 THB (DB CHECK too). */
+const OFFLINE_PAID_MAX_SATANG = 1_000_000;
 const REASON_MIN = 5;
 const REASON_MAX = 500;
 const IDEMPOTENCY_KEY_MAX = 200;
@@ -125,6 +128,23 @@ function redeemErrorFor(error: unknown): DiscountCodeError | null {
   return null;
 }
 
+/**
+ * A BIGINT column read with $queryRaw (Prisma returns bigint). Anything that
+ * is not a whole, non-negative number fails the redemption rather than record
+ * a wrong amount.
+ */
+function rawMinorOrNull(value: unknown): bigint | null {
+  if (value === null || value === undefined) return null;
+  let amount: bigint | null = null;
+  if (typeof value === "bigint") amount = value;
+  else if (typeof value === "number" && Number.isSafeInteger(value)) amount = BigInt(value);
+  else if (typeof value === "string" && /^\d+$/.test(value)) amount = BigInt(value);
+  if (amount === null || amount < 0n) {
+    throw new Error(`Unexpected offline_paid_amount_minor value: ${String(value)}`);
+  }
+  return amount;
+}
+
 // ── Student ────────────────────────────────────────────────────────────────
 
 // POST /v1/discount-codes/preview { code, classId, cycleId? } — student checks a code (no writes)
@@ -194,7 +214,8 @@ type RedeemInput = {
 
 /**
  * The whole redemption in one transaction: claim one use of the code, create
- * a 0 THB payment intent and activate it through the same path as a paid
+ * a payment intent for the amount the student already paid outside the system
+ * (0 THB for a free code) and activate it through the same path as a paid
  * Omise charge. Any failure rolls everything back.
  */
 async function redeemInTransaction(tx: Prisma.TransactionClient, input: RedeemInput) {
@@ -313,15 +334,19 @@ async function redeemInTransaction(tx: Prisma.TransactionClient, input: RedeemIn
   }
 
   // Claim one use. The guard re-checks status, limit and expiry inside the
-  // UPDATE, so concurrent redemptions cannot exceed maxRedemptions.
-  const claimed = await tx.$executeRaw`
+  // UPDATE, so concurrent redemptions cannot exceed maxRedemptions. The
+  // offline-paid amount comes back from the row this UPDATE locks: an admin
+  // edit (only allowed while redeemed_count = 0) either committed before the
+  // claim and is used here, or waits for it and is then refused.
+  const claimed = await tx.$queryRaw<Array<{ offline_paid_amount_minor: unknown }>>`
     UPDATE finance_mlm.discount_codes
     SET redeemed_count = redeemed_count + 1, updated_at = now()
     WHERE discount_code_id = ${discountCode.discountCodeId}::uuid
       AND status = 'ACTIVE'
       AND redeemed_count < max_redemptions
-      AND (expires_at IS NULL OR expires_at > now())`;
-  if (claimed !== 1) {
+      AND (expires_at IS NULL OR expires_at > now())
+    RETURNING offline_paid_amount_minor`;
+  if (claimed.length !== 1) {
     const current = await tx.discountCode.findUnique({
       where: { discountCodeId: discountCode.discountCodeId },
     });
@@ -329,6 +354,10 @@ async function redeemInTransaction(tx: Prisma.TransactionClient, input: RedeemIn
     // Another redemption or a void won the race: report why it is unusable now.
     throw discountCodeStatusError(effectiveDiscountCodeStatus(current)) ?? discountCodeUsedUp();
   }
+  const offlinePaidAmountMinor = rawMinorOrNull(claimed[0].offline_paid_amount_minor);
+  // The student pays 0 THB at checkout; the payment records what they already
+  // paid by bank transfer so the tutor and upline earn on it. Free code: 0 THB.
+  const amountMinor = offlinePaidAmountMinor ?? 0n;
 
   const redemptionId = randomUUID();
   const providerRef = `discount:${redemptionId}`;
@@ -337,7 +366,7 @@ async function redeemInTransaction(tx: Prisma.TransactionClient, input: RedeemIn
       enrollmentId,
       enrollmentPackageId: enrollmentPackageId ?? undefined,
       studentUserId,
-      amountMinor: 0n,
+      amountMinor,
       currency: "THB",
       method: DISCOUNT_CODE_METHOD,
       status: "PENDING",
@@ -370,6 +399,7 @@ async function redeemInTransaction(tx: Prisma.TransactionClient, input: RedeemIn
         redemptionId,
         code: discountCode.code,
         originalAmountMinor: originalAmountMinor.toString(),
+        offlinePaidAmountMinor: amountMinor.toString(),
       },
       occurredAt: new Date(),
     },
@@ -396,6 +426,7 @@ async function redeemInTransaction(tx: Prisma.TransactionClient, input: RedeemIn
         enrollmentPackageId,
         classId: enrollment.classId,
         originalAmountMinor: originalAmountMinor.toString(),
+        offlinePaidAmountMinor: amountMinor.toString(),
       },
       requestId: input.requestId,
     },
@@ -404,7 +435,8 @@ async function redeemInTransaction(tx: Prisma.TransactionClient, input: RedeemIn
 
   return {
     intent: fulfilled,
-    discount: buildDiscountQuote(discountCode, {
+    // The amount this redemption recorded, not the earlier read.
+    discount: buildDiscountQuote({ ...discountCode, offlinePaidAmountMinor }, {
       classId: enrollment.classId,
       cycleId,
       originalAmountMinor,
@@ -413,6 +445,7 @@ async function redeemInTransaction(tx: Prisma.TransactionClient, input: RedeemIn
 }
 
 // POST /v1/discount-codes/redeem { code, enrollmentId, enrollmentPackageId? } — 0 THB checkout
+// (the payment records the amount the student already paid outside the system)
 export async function redeemDiscountCode(req: AuthenticatedRequest, res: Response) {
   try {
     const roleError = requireStudent(req, res);
@@ -539,6 +572,7 @@ async function presentDiscountCodes(codes: DiscountCode[], now: Date = new Date(
       classTitle: cls?.title ?? null,
       bookCode: cls?.book.bookCode ?? null,
       packagePriceSatang: cls ? Number(cls.packagePriceMinor) : null,
+      offlinePaidSatang: satangOrNull(code.offlinePaidAmountMinor),
       tutorUserId: cls?.tutorUserId ?? null,
       tutorName: tutor?.displayName ?? null,
       tutorEmail: tutor?.email ?? null,
@@ -591,6 +625,34 @@ function parseIdempotencyKey(raw: unknown): ParsedIdempotencyKey {
   if (raw === undefined) return { ok: true, value: null };
   if (typeof raw !== "string" || raw.trim().length > IDEMPOTENCY_KEY_MAX) return { ok: false };
   return { ok: true, value: raw.trim() || null };
+}
+
+type ParsedOfflinePaid = { ok: true; value: bigint | null } | { ok: false };
+
+/**
+ * `offlinePaidSatang`: what the student already paid outside the system, an
+ * integer number of satang from 0 to OFFLINE_PAID_MAX_SATANG. null / absent
+ * stores NULL (a free code). Strings and fractions are rejected.
+ */
+function parseOfflinePaid(raw: unknown): ParsedOfflinePaid {
+  if (raw === undefined || raw === null) return { ok: true, value: null };
+  if (typeof raw !== "number" || !Number.isInteger(raw) || raw < 0 || raw > OFFLINE_PAID_MAX_SATANG) {
+    return { ok: false };
+  }
+  return { ok: true, value: BigInt(raw) };
+}
+
+function invalidOfflineAmount(req: AuthenticatedRequest) {
+  return errorBody(
+    req,
+    "INVALID_OFFLINE_AMOUNT",
+    `offlinePaidSatang must be an integer from 0 to ${OFFLINE_PAID_MAX_SATANG} (satang), or null`,
+  );
+}
+
+/** Minor units as an audit-payload string (JSON has no bigint). */
+function minorString(amountMinor: bigint | null) {
+  return amountMinor === null ? null : amountMinor.toString();
 }
 
 /**
@@ -721,7 +783,7 @@ export async function getDiscountCodes(req: AuthenticatedRequest, res: Response)
   }
 }
 
-// POST /v1/discount-codes { classId, maxRedemptions?, expiresAt?, note? } — admin issues a code
+// POST /v1/discount-codes { classId, maxRedemptions?, expiresAt?, note?, offlinePaidSatang? } — admin issues a code
 export async function createDiscountCode(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
@@ -729,7 +791,7 @@ export async function createDiscountCode(req: AuthenticatedRequest, res: Respons
       return forbidden(req, res, "Only admins can issue discount codes");
     }
 
-    const { classId, maxRedemptions: rawMax, expiresAt, note } = req.body ?? {};
+    const { classId, maxRedemptions: rawMax, expiresAt, note, offlinePaidSatang } = req.body ?? {};
     if (!isUuid(classId)) {
       return res.status(400).json(errorBody(req, "INVALID_CLASS_ID", "classId must be a valid UUID"));
     }
@@ -761,6 +823,11 @@ export async function createDiscountCode(req: AuthenticatedRequest, res: Respons
         .json(errorBody(req, "INVALID_NOTE", `note must be text of at most ${NOTE_MAX} characters`));
     }
 
+    const parsedOfflinePaid = parseOfflinePaid(offlinePaidSatang);
+    if (!parsedOfflinePaid.ok) {
+      return res.status(400).json(invalidOfflineAmount(req));
+    }
+
     const idempotencyKey = parseIdempotencyKey(req.headers["idempotency-key"]);
     if (!idempotencyKey.ok) {
       return res
@@ -774,9 +841,14 @@ export async function createDiscountCode(req: AuthenticatedRequest, res: Respons
         );
     }
 
-    // A retried request (same Idempotency-Key) gets the code it already created.
+    // A retried request (same Idempotency-Key) gets the code it already
+    // created, but never one recording a different offline-paid amount.
     const replay = async (existing: DiscountCode) => {
-      if (existing.classId !== classId || existing.createdByUserId !== userId) {
+      if (
+        existing.classId !== classId ||
+        existing.createdByUserId !== userId ||
+        existing.offlinePaidAmountMinor !== parsedOfflinePaid.value
+      ) {
         return res
           .status(409)
           .json(
@@ -822,6 +894,7 @@ export async function createDiscountCode(req: AuthenticatedRequest, res: Respons
             maxRedemptions,
             note: parsedNote.value,
             createdByUserId: userId,
+            offlinePaidAmountMinor: parsedOfflinePaid.value,
             creationIdempotencyKey: idempotencyKey.value,
             expiresAt: parsedExpiry.value,
           },
@@ -850,6 +923,7 @@ export async function createDiscountCode(req: AuthenticatedRequest, res: Respons
         maxRedemptions,
         expiresAt: iso(parsedExpiry.value),
         note: parsedNote.value,
+        offlinePaidAmountMinor: minorString(parsedOfflinePaid.value),
       },
       requestId: req.id,
     });
@@ -909,7 +983,7 @@ async function generateFreeDiscountCodes(quantity: number): Promise<string[]> {
   return Array.from(codes);
 }
 
-// POST /v1/discount-codes/batch { classId, quantity, expiresAt?, note? } — admin issues
+// POST /v1/discount-codes/batch { classId, quantity, expiresAt?, note?, offlinePaidSatang? } — admin issues
 // `quantity` single-use codes (one per student, so a forwarded code cannot be reused)
 export async function createDiscountCodeBatch(req: AuthenticatedRequest, res: Response) {
   try {
@@ -918,7 +992,7 @@ export async function createDiscountCodeBatch(req: AuthenticatedRequest, res: Re
       return forbidden(req, res, "Only admins can issue discount codes");
     }
 
-    const { classId, quantity, expiresAt, note } = req.body ?? {};
+    const { classId, quantity, expiresAt, note, offlinePaidSatang } = req.body ?? {};
     if (!isUuid(classId)) {
       return res.status(400).json(errorBody(req, "INVALID_CLASS_ID", "classId must be a valid UUID"));
     }
@@ -945,6 +1019,12 @@ export async function createDiscountCodeBatch(req: AuthenticatedRequest, res: Re
         .json(errorBody(req, "INVALID_NOTE", `note must be text of at most ${NOTE_MAX} characters`));
     }
 
+    const parsedOfflinePaid = parseOfflinePaid(offlinePaidSatang);
+    if (!parsedOfflinePaid.ok) {
+      return res.status(400).json(invalidOfflineAmount(req));
+    }
+    const offlinePaidAmountMinor = parsedOfflinePaid.value;
+
     const idempotencyKey = parseIdempotencyKey(req.headers["idempotency-key"]);
     if (!idempotencyKey.ok) {
       return res
@@ -960,13 +1040,17 @@ export async function createDiscountCodeBatch(req: AuthenticatedRequest, res: Re
     const key = idempotencyKey.value;
 
     // A retried request (same Idempotency-Key) gets the codes it already
-    // created, but only when they are that whole batch for the same class.
+    // created, but only when they are that whole batch for the same class and
+    // the same offline-paid amount.
     const replay = async (existing: Awaited<ReturnType<typeof findBatchByKey>>) => {
       const sameBatch =
         existing.length === quantity &&
         existing.every(
           ({ row, index }, position) =>
-            index === position + 1 && row.classId === classId && row.createdByUserId === userId,
+            index === position + 1 &&
+            row.classId === classId &&
+            row.createdByUserId === userId &&
+            row.offlinePaidAmountMinor === offlinePaidAmountMinor,
         );
       if (!sameBatch) {
         return res
@@ -1015,6 +1099,7 @@ export async function createDiscountCodeBatch(req: AuthenticatedRequest, res: Re
                   maxRedemptions: 1,
                   note: parsedNote.value,
                   createdByUserId: userId,
+                  offlinePaidAmountMinor,
                   creationIdempotencyKey: key ? batchIdempotencyKey(key, batchIndex) : null,
                   expiresAt: parsedExpiry.value,
                 },
@@ -1032,6 +1117,7 @@ export async function createDiscountCodeBatch(req: AuthenticatedRequest, res: Re
                     maxRedemptions: 1,
                     expiresAt: iso(parsedExpiry.value),
                     note: parsedNote.value,
+                    offlinePaidAmountMinor: minorString(offlinePaidAmountMinor),
                     batchSize: quantity,
                     batchIndex,
                   },
@@ -1063,6 +1149,91 @@ export async function createDiscountCodeBatch(req: AuthenticatedRequest, res: Re
     return res
       .status(500)
       .json(errorBody(req, "INTERNAL_SERVER_ERROR", "Could not create discount codes"));
+  }
+}
+
+// PATCH /v1/discount-codes/:discountCodeId/offline-amount { offlinePaidSatang } — admin
+// corrects what the student paid outside the system (null = free code). Only
+// while the code is ACTIVE and unused: a redemption has already recorded it.
+export async function updateDiscountCodeOfflineAmount(req: AuthenticatedRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    if (!userId || req.user?.role !== "ADMIN") {
+      return forbidden(req, res, "Only admins can edit discount codes");
+    }
+
+    const { discountCodeId } = req.params;
+    if (!UUID_RE.test(discountCodeId)) {
+      return res
+        .status(400)
+        .json(errorBody(req, "INVALID_DISCOUNT_CODE_ID", "discountCodeId must be a valid UUID"));
+    }
+
+    // The field is required: an empty body must not turn a paid code free.
+    const body = (req.body ?? {}) as Record<string, unknown>;
+    const parsed: ParsedOfflinePaid =
+      "offlinePaidSatang" in body ? parseOfflinePaid(body.offlinePaidSatang) : { ok: false };
+    if (!parsed.ok) {
+      return res.status(400).json(invalidOfflineAmount(req));
+    }
+    const offlinePaidAmountMinor = parsed.value;
+
+    // The change and its audit row commit together (it decides tutor earnings).
+    const discountCode = await prisma.$transaction(async (tx) => {
+      // Lock the row before reading it, so `before` is exactly the value this
+      // update replaces even when two admins edit the same code at once.
+      await tx.$queryRaw`
+        SELECT 1 FROM finance_mlm.discount_codes
+        WHERE discount_code_id = ${discountCodeId}::uuid
+        FOR UPDATE`;
+      const before = await tx.discountCode.findUnique({ where: { discountCodeId } });
+      if (!before) throw discountCodeNotFound();
+
+      // Atomic guard against a concurrent redeem or void: the redeem claim
+      // locks the row and raises redeemed_count before reading the amount.
+      const result = await tx.discountCode.updateMany({
+        where: { discountCodeId, status: "ACTIVE", redeemedCount: 0 },
+        data: { offlinePaidAmountMinor, updatedAt: new Date() },
+      });
+      if (result.count === 0) {
+        throw new DiscountCodeError(
+          409,
+          "OFFLINE_AMOUNT_LOCKED",
+          "The amount can only change while the code is active and nobody has used it",
+        );
+      }
+
+      const after = await tx.discountCode.findUnique({ where: { discountCodeId } });
+      if (!after) throw discountCodeNotFound();
+
+      await recordAuditEvent(
+        {
+          actorId: userId,
+          action: AUDIT_ACTIONS.DISCOUNT_CODE_UPDATE,
+          entityType: AUDIT_ENTITY.DISCOUNT_CODE,
+          entityId: discountCodeId,
+          payload: {
+            code: after.code,
+            classId: after.classId,
+            before: { offlinePaidAmountMinor: minorString(before.offlinePaidAmountMinor) },
+            after: { offlinePaidAmountMinor: minorString(after.offlinePaidAmountMinor) },
+          },
+          requestId: req.id,
+        },
+        { client: tx, strict: true },
+      );
+      return after;
+    });
+
+    return res.status(200).json({ discountCode: await presentDiscountCode(discountCode) });
+  } catch (error) {
+    if (error instanceof DiscountCodeError) {
+      return res.status(error.status).json(errorBody(req, error.code, error.message));
+    }
+    logger.error("Update Discount Code Offline Amount Error:", error);
+    return res
+      .status(500)
+      .json(errorBody(req, "INTERNAL_SERVER_ERROR", "Could not update discount code"));
   }
 }
 
@@ -1166,6 +1337,7 @@ export async function getDiscountCodeRedemptions(req: AuthenticatedRequest, res:
     const redemptions = await prisma.discountCodeRedemption.findMany({
       where: { discountCodeId },
       orderBy: { createdAt: "desc" },
+      include: { paymentIntent: { select: { amountMinor: true } } },
     });
 
     const studentIds = Array.from(new Set(redemptions.map((r) => r.studentUserId)));
@@ -1201,6 +1373,8 @@ export async function getDiscountCodeRedemptions(req: AuthenticatedRequest, res:
           enrollmentStatus: enrollmentMap.get(r.enrollmentId)?.status ?? null,
           paymentIntentId: r.paymentIntentId,
           originalAmountSatang: Number(r.originalAmountMinor),
+          // What this redemption recorded (the offline-paid amount, 0 when free).
+          paidAmountSatang: Number(r.paymentIntent.amountMinor),
           createdAt: r.createdAt.toISOString(),
         };
       }),

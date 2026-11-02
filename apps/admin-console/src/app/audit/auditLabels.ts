@@ -80,7 +80,14 @@ export const AUDIT_CATEGORIES: { id: AuditCategory; label: string; actions: stri
   {
     id: "class",
     label: t("audit.catClass"),
-    actions: ["ADMIN_CLASS_CREATE", "ADMIN_TUTOR_PROVISION", "DISCOUNT_CODE_CREATE", "DISCOUNT_CODE_VOID", "DISCOUNT_CODE_REDEEM"],
+    actions: [
+      "ADMIN_CLASS_CREATE",
+      "ADMIN_TUTOR_PROVISION",
+      "DISCOUNT_CODE_CREATE",
+      "DISCOUNT_CODE_UPDATE",
+      "DISCOUNT_CODE_VOID",
+      "DISCOUNT_CODE_REDEEM",
+    ],
   },
   { id: "system", label: t("audit.catSystem"), actions: ["AUDIT_EXPORT"] },
 ];

@@ -84,6 +84,8 @@ export const PROXY_RULES: readonly ProxyRule[] = [
   { methods: ["POST"], path: "/v1/discount-codes/batch", service: "finance", roles: ADMIN },
   { methods: ["POST"], path: "/v1/discount-codes/:id/void", service: "finance", roles: ADMIN },
   { methods: ["GET"], path: "/v1/discount-codes/:id/redemptions", service: "finance", roles: ADMIN },
+  // Amount the student paid outside the app (only while nobody used the code).
+  { methods: ["PATCH"], path: "/v1/discount-codes/:id/offline-amount", service: "finance", roles: ADMIN },
   { methods: ["GET", "POST"], path: "/v1/admin/classes", service: "learning", roles: ADMIN },
   { methods: ["GET"], path: "/v1/books", service: "learning", roles: ADMIN },
 

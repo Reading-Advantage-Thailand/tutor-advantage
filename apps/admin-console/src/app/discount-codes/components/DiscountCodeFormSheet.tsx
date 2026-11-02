@@ -2,19 +2,22 @@
 
 import { ArrowRight, Check, CheckCircle2, Copy, Download } from "lucide-react";
 import { useEffect, useState } from "react";
-import { CopyButton, DescriptionList, Money, Sheet, TextAreaField, TextField } from "@/components/app";
+import { CopyButton, DescriptionList, Money, Notice, Sheet, TextAreaField, TextField } from "@/components/app";
 import { toast } from "@/components/app/toastStore";
 import { Button } from "@/components/ui/button";
 import { api, downloadBlob, errorMessage, newIdempotencyKey } from "@/lib/api";
-import { formatNumber, formatThaiDate } from "@/lib/format";
+import { formatNumber, formatSatang, formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { EMPTY_DATE } from "../../coupons/couponForm";
 import { ThaiDateField } from "../../coupons/components/ThaiDateField";
 import { buildCodesCsv, buildCodesText, codesCsvFilename, CSV_MIME } from "../discountCodeExport";
 import {
   NOTE_MAX,
+  offlinePaidOf,
+  offlinePaidWarning,
   QUANTITY_LIMIT,
   validateDiscountCodeForm,
+  withClassOption,
   type DiscountCode,
   type DiscountCodeCreateBody,
   type DiscountCodeFormErrors,
@@ -34,11 +37,12 @@ export interface DiscountCodeFormSheetProps {
   onCreated: (codes: DiscountCode[]) => void;
 }
 
-const BLANK: DiscountCodeFormValues = { classOption: null, quantity: "1", expiry: EMPTY_DATE, note: "" };
+const BLANK: DiscountCodeFormValues = { classOption: null, offlinePaid: "", quantity: "1", expiry: EMPTY_DATE, note: "" };
 
 const MESSAGES = {
   classRequired: t("discountCodes.validation.classRequired"),
   classDemo: t("discountCodes.validation.classDemo"),
+  offlinePaid: t("discountCodes.validation.offlinePaid"),
   quantity: t("discountCodes.validation.quantity"),
   noteTooLong: t("discountCodes.validation.noteTooLong", { max: NOTE_MAX }),
   // Same date picker as coupons, same wording.
@@ -50,6 +54,11 @@ const MESSAGES = {
 function tutorName(tutor: { displayName: string | null; email: string | null } | null | undefined): string {
   if (!tutor) return "–";
   return tutor.displayName || tutor.email || t("discountCodes.tutorUnnamed");
+}
+
+/** "฿3,000 ต่อโค้ด", or "ไม่มี (โค้ดฟรี)" when nothing was paid outside the app. */
+function offlinePaidText(satang: number): string {
+  return satang > 0 ? t("discountCodes.offlinePaidValue", { amount: formatSatang(satang) }) : t("discountCodes.offlinePaidNone");
 }
 
 /** "คัดลอกทั้งหมด": a labelled button (CopyButton is icon-only) that confirms for a moment. */
@@ -81,9 +90,11 @@ function CopyAllButton({ value }: { value: string }) {
 
 /**
  * Issue class discount codes in a Sheet: form → review (class, price ฿X → ฿0,
- * number of codes, expiry) → created (one code + a message to send the
- * student, or a numbered list with copy-all and CSV for a batch). Every code
- * is single-use (one per student), so a forwarded code cannot be reused.
+ * amount paid outside the app, number of codes, expiry) → created (one code +
+ * a message to send the student, or a numbered list with copy-all and CSV for
+ * a batch). Every code is single-use (one per student), so a forwarded code
+ * cannot be reused. The amount paid outside the app follows the class price
+ * until the admin types one; it is what the tutor and upline earn on.
  * Mounted with a `key` per opening so state resets; one Idempotency-Key per
  * opening (and per "ออกโค้ดเพิ่ม").
  */
@@ -96,6 +107,8 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
   const [created, setCreated] = useState<DiscountCode[] | null>(null);
   // One key per opening: a retry after a network error is the same request.
   const [idempotencyKey, setIdempotencyKey] = useState(newIdempotencyKey);
+  // The admin typed an amount: picking another class no longer overwrites it with the class price.
+  const [amountTyped, setAmountTyped] = useState(false);
 
   // Deep link (?classId=): fill the picker once the class has loaded.
   const lookup = useClassLookup(initialClassId);
@@ -104,8 +117,8 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
     if (prefilled || lookup.data === undefined) return;
     setPrefilled(true);
     const found = lookup.data;
-    if (found) setValues((current) => (current.classOption ? current : { ...current, classOption: found }));
-  }, [lookup.data, prefilled]);
+    if (found) setValues((current) => (current.classOption ? current : withClassOption(current, found, amountTyped)));
+  }, [lookup.data, prefilled, amountTyped]);
   const preselecting = Boolean(initialClassId) && !prefilled && lookup.isLoading;
   const preselectMissing = Boolean(initialClassId) && prefilled && lookup.data === null && !values.classOption;
   // The lookup failed (network/server): say so instead of silently showing an empty picker.
@@ -116,6 +129,18 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
     setValues((current) => ({ ...current, [key]: value }));
     const errorKey = key === "classOption" ? "class" : (key as keyof DiscountCodeFormErrors);
     if (errors[errorKey]) setErrors((current) => ({ ...current, [errorKey]: undefined }));
+  };
+
+  const pickClass = (option: DiscountCodeFormValues["classOption"]) => {
+    setValues((current) => withClassOption(current, option, amountTyped));
+    // The prefilled amount replaces whatever was wrong with the field.
+    setErrors((current) => ({ ...current, class: undefined, ...(amountTyped ? {} : { offlinePaid: undefined }) }));
+  };
+
+  const setOfflinePaid = (text: string) => {
+    set("offlinePaid", text);
+    // Clearing the field hands it back to the class price.
+    setAmountTyped(text.trim() !== "");
   };
 
   const save = async (body: DiscountCodeCreateBody) => {
@@ -143,9 +168,11 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
   };
 
   // More codes for the same class is the common case (one code per paying student).
+  // The amount starts again from the class price, like a fresh form.
   const createAnother = () => {
     setCreated(null);
-    setValues((current) => ({ ...BLANK, classOption: current.classOption }));
+    setValues((current) => withClassOption(BLANK, current.classOption, false));
+    setAmountTyped(false);
     setErrors({});
     setIdempotencyKey(newIdempotencyKey());
   };
@@ -177,6 +204,11 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
       label: t("discountCodes.detailExpires"),
       value: first?.expiresAt ? formatThaiDate(first.expiresAt, "long") : t("discountCodes.noExpiry"),
     };
+    // What the API stored (a batch shares one amount), not what was typed.
+    const offlinePaidItem = {
+      label: t("discountCodes.detailOfflinePaid"),
+      value: offlinePaidText(first ? offlinePaidOf(first) : 0),
+    };
     footer = (
       <div className={footerRow}>
         <Button variant="outline" onClick={createAnother}>
@@ -207,6 +239,7 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
                 value: t("discountCodes.usesValue", { count: formatNumber(first.maxRedemptions) }),
               },
               expiryItem,
+              offlinePaidItem,
             ]}
           />
           <div className="flex flex-col gap-1.5">
@@ -245,6 +278,7 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
                 value: t("discountCodes.quantityValue", { count: formatNumber(created.length) }),
               },
               expiryItem,
+              offlinePaidItem,
             ]}
           />
           <div className="flex flex-col gap-2">
@@ -275,6 +309,7 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
       );
     }
   } else if (review) {
+    const warning = offlinePaidWarning(review.offlinePaidSatang, selected?.packagePriceSatang);
     title = t("discountCodes.reviewTitle");
     description = t("discountCodes.reviewDescription");
     footer = (
@@ -307,6 +342,10 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
                 ),
               },
               {
+                label: t("discountCodes.detailOfflinePaid"),
+                value: <span className="font-semibold text-fg">{offlinePaidText(review.offlinePaidSatang)}</span>,
+              },
+              {
                 label: t("discountCodes.detailQuantity"),
                 value: t("discountCodes.quantityValue", { count: formatNumber(review.quantity) }),
               },
@@ -320,6 +359,16 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
             ]}
           />
         </div>
+        {warning ? (
+          <Notice tone="warning">
+            {warning === "free"
+              ? t("discountCodes.offlinePaidWarnFree")
+              : t("discountCodes.offlinePaidWarnDiffers", {
+                  amount: formatSatang(review.offlinePaidSatang),
+                  price: formatSatang(selected?.packagePriceSatang ?? null),
+                })}
+          </Notice>
+        ) : null}
         {errorBox}
       </div>
     );
@@ -340,11 +389,23 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
       <form id="discount-code-form" noValidate onSubmit={submit} className="flex flex-col gap-5">
         <ClassPicker
           value={values.classOption}
-          onChange={(option) => set("classOption", option)}
+          onChange={pickClass}
           disabled={saving}
           error={errors.class}
           loading={preselecting}
           notice={preselectMissing ? t("discountCodes.classMissing") : (preselectError ?? undefined)}
+        />
+        <TextField
+          label={t("discountCodes.offlinePaidLabel")}
+          required
+          inputMode="decimal"
+          autoComplete="off"
+          disabled={saving}
+          value={values.offlinePaid}
+          onChange={(event) => setOfflinePaid(event.target.value)}
+          endAddon={t("discountCodes.offlinePaidUnit")}
+          hint={t("discountCodes.offlinePaidHint")}
+          error={errors.offlinePaid}
         />
         <TextField
           label={t("discountCodes.quantityLabel")}

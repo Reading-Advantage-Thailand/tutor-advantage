@@ -482,6 +482,31 @@ describe("usePaymentFlow", () => {
       expect(invalidateResource).toHaveBeenCalledWith("u1:");
     });
 
+    it("paid outside the app: ฿0 to pay now, the receipt shows the amount recorded on the payment", async () => {
+      const paidOffline = { ...QUOTE, offlinePaidSatang: 320000 };
+      api.previewDiscountCode.mockResolvedValue({ discount: paidOffline });
+      api.redeemDiscountCode.mockResolvedValue({
+        ...REDEEMED,
+        intent: { ...REDEEMED.intent, amountMinor: 320000 },
+        discount: paidOffline,
+      });
+      api.enrollClass.mockResolvedValue({ ...PENDING_ENROLLMENT, classId: "c1" });
+      await render();
+
+      await applyCode();
+      expect(flow.discount.quote).toEqual(paidOffline);
+      // Same checkout as a free code: nothing to pay in the app.
+      expect(flow.discount.free).toBe(true);
+      expect(flow.amountSatang).toBe(0);
+
+      await act(async () => flow.actions.proceed());
+      await settle();
+      expect(api.createPaymentIntent).not.toHaveBeenCalled();
+      expect(flow.step).toBe("success");
+      expect(flow.amountSatang).toBe(320000);
+      expect(flow.receiptMethod).toBe("DISCOUNT_CODE");
+    });
+
     it("book cycle: the quote and the redeem use the cycle package", async () => {
       api.previewDiscountCode.mockResolvedValue({
         discount: { ...QUOTE, cycleId: "cy1", originalAmountSatang: 180000, discountSatang: 180000 },

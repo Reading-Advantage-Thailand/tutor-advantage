@@ -217,6 +217,48 @@ describe("finance discount code OpenAPI contract (student checkout)", () => {
     expect(response.status).toBe(500);
     expect(response.body.error.code).toBe("OPENAPI_RESPONSE_VALIDATION_FAILED");
   });
+
+  it.each([300000, 0, null])("accepts offlinePaidSatang %o in the quote (preview and redeem)", async (offlinePaidSatang) => {
+    const paidApp = contractApp("finance-mlm.v1.yaml", (server) => {
+      server.post("/v1/discount-codes/preview", (_req, res) => {
+        res.status(200).json({ discount: { ...quote, offlinePaidSatang } });
+      });
+      server.post("/v1/discount-codes/redeem", (_req, res) => {
+        res.status(200).json({
+          intent: { paymentIntentId: id, status: "SUCCESS", amountMinor: offlinePaidSatang ?? 0, method: "DISCOUNT_CODE" },
+          checkout: null,
+          discount: { ...quote, offlinePaidSatang },
+        });
+      });
+    });
+    await request(paidApp).post("/v1/discount-codes/preview").send({ code: "DC-ABCD-EFGH", classId: id }).expect(200);
+    await request(paidApp).post("/v1/discount-codes/redeem").send({ code: "DC-ABCD-EFGH", enrollmentId: id }).expect(200);
+  });
+
+  it.each([3000.5, -1, 1_000_001, "300000"])("catches offlinePaidSatang %o in the quote", async (offlinePaidSatang) => {
+    const badApp = contractApp("finance-mlm.v1.yaml", (server) => {
+      server.post("/v1/discount-codes/preview", (_req, res) => {
+        res.status(200).json({ discount: { ...quote, offlinePaidSatang } });
+      });
+    });
+    const response = await request(badApp)
+      .post("/v1/discount-codes/preview")
+      .send({ code: "DC-ABCD-EFGH", classId: id });
+    expect(response.status).toBe(500);
+    expect(response.body.error.code).toBe("OPENAPI_RESPONSE_VALIDATION_FAILED");
+  });
+
+  it("leaves the admin offline-amount edit unvalidated (admin CRUD is undocumented)", async () => {
+    const adminApp = contractApp("finance-mlm.v1.yaml", (server) => {
+      server.patch("/v1/discount-codes/:discountCodeId/offline-amount", (_req, res) => {
+        res.status(200).json({ discountCode: { discountCodeId: id, offlinePaidSatang: 300000 } });
+      });
+    });
+    await request(adminApp)
+      .patch(`/v1/discount-codes/${id}/offline-amount`)
+      .send({ offlinePaidSatang: 300000 })
+      .expect(200);
+  });
 });
 
 describe("finance audit-log OpenAPI contract (admin G1)", () => {

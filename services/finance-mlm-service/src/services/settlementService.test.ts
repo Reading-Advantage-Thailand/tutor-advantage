@@ -557,7 +557,11 @@ describe("SettlementService", () => {
     await SettlementService.previewSettlement("2026-05", "admin-1");
 
     const paymentQuery = prismaMock.paymentIntent.findMany.mock.calls[0][0];
-    // Month end 2026-05-31 23:59:59.999 ICT; card hold 60 days, PromptPay 7 days.
+    // Month end 2026-05-31 23:59:59.999 ICT; card hold 60 days, PromptPay and
+    // DISCOUNT_CODE (bank transfers, no chargeback) 7 days.
+    // An exact `in` list (LOWER(method) IN ...), never ILIKE: "discount_code"
+    // has a `_`, which ILIKE would treat as "any character".
+    const shortHoldMethods = { method: { in: ["promptpay", "discount_code"], mode: "insensitive" } };
     expect(paymentQuery.where).toEqual({
       status: "SUCCESS",
       OR: [
@@ -566,8 +570,8 @@ describe("SettlementService", () => {
             { commissionSettlementRunId: null },
             {
               OR: [
-                { method: { equals: "promptpay", mode: "insensitive" }, paidAt: { lte: new Date("2026-05-24T16:59:59.999Z") } },
-                { NOT: { method: { equals: "promptpay", mode: "insensitive" } }, paidAt: { lte: new Date("2026-04-01T16:59:59.999Z") } },
+                { AND: [shortHoldMethods], paidAt: { lte: new Date("2026-05-24T16:59:59.999Z") } },
+                { NOT: shortHoldMethods, paidAt: { lte: new Date("2026-04-01T16:59:59.999Z") } },
               ],
             },
           ],

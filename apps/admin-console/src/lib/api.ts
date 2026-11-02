@@ -139,6 +139,8 @@ export const ERROR_MESSAGES: Record<string, string> = {
   DISCOUNT_CODE_USED_UP: "โค้ดนี้ถูกใช้ครบจำนวนแล้ว",
   DISCOUNT_CODE_ALREADY_USED: "นักเรียนคนนี้ใช้โค้ดนี้ไปแล้ว",
   DISCOUNT_CODE_WRONG_CLASS: "โค้ดนี้ใช้กับคลาสอื่น",
+  INVALID_OFFLINE_AMOUNT: "ยอดที่รับนอกระบบต้องเป็น 0–10,000 บาท",
+  OFFLINE_AMOUNT_LOCKED: "แก้ยอดที่รับได้เฉพาะโค้ดที่ยังไม่มีนักเรียนใช้และยังไม่ถูกยกเลิก กรุณารีเฟรช",
   ENROLLMENT_NOT_PENDING_PAYMENT: "การลงเรียนนี้ไม่ได้รอชำระเงินแล้ว",
   PAYMENT_IN_PROGRESS: "มีรายการชำระเงินของการลงเรียนนี้กำลังดำเนินการอยู่",
   PAYMENT_ALREADY_COMPLETED: "การลงเรียนนี้ชำระเงินเรียบร้อยแล้ว",

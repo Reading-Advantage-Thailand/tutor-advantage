@@ -65,6 +65,7 @@ import {
   getDiscountCodes,
   previewDiscountCode,
   redeemDiscountCode,
+  updateDiscountCodeOfflineAmount,
   voidDiscountCode,
 } from "./discountCodeController";
 
@@ -122,6 +123,7 @@ function discountCodeRow(overrides: Record<string, unknown> = {}) {
     status: "ACTIVE",
     note: null,
     createdByUserId: ADMIN_ID,
+    offlinePaidAmountMinor: null,
     creationIdempotencyKey: null,
     expiresAt: null,
     voidedAt: null,
@@ -201,8 +203,14 @@ beforeEach(() => {
   prisma.discountCodeRedemption.create.mockResolvedValue({});
   prisma.discountCodeRedemption.findMany.mockResolvedValue([]);
   prisma.discountCodeRedemption.groupBy.mockResolvedValue([]);
-  prisma.$executeRaw.mockResolvedValue(1);
+  // The guarded claim (UPDATE ... RETURNING): one row, a free code by default.
+  prisma.$queryRaw.mockResolvedValue([{ offline_paid_amount_minor: null }]);
 });
+
+/** The claim UPDATE ... RETURNING returns this offline-paid amount. */
+function claimReturns(offlinePaidAmountMinor: unknown) {
+  prisma.$queryRaw.mockResolvedValue([{ offline_paid_amount_minor: offlinePaidAmountMinor }]);
+}
 
 describe("discountCodeController.previewDiscountCode", () => {
   beforeEach(() => {
@@ -246,11 +254,26 @@ describe("discountCodeController.previewDiscountCode", () => {
         originalAmountSatang: 300000,
         discountSatang: 300000,
         finalAmountSatang: 0,
+        offlinePaidSatang: null,
       },
     });
     expect(prisma.discountCode.findUnique).toHaveBeenCalledWith({ where: { code: "DC-ABCDEFGH" } });
-    expect(prisma.$executeRaw).not.toHaveBeenCalled();
+    expect(prisma.$queryRaw).not.toHaveBeenCalled();
     expect(prisma.discountCodeRedemption.create).not.toHaveBeenCalled();
+  });
+
+  it("shows what the student already paid outside the system (still 0 THB to pay now)", async () => {
+    prisma.discountCode.findUnique.mockResolvedValue(discountCodeRow({ offlinePaidAmountMinor: 300000n }));
+    const res = createResponse();
+    await previewDiscountCode(studentRequest({ code: "DC-ABCD-EFGH", classId: CLASS_ID }) as never, res as never);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.discount).toMatchObject({
+      originalAmountSatang: 300000,
+      discountSatang: 300000,
+      finalAmountSatang: 0,
+      offlinePaidSatang: 300000,
+    });
+    expect(prisma.$queryRaw).not.toHaveBeenCalled();
   });
 
   it("uses the book cycle price, and only for a cycle of the same class", async () => {
@@ -306,7 +329,7 @@ describe("discountCodeController.redeemDiscountCode", () => {
   }
 
   function expectNoRedemptionWrites() {
-    expect(prisma.$executeRaw).not.toHaveBeenCalled();
+    expect(prisma.$queryRaw).not.toHaveBeenCalled();
     expect(prisma.paymentIntent.create).not.toHaveBeenCalled();
     expect(prisma.discountCodeRedemption.create).not.toHaveBeenCalled();
     expect(prisma.auditEvent.create).not.toHaveBeenCalled();
@@ -331,10 +354,12 @@ describe("discountCodeController.redeemDiscountCode", () => {
     expect(providerRef).toMatch(/^discount:[0-9a-f-]{36}$/);
     const redemptionId = providerRef.slice("discount:".length);
 
-    // One use claimed with a guarded UPDATE.
-    const [sql, codeId] = prisma.$executeRaw.mock.calls[0];
+    // One use claimed with a guarded UPDATE that returns the offline-paid amount.
+    expect(prisma.$queryRaw).toHaveBeenCalledTimes(1);
+    const [sql, codeId] = prisma.$queryRaw.mock.calls[0];
     expect(sql.join("?")).toContain("redeemed_count < max_redemptions");
     expect(sql.join("?")).toContain("status = 'ACTIVE'");
+    expect(sql.join("?")).toContain("RETURNING offline_paid_amount_minor");
     expect(codeId).toBe(CODE_ID);
 
     expect(prisma.discountCodeRedemption.create).toHaveBeenCalledWith({
@@ -355,7 +380,13 @@ describe("discountCodeController.redeemDiscountCode", () => {
         paymentIntentId: INTENT_ID,
         providerEventId: `${providerRef}:redeemed`,
         eventType: "discount_code.redeemed",
-        rawPayload: { discountCodeId: CODE_ID, redemptionId, code: "DC-ABCD-EFGH", originalAmountMinor: "300000" },
+        rawPayload: {
+          discountCodeId: CODE_ID,
+          redemptionId,
+          code: "DC-ABCD-EFGH",
+          originalAmountMinor: "300000",
+          offlinePaidAmountMinor: "0",
+        },
       }),
     });
 
@@ -390,6 +421,7 @@ describe("discountCodeController.redeemDiscountCode", () => {
           enrollmentPackageId: null,
           classId: CLASS_ID,
           originalAmountMinor: "300000",
+          offlinePaidAmountMinor: "0",
           requestId: "req-1",
         }),
       }),
@@ -412,12 +444,106 @@ describe("discountCodeController.redeemDiscountCode", () => {
         originalAmountSatang: 300000,
         discountSatang: 300000,
         finalAmountSatang: 0,
+        offlinePaidSatang: null,
       },
     });
     expect(() => JSON.stringify(res.body)).not.toThrow();
     expect(omiseMock.createOmiseCharge).not.toHaveBeenCalled();
     expect(omiseMock.retrieveOmiseCharge).not.toHaveBeenCalled();
   });
+
+  it("records the amount the student paid outside the system, so the tutor earns on it", async () => {
+    prisma.discountCode.findUnique.mockResolvedValue(discountCodeRow({ offlinePaidAmountMinor: 300000n }));
+    claimReturns(300000n);
+
+    const res = await redeem();
+
+    expect(res.statusCode).toBe(200);
+    expect(prisma.paymentIntent.create.mock.calls[0][0].data).toMatchObject({
+      amountMinor: 300000n,
+      method: "DISCOUNT_CODE",
+      status: "PENDING",
+    });
+    // Same activation as a paid charge, with the amount on the receipt.
+    expect(prisma.paymentIntent.update).toHaveBeenCalledWith({
+      where: { paymentIntentId: INTENT_ID },
+      data: expect.objectContaining({ status: "SUCCESS", earningTutorUserId: TUTOR_ID }),
+    });
+    expect(prisma.paymentReceipt.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        create: expect.objectContaining({ grossAmountMinor: 300000n, netAmountMinor: 300000n, vatAmountMinor: 0n }),
+      }),
+    );
+    // The checkout itself is still free; the redemption keeps the full discount.
+    expect(prisma.discountCodeRedemption.create.mock.calls[0][0].data).toMatchObject({
+      originalAmountMinor: 300000n,
+      discountAmountMinor: 300000n,
+    });
+    expect(prisma.paymentEvent.create.mock.calls[0][0].data.rawPayload).toMatchObject({
+      originalAmountMinor: "300000",
+      offlinePaidAmountMinor: "300000",
+    });
+    expect(prisma.auditEvent.create.mock.calls[0][0].data).toMatchObject({
+      action: "DISCOUNT_CODE_REDEEM",
+      payload: expect.objectContaining({ offlinePaidAmountMinor: "300000" }),
+    });
+    expect(res.body.intent).toMatchObject({ status: "SUCCESS", amountMinor: 300000, method: "DISCOUNT_CODE" });
+    expect(res.body.checkout).toBeNull();
+    expect(res.body.discount).toMatchObject({ finalAmountSatang: 0, offlinePaidSatang: 300000 });
+    expect(() => JSON.stringify(res.body)).not.toThrow();
+    expect(omiseMock.createOmiseCharge).not.toHaveBeenCalled();
+  });
+
+  it("records 0 THB for a free code (no offline-paid amount)", async () => {
+    claimReturns(null);
+    const res = await redeem();
+    expect(res.statusCode).toBe(200);
+    expect(prisma.paymentIntent.create.mock.calls[0][0].data.amountMinor).toBe(0n);
+    expect(res.body.intent.amountMinor).toBe(0);
+    expect(res.body.discount.offlinePaidSatang).toBeNull();
+  });
+
+  it("records 0 THB when the code says 0 was paid", async () => {
+    prisma.discountCode.findUnique.mockResolvedValue(discountCodeRow({ offlinePaidAmountMinor: 0n }));
+    claimReturns(0n);
+    const res = await redeem();
+    expect(res.statusCode).toBe(200);
+    expect(prisma.paymentIntent.create.mock.calls[0][0].data.amountMinor).toBe(0n);
+    expect(res.body.discount.offlinePaidSatang).toBe(0);
+  });
+
+  it("takes the amount from the row the claim locked, not from the earlier read", async () => {
+    // An admin changed the amount between the code lookup and the claim.
+    prisma.discountCode.findUnique.mockResolvedValue(discountCodeRow({ offlinePaidAmountMinor: 100000n }));
+    claimReturns(250000n);
+    const res = await redeem();
+    expect(res.statusCode).toBe(200);
+    expect(prisma.paymentIntent.create.mock.calls[0][0].data.amountMinor).toBe(250000n);
+    expect(prisma.paymentEvent.create.mock.calls[0][0].data.rawPayload.offlinePaidAmountMinor).toBe("250000");
+    expect(res.body.discount.offlinePaidSatang).toBe(250000);
+  });
+
+  it("accepts the claimed amount as a number or string from the driver", async () => {
+    claimReturns(300000);
+    await redeem();
+    claimReturns("123456");
+    await redeem();
+    expect(prisma.paymentIntent.create.mock.calls.map(([arg]: [any]) => arg.data.amountMinor)).toEqual([
+      300000n,
+      123456n,
+    ]);
+  });
+
+  it.each([1.5, -1n, -100, "-5", "3,000"])(
+    "fails the redemption rather than record an amount it cannot trust (%o)",
+    async (raw) => {
+      claimReturns(raw);
+      const res = await redeem();
+      expect(res.statusCode).toBe(500);
+      expect(errorCode(res)).toBe("INTERNAL_SERVER_ERROR");
+      expect(prisma.paymentIntent.create).not.toHaveBeenCalled();
+    },
+  );
 
   it("activates a book-cycle package at the cycle price", async () => {
     prisma.enrollment.findUnique.mockResolvedValue(enrollmentRow({ status: "ACTIVE" }));
@@ -494,8 +620,43 @@ describe("discountCodeController.redeemDiscountCode", () => {
     expect(res.body).toMatchObject({
       intent: { paymentIntentId: INTENT_ID, status: "SUCCESS", amountMinor: 0 },
       checkout: null,
-      discount: { code: "DC-ABCD-EFGH", originalAmountSatang: 300000, finalAmountSatang: 0 },
+      discount: { code: "DC-ABCD-EFGH", originalAmountSatang: 300000, finalAmountSatang: 0, offlinePaidSatang: null },
     });
+    expectNoRedemptionWrites();
+  });
+
+  it("returns the recorded offline-paid amount when a paid redemption is retried", async () => {
+    prisma.enrollment.findUnique.mockResolvedValue(enrollmentRow({ status: "ACTIVE" }));
+    prisma.discountCodeRedemption.findFirst.mockResolvedValue({
+      redemptionId: "r1",
+      discountCodeId: CODE_ID,
+      classId: CLASS_ID,
+      enrollmentId: ENROLLMENT_ID,
+      enrollmentPackageId: null,
+      originalAmountMinor: 300000n,
+      discountCode: discountCodeRow({ redeemedCount: 1, offlinePaidAmountMinor: 300000n }),
+      paymentIntent: {
+        paymentIntentId: INTENT_ID,
+        enrollmentId: ENROLLMENT_ID,
+        enrollmentPackageId: null,
+        studentUserId: STUDENT_ID,
+        amountMinor: 300000n,
+        refundedAmountMinor: 0n,
+        currency: "THB",
+        method: "DISCOUNT_CODE",
+        status: "SUCCESS",
+        providerRef: "discount:r1",
+        paidAt: new Date("2026-11-02T03:00:00.000Z"),
+        createdAt: new Date("2026-11-02T03:00:00.000Z"),
+        updatedAt: new Date("2026-11-02T03:00:00.000Z"),
+      },
+    });
+
+    const res = await redeem();
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.intent.amountMinor).toBe(300000);
+    expect(res.body.discount).toMatchObject({ finalAmountSatang: 0, offlinePaidSatang: 300000 });
     expectNoRedemptionWrites();
   });
 
@@ -641,7 +802,7 @@ describe("discountCodeController.redeemDiscountCode", () => {
   });
 
   it("reports the precise reason when another redemption wins the race", async () => {
-    prisma.$executeRaw.mockResolvedValue(0);
+    prisma.$queryRaw.mockResolvedValue([]);
     prisma.discountCode.findUnique
       .mockResolvedValueOnce(discountCodeRow())
       .mockResolvedValueOnce(discountCodeRow({ redeemedCount: 1 }));
@@ -674,7 +835,7 @@ describe("discountCodeController.redeemDiscountCode", () => {
   });
 
   it("maps only the redemption-limit CHECK to USED_UP; other CHECK failures stay 500", async () => {
-    prisma.$executeRaw.mockRejectedValueOnce(
+    prisma.$queryRaw.mockRejectedValueOnce(
       Object.assign(new Error("Raw query failed"), {
         code: "P2010",
         meta: {
@@ -839,8 +1000,62 @@ describe("discountCodeController.createDiscountCode", () => {
       maxRedemptions: 1,
       expiresAt: null,
       note: null,
+      offlinePaidAmountMinor: null,
       creationIdempotencyKey: null,
     });
+    expect(res.body.discountCode.offlinePaidSatang).toBeNull();
+  });
+
+  it.each([-1, 1_000_001, 1.5, "300000", true, {}])("rejects offlinePaidSatang %o", async (offlinePaidSatang) => {
+    const res = createResponse();
+    await createDiscountCode(adminRequest({ body: { classId: CLASS_ID, offlinePaidSatang } }) as never, res as never);
+    expect(res.statusCode).toBe(400);
+    expect(errorCode(res)).toBe("INVALID_OFFLINE_AMOUNT");
+    expect(prisma.discountCode.create).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [0, 0n],
+    [300000, 300000n],
+    [1_000_000, 1_000_000n],
+    [null, null],
+  ])("stores offlinePaidSatang %o and audits it", async (offlinePaidSatang, stored) => {
+    const res = createResponse();
+    await createDiscountCode(adminRequest({ body: { classId: CLASS_ID, offlinePaidSatang } }) as never, res as never);
+    expect(res.statusCode).toBe(201);
+    expect(prisma.discountCode.create.mock.calls[0][0].data.offlinePaidAmountMinor).toBe(stored);
+    expect(res.body.discountCode.offlinePaidSatang).toBe(stored === null ? null : Number(stored));
+    expect(prisma.auditEvent.create.mock.calls[0][0].data.payload).toMatchObject({
+      offlinePaidAmountMinor: stored === null ? null : stored.toString(),
+    });
+    expect(() => JSON.stringify(res.body)).not.toThrow();
+  });
+
+  it("refuses a replayed Idempotency-Key with a different offline-paid amount", async () => {
+    prisma.discountCode.findUnique.mockResolvedValue(
+      discountCodeRow({ creationIdempotencyKey: "sheet-key-1", offlinePaidAmountMinor: 300000n }),
+    );
+    const replayed = createResponse();
+    await createDiscountCode(
+      adminRequest({
+        headers: { "idempotency-key": "sheet-key-1" },
+        body: { classId: CLASS_ID, offlinePaidSatang: 300000 },
+      }) as never,
+      replayed as never,
+    );
+    expect(replayed.statusCode).toBe(200);
+    expect(replayed.body.discountCode.offlinePaidSatang).toBe(300000);
+
+    for (const offlinePaidSatang of [250000, null]) {
+      const res = createResponse();
+      await createDiscountCode(
+        adminRequest({ headers: { "idempotency-key": "sheet-key-1" }, body: { classId: CLASS_ID, offlinePaidSatang } }) as never,
+        res as never,
+      );
+      expect(res.statusCode).toBe(409);
+      expect(errorCode(res)).toBe("IDEMPOTENCY_KEY_REUSED");
+    }
+    expect(prisma.discountCode.create).not.toHaveBeenCalled();
   });
 
   it("returns the existing code when the Idempotency-Key is replayed", async () => {
@@ -970,6 +1185,10 @@ describe("discountCodeController.createDiscountCodeBatch", () => {
     [{ classId: CLASS_ID, quantity: 2, expiresAt: "tomorrow" }, "INVALID_EXPIRY"],
     [{ classId: CLASS_ID, quantity: 2, note: "x".repeat(501) }, "INVALID_NOTE"],
     [{ classId: CLASS_ID, quantity: 2, note: 5 }, "INVALID_NOTE"],
+    [{ classId: CLASS_ID, quantity: 2, offlinePaidSatang: -1 }, "INVALID_OFFLINE_AMOUNT"],
+    [{ classId: CLASS_ID, quantity: 2, offlinePaidSatang: 1_000_001 }, "INVALID_OFFLINE_AMOUNT"],
+    [{ classId: CLASS_ID, quantity: 2, offlinePaidSatang: 299999.5 }, "INVALID_OFFLINE_AMOUNT"],
+    [{ classId: CLASS_ID, quantity: 2, offlinePaidSatang: "300000" }, "INVALID_OFFLINE_AMOUNT"],
   ])("rejects %o with %s", async (body, code) => {
     const res = await createBatch(body);
     expect(res.statusCode).toBe(400);
@@ -1030,6 +1249,7 @@ describe("discountCodeController.createDiscountCodeBatch", () => {
         maxRedemptions: 1,
         note: "ชำระเงินสด",
         createdByUserId: ADMIN_ID,
+        offlinePaidAmountMinor: null,
         creationIdempotencyKey: `sheet-key-1#${position + 1}`,
         expiresAt: new Date(future),
       });
@@ -1240,6 +1460,64 @@ describe("discountCodeController.createDiscountCodeBatch", () => {
     expect(prisma.auditEvent.create).not.toHaveBeenCalled();
   });
 
+  it("stores the offline-paid amount on every code of the batch and audits it", async () => {
+    const res = await createBatch({ classId: CLASS_ID, quantity: 2, offlinePaidSatang: 300000 });
+
+    expect(res.statusCode).toBe(201);
+    const rows = prisma.discountCode.create.mock.calls.map(([arg]: [any]) => arg.data);
+    expect(rows.map((data: Record<string, unknown>) => data.offlinePaidAmountMinor)).toEqual([300000n, 300000n]);
+    expect(prisma.auditEvent.create.mock.calls.map(([arg]: [any]) => arg.data.payload.offlinePaidAmountMinor)).toEqual([
+      "300000",
+      "300000",
+    ]);
+    expect(res.body.discountCodes.map((view: { offlinePaidSatang: number | null }) => view.offlinePaidSatang)).toEqual([
+      300000,
+      300000,
+    ]);
+    expect(() => JSON.stringify(res.body)).not.toThrow();
+  });
+
+  it.each([
+    [0, 0n],
+    [1_000_000, 1_000_000n],
+    [null, null],
+  ])("accepts offlinePaidSatang %o", async (offlinePaidSatang, stored) => {
+    const res = await createBatch({ classId: CLASS_ID, quantity: 1, offlinePaidSatang });
+    expect(res.statusCode).toBe(201);
+    expect(prisma.discountCode.create.mock.calls[0][0].data.offlinePaidAmountMinor).toBe(stored);
+  });
+
+  it("replays a batch only for the same offline-paid amount", async () => {
+    stored = [1, 2].map((index) =>
+      discountCodeRow({
+        discountCodeId: batchCodeId(index),
+        code: `DC-AAAA-AAA${index + 1}`,
+        creationIdempotencyKey: `sheet-key-1#${index}`,
+        offlinePaidAmountMinor: 300000n,
+      }),
+    );
+    const same = await createBatch(
+      { classId: CLASS_ID, quantity: 2, offlinePaidSatang: 300000 },
+      { "idempotency-key": "sheet-key-1" },
+    );
+    expect(same.statusCode).toBe(200);
+    expect(same.body.discountCodes.map((view: { offlinePaidSatang: number }) => view.offlinePaidSatang)).toEqual([
+      300000,
+      300000,
+    ]);
+
+    for (const offlinePaidSatang of [250000, 0, null, undefined]) {
+      const res = await createBatch(
+        { classId: CLASS_ID, quantity: 2, offlinePaidSatang },
+        { "idempotency-key": "sheet-key-1" },
+      );
+      expect(res.statusCode, String(offlinePaidSatang)).toBe(409);
+      expect(errorCode(res)).toBe("IDEMPOTENCY_KEY_REUSED");
+    }
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+    expect(prisma.discountCode.create).not.toHaveBeenCalled();
+  });
+
   it("leaves the single-code endpoint unchanged", async () => {
     prisma.discountCode.findUnique.mockResolvedValue(null);
     const res = createResponse();
@@ -1309,6 +1587,7 @@ describe("discountCodeController.getDiscountCodes", () => {
       discountCodeId: CODE_ID,
       status: "USED_UP",
       remaining: 0,
+      offlinePaidSatang: null,
       classTitle: "English",
       tutorName: "T.นกเอี้ยง",
       createdByName: "แอดมิน",
@@ -1577,6 +1856,7 @@ describe("discountCodeController.getDiscountCodeRedemptions", () => {
         originalAmountMinor: 300000n,
         discountAmountMinor: 300000n,
         createdAt: new Date("2026-11-02T03:00:00.000Z"),
+        paymentIntent: { amountMinor: 300000n },
       },
     ]);
     prisma.user.findMany.mockResolvedValue([
@@ -1591,6 +1871,7 @@ describe("discountCodeController.getDiscountCodeRedemptions", () => {
     expect(prisma.discountCodeRedemption.findMany).toHaveBeenCalledWith({
       where: { discountCodeId: CODE_ID },
       orderBy: { createdAt: "desc" },
+      include: { paymentIntent: { select: { amountMinor: true } } },
     });
     expect(res.body).toEqual({
       items: [
@@ -1605,9 +1886,208 @@ describe("discountCodeController.getDiscountCodeRedemptions", () => {
           enrollmentStatus: "ACTIVE",
           paymentIntentId: INTENT_ID,
           originalAmountSatang: 300000,
+          paidAmountSatang: 300000,
           createdAt: "2026-11-02T03:00:00.000Z",
         },
       ],
     });
+  });
+
+  it("shows 0 paid for a redemption of a free code", async () => {
+    prisma.discountCode.findUnique.mockResolvedValue({ discountCodeId: CODE_ID });
+    prisma.discountCodeRedemption.findMany.mockResolvedValue([
+      {
+        redemptionId: "r0",
+        discountCodeId: CODE_ID,
+        studentUserId: STUDENT_ID,
+        classId: CLASS_ID,
+        enrollmentId: ENROLLMENT_ID,
+        enrollmentPackageId: null,
+        paymentIntentId: INTENT_ID,
+        originalAmountMinor: 300000n,
+        discountAmountMinor: 300000n,
+        createdAt: new Date("2026-11-02T03:00:00.000Z"),
+        paymentIntent: { amountMinor: 0n },
+      },
+    ]);
+    prisma.user.findMany.mockResolvedValue([]);
+    prisma.enrollment.findMany.mockResolvedValue([]);
+    const res = createResponse();
+    await getDiscountCodeRedemptions(adminRequest({ params: { discountCodeId: CODE_ID } }) as never, res as never);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.items[0]).toMatchObject({ originalAmountSatang: 300000, paidAmountSatang: 0 });
+  });
+});
+
+describe("discountCodeController.updateDiscountCodeOfflineAmount", () => {
+  async function patch(body: unknown, overrides: Record<string, unknown> = {}) {
+    const res = createResponse();
+    await updateDiscountCodeOfflineAmount(
+      adminRequest({ params: { discountCodeId: CODE_ID }, body, ...overrides }) as never,
+      res as never,
+    );
+    return res;
+  }
+
+  beforeEach(() => {
+    prisma.class.findMany.mockResolvedValue([
+      { classId: CLASS_ID, title: "English", tutorUserId: TUTOR_ID, packagePriceMinor: 300000n, book: { bookCode: "PO2" } },
+    ]);
+    prisma.user.findMany.mockResolvedValue([]);
+    prisma.discountCode.updateMany.mockResolvedValue({ count: 1 });
+    // SELECT ... FOR UPDATE on the code row.
+    prisma.$queryRaw.mockResolvedValue([{ "?column?": 1 }]);
+  });
+
+  it("is admin only", async () => {
+    const res = await patch({ offlinePaidSatang: 300000 }, { user: { userId: ADMIN_ID, role: "FINANCE_CHECKER" } });
+    expect(res.statusCode).toBe(403);
+    expect(errorCode(res)).toBe("FORBIDDEN");
+    expect(prisma.discountCode.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("validates the id and the amount (required, integer 0..1,000,000 or null)", async () => {
+    const badId = await patch({ offlinePaidSatang: 300000 }, { params: { discountCodeId: "c1" } });
+    expect(badId.statusCode).toBe(400);
+    expect(errorCode(badId)).toBe("INVALID_DISCOUNT_CODE_ID");
+
+    for (const body of [
+      {},
+      undefined,
+      { offlinePaidSatang: -1 },
+      { offlinePaidSatang: 1_000_001 },
+      { offlinePaidSatang: 1.5 },
+      { offlinePaidSatang: "300000" },
+      { amount: 300000 },
+    ]) {
+      const res = await patch(body);
+      expect(res.statusCode, JSON.stringify(body)).toBe(400);
+      expect(errorCode(res)).toBe("INVALID_OFFLINE_AMOUNT");
+    }
+    expect(prisma.discountCode.updateMany).not.toHaveBeenCalled();
+    expect(prisma.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("changes the amount of an unused code with a guarded update and audits before / after", async () => {
+    prisma.discountCode.findUnique
+      .mockResolvedValueOnce(discountCodeRow({ offlinePaidAmountMinor: 300000n }))
+      .mockResolvedValueOnce(discountCodeRow({ offlinePaidAmountMinor: 250000n }));
+
+    const res = await patch({ offlinePaidSatang: 250000 });
+
+    expect(res.statusCode).toBe(200);
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+    // The row is locked before `before` is read, so a concurrent edit cannot
+    // make the audit's before value stale.
+    expect(prisma.$queryRaw).toHaveBeenCalledTimes(1);
+    const [lockSql, lockedId] = prisma.$queryRaw.mock.calls[0];
+    expect(lockSql.join("?")).toMatch(/FROM finance_mlm\.discount_codes\s+WHERE discount_code_id = \?::uuid\s+FOR UPDATE/);
+    expect(lockedId).toBe(CODE_ID);
+    expect(prisma.$queryRaw.mock.invocationCallOrder[0]).toBeLessThan(
+      prisma.discountCode.findUnique.mock.invocationCallOrder[0],
+    );
+    expect(prisma.discountCode.updateMany).toHaveBeenCalledWith({
+      where: { discountCodeId: CODE_ID, status: "ACTIVE", redeemedCount: 0 },
+      data: { offlinePaidAmountMinor: 250000n, updatedAt: expect.any(Date) },
+    });
+    expect(prisma.auditEvent.create).toHaveBeenCalledTimes(1);
+    expect(prisma.auditEvent.create.mock.calls[0][0].data).toMatchObject({
+      actorId: ADMIN_ID,
+      action: "DISCOUNT_CODE_UPDATE",
+      entityType: "DiscountCode",
+      entityId: CODE_ID,
+      payload: {
+        code: "DC-ABCD-EFGH",
+        classId: CLASS_ID,
+        before: { offlinePaidAmountMinor: "300000" },
+        after: { offlinePaidAmountMinor: "250000" },
+        requestId: "req-admin",
+      },
+    });
+    expect(res.body.discountCode).toMatchObject({
+      discountCodeId: CODE_ID,
+      offlinePaidSatang: 250000,
+      classTitle: "English",
+      status: "ACTIVE",
+    });
+    expect(() => JSON.stringify(res.body)).not.toThrow();
+  });
+
+  it("turns a code free with null, and 0 is kept as 0", async () => {
+    prisma.discountCode.findUnique
+      .mockResolvedValueOnce(discountCodeRow({ offlinePaidAmountMinor: 300000n }))
+      .mockResolvedValueOnce(discountCodeRow({ offlinePaidAmountMinor: null }));
+    const res = await patch({ offlinePaidSatang: null });
+    expect(res.statusCode).toBe(200);
+    expect(prisma.discountCode.updateMany.mock.calls[0][0].data.offlinePaidAmountMinor).toBeNull();
+    expect(prisma.auditEvent.create.mock.calls[0][0].data.payload).toMatchObject({
+      before: { offlinePaidAmountMinor: "300000" },
+      after: { offlinePaidAmountMinor: null },
+    });
+    expect(res.body.discountCode.offlinePaidSatang).toBeNull();
+
+    prisma.discountCode.findUnique
+      .mockResolvedValueOnce(discountCodeRow())
+      .mockResolvedValueOnce(discountCodeRow({ offlinePaidAmountMinor: 0n }));
+    const zero = await patch({ offlinePaidSatang: 0 });
+    expect(zero.statusCode).toBe(200);
+    expect(prisma.discountCode.updateMany.mock.calls[1][0].data.offlinePaidAmountMinor).toBe(0n);
+    expect(zero.body.discountCode.offlinePaidSatang).toBe(0);
+  });
+
+  it("accepts the upper bound", async () => {
+    prisma.discountCode.findUnique
+      .mockResolvedValueOnce(discountCodeRow())
+      .mockResolvedValueOnce(discountCodeRow({ offlinePaidAmountMinor: 1_000_000n }));
+    const res = await patch({ offlinePaidSatang: 1_000_000 });
+    expect(res.statusCode).toBe(200);
+    expect(prisma.discountCode.updateMany.mock.calls[0][0].data.offlinePaidAmountMinor).toBe(1_000_000n);
+  });
+
+  it.each([
+    ["used", { redeemedCount: 1 }],
+    ["void", { status: "VOID" }],
+    ["used up", { maxRedemptions: 1, redeemedCount: 1 }],
+  ])("locks the amount of a %s code", async (_label, overrides) => {
+    prisma.discountCode.findUnique.mockResolvedValue(discountCodeRow({ offlinePaidAmountMinor: 300000n, ...overrides }));
+    // The guard (status ACTIVE, redeemedCount 0) matches nothing.
+    prisma.discountCode.updateMany.mockResolvedValue({ count: 0 });
+    const res = await patch({ offlinePaidSatang: 0 });
+    expect(res.statusCode).toBe(409);
+    expect(errorCode(res)).toBe("OFFLINE_AMOUNT_LOCKED");
+    expect(prisma.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("returns 404 for an unknown code", async () => {
+    prisma.discountCode.findUnique.mockResolvedValue(null);
+    const res = await patch({ offlinePaidSatang: 300000 });
+    expect(res.statusCode).toBe(404);
+    expect(errorCode(res)).toBe("DISCOUNT_CODE_NOT_FOUND");
+    expect(prisma.discountCode.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("writes the change and its audit row on the transaction client, all or nothing", async () => {
+    const txDiscountCode = {
+      findUnique: vi
+        .fn()
+        .mockResolvedValueOnce(discountCodeRow())
+        .mockResolvedValueOnce(discountCodeRow({ offlinePaidAmountMinor: 300000n })),
+      updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+    };
+    const txAuditEvent = { create: vi.fn().mockRejectedValue(new Error("audit down")) };
+    const txQueryRaw = vi.fn().mockResolvedValue([{ "?column?": 1 }]);
+    prisma.$transaction.mockImplementationOnce((fn: (tx: unknown) => unknown) =>
+      fn({ discountCode: txDiscountCode, auditEvent: txAuditEvent, $queryRaw: txQueryRaw }),
+    );
+
+    const res = await patch({ offlinePaidSatang: 300000 });
+
+    expect(res.statusCode).toBe(500);
+    expect(errorCode(res)).toBe("INTERNAL_SERVER_ERROR");
+    expect(txQueryRaw).toHaveBeenCalledTimes(1);
+    expect(prisma.$queryRaw).not.toHaveBeenCalled();
+    expect(txDiscountCode.updateMany).toHaveBeenCalledTimes(1);
+    expect(txAuditEvent.create).toHaveBeenCalledTimes(1);
+    expect(prisma.discountCode.updateMany).not.toHaveBeenCalled();
   });
 });

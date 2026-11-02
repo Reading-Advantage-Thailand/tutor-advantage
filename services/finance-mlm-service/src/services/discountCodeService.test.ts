@@ -137,7 +137,7 @@ describe("buildDiscountQuote", () => {
   it("waives the whole price", () => {
     expect(
       buildDiscountQuote(
-        { code: "DC-ABCD-EFGH", discountCodeId: CODE_ID },
+        { code: "DC-ABCD-EFGH", discountCodeId: CODE_ID, offlinePaidAmountMinor: null },
         { classId: CLASS_ID, cycleId: null, originalAmountMinor: 300000n },
       ),
     ).toEqual({
@@ -148,6 +148,21 @@ describe("buildDiscountQuote", () => {
       originalAmountSatang: 300000,
       discountSatang: 300000,
       finalAmountSatang: 0,
+      offlinePaidSatang: null,
     });
+  });
+
+  it("reports what was paid outside the system while the checkout stays 0 THB", () => {
+    for (const [stored, shown] of [
+      [300000n, 300000],
+      [0n, 0],
+    ] as const) {
+      expect(
+        buildDiscountQuote(
+          { code: "DC-ABCD-EFGH", discountCodeId: CODE_ID, offlinePaidAmountMinor: stored },
+          { classId: CLASS_ID, cycleId: null, originalAmountMinor: 350000n },
+        ),
+      ).toMatchObject({ originalAmountSatang: 350000, discountSatang: 350000, finalAmountSatang: 0, offlinePaidSatang: shown });
+    }
   });
 });

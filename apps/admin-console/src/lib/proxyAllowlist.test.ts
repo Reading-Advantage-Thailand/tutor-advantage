@@ -104,6 +104,7 @@ describe("proxy allowlist", () => {
       ["POST", "/v1/discount-codes/batch", "finance"],
       ["POST", `/v1/discount-codes/${id}/void`, "finance"],
       ["GET", `/v1/discount-codes/${id}/redemptions`, "finance"],
+      ["PATCH", `/v1/discount-codes/${id}/offline-amount`, "finance"],
       ["GET", "/v1/admin/classes", "learning"],
       ["POST", "/v1/admin/classes", "learning"],
       ["GET", "/v1/books", "learning"],
@@ -123,6 +124,22 @@ describe("proxy allowlist", () => {
       expect(matchProxyRequest(seg("/v1/discount-codes/batch"), method, admin), method).toMatchObject({ ok: false, status: 405 });
     }
     expect(matchProxyRequest(seg("/v1/books"), "POST", admin)).toMatchObject({ ok: false, status: 405 });
+  });
+
+  it("allows changing a code's offline amount with PATCH only, for ADMIN only", () => {
+    const id = "5eed0000-0000-4000-8000-000000000d01";
+    const path = seg(`/v1/discount-codes/${id}/offline-amount`);
+    const match = matchProxyRequest(path, "PATCH", admin);
+    expect(match).toMatchObject({ ok: true, path: `/v1/discount-codes/${id}/offline-amount` });
+    expect(match.ok && match.rule.service).toBe("finance");
+    expect(matchProxyRequest(path, "PATCH", checker)).toMatchObject({ ok: false, code: "PROXY_ROLE_NOT_ALLOWED" });
+    for (const method of ["GET", "POST", "PUT", "DELETE"]) {
+      expect(matchProxyRequest(path, method, admin), method).toMatchObject({ ok: false, status: 405 });
+    }
+    // Nothing else on a code is editable through the console.
+    for (const other of [`/v1/discount-codes/${id}`, `/v1/discount-codes/${id}/offline-amount/x`, `/v1/discount-codes/${id}/amount`]) {
+      expect(matchProxyRequest(seg(other), "PATCH", admin), other).toMatchObject({ ok: false, status: 403 });
+    }
   });
 
   it("never forwards the student discount checkout endpoints", () => {

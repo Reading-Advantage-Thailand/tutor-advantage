@@ -1,13 +1,24 @@
 import { describe, expect, it } from "vitest";
 import type { AdminClass } from "../classes/classForm";
 import {
+  canEditOfflinePaid,
+  classPriceBahtInput,
   isVoidable,
   latestRedeemer,
   listQuery,
+  OFFLINE_PAID_MAX_SATANG,
+  offlinePaidAttempt,
+  offlinePaidEditDefault,
+  offlinePaidOf,
+  offlinePaidWarning,
+  parseOfflinePaidBaht,
   readCreateRequest,
   redeemerLabel,
+  redemptionAmount,
   redemptionPhone,
+  satangToBahtInput,
   validateDiscountCodeForm,
+  withClassOption,
   withoutCreateParam,
   type DiscountCodeRedeemer,
 } from "./discountCodeForm";
@@ -15,6 +26,7 @@ import {
 const messages = {
   classRequired: "class",
   classDemo: "demo",
+  offlinePaid: "offlinePaid",
   quantity: "quantity",
   noteTooLong: "note",
   expiryIncomplete: "incomplete",
@@ -42,11 +54,20 @@ const englishClass: AdminClass = {
   createdAt: "2026-11-02T02:00:00.000Z",
   tutor: { userId: "t1", displayName: "T.นกเอี้ยง", email: "kasamphon63@gmail.com", pendingRegistration: true },
 };
-const base = { classOption: englishClass, quantity: "1", expiry: { day: "", month: "", yearBE: "" }, note: "" };
+const base = {
+  classOption: englishClass,
+  offlinePaid: "3,000",
+  quantity: "1",
+  expiry: { day: "", month: "", yearBE: "" },
+  note: "",
+};
 
 describe("validateDiscountCodeForm", () => {
-  it("builds the minimal batch body: one code, no expiry, no note", () => {
-    expect(validateDiscountCodeForm(base, messages, { now })).toEqual({ errors: {}, body: { classId, quantity: 1 } });
+  it("builds the minimal batch body: one code, the amount paid, no expiry, no note", () => {
+    expect(validateDiscountCodeForm(base, messages, { now })).toEqual({
+      errors: {},
+      body: { classId, quantity: 1, offlinePaidSatang: 300_000 },
+    });
   });
 
   it("sends the Bangkok end of day as expiry and a trimmed note", () => {
@@ -58,6 +79,7 @@ describe("validateDiscountCodeForm", () => {
     expect(result.body).toEqual({
       classId,
       quantity: 25,
+      offlinePaidSatang: 300_000,
       expiresAt: "2026-11-02T16:59:59.999Z",
       note: "โอนเงินแล้ว",
     });
@@ -85,7 +107,7 @@ describe("validateDiscountCodeForm", () => {
 
   it("never sends a per-code use count: every code in a batch is single-use", () => {
     const body = validateDiscountCodeForm({ ...base, quantity: "20" }, messages, { now }).body;
-    expect(body).toEqual({ classId, quantity: 20 });
+    expect(body).toEqual({ classId, quantity: 20, offlinePaidSatang: 300_000 });
     expect(body).not.toHaveProperty("maxRedemptions");
   });
 
@@ -97,6 +119,113 @@ describe("validateDiscountCodeForm", () => {
     expect(
       validateDiscountCodeForm({ ...base, expiry: { day: "1", month: "", yearBE: "2569" } }, messages, { now }).errors.expiry,
     ).toBe("incomplete");
+  });
+});
+
+describe("amount the student paid outside the app", () => {
+  it("parses baht to satang: separators, ฿, two decimals, 0 for a free code", () => {
+    expect(parseOfflinePaidBaht("3,000")).toBe(300_000);
+    expect(parseOfflinePaidBaht(" 3000 ")).toBe(300_000);
+    expect(parseOfflinePaidBaht("฿3,000")).toBe(300_000);
+    expect(parseOfflinePaidBaht("2,999.5")).toBe(299_950);
+    expect(parseOfflinePaidBaht("2999.50")).toBe(299_950);
+    expect(parseOfflinePaidBaht("0.01")).toBe(1);
+    expect(parseOfflinePaidBaht("0")).toBe(0);
+    expect(parseOfflinePaidBaht("0.00")).toBe(0);
+    expect(parseOfflinePaidBaht("10,000")).toBe(OFFLINE_PAID_MAX_SATANG);
+    expect(parseOfflinePaidBaht("10000.00")).toBe(1_000_000);
+  });
+
+  it("rejects empty, negative, malformed and over-the-cap amounts (never guesses)", () => {
+    for (const input of ["", "  ", "-1", "10,000.01", "10001", "1.234", "1e3", "abc", "3,000 บาท", ".5", "5.", "1..2", "999999999999"]) {
+      expect(parseOfflinePaidBaht(input), input).toBeNull();
+    }
+  });
+
+  it("formats satang for the field and round-trips through the parser", () => {
+    expect(satangToBahtInput(300_000)).toBe("3,000");
+    expect(satangToBahtInput(299_950)).toBe("2,999.50");
+    expect(satangToBahtInput(1_000_000)).toBe("10,000");
+    expect(satangToBahtInput(5)).toBe("0.05");
+    expect(satangToBahtInput(0)).toBe("0");
+    for (const bad of [null, undefined, -100, 1.5, Number.NaN]) expect(satangToBahtInput(bad), String(bad)).toBe("");
+    for (const satang of [0, 1, 99, 100, 299_950, 300_000, 1_000_000]) {
+      expect(parseOfflinePaidBaht(satangToBahtInput(satang)), String(satang)).toBe(satang);
+    }
+  });
+
+  it("prefills the class price until the admin types an amount", () => {
+    const blank = { ...base, classOption: null, offlinePaid: "" };
+    expect(classPriceBahtInput(englishClass)).toBe("3,000");
+    expect(classPriceBahtInput({ packagePriceSatang: 0 })).toBe("");
+    expect(classPriceBahtInput(null)).toBe("");
+
+    // Picking a class fills its price.
+    const picked = withClassOption(blank, englishClass, false);
+    expect(picked).toMatchObject({ classOption: englishClass, offlinePaid: "3,000" });
+    // Another class (not typed yet) follows the new price, including satang.
+    const other = { ...englishClass, classId: "c2", packagePriceSatang: 249_950 };
+    expect(withClassOption(picked, other, false).offlinePaid).toBe("2,499.50");
+    // Clearing the class clears the untouched amount.
+    expect(withClassOption(picked, null, false)).toMatchObject({ classOption: null, offlinePaid: "" });
+    // A typed amount (also "0" for a free code) is never overwritten.
+    expect(withClassOption({ ...picked, offlinePaid: "2,500" }, other, true)).toMatchObject({ classOption: other, offlinePaid: "2,500" });
+    expect(withClassOption({ ...blank, offlinePaid: "0" }, englishClass, true).offlinePaid).toBe("0");
+  });
+
+  it("requires the amount and sends it in satang; 0 is a deliberate free code", () => {
+    expect(validateDiscountCodeForm({ ...base, offlinePaid: "0" }, messages, { now }).body?.offlinePaidSatang).toBe(0);
+    expect(validateDiscountCodeForm({ ...base, offlinePaid: "2,999.50" }, messages, { now }).body?.offlinePaidSatang).toBe(299_950);
+    expect(validateDiscountCodeForm({ ...base, offlinePaid: "10,000" }, messages, { now }).body?.offlinePaidSatang).toBe(1_000_000);
+    for (const offlinePaid of ["", "-5", "10,001", "abc"]) {
+      const result = validateDiscountCodeForm({ ...base, offlinePaid }, messages, { now });
+      expect(result.errors.offlinePaid, offlinePaid).toBe("offlinePaid");
+      expect(result.body, offlinePaid).toBeNull();
+    }
+  });
+
+  it("warns on the review step about a free code or an amount other than the class price", () => {
+    expect(offlinePaidWarning(0, 300_000)).toBe("free");
+    expect(offlinePaidWarning(250_000, 300_000)).toBe("differs");
+    expect(offlinePaidWarning(300_000, 300_000)).toBeNull();
+    expect(offlinePaidWarning(300_000, null)).toBeNull();
+  });
+
+  it("reads the recorded amount of a code: null and older finance versions are free", () => {
+    expect(offlinePaidOf({ offlinePaidSatang: 300_000 })).toBe(300_000);
+    expect(offlinePaidOf({ offlinePaidSatang: 0 })).toBe(0);
+    expect(offlinePaidOf({ offlinePaidSatang: null })).toBe(0);
+    expect(offlinePaidOf({})).toBe(0);
+  });
+
+  it("offers แก้ยอดที่รับ only for an active code nobody used", () => {
+    expect(canEditOfflinePaid({ status: "ACTIVE", redeemedCount: 0 })).toBe(true);
+    expect(canEditOfflinePaid({ status: "ACTIVE", redeemedCount: 1 })).toBe(false);
+    for (const status of ["USED_UP", "EXPIRED", "VOID"] as const) {
+      expect(canEditOfflinePaid({ status, redeemedCount: 0 }), status).toBe(false);
+    }
+  });
+
+  it("starts the edit field from the recorded amount, else the class price for an older free code", () => {
+    expect(offlinePaidEditDefault({ offlinePaidSatang: 250_000, packagePriceSatang: 300_000 })).toBe("2,500");
+    expect(offlinePaidEditDefault({ offlinePaidSatang: 0, packagePriceSatang: 300_000 })).toBe("0");
+    expect(offlinePaidEditDefault({ offlinePaidSatang: null, packagePriceSatang: 300_000 })).toBe("3,000");
+    expect(offlinePaidEditDefault({ packagePriceSatang: null })).toBe("");
+  });
+
+  it("reuses the Idempotency-Key only for a retry of the same amount", () => {
+    let n = 0;
+    const newKey = () => `key-${++n}`;
+    const first = offlinePaidAttempt(null, 300_000, newKey);
+    expect(first).toEqual({ satang: 300_000, key: "key-1" });
+    expect(offlinePaidAttempt(first, 300_000, newKey)).toBe(first);
+    expect(offlinePaidAttempt(first, 250_000, newKey)).toEqual({ satang: 250_000, key: "key-2" });
+  });
+
+  it("shows what each redemption recorded, falling back to the discount on older finance versions", () => {
+    expect(redemptionAmount({ paidAmountSatang: 300_000, originalAmountSatang: 300_000 })).toEqual({ kind: "paid", satang: 300_000 });
+    expect(redemptionAmount({ paidAmountSatang: 0, originalAmountSatang: 300_000 })).toEqual({ kind: "free", satang: 300_000 });
+    expect(redemptionAmount({ originalAmountSatang: 300_000 })).toEqual({ kind: "discount", satang: 300_000 });
   });
 });
 

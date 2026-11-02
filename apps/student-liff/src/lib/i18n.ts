@@ -883,6 +883,7 @@ export const th = {
       orderSummary: "สรุปรายการ",
       tuition: "ค่าเรียน",
       discount: "ส่วนลด",
+      paidOffline: "ชำระแล้วนอกระบบ",
       fee: "ค่าธรรมเนียม",
       noFee: "ไม่มี",
       total: "ยอดที่ต้องจ่าย",

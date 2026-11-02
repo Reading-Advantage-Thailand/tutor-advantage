@@ -736,6 +736,10 @@ model DiscountCode {
   status                 String    @default("ACTIVE") // ACTIVE | VOID
   note                   String?
   createdByUserId        String    @map("created_by_user_id") @db.Uuid
+  /// What the student already paid outside the system (bank transfer). A
+  /// redemption records a SUCCESS payment of this amount so the tutor earns on
+  /// it. Null means a free code (0 THB payment).
+  offlinePaidAmountMinor BigInt?   @map("offline_paid_amount_minor")
   creationIdempotencyKey String?   @unique @map("creation_idempotency_key")
   expiresAt              DateTime? @map("expires_at") @db.Timestamptz
   voidedAt               DateTime? @map("voided_at") @db.Timestamptz

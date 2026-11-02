@@ -3,8 +3,13 @@ import type { Prisma } from "@tutor-advantage/database";
 
 /**
  * Class discount codes (2026-11-02): an admin issues a code for one class; a
- * student types it at checkout and the class becomes free (0 THB). Only
- * ACTIVE and VOID are stored; USED_UP and EXPIRED are derived.
+ * student types it at checkout and pays 0 THB there. Only ACTIVE and VOID are
+ * stored; USED_UP and EXPIRED are derived.
+ *
+ * Most codes stand for a class fee the student already paid by bank transfer
+ * outside the system: offlinePaidAmountMinor holds that amount and redeeming
+ * records a SUCCESS payment of it, so the tutor and upline earn commission on
+ * it. Null means a free code (a 0 THB payment, no earnings).
  */
 
 // Human-friendly code: DC-XXXX-XXXX (no ambiguous chars O/0/I/1). The DC-
@@ -162,11 +167,22 @@ export type DiscountQuote = {
   originalAmountSatang: number;
   discountSatang: number;
   finalAmountSatang: number;
+  /** What the student already paid outside the system; null for a free code. */
+  offlinePaidSatang: number | null;
 };
 
-/** Codes waive the whole price: the student pays 0 THB. */
+/** Satang as a JSON number, keeping null. */
+export function satangOrNull(amountMinor: bigint | null | undefined): number | null {
+  return amountMinor === null || amountMinor === undefined ? null : Number(amountMinor);
+}
+
+/**
+ * Codes waive the whole price at checkout: the student pays 0 THB there. A
+ * code with an offline-paid amount stands for money already received, which
+ * redeem records as the payment amount.
+ */
 export function buildDiscountQuote(
-  discountCode: { code: string; discountCodeId: string },
+  discountCode: { code: string; discountCodeId: string; offlinePaidAmountMinor: bigint | null },
   target: { classId: string; cycleId: string | null; originalAmountMinor: bigint },
 ): DiscountQuote {
   const original = Number(target.originalAmountMinor);
@@ -178,5 +194,6 @@ export function buildDiscountQuote(
     originalAmountSatang: original,
     discountSatang: original,
     finalAmountSatang: 0,
+    offlinePaidSatang: satangOrNull(discountCode.offlinePaidAmountMinor),
   };
 }

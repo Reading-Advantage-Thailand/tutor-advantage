@@ -82,6 +82,12 @@ export type DiscountQuote = {
   originalAmountSatang: number;
   discountSatang: number;
   finalAmountSatang: number;
+  /**
+   * What the student already paid outside the app (bank transfer), recorded
+   * on the payment when the code is used. null/0 = a free code; absent while
+   * an older finance version is deployed.
+   */
+  offlinePaidSatang?: number | null;
 };
 
 /** Response of POST /discount-codes/preview. */
@@ -372,6 +378,17 @@ export function isDiscountQuoteFor(
 /** Nothing left to pay: the checkout skips PromptPay/card and redeems the code. */
 export function isFreeWithDiscount(quote: Pick<DiscountQuote, "finalAmountSatang"> | null | undefined): boolean {
   return quote != null && quote.finalAmountSatang === 0;
+}
+
+/** The class fee was already paid outside the app; the code only records it (not a discount). */
+export function isPaidOfflineQuote(quote: Pick<DiscountQuote, "offlinePaidSatang"> | null | undefined): boolean {
+  const paid = quote?.offlinePaidSatang;
+  return typeof paid === "number" && Number.isFinite(paid) && paid > 0;
+}
+
+/** Label of the order summary row for an applied code: "ชำระแล้วนอกระบบ" or "ส่วนลด". */
+export function getDiscountRowLabelKey(quote: Pick<DiscountQuote, "offlinePaidSatang"> | null | undefined): I18nKey {
+  return isPaidOfflineQuote(quote) ? "payment.select.paidOffline" : "payment.select.discount";
 }
 
 const DISCOUNT_ERROR_KEYS = new Map<string, I18nKey>([

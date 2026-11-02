@@ -10,14 +10,15 @@
  *  MULTI_ACCOUNT  one card used by many different students
  *  CARD_BLOCKED   a card that already had a chargeback tried again (refused)
  *  VELOCITY       a new tutor reached the card-sales limit (card refused,
- *                 PromptPay still works)
+ *                 PromptPay still works; PromptPay and discount code
+ *                 payments do not count as card sales)
  *  CARD_NO_3DS    a card charge that was paid without 3-D Secure
  */
 import { logger } from "@tutor-advantage/shared-config";
 import { prisma } from "@tutor-advantage/database";
 import {
   DAY_IN_MS,
-  PROMPTPAY_METHOD_FILTER,
+  NO_CHARGEBACK_METHOD_WHERE,
   PAYOUT_HOLD_FLAG_SEVERITIES,
   PAYOUT_HOLD_FLAG_STATUSES,
   getRiskConfig,
@@ -202,8 +203,9 @@ export async function checkCardPaymentRisk(input: {
       const recent = await prisma.paymentIntent.aggregate({
         where: {
           earningTutorUserId: tutorId,
-          // Any non-PromptPay method counts as card (fail-safe, any letter case).
-          NOT: { method: PROMPTPAY_METHOD_FILTER },
+          // Every method except PromptPay and DISCOUNT_CODE (bank transfers,
+          // no chargeback) counts as card (fail-safe, any letter case).
+          NOT: NO_CHARGEBACK_METHOD_WHERE,
           status: { in: ["SUCCESS", "DISPUTED"] },
           paidAt: { gte: since },
         },

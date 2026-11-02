@@ -102,6 +102,7 @@ import {
   getDiscountCodes,
   previewDiscountCode,
   redeemDiscountCode,
+  updateDiscountCodeOfflineAmount,
   voidDiscountCode,
 } from "./controllers/discountCodeController";
 import {
@@ -248,6 +249,12 @@ app.get("/v1/discount-codes", authMiddleware, adminOnly, getDiscountCodes);
 app.post("/v1/discount-codes", authMiddleware, adminOnly, createDiscountCode);
 // Single-use codes, one per student (static path before the /:discountCodeId routes).
 app.post("/v1/discount-codes/batch", authMiddleware, adminOnly, createDiscountCodeBatch);
+app.patch(
+  "/v1/discount-codes/:discountCodeId/offline-amount",
+  authMiddleware,
+  adminOnly,
+  updateDiscountCodeOfflineAmount,
+);
 app.post("/v1/discount-codes/:discountCodeId/void", authMiddleware, adminOnly, voidDiscountCode);
 app.get(
   "/v1/discount-codes/:discountCodeId/redemptions",

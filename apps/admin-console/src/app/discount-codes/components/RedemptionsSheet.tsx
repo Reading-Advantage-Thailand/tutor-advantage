@@ -15,7 +15,12 @@ import { api, errorMessage } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatSatang, formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
-import { redemptionPhone, type DiscountCode, type DiscountCodeRedemption } from "../discountCodeForm";
+import {
+  redemptionAmount,
+  redemptionPhone,
+  type DiscountCode,
+  type DiscountCodeRedemption,
+} from "../discountCodeForm";
 import "@/locales/th/discountCodes";
 
 export interface RedemptionsSheetProps {
@@ -25,7 +30,16 @@ export interface RedemptionsSheetProps {
   code: DiscountCode | null;
 }
 
-/** Students who used a discount code (GET /v1/discount-codes/:id/redemptions), newest first. */
+/** "รับนอกระบบ ฿3,000" (recorded on the payment), "โค้ดฟรี (ส่วนลด ฿3,000)", or the discount from an older finance version. */
+function amountText(item: DiscountCodeRedemption): string {
+  const amount = redemptionAmount(item);
+  const formatted = formatSatang(amount.satang);
+  if (amount.kind === "paid") return t("discountCodes.redemptionPaid", { amount: formatted });
+  if (amount.kind === "free") return t("discountCodes.redemptionFree", { amount: formatted });
+  return t("discountCodes.discountValue", { amount: formatted });
+}
+
+/** Students who used a discount code (GET /v1/discount-codes/:id/redemptions), newest first, with the amount each paid. */
 export function RedemptionsSheet({ open, onOpenChange, code }: RedemptionsSheetProps) {
   const me = useAdminSession();
   const { data, error, isLoading, refetch } = useCachedResource(
@@ -67,9 +81,7 @@ export function RedemptionsSheet({ open, onOpenChange, code }: RedemptionsSheetP
             meta={
               <>
                 {item.enrollmentStatus ? <AdminStatusChip domain="enrollment" status={item.enrollmentStatus} /> : null}
-                <span className="text-[0.8125rem] text-fg-muted">
-                  {t("discountCodes.discountValue", { amount: formatSatang(item.originalAmountSatang) })}
-                </span>
+                <span className="text-[0.8125rem] whitespace-nowrap text-fg-muted">{amountText(item)}</span>
               </>
             }
           />

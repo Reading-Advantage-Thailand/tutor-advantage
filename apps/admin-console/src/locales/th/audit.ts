@@ -143,6 +143,7 @@ export const audit = {
     DISCOUNT_CODE_CREATE: "ออกโค้ดส่วนลดคลาส",
     DISCOUNT_CODE_VOID: "ยกเลิกโค้ดส่วนลดคลาส",
     DISCOUNT_CODE_REDEEM: "นักเรียนใช้โค้ดส่วนลด",
+    DISCOUNT_CODE_UPDATE: "แก้ยอดที่รับของโค้ดส่วนลด",
     ADMIN_CLASS_CREATE: "สร้างคลาสให้ครู",
     ADMIN_TUTOR_PROVISION: "สร้างบัญชีครูรอลงทะเบียน",
   },

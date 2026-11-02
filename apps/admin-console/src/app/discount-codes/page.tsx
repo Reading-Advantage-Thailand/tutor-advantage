@@ -1,6 +1,6 @@
 "use client";
 
-import { Ban, CheckCircle2, Plus, TicketPercent, TicketX, UsersRound, X } from "lucide-react";
+import { Ban, CheckCircle2, Pencil, Plus, TicketPercent, TicketX, UsersRound, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -14,6 +14,7 @@ import {
   ErrorState,
   FilterBar,
   Grid,
+  Money,
   Page,
   PageHeader,
   Pagination,
@@ -31,11 +32,14 @@ import { formatNumber, formatThaiDate, formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { statusOptions } from "@/lib/status";
 import { DiscountCodeFormSheet } from "./components/DiscountCodeFormSheet";
+import { OfflinePaidSheet } from "./components/OfflinePaidSheet";
 import { RedemptionsSheet } from "./components/RedemptionsSheet";
 import {
+  canEditOfflinePaid,
   isVoidable,
   latestRedeemer,
   listQuery,
+  offlinePaidOf,
   readCreateRequest,
   redeemerLabel,
   withoutCreateParam,
@@ -121,6 +125,12 @@ export default function DiscountCodesPage() {
   const [form, setForm] = useState<{ open: boolean; key: number; classId: string | null }>({ open: false, key: 0, classId: null });
   const [redemptions, setRedemptions] = useState<{ open: boolean; code: DiscountCode | null }>({ open: false, code: null });
   const [voidTarget, setVoidTarget] = useState<{ code: DiscountCode; idempotencyKey: string } | null>(null);
+  // Kept after closing so the sheet can animate out; `key` resets its field per opening.
+  const [amountTarget, setAmountTarget] = useState<{ open: boolean; key: number; code: DiscountCode | null }>({
+    open: false,
+    key: 0,
+    code: null,
+  });
 
   const refreshAll = () => {
     if (me) invalidateResource(`${me.userId}:discount-codes:`);
@@ -173,6 +183,19 @@ export default function DiscountCodesPage() {
         cell: (row) => <ClassCell row={row} />,
       },
       {
+        key: "offlinePaid",
+        header: t("discountCodes.colOfflinePaid"),
+        align: "right",
+        cell: (row) => {
+          const amount = offlinePaidOf(row);
+          return amount > 0 ? (
+            <Money satang={amount} />
+          ) : (
+            <span className="whitespace-nowrap text-fg-muted">{t("discountCodes.offlinePaidFree")}</span>
+          );
+        },
+      },
+      {
         key: "redeemedCount",
         header: t("discountCodes.colUsed"),
         align: "right",
@@ -223,6 +246,16 @@ export default function DiscountCodesPage() {
               <UsersRound aria-hidden="true" />
               {t("discountCodes.redemptionsAction")}
             </Button>
+            {canEditOfflinePaid(row) ? (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setAmountTarget((current) => ({ open: true, key: current.key + 1, code: row }))}
+              >
+                <Pencil aria-hidden="true" />
+                {t("discountCodes.editOfflinePaidAction")}
+              </Button>
+            ) : null}
             {isVoidable(row) ? (
               <Button size="sm" variant="destructive" onClick={() => setVoidTarget({ code: row, idempotencyKey: newIdempotencyKey() })}>
                 <Ban aria-hidden="true" />
@@ -377,6 +410,16 @@ export default function DiscountCodesPage() {
           if (me) invalidateResource(adminClassesKey(me.userId));
         }}
       />
+
+      {amountTarget.code ? (
+        <OfflinePaidSheet
+          key={amountTarget.key}
+          open={amountTarget.open}
+          code={amountTarget.code}
+          onOpenChange={(open) => setAmountTarget((current) => ({ ...current, open }))}
+          onChanged={refreshAll}
+        />
+      ) : null}
 
       <RedemptionsSheet
         open={redemptions.open}
