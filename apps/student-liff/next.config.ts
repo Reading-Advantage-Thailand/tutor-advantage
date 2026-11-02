@@ -35,12 +35,14 @@ const nextConfig: NextConfig = {
     ];
   },
   allowedDevOrigins: ["*.ngrok-free.app", "*.ngrok-free.dev", "localhost:3000", "localhost:3004"],
+  // /_next/image fetches and decodes these on the server, so list only the
+  // hosts we really show (LINE and Google profile pictures, our content
+  // bucket). A "**" wildcard let anyone feed the optimizer their own files.
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
+      { protocol: "https", hostname: "*.line-scdn.net" },
+      { protocol: "https", hostname: "*.googleusercontent.com" },
+      { protocol: "https", hostname: "storage.googleapis.com", pathname: "/tutor_advantage_bucket/**" },
     ],
   },
 };
