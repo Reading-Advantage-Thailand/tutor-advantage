@@ -166,6 +166,7 @@ jobs:
           gcloud run jobs deploy tutor-advantage-db-migrate \
             --image=${{ env.REGISTRY }}/database-migrate:${DEPLOY_SHA} \
             --region=${{ env.REGION }} \
+            --service-account=ta-db-migrate@${{ env.PROJECT_ID }}.iam.gserviceaccount.com \
             --set-cloudsql-instances=reading-advantage:asia-southeast1:cloud-sql \
             --set-secrets=DATABASE_URL=${DATABASE_SECRET}:latest \
             --max-retries=0 \
@@ -205,26 +206,32 @@ jobs:
             dockerfile: services/learning-service/Dockerfile
             changed: ${{ needs.changes.outputs.learning-service }}
             needs_db: true
+            runtime_sa: ta-learning-run
           - service: identity-service
             dockerfile: services/identity-service/Dockerfile
             changed: ${{ needs.changes.outputs.identity-service }}
             needs_db: true
+            runtime_sa: ta-identity-run
           - service: finance-mlm-service
             dockerfile: services/finance-mlm-service/Dockerfile
             changed: ${{ needs.changes.outputs.finance-mlm-service }}
             needs_db: true
+            runtime_sa: ta-finance-run
           - service: tutor-pwa
             dockerfile: apps/tutor-pwa/Dockerfile
             changed: ${{ needs.changes.outputs.tutor-pwa }}
             needs_db: false
+            runtime_sa: ta-tutor-pwa-run
           - service: student-liff
             dockerfile: apps/student-liff/Dockerfile
             changed: ${{ needs.changes.outputs.student-liff }}
             needs_db: false
+            runtime_sa: ta-student-liff-run
           - service: admin-console
             dockerfile: apps/admin-console/Dockerfile
             changed: ${{ needs.changes.outputs.admin-console }}
             needs_db: false
+            runtime_sa: ta-admin-console-run
 
     steps:
       - name: Skip if unchanged
@@ -315,9 +322,12 @@ jobs:
             )
           fi
 
+          # Each service runs as its own least-privilege identity (only its own
+          # secrets), never the default compute SA, which holds roles/editor.
           gcloud run deploy ${{ matrix.service }} \
             --image=${{ env.REGISTRY }}/${{ matrix.service }}:${DEPLOY_SHA} \
             --region=${{ env.REGION }} \
+            --service-account=${{ matrix.runtime_sa }}@${{ env.PROJECT_ID }}.iam.gserviceaccount.com \
             "${DEPLOY_FLAGS[@]}" \
             --quiet
 
