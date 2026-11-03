@@ -6,6 +6,7 @@ import {
   getJwtSecret,
   requiresGuardianConsent,
 } from "@tutor-advantage/shared-config";
+import { isStaffRole } from "../controllers/roleController";
 
 export interface AuthResult {
   sessionToken: string;
@@ -156,6 +157,11 @@ async function processLogin(
       // mailbox, so it must not claim an existing (e.g. pre-provisioned) account.
       if (provider === "google" && emailVerified === false) {
         throw new Error("EMAIL_NOT_VERIFIED");
+      }
+      // Staff sign in through the admin console only. A matching email or
+      // phone must never hand a student/tutor login an admin or finance account.
+      if (isStaffRole(user.role)) {
+        throw new Error("STAFF_ACCOUNT_LINK_FORBIDDEN");
       }
 
       // Optionally update picture, phone number, or displayName if they were placeholder/missing

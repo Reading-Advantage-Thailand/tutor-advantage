@@ -479,6 +479,28 @@ describe("processOAuthLogin", () => {
       expect(prisma.user.create).not.toHaveBeenCalled();
     });
 
+    it.each([
+      ["a verified Google email", "google", "admin@example.com", undefined, true],
+      ["a LINE email", "line", "admin@example.com", undefined, undefined],
+      ["a LINE verified phone", "line", undefined, "+66812345678", undefined],
+    ])("never links a new login to a staff account through %s", async (_label, provider, email, phone, verified) => {
+      const staff = { ...pendingTutor, userId: "staff-1", email: "admin@example.com", phoneNumber: "+66812345678" };
+      for (const role of ["ADMIN", "FINANCE_CHECKER"]) {
+        vi.clearAllMocks();
+        prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
+        prisma.user.findUnique.mockResolvedValue({ ...staff, role });
+        prisma.user.findFirst.mockResolvedValue({ ...staff, role });
+
+        await expect(
+          processOAuthLogin(provider, "new-subject", email, "Someone", "", null, phone, verified),
+        ).rejects.toThrow("STAFF_ACCOUNT_LINK_FORBIDDEN");
+
+        expect(prisma.oAuthIdentity.create).not.toHaveBeenCalled();
+        expect(prisma.user.update).not.toHaveBeenCalled();
+        expect(prisma.user.create).not.toHaveBeenCalled();
+      }
+    });
+
     it("still signs in a returning Google user whose email is unverified", async () => {
       prisma.oAuthIdentity.findUnique.mockResolvedValue({
         user: { ...pendingTutor, profilePictureUrl: "avatar.png" },
