@@ -1,5 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { consumedVoiceSeconds } from "./voiceSessionTime";
+import { consumedVoiceSeconds, providerEventShowsUse } from "./voiceSessionTime";
+
+describe("provider events that start the clock", () => {
+  it("treats learner speech and any reply as use", () => {
+    expect(providerEventShowsUse("input_audio_buffer.speech_started")).toBe(true);
+    expect(providerEventShowsUse("response.created")).toBe(true);
+  });
+
+  it("ignores events that do not prove the call is in use", () => {
+    expect(providerEventShowsUse("session.created")).toBe(false);
+    expect(providerEventShowsUse("session.updated")).toBe(false);
+    expect(providerEventShowsUse("response.done")).toBe(false);
+  });
+});
 
 describe("voice session usage", () => {
   const start = new Date("2026-09-28T00:00:00.000Z");

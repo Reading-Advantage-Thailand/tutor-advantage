@@ -12,7 +12,7 @@ import {
   type VoiceSafetyDecision,
   type VoiceSafetyReason,
 } from "./voiceSafety";
-import { consumedVoiceSeconds } from "./voiceSessionTime";
+import { consumedVoiceSeconds, providerEventShowsUse } from "./voiceSessionTime";
 import {
   addRealtimeUsage,
   emptyRealtimeUsage,
@@ -73,6 +73,8 @@ type SidebandState = {
   summaryRequested: boolean;
   guardQueue: Promise<void>;
   safetyEvents: Partial<Record<VoiceSafetyReason, number>>;
+  // Set once provider activity has started the clock (or tried to).
+  meteringStarted: boolean;
 };
 const sidebands = new Map<string, SidebandState>();
 
@@ -328,12 +330,18 @@ function attachSideband(voiceSessionId: string, providerCallId: string, recovere
       summaryRequested: false,
       guardQueue: Promise.resolve(),
       safetyEvents: {},
+      meteringStarted: false,
     };
     sidebands.set(voiceSessionId, state);
     connection.on("event", (providerEvent) => {
       const event = providerEvent as unknown as Record<string, unknown>;
       const type = String(event.type || "");
       const eventItemId = typeof event.item_id === "string" ? event.item_id : null;
+      // The end-of-practice summary is our own response, not use.
+      if (!state.meteringStarted && !state.closing && providerEventShowsUse(type)) {
+        state.meteringStarted = true;
+        void startMeteringFromProvider(voiceSessionId);
+      }
       if (type === "input_audio_buffer.speech_started") {
         state.speechActive = true;
         if (eventItemId) state.speechStarts.set(eventItemId, Number(event.audio_start_ms));
@@ -593,21 +601,48 @@ export async function startVoiceSession(studentUserId: string, classBookCycleId:
   }
 }
 
-export async function markVoiceSessionConnected(voiceSessionId: string, studentUserId: string) {
-  const session = await prisma.$transaction(async (tx) => {
+/**
+ * Starts the paid clock once and stretches the lease to the reservation.
+ * The client's /connected call and provider activity on the sideband may race;
+ * the conditional update lets only the first one start it.
+ */
+async function startVoiceClock(voiceSessionId: string, studentUserId?: string) {
+  return prisma.$transaction(async (tx) => {
     const current = await tx.aiVoiceSession.findUnique({ where: { voiceSessionId } });
     if (!current) throw new AiVoiceError("NOT_FOUND", 404, "Voice session not found");
-    if (current.studentUserId !== studentUserId) throw new AiVoiceError("FORBIDDEN", 403, "This voice session belongs to another student");
-    if (current.status !== "ACTIVE" || current.startedAt) return current;
+    if (studentUserId && current.studentUserId !== studentUserId) {
+      throw new AiVoiceError("FORBIDDEN", 403, "This voice session belongs to another student");
+    }
+    if (current.status !== "ACTIVE" || current.startedAt) return { session: current, started: false };
     const startedAt = new Date();
     const expiresAt = new Date(startedAt.getTime() + current.reservedSeconds * 1000);
-    const updated = await tx.aiVoiceSession.update({
-      where: { voiceSessionId },
+    const { count } = await tx.aiVoiceSession.updateMany({
+      where: { voiceSessionId, status: "ACTIVE", startedAt: null },
       data: { startedAt, expiresAt },
     });
+    if (count === 0) {
+      const latest = await tx.aiVoiceSession.findUnique({ where: { voiceSessionId } });
+      return { session: latest ?? current, started: false };
+    }
     await tx.activeAiVoiceSession.updateMany({ where: { voiceSessionId }, data: { expiresAt } });
-    return updated;
+    return { session: { ...current, startedAt, expiresAt }, started: true };
   });
+}
+
+// A client that never calls /connected must still pay for the time it uses.
+async function startMeteringFromProvider(voiceSessionId: string) {
+  try {
+    const { session, started } = await startVoiceClock(voiceSessionId);
+    if (!started) return;
+    logger.warn(`[AiVoice] session=${voiceSessionId} used before the client reported a connection; metering from provider activity`);
+    if (session.providerCallId) scheduleExpiry(voiceSessionId, session.expiresAt);
+  } catch (error) {
+    logger.warn(`[AiVoice] Could not start metering for ${voiceSessionId}`, error);
+  }
+}
+
+export async function markVoiceSessionConnected(voiceSessionId: string, studentUserId: string) {
+  const { session } = await startVoiceClock(voiceSessionId, studentUserId);
   if (session.status === "ACTIVE" && session.providerCallId) scheduleExpiry(voiceSessionId, session.expiresAt);
   return { sessionId: voiceSessionId, expiresAt: session.expiresAt };
 }
