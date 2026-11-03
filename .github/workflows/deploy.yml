@@ -24,6 +24,12 @@ env:
   # Private bucket (public access prevention enforced) for tutor identity
   # documents. Not GCS_BUCKET_NAME: that bucket is publicly readable.
   VERIFICATION_BUCKET_NAME: tutor-advantage-verification
+  # Keyless deploys: GitHub's OIDC token is exchanged through Workload
+  # Identity Federation for ta-deployer. The provider only trusts this file
+  # on main of this repository; ta-deployer can deploy only our services and
+  # run them only as their ta-* service accounts.
+  WIF_PROVIDER: projects/1090865515742/locations/global/workloadIdentityPools/github-actions/providers/tutor-advantage
+  DEPLOYER_SA: ta-deployer@reading-advantage.iam.gserviceaccount.com
   ALLOWED_ORIGINS: >-
     https://student-liff-1090865515742.asia-southeast1.run.app,
     https://student-liff-hxamzdhgwa-as.a.run.app,
@@ -127,6 +133,9 @@ jobs:
     name: Apply database migrations
     runs-on: ubuntu-latest
     needs: changes
+    permissions:
+      contents: read
+      id-token: write
     if: >-
       needs.changes.outputs.learning-service == 'true' ||
       needs.changes.outputs.identity-service == 'true' ||
@@ -140,7 +149,8 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.DEPLOYER_SA }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -187,6 +197,9 @@ jobs:
     name: Deploy ${{ matrix.service }}
     runs-on: ubuntu-latest
     needs: [changes, migrate]
+    permissions:
+      contents: read
+      id-token: write
     if: >-
       always() &&
       needs.changes.result == 'success' &&
@@ -248,7 +261,8 @@ jobs:
         if: matrix.changed == 'true'
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.DEPLOYER_SA }}
 
       - name: Set up Cloud SDK
         if: matrix.changed == 'true'
