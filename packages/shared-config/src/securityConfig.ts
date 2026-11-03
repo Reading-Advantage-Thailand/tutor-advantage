@@ -16,6 +16,22 @@ export function getJwtSecret(
   return value || DEVELOPMENT_JWT_SECRET;
 }
 
+/**
+ * Express "trust proxy" value. Cloud Run's front end is one proxy hop that
+ * appends the caller's IP to X-Forwarded-For; without trusting it every
+ * request seems to come from the same address and all users share one
+ * rate-limit bucket. TRUST_PROXY overrides it ("false", a hop count, or a
+ * list of addresses).
+ */
+export function trustProxySetting(
+  env: SecurityEnvironment = process.env,
+): boolean | number | string {
+  const value = env.TRUST_PROXY?.trim();
+  if (!value || value === "true") return 1;
+  if (value === "false") return false;
+  return /^\d+$/.test(value) ? Number(value) : value;
+}
+
 export function getAllowedOrigins(
   env: SecurityEnvironment = process.env,
 ): string[] {

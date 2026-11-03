@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { signedClientIpHeaders } from "@/lib/clientIp";
 
 const IDENTITY_URL =
   process.env.IDENTITY_SERVICE_URL || "http://localhost:3001";
@@ -15,7 +16,7 @@ export async function POST(req: NextRequest) {
   try {
     response = await fetch(`${IDENTITY_URL}/v1/auth/callback`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...signedClientIpHeaders(req.headers) },
       body: JSON.stringify({ provider: "line", code: idToken }),
     });
   } catch (err) {

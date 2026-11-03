@@ -14,7 +14,9 @@ import {
   logger,
   createOpenApiMiddleware,
   openApiValidationErrorHandler,
+  trustProxySetting,
 } from "@tutor-advantage/shared-config";
+import { learningRateLimitKey } from "./middlewares/rateLimitKey";
 
 // Load the monorepo .env file from both ts-node src/ and compiled dist/ starts.
 dotenv.config({
@@ -98,12 +100,7 @@ const app = express();
 const port = process.env.PORT || 3002;
 assertProductionSecurityConfig();
 
-const trustProxy = process.env.TRUST_PROXY;
-if (trustProxy) {
-  app.set("trust proxy", trustProxy === "true" ? 1 : trustProxy);
-} else if (process.env.NODE_ENV !== "production") {
-  app.set("trust proxy", 1);
-}
+app.set("trust proxy", trustProxySetting());
 
 const ALLOWED_ORIGINS = getAllowedOrigins();
 
@@ -133,6 +130,7 @@ app.use(
     limit: 300,
     standardHeaders: "draft-8",
     legacyHeaders: false,
+    keyGenerator: learningRateLimitKey,
   }),
 );
 

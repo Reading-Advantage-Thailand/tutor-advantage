@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { identityCallbackErrorCode } from "@/components/auth/login-error";
+import { signedClientIpHeaders } from "@/lib/clientIp";
 
 export async function GET(
   request: Request,
@@ -75,7 +76,7 @@ export async function GET(
 
     const response = await fetch(`${identityServiceUrl}/v1/auth/callback`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...signedClientIpHeaders(request.headers) },
       body: JSON.stringify(callbackBody),
     });
 

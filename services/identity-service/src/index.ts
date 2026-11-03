@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
-import { rateLimit } from "express-rate-limit";
+import { ipKeyGenerator, rateLimit } from "express-rate-limit";
 import dotenv from "dotenv";
 import path from "path";
 import { prisma } from "@tutor-advantage/database";
@@ -16,6 +16,9 @@ import {
   logger,
   createOpenApiMiddleware,
   openApiValidationErrorHandler,
+  forwardedClientIp,
+  getJwtSecret,
+  trustProxySetting,
 } from "@tutor-advantage/shared-config";
 
 // Load root .env file
@@ -31,7 +34,7 @@ import { getCurrentUser, submitVerification, updateCurrentUserProfile } from "./
 import { getSettings, updateSettings } from "./controllers/settingController";
 import { uploadFile } from "./controllers/uploadController";
 import { scanPassportPhoto } from "./controllers/passportScanController";
-import { authMiddleware, requireRoles } from "./middlewares/authMiddleware";
+import { authMiddleware, requireRoles, type AuthenticatedRequest } from "./middlewares/authMiddleware";
 import multer from "multer";
 
 const upload = multer({
@@ -46,25 +49,29 @@ const upload = multer({
 const app = express();
 assertProductionSecurityConfig();
 
-const trustProxy = process.env.TRUST_PROXY;
-if (trustProxy) {
-  app.set("trust proxy", trustProxy === "true" ? 1 : trustProxy);
-} else if (process.env.NODE_ENV !== "production") {
-  app.set("trust proxy", 1);
-}
+app.set("trust proxy", trustProxySetting());
 
 const ALLOWED_ORIGINS = getAllowedOrigins();
+// Student and tutor logins come from the apps' servers, which forward the
+// user's IP signed; counting the app's own IP would lock everyone out at once.
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 30,
   standardHeaders: "draft-8",
   legacyHeaders: false,
+  keyGenerator: (req) => `ip:${ipKeyGenerator(forwardedClientIp(req.headers, getJwtSecret()) || req.ip || "unknown")}`,
 });
+// Mounted after authMiddleware: each user gets their own budget.
+const perUserKey = (req: Request) => {
+  const userId = (req as AuthenticatedRequest).user?.userId;
+  return userId ? `user:${userId}` : `ip:${ipKeyGenerator(req.ip || "unknown")}`;
+};
 const uploadLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 20,
   standardHeaders: "draft-8",
   legacyHeaders: false,
+  keyGenerator: perUserKey,
 });
 // Each passport scan is a paid model call.
 const passportScanLimiter = rateLimit({
@@ -72,6 +79,7 @@ const passportScanLimiter = rateLimit({
   limit: 10,
   standardHeaders: "draft-8",
   legacyHeaders: false,
+  keyGenerator: perUserKey,
 });
 
 app.use(helmet());
@@ -126,11 +134,11 @@ app.patch("/v1/users/me/profile", authMiddleware, updateCurrentUserProfile);
 app.get("/v1/users/me/settings", authMiddleware, getSettings);
 app.patch("/v1/users/me/settings", authMiddleware, updateSettings);
 app.post("/v1/users/me/verification", authMiddleware, submitVerification);
-app.post("/v1/upload", uploadLimiter, authMiddleware, upload.single("file"), uploadFile);
+app.post("/v1/upload", authMiddleware, uploadLimiter, upload.single("file"), uploadFile);
 app.post(
   "/v1/users/me/passport-scan",
-  passportScanLimiter,
   authMiddleware,
+  passportScanLimiter,
   requireRoles("TUTOR"),
   upload.single("file"),
   scanPassportPhoto,

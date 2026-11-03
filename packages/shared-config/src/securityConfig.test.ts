@@ -5,7 +5,18 @@ import {
   getAllowedOrigins,
   getJwtSecret,
   isOriginAllowed,
+  trustProxySetting,
 } from "./securityConfig";
+
+describe("trust proxy setting", () => {
+  it("trusts Cloud Run's single front-end hop unless told otherwise", () => {
+    expect(trustProxySetting({ NODE_ENV: "production" })).toBe(1);
+    expect(trustProxySetting({ TRUST_PROXY: "true" })).toBe(1);
+    expect(trustProxySetting({ TRUST_PROXY: "2" })).toBe(2);
+    expect(trustProxySetting({ TRUST_PROXY: "false" })).toBe(false);
+    expect(trustProxySetting({ TRUST_PROXY: "loopback, 10.0.0.0/8" })).toBe("loopback, 10.0.0.0/8");
+  });
+});
 
 describe("security configuration", () => {
   it("fails closed when production secrets or origins are missing", () => {
