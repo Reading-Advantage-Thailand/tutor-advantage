@@ -1,0 +1,44 @@
+# Google Cloud Scheduler — "Class starts in 15 minutes" LINE reminders
+#
+# Every 5 minutes the learning service finds class sessions starting within the
+# next 15 minutes (Class.scheduleData, Bangkok time) and pushes a LINE Flex
+# reminder to every ACTIVE student who has class reminders turned on.
+# Each reminder is claimed in learning.notification_deliveries first, so a
+# retried or overlapping run never sends it twice (see
+# docs/runbooks/scheduled-reminders.md).
+#
+# Deploy:
+#   gcloud scheduler jobs create http ta-class-session-reminders \
+#     --schedule="*/5 * * * *" \
+#     --time-zone="Asia/Bangkok" \
+#     --uri="https://<LEARNING_SERVICE_URL>/v1/internal/reminders/class-sessions" \
+#     --http-method=POST \
+#     --headers="X-Internal-Key=<INTERNAL_API_KEY>,Content-Type=application/json" \
+#     --message-body='{"leadMinutes":15}' \
+#     --attempt-deadline=180s \
+#     --max-retry-attempts=1 \
+#     --location=asia-southeast1 \
+#     --project=<GCP_PROJECT_ID>
+
+name: ta-class-session-reminders
+description: "LINE reminder to students 15 minutes before each class session"
+schedule: "*/5 * * * *"
+timeZone: "Asia/Bangkok"
+
+httpTarget:
+  uri: "https://<LEARNING_SERVICE_URL>/v1/internal/reminders/class-sessions"
+  httpMethod: POST
+  headers:
+    Content-Type: "application/json"
+    X-Internal-Key: "<INTERNAL_API_KEY>"  # from Secret Manager in production
+  body: '{"leadMinutes":15}'
+
+attemptDeadline: "180s"
+
+# One retry is enough: the next run is 5 minutes away and still inside the
+# 15-minute window, and the claim table makes retries safe.
+retryConfig:
+  retryCount: 1
+  minBackoffDuration: "30s"
+  maxBackoffDuration: "60s"
+  maxDoublings: 1

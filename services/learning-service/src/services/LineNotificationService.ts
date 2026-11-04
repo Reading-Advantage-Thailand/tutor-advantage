@@ -5,6 +5,12 @@ const prisma = new PrismaClient();
 
 export interface NotificationOptions {
   type: "notifyClassReminders" | "notifyScoreUpdates" | "notifyLineMessages" | "notifyMarketing";
+  /**
+   * UUID sent as X-Line-Retry-Key. LINE accepts a key once per 24 hours and
+   * answers 409 to a repeat, so a push retried within 24 hours of the first
+   * attempt cannot reach the user twice. Later retries are not protected.
+   */
+  retryKey?: string;
 }
 
 type LineMessage = Record<string, unknown>;
@@ -33,7 +39,15 @@ export class LineNotificationService {
     message: string, 
     options?: NotificationOptions
   ): Promise<boolean> {
-    return (await this.sendMessagesToUser(userId, [{ type: "text", text: message }], options)).sent;
+    return (await this.sendTextToUserWithResult(userId, message, options)).sent;
+  }
+
+  static async sendTextToUserWithResult(
+    userId: string,
+    message: string,
+    options?: NotificationOptions,
+  ): Promise<LineNotificationResult> {
+    return this.sendMessagesToUser(userId, [{ type: "text", text: message }], options);
   }
 
   static async sendFlexToUser(
@@ -113,17 +127,27 @@ export class LineNotificationService {
       const lineUserId = lineIdentity.providerSubject;
 
       // 3. Prepare the message payload for LINE API
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`,
+      };
+      if (options?.retryKey) headers["X-Line-Retry-Key"] = options.retryKey;
       const response = await fetch("https://api.line.me/v2/bot/message/push", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`,
-        },
+        headers,
         body: JSON.stringify({
           to: lineUserId,
           messages,
         }),
       });
+
+      // 409 with a retry key: an earlier attempt with this key was accepted.
+      if (response.status === 409 && options?.retryKey) {
+        logger.info("[LineNotificationService] Retry key already accepted by LINE.", {
+          userId: hashIdentifier(userId),
+        });
+        return { sent: true };
+      }
 
       if (!response.ok) {
         logger.error("[LineNotificationService] LINE API error.", {

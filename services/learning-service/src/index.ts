@@ -76,6 +76,7 @@ import {
 } from "./controllers/couponController";
 import { getStudentLessonHistory, getLessonSessionDetails } from "./controllers/lessonHistoryController";
 import { handleLineWebhook } from "./controllers/lineWebhookController";
+import { runBookPaymentReminders, runClassSessionReminders } from "./controllers/reminderController";
 import {
   connectVoiceSession,
   createVoiceSession,
@@ -262,6 +263,11 @@ app.post("/v1/classes/:classId/apply-coupon", authMiddleware, applyCouponToClass
 
 // Public LINE OA webhook
 app.post("/v1/line/webhook", handleLineWebhook);
+
+// ── Internal Routes (protected by X-Internal-Key, NOT JWT) ────────────────
+// Called by Google Cloud Scheduler — no authMiddleware
+app.post("/v1/internal/reminders/class-sessions", runClassSessionReminders);
+app.post("/v1/internal/reminders/book-payments", runBookPaymentReminders);
 
 // DEV-ONLY seed routes: mounted (and re-checked per request) only when
 // NODE_ENV !== "production" && ENABLE_DEV_ROUTES === "true". Self-scoped seeds

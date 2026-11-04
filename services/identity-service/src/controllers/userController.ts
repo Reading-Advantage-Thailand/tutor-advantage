@@ -12,6 +12,7 @@ import {
   GUARDIAN_CONSENT_TYPE,
   RIGHT_TO_WORK_CONSENT_TYPE,
   computeTutorVerificationStatus,
+  documentExpiryWarnings,
   encryptPii,
   isExpired,
   isIdType,
@@ -148,6 +149,8 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
           privacyNoticeAcceptedAt: privacyNotice?.effectiveAt.toISOString() ?? null,
           taxResidency,
           payoutBlock: payoutDocumentBlock(user),
+          // Advance notice for documents that expire within 30 Bangkok days.
+          expiryWarnings: user.role === "TUTOR" ? documentExpiryWarnings(user) : [],
         },
         dateOfBirth: user.dateOfBirth?.toISOString().slice(0, 10) ?? null,
         requiresGuardian: requiresGuardianConsent(

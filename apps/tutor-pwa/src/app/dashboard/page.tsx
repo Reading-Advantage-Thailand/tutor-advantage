@@ -22,6 +22,8 @@ import VerificationBanner from "@/components/dashboard/verification-banner";
 import { RoleUpgradeBanner } from "@/components/dashboard/role-upgrade-banner";
 import { formatNumber, formatTHB } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { getCurrentUserAction } from "./actions";
+import { DocumentExpiryNotice } from "./settings/components/DocumentExpiryNotice";
 import { RateGoalCard } from "./_home/RateGoalCard";
 import { SetupClassesNotice } from "./_home/SetupClassesNotice";
 import { formatRatePercent } from "./_shared/text";
@@ -66,9 +68,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value || "";
 
-  const [learning, finance, { signedIn }] = await Promise.all([
+  const [learning, finance, user, { signedIn }] = await Promise.all([
     getLearningData(token),
     getFinanceData(token),
+    getCurrentUserAction(),
     searchParams,
   ]);
 
@@ -94,7 +97,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       <Suspense>
         <RoleUpgradeBanner />
       </Suspense>
-      <VerificationBanner />
+      <VerificationBanner user={user ?? undefined} />
+      <DocumentExpiryNotice identity={user?.identity} href="/dashboard/settings#verify" showPayoutBlock />
 
       <PageHeader
         title={t("dashboardHome.title")}

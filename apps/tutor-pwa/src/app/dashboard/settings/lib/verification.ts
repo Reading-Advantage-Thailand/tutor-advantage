@@ -21,6 +21,13 @@ export type TutorIdentity = {
   privacyNoticeAcceptedAt?: string | null;
   taxResidency?: "RESIDENT" | "NON_RESIDENT";
   payoutBlock?: "PASSPORT_EXPIRED" | "WORK_PERMIT_EXPIRED" | "WORK_PERMIT_MISSING" | null;
+  /** Still-valid documents expiring within 30 Bangkok days (daysLeft 0 = today). */
+  expiryWarnings?: DocumentExpiryWarning[];
+};
+export type DocumentExpiryWarning = {
+  document: "PASSPORT" | "WORK_PERMIT";
+  expiresOn: string;
+  daysLeft: number;
 };
 export type FieldStatus = "UNVERIFIED" | "PENDING" | "VERIFIED" | "REJECTED" | (string & {});
 

@@ -199,4 +199,10 @@ export const dashboardSettings = {
   scanError_INVALID_VERIFICATION_FILE: "ไฟล์ไม่รองรับ ใช้ JPG, PNG, WEBP หรือ PDF · Unsupported file. Use JPG, PNG, WEBP or PDF",
   scanError_FILE_TOO_LARGE: "ไฟล์ใหญ่เกิน 5 MB · File is larger than 5 MB",
   scanFailed: "อ่านรูปไม่สำเร็จ ลองใหม่หรือกรอกข้อมูลเอง · Couldn't read the photo. Try again or type your details",
+  // Advance warning before a passport / work permit expires (identity expiryWarnings)
+  expiryWarningTitle: "เอกสารใกล้หมดอายุ · Document expiring soon",
+  expiryWarningPassport: "หนังสือเดินทางจะหมดอายุในอีก {days} วัน (วันที่ {date}) กรุณาส่งฉบับใหม่ก่อนหมดอายุเพื่อไม่ให้การจ่ายเงินถูกระงับ · Your passport expires in {days} {dayUnit} ({isoDate}). Submit a new one before then so payouts are not paused",
+  expiryWarningPassportToday: "หนังสือเดินทางจะหมดอายุวันนี้ (วันที่ {date}) กรุณาส่งฉบับใหม่เพื่อไม่ให้การจ่ายเงินถูกระงับ · Your passport expires today ({isoDate}). Submit a new one so payouts are not paused",
+  expiryWarningWorkPermit: "ใบอนุญาตทำงานจะหมดอายุในอีก {days} วัน (วันที่ {date}) กรุณาส่งฉบับใหม่ก่อนหมดอายุเพื่อไม่ให้การจ่ายเงินถูกระงับ · Your work permit expires in {days} {dayUnit} ({isoDate}). Submit a new one before then so payouts are not paused",
+  expiryWarningWorkPermitToday: "ใบอนุญาตทำงานจะหมดอายุวันนี้ (วันที่ {date}) กรุณาส่งฉบับใหม่เพื่อไม่ให้การจ่ายเงินถูกระงับ · Your work permit expires today ({isoDate}). Submit a new one so payouts are not paused",
 } as const;

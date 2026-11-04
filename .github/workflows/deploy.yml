@@ -310,6 +310,8 @@ jobs:
           if [[ "${{ matrix.service }}" == "learning-service" ]]; then
             DEPLOY_FLAGS+=(
               "--update-secrets=DATABASE_URL_PRIMARY_ADVANTAGE=ta-database_url_primary_advantage:latest"
+              # Shared key for Cloud Scheduler internal routes (LINE reminders).
+              "--update-secrets=INTERNAL_API_KEY=ta-internal_api_key:latest"
               "--update-env-vars=AI_VOICE_ENABLED=${AI_VOICE_ENABLED},AI_VOICE_MODEL=${AI_VOICE_MODEL}"
             )
             if [[ -n "${{ secrets.OPENAI_API_KEY_SECRET_NAME }}" ]]; then

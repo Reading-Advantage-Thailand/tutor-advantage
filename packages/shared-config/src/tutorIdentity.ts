@@ -152,6 +152,48 @@ export function payoutDocumentBlock(user: TutorIdentityState, asOf: Date = new D
   return null;
 }
 
+export type ExpiringDocument = "PASSPORT" | "WORK_PERMIT";
+
+export type DocumentExpiryWarning = {
+  document: ExpiringDocument;
+  /** YYYY-MM-DD, the last valid day. */
+  expiresOn: string;
+  /** Bangkok calendar days until expiry; 0 = expires today (still valid). */
+  daysLeft: number;
+};
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Documents that are still valid but expire within `withinDays` Bangkok
+ * days, so the tutor can renew before payoutDocumentBlock kicks in. Expired
+ * or missing documents are left to payoutDocumentBlock.
+ */
+export function documentExpiryWarnings(
+  user: TutorIdentityState,
+  asOf: Date = new Date(),
+  withinDays = 30,
+): DocumentExpiryWarning[] {
+  if (user.idType !== "PASSPORT") return [];
+  const today = parseIsoDate(bangkokDay(asOf));
+  if (!today) return [];
+  const candidates: Array<[ExpiringDocument, Date | string | null | undefined]> = [
+    ["PASSPORT", user.passportExpiresOn],
+  ];
+  if (requiresWorkPermit(user)) candidates.push(["WORK_PERMIT", user.workPermitExpiresOn]);
+
+  const warnings: DocumentExpiryWarning[] = [];
+  for (const [document, value] of candidates) {
+    if (!value) continue;
+    const expiry = typeof value === "string" ? parseIsoDate(value.slice(0, 10)) : value;
+    if (!expiry || Number.isNaN(expiry.getTime())) continue;
+    const expiresOn = expiry.toISOString().slice(0, 10);
+    const daysLeft = Math.round((parseIsoDate(expiresOn)!.getTime() - today.getTime()) / DAY_MS);
+    if (daysLeft >= 0 && daysLeft <= withinDays) warnings.push({ document, expiresOn, daysLeft });
+  }
+  return warnings;
+}
+
 /** Integer withholding (half-up to the satang) at a whole-percent rate. */
 export function calculateWithholdingAtRate(grossMinor: bigint, ratePercent: number) {
   const rate = BigInt(ratePercent);

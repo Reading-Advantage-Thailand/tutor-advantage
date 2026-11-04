@@ -16,7 +16,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import { stepCompletion, verificationSteps, type SettingsUser, type TutorIdentity, type VerificationField } from "../lib/verification";
+import { payoutBlockText } from "../lib/documentExpiry";
+import { stepCompletion, verificationSteps, type SettingsUser, type VerificationField } from "../lib/verification";
+import { DocumentExpiryNotice } from "./DocumentExpiryNotice";
 import { VerificationSummary } from "./VerificationSummary";
 
 // The upload/edit forms only load when they are shown (never for a verified
@@ -32,13 +34,6 @@ export const STEP_LABELS: Record<VerificationField, string> = {
   taxInfo: t("dashboardSettings.stepTax"),
   workPermit: t("dashboardSettings.stepWorkPermit"),
 };
-
-function payoutBlockText(block: TutorIdentity["payoutBlock"]) {
-  if (block === "PASSPORT_EXPIRED") return t("dashboardSettings.payoutBlockedPassportExpired");
-  if (block === "WORK_PERMIT_EXPIRED") return t("dashboardSettings.payoutBlockedWorkPermitExpired");
-  if (block === "WORK_PERMIT_MISSING") return t("dashboardSettings.payoutBlockedWorkPermitMissing");
-  return null;
-}
 
 function statusText(status: string | undefined) {
   if (status === "VERIFIED") return t("dashboardSettings.verifiedStatusRow");
@@ -109,6 +104,8 @@ export function VerificationSection({ user }: { user: SettingsUser }) {
             {blockText}
           </Notice>
         ) : null}
+
+        <DocumentExpiryNotice identity={user.identity} />
 
         {highlighted ? (
           <Notice tone="brand" role="status">

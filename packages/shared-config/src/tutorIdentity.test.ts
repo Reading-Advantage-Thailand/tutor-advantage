@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   calculateWithholdingAtRate,
   computeTutorVerificationStatus,
+  documentExpiryWarnings,
   isExpired,
   isValidNationality,
   isValidPassportNumber,
@@ -112,6 +113,63 @@ describe("payoutDocumentBlock", () => {
     expect(
       payoutDocumentBlock({ idType: "PASSPORT", teachingLocation: "THAILAND", passportExpiresOn: future, workPermitExpiresOn: future }, asOf),
     ).toBeNull();
+  });
+});
+
+describe("documentExpiryWarnings", () => {
+  const foreign = { idType: "PASSPORT", teachingLocation: "ABROAD" };
+  const inThailand = { idType: "PASSPORT", teachingLocation: "THAILAND" };
+
+  it("never warns Thai ID tutors", () => {
+    const asOf = new Date("2026-11-04T05:00:00.000Z");
+    expect(documentExpiryWarnings({ idType: "THAI_ID", passportExpiresOn: "2026-11-10" }, asOf)).toEqual([]);
+    expect(documentExpiryWarnings({}, asOf)).toEqual([]);
+  });
+
+  it("counts days by Bangkok calendar day", () => {
+    const user = { ...foreign, passportExpiresOn: new Date("2026-11-05") };
+    // 16:59Z is 23:59 on 4 Nov in Bangkok; 17:00Z is already 5 Nov.
+    expect(documentExpiryWarnings(user, new Date("2026-11-04T16:59:59.000Z"))).toEqual([
+      { document: "PASSPORT", expiresOn: "2026-11-05", daysLeft: 1 },
+    ]);
+    expect(documentExpiryWarnings(user, new Date("2026-11-04T17:00:00.000Z"))).toEqual([
+      { document: "PASSPORT", expiresOn: "2026-11-05", daysLeft: 0 },
+    ]);
+    // The next Bangkok day the passport has expired: payoutDocumentBlock takes over.
+    expect(documentExpiryWarnings(user, new Date("2026-11-05T17:00:00.000Z"))).toEqual([]);
+    expect(payoutDocumentBlock(user, new Date("2026-11-05T17:00:00.000Z"))).toBe("PASSPORT_EXPIRED");
+  });
+
+  it("includes exactly withinDays and excludes one day more", () => {
+    const asOf = new Date("2026-11-04T05:00:00.000Z");
+    expect(documentExpiryWarnings({ ...foreign, passportExpiresOn: "2026-12-04" }, asOf)).toEqual([
+      { document: "PASSPORT", expiresOn: "2026-12-04", daysLeft: 30 },
+    ]);
+    expect(documentExpiryWarnings({ ...foreign, passportExpiresOn: "2026-12-05" }, asOf)).toEqual([]);
+    expect(documentExpiryWarnings({ ...foreign, passportExpiresOn: "2026-12-05" }, asOf, 31)).toHaveLength(1);
+  });
+
+  it("checks the work permit only when one is required", () => {
+    const asOf = new Date("2026-11-04T05:00:00.000Z");
+    const docs = { passportExpiresOn: "2027-06-01", workPermitExpiresOn: "2026-11-20" };
+    expect(documentExpiryWarnings({ ...foreign, ...docs }, asOf)).toEqual([]);
+    expect(documentExpiryWarnings({ ...inThailand, ...docs }, asOf)).toEqual([
+      { document: "WORK_PERMIT", expiresOn: "2026-11-20", daysLeft: 16 },
+    ]);
+    expect(
+      documentExpiryWarnings({ ...inThailand, passportExpiresOn: "2026-11-10", workPermitExpiresOn: "2026-11-20" }, asOf),
+    ).toEqual([
+      { document: "PASSPORT", expiresOn: "2026-11-10", daysLeft: 6 },
+      { document: "WORK_PERMIT", expiresOn: "2026-11-20", daysLeft: 16 },
+    ]);
+  });
+
+  it("skips missing or already expired documents", () => {
+    const asOf = new Date("2026-11-04T05:00:00.000Z");
+    expect(documentExpiryWarnings({ ...inThailand }, asOf)).toEqual([]);
+    expect(
+      documentExpiryWarnings({ ...inThailand, passportExpiresOn: "2026-11-03", workPermitExpiresOn: "2026-11-04" }, asOf),
+    ).toEqual([{ document: "WORK_PERMIT", expiresOn: "2026-11-04", daysLeft: 0 }]);
   });
 });
 

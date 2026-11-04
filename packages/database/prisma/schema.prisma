@@ -645,6 +645,29 @@ model TutorBadge {
   @@schema("learning")
 }
 
+/// One row per scheduled LINE reminder (class session, unpaid book). The
+/// unique dedupKey makes Cloud Scheduler retries and overlapping runs safe;
+/// deliveryId doubles as the LINE X-Line-Retry-Key.
+/// kind: CLASS_SESSION_REMINDER | BOOK_PAYMENT_REMINDER
+/// status: CLAIMED | SENT | SKIPPED | FAILED
+model NotificationDelivery {
+  deliveryId String    @id @default(dbgenerated("gen_random_uuid()")) @map("delivery_id") @db.Uuid
+  dedupKey   String    @unique @map("dedup_key")
+  kind       String
+  userId     String    @map("user_id") @db.Uuid
+  classId    String?   @map("class_id") @db.Uuid
+  status     String
+  reason     String?
+  attempts   Int       @default(0)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+  sentAt     DateTime? @map("sent_at") @db.Timestamptz
+
+  @@index([status, updatedAt])
+  @@map("notification_deliveries")
+  @@schema("learning")
+}
+
 // ----------------------------------------------------------------------
 // FINANCE & MLM SCHEMA
 // ----------------------------------------------------------------------
