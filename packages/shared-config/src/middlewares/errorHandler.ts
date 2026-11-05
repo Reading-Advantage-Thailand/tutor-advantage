@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { logger } from "./logger";
+import { getSafeRequestPath, logger } from "./logger";
 
 export interface AppErrorOptions {
   message: string;
@@ -40,16 +40,19 @@ export const errorHandlerMiddleware = (
     details = err.details;
   }
 
-  // Log the error
+  // 5xx / unexpected errors go out at error level with the Error itself, so
+  // the log carries stack_trace for Error Reporting and pages Discord.
+  // 4xx AppErrors are client mistakes: warn, no stack, no alert.
   const errorLogPayload = {
     message: err.message,
     code,
+    statusCode,
     requestId: req.id,
-    stack: statusCode >= 500 ? err.stack : undefined, // Only log stack for 5xx errors
+    path: getSafeRequestPath(req),
   };
 
   if (statusCode >= 500) {
-    logger.error("Unhandled Server Error", errorLogPayload);
+    logger.error("Unhandled Server Error", { ...errorLogPayload, error: err });
   } else {
     logger.warn("Client Error", errorLogPayload);
   }

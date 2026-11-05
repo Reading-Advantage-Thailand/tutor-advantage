@@ -17,10 +17,13 @@ import {
   logger,
   createOpenApiMiddleware,
   openApiValidationErrorHandler,
+  installProcessErrorHandlers,
 } from "@tutor-advantage/shared-config";
 
 // Load root .env file
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+// Log crashes and stray rejections at error level (Error Reporting + Discord).
+installProcessErrorHandlers("finance-mlm-service");
 import { authMiddleware, requireRoles, AuthenticatedRequest } from "./middlewares/authMiddleware";
 import {
   createPaymentIntent,

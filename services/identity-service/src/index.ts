@@ -19,6 +19,7 @@ import {
   forwardedClientIp,
   getJwtSecret,
   trustProxySetting,
+  installProcessErrorHandlers,
 } from "@tutor-advantage/shared-config";
 
 // Load root .env file
@@ -26,6 +27,8 @@ dotenv.config({
   path: path.resolve(__dirname, "../../../.env"),
   override: process.env.NODE_ENV !== "production",
 });
+// Log crashes and stray rejections at error level (Error Reporting + Discord).
+installProcessErrorHandlers("identity-service");
 import { handleOAuthCallback } from "./controllers/authController";
 import { handleDevLogin } from "./controllers/devAuthController";
 import { getSession, issueSocketToken } from "./controllers/sessionController";
@@ -34,6 +37,7 @@ import { getCurrentUser, submitVerification, updateCurrentUserProfile } from "./
 import { getSettings, updateSettings } from "./controllers/settingController";
 import { uploadFile } from "./controllers/uploadController";
 import { scanPassportPhoto } from "./controllers/passportScanController";
+import { relayMonitoringAlert } from "./controllers/monitoringAlertController";
 import { authMiddleware, requireRoles, type AuthenticatedRequest } from "./middlewares/authMiddleware";
 import multer from "multer";
 
@@ -146,6 +150,9 @@ app.post(
 app.get("/v1/guardian/consent", authMiddleware, getGuardianConsentStatus);
 app.post("/v1/guardian/consent", authMiddleware, submitGuardianConsent);
 app.post("/v1/users/me/consents", authMiddleware, submitUserConsent);
+
+// Cloud Monitoring alert relay → Discord (HTTP Basic auth with INTERNAL_API_KEY, NOT JWT)
+app.post("/v1/internal/alerts/monitoring", relayMonitoringAlert);
 
 // Admin Routes
 app.get("/v1/admin/roles", authMiddleware, requireRoles("ADMIN"), getSystemRoles);

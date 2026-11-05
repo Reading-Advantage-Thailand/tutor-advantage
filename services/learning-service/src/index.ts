@@ -15,6 +15,7 @@ import {
   createOpenApiMiddleware,
   openApiValidationErrorHandler,
   trustProxySetting,
+  installProcessErrorHandlers,
 } from "@tutor-advantage/shared-config";
 import { learningRateLimitKey } from "./middlewares/rateLimitKey";
 
@@ -23,6 +24,8 @@ dotenv.config({
   path: path.resolve(__dirname, "../../../.env"),
   override: true,
 });
+// Log crashes and stray rejections at error level (Error Reporting + Discord).
+installProcessErrorHandlers("learning-service");
 const { prisma } = require("@tutor-advantage/database") as typeof import("@tutor-advantage/database");
 
 import { createServer } from "http";

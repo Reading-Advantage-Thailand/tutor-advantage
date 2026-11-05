@@ -5,7 +5,7 @@ const logger = {
   warn: vi.fn(),
 };
 
-vi.mock("./logger", () => ({ logger }));
+vi.mock("./logger", () => ({ logger, getSafeRequestPath: () => "/v1/things/:id" }));
 
 describe("errorHandlerMiddleware", () => {
   beforeEach(() => {
@@ -40,6 +40,10 @@ describe("errorHandlerMiddleware", () => {
     });
     expect(logger.warn).toHaveBeenCalledOnce();
     expect(logger.error).not.toHaveBeenCalled();
+    const [, payload] = logger.warn.mock.calls[0];
+    expect(payload).toMatchObject({ code: "BAD_INPUT", statusCode: 400, requestId: "req-1" });
+    expect(payload).not.toHaveProperty("error");
+    expect(payload).not.toHaveProperty("stack");
   });
 
   it("hides unexpected error details and logs server errors", async () => {
@@ -50,7 +54,8 @@ describe("errorHandlerMiddleware", () => {
       json: vi.fn(),
     };
 
-    errorHandlerMiddleware(new Error("database exploded"), req as never, res as never, vi.fn());
+    const err = new Error("database exploded");
+    errorHandlerMiddleware(err, req as never, res as never, vi.fn());
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
@@ -61,5 +66,31 @@ describe("errorHandlerMiddleware", () => {
       },
     });
     expect(logger.error).toHaveBeenCalledOnce();
+    expect(logger.warn).not.toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalledWith(
+      "Unhandled Server Error",
+      expect.objectContaining({
+        code: "INTERNAL_SERVER_ERROR",
+        statusCode: 500,
+        requestId: "req-2",
+        path: "/v1/things/:id",
+        error: err,
+      }),
+    );
+  });
+
+  it("logs 5xx AppErrors at error level with the Error attached", async () => {
+    const { AppError, errorHandlerMiddleware } = await import("./errorHandler");
+    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+    const err = new AppError({ message: "Upstream down", statusCode: 502, code: "UPSTREAM" });
+
+    errorHandlerMiddleware(err, { id: "req-3" } as never, res as never, vi.fn());
+
+    expect(res.status).toHaveBeenCalledWith(502);
+    expect(logger.warn).not.toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalledWith(
+      "Unhandled Server Error",
+      expect.objectContaining({ code: "UPSTREAM", error: err }),
+    );
   });
 });

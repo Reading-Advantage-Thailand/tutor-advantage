@@ -334,7 +334,17 @@ jobs:
           if [[ "${{ matrix.service }}" == "identity-service" ]]; then
             DEPLOY_FLAGS+=(
               "--update-secrets=GOOGLE_GENERATIVE_AI_API_KEY=ta-google_generative_ai_api_key:latest"
+              "--update-secrets=INTERNAL_API_KEY=ta-internal_api_key:latest"
               "--update-env-vars=VERIFICATION_BUCKET_NAME=${VERIFICATION_BUCKET_NAME}"
+            )
+          fi
+
+          # Backend error logs are mirrored to the ops Discord channel
+          # (shared-config DiscordAlertTransport). Each runtime SA needs
+          # secretAccessor on ta-discord-webhook-url.
+          if [[ "${{ matrix.service }}" == "identity-service" || "${{ matrix.service }}" == "learning-service" || "${{ matrix.service }}" == "finance-mlm-service" ]]; then
+            DEPLOY_FLAGS+=(
+              "--update-secrets=DISCORD_WEBHOOK_URL=ta-discord-webhook-url:latest"
             )
           fi
 
