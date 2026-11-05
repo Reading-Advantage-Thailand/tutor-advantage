@@ -1,4 +1,4 @@
-import { logger } from "@tutor-advantage/shared-config";
+import { isValidInternalKey, logger } from "@tutor-advantage/shared-config";
 import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -14,9 +14,7 @@ const UUID_RE =
  * can never leave one unnoticed.
  */
 export async function syncDisputesInternal(req: Request, res: Response) {
-  const internalKey = process.env.INTERNAL_API_KEY;
-  const providedKey = req.headers["x-internal-key"];
-  if (!internalKey || providedKey !== internalKey) {
+  if (!isValidInternalKey(req.headers["x-internal-key"], process.env.INTERNAL_API_KEY)) {
     return res.status(401).json({
       error: { code: "UNAUTHORIZED", message: "Invalid internal key" },
     });

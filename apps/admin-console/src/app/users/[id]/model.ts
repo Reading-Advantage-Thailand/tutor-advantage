@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { t } from "@/lib/i18n";
 import "@/locales/th/userHeader";
+import type { DocumentExpiryWarning } from "../documentExpiry";
 
 export type VerificationField = "idCard" | "bankBook" | "address" | "taxInfo" | "workPermit";
 export const VERIFICATION_FIELDS: VerificationField[] = ["idCard", "bankBook", "address", "taxInfo", "workPermit"];
@@ -26,6 +27,8 @@ export interface UserIdentity {
   rightToWorkConfirmedAt: string | null;
   taxResidency: "RESIDENT" | "NON_RESIDENT";
   payoutBlock: "PASSPORT_EXPIRED" | "WORK_PERMIT_EXPIRED" | "WORK_PERMIT_MISSING" | null;
+  /** Still-valid documents expiring within 30 Bangkok days (older servers omit it). */
+  expiryWarnings?: DocumentExpiryWarning[];
   requiredFields: VerificationField[];
 }
 

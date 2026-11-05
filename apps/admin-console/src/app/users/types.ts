@@ -1,3 +1,5 @@
+import type { DocumentExpiry } from "./documentExpiry";
+
 /** GET /v1/users row (finance userController.getUsers). Never contains settings/PII beyond name + email. */
 export interface UserListItem {
   id: string;
@@ -13,6 +15,8 @@ export interface UserListItem {
   verificationStatus: string;
   pendingVerificationCount: number;
   guardianSetup: boolean;
+  /** Tutors only: soonest passport / work permit expiry (expired or within 30 days), else null. */
+  documentExpiry?: DocumentExpiry | null;
   createdAt: string;
 }
 

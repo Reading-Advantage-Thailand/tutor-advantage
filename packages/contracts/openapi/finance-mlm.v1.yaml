@@ -709,6 +709,15 @@ paths:
           schema:
             type: string
             enum: [REVIEW, UNVERIFIED, PENDING, VERIFIED, REJECTED]
+        - name: documents
+          in: query
+          required: false
+          description: >-
+            Tutors only. EXPIRING = passport or work permit expires within
+            30 Bangkok days; EXPIRED = a document has already expired.
+          schema:
+            type: string
+            enum: [EXPIRING, EXPIRED]
       responses:
         default:
           $ref: "#/components/responses/AdminError"

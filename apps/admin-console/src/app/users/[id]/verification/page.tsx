@@ -35,6 +35,7 @@ import {
   type UserDetailV2,
   type VerificationField,
 } from "../model";
+import { expiryWarningLines, type ExpiryMessages } from "../../documentExpiry";
 import "@/locales/th/userDetail";
 import "@/locales/th/userHeader";
 
@@ -133,6 +134,14 @@ function documentFor(user: UserDetailV2, field: VerificationField) {
   if (field === "workPermit") return { url: user.identity?.workPermitImageUrl ?? null, has: Boolean(user.identity?.hasWorkPermitImage) };
   return null;
 }
+
+const EXPIRY_MESSAGES: ExpiryMessages = {
+  passport: t("userDetail.expiryDocPassport"),
+  workPermit: t("userDetail.expiryDocWorkPermit"),
+  inDays: t("userDetail.expiryWarningInDays"),
+  today: t("userDetail.expiryWarningToday"),
+  expired: t("userDetail.expiryWarningExpired"),
+};
 
 function payoutBlockText(block: NonNullable<UserDetailV2["identity"]>["payoutBlock"] | undefined) {
   if (block === "PASSPORT_EXPIRED") return t("userDetail.payoutBlockedPassportExpired");
@@ -462,12 +471,23 @@ export default function UserVerificationTab() {
 
   const bankBookIn = (fields: VerificationField[]) => fields.includes("bankBook") && !user.settings.omiseRecipientId;
   const blockText = payoutBlockText(user.identity?.payoutBlock);
+  const expiryLines = expiryWarningLines(user.identity?.expiryWarnings, EXPIRY_MESSAGES);
 
   return (
     <>
       {blockText ? (
         <Notice tone="danger" role="alert">
           {blockText}
+        </Notice>
+      ) : null}
+      {expiryLines.length ? (
+        <Notice tone="warning" title={t("userDetail.expiryWarningTitle")}>
+          <ul className="flex flex-col gap-0.5">
+            {expiryLines.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+          <p className="mt-1">{t("userDetail.expiryWarningBody")}</p>
         </Notice>
       ) : null}
       <Card padding="md" tone={pending.length ? "warning" : "default"}>

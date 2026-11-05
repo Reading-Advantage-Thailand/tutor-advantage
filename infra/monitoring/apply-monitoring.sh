@@ -17,6 +17,12 @@
 #   INTERNAL_KEY_SECRET (ta-internal_api_key) Secret Manager secret holding the
 #                  Basic-auth password. Read at run time, never printed.
 #   DRY_RUN_OUT    with DRY_RUN=1, also save each body as a file in this directory.
+#   ALERT_EMAIL    optional. When set, also upsert an email notification channel
+#                  ("Tutor Advantage → email backup") and attach it, in addition
+#                  to the relay, to "TA: service down (identity-service)" only —
+#                  the one incident the relay cannot deliver (it runs on
+#                  identity-service). Unset: no email channel, policies unchanged.
+#                  Read from env, never passed on a command line.
 #
 # Needs: gcloud (authenticated, monitoring.editor + secretAccessor on the key),
 # curl, python3. Uses the Monitoring REST API, so no gcloud alpha/beta components.
@@ -30,6 +36,8 @@ DRY_RUN="${DRY_RUN:-0}"
 INTERNAL_KEY_SECRET="${INTERNAL_KEY_SECRET:-ta-internal_api_key}"
 API="https://monitoring.googleapis.com/v3/projects/${PROJECT}"
 CHANNEL_NAME="Tutor Advantage → Discord relay"
+EMAIL_CHANNEL_NAME="Tutor Advantage → email backup"
+ALERT_EMAIL="${ALERT_EMAIL:-}"
 
 BACKENDS=(identity-service learning-service finance-mlm-service)
 FRONTENDS=(student-liff tutor-pwa admin-console)
@@ -65,6 +73,7 @@ RUNBOOK = "docs/runbooks/monitoring-alerts.md"
 TA_SERVICES = ["identity-service", "learning-service", "finance-mlm-service",
                "student-liff", "tutor-pwa", "admin-console"]
 CHANNEL_NAME = os.environ["CHANNEL_NAME"]
+EMAIL_CHANNEL_NAME = os.environ["EMAIL_CHANNEL_NAME"]
 PROJECT = os.environ["PROJECT"]
 
 
@@ -88,7 +97,7 @@ def strategy(log_match=False):
     return s
 
 
-def policy(name, severity, conditions, documentation, log_match=False):
+def policy(name, severity, conditions, documentation, log_match=False, extra_channels=()):
     return {
         "displayName": name,
         "combiner": "OR",
@@ -98,7 +107,7 @@ def policy(name, severity, conditions, documentation, log_match=False):
         "conditions": conditions,
         "documentation": documentation,
         "alertStrategy": strategy(log_match),
-        "notificationChannels": [os.environ["CHANNEL_ID"]],
+        "notificationChannels": [os.environ["CHANNEL_ID"]] + [c for c in extra_channels if c],
     }
 
 
@@ -118,6 +127,19 @@ def cmd_channel(out, url, password_file):
         "description": "Relays Cloud Monitoring incidents to the Tutor Advantage Discord channel via "
                        "identity-service POST /v1/internal/alerts/monitoring. See " + RUNBOOK + ".",
         "labels": {"url": url, "username": "monitoring", "password": password},
+        "userLabels": {"app": "tutor-advantage"},
+        "enabled": True,
+    })
+
+
+def cmd_email_channel(out):
+    # The address comes from env (ALERT_EMAIL), never argv.
+    write(out, {
+        "type": "email",
+        "displayName": EMAIL_CHANNEL_NAME,
+        "description": "Email backup for the one incident the Discord relay cannot deliver: "
+                       "identity-service itself being down. See " + RUNBOOK + ".",
+        "labels": {"email_address": os.environ["ALERT_EMAIL"]},
         "userLabels": {"app": "tutor-advantage"},
         "enabled": True,
     })
@@ -176,6 +198,8 @@ def cmd_service_down(out, service, check_id):
             f"**{service}** has failed its uptime check from 2+ regions for 5 minutes. "
             "Check the latest Cloud Run revision, its logs around the start time, and Cloud SQL.",
             "Service down"),
+        # The relay runs on identity-service, so its own outage also goes to email.
+        extra_channels=[os.environ.get("EMAIL_CHANNEL_ID", "")] if service == "identity-service" else (),
     ))
 
 
@@ -301,7 +325,7 @@ def cmd_merge(page_file, collection, acc_file):
 
 
 COMMANDS = {
-    "channel": cmd_channel, "uptime": cmd_uptime, "service-down": cmd_service_down,
+    "channel": cmd_channel, "email-channel": cmd_email_channel, "uptime": cmd_uptime, "service-down": cmd_service_down,
     "5xx": cmd_5xx, "scheduler": cmd_scheduler, "migration": cmd_migration, "crash": cmd_crash,
     "find": cmd_find, "get": cmd_get, "merge": cmd_merge,
 }
@@ -310,7 +334,9 @@ if __name__ == "__main__":
     COMMANDS[sys.argv[1]](*sys.argv[2:])
 PY
 
-gen() { CHANNEL_NAME="$CHANNEL_NAME" PROJECT="$PROJECT" CHANNEL_ID="${CHANNEL_ID:-}" "$PY" "$WORK/gen.py" "$@"; }
+gen() {
+  CHANNEL_NAME="$CHANNEL_NAME" EMAIL_CHANNEL_NAME="$EMAIL_CHANNEL_NAME" PROJECT="$PROJECT"     CHANNEL_ID="${CHANNEL_ID:-}" EMAIL_CHANNEL_ID="${EMAIL_CHANNEL_ID:-}" ALERT_EMAIL="$ALERT_EMAIL"     "$PY" "$WORK/gen.py" "$@"
+}
 
 # ---------------------------------------------------------------------------
 # REST helpers. The bearer token lives in a 0600 header file read by curl -H @file.
@@ -414,6 +440,15 @@ CHANNEL_ID="$(upsert notificationChannels "$CHANNEL_NAME" "$WORK/channel.json" \
 rm -f "$WORK/channel.json" # holds the password
 export CHANNEL_ID
 
+# Optional email backup (ALERT_EMAIL): attached to the identity-service
+# service-down policy only, because that is the relay's blind spot.
+EMAIL_CHANNEL_ID=""
+if [[ -n "$ALERT_EMAIL" ]]; then
+  gen email-channel "$WORK/email-channel.json"
+  EMAIL_CHANNEL_ID="$(upsert notificationChannels "$EMAIL_CHANNEL_NAME" "$WORK/email-channel.json"     "displayName,description,labels,userLabels,enabled" email)"
+fi
+export EMAIL_CHANNEL_ID
+
 # ---------------------------------------------------------------------------
 # 2. Uptime checks (+ one "service down" policy per check)
 # ---------------------------------------------------------------------------
@@ -471,3 +506,8 @@ echo
 echo "Cloud Monitoring setup for project $PROJECT$(is_dry_run && echo ' (DRY RUN — nothing changed)'):"
 sed 's/^/  /' "$WORK/summary"
 echo "  relay: $RELAY_URL"
+if [[ -n "$ALERT_EMAIL" ]]; then
+  echo "  email backup: on (identity-service service-down policy)"
+else
+  echo "  email backup: off (set ALERT_EMAIL to enable)"
+fi

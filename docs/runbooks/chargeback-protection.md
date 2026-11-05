@@ -109,9 +109,21 @@ override with GitHub repository variables of the same name).
 ## Production setup (done 2026-10-22)
 
 - Secret Manager `ta-internal_api_key` (random, created 2026-10-22) is mounted
-  as `INTERNAL_API_KEY` on finance-mlm-service by `deploy.yml`; the compute
-  service account has `secretAccessor` on it. Rotate: add a new secret
-  version, redeploy, then update the scheduler job header.
+  as `INTERNAL_API_KEY` on finance-mlm-service by `deploy.yml`. Since
+  2026-11-03 each service runs as its own runtime service account, never the
+  default compute SA: finance-mlm-service runs as
+  `ta-finance-run@reading-advantage.iam.gserviceaccount.com`, which holds
+  `roles/secretmanager.secretAccessor` on this secret. learning-service
+  (`ta-learning-run`) and identity-service (`ta-identity-run`) mount the same
+  secret and hold the same grant. A revision whose SA cannot read a mounted
+  secret fails to start, so grant before deploying a new mount:
+  ```bash
+  gcloud secrets add-iam-policy-binding ta-internal_api_key     --member="serviceAccount:ta-finance-run@reading-advantage.iam.gserviceaccount.com"     --role="roles/secretmanager.secretAccessor" --project=reading-advantage
+  ```
+  `ta-finance-run` also needs access to the other secrets finance mounts
+  (`ta-omise_webhook_secret`, `ta-discord-webhook-url` and the database URL).
+  Rotate: add a new secret version, redeploy the three services, then update
+  the scheduler job headers.
 - Cloud Scheduler job `ta-daily-dispute-sync` (06:15 Asia/Bangkok) calls the
   daily sync with that key in the `X-Internal-Key` header.
 - `deploy.yml` now detects changed services against the last successful

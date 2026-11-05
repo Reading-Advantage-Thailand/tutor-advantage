@@ -24,6 +24,7 @@ import { useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { statusLabel } from "@/lib/status";
+import { documentExpiryChip, type ExpiryMessages } from "./documentExpiry";
 import type { UserListItem, UserListResponse } from "./types";
 import "@/locales/th/users";
 
@@ -46,6 +47,19 @@ const VERIFICATION_OPTIONS = [
   { value: "VERIFIED", label: statusLabel("verification", "VERIFIED") },
   { value: "REJECTED", label: statusLabel("verification", "REJECTED") },
 ];
+const DOCUMENT_OPTIONS = [
+  { value: "", label: t("users.documentsAll") },
+  { value: "EXPIRING", label: t("users.documentsExpiring") },
+  { value: "EXPIRED", label: t("users.documentsExpired") },
+];
+
+const EXPIRY_MESSAGES: ExpiryMessages = {
+  passport: t("users.docPassport"),
+  workPermit: t("users.docWorkPermit"),
+  inDays: t("users.expiryInDays"),
+  today: t("users.expiryToday"),
+  expired: t("users.expiryExpired"),
+};
 
 function VerificationCell({ user }: { user: UserListItem }) {
   if (user.role !== "TUTOR") {
@@ -57,12 +71,18 @@ function VerificationCell({ user }: { user: UserListItem }) {
       </Chip>
     );
   }
+  const expiry = documentExpiryChip(user.documentExpiry, EXPIRY_MESSAGES);
   return (
     <span className="flex flex-wrap items-center gap-1.5">
       <AdminStatusChip domain="verification" status={user.verificationStatus} />
       {user.pendingVerificationCount > 0 ? (
         <Chip tone="warning" size="sm">
           {t("users.pendingFields", { count: user.pendingVerificationCount })}
+        </Chip>
+      ) : null}
+      {expiry ? (
+        <Chip tone={expiry.tone} size="sm" dot>
+          {expiry.text}
         </Chip>
       ) : null}
     </span>
@@ -126,7 +146,7 @@ export default function UsersPage() {
   const table = useTableState({
     defaultSort: { key: "createdAt", dir: "desc" },
     sortKeys: ["createdAt", "name"],
-    filterKeys: ["role", "status", "verification"],
+    filterKeys: ["role", "status", "verification", "documents"],
   });
 
   const { data, error, isLoading, isValidating, refetch } = useCachedResource(
@@ -174,6 +194,13 @@ export default function UsersPage() {
           value={table.filters.verification ?? ""}
           onChange={(event) => table.setFilter("verification", event.target.value)}
           options={VERIFICATION_OPTIONS}
+        />
+        <SelectField
+          aria-label={t("users.filterDocuments")}
+          containerClassName="w-full sm:w-52"
+          value={table.filters.documents ?? ""}
+          onChange={(event) => table.setFilter("documents", event.target.value)}
+          options={DOCUMENT_OPTIONS}
         />
         <SelectField
           aria-label={t("users.filterAccount")}

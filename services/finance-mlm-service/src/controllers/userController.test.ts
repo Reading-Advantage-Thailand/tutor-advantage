@@ -32,7 +32,9 @@ vi.mock("../services/omiseService", () => ({
 
 import {
   anonymizeUser,
+  bangkokToday,
   buildUserListWhere,
+  documentExpiryWhere,
   computeVerificationStatus,
   getUserDetails,
   getUsers,
@@ -41,6 +43,7 @@ import {
   planVerification,
   scrubSettings,
   settingsForRole,
+  soonestDocumentExpiry,
   suspendUser,
   updateTaxResidency,
   verifyUser,
@@ -452,6 +455,102 @@ describe("foreign tutors (passport)", () => {
     expect(forChecker.workPermitImageUrl).toBeNull();
     expect(forAdmin.taxResidency).toBe("NON_RESIDENT");
     expect(forAdmin.payoutBlock).toBeNull();
+  });
+});
+
+describe("document expiry (admin list)", () => {
+  // 2026-11-05T17:30Z is already 2026-11-06 00:30 in Bangkok.
+  const lateUtc = new Date("2026-11-05T17:30:00.000Z");
+  const earlyUtc = new Date("2026-11-05T16:30:00.000Z"); // 23:30 Bangkok, still the 5th
+
+  it("uses the Bangkok calendar day as the DATE column value", () => {
+    expect(bangkokToday(lateUtc).toISOString()).toBe("2026-11-06T00:00:00.000Z");
+    expect(bangkokToday(earlyUtc).toISOString()).toBe("2026-11-05T00:00:00.000Z");
+  });
+
+  it("filters expiring documents from today through today + 30 Bangkok days", () => {
+    const where = documentExpiryWhere("EXPIRING", lateUtc) as any;
+    const range = { gte: new Date("2026-11-06T00:00:00.000Z"), lte: new Date("2026-12-06T00:00:00.000Z") };
+    expect(where).toEqual({
+      role: "TUTOR",
+      idType: "PASSPORT",
+      OR: [{ passportExpiresOn: range }, { teachingLocation: "THAILAND", workPermitExpiresOn: range }],
+    });
+  });
+
+  it("filters expired documents as before today (payout blocked)", () => {
+    const where = documentExpiryWhere("EXPIRED", earlyUtc) as any;
+    const range = { lt: new Date("2026-11-05T00:00:00.000Z") };
+    expect(where.OR).toEqual([{ passportExpiresOn: range }, { teachingLocation: "THAILAND", workPermitExpiresOn: range }]);
+    expect(documentExpiryWhere("SOMETHING", earlyUtc)).toBeNull();
+  });
+
+  it("adds the documents filter to the list where (case-insensitive) and ignores unknown values", () => {
+    const where = buildUserListWhere({ role: "tutor", documents: "expiring" }, lateUtc) as any;
+    expect(where.AND).toHaveLength(2);
+    expect(where.AND[1]).toEqual(documentExpiryWhere("EXPIRING", lateUtc));
+    expect((buildUserListWhere({ documents: "soon" }) as any).AND).toHaveLength(1);
+  });
+
+  const tutor = {
+    role: "TUTOR",
+    idType: "PASSPORT",
+    teachingLocation: "THAILAND",
+    passportExpiresOn: new Date("2027-06-01"),
+    workPermitExpiresOn: new Date("2026-12-06"),
+  };
+
+  it("picks the soonest document within 30 days, counted in Bangkok days", () => {
+    expect(soonestDocumentExpiry(tutor, lateUtc)).toEqual({ document: "WORK_PERMIT", expiresOn: "2026-12-06", daysLeft: 30 });
+    expect(soonestDocumentExpiry(tutor, earlyUtc)).toBeNull(); // 31 days left on the 5th
+    expect(soonestDocumentExpiry({ ...tutor, passportExpiresOn: new Date("2026-11-06") }, lateUtc)).toEqual({
+      document: "PASSPORT",
+      expiresOn: "2026-11-06",
+      daysLeft: 0,
+    });
+  });
+
+  it("reports expired documents with negative days and skips non-required work permits", () => {
+    const expired = { ...tutor, workPermitExpiresOn: new Date("2026-11-04") };
+    expect(soonestDocumentExpiry(expired, lateUtc)).toEqual({ document: "WORK_PERMIT", expiresOn: "2026-11-04", daysLeft: -2 });
+    expect(soonestDocumentExpiry({ ...expired, teachingLocation: "ABROAD" }, lateUtc)).toBeNull();
+    expect(soonestDocumentExpiry({ ...tutor, idType: "THAI_ID" }, lateUtc)).toBeNull();
+    expect(soonestDocumentExpiry({ ...tutor, role: "STUDENT" }, lateUtc)).toBeNull();
+  });
+
+  it("adds expiry warnings to the tutor identity", () => {
+    const identity = identityForRole(tutor, "ADMIN", lateUtc);
+    expect(identity.expiryWarnings).toEqual([{ document: "WORK_PERMIT", expiresOn: "2026-12-06", daysLeft: 30 }]);
+    expect(identityForRole({ ...tutor, role: "STUDENT" }, "ADMIN", lateUtc).expiryWarnings).toEqual([]);
+  });
+
+  it("returns a documentExpiry for tutor rows only", async () => {
+    prismaMock.user.count.mockResolvedValue(1);
+    prismaMock.user.findMany.mockResolvedValue([
+      {
+        userId: USER_ID,
+        displayName: "John",
+        email: null,
+        role: "TUTOR",
+        profilePictureUrl: null,
+        verificationStatus: "VERIFIED",
+        settings: {},
+        isActive: true,
+        createdAt: new Date("2026-01-01"),
+        idType: "PASSPORT",
+        teachingLocation: "ABROAD",
+        passportExpiresOn: new Date("2000-01-01"),
+        workPermitExpiresOn: null,
+      },
+    ]);
+    prismaMock.class.groupBy.mockResolvedValue([]);
+    prismaMock.enrollment.groupBy.mockResolvedValue([]);
+    prismaMock.guardianConsent.groupBy.mockResolvedValue([]);
+    const res = createResponse();
+    await getUsers({ user: ADMIN, query: { documents: "EXPIRED" } } as never, res as never);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.items[0].documentExpiry).toMatchObject({ document: "PASSPORT", expiresOn: "2000-01-01" });
+    expect(res.body.items[0].documentExpiry.daysLeft).toBeLessThan(0);
   });
 });
 

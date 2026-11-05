@@ -1,4 +1,4 @@
-import { decryptPii, logger } from "@tutor-advantage/shared-config";
+import { decryptPii, isValidInternalKey, logger } from "@tutor-advantage/shared-config";
 import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import {
@@ -53,10 +53,7 @@ function getPreviousIctMonth(): string {
  * Protected by X-Internal-Key header (shared secret), NOT JWT.
  */
 export async function autoRunSettlement(req: Request, res: Response) {
-  const internalKey = process.env.INTERNAL_API_KEY;
-  const providedKey = req.headers["x-internal-key"];
-
-  if (!internalKey || providedKey !== internalKey) {
+  if (!isValidInternalKey(req.headers["x-internal-key"], process.env.INTERNAL_API_KEY)) {
     return res.status(401).json({
       error: { code: "UNAUTHORIZED", message: "Invalid internal key" },
     });

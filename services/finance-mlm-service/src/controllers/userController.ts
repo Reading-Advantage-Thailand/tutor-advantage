@@ -1,12 +1,14 @@
 import {
   ALL_VERIFICATION_FIELDS,
   computeTutorVerificationStatus,
+  documentExpiryWarnings,
   isExpired,
   isTaxResidency,
   logger,
   payoutDocumentBlock,
   requiredVerificationFields,
   requiresWorkPermit,
+  type ExpiringDocument,
   type TutorIdentityState,
 } from "@tutor-advantage/shared-config";
 import { Response } from "express";
@@ -138,6 +140,7 @@ export function settingsForRole(settingsValue: unknown, role: string | undefined
 }
 
 type IdentityColumns = TutorIdentityState & {
+  role?: string | null;
   passportNumberLast4?: string | null;
   passportNationality?: string | null;
   workPermitImageUrl?: string | null;
@@ -170,8 +173,86 @@ export function identityForRole(user: IdentityColumns, role: string | undefined,
     rightToWorkConfirmedAt: user.rightToWorkConfirmedAt?.toISOString() ?? null,
     taxResidency: user.taxResidency === "NON_RESIDENT" ? "NON_RESIDENT" : "RESIDENT",
     payoutBlock: payoutDocumentBlock(user, asOf),
+    // Still-valid documents that expire within 30 Bangkok days (renew before payouts block).
+    expiryWarnings: user.role && user.role !== "TUTOR" ? [] : documentExpiryWarnings(user, asOf),
     requiredFields: requiredVerificationFields(user),
   };
+}
+
+/* ─── Document expiry (list filter + row chip) ────────────────────────── */
+
+/** Days ahead that count as "expiring soon" (same window as documentExpiryWarnings). */
+export const DOCUMENT_EXPIRY_WINDOW_DAYS = 30;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Today's Bangkok calendar day as UTC midnight, which is how Prisma reads and
+ * writes the DATE columns passport_expires_on / work_permit_expires_on.
+ */
+export function bangkokToday(asOf: Date = new Date()): Date {
+  const day = new Date(asOf.getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  return new Date(`${day}T00:00:00.000Z`);
+}
+
+/**
+ * documents=EXPIRING: a document is still valid (expires today or later) but
+ * expires within 30 Bangkok days. documents=EXPIRED: a document's last valid
+ * day is before today, so payouts are blocked. Mirrors the shared rules: only
+ * passport holders, and the work permit only counts when teaching from Thailand.
+ */
+export function documentExpiryWhere(
+  filter: string,
+  asOf: Date = new Date(),
+): Prisma.UserWhereInput | null {
+  if (filter !== "EXPIRING" && filter !== "EXPIRED") return null;
+  const today = bangkokToday(asOf);
+  const range: Prisma.DateTimeNullableFilter =
+    filter === "EXPIRING"
+      ? { gte: today, lte: new Date(today.getTime() + DOCUMENT_EXPIRY_WINDOW_DAYS * DAY_MS) }
+      : { lt: today };
+  return {
+    role: "TUTOR",
+    idType: "PASSPORT",
+    OR: [
+      { passportExpiresOn: range },
+      { teachingLocation: "THAILAND", workPermitExpiresOn: range },
+    ],
+  };
+}
+
+export type DocumentExpirySummary = {
+  document: ExpiringDocument;
+  /** YYYY-MM-DD, the last valid day. */
+  expiresOn: string;
+  /** Bangkok days left; 0 = expires today, negative = already expired. */
+  daysLeft: number;
+};
+
+/**
+ * The soonest-expiring identity document for a list row: expired documents
+ * (daysLeft < 0) or ones expiring within 30 days. null when nothing is due.
+ */
+export function soonestDocumentExpiry(
+  user: IdentityColumns,
+  asOf: Date = new Date(),
+): DocumentExpirySummary | null {
+  if ((user.role && user.role !== "TUTOR") || user.idType !== "PASSPORT") return null;
+  const today = bangkokToday(asOf).getTime();
+  const candidates: Array<[ExpiringDocument, Date | string | null | undefined]> = [
+    ["PASSPORT", user.passportExpiresOn],
+  ];
+  if (requiresWorkPermit(user)) candidates.push(["WORK_PERMIT", user.workPermitExpiresOn]);
+  let soonest: DocumentExpirySummary | null = null;
+  for (const [document, value] of candidates) {
+    const expiresOn = isoDay(value);
+    if (!expiresOn || !/^\d{4}-\d{2}-\d{2}$/.test(expiresOn)) continue;
+    const expiry = new Date(`${expiresOn}T00:00:00.000Z`).getTime();
+    if (Number.isNaN(expiry)) continue;
+    const daysLeft = Math.round((expiry - today) / DAY_MS);
+    if (daysLeft > DOCUMENT_EXPIRY_WINDOW_DAYS) continue;
+    if (!soonest || daysLeft < soonest.daysLeft) soonest = { document, expiresOn, daysLeft };
+  }
+  return soonest;
 }
 
 /* ─── List ────────────────────────────────────────────────────────────── */
@@ -224,7 +305,10 @@ const notAnonymizedWhere = (): Prisma.UserWhereInput => ({
   OR: [{ displayName: null }, { displayName: { not: ANONYMIZED_DISPLAY_NAME } }],
 });
 
-export function buildUserListWhere(query: Record<string, unknown>): Prisma.UserWhereInput {
+export function buildUserListWhere(
+  query: Record<string, unknown>,
+  asOf: Date = new Date(),
+): Prisma.UserWhereInput {
   const and: Prisma.UserWhereInput[] = [];
   const role = typeof query.role === "string" ? query.role.toUpperCase() : "";
   and.push({ role: LISTED_ROLES.includes(role) ? role : { in: LISTED_ROLES } });
@@ -254,6 +338,10 @@ export function buildUserListWhere(query: Record<string, unknown>): Prisma.UserW
   } else if (["UNVERIFIED", "PENDING", "VERIFIED", "REJECTED"].includes(verification)) {
     and.push({ verificationStatus: verification });
   }
+
+  const documents = typeof query.documents === "string" ? query.documents.toUpperCase() : "";
+  const documentsWhere = documentExpiryWhere(documents, asOf);
+  if (documentsWhere) and.push(documentsWhere);
 
   return { AND: and };
 }
@@ -299,6 +387,11 @@ export const getUsers = async (req: AuthenticatedRequest, res: Response) => {
           settings: true,
           isActive: true,
           createdAt: true,
+          // Document expiry chip (dates only; the passport number is never read here).
+          idType: true,
+          teachingLocation: true,
+          passportExpiresOn: true,
+          workPermitExpiresOn: true,
         },
         orderBy,
         skip: (page - 1) * pageSize,
@@ -326,6 +419,7 @@ export const getUsers = async (req: AuthenticatedRequest, res: Response) => {
       guardianCounts.map((item) => [item.studentUserId, item._count.consentId]),
     );
 
+    const asOf = new Date();
     const formattedUsers = users.map((user) => {
       const submittedVerificationFields = getSubmittedVerificationFields(user.settings);
       const activeClasses =
@@ -349,6 +443,7 @@ export const getUsers = async (req: AuthenticatedRequest, res: Response) => {
         pendingVerificationCount: submittedVerificationFields.length,
         guardianSetup:
           user.role === "STUDENT" ? (guardianMap.get(user.userId) ?? 0) > 0 : true,
+        documentExpiry: user.role === "TUTOR" ? soonestDocumentExpiry(user, asOf) : null,
         joined: user.createdAt.toISOString().split("T")[0],
         createdAt: user.createdAt.toISOString(),
       };

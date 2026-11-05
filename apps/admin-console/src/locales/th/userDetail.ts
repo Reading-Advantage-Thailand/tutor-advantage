@@ -225,6 +225,14 @@ export const userDetail = {
   cardTrustFrom: "จาก",
   cardTrustTo: "เป็น",
   cardTrustSaved: "บันทึกสิทธิ์รับบัตรแล้ว",
+  // ── Document expiry warnings (passport / work permit, within 30 days) ──
+  expiryWarningTitle: "เอกสารใกล้หมดอายุ",
+  expiryWarningBody: "ให้ครูส่งฉบับใหม่ก่อนวันหมดอายุ มิฉะนั้นระบบจะระงับการจ่ายเงินอัตโนมัติ",
+  expiryDocPassport: "หนังสือเดินทาง",
+  expiryDocWorkPermit: "ใบอนุญาตทำงาน",
+  expiryWarningInDays: "{document}หมดอายุ {date} (อีก {days} วัน)",
+  expiryWarningToday: "{document}หมดอายุวันนี้ ({date}) — ใช้ได้ถึงสิ้นวันนี้",
+  expiryWarningExpired: "{document}หมดอายุแล้ว ({date})",
 } as const;
 
 registerMessages("userDetail", userDetail);

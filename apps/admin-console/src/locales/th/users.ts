@@ -62,6 +62,16 @@ export const users = {
   emptyTitle: "ไม่พบผู้ใช้",
   emptyFiltered: "ลองเปลี่ยนคำค้นหาหรือล้างตัวกรอง",
   tableCaption: "รายชื่อผู้ใช้งาน",
+  // ── Tutor document expiry (passport / work permit) ──
+  filterDocuments: "วันหมดอายุเอกสาร",
+  documentsAll: "ทุกสถานะวันหมดอายุ",
+  documentsExpiring: "ใกล้หมดอายุ (ภายใน 30 วัน)",
+  documentsExpired: "หมดอายุแล้ว (ระงับจ่ายเงิน)",
+  docPassport: "หนังสือเดินทาง",
+  docWorkPermit: "ใบอนุญาตทำงาน",
+  expiryInDays: "{document}หมดอายุในอีก {days} วัน",
+  expiryToday: "{document}หมดอายุวันนี้",
+  expiryExpired: "{document}หมดอายุแล้ว",
 } as const;
 
 registerMessages("users", users);

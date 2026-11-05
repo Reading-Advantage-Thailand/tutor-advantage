@@ -79,6 +79,24 @@ embed). Setup script: `infra/monitoring/apply-monitoring.sh`.
    reads the service URLs with `gcloud run services describe`; override with
    `IDENTITY_SERVICE_URL`, `STUDENT_LIFF_URL`, … if needed. Then in Console →
    Monitoring → Alerting → the channel → **Send test notification**.
+7. **Email backup for identity-service down** (recommended; see Known
+   limitations). Run the script with `ALERT_EMAIL` set to a monitored ops
+   mailbox or group:
+   ```bash
+   ALERT_EMAIL=ops@example.com DRY_RUN=1 infra/monitoring/apply-monitoring.sh   # review
+   ALERT_EMAIL=ops@example.com infra/monitoring/apply-monitoring.sh
+   ```
+   It upserts an `email` channel **"Tutor Advantage → email backup"** and adds
+   it, next to the relay, to `TA: service down (identity-service)` only. Every
+   other policy keeps the relay channel alone. Google sends no verification
+   mail for email channels, so check the address before running and use
+   **Send test notification** on the new channel afterwards. The address is read
+   from the environment, not the command line arguments, and is not printed in
+   the summary (the dry-run JSON does show it).
+   **Always set `ALERT_EMAIL` on later runs too:** the policies are replaced in
+   full, so a run without it detaches the email channel again (the channel
+   itself stays, unused, until you delete it in the Console). The summary's last
+   line says `email backup: on` or `off`.
 
 ## What each alert means and first checks
 
@@ -91,6 +109,9 @@ here too); frontends check `/` and accept 2xx or 3xx.
 - Logs around the start time: startup errors, missing secrets, `db_unreachable`.
 - If every backend is down at once, check Cloud SQL (`cloud-sql` instance) first.
 - Roll back: Cloud Run → Revisions → route 100% traffic to the previous revision.
+- `TA: service down (identity-service)` is the one alert the relay cannot post
+  (the relay is identity-service). If the script ran with `ALERT_EMAIL` it
+  arrives by email from Google Cloud instead; nothing appears in Discord.
 
 ### 5xx spike
 `TA: 5xx spike` — more than 10 HTTP 5xx responses in 5 minutes from one TA service.
@@ -142,13 +163,16 @@ reach Discord directly, with throttling.
 ## Known limitations
 
 - **identity-service down = its own alert cannot be relayed.** The relay runs
-  on identity-service, so `TA: service down (identity-service)` (or an outage
-  of all backends) has nowhere to go. The incident is still open and visible in
-  Console → Monitoring → Alerting / Uptime checks. Mitigation: add an email
-  notification channel (Console → Alerting → Edit notification channels →
-  Email) to the identity-service and 5xx policies as a backup; the script only
-  manages the Discord relay channel, so add the email channel in the Console
-  after each run or extend `notificationChannels` in the script.
+  on identity-service, so without a backup `TA: service down
+  (identity-service)` (or an outage of all backends) has nowhere to go. The
+  incident is still open and visible in Console → Monitoring → Alerting /
+  Uptime checks. Mitigation: run the script with `ALERT_EMAIL` (One-time setup
+  step 7), which attaches the **"Tutor Advantage → email backup"** channel to
+  that policy. Only that policy gets it. While identity-service is down, other
+  incidents (for example 5xx spikes or crash loops on identity-service
+  itself) are still lost from Discord, but the identity-service down email
+  tells you to look in the Console. Do not add an email channel by hand in the
+  Console: the next script run replaces each policy's channel list and drops it.
 - The relay is one HTTP call per notification with a 5 s Discord timeout;
   Monitoring does not retry a 200, so a Discord outage loses that one embed.
   The incident itself stays in the Console.
