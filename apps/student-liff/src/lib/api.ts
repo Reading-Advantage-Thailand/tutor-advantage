@@ -243,4 +243,28 @@ export const studentApi = {
     method: 'POST',
     body: JSON.stringify(payload),
   }),
+
+  // Support tickets ("คำร้องของฉัน"), hosted by learning-service
+  getSupportTickets: () => fetchWithAuth('/tickets'),
+  getSupportTicket: (ticketId: string) => fetchWithAuth(`/tickets/${encodeURIComponent(ticketId)}`),
+  createSupportTicket: (payload: {
+    category: string;
+    subject: string;
+    body: string;
+    classId?: string;
+    paymentReference?: string;
+    /** UUID, the same for every retry of one submit (server replays return the first ticket). */
+    idempotencyKey: string;
+  }) => fetchWithAuth('/tickets', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }),
+  replySupportTicket: (ticketId: string, payload: { body: string; clientMessageId: string }) => fetchWithAuth(`/tickets/${encodeURIComponent(ticketId)}/messages`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }),
+  resolveSupportTicket: (ticketId: string) => fetchWithAuth(`/tickets/${encodeURIComponent(ticketId)}/resolve`, {
+    method: 'POST',
+    body: JSON.stringify({}),
+  }),
 };

@@ -1,9 +1,12 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Copy } from "lucide-react";
+import Link from "next/link";
+import { Copy, LifeBuoy } from "lucide-react";
 import { toast } from "sonner";
 import { BottomSheet, Chip, IconButton } from "@/components/mobile";
+import { Button } from "@/components/ui/button";
+import { buildNewRequestHref, isValidPaymentReference } from "@/app/support/_lib/form";
 import { formatSatang, formatThaiDate, formatThaiTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import {
@@ -44,6 +47,10 @@ export function PaymentDetailSheet({ payment, open, onOpenChange, onClosed }: Pa
   const status = getPaymentStatusDisplay(payment?.status);
   const book = payment ? getPaymentBookLabel(payment) : null;
   const date = payment ? `${formatThaiDate(payment.createdAt, "long")} ${formatThaiTime(payment.createdAt, { suffix: true })}`.trim() : "";
+  // "แจ้งปัญหา" opens a refund request with this payment's reference filled in.
+  const reportHref = isValidPaymentReference(payment?.providerRef)
+    ? buildNewRequestHref({ category: "REFUND", ref: payment?.providerRef })
+    : null;
 
   return (
     <BottomSheet
@@ -81,6 +88,18 @@ export function PaymentDetailSheet({ payment, open, onOpenChange, onClosed }: Pa
             </div>
           ) : null}
         </dl>
+      ) : null}
+      {payment && reportHref ? (
+        <Button
+          variant="brandSoft"
+          size="touch"
+          className="mt-3 w-full"
+          nativeButton={false}
+          render={<Link href={reportHref} />}
+        >
+          <LifeBuoy aria-hidden="true" />
+          {t("support.reportProblem")}
+        </Button>
       ) : null}
     </BottomSheet>
   );

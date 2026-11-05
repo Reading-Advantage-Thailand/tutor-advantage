@@ -36,6 +36,7 @@ export const app = {
   navEarnings: "รายได้",
   navNetwork: "เครือข่าย",
   navPerformance: "ผลงาน",
+  navSupport: "คำร้อง/ติดต่อทีมงาน",
   navSettings: "ตั้งค่า",
   helpLine: "ช่วยเหลือ / LINE OA",
   contactTeam: "ติดต่อทีมงาน",

@@ -3,6 +3,8 @@
 Owner: คุณแจง / support@reading-advantage.com / LINE OA https://lin.ee/5LRn0YM.
 Public wording lives in `apps/student-liff/src/lib/content/legal.ts`; update its version and date when changing policy, and update this runbook to match. The time limits below are commitments in the public policy; escalate before a limit is missed.
 
+**Case record:** cases are now opened and recorded in the admin console **คำร้อง** queue (`/support/tickets`), whether the student opened the ticket in the app or you open it on their behalf after a LINE OA or email contact. The case reference in every step below is the ticket number (`#123`); quote it to the student, finance and the tutor, and keep decisions, approvers and processing references as internal notes on that ticket. The queue's first-response deadline (3 business days for refunds, 2 for everything else) covers only the first reply; the later limits below still apply. See `support-tickets.md`.
+
 ## Cancellation and refund requests
 
 Students can cancel before payment by leaving checkout. After payment the company does not accept cancellations, except when it cannot open the class as scheduled; that case is refunded in full under the steps below.

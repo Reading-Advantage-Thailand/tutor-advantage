@@ -16,7 +16,7 @@ const byId = (id: string) => NAV_ITEMS.find((item) => item.id === id)!;
 describe("navigation config", () => {
   it("has 4 tab items (+ more) that include schedule, and the rest in the more sheet", () => {
     expect(TAB_ITEMS.map((item) => item.id)).toEqual(["home", "classes", "schedule", "chat"]);
-    expect(MORE_ITEMS.map((item) => item.id)).toEqual(["demo", "earnings", "network", "performance", "settings"]);
+    expect(MORE_ITEMS.map((item) => item.id)).toEqual(["demo", "earnings", "network", "performance", "support", "settings"]);
     expect(new Set(NAV_ITEMS.map((item) => item.href)).size).toBe(NAV_ITEMS.length);
   });
 });
@@ -40,6 +40,7 @@ describe("isNavItemActive / getActiveNavItem", () => {
 
   it("flags the more tab for secondary sections", () => {
     expect(isMoreActive("/dashboard/earnings")).toBe(true);
+    expect(isMoreActive("/dashboard/support/new")).toBe(true);
     expect(isMoreActive("/dashboard/schedule")).toBe(false);
   });
 });
@@ -52,6 +53,8 @@ describe("app bar helpers", () => {
     expect(getBackHref("/dashboard")).toBeNull();
     expect(getBackHref("/dashboard/classes/123")).toBe("/dashboard/classes");
     expect(getBackHref("/dashboard/chat/abc/")).toBe("/dashboard/chat");
+    expect(getBackHref("/dashboard/support/new")).toBe("/dashboard/support");
+    expect(getBackHref("/dashboard/support")).toBeNull();
   });
 
   it("uses the section label as default title", () => {

@@ -9,6 +9,9 @@ import {
   getTodayHistoryRange,
   progressResourceKey,
   progressResourcePrefix,
+  supportResourcePrefix,
+  supportTicketResourceKey,
+  supportTicketsResourceKey,
 } from "./resourceKeys";
 
 describe("resource keys", () => {
@@ -22,6 +25,14 @@ describe("resource keys", () => {
     expect(progressResourceKey("U1", "c1", null)).toBe("U1:progress:c1:auto");
     expect(progressResourceKey("U1", "c1", "b2")).toBe("U1:progress:c1:b2");
     expect(progressResourceKey("U1", "c1", "b2").startsWith(progressResourcePrefix("U1"))).toBe(true);
+  });
+
+  it("keeps support list and ticket keys under one prefix", () => {
+    expect(supportResourcePrefix("U1")).toBe("U1:support:");
+    expect(supportTicketsResourceKey("U1")).toBe("U1:support:list");
+    expect(supportTicketResourceKey("U1", "t-1")).toBe("U1:support:ticket:t-1");
+    expect(supportTicketResourceKey("U1", "t-1").startsWith(supportResourcePrefix("U1"))).toBe(true);
+    expect(supportTicketsResourceKey("U1").startsWith(supportResourcePrefix("U12"))).toBe(false);
   });
 
   it("does not collide with another student's prefix", () => {

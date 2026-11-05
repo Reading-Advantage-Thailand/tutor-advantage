@@ -1,9 +1,8 @@
-import { logger } from "@tutor-advantage/shared-config";
+import { hashIdentifier, logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
-import { PrismaClient } from "@tutor-advantage/database";
+import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
-
-const prisma = new PrismaClient();
+import { countSupportUpdates } from "../services/supportTicketCounts";
 
 export const getNotificationSummary = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
@@ -19,7 +18,7 @@ export const getNotificationSummary = async (req: AuthenticatedRequest, res: Res
     });
 
     let unreadChatCount = 0;
-    
+
     // Calculate unread messages in parallel
     await Promise.all(
       participants.map(async (p) => {
@@ -33,7 +32,7 @@ export const getNotificationSummary = async (req: AuthenticatedRequest, res: Res
         unreadChatCount += count;
       })
     );
-    
+
     // 2. Get available auctions count
     const availableAuctionsCount = await prisma.classTransferRequest.count({
       where: {
@@ -45,10 +44,20 @@ export const getNotificationSummary = async (req: AuthenticatedRequest, res: Res
       }
     });
 
+    // 3. Support tickets with a reply the requester has not opened yet. A
+    // failure here only hides the badge; the other counts still load.
+    let supportUpdates = 0;
+    try {
+      supportUpdates = await countSupportUpdates(userId);
+    } catch (error) {
+      logger.warn("Support ticket badge count failed", { alert: false, user: hashIdentifier(userId), error: String(error) });
+    }
+
     res.status(200).json({
       notifications: {
         unreadChat: unreadChatCount,
-        availableAuctions: availableAuctionsCount
+        availableAuctions: availableAuctionsCount,
+        supportUpdates,
       }
     });
   } catch (error) {

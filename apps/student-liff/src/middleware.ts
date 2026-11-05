@@ -18,6 +18,7 @@ const PRIVATE_ROUTES = [
   "/study",
   "/lesson",
   "/voice-practice",
+  "/support",
 ];
 
 const LIFF_BOOTSTRAP_PARAMS = [

@@ -19,6 +19,17 @@ describe("admin route map", () => {
     }
   });
 
+  it("keeps the support ticket queue and detail ADMIN only", () => {
+    expect(findRoute("/support/tickets")?.id).toBe("tickets");
+    expect(findRoute("/support/tickets/5eed0000-0000-4000-8000-0000000000e1")?.id).toBe("tickets");
+    expect(findRoute("/support/tickets")?.badge).toBe("tickets");
+    expect(findRoute("/support/tickets")?.group).toBe("operations");
+    for (const path of ["/support/tickets", "/support/tickets/abc?tab=1"]) {
+      expect(decideAccess(path, "ADMIN", { devRoutes: false }), path).toBe("allow");
+      expect(decideAccess(path, "FINANCE_CHECKER", { devRoutes: false }), path).toBe("forbidden");
+    }
+  });
+
   it("decides access per role", () => {
     const dev = { devRoutes: true };
     expect(decideAccess("/login", null, dev)).toBe("allow");

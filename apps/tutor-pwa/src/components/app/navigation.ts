@@ -9,6 +9,7 @@ import {
   CalendarDays,
   GitBranch,
   LayoutDashboard,
+  LifeBuoy,
   MessageSquare,
   Settings,
   Sparkles,
@@ -25,11 +26,12 @@ export type NavItemId =
   | "network"
   | "performance"
   | "demo"
+  | "support"
   | "settings";
 
 export type NavGroup = "teaching" | "business" | "account";
 
-export type NavBadgeSource = "unreadChat" | "availableAuctions";
+export type NavBadgeSource = "unreadChat" | "availableAuctions" | "supportUpdates";
 
 export interface NavItem {
   id: NavItemId;
@@ -63,6 +65,14 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { id: "earnings", href: "/dashboard/earnings", label: t("app.navEarnings"), icon: Wallet, group: "business" },
   { id: "network", href: "/dashboard/network", label: t("app.navNetwork"), icon: GitBranch, group: "business" },
   { id: "performance", href: "/dashboard/performance", label: t("app.navPerformance"), icon: Award, group: "business" },
+  {
+    id: "support",
+    href: "/dashboard/support",
+    label: t("app.navSupport"),
+    icon: LifeBuoy,
+    group: "account",
+    badge: "supportUpdates",
+  },
   { id: "settings", href: "/dashboard/settings", label: t("app.navSettings"), icon: Settings, group: "account" },
 ];
 

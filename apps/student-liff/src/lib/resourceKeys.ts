@@ -50,3 +50,18 @@ export function getTodayHistoryRange(now: Date = new Date()): { historyFrom: str
 export function fetchDashboardSummary(): Promise<DashboardSummary> {
   return studentApi.getDashboard(getTodayHistoryRange()) as Promise<DashboardSummary>;
 }
+
+/** Prefix of every support-ticket entry of one student (list + each ticket). */
+export function supportResourcePrefix(userId: string): string {
+  return `${userId}:support:`;
+}
+
+/** "คำร้องของฉัน" list (GET /tickets). */
+export function supportTicketsResourceKey(userId: string): string {
+  return `${supportResourcePrefix(userId)}list`;
+}
+
+/** One ticket with its thread (GET /tickets/:ticketId). */
+export function supportTicketResourceKey(userId: string, ticketId: string): string {
+  return `${supportResourcePrefix(userId)}ticket:${ticketId}`;
+}

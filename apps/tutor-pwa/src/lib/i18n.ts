@@ -18,6 +18,7 @@ import { dashboardNetwork } from "@/locales/th/dashboardNetwork";
 import { dashboardHome } from "@/locales/th/dashboardHome";
 import { dashboardChat } from "@/locales/th/dashboardChat";
 import { dashboardEarnings } from "@/locales/th/dashboardEarnings";
+import { dashboardSupport } from "@/locales/th/dashboardSupport";
 import { demo } from "@/locales/th/demo";
 import { lesson } from "@/locales/th/lesson";
 import { shell } from "@/locales/th/shell";
@@ -36,6 +37,7 @@ export const th = {
   dashboardHome,
   dashboardChat,
   dashboardEarnings,
+  dashboardSupport,
   demo,
   lesson,
   shell,

@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, BellOff, Gavel, MessageSquare } from "lucide-react";
+import { Bell, BellOff, Gavel, LifeBuoy, MessageSquare } from "lucide-react";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { IconTile } from "./Atoms";
@@ -23,8 +23,8 @@ export function CountBadge({ count, className }: { count: number; className?: st
 }
 
 /**
- * Bell with total unread count; opens a small panel linking to chats and
- * open class auctions. Reads the shared NotificationsProvider (no polling here).
+ * Bell with total unread count; opens a small panel linking to chats, open
+ * class auctions and answered support tickets. Reads the shared NotificationsProvider (no polling here).
  */
 export function NotificationBell({
   placement = "bottom-end",
@@ -33,7 +33,7 @@ export function NotificationBell({
   placement?: DropdownPlacement;
   className?: string;
 }) {
-  const { unreadChat, availableAuctions, total, muted, setMuted } = useNotifications();
+  const { unreadChat, availableAuctions, supportUpdates, total, muted, setMuted } = useNotifications();
   const label = total > 0 ? `${t("shell.notifications")} (${total})` : t("shell.notifications");
   return (
     <Dropdown
@@ -91,6 +91,16 @@ export function NotificationBell({
                   leading={<IconTile icon={Gavel} tone="amber" size="sm" />}
                   title={t("shell.notificationsAuctions")}
                   trailing={<CountBadge count={availableAuctions} className="bg-warning-solid text-on-warning" />}
+                  chevron={false}
+                />
+              ) : null}
+              {supportUpdates > 0 ? (
+                <ListRow
+                  href="/dashboard/support"
+                  onClick={close}
+                  leading={<IconTile icon={LifeBuoy} tone="teal" size="sm" />}
+                  title={t("shell.notificationsSupport")}
+                  trailing={<CountBadge count={supportUpdates} />}
                   chevron={false}
                 />
               ) : null}

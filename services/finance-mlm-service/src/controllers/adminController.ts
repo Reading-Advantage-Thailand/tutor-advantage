@@ -33,6 +33,8 @@ function iso(value: Date | null | undefined): string | null {
  *                   (= /users?role=TUTOR&verification=REVIEW, tutorVerificationReviewWhere)
  *  - exceptions:    exceptions with status UNRESOLVED
  *  - fraudFlags:    fraud flags with status OPEN/INVESTIGATING/MONITORING/FROZEN
+ *  - tickets:       support tickets not RESOLVED with awaitingSupport=true
+ *                   (learning-service /v1/admin/tickets counts.awaitingSupport)
  */
 export async function getAdminOverview(req: AuthenticatedRequest, res: Response) {
   try {
@@ -57,6 +59,7 @@ export async function getAdminOverview(req: AuthenticatedRequest, res: Response)
       oldestVerification,
       oldestException,
       oldestFraudFlag,
+      awaitingSupportTickets,
     ] = await Promise.all([
       prisma.settlementRun.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
       prisma.settlementRun.count({ where: { status: "SUBMITTED" } }),
@@ -85,6 +88,7 @@ export async function getAdminOverview(req: AuthenticatedRequest, res: Response)
       prisma.user.findFirst({ where: verificationWhere, orderBy: { updatedAt: "asc" }, select: { updatedAt: true } }),
       prisma.exception.findFirst({ where: { status: "UNRESOLVED" }, orderBy: { createdAt: "asc" }, select: { createdAt: true } }),
       prisma.fraudFlag.findFirst({ where: fraudWhere, orderBy: { createdAt: "asc" }, select: { createdAt: true } }),
+      prisma.supportTicket.count({ where: { status: { not: "RESOLVED" }, awaitingSupport: true } }),
     ]);
 
     const actorIds = [...new Set(recentAuditEvents.map((e) => e.actorId))].filter((id) => UUID_RE.test(id));
@@ -111,6 +115,7 @@ export async function getAdminOverview(req: AuthenticatedRequest, res: Response)
         verifications: pendingVerificationUsers,
         exceptions: unresolvedExceptions,
         fraudFlags: activeFraudFlags,
+        tickets: awaitingSupportTickets,
       },
       /** Oldest waiting item per queue (ISO), for "waiting since" hints. */
       queueOldest: {

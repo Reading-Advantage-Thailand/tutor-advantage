@@ -27,6 +27,7 @@ export const shell = {
   notificationsEmpty: "ไม่มีการแจ้งเตือนใหม่",
   notificationsUnreadChat: "ข้อความที่ยังไม่ได้อ่าน",
   notificationsAuctions: "คลาสที่เปิดให้รับสอน",
+  notificationsSupport: "ทีมงานตอบคำร้องแล้ว",
   notificationsMute: "ปิดเสียงแจ้งเตือน",
   notificationsUnmute: "เปิดเสียงแจ้งเตือน",
   account: "บัญชีของฉัน",

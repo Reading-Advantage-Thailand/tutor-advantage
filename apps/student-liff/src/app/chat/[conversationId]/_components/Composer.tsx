@@ -14,6 +14,8 @@ interface ComposerProps {
   onSend: () => void;
   /** A send is in flight (one at a time). */
   sending: boolean;
+  /** Input placeholder and accessible name (default: the chat one). */
+  placeholder?: string;
 }
 
 /**
@@ -21,7 +23,7 @@ interface ComposerProps {
  * "send" key, 44px send button. Sending keeps the keyboard open (the button
  * never steals focus from the input).
  */
-export function Composer({ value, onChange, onSend, sending }: ComposerProps) {
+export function Composer({ value, onChange, onSend, sending, placeholder }: ComposerProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const keepFocusRef = useRef(false);
   const canSend = value.trim().length > 0 && !sending;
@@ -66,8 +68,8 @@ export function Composer({ value, onChange, onSend, sending }: ComposerProps) {
           onKeyDown={onKeyDown}
           enterKeyHint="send"
           autoComplete="off"
-          placeholder={t("chat.messagePlaceholder")}
-          aria-label={t("chat.messagePlaceholder")}
+          placeholder={placeholder ?? t("chat.messagePlaceholder")}
+          aria-label={placeholder ?? t("chat.messagePlaceholder")}
           className="block min-h-11 flex-1 resize-none overflow-y-auto rounded-[22px] border border-hairline bg-fill-muted px-4 py-2.5 text-base leading-[1.4] text-fg outline-none placeholder:text-fg-subtle focus:border-brand-vivid"
         />
         <button

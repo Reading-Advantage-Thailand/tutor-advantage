@@ -22,7 +22,7 @@ export const ADMIN_AUDIENCE = "tutor-advantage-admin";
 export type NavGroup = "finance" | "operations" | "users" | "settings" | "dev";
 
 /** Keys of `workQueues` in GET /v1/admin/overview used for nav badges. */
-export type NavBadgeKey = "settlements" | "adjustments" | "verifications" | "exceptions" | "fraudFlags";
+export type NavBadgeKey = "settlements" | "adjustments" | "verifications" | "exceptions" | "fraudFlags" | "tickets";
 
 export interface AdminRoute {
   id: string;
@@ -52,6 +52,7 @@ export const ADMIN_ROUTES: readonly AdminRoute[] = [
   { id: "audit", href: "/audit", roles: BOTH, group: "finance" },
   { id: "exceptions", href: "/operations/exceptions", roles: BOTH, group: "operations", tab: true, badge: "exceptions" },
   { id: "fraud", href: "/fraud", roles: BOTH, group: "operations", badge: "fraudFlags" },
+  { id: "tickets", href: "/support/tickets", roles: ADMIN, group: "operations", badge: "tickets" },
   { id: "users", href: "/users", roles: ADMIN, group: "users", badge: "verifications" },
   { id: "coupons", href: "/coupons", roles: ADMIN, group: "users" },
   { id: "classes", href: "/classes", roles: ADMIN, group: "users" },

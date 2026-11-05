@@ -68,6 +68,8 @@ export function TabBar() {
   const counts = useNotifications();
   const [moreOpen, setMoreOpen] = useState(false);
   const moreActive = isMoreActive(pathname);
+  // Items in the More sheet (e.g. support replies) still need to be noticed on the tab bar.
+  const moreCount = MORE_ITEMS.reduce((sum, item) => sum + (item.badge ? counts[item.badge] : 0), 0);
 
   // Close the sheet after navigating from it.
   useEffect(() => {
@@ -112,6 +114,7 @@ export function TabBar() {
         >
           <span className={pillClass(moreActive)}>
             <MoreHorizontal aria-hidden="true" className="size-[22px]" strokeWidth={moreActive ? 2.2 : 1.8} />
+            {moreCount > 0 ? <CountBadge count={moreCount} className="absolute -top-1 right-1.5 h-4 min-w-4 text-[0.625rem] ring-2 ring-surface" /> : null}
           </span>
           <span>{t("shell.navMore")}</span>
         </button>
@@ -123,6 +126,7 @@ export function TabBar() {
 
 function MoreSheet({ open, onOpenChange, pathname }: { open: boolean; onOpenChange: (open: boolean) => void; pathname: string }) {
   const { user } = useShell();
+  const counts = useNotifications();
   return (
     <Sheet open={open} onOpenChange={onOpenChange} title={t("shell.moreTitle")}>
       <div className="flex flex-col gap-4">
@@ -138,6 +142,7 @@ function MoreSheet({ open, onOpenChange, pathname }: { open: boolean; onOpenChan
         <ListGroup>
           {MORE_ITEMS.map((item) => {
             const active = isNavItemActive(item, pathname);
+            const count = item.badge ? counts[item.badge] : 0;
             return (
               <ListRow
                 key={item.id}
@@ -145,6 +150,7 @@ function MoreSheet({ open, onOpenChange, pathname }: { open: boolean; onOpenChan
                 onClick={() => onOpenChange(false)}
                 leading={<IconTile icon={item.icon} tone={active ? "brand" : "neutral"} size="sm" />}
                 title={<span className={cn(active && "text-brand-fg")}>{item.label}</span>}
+                trailing={count > 0 ? <CountBadge count={count} /> : undefined}
                 lines={1}
               />
             );

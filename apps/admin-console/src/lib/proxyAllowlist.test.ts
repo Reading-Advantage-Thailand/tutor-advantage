@@ -154,6 +154,37 @@ describe("proxy allowlist", () => {
     }
   });
 
+  it("routes the admin ticket endpoints to learning, ADMIN only", () => {
+    const id = "5eed0000-0000-4000-8000-0000000000e1";
+    const cases: [string, string][] = [
+      ["GET", "/v1/admin/tickets"],
+      ["GET", `/v1/admin/tickets/${id}`],
+      ["POST", `/v1/admin/tickets/${id}/messages`],
+      ["POST", `/v1/admin/tickets/${id}/status`],
+      ["POST", `/v1/admin/tickets/${id}/assign`],
+    ];
+    for (const [method, path] of cases) {
+      const match = matchProxyRequest(seg(path), method, admin);
+      expect(match.ok && match.rule.service, `${method} ${path}`).toBe("learning");
+      expect(matchProxyRequest(seg(path), method, checker), `${method} ${path}`).toMatchObject({
+        ok: false,
+        code: "PROXY_ROLE_NOT_ALLOWED",
+      });
+    }
+    expect(matchProxyRequest(seg("/v1/admin/tickets"), "POST", admin)).toMatchObject({ ok: false, status: 405 });
+    expect(matchProxyRequest(seg(`/v1/admin/tickets/${id}`), "PATCH", admin)).toMatchObject({ ok: false, status: 405 });
+    expect(matchProxyRequest(seg(`/v1/admin/tickets/${id}/messages`), "GET", admin)).toMatchObject({ ok: false, status: 405 });
+    expect(matchProxyRequest(seg(`/v1/admin/tickets/${id}/delete`), "POST", admin)).toMatchObject({ ok: false, status: 403 });
+  });
+
+  it("never forwards the requester ticket endpoints", () => {
+    for (const path of ["/v1/tickets", "/v1/tickets/abc", "/v1/tickets/abc/messages", "/v1/tickets/abc/resolve", "/v1/internal/tickets/overdue-digest"]) {
+      for (const method of ["GET", "POST"]) {
+        expect(matchProxyRequest(seg(path), method, admin), `${method} ${path}`).toMatchObject({ ok: false, status: 403 });
+      }
+    }
+  });
+
   it("exposes dev endpoints only when dev routes are enabled", () => {
     expect(matchProxyRequest(seg("/v1/dev/actions/purge"), "POST", admin).ok).toBe(false);
     expect(matchProxyRequest(seg("/v1/dev/actions/purge"), "POST", { ...admin, devRoutes: true }).ok).toBe(true);

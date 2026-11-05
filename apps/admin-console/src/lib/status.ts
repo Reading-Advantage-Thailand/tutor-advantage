@@ -177,6 +177,24 @@ export const ADMIN_STATUS = {
     /** Set when the tutor closes the class (learning closeClass); listed on /classes. */
     CLOSED: { label: "ปิดคลาสแล้ว", tone: "neutral" },
   },
+  /** learning.support_tickets.status (admin wording: the requester is the one we wait on) */
+  ticket: {
+    OPEN: { label: "รอทีมงาน", tone: "warning", hint: "ผู้แจ้งรอทีมงานตอบ" },
+    IN_PROGRESS: { label: "กำลังดำเนินการ", tone: "info" },
+    WAITING_ON_REQUESTER: { label: "รอผู้แจ้ง", tone: "neutral", hint: "รอข้อมูลเพิ่มเติมจากผู้แจ้ง" },
+    RESOLVED: { label: "ปิดแล้ว", tone: "success" },
+  },
+  /** learning.support_tickets.category */
+  ticketCategory: {
+    REFUND: { label: "คืนเงิน/ยกเลิก", tone: "danger" },
+    BOOK_DELIVERY: { label: "หนังสือยังไม่ได้รับ/ส่งช้า", tone: "warning" },
+    BOOK_DAMAGED: { label: "หนังสือชำรุด/ผิดเล่ม", tone: "warning" },
+    CLASS: { label: "คลาสเรียน/ตารางเรียน", tone: "info" },
+    PAYOUT: { label: "การจ่ายเงินติวเตอร์", tone: "brand" },
+    PRIVACY: { label: "ข้อมูลส่วนตัว/ลบบัญชี", tone: "danger" },
+    TECHNICAL: { label: "ปัญหาการใช้งานแอป", tone: "info" },
+    OTHER: { label: "อื่นๆ", tone: "neutral" },
+  },
 } as const satisfies Record<string, Record<string, StatusMeta>>;
 
 export type StatusDomain = keyof typeof ADMIN_STATUS;

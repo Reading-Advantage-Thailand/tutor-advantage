@@ -33,6 +33,7 @@ import type { operations } from "../locales/th/operations";
 import type { reconciliation } from "../locales/th/reconciliation";
 import type { roles } from "../locales/th/roles";
 import type { settlements } from "../locales/th/settlements";
+import type { tickets } from "../locales/th/tickets";
 import type { unauthorized } from "../locales/th/unauthorized";
 import type { userDetail } from "../locales/th/userDetail";
 import type { userHeader } from "../locales/th/userHeader";
@@ -58,6 +59,7 @@ export interface Messages {
   reconciliation: typeof reconciliation;
   roles: typeof roles;
   settlements: typeof settlements;
+  tickets: typeof tickets;
   unauthorized: typeof unauthorized;
   userDetail: typeof userDetail;
   userHeader: typeof userHeader;

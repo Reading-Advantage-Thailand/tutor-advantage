@@ -15,6 +15,8 @@ import { usePolling } from "@/hooks/usePolling";
 export interface NotificationsSummary {
   unreadChat: number;
   availableAuctions: number;
+  /** Own support tickets with an unread reply from the team. */
+  supportUpdates: number;
 }
 
 interface NotificationsContextValue extends NotificationsSummary {
@@ -26,7 +28,7 @@ interface NotificationsContextValue extends NotificationsSummary {
   setMuted: (muted: boolean) => void;
 }
 
-const EMPTY: NotificationsSummary = { unreadChat: 0, availableAuctions: 0 };
+const EMPTY: NotificationsSummary = { unreadChat: 0, availableAuctions: 0, supportUpdates: 0 };
 const MUTE_KEY = "app-notif-muted";
 /** Poll interval for the notification summary (visibility-aware). */
 export const NOTIFICATIONS_POLL_MS = 30_000;
@@ -46,7 +48,11 @@ function toCount(value: unknown): number {
 export function normalizeSummary(value: unknown): NotificationsSummary {
   if (!value || typeof value !== "object") return EMPTY;
   const record = value as Record<string, unknown>;
-  return { unreadChat: toCount(record.unreadChat), availableAuctions: toCount(record.availableAuctions) };
+  return {
+    unreadChat: toCount(record.unreadChat),
+    availableAuctions: toCount(record.availableAuctions),
+    supportUpdates: toCount(record.supportUpdates),
+  };
 }
 
 type AudioWindow = Window & { __globalAudioCtx?: AudioContext };
@@ -123,7 +129,9 @@ export function NotificationsProvider({
     if (next.unreadChat > lastUnreadRef.current && !mutedRef.current) playPing();
     lastUnreadRef.current = next.unreadChat;
     setSummary((current) =>
-      current.unreadChat === next.unreadChat && current.availableAuctions === next.availableAuctions
+      current.unreadChat === next.unreadChat &&
+      current.availableAuctions === next.availableAuctions &&
+      current.supportUpdates === next.supportUpdates
         ? current
         : next,
     );
@@ -135,7 +143,7 @@ export function NotificationsProvider({
   const value = useMemo<NotificationsContextValue>(
     () => ({
       ...summary,
-      total: summary.unreadChat + summary.availableAuctions,
+      total: summary.unreadChat + summary.availableAuctions + summary.supportUpdates,
       refresh: runNow,
       muted,
       setMuted,

@@ -10,6 +10,7 @@ import {
   ExternalLink,
   FileText,
   IdCard,
+  LifeBuoy,
   Lock,
   LogOut,
   MessageCircle,
@@ -174,6 +175,12 @@ export default function ProfilePage() {
         </ListGroup>
 
         <ListGroup header={t("profile.help")}>
+          <ListRow
+            href="/support"
+            leading={<IconTile icon={LifeBuoy} tone="blue" />}
+            title={t("profile.myRequests")}
+            subtitle={t("profile.myRequestsSub")}
+          />
           <ListRow
             href={businessContact.lineUrl}
             chevron={false}

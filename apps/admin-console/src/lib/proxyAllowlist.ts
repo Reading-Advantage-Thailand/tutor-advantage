@@ -89,6 +89,11 @@ export const PROXY_RULES: readonly ProxyRule[] = [
   { methods: ["GET", "POST"], path: "/v1/admin/classes", service: "learning", roles: ADMIN },
   { methods: ["GET"], path: "/v1/books", service: "learning", roles: ADMIN },
 
+  // ── Support tickets (learning-service): the queue, one ticket, and its admin actions ──
+  { methods: ["GET"], path: "/v1/admin/tickets", service: "learning", roles: ADMIN },
+  { methods: ["GET"], path: "/v1/admin/tickets/:id", service: "learning", roles: ADMIN },
+  { methods: ["POST"], path: "/v1/admin/tickets/:id/(messages|status|assign)", service: "learning", roles: ADMIN },
+
   // ── Dev tools (G5 / DevToolbar), only with ENABLE_DEV_ROUTES=true ──
   { methods: ["GET", "POST"], path: "/v1/dev/users", service: "finance", roles: ADMIN, devOnly: true },
   { methods: ["PATCH", "DELETE"], path: "/v1/dev/users/:id", service: "finance", roles: ADMIN, devOnly: true },

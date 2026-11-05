@@ -24,6 +24,26 @@ describe("admin status map", () => {
     expect(statusOptions("discountCode", { all: "ทุกสถานะ" })).toContainEqual({ value: "USED_UP", label: "ใช้แล้ว" });
   });
 
+  it("labels every support ticket status and category in Thai", () => {
+    expect(statusLabel("ticket", "OPEN")).toBe("รอทีมงาน");
+    expect(statusLabel("ticket", "IN_PROGRESS")).toBe("กำลังดำเนินการ");
+    expect(statusLabel("ticket", "WAITING_ON_REQUESTER")).toBe("รอผู้แจ้ง");
+    expect(statusLabel("ticket", "RESOLVED")).toBe("ปิดแล้ว");
+    expect(statusLabel("ticketCategory", "REFUND")).toBe("คืนเงิน/ยกเลิก");
+    expect(statusLabel("ticketCategory", "OTHER")).toBe("อื่นๆ");
+    expect(statusOptions("ticketCategory").map((o) => o.value)).toEqual([
+      "REFUND",
+      "BOOK_DELIVERY",
+      "BOOK_DAMAGED",
+      "CLASS",
+      "PAYOUT",
+      "PRIVACY",
+      "TECHNICAL",
+      "OTHER",
+    ]);
+    for (const option of statusOptions("ticketCategory")) expect(option.label, option.value).not.toMatch(/[A-Za-z]/);
+  });
+
   it("falls back to a neutral humanised label", () => {
     expect(statusMeta("coupon", "SOMETHING_NEW")).toEqual({ label: "Something new", tone: "neutral" });
     expect(statusLabel("coupon", null)).toBe("–");

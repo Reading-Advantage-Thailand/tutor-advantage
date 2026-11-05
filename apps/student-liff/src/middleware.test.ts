@@ -43,7 +43,7 @@ describe("student LIFF middleware", () => {
       expect(response.status).toBe(200);
       expect(response.headers.get("location")).toBeNull();
     }
-    for (const path of ["/classes", "/enroll", "/payment"]) {
+    for (const path of ["/classes", "/enroll", "/payment", "/support", "/support/new?category=REFUND"]) {
       const response = await middleware(createRequest(path));
       expect(response.status).toBe(307);
       expect(response.headers.get("location")).toContain("/login?redirect=");

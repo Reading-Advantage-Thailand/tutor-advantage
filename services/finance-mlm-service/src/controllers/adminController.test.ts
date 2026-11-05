@@ -9,6 +9,7 @@ const prismaMock = vi.hoisted(() => ({
   auditEvent: { findMany: vi.fn() },
   paymentIntent: { aggregate: vi.fn() },
   payoutLine: { aggregate: vi.fn() },
+  supportTicket: { count: vi.fn() },
 }));
 vi.mock("@tutor-advantage/database", () => ({ prisma: prismaMock }));
 
@@ -50,6 +51,7 @@ describe("getAdminOverview", () => {
     prismaMock.user.findFirst.mockResolvedValue(null);
     prismaMock.exception.findFirst.mockResolvedValue(null);
     prismaMock.fraudFlag.findFirst.mockResolvedValue(null);
+    prismaMock.supportTicket.count.mockResolvedValue(8);
   });
 
   it("returns queues, KPIs and named activity in one response", async () => {
@@ -57,7 +59,7 @@ describe("getAdminOverview", () => {
     await getAdminOverview({ id: "r" } as never, res as never);
     expect(res.statusCode).toBe(200);
     expect(res.body).toMatchObject({
-      workQueues: { settlements: 1, adjustments: 2, verifications: 4, exceptions: 5, fraudFlags: 6 },
+      workQueues: { settlements: 1, adjustments: 2, verifications: 4, exceptions: 5, fraudFlags: 6, tickets: 8 },
       kpis: {
         paymentsLast30Days: { count: 7, amountSatang: 1234500 },
         awaitingApproval: { runs: 1, payoutLines: 3, netPayoutSatang: 99900, oldestPeriodMonth: "2026-08" },
@@ -73,5 +75,9 @@ describe("getAdminOverview", () => {
     expect(prismaMock.user.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: reviewWhere }));
     expect(JSON.stringify(reviewWhere)).toContain('"role":"TUTOR"');
     expect(JSON.stringify(reviewWhere)).toContain('"path":["verification","idCard","status"],"equals":"PENDING"');
+    // Ticket badge = unresolved tickets waiting on the support team.
+    expect(prismaMock.supportTicket.count).toHaveBeenCalledWith({
+      where: { status: { not: "RESOLVED" }, awaitingSupport: true },
+    });
   });
 });

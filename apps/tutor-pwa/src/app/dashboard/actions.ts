@@ -4,10 +4,11 @@ import { cookies } from "next/headers";
 import { IDENTITY_URL, LEARNING_URL } from "@/lib/service-urls";
 
 export async function getNotificationsSummary() {
+  const empty = { unreadChat: 0, availableAuctions: 0, supportUpdates: 0 };
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;
   
-  if (!token) return { unreadChat: 0, availableAuctions: 0 };
+  if (!token) return empty;
 
   try {
     const res = await fetch(`${LEARNING_URL}/v1/notifications/summary`, {
@@ -17,13 +18,13 @@ export async function getNotificationsSummary() {
       next: { revalidate: 0 } // Do not cache summary endpoint heavily
     });
     
-    if (!res.ok) return { unreadChat: 0, availableAuctions: 0 };
+    if (!res.ok) return empty;
     
     const data = await res.json();
-    return data.notifications || { unreadChat: 0, availableAuctions: 0 };
+    return { ...empty, ...(data.notifications || {}) };
   } catch (error) {
     console.error("Failed to fetch notification summary", error);
-    return { unreadChat: 0, availableAuctions: 0 };
+    return empty;
   }
 }
 

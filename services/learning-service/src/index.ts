@@ -81,6 +81,21 @@ import { getStudentLessonHistory, getLessonSessionDetails } from "./controllers/
 import { handleLineWebhook } from "./controllers/lineWebhookController";
 import { runBookPaymentReminders, runClassSessionReminders } from "./controllers/reminderController";
 import {
+  createTicket,
+  getMyTicket,
+  listMyTickets,
+  replyToMyTicket,
+  resolveMyTicket,
+} from "./controllers/ticketController";
+import {
+  assignAdminTicket,
+  getAdminTicket,
+  getAdminTickets,
+  postAdminTicketMessage,
+  setAdminTicketStatus,
+} from "./controllers/adminTicketController";
+import { runTicketOverdueDigest } from "./controllers/ticketDigestController";
+import {
   connectVoiceSession,
   createVoiceSession,
   endVoiceSession,
@@ -259,6 +274,20 @@ app.post("/v1/classes/:classId/review", authMiddleware, submitTutorReview);
 // Protected Notifications Summary
 app.get("/v1/notifications/summary", authMiddleware, getNotificationSummary);
 
+// Support tickets: requester side (STUDENT/TUTOR, checked in the handlers).
+app.get("/v1/tickets", authMiddleware, listMyTickets);
+app.post("/v1/tickets", authMiddleware, createTicket);
+app.get("/v1/tickets/:ticketId", authMiddleware, getMyTicket);
+app.post("/v1/tickets/:ticketId/messages", authMiddleware, replyToMyTicket);
+app.post("/v1/tickets/:ticketId/resolve", authMiddleware, resolveMyTicket);
+
+// Support tickets: admin console queue (route guard + in-handler ADMIN check).
+app.get("/v1/admin/tickets", authMiddleware, requireRoles("ADMIN"), getAdminTickets);
+app.get("/v1/admin/tickets/:ticketId", authMiddleware, requireRoles("ADMIN"), getAdminTicket);
+app.post("/v1/admin/tickets/:ticketId/messages", authMiddleware, requireRoles("ADMIN"), postAdminTicketMessage);
+app.post("/v1/admin/tickets/:ticketId/status", authMiddleware, requireRoles("ADMIN"), setAdminTicketStatus);
+app.post("/v1/admin/tickets/:ticketId/assign", authMiddleware, requireRoles("ADMIN"), assignAdminTicket);
+
 // Protected Coupon Routes (tutor)
 app.get("/v1/coupons/mine", authMiddleware, getMyCoupons);
 app.post("/v1/coupons/validate", authMiddleware, validateCouponCode);
@@ -271,6 +300,7 @@ app.post("/v1/line/webhook", handleLineWebhook);
 // Called by Google Cloud Scheduler — no authMiddleware
 app.post("/v1/internal/reminders/class-sessions", runClassSessionReminders);
 app.post("/v1/internal/reminders/book-payments", runBookPaymentReminders);
+app.post("/v1/internal/tickets/overdue-digest", runTicketOverdueDigest);
 
 // DEV-ONLY seed routes: mounted (and re-checked per request) only when
 // NODE_ENV !== "production" && ENABLE_DEV_ROUTES === "true". Self-scoped seeds

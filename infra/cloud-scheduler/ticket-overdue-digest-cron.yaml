@@ -1,0 +1,50 @@
+# Google Cloud Scheduler — Support ticket overdue digest
+#
+# Every day at 09:00 ICT the learning service counts support tickets that are
+# past their first-response deadline (not RESOLVED, no support reply yet,
+# due_at passed) and those waiting on the support team. When anything is
+# overdue it posts ONE count-only embed to DISCORD_TICKETS_WEBHOOK_URL (no
+# subjects, names or ids) linking to the admin console queue
+# (<ADMIN_CONSOLE_URL>/support/tickets?overdue=true). Nothing is posted when
+# the channel is not configured; it never uses the ops DISCORD_WEBHOOK_URL.
+#
+# The route only reads counts, so a retry can at worst post the digest twice.
+# Retries are kept short for that reason.
+#
+# NOT created on production yet — file only.
+#
+# Deploy:
+#   gcloud scheduler jobs create http ta-ticket-overdue-digest \
+#     --schedule="0 9 * * *" \
+#     --time-zone="Asia/Bangkok" \
+#     --uri="https://<LEARNING_SERVICE_URL>/v1/internal/tickets/overdue-digest" \
+#     --http-method=POST \
+#     --headers="X-Internal-Key=<INTERNAL_API_KEY>,Content-Type=application/json" \
+#     --message-body="{}" \
+#     --attempt-deadline=60s \
+#     --max-retry-attempts=2 \
+#     --min-backoff=60s \
+#     --max-backoff=300s \
+#     --location=asia-southeast1 \
+#     --project=<GCP_PROJECT_ID>
+
+name: ta-ticket-overdue-digest
+description: "Daily Discord digest of support tickets past their first-response deadline"
+schedule: "0 9 * * *"
+timeZone: "Asia/Bangkok"
+
+httpTarget:
+  uri: "https://<LEARNING_SERVICE_URL>/v1/internal/tickets/overdue-digest"
+  httpMethod: POST
+  headers:
+    Content-Type: "application/json"
+    X-Internal-Key: "<INTERNAL_API_KEY>"  # from Secret Manager in production
+  body: "{}"
+
+attemptDeadline: "60s"
+
+retryConfig:
+  retryCount: 2
+  minBackoffDuration: "60s"
+  maxBackoffDuration: "300s"
+  maxDoublings: 2

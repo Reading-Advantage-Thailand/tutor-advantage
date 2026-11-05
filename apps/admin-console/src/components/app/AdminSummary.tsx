@@ -40,6 +40,7 @@ export const EMPTY_QUEUES: Record<NavBadgeKey, number> = {
   verifications: 0,
   exceptions: 0,
   fraudFlags: 0,
+  tickets: 0,
 };
 
 export function overviewKey(userId: string) {
