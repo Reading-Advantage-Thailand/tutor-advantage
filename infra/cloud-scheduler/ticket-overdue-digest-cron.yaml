@@ -11,7 +11,7 @@
 # The route only reads counts, so a retry can at worst post the digest twice.
 # Retries are kept short for that reason.
 #
-# NOT created on production yet — file only.
+# Live on production since 2026-11-05 (docs/runbooks/support-tickets.md).
 #
 # Deploy:
 #   gcloud scheduler jobs create http ta-ticket-overdue-digest \

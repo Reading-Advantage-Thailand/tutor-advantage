@@ -108,6 +108,9 @@ here too); frontends check `/` and accept 2xx or 3xx.
 - Cloud Run → the service → Revisions: is the latest revision ready? Did a deploy just happen?
 - Logs around the start time: startup errors, missing secrets, `db_unreachable`.
 - If every backend is down at once, check Cloud SQL (`cloud-sql` instance) first.
+  If the database itself is lost or its data is damaged, follow
+  `backup-and-recovery.md` (never restore a backup over `cloud-sql`: it is
+  shared with other products).
 - Roll back: Cloud Run → Revisions → route 100% traffic to the previous revision.
 - `TA: service down (identity-service)` is the one alert the relay cannot post
   (the relay is identity-service). If the script ran with `ALERT_EMAIL` it

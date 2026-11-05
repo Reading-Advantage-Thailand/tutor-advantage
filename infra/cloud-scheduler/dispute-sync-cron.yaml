@@ -5,7 +5,7 @@
 # This is the safety net for a missed or failed webhook; it is idempotent.
 #
 # Deploy:
-#   gcloud scheduler jobs create http daily-dispute-sync \
+#   gcloud scheduler jobs create http ta-daily-dispute-sync \
 #     --schedule="15 6 * * *" \
 #     --time-zone="Asia/Bangkok" \
 #     --uri="https://<FINANCE_SERVICE_URL>/v1/internal/payments/sync-disputes" \
@@ -20,7 +20,7 @@
 # receives: charge.*, refund.create, dispute.create, dispute.update,
 # dispute.accept, dispute.close.
 
-name: daily-dispute-sync
+name: ta-daily-dispute-sync
 description: "Pulls Omise disputes and refunds daily (chargeback protection)"
 schedule: "15 6 * * *"
 timeZone: "Asia/Bangkok"
