@@ -140,10 +140,14 @@ with other staff outside the ticket.
 
 1. **Migration** `20261105090000_support_tickets` runs with the deploy
    (`tutor-advantage-db-migrate`).
-2. **Discord channel for tickets** (optional; without it there is no Discord
-   post). Create a webhook in a support channel (not the ops alert channel),
-   then store it and let the learning runtime SA read it **before** mounting
-   it:
+2. **Discord channel for tickets** — done 2026-11-05: Discord channel
+   `ta-monitoring` (channel id `1567888051492102154`, a different channel from the RA ops
+   alert channel), secret `ta-discord-tickets-webhook-url`, accessor grant for
+   `ta-learning-run`, mounted from revision `learning-service-00088`. To rotate
+   the webhook, add a new secret version (`gcloud secrets versions add … --data-file=-`)
+   and redeploy learning-service. Original setup, for reference: create a
+   webhook in the channel, then store it and let the learning runtime SA read
+   it **before** mounting it:
    ```bash
    printf '%s' 'https://discord.com/api/webhooks/…' | \
      gcloud secrets create ta-discord-tickets-webhook-url --project=reading-advantage \
@@ -157,7 +161,9 @@ with other staff outside the ticket.
    A revision whose SA cannot read a mounted secret fails to start, so the
    grant comes first. `deploy.yml` uses `--update-secrets`, which keeps this
    mount on later deploys.
-3. **Link targets** (plain env vars, not secrets) on learning-service:
+3. **Link targets** (plain env vars, not secrets) on learning-service — done
+   2026-11-05: `ADMIN_CONSOLE_URL=https://admin-console-hxamzdhgwa-as.a.run.app`,
+   `TUTOR_PWA_URL=https://tutor.reading-advantage.com`:
    ```bash
    gcloud run services update learning-service --region=asia-southeast1 --project=reading-advantage \
      --update-env-vars=ADMIN_CONSOLE_URL=https://<admin-console-host>,TUTOR_PWA_URL=https://<tutor-pwa-host>
@@ -168,15 +174,17 @@ with other staff outside the ticket.
    check the Discord embed has no subject/body, reply from the admin console,
    check the LINE push and its link, then resolve.
 
-### Optional: daily overdue digest (not created yet)
+### Daily overdue digest (live since 2026-11-05)
 
 `POST /v1/internal/tickets/overdue-digest` (header `X-Internal-Key`) counts
 overdue and awaiting-support tickets and, when at least one is overdue and
 `DISCORD_TICKETS_WEBHOOK_URL` is set, posts one embed with the counts only.
 It returns `{ overdue, awaitingSupport, posted }`. The job definition is in
 `infra/cloud-scheduler/ticket-overdue-digest-cron.yaml` (09:00 Asia/Bangkok
-daily). **It has not been created in production.** To create it (learning-service
-already mounts `INTERNAL_API_KEY`):
+daily). It was created in production on 2026-11-05 (first manual run returned
+200). It only posts once `DISCORD_TICKETS_WEBHOOK_URL` is mounted; until then
+it just returns the counts. To recreate it (learning-service already mounts
+`INTERNAL_API_KEY`):
 
 ```bash
 LEARNING_URL=$(gcloud run services describe learning-service \
