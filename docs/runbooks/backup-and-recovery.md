@@ -11,9 +11,9 @@ running anything.
 | Database | `tutor_advantage` (schemas `identity`, `learning`, `finance_mlm`; migration history in `public._prisma_migrations`; owner `cloudsqlsuperuser`) on the **shared** Cloud SQL instance `cloud-sql` (`reading-advantage:asia-southeast1:cloud-sql`, PostgreSQL 17, `db-g1-small`, zonal) |
 | Who connects | identity-service, learning-service, finance-mlm-service, admin-console and the job `tutor-advantage-db-migrate`, all as `postgres` through secret `ta-database_url` |
 | Automated backups | daily, window opens 17:00 UTC (00:00 ICT), 7 kept, stored in multi-region `asia`, kept after instance deletion (`retainBackupsOnDelete`) |
-| Point-in-time recovery | enabled with 7 days of WAL, **but a PITR clone currently fails** (see [Known gaps](#known-gaps)) |
+| Point-in-time recovery | enabled with 7 days of WAL; a clone to a new instance works (about 13 min, tested 2026-11-06) |
 | Deletion protection | on for `cloud-sql` |
-| RPO (worst case today) | up to ~24 h (last daily backup), because PITR cannot be used until the network gap is fixed |
+| RPO | minutes within the last 7 days (PITR); up to ~24 h when only a daily backup can be used |
 | RTO (measured) | ~15 min of Cloud SQL work for a per-database restore, plus freeze, smoke tests and reconciliation; plan for 1–2 h |
 | Not a backup | `npm run db:clone:local` (`local-production-clone.md`) is anonymized and remapped; it cannot be restored to production |
 
@@ -129,10 +129,17 @@ export D=$(date -u +%Y%m%d)          # incident date, used in scratch names
      ```
      If you cannot rule out that the damage happened before that backup's
      `endTime`, use the backup before it.
-   - PITR to an exact second is possible only after the network gap is fixed
-     (Known gap 1). Then
-     `gcloud sql instances clone cloud-sql ta-dr-$D --point-in-time=<UTC ISO> --project=$P`
-     replaces A1–A2.
+   - PITR to an exact time, within the last 7 days, loses the least data and
+     is preferred when the moment of the damage is known. It replaces A1–A2:
+     ```bash
+     gcloud sql instances clone cloud-sql ta-dr-$D --point-in-time=<UTC ISO> --project=$P
+     ```
+     It took about 13 min in the drill. gcloud stops waiting after about 10
+     min and prints a "taking longer than expected" error while the clone
+     continues, so check with `gcloud sql operations list --instance=ta-dr-$D
+     --project=$P`. The clone copies deletion protection from `cloud-sql`, so
+     run `gcloud sql instances patch ta-dr-$D --no-deletion-protection
+     --project=$P` before deleting it in A11.
 8. **Check the code/schema gap.** If the restore point is older than the
    newest migration in `packages/database/prisma/migrations`, the running
    images expect tables the restored DB does not have. A7 fixes this after the
@@ -151,9 +158,9 @@ Because the name stays `tutor_advantage`:
 
 This was tested on Cloud SQL as `postgres` on 2026-11-05 (see the drill log).
 
-**A1. Create a scratch instance** (about 4.5 min). It gets a **public IP
-only**, because a new instance on `sql-connect-vpc` cannot be created today
-(Known gap 1). `--labels` is not accepted by this command. Use a bigger
+**A1. Create a scratch instance** (about 4.5 min; skip A1–A2 if you used a
+PITR clone). It gets a public IP only. `--labels` is not accepted by this
+command. Use a bigger
 `--storage-size` if `cloud-sql` has grown, since the target must not be
 smaller than the source disk.
 ```bash
@@ -353,6 +360,9 @@ Psql 16 works against this server. Set `PGHOST=127.0.0.1`, `PGPORT=<prod proxy p
    - `learning.classes` created in the gap (parents of tickets, codes and
      enrollments);
    - `learning.support_tickets`, then `learning.support_ticket_messages`;
+   - `learning.class_meetings`, then `learning.attendance_records`. Marks
+     corrected or removed in the gap on rows older than the window are not
+     carried over; the tutor re-checks those meetings;
    - `finance_mlm.discount_codes`;
    - `finance_mlm.settlement_runs` created in the gap (parents of
      adjustments), copied as recorded. Approve or send nothing;
@@ -604,18 +614,19 @@ that now exist only in soft delete, so restore those within the 7 days.
 
 ## Known gaps
 
-These were found on 2026-11-05. Each needs an owner's decision, and none is
-fixed yet.
+These were found on 2026-11-05. Gap 1 is fixed; each of the others needs an
+owner's decision.
 
-1. **PITR clone is broken.** `gcloud sql instances clone cloud-sql …` fails
-   with `NETWORK_PEERING_DELETED`. `cloud-sql` has a private IP (10.10.20.3)
-   on VPC `sql-connect-vpc`, but that network no longer has a Service
-   Networking peering; only `default` has one. Until this is fixed, only
-   daily backups can be restored, so the RPO is up to 24 h instead of
-   seconds. The fix is for the network owner: re-create the private services
-   access connection on `sql-connect-vpc`, or remove the instance's private
-   IP if nothing uses it. The network is shared, so coordinate with the other
-   products.
+1. **PITR clone: fixed 2026-11-06.** Clones failed with
+   `NETWORK_PEERING_DELETED`. `sql-connect-vpc` had lost its Service Networking
+   peering, and reconnecting was blocked because the empty subnet `sqlconnect`
+   (10.10.20.0/24) overlapped the range Google holds for the instance. Nothing
+   used that subnet: no VM, connector or forwarding rule, and other products
+   reach `cloud-sql` through the connector over public IP or through PSC. The
+   fix was to delete the subnet, reserve global address
+   `cloudsql-private-range` (10.10.20.0/24, purpose `VPC_PEERING`) and run
+   `gcloud services vpc-peerings connect`. Do not create a subnet in
+   10.10.20.0/24 on this network again, and do not delete that address.
 2. **No copy outside the instance.** All backups belong to `cloud-sql` in the
    same project, so one project-level mistake loses them all. One option is a
    scheduled `gcloud sql export sql … --database=tutor_advantage` to a locked
@@ -657,6 +668,13 @@ or this runbook. Always use a scratch instance, never `cloud-sql`.
 | Name swap (A6) on a separate scratch instance, as `postgres` with an open client | Block, terminate (1 session), rename both and re-allow all OK. The old client was disconnected, a reconnect read the restored copy, and the damaged DB refused connections | about 0.5 s |
 | Swap rollback | OK. A reconnect read the original again | about 0.4 s |
 | Cleanup | Both scratch instances and the bucket deleted | — |
+
+**2026-11-06**, PITR clone after the peering fix: clone to target
+2026-11-06 07:17:27 UTC succeeded in about 13 min, with public IP and private
+IP 10.10.20.12. Its data included the 2026-11-05 migration
+`20261105090000_support_tickets`, with users 51 and payment_intents 73. Row
+counts were not compared table by table. All 12 Cloud Run services returned
+the same status before and after the network change. The clone was deleted.
 
 Not yet exercised against production: the deploy freeze (step 4), the
 ingress freeze (step 5), the swap on `cloud-sql` itself, and Path B.

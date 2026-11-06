@@ -164,6 +164,7 @@ export const studentApi = {
     method: 'POST',
   }),
   getClassReview: (classId: string) => fetchWithAuth(`/classes/${classId}/review`),
+  getClassAttendance: (classId: string) => fetchWithAuth(`/classes/${encodeURIComponent(classId)}/attendance`),
   submitClassReview: (classId: string, payload: { rating: number; comment?: string }) => fetchWithAuth(`/classes/${classId}/review`, {
     method: 'POST',
     body: JSON.stringify(payload),

@@ -56,6 +56,29 @@ export interface ClassArticleDetail {
   isCompleted: boolean;
 }
 
+export type AttendanceStatus = "PRESENT" | "LATE" | "ABSENT";
+
+export interface AttendanceRecord {
+  /** yyyy-MM-dd, Bangkok calendar day. */
+  date: string;
+  /** HH:mm */
+  start: string;
+  end: string | null;
+  status: AttendanceStatus;
+}
+
+/** GET /classes/:id/attendance → `mine` (student role). Records are newest first. */
+export interface MyClassAttendance {
+  summary: {
+    present: number;
+    late: number;
+    absent: number;
+    /** 0..1, null when nothing is marked. */
+    rate: number | null;
+  };
+  records: AttendanceRecord[];
+}
+
 export interface TutorReview {
   id: string;
   rating: number;

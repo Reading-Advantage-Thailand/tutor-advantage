@@ -1,13 +1,15 @@
 import { prisma, Prisma } from "@tutor-advantage/database";
 import { hashIdentifier, logger } from "@tutor-advantage/shared-config";
 import { LineNotificationService, LineNotificationResult } from "./LineNotificationService";
+import { addDays, bangkokDateKey, bangkokInstant } from "./bangkokTime";
+
+export { bangkokDateKey };
 
 // Scheduled LINE reminders, triggered by Cloud Scheduler through
 // /v1/internal/reminders/*. Each reminder is claimed in
 // learning.notification_deliveries before it is sent, so a retried or
 // overlapping run never sends the same reminder twice.
 
-const BANGKOK_OFFSET_MS = 7 * 60 * 60 * 1000; // Thailand has no DST
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -68,22 +70,6 @@ type DeliveryRow = {
   createdAt: Date;
   updatedAt: Date;
 };
-
-/** yyyy-MM-dd of the Bangkok calendar day that contains `instant`. */
-export function bangkokDateKey(instant: Date): string {
-  return new Date(instant.getTime() + BANGKOK_OFFSET_MS).toISOString().slice(0, 10);
-}
-
-function bangkokInstant(date: string, time: string): Date | null {
-  const instant = new Date(`${date}T${time}:00+07:00`);
-  if (Number.isNaN(instant.getTime())) return null;
-  // Reject impossible dates such as 2026-02-31, which Date rolls over.
-  return bangkokDateKey(instant) === date ? instant : null;
-}
-
-function addDays(date: string, days: number): string {
-  return new Date(Date.parse(`${date}T00:00:00Z`) + days * DAY_MS).toISOString().slice(0, 10);
-}
 
 /**
  * Upcoming session starts (strictly after `now`) from Class.scheduleData.

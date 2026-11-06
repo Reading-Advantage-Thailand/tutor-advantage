@@ -195,6 +195,12 @@ export const ADMIN_STATUS = {
     TECHNICAL: { label: "ปัญหาการใช้งานแอป", tone: "info" },
     OTHER: { label: "อื่นๆ", tone: "neutral" },
   },
+  /** learning.attendance_records.status */
+  attendance: {
+    PRESENT: { label: "มาเรียน", tone: "success" },
+    LATE: { label: "มาสาย", tone: "warning" },
+    ABSENT: { label: "ขาดเรียน", tone: "danger" },
+  },
 } as const satisfies Record<string, Record<string, StatusMeta>>;
 
 export type StatusDomain = keyof typeof ADMIN_STATUS;

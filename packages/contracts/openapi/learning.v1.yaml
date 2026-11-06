@@ -507,6 +507,98 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
+  /v1/classes/{classId}/attendance:
+    get:
+      summary: Attendance history. The owning tutor gets every meeting and student; a student gets only their own marks
+      security: [{ bearerAuth: [] }]
+      # classId is a plain string so a malformed id reaches the handler and is 404.
+      parameters: [{ name: classId, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200":
+          description: AttendanceOverview for the tutor, MyAttendance for a student
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - { $ref: "#/components/schemas/AttendanceOverview" }
+                  - { $ref: "#/components/schemas/MyAttendance" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "403": { $ref: "#/components/responses/ForbiddenError" }
+        "404": { $ref: "#/components/responses/AttendanceError" }
+        "409": { $ref: "#/components/responses/AttendanceError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+  /v1/classes/{classId}/attendance/meeting:
+    get:
+      summary: One meeting with its roster and marks, for the owning tutor. A future meeting returns markable false
+      security: [{ bearerAuth: [] }]
+      # date and start are checked in the handler (VALIDATION_FAILED).
+      parameters:
+        - { name: classId, in: path, required: true, schema: { type: string } }
+        - { name: date, in: query, required: false, schema: { type: string }, description: "Bangkok date, yyyy-MM-dd. Required by the handler." }
+        - { name: start, in: query, required: false, allowReserved: true, schema: { type: string }, description: "Bangkok time, HH:mm. Required by the handler." }
+      responses:
+        "200":
+          description: Meeting and roster
+          content: { application/json: { schema: { $ref: "#/components/schemas/AttendanceMeetingDetail" } } }
+        "400": { $ref: "#/components/responses/AttendanceError" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "403": { $ref: "#/components/responses/ForbiddenError" }
+        "404": { $ref: "#/components/responses/AttendanceError" }
+        "409": { $ref: "#/components/responses/AttendanceError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+    put:
+      summary: Save marks for one meeting, for the owning tutor. Partial and idempotent; the whole save rolls back on any error
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: classId, in: path, required: true, schema: { type: string } }]
+      requestBody:
+        required: true
+        description: >-
+          { date: yyyy-MM-dd, start: HH:mm, end?: HH:mm, marks: [{ studentUserId: uuid, status: PRESENT | LATE | ABSENT | null }] }
+          with at most 200 unique students. A null status removes the mark. `end` sets the end of a new meeting and
+          fills a missing end on an existing one; it never replaces a saved end. Checked in the handler (VALIDATION_FAILED).
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        "200":
+          description: The meeting and roster after the save
+          content: { application/json: { schema: { $ref: "#/components/schemas/AttendanceMeetingDetail" } } }
+        "400": { $ref: "#/components/responses/AttendanceError" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "403": { $ref: "#/components/responses/ForbiddenError" }
+        "404": { $ref: "#/components/responses/AttendanceError" }
+        "409": { $ref: "#/components/responses/AttendanceError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+  /v1/admin/classes/{classId}/attendance:
+    get:
+      summary: Read-only attendance of one class for admins
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: classId, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200":
+          description: Class, meetings and per-student totals
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [class, meetings, students]
+                properties:
+                  class:
+                    type: object
+                    additionalProperties: false
+                    required: [classId, title, tutorName]
+                    properties:
+                      classId: { type: string, format: uuid }
+                      title: { type: string }
+                      tutorName: { type: [string, "null"] }
+                  meetings: { type: array, items: { $ref: "#/components/schemas/AttendanceMeetingSummary" } }
+                  students: { type: array, items: { $ref: "#/components/schemas/AttendanceStudentStats" } }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "403": { $ref: "#/components/responses/ForbiddenError" }
+        "404": { $ref: "#/components/responses/AttendanceError" }
+        "409": { $ref: "#/components/responses/AttendanceError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
 
 components:
   securitySchemes:
@@ -603,6 +695,116 @@ components:
       minimum: 0
       maximum: 9007199254740991
       description: Integer amount in Satang within JavaScript's safe integer range.
+    AttendanceStatus:
+      type: string
+      enum: [PRESENT, LATE, ABSENT]
+    AttendanceMeetingSource:
+      type: string
+      enum: [SCHEDULED, ADHOC]
+    AttendanceMeetingSummary:
+      type: object
+      additionalProperties: false
+      required: [date, start, end, source, inSchedule, movedFrom, counts, marked]
+      properties:
+        date: { type: string, description: "Bangkok date, yyyy-MM-dd" }
+        start: { type: string, description: "Bangkok time, HH:mm" }
+        end: { type: [string, "null"] }
+        source: { $ref: "#/components/schemas/AttendanceMeetingSource" }
+        inSchedule: { type: boolean }
+        movedFrom: { type: [string, "null"], description: "The start already marked, when the schedule has since moved this meeting to start" }
+        counts:
+          type: object
+          additionalProperties: false
+          required: [present, late, absent, unmarked]
+          properties:
+            present: { type: integer, minimum: 0 }
+            late: { type: integer, minimum: 0 }
+            absent: { type: integer, minimum: 0 }
+            unmarked: { type: integer, minimum: 0 }
+        marked: { type: boolean }
+    AttendanceStudentStats:
+      type: object
+      additionalProperties: false
+      required: [studentUserId, name, avatarUrl, present, late, absent, rate]
+      properties:
+        studentUserId: { type: string, format: uuid }
+        name: { type: [string, "null"] }
+        avatarUrl: { type: [string, "null"] }
+        present: { type: integer, minimum: 0 }
+        late: { type: integer, minimum: 0 }
+        absent: { type: integer, minimum: 0 }
+        rate: { type: [number, "null"], minimum: 0, maximum: 1, description: "(present + late) / marked; null when nothing is marked" }
+    AttendanceOverview:
+      type: object
+      additionalProperties: false
+      required: [meetings, students]
+      properties:
+        meetings: { type: array, items: { $ref: "#/components/schemas/AttendanceMeetingSummary" } }
+        students: { type: array, items: { $ref: "#/components/schemas/AttendanceStudentStats" } }
+    MyAttendance:
+      type: object
+      additionalProperties: false
+      required: [mine]
+      properties:
+        mine:
+          type: object
+          additionalProperties: false
+          required: [summary, records]
+          properties:
+            summary:
+              type: object
+              additionalProperties: false
+              required: [present, late, absent, rate]
+              properties:
+                present: { type: integer, minimum: 0 }
+                late: { type: integer, minimum: 0 }
+                absent: { type: integer, minimum: 0 }
+                rate: { type: [number, "null"], minimum: 0, maximum: 1 }
+            records:
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                required: [date, start, end, status]
+                properties:
+                  date: { type: string }
+                  start: { type: string }
+                  end: { type: [string, "null"] }
+                  status: { $ref: "#/components/schemas/AttendanceStatus" }
+    AttendanceMeetingDetail:
+      type: object
+      additionalProperties: false
+      required: [meeting, roster]
+      properties:
+        meeting:
+          type: object
+          additionalProperties: false
+          required: [date, start, end, source, inSchedule, movedFrom, markable]
+          properties:
+            date: { type: string }
+            start: { type: string }
+            end: { type: [string, "null"] }
+            source: { $ref: "#/components/schemas/AttendanceMeetingSource" }
+            inSchedule: { type: boolean }
+            movedFrom: { type: [string, "null"] }
+            markable: { type: boolean }
+        roster:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [studentUserId, name, avatarUrl, status, joinedAt, enrolled, joinedLater]
+            properties:
+              studentUserId: { type: string, format: uuid }
+              name: { type: [string, "null"] }
+              avatarUrl: { type: [string, "null"] }
+              status:
+                oneOf:
+                  - { $ref: "#/components/schemas/AttendanceStatus" }
+                  - type: "null"
+              joinedAt: { type: [string, "null"], format: date-time, description: "Earliest live-lesson join in the meeting window. A hint only" }
+              enrolled: { type: boolean, description: "false rows are read-only" }
+              joinedLater: { type: boolean, description: "Active, but enrolled after this meeting's Bangkok date. Not counted as unmarked; can still be marked" }
     ErrorEnvelope:
       type: object
       properties:
@@ -619,6 +821,14 @@ components:
             details:
               type: object
   responses:
+    AttendanceError:
+      description: >-
+        VALIDATION_FAILED (400), NOT_FOUND (404), ATTENDANCE_NOT_AVAILABLE, MEETING_NOT_STARTED or
+        STUDENT_NOT_ENROLLED (409)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
     VoiceError:
       description: Voice practice authorization, quota, concurrency, or provider error
       content:

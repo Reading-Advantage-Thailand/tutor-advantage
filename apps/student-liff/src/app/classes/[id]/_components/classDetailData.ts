@@ -1,6 +1,6 @@
 // Relative imports: the root vitest config maps "@" to another app.
 import { StudentApiError, studentApi } from "../../../../lib/api";
-import type { ClassArticleDetail, ClassDetail, TutorReview } from "./types";
+import type { ClassArticleDetail, ClassDetail, MyClassAttendance, TutorReview } from "./types";
 
 export function fetchClassDetail(classId: string): Promise<{ class: ClassDetail }> {
   return studentApi.getClassDetails(classId);
@@ -19,6 +19,12 @@ export async function fetchClassArticles(classId: string, cycleId: string): Prom
     if (error instanceof StudentApiError && error.status === 402) return [];
     throw error;
   }
+}
+
+/** The student's own attendance. Failures are thrown: the section offers its own retry. */
+export async function fetchClassAttendance(classId: string): Promise<MyClassAttendance> {
+  const data = await studentApi.getClassAttendance(classId);
+  return data.mine;
 }
 
 /** The student's own review; a failed load counts as "no review yet" (unchanged behaviour). */

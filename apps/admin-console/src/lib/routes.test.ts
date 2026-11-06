@@ -13,7 +13,7 @@ describe("admin route map", () => {
   });
 
   it("keeps classes and discount codes ADMIN only", () => {
-    for (const path of ["/classes", "/discount-codes?create=1"]) {
+    for (const path of ["/classes", "/classes/abc/attendance", "/discount-codes?create=1"]) {
       expect(decideAccess(path, "ADMIN", { devRoutes: false }), path).toBe("allow");
       expect(decideAccess(path, "FINANCE_CHECKER", { devRoutes: false }), path).toBe("forbidden");
     }

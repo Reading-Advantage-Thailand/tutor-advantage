@@ -44,6 +44,12 @@ describe("admin status map", () => {
     for (const option of statusOptions("ticketCategory")) expect(option.label, option.value).not.toMatch(/[A-Za-z]/);
   });
 
+  it("labels every attendance status in the agreed Thai words", () => {
+    expect(statusMeta("attendance", "PRESENT")).toEqual({ label: "มาเรียน", tone: "success" });
+    expect(statusMeta("attendance", "LATE")).toEqual({ label: "มาสาย", tone: "warning" });
+    expect(statusMeta("attendance", "ABSENT")).toEqual({ label: "ขาดเรียน", tone: "danger" });
+  });
+
   it("falls back to a neutral humanised label", () => {
     expect(statusMeta("coupon", "SOMETHING_NEW")).toEqual({ label: "Something new", tone: "neutral" });
     expect(statusLabel("coupon", null)).toBe("–");

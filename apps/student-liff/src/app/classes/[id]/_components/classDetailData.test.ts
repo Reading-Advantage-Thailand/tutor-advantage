@@ -10,12 +10,12 @@ const { api, ApiError } = vi.hoisted(() => {
   }
   return {
     ApiError,
-    api: { getClassDetails: vi.fn(), getClassArticles: vi.fn(), getClassReview: vi.fn() },
+    api: { getClassDetails: vi.fn(), getClassArticles: vi.fn(), getClassReview: vi.fn(), getClassAttendance: vi.fn() },
   };
 });
 vi.mock("../../../../lib/api", () => ({ studentApi: api, StudentApiError: ApiError }));
 
-import { fetchClassArticles, fetchClassReview } from "./classDetailData";
+import { fetchClassArticles, fetchClassAttendance, fetchClassReview } from "./classDetailData";
 
 beforeEach(() => vi.resetAllMocks());
 
@@ -34,6 +34,20 @@ describe("fetchClassArticles", () => {
     await expect(fetchClassArticles("c1", "cy")).resolves.toEqual([]);
     api.getClassArticles.mockRejectedValue(new ApiError(500));
     await expect(fetchClassArticles("c1", "cy")).rejects.toMatchObject({ status: 500 });
+  });
+});
+
+describe("fetchClassAttendance", () => {
+  it("returns the student's own attendance", async () => {
+    const mine = { summary: { present: 1, late: 0, absent: 0, rate: 1 }, records: [] };
+    api.getClassAttendance.mockResolvedValue({ mine });
+    await expect(fetchClassAttendance("c1")).resolves.toEqual(mine);
+    expect(api.getClassAttendance).toHaveBeenLastCalledWith("c1");
+  });
+
+  it("rethrows failures so the section can offer a retry", async () => {
+    api.getClassAttendance.mockRejectedValue(new ApiError(500));
+    await expect(fetchClassAttendance("c1")).rejects.toMatchObject({ status: 500 });
   });
 });
 

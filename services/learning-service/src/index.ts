@@ -95,6 +95,8 @@ import {
   setAdminTicketStatus,
 } from "./controllers/adminTicketController";
 import { runTicketOverdueDigest } from "./controllers/ticketDigestController";
+import { getAttendanceMeeting, getClassAttendance, saveAttendanceMeeting } from "./controllers/attendanceController";
+import { getAdminClassAttendance } from "./controllers/adminAttendanceController";
 import {
   connectVoiceSession,
   createVoiceSession,
@@ -183,6 +185,7 @@ app.get("/v1/public/classes/:classId", getPublicClass);
 // Admin console: classes created on a tutor's behalf (route guard + in-handler ADMIN check).
 app.get("/v1/admin/classes", authMiddleware, requireRoles("ADMIN"), getAdminClasses);
 app.post("/v1/admin/classes", authMiddleware, requireRoles("ADMIN"), createAdminClass);
+app.get("/v1/admin/classes/:classId/attendance", authMiddleware, requireRoles("ADMIN"), getAdminClassAttendance);
 
 // Protected Class Routes
 app.get("/v1/books", authMiddleware, getBooks);
@@ -201,6 +204,11 @@ app.post("/v1/classes/:classId/lobby-notifications", authMiddleware, notifyClass
 app.get("/v1/classes/:classId/articles", authMiddleware, getClassArticles);
 app.post("/v1/classes/:classId/book-cycles", authMiddleware, createClassBookCycle);
 app.post("/v1/classes/:classId/book-cycles/:cycleId/access", authMiddleware, prepareClassBookCycleAccess);
+
+// Attendance: owning tutor marks, student reads their own (roles checked in the handlers).
+app.get("/v1/classes/:classId/attendance", authMiddleware, getClassAttendance);
+app.get("/v1/classes/:classId/attendance/meeting", authMiddleware, getAttendanceMeeting);
+app.put("/v1/classes/:classId/attendance/meeting", authMiddleware, saveAttendanceMeeting);
 
 // Protected Referral Routes
 app.get("/v1/book-cycles/:cycleId/assessment", authMiddleware, getAssessment);

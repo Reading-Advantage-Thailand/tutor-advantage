@@ -11,6 +11,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { useCachedResource } from "@/lib/cachedResource";
 import {
   classArticlesResourceKey,
+  classAttendanceResourceKey,
   classDetailResourceKey,
   classReviewResourceKey,
   classifyClassLoadError,
@@ -23,14 +24,15 @@ import { formatTHB } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { LiffStartupError } from "../_components/LiffStartupError";
+import { AttendanceSection, type AttendanceState } from "./_components/AttendanceSection";
 import { ClassDetailAppBar, ClassDetailSkeleton } from "./_components/ClassDetailSkeleton";
 import { ClassHero } from "./_components/ClassHero";
 import { BenefitsSection, SeatsSection, TutorSection } from "./_components/InfoSections";
 import { CoursePreviewSection, LessonsSection, type ArticlesState } from "./_components/Lessons";
 import { ReviewCard } from "./_components/ReviewCard";
 import { CalendarSheet, NextSessionCard, ScheduleSection } from "./_components/ScheduleSections";
-import { fetchClassArticles, fetchClassDetail, fetchClassReview } from "./_components/classDetailData";
-import type { ClassArticleDetail, ClassDetail, TutorReview } from "./_components/types";
+import { fetchClassArticles, fetchClassAttendance, fetchClassDetail, fetchClassReview } from "./_components/classDetailData";
+import type { ClassArticleDetail, ClassDetail, MyClassAttendance, TutorReview } from "./_components/types";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -116,6 +118,19 @@ export default function ClassDetailPage({ params }: PageProps) {
     () => fetchClassReview(id),
     { enabled: isReady },
   );
+
+  const attendanceResource = useCachedResource<MyClassAttendance>(
+    userId && cls?.isEnrolled ? classAttendanceResourceKey(userId, id) : null,
+    () => fetchClassAttendance(id),
+    { enabled: isReady },
+  );
+  const attendance: AttendanceState = {
+    data: attendanceResource.data,
+    error: attendanceResource.error,
+    isLoading: attendanceResource.isLoading,
+    isValidating: attendanceResource.isValidating,
+    refetch: () => void attendanceResource.refetch(),
+  };
 
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}/classes/${id}`;
@@ -205,6 +220,8 @@ export default function ClassDetailPage({ params }: PageProps) {
             ) : null}
 
             <NextSessionCard cls={cls} onAddToCalendar={openCalendar} />
+
+            <AttendanceSection attendance={attendance} />
 
             <LessonsSection
               cls={cls}

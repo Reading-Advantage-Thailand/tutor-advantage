@@ -199,3 +199,8 @@ export function classArticlesResourceKey(userId: string, classId: string, cycleI
 export function classReviewResourceKey(userId: string, classId: string): string {
   return `${classDetailResourceKey(userId, classId)}:review`;
 }
+
+/** GET /classes/:id/attendance (the student's own attendance in this class). */
+export function classAttendanceResourceKey(userId: string, classId: string): string {
+  return `${classDetailResourceKey(userId, classId)}:attendance`;
+}

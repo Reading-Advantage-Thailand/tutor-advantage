@@ -70,6 +70,9 @@ model User {
   supportTicketsRequested SupportTicket[]   @relation("SupportTicketRequester")
   supportTicketsAssigned  SupportTicket[]   @relation("SupportTicketAssignee")
   supportTicketMessages   SupportTicketMessage[]
+  classMeetingsCreated    ClassMeeting[]     @relation("ClassMeetingCreator")
+  attendanceRecords       AttendanceRecord[] @relation("AttendanceStudent")
+  attendanceMarks         AttendanceRecord[] @relation("AttendanceMarker")
 
   @@map("users")
   @@schema("identity")
@@ -208,6 +211,7 @@ model Class {
   interactiveSessions InteractiveSession[]
   activeLessonSessionLock ActiveLessonSessionLock?
   supportTickets SupportTicket[]
+  classMeetings  ClassMeeting[]
 
   @@index([tutorUserId, status])
   @@map("classes")
@@ -441,6 +445,7 @@ model InteractiveSession {
 
   @@index([classBookCycleId], map: "interactive_sessions_class_book_cycle_id_idx")
   @@index([bookId], map: "interactive_sessions_book_id_idx")
+  @@index([classId, createdAt])
   @@map("interactive_sessions")
   @@schema("learning")
 }
@@ -735,6 +740,55 @@ model SupportTicketMessage {
   @@unique([ticketId, clientMessageId])
   @@index([ticketId, createdAt])
   @@map("support_ticket_messages")
+  @@schema("learning")
+}
+
+/// One dated class meeting that has at least one attendance mark. Created on the
+/// first saved mark and deleted when its last mark is removed. Date and times are
+/// a Bangkok wall-clock snapshot: never joined back to Class.scheduleData, so the
+/// row survives a reschedule.
+/// meetingDate: yyyy-MM-dd; startTime, endTime: HH:mm
+/// source: SCHEDULED | ADHOC
+model ClassMeeting {
+  meetingId       String   @id @default(dbgenerated("gen_random_uuid()")) @map("meeting_id") @db.Uuid
+  classId         String   @map("class_id") @db.Uuid
+  meetingDate     String   @map("meeting_date")
+  startTime       String   @map("start_time")
+  endTime         String?  @map("end_time")
+  source          String
+  createdByUserId String   @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  class     Class              @relation(fields: [classId], references: [classId], onDelete: Cascade)
+  createdBy User               @relation("ClassMeetingCreator", fields: [createdByUserId], references: [userId])
+  records   AttendanceRecord[]
+
+  @@unique([classId, meetingDate, startTime])
+  @@index([classId, meetingDate])
+  @@map("class_meetings")
+  @@schema("learning")
+}
+
+/// One student's mark for one meeting. Keyed on the student, never the
+/// enrollment, so it outlives re-enrollment. No row means "not marked".
+/// status: PRESENT | LATE | ABSENT
+model AttendanceRecord {
+  recordId       String   @id @default(dbgenerated("gen_random_uuid()")) @map("record_id") @db.Uuid
+  meetingId      String   @map("meeting_id") @db.Uuid
+  studentUserId  String   @map("student_user_id") @db.Uuid
+  status         String
+  markedByUserId String   @map("marked_by_user_id") @db.Uuid
+  markedAt       DateTime @default(now()) @map("marked_at") @db.Timestamptz
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  meeting  ClassMeeting @relation(fields: [meetingId], references: [meetingId], onDelete: Cascade)
+  student  User         @relation("AttendanceStudent", fields: [studentUserId], references: [userId])
+  markedBy User         @relation("AttendanceMarker", fields: [markedByUserId], references: [userId])
+
+  @@unique([meetingId, studentUserId])
+  @@index([studentUserId])
+  @@map("attendance_records")
   @@schema("learning")
 }
 

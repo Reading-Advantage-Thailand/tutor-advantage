@@ -10,6 +10,7 @@ import {
   Chip,
   DescriptionList,
   IconTile,
+  ListSkeleton,
   Notice,
   Page,
   PageHeader,
@@ -20,6 +21,7 @@ import { LEARNING_URL } from "@/lib/service-urls";
 import { classSetupHref, sumScheduledHours } from "@/lib/tutorClassFlow";
 import type { BookOption } from "../components/book-options";
 import { ArticleSelector } from "./components/ArticleSelector";
+import { AttendanceEntryCard } from "./components/AttendanceEntryCard";
 import { initialCycleId, type BookCycle } from "./components/book-cycles";
 import { ClassStatusToggle } from "./components/ClassStatusToggle";
 import { CouponExtendButton } from "./components/CouponExtendButton";
@@ -120,8 +122,15 @@ function ScheduleCard({ cls, classId }: { cls: any; classId: string }) {
 }
 
 // In Next.js 15, `params` is a Promise
-export default async function ClassDetailPage({ params }: { params: Promise<{ classId: string }> }) {
+export default async function ClassDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ classId: string }>;
+  searchParams: Promise<{ tab?: string | string[] }>;
+}) {
   const { classId } = await params;
+  const { tab } = await searchParams;
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value || "";
 
@@ -168,7 +177,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
         </Notice>
       ) : null}
 
-      <DetailTabs>
+      <DetailTabs initial={tab === "students" ? "students" : undefined}>
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-8">
           <div className="flex min-w-0 flex-col gap-6">
             <TabPanel tab="lessons">
@@ -177,6 +186,9 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
               </Suspense>
             </TabPanel>
             <TabPanel tab="students">
+              <Suspense fallback={<ListSkeleton rows={2} />}>
+                <AttendanceEntryCard classId={classId} token={token} />
+              </Suspense>
               <VoicePracticeSection sessions={voiceSessions} />
             </TabPanel>
             {process.env.NODE_ENV === "development" ? (

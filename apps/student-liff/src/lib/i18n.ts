@@ -1358,6 +1358,18 @@ export const th = {
       pendingPaymentDescription: "ชำระเงินให้เรียบร้อย แล้วเริ่มเรียนได้เลย",
       continuePayment: "ชำระเงินต่อ",
       priceLabel: "ราคา",
+      attendance: {
+        title: "บันทึกการเข้าเรียน",
+        allTitle: "บันทึกการเข้าเรียนทั้งหมด",
+        seeAll: "ดูทั้งหมด",
+        ratePrefix: "อัตราการมาเรียน",
+        present: "มาเรียน",
+        late: "มาสาย",
+        absent: "ขาดเรียน",
+        emptyTitle: "ยังไม่มีบันทึกการเข้าเรียน",
+        emptyDescription: "เมื่อคุณครูเช็กชื่อแล้ว จะแสดงที่นี่",
+        loadFailed: "โหลดบันทึกการเข้าเรียนไม่สำเร็จ",
+      },
     },
     assessment: {
       ariaLabel: "พัฒนาการก่อนและหลังเรียน",

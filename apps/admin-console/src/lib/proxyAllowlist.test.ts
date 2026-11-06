@@ -177,6 +177,27 @@ describe("proxy allowlist", () => {
     expect(matchProxyRequest(seg(`/v1/admin/tickets/${id}/delete`), "POST", admin)).toMatchObject({ ok: false, status: 403 });
   });
 
+  it("allows admins to read class attendance and nothing else", () => {
+    const id = "5eed0000-0000-4000-8000-0000000000c1";
+    const path = `/v1/admin/classes/${id}/attendance`;
+    const match = matchProxyRequest(seg(path), "GET", admin);
+    expect(match.ok && match.rule.service).toBe("learning");
+    expect(matchProxyRequest(seg(path), "GET", checker)).toMatchObject({ ok: false, code: "PROXY_ROLE_NOT_ALLOWED" });
+    for (const method of ["POST", "PUT", "PATCH", "DELETE"]) {
+      expect(matchProxyRequest(seg(path), method, admin).ok, method).toBe(false);
+    }
+    expect(matchProxyRequest(seg(`${path}/meeting`), "GET", admin)).toMatchObject({ ok: false, status: 403 });
+  });
+
+  it("never forwards the tutor and student attendance endpoints", () => {
+    const id = "5eed0000-0000-4000-8000-0000000000c1";
+    for (const path of [`/v1/classes/${id}/attendance`, `/v1/classes/${id}/attendance/meeting`]) {
+      for (const method of ["GET", "PUT"]) {
+        expect(matchProxyRequest(seg(path), method, admin), `${method} ${path}`).toMatchObject({ ok: false, status: 403 });
+      }
+    }
+  });
+
   it("never forwards the requester ticket endpoints", () => {
     for (const path of ["/v1/tickets", "/v1/tickets/abc", "/v1/tickets/abc/messages", "/v1/tickets/abc/resolve", "/v1/internal/tickets/overdue-digest"]) {
       for (const method of ["GET", "POST"]) {

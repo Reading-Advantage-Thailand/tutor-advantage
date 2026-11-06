@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   articleReadHref,
   classArticlesResourceKey,
+  classAttendanceResourceKey,
   classDetailResourceKey,
   classReviewResourceKey,
   classifyClassLoadError,
@@ -160,10 +161,11 @@ describe("classifyClassLoadError", () => {
 });
 
 describe("cache keys", () => {
-  it("nests articles and review under the class key", () => {
+  it("nests articles, review and attendance under the class key", () => {
     expect(classDetailResourceKey("u", "c")).toBe("u:class:c");
     expect(classArticlesResourceKey("u", "c", "cy")).toBe("u:class:c:articles:cy");
     expect(classArticlesResourceKey("u", "c", "")).toBe("u:class:c:articles:");
     expect(classReviewResourceKey("u", "c")).toBe("u:class:c:review");
+    expect(classAttendanceResourceKey("u", "c")).toBe("u:class:c:attendance");
   });
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Plus, School, TicketPercent } from "lucide-react";
+import { ClipboardCheck, Plus, School, TicketPercent } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   AdminStatusChip,
@@ -25,6 +25,7 @@ import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatThaiDate, formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { adminClassesKey } from "../discount-codes/useClassLookup";
+import { classAttendanceHref } from "./attendanceModel";
 import { discountCodeCreateHref, type AdminClass, type AdminClassPage } from "./classForm";
 import { CreateClassSheet } from "./components/CreateClassSheet";
 import "@/locales/th/classes";
@@ -148,7 +149,13 @@ export default function ClassesPage() {
         alwaysVisible: true,
         cell: (row) =>
           row.isDemo ? null : (
-            <span role="group" aria-label={t("classes.rowActions", { title: row.title })} className="flex justify-end">
+            <span role="group" aria-label={t("classes.rowActions", { title: row.title })} className="flex flex-wrap justify-end gap-1">
+              <Button asChild size="sm" variant="ghost">
+                <Link href={classAttendanceHref(row.classId)}>
+                  <ClipboardCheck aria-hidden="true" />
+                  {t("classes.attendanceAction")}
+                </Link>
+              </Button>
               <Button asChild size="sm" variant="ghost">
                 <Link href={discountCodeCreateHref(row.classId)}>
                   <TicketPercent aria-hidden="true" />
