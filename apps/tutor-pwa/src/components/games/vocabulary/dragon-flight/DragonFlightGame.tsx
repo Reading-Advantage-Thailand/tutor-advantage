@@ -120,31 +120,31 @@ type FlightLayout = {
 
 const ASSETS = {
   gates: withBasePath(
-    "/games/vocabulary/dragon-flight/gates-3x3-sheet-facing-up.png",
+    "/games/vocabulary/dragon-flight/gates-3x3-sheet-facing-up.webp",
   ),
   boss: withBasePath(
-    "/games/vocabulary/dragon-flight/boss-3x3-sheet-facing-up.png",
+    "/games/vocabulary/dragon-flight/boss-3x3-sheet-facing-up.webp",
   ),
   player: withBasePath(
-    "/games/vocabulary/dragon-flight/player-3x3-sheet-facing-down.png",
+    "/games/vocabulary/dragon-flight/player-3x3-sheet-facing-down.webp",
   ),
   playerCamera: withBasePath(
     "/games/vocabulary/dragon-flight/player-3x3-sheet-facing-camera.png",
   ),
   army: withBasePath(
-    "/games/vocabulary/dragon-flight/dragon-army-3x3-sheet-facing-up.png",
+    "/games/vocabulary/dragon-flight/dragon-army-3x3-sheet-facing-up.webp",
   ),
   parallaxTop: withBasePath(
-    "/games/vocabulary/dragon-flight/parallax-top-tiling.png",
+    "/games/vocabulary/dragon-flight/parallax-top-tiling.webp",
   ),
   parallaxMiddle: withBasePath(
-    "/games/vocabulary/dragon-flight/parallax-middle-tiling.png",
+    "/games/vocabulary/dragon-flight/parallax-middle-tiling.webp",
   ),
   parallaxBottom: withBasePath(
-    "/games/vocabulary/dragon-flight/parallax-bottom-tiling.png",
+    "/games/vocabulary/dragon-flight/parallax-bottom-tiling.webp",
   ),
   loadingBackground: withBasePath(
-    "/games/vocabulary/dragon-flight/loading-screen-background.png",
+    "/games/vocabulary/dragon-flight/loading-screen-background.webp",
   ),
   projectileFireball: withBasePath(
     "/games/vocabulary/dragon-flight/projectile-fireball.png",

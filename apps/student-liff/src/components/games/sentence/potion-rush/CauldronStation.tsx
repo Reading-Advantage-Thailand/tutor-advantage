@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Group, Rect, Text, Image as KonvaImage } from "react-konva";
 import { usePotionRushStore, Cauldron } from "@/store/usePotionRushStore";
-import { withBasePath } from "@/lib/games/basePath";
+import { useGameImages } from "@/lib/games/useGameImages";
 import { useSound } from "@/hooks/useSound";
 import { tx } from "@/lib/games/gameText";
+
+const CAULDRON_IMAGES = {
+  blue: "/games/sentence/potion-rush/cauldron-blue.webp",
+  green: "/games/sentence/potion-rush/cauldron-green.webp",
+  yellow: "/games/sentence/potion-rush/cauldron-yellow.webp",
+};
 
 interface LayoutConfig {
   trashX: number;
@@ -26,27 +32,7 @@ export default function CauldronStation({
   const handleDump = usePotionRushStore((state) => state.handleDumpCauldron);
   const handleServe = usePotionRushStore((state) => state.handleServeCustomer);
 
-  const [images, setImages] = useState<Record<string, HTMLImageElement>>({});
-
-  useEffect(() => {
-    const assets = {
-      blue: withBasePath("/games/sentence/potion-rush/cauldron-blue.png"),
-      green: withBasePath("/games/sentence/potion-rush/cauldron-green.png"),
-      yellow: withBasePath("/games/sentence/potion-rush/cauldron-yellow.png"),
-    };
-    const loadedImgs: Record<string, HTMLImageElement> = {};
-    let count = 0;
-    const sources = Object.entries(assets);
-    sources.forEach(([key, src]) => {
-      const img = new window.Image();
-      img.src = src;
-      img.onload = () => {
-        loadedImgs[key] = img;
-        count++;
-        if (count === sources.length) setImages(loadedImgs);
-      };
-    });
-  }, []);
+  const { images } = useGameImages(CAULDRON_IMAGES);
 
   const stationWidth = width / 3;
 

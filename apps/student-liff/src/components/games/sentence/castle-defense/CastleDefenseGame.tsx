@@ -45,8 +45,12 @@ import {
   computeCastleDefenseCamera,
   type CastleDefenseCameraFit,
   type SentenceItem,
+  getCastleWordProgress,
+  parseSentenceWords,
 } from "@/lib/games/castleDefense";
-import { BackgroundLayer } from "./BackgroundLayer";
+import { BackgroundLayer, CASTLE_BACKGROUND_PATHS } from "./BackgroundLayer";
+import { GameAssetLoadFailure, GameAssetLoading } from "@/components/games/GameAssetLoadFailure";
+import { MAX_GAME_POINTS, pickShortSentences, roundWordBudget } from "@/lib/games/sentenceRound";
 import { tx } from "@/lib/games/gameText";
 
 const buildSpriteGrid = (width: number, height: number) => {
@@ -97,20 +101,32 @@ type Props = {
 
 const GAME_DURATION_MS = 60_000;
 const MAX_ROUND_SENTENCES = 10;
+// Full marks. Measured on a phone: a flawless bot gets here in under 40 seconds at
+// A1 and at C1, and a bot with a kid's reading delay collects about 14 words in 60.
+const ROUND_WORD_BUDGET = 24;
+const MAX_SENTENCE_WORDS = 12;
+// A very slow link starts without the map rather than wait for it forever.
+const MAP_WAIT_MS = 8_000;
 const CASTLE_ASSET_PATHS = {
-  player: "/games/sentence/castle-defense/player_3x3_pose_sheet.png",
-  soldier: "/games/sentence/castle-defense/goblin_3x3_pose_sheet.png",
-  tank: "/games/sentence/castle-defense/orc_3x3_pose_sheet.png",
-  boss: "/games/sentence/castle-defense/troll_3x3_pose_sheet.png",
-  towerBase: "/games/sentence/castle-defense/tower-base.png",
-  towerBuilt: "/games/sentence/castle-defense/tower-built.png",
-  base: "/games/sentence/castle-defense/player-castle.png",
+  player: "/games/sentence/castle-defense/player_3x3_pose_sheet.webp",
+  soldier: "/games/sentence/castle-defense/goblin_3x3_pose_sheet.webp",
+  tank: "/games/sentence/castle-defense/orc_3x3_pose_sheet.webp",
+  boss: "/games/sentence/castle-defense/troll_3x3_pose_sheet.webp",
+  towerBase: "/games/sentence/castle-defense/tower-base.webp",
+  towerBuilt: "/games/sentence/castle-defense/tower-built.webp",
+  base: "/games/sentence/castle-defense/player-castle.webp",
 };
 
+const countCastleWords = (term: string) => parseSentenceWords(term).length;
+
 const buildRoundSentences = (items: SentenceItem[]) =>
-  [...items].sort(() => Math.random() - 0.5).slice(0, MAX_ROUND_SENTENCES);
+  pickShortSentences(items, MAX_SENTENCE_WORDS)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, MAX_ROUND_SENTENCES);
 
 const getCachedCastleAssets = (): GameAssets | null => {
+  // Sprites cached while the map is still coming must not start the clock.
+  if (!CASTLE_BACKGROUND_PATHS.every((src) => getCachedGameImage(src))) return null;
   const player = getCachedGameImage(CASTLE_ASSET_PATHS.player);
   const soldier = getCachedGameImage(CASTLE_ASSET_PATHS.soldier);
   const tank = getCachedGameImage(CASTLE_ASSET_PATHS.tank);
@@ -155,6 +171,8 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
   const difficulty: "easy" | "medium" | "hard" = "medium";
   const [showRanking, setShowRanking] = useState(false);
   const [assets, setAssets] = useState<GameAssets | null>(() => getCachedCastleAssets());
+  const [assetLoadFailed, setAssetLoadFailed] = useState(false);
+  const [assetLoadAttempt, setAssetLoadAttempt] = useState(0);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [camera, setCamera] = useState({ x: 0, y: 0, scale: 1 });
   const [hasStarted, setHasStarted] = useState(false);
@@ -230,6 +248,10 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
 
     const load = async () => {
       try {
+        const mapReady = Promise.race([
+          Promise.allSettled(CASTLE_BACKGROUND_PATHS.map((src) => loadGameImage(src))),
+          new Promise((resolve) => setTimeout(resolve, MAP_WAIT_MS)),
+        ]);
         const [player, soldier, tank, boss, towerBase, towerBuilt, base] =
           await Promise.all([
             loadGameImage(CASTLE_ASSET_PATHS.player),
@@ -240,6 +262,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
             loadGameImage(CASTLE_ASSET_PATHS.towerBuilt),
             loadGameImage(CASTLE_ASSET_PATHS.base),
           ]);
+        await mapReady;
         if (mounted) {
           setAssets({
             player,
@@ -253,6 +276,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
         }
       } catch (e) {
         console.error("Failed to load assets", e);
+        if (mounted) setAssetLoadFailed(true);
       }
     };
 
@@ -260,7 +284,21 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [assetLoadAttempt]);
+
+  const giveUpLoading = useCallback(() => {
+    if (completedRef.current) return;
+    completedRef.current = true;
+    onCompleteRef.current?.({
+      xp: 0,
+      score: 0,
+      accuracy: 0,
+      correctAnswers: 0,
+      totalAttempts: MAX_GAME_POINTS,
+      difficulty,
+      durationMs: 0,
+    });
+  }, [difficulty]);
 
   const towers = gameState?.towers;
 
@@ -322,6 +360,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
       difficulty,
       maxSentences: Math.min(MAX_ROUND_SENTENCES, gameVocabulary.length || 1),
       durationMs: GAME_DURATION_MS,
+      wordBudget: roundWordBudget(gameVocabulary, ROUND_WORD_BUDGET, countCastleWords),
     }));
     setHasStarted(true);
     enterFullscreen();
@@ -390,8 +429,8 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
             xp: calculateCastleDefenseXP(nextState),
             score: nextState.score,
             accuracy,
-            correctAnswers: nextState.completedSentences,
-            totalAttempts: nextState.maxSentences,
+            correctAnswers: nextState.score,
+            totalAttempts: MAX_GAME_POINTS,
             difficulty: nextState.difficulty,
             durationMs: Math.min(GAME_DURATION_MS, Math.max(0, nextState.gameTime)),
           });
@@ -401,6 +440,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
               difficulty,
               maxSentences: Math.min(MAX_ROUND_SENTENCES, gameVocabulary.length || 1),
               durationMs: GAME_DURATION_MS,
+              wordBudget: roundWordBudget(gameVocabulary, ROUND_WORD_BUDGET, countCastleWords),
             });
           }
           exitFullscreen();
@@ -452,9 +492,27 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState?.sentenceCompleted, gameState?.towerSlots, gameState?.towers, gameState?.player.x, gameState?.player.y]);
 
+  if (assetLoadFailed) {
+    return (
+      <div className="relative h-full min-h-0 w-full bg-slate-950">
+        <GameAssetLoadFailure
+          onRetry={() => {
+            setAssetLoadFailed(false);
+            setAssetLoadAttempt((attempt) => attempt + 1);
+          }}
+          onGiveUp={autoStart && !restartOnComplete && !tutorialMode ? giveUpLoading : undefined}
+        />
+      </div>
+    );
+  }
+
   if (!assets) {
     if (autoStart) {
-      return <div className="h-full min-h-0 w-full bg-slate-950" />;
+      return (
+        <div className="relative h-full min-h-0 w-full bg-slate-950">
+          <GameAssetLoading />
+        </div>
+      );
     }
     return (
       <div className="relative h-[60vh] w-full overflow-hidden rounded-2xl bg-slate-950 flex items-center justify-center border border-white/10 md:aspect-video md:h-auto">
@@ -548,7 +606,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
   return (
     <div
       ref={containerRef}
-      className="relative h-full min-h-0 w-full overflow-hidden bg-slate-900 touch-none select-none rounded-none"
+      className="relative h-full min-h-0 w-full overflow-hidden bg-lime-800 touch-none select-none rounded-none"
     >
       {gameState && dimensions.width > 0 && dimensions.height > 0 && (
         <Stage width={dimensions.width} height={dimensions.height}>
@@ -777,7 +835,9 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, r
                 ⏱ {Math.max(0, Math.ceil((gameState.durationMs - gameState.gameTime) / 1000))}s
               </div>
               <div className="rounded-full border border-white/10 bg-slate-950/80 px-3 py-1 text-[11px] font-black text-white shadow-lg backdrop-blur">
-                {gameState.completedSentences}/{gameState.maxSentences}
+                {gameState.wordBudget === null
+                  ? `${gameState.completedSentences}/${gameState.maxSentences}`
+                  : `${Math.min(getCastleWordProgress(gameState), gameState.wordBudget)}/${gameState.wordBudget} คำ`}
               </div>
             </div>
 

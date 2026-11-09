@@ -750,6 +750,7 @@ export const th = {
     gameLoadFailedDescription: "อินเทอร์เน็ตอาจช้าอยู่ ลองกดโหลดใหม่อีกครั้งนะ",
     gameLoadRetry: "โหลดใหม่อีกครั้ง",
     gameComplete: "เล่นเกมเสร็จแล้ว",
+    gameCorrectCount: "ทำได้",
     gameWaitTeacher: "รอคุณครูไปหน้าถัดไป",
     gameVoteTitle: "โหวตเกมที่อยากเล่น",
     vocabularyGame: "เกมคำศัพท์",
@@ -782,7 +783,6 @@ export const th = {
     runTimer: "เวลาที่เหลือ",
     bossApproaches: "บอสกำลังเข้ามา",
     dragonRiderAssetError: "โหลดภาพเกม Dragon Rider ไม่สำเร็จ กรุณารีเฟรชแล้วลองอีกครั้ง",
-    dragonFlightAssetError: "โหลดภาพเกม Dragon Flight ไม่สำเร็จ กรุณารีเฟรชแล้วลองอีกครั้ง",
     // ── Step 11 Guided Writing ──
     writingTitle: "เขียนแบบมีโครง",
     writingPlanLabel: "วางแผนก่อนเขียน (จดไอเดียสั้นๆ)",

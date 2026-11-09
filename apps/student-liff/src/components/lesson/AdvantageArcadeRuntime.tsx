@@ -9,6 +9,7 @@ import {
   preloadGame,
   resolveGameId,
 } from "@/components/lesson/gameRegistry"
+import { toLessonGameResult, type ArcadeResult, type LessonGameResult } from "@/lib/games/lessonGameResult"
 import type { LiveLessonGameCategory } from "@/lib/liveLessonGames"
 import type { VocabularyItem } from "@/store/useGameStore"
 
@@ -35,17 +36,6 @@ type ArticleData = {
   sentences?: LessonSentence[]
 }
 
-type ArcadeResult = {
-  score?: number
-  xp?: number
-  accuracy?: number
-  correctAnswers?: number
-  totalAttempts?: number
-  correctWords?: number
-  total?: number
-  durationMs?: number
-}
-
 type AdvantageArcadeRuntimeProps = {
   gameId: string
   category: LiveLessonGameCategory
@@ -54,12 +44,7 @@ type AdvantageArcadeRuntimeProps = {
   /** Allow a game child to start a fresh round after completion. */
   restartOnComplete?: boolean
   tutorialMode?: boolean
-  onComplete: (result: {
-    score: number
-    correct: number
-    total: number
-    durationMs: number
-  }) => void
+  onComplete: (result: LessonGameResult) => void
 }
 
 // Each game is a separate chunk (see gameRegistry); names and props are unchanged.
@@ -107,6 +92,8 @@ const sentenceTranslation = (sentence: LessonSentence, fallback: string) => {
 
 function buildVocabulary(articleData?: ArticleData | null): VocabularyItem[] {
   const words = articleData?.words ?? []
+  // A word listed twice could never be answered twice, so a perfect round could not reach full marks.
+  const seenTerms = new Set<string>()
   const vocabulary = words
     .map((word, index) => {
       const term = wordText(word, index)
@@ -116,7 +103,13 @@ function buildVocabulary(articleData?: ArticleData | null): VocabularyItem[] {
         translation: wordTranslation(word, term),
       }
     })
-    .filter((word) => word.term && word.translation)
+    .filter((word) => {
+      if (!word.term || !word.translation) return false
+      const key = word.term.trim().toLowerCase()
+      if (seenTerms.has(key)) return false
+      seenTerms.add(key)
+      return true
+    })
 
   return vocabulary.length
     ? vocabulary
@@ -246,19 +239,7 @@ export function AdvantageArcadeRuntime({
     completedRef.current = true
     setHasCompleted(true)
 
-    const total = Math.max(result.totalAttempts ?? result.total ?? 1, 1)
-    const accuracy = typeof result.accuracy === "number" ? result.accuracy : undefined
-    const correct = Math.round(
-      result.correctAnswers ?? result.correctWords ?? (accuracy !== undefined ? accuracy * total : total)
-    )
-    const rawScore = result.score ?? result.xp ?? correct * 10
-
-    onCompleteRef.current({
-      score: Math.max(0, Math.round(rawScore)),
-      correct: Math.max(0, correct),
-      total,
-      durationMs: Math.max(0, Math.round(result.durationMs ?? Date.now() - startedAt.current)),
-    })
+    onCompleteRef.current(toLessonGameResult(result, Date.now() - startedAt.current))
   }, [])
 
   const commonClass = "h-dvh min-h-0 w-full overflow-hidden bg-background"

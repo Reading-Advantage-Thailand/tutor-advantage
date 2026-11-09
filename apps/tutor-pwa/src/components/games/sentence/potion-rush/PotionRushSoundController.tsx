@@ -6,23 +6,23 @@ import { useSound } from '@/hooks/useSound'
 
 export default function PotionRushSoundController() {
   const { playSound } = useSound()
-  const lastScore = useRef(0)
+  const lastServed = useRef(0)
   const lastReputation = useRef(100)
   const lastCauldronStates = useRef<string[]>([])
   const lastCauldronWordCounts = useRef<number[]>([0, 0, 0])
 
   useEffect(() => {
     const state = usePotionRushStore.getState()
-    lastScore.current = state.score
+    lastServed.current = state.completedSentences
     lastReputation.current = state.reputation
     lastCauldronStates.current = state.cauldrons.map(c => c.state)
     lastCauldronWordCounts.current = state.cauldrons.map(c => c.currentWords.length)
 
     const unsubscribe = usePotionRushStore.subscribe((state) => {
-      if (state.score > lastScore.current) {
+      if (state.completedSentences > lastServed.current) {
         playSound('cash-register')
       }
-      lastScore.current = state.score
+      lastServed.current = state.completedSentences
 
       if (state.reputation < lastReputation.current) {
         playSound('angry-grunt')

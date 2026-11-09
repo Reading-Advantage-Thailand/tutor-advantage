@@ -1,23 +1,27 @@
 "use client";
 
 import { Group, Image as KonvaImage } from "react-konva";
-import { useEffect, useState, useMemo } from "react";
+import { useMemo } from "react";
 import { getRoadTileInfo, TILE_SIZE } from "@/lib/games/castleDefense";
-import { getCachedGameImage, loadGameImage } from "@/lib/games/gameAssetPreloader";
+import { useGameImages } from "@/lib/games/useGameImages";
 
 const ASSETS = {
   grass: [
-    "/games/sentence/castle-defense/grass_A.png",
-    "/games/sentence/castle-defense/grass_B.png",
-    "/games/sentence/castle-defense/grass_C.png",
-    "/games/sentence/castle-defense/grass_D.png",
+    "/games/sentence/castle-defense/grass_A.webp",
+    "/games/sentence/castle-defense/grass_B.webp",
+    "/games/sentence/castle-defense/grass_C.webp",
+    "/games/sentence/castle-defense/grass_D.webp",
   ],
   road: {
-    EW: "/games/sentence/castle-defense/road_EW.png",
-    NS: "/games/sentence/castle-defense/road_NS.png",
-    CORNER: "/games/sentence/castle-defense/road_corner.png",
+    EW: "/games/sentence/castle-defense/road_EW.webp",
+    NS: "/games/sentence/castle-defense/road_NS.webp",
+    CORNER: "/games/sentence/castle-defense/road_corner.webp",
   },
 };
+
+/** Map tiles, so the game can hold its clock until the map can be drawn. */
+export const CASTLE_BACKGROUND_PATHS = [...ASSETS.grass, ASSETS.road.EW, ASSETS.road.NS, ASSETS.road.CORNER];
+const TILE_IMAGES = Object.fromEntries(CASTLE_BACKGROUND_PATHS.map((src) => [src, src]));
 
 interface BackgroundLayerProps {
   grassMap: number[][];
@@ -25,50 +29,10 @@ interface BackgroundLayerProps {
 }
 
 export function BackgroundLayer({ grassMap, path }: BackgroundLayerProps) {
-  const [images, setImages] = useState<Record<string, HTMLImageElement>>(() => {
-    const cached: Record<string, HTMLImageElement> = {};
-    [...ASSETS.grass, ASSETS.road.EW, ASSETS.road.NS, ASSETS.road.CORNER].forEach((src) => {
-      const image = getCachedGameImage(src);
-      if (image) cached[src] = image;
-    });
-    return cached;
-  });
-  const [loaded, setLoaded] = useState(
-    [...ASSETS.grass, ASSETS.road.EW, ASSETS.road.NS, ASSETS.road.CORNER].every((src) =>
-      Boolean(getCachedGameImage(src)),
-    ),
-  );
-
-  useEffect(() => {
-    const toLoad = [
-      ...ASSETS.grass,
-      ASSETS.road.EW,
-      ASSETS.road.NS,
-      ASSETS.road.CORNER,
-    ];
-
-    let mounted = true;
-
-    Promise.allSettled(toLoad.map((src) => loadGameImage(src))).then((results) => {
-      if (!mounted) return;
-      const loadedImgs: Record<string, HTMLImageElement> = {};
-      results.forEach((result, index) => {
-        if (result.status === "fulfilled") {
-          loadedImgs[toLoad[index]] = result.value;
-        }
-      });
-      setImages(loadedImgs);
-      setLoaded(true);
-    });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  // Each tile appears as it arrives, so a failed image only leaves its own squares empty.
+  const { images } = useGameImages(TILE_IMAGES);
 
   const tiles = useMemo(() => {
-    if (!loaded) return null;
-
     const grid: React.ReactNode[] = [];
 
     for (let r = 0; r < grassMap.length; r++) {
@@ -125,9 +89,7 @@ export function BackgroundLayer({ grassMap, path }: BackgroundLayerProps) {
       }
     }
     return grid;
-  }, [loaded, images, grassMap, path]);
-
-  if (!loaded) return <Group />;
+  }, [images, grassMap, path]);
 
   return <Group listening={false}>{tiles}</Group>;
 }

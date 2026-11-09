@@ -997,12 +997,19 @@ class LessonSessionService {
     const isBoundedInteger = (value: unknown, max: number) =>
       value === undefined ||
       (typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= max);
+    // An older client can report more attempts than this. Cap the counts rather
+    // than drop the result: a dropped result leaves the whole class waiting.
+    const MAX_RESULT_COUNT = 100;
+    const capCount = (value: number | undefined) =>
+      value === undefined ? undefined : Math.min(value, MAX_RESULT_COUNT);
+    const correct = capCount(result.correct);
+    const total = capCount(result.total);
     if (
       !isBoundedInteger(result.score, 100_000) ||
-      !isBoundedInteger(result.correct, 100) ||
-      !isBoundedInteger(result.total, 100) ||
+      !isBoundedInteger(result.correct, Number.MAX_SAFE_INTEGER) ||
+      !isBoundedInteger(result.total, Number.MAX_SAFE_INTEGER) ||
       !isBoundedInteger(result.durationMs, 30 * 60 * 1000) ||
-      (result.correct !== undefined && result.total !== undefined && result.correct > result.total)
+      (correct !== undefined && total !== undefined && correct > total)
     ) {
       return null;
     }
@@ -1012,8 +1019,6 @@ class LessonSessionService {
     // lesson points; they are not used for money-bearing metrics.
     // Keep this value in the participant tally so student and tutor views agree.
     const score = result.score ?? 0;
-    const correct = result.correct;
-    const total = result.total;
     const durationMs = result.durationMs;
     participant.score = (participant.score || 0) + score;
     participant.hasAnsweredCurrentPhase = true;

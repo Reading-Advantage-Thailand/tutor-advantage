@@ -35,6 +35,7 @@ import { useGameDimensions } from "@/hooks/useGameDimensions";
 import { VirtualDPad } from "@/components/ui/VirtualDPad";
 import { calculateIndicators } from "@/lib/games/wizardZombieIndicators";
 import { getCachedGameImage, loadGameImage } from "@/lib/games/gameAssetPreloader";
+import { GameAssetLoadFailure } from "@/components/games/GameAssetLoadFailure";
 import { GameStartScreen } from "@/components/games/game/GameStartScreen";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import {
@@ -76,10 +77,10 @@ interface WizardZombieGameProps {
 const GAME_DURATION_MS = 60_000;
 const MAX_ROUND_WORDS = 10;
 const WIZARD_ASSET_PATHS = {
-  player: "/games/vocabulary/wizard-vs-zombie/player_3x3_pose_sheet.png",
-  zombie: "/games/vocabulary/wizard-vs-zombie/zombie_3x3_pose_sheet.png",
-  orb: "/games/vocabulary/wizard-vs-zombie/orb_3x3_pose_sheet.png",
-  floor: "/games/vocabulary/wizard-vs-zombie/tile-ruins.png",
+  player: "/games/vocabulary/wizard-vs-zombie/player_3x3_pose_sheet.webp",
+  zombie: "/games/vocabulary/wizard-vs-zombie/zombie_3x3_pose_sheet.webp",
+  orb: "/games/vocabulary/wizard-vs-zombie/orb_3x3_pose_sheet.webp",
+  floor: "/games/vocabulary/wizard-vs-zombie/tile-ruins.webp",
 };
 
 const buildRoundVocabulary = (items: VocabularyItem[]) =>
@@ -171,6 +172,8 @@ export function WizardZombieGame({
     orb: HTMLImageElement;
     floor: HTMLImageElement;
   } | null>(() => getCachedWizardAssets());
+  const [assetLoadFailed, setAssetLoadFailed] = useState(false);
+  const [assetLoadAttempt, setAssetLoadAttempt] = useState(0);
   const assetsRef = useRef(assets);
   useEffect(() => { assetsRef.current = assets; }, [assets]);
 
@@ -209,13 +212,27 @@ export function WizardZombieGame({
         if (mounted) setAssets({ player, zombie, orb, floor });
       } catch (e) {
         console.error("Failed to load assets", e);
+        if (mounted) setAssetLoadFailed(true);
       }
     };
     load();
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [assetLoadAttempt]);
+
+  const giveUpLoading = useCallback(() => {
+    if (completedRef.current) return;
+    completedRef.current = true;
+    onComplete({
+      xp: 0,
+      accuracy: 0,
+      correctAnswers: 0,
+      totalAttempts: Math.max(gameVocabulary.length, 1),
+      difficulty: selectedDifficulty,
+      durationMs: 0,
+    });
+  }, [gameVocabulary.length, onComplete, selectedDifficulty]);
 
   const startGame = useCallback(() => {
     if (gameVocabulary.length > 0) {
@@ -506,9 +523,19 @@ export function WizardZombieGame({
         className="relative w-full overflow-hidden rounded-2xl bg-slate-950 flex items-center justify-center border border-white/10"
         style={{ height: "min(75svh, 100%)" }}
       >
-        <div className="text-white animate-pulse font-mono tracking-widest uppercase text-sm sm:text-base">
-          {tx("Initializing Grimoire...")}
-        </div>
+        {assetLoadFailed ? (
+          <GameAssetLoadFailure
+            onRetry={() => {
+              setAssetLoadFailed(false);
+              setAssetLoadAttempt((attempt) => attempt + 1);
+            }}
+            onGiveUp={autoStart && !tutorialMode ? giveUpLoading : undefined}
+          />
+        ) : (
+          <div className="text-white animate-pulse font-mono tracking-widest uppercase text-sm sm:text-base">
+            {tx("Initializing Grimoire...")}
+          </div>
+        )}
       </div>
     );
   }
@@ -569,7 +596,9 @@ export function WizardZombieGame({
             </div>
           </div>
           <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 text-white font-bold text-sm sm:text-lg pointer-events-none drop-shadow-md">
-            {t("common.score")}: {gameState.score}
+            {autoStart
+              ? `ถูก ${gameState.correctAnswers}/${gameVocabulary.length}`
+              : `${t("common.score")}: ${gameState.score}`}
           </div>
           <div className="absolute top-2 sm:top-4 left-1/2 z-10 -translate-x-1/2 rounded-full border border-white/15 bg-black/55 px-4 py-1.5 text-center font-black text-white shadow-lg backdrop-blur-sm pointer-events-none">
             <div className="text-[10px] uppercase tracking-[0.18em] text-white/60">

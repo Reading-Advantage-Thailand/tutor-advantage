@@ -38,6 +38,8 @@ export type EnchantedLibraryState = {
   targetWord: string;
   mana: number;
   vocabularyProgress: Map<string, number>;
+  /** Words where a wrong book was picked before the right one. */
+  missedWords: Set<string>;
   totalWords: number;
   shieldActive: boolean;
   shieldTimer: number;
@@ -145,6 +147,7 @@ export const createEnchantedLibraryState = (
     targetWord: target.term,
     mana: INITIAL_MANA,
     vocabularyProgress,
+    missedWords: new Set<string>(),
     totalWords: vocabulary.length,
     shieldActive: false,
     shieldTimer: 0,
@@ -427,9 +430,14 @@ export const checkBookCollisions = (
         }
       } else {
         // Incorrect book: -5 mana, no shield charge (min 0)
+        const alreadyFound =
+          (newState.vocabularyProgress.get(state.targetWord) || 0) > 0;
         newState = {
           ...newState,
           mana: Math.max(0, newState.mana - MANA_LOSS_INCORRECT),
+          missedWords: alreadyFound
+            ? newState.missedWords
+            : new Set(newState.missedWords).add(state.targetWord),
         };
         // Target word stays the same (reshuffle)
       }
@@ -707,6 +715,13 @@ export const advanceEnchantedLibraryTime = (
 
   return newState;
 };
+
+/** Words the student knew: found on the first try, so trying every book earns nothing. */
+export function countFirstTryWords(state: EnchantedLibraryState): number {
+  return Array.from(state.vocabularyProgress.entries()).filter(
+    ([word, count]) => count >= 1 && !state.missedWords.has(word),
+  ).length;
+}
 
 export function calculateEnchantedLibraryXP(
   state: EnchantedLibraryState,

@@ -2,8 +2,15 @@ import React, { useEffect, useRef, useState } from 'react'
 import type Konva from 'konva'
 import { Group, Rect, Text, Image as KonvaImage, Circle } from 'react-konva'
 import { usePotionRushStore, Ingredient } from '@/store/usePotionRushStore'
-import { withBasePath } from '@/lib/games/basePath'
+import { useGameImages } from '@/lib/games/useGameImages'
 import { useSound } from '@/hooks/useSound'
+
+const BELT_IMAGES = {
+  herb: '/games/sentence/potion-rush/herb.webp',
+  mineral: '/games/sentence/potion-rush/mineral.webp',
+  mushroom: '/games/sentence/potion-rush/mushroom.webp',
+  potion: '/games/sentence/potion-rush/potion.webp',
+}
 
 interface LayoutConfig {
   cauldronY: number
@@ -28,30 +35,9 @@ export default function ConveyorBelt({ y, width, layout }: ConveyorBeltProps) {
   const gameState = usePotionRushStore(state => state.gameState)
   const beltSpeed = usePotionRushStore(state => state.beltSpeed)
   
-  const [images, setImages] = useState<Record<string, HTMLImageElement>>({})
+  const { images } = useGameImages(BELT_IMAGES)
   const [beltOffset, setBeltOffset] = useState(0)
   const lastFrameRef = useRef<number | null>(null)
-
-  useEffect(() => {
-    const assets = {
-      herb: withBasePath('/games/sentence/potion-rush/herb.png'),
-      mineral: withBasePath('/games/sentence/potion-rush/mineral.png'),
-      mushroom: withBasePath('/games/sentence/potion-rush/mushroom.png'),
-      potion: withBasePath('/games/sentence/potion-rush/potion.png'),
-    }
-    const loadedImgs: Record<string, HTMLImageElement> = {}
-    let count = 0
-    const sources = Object.entries(assets)
-    sources.forEach(([key, src]) => {
-      const img = new window.Image()
-      img.src = src
-      img.onload = () => {
-        loadedImgs[key] = img
-        count++
-        if (count === sources.length) setImages(loadedImgs)
-      }
-    })
-  }, [])
 
   useEffect(() => {
     if (gameState !== 'PLAYING') {

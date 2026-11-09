@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Stage, Layer, Image as KonvaImage, Group, Rect, Text } from "react-konva";
 import { usePotionRushStore, SentenceItem } from "@/store/usePotionRushStore";
-import { withBasePath } from "@/lib/games/basePath";
+import { useGameImages } from "@/lib/games/useGameImages";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Beaker } from "lucide-react";
@@ -18,6 +18,17 @@ import TrashPortal from "./TrashPortal";
 import PotionRushEffectsLayer from "./PotionRushEffectsLayer";
 import PotionRushSoundController from "./PotionRushSoundController";
 import { tx } from "@/lib/games/gameText";
+import { MAX_GAME_POINTS, pickShortSentences } from "@/lib/games/sentenceRound";
+
+const SHOP_IMAGES = {
+  wall: "/games/sentence/potion-rush/shop-wall.webp",
+  floor: "/games/sentence/potion-rush/shop-floor.webp",
+  counter: "/games/sentence/potion-rush/shop-counter.webp",
+};
+// The shop art is scenery: a slow or failed image must not hold the round back.
+const SHOP_IMAGE_WAIT_MS = 4_000;
+// A longer order cannot be brewed in a 60 second round.
+const MAX_ORDER_WORDS = 8;
 
 export interface PotionRushGameResult {
   xp: number;
@@ -51,42 +62,18 @@ export default function PotionRushGame({
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const [hasStarted, setHasStarted] = useState(false);
+  const roundSentences = useMemo(() => pickShortSentences(vocabList, MAX_ORDER_WORDS), [vocabList]);
   const { containerRef: fsContainerRef, enterFullscreen, exitFullscreen } = useGameFullscreen();
   useAccessibilitySettings(); // Verify hook is integrated
 
-  const [images, setImages] = useState<Record<string, HTMLImageElement>>({});
-  const assetsLoaded = Object.keys(images).length === 3;
+  const { images, settled: shopImagesSettled } = useGameImages(SHOP_IMAGES);
+  const [waitedForImages, setWaitedForImages] = useState(false);
+  const assetsLoaded = shopImagesSettled || waitedForImages;
 
 
   useEffect(() => {
-    const assets = {
-      wall: withBasePath("/games/sentence/potion-rush/shop-wall.png"),
-      floor: withBasePath("/games/sentence/potion-rush/shop-floor.png"),
-      counter: withBasePath("/games/sentence/potion-rush/shop-counter.png"),
-    };
-
-    const loadedImgs: Record<string, HTMLImageElement> = {};
-    let count = 0;
-    const sources = Object.entries(assets);
-
-    sources.forEach(([key, src]) => {
-      const img = new window.Image();
-      img.src = src;
-      img.onload = () => {
-        loadedImgs[key] = img;
-        count++;
-        if (count === sources.length) {
-          setImages(loadedImgs);
-        }
-      };
-      img.onerror = () => {
-        console.error(`Failed to load: ${src}`);
-        count++;
-        if (count === sources.length) {
-          setImages(loadedImgs);
-        }
-      };
-    });
+    const timer = setTimeout(() => setWaitedForImages(true), SHOP_IMAGE_WAIT_MS);
+    return () => clearTimeout(timer);
   }, []);
 
   const startGame = usePotionRushStore((state) => state.startGame);
@@ -114,7 +101,7 @@ export default function PotionRushGame({
   useEffect(() => {
     if (gameState === "GAME_OVER") {
       if (restartOnComplete && (autoStart || tutorialMode)) {
-        startGame(vocabList, difficulty);
+        startGame(roundSentences, difficulty);
         return;
       }
       exitFullscreen();
@@ -123,12 +110,12 @@ export default function PotionRushGame({
         accuracy: Math.max(0, Math.min(reputation, 100)) / 100,
         difficulty: difficulty,
         score: score,
-        correctAnswers: completedSentences,
-        totalAttempts: Math.min(10, vocabList.length || 10),
+        correctAnswers: score,
+        totalAttempts: MAX_GAME_POINTS,
         durationMs: Math.round(gameTime * 1000),
       });
     }
-  }, [gameState, autoStart, restartOnComplete, tutorialMode, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList, gameTime, onComplete, exitFullscreen, startGame]);
+  }, [gameState, autoStart, restartOnComplete, tutorialMode, totalXpEarned, reputation, difficulty, score, roundSentences, gameTime, onComplete, exitFullscreen, startGame]);
 
   // Mobile-first portrait reference: 390x844
   const VIRTUAL_WIDTH = 390;
@@ -203,12 +190,12 @@ export default function PotionRushGame({
   }, [reset]);
 
   useEffect(() => {
-    if ((autoStart || tutorialMode) && assetsLoaded && !hasStarted && vocabList.length > 0) {
+    if ((autoStart || tutorialMode) && assetsLoaded && !hasStarted && roundSentences.length > 0) {
       setHasStarted(true);
       enterFullscreen();
-      startGame(vocabList, difficulty);
+      startGame(roundSentences, difficulty);
     }
-  }, [autoStart, tutorialMode, assetsLoaded, hasStarted, vocabList, difficulty, enterFullscreen, startGame]);
+  }, [autoStart, tutorialMode, assetsLoaded, hasStarted, roundSentences, difficulty, enterFullscreen, startGame]);
 
   if (dimensions.width === 0)
     return <div ref={containerRef} className="h-full min-h-0 w-full bg-slate-950" />;
@@ -249,7 +236,7 @@ export default function PotionRushGame({
             onStart={() => {
               setHasStarted(true);
               enterFullscreen();
-              startGame(vocabList, difficulty);
+              startGame(roundSentences, difficulty);
             }}
           />
         )}
@@ -408,7 +395,7 @@ export default function PotionRushGame({
           restartButtonText={t("messages.openAgain")}
           onRestart={() => {
             enterFullscreen();
-            startGame(vocabList, difficulty);
+            startGame(roundSentences, difficulty);
           }}
           onExit={() => router.push("/")}
         />

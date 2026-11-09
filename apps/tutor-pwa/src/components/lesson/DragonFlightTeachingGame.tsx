@@ -123,8 +123,8 @@ export function DragonFlightTeachingGame({ vocabulary, mode, fullscreen = false 
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none" : "min-h-[500px] rounded-[32px] shadow-2xl"}`}
       data-testid={`dragon-flight-${mode}`}
     >
-      <div className="absolute inset-0 bg-[url('/games/vocabulary/dragon-flight/parallax-bottom-tiling.png')] bg-cover bg-center" />
-      <div className="absolute inset-0 bg-[url('/games/vocabulary/dragon-flight/parallax-middle-tiling.png')] bg-cover bg-center opacity-80 animate-[pulse_8s_ease-in-out_infinite]" />
+      <div className="absolute inset-0 bg-[url('/games/vocabulary/dragon-flight/parallax-bottom-tiling.webp')] bg-cover bg-center" />
+      <div className="absolute inset-0 bg-[url('/games/vocabulary/dragon-flight/parallax-middle-tiling.webp')] bg-cover bg-center opacity-80 animate-[pulse_8s_ease-in-out_infinite]" />
       <div className="absolute inset-0 bg-gradient-to-b from-indigo-950/10 via-sky-900/5 to-slate-950/70" />
 
       <div className={`relative z-10 flex flex-col p-5 sm:p-7 ${fullscreen ? "h-full min-h-0 pb-28 sm:pb-28" : "min-h-[500px]"}`}>
@@ -145,14 +145,14 @@ export function DragonFlightTeachingGame({ vocabulary, mode, fullscreen = false 
         <div className={`relative grid min-h-0 flex-1 grid-cols-2 items-center gap-10 px-8 ${fullscreen ? "mt-3" : "mt-8"}`}>
           {(["left", "right"] as GateSide[]).map((side) => (
             <button key={side} type="button" disabled={mode === "tutorial" || !!feedback} onClick={() => chooseGate(side)} className={`group relative mx-auto flex h-64 w-48 flex-col items-center justify-end rounded-[80px] border border-white/15 pb-4 transition-all duration-500 disabled:cursor-default ${gateClass(side)}`}>
-              <div className="absolute inset-x-2 top-0 h-52 bg-[url('/games/vocabulary/dragon-flight/gates-3x3-sheet-facing-up.png')] bg-[length:300%_300%] bg-[position:0%_0%] bg-no-repeat drop-shadow-[0_15px_20px_rgba(0,0,0,0.5)]" />
+              <div className="absolute inset-x-2 top-0 h-52 bg-[url('/games/vocabulary/dragon-flight/gates-3x3-sheet-facing-up.webp')] bg-[length:300%_300%] bg-[position:0%_0%] bg-no-repeat drop-shadow-[0_15px_20px_rgba(0,0,0,0.5)]" />
               <span className="relative z-10 min-w-[140px] rounded-2xl border border-white/15 bg-black/75 px-4 py-3 text-center text-xl font-black shadow-xl backdrop-blur">{labels[side]}</span>
               {mode === "tutorial" && tutorialStep === 2 && side === correctSide && <span className="absolute -top-4 rounded-full bg-amber-300 px-4 py-2 text-xs font-black text-slate-950 shadow-xl">เลือกประตูนี้</span>}
             </button>
           ))}
 
           <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
-            <div className={`h-32 w-32 bg-[url('/games/vocabulary/dragon-flight/player-3x3-sheet-facing-down.png')] bg-[length:300%_300%] bg-[position:50%_50%] bg-no-repeat drop-shadow-[0_18px_16px_rgba(0,0,0,0.65)] transition-transform duration-700 ${chosenSide === "left" ? "-translate-x-52 -translate-y-24" : chosenSide === "right" ? "translate-x-52 -translate-y-24" : ""}`} />
+            <div className={`h-32 w-32 bg-[url('/games/vocabulary/dragon-flight/player-3x3-sheet-facing-down.webp')] bg-[length:300%_300%] bg-[position:50%_50%] bg-no-repeat drop-shadow-[0_18px_16px_rgba(0,0,0,0.65)] transition-transform duration-700 ${chosenSide === "left" ? "-translate-x-52 -translate-y-24" : chosenSide === "right" ? "translate-x-52 -translate-y-24" : ""}`} />
           </div>
         </div>
 

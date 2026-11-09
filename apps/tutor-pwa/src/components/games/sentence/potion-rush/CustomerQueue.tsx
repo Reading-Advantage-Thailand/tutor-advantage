@@ -1,7 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Group, Rect, Text, Image as KonvaImage, Line } from 'react-konva'
 import { usePotionRushStore, Customer, CustomerType } from '@/store/usePotionRushStore'
-import { withBasePath } from '@/lib/games/basePath'
+import { useGameImages } from '@/lib/games/useGameImages'
+
+const CUSTOMER_IMAGES = {
+  sheet1: '/games/sentence/potion-rush/character-sheet-adjusted.webp',
+  sheet2: '/games/sentence/potion-rush/character-sheet-2-adjusted.webp',
+}
 
 interface CustomerQueueProps {
   y: number
@@ -22,29 +27,8 @@ export default function CustomerQueue({ y, width }: CustomerQueueProps) {
   const customers = usePotionRushStore(state => state.customers)
   const slotWidth = width / 3
 
-  const [images, setImages] = useState<Record<string, HTMLImageElement>>({})
+  const { images } = useGameImages(CUSTOMER_IMAGES)
   const [focusedIndex, setFocusedIndex] = useState<number>(0)
-
-  useEffect(() => {
-    const assets = {
-      sheet1: withBasePath('/games/sentence/potion-rush/character-sheet-adjusted.png'),
-      sheet2: withBasePath('/games/sentence/potion-rush/character-sheet-2-adjusted.png'),
-    }
-    
-    const loadedImgs: Record<string, HTMLImageElement> = {}
-    let count = 0
-    const sources = Object.entries(assets)
-
-    sources.forEach(([key, src]) => {
-      const img = new window.Image()
-      img.src = src
-      img.onload = () => {
-        loadedImgs[key] = img
-        count++
-        if (count === sources.length) setImages(loadedImgs)
-      }
-    })
-  }, [])
 
   // Create render order: put the focused slot index last so it gets rendered on top in Konva
   const renderOrder = [0, 1, 2]

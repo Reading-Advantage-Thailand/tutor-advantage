@@ -167,7 +167,7 @@ export function WizardZombieTeachingGame({ vocabulary, mode, fullscreen = false 
 
   return (
     <div className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none" : "min-h-[500px] rounded-[32px] shadow-2xl"}`} data-testid={`wizard-zombie-${mode}`}>
-      <div className="absolute inset-0 bg-[url('/games/vocabulary/wizard-vs-zombie/tile-ruins.png')] bg-[length:160px_160px] opacity-70" />
+      <div className="absolute inset-0 bg-[url('/games/vocabulary/wizard-vs-zombie/tile-ruins.webp')] bg-[length:160px_160px] opacity-70" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(67,56,202,0.42),transparent_42%),linear-gradient(to_bottom,rgba(15,23,42,0.18),rgba(2,6,23,0.86))]" />
 
       <div className={`relative z-10 flex flex-col p-5 sm:p-7 ${fullscreen ? "h-full min-h-0 pb-28 sm:pb-28" : "min-h-[500px]"}`}>
@@ -189,18 +189,18 @@ export function WizardZombieTeachingGame({ vocabulary, mode, fullscreen = false 
               style={{ left: `${(orb.x / GAME_WIDTH) * 100}%`, top: `${(orb.y / GAME_HEIGHT) * 100}%` }}
               className={`group pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 transition-all duration-100 ${orb.isCorrect && highlighted("orb") ? "scale-110 rounded-full ring-8 ring-amber-300/90 animate-pulse" : ""}`}
             >
-              <span className="block size-20 rounded-full bg-[url('/games/vocabulary/wizard-vs-zombie/orb_3x3_pose_sheet.png')] bg-[length:300%_300%] bg-[position:50%_0%] bg-no-repeat drop-shadow-[0_0_24px_rgba(34,211,238,0.9)]" />
+              <span className="block size-20 rounded-full bg-[url('/games/vocabulary/wizard-vs-zombie/orb_3x3_pose_sheet.webp')] bg-[length:300%_300%] bg-[position:50%_0%] bg-no-repeat drop-shadow-[0_0_24px_rgba(34,211,238,0.9)]" />
               <span className="absolute left-1/2 top-[72px] w-max max-w-[150px] -translate-x-1/2 rounded-xl border border-white/15 bg-black/75 px-3 py-1.5 text-sm font-black shadow-xl backdrop-blur">{orb.translation}</span>
               {orb.isCorrect && highlighted("orb") && <span className="absolute -top-10 left-1/2 w-max -translate-x-1/2 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-black text-slate-950">เก็บลูกแก้วนี้</span>}
             </div>
           ))}
 
           {gameState.zombies.map((zombie) => (
-            <div key={zombie.id} className="pointer-events-none absolute z-10 size-20 bg-[url('/games/vocabulary/wizard-vs-zombie/zombie_3x3_pose_sheet.png')] bg-[length:300%_300%] bg-[position:50%_0%] bg-no-repeat drop-shadow-[0_0_16px_rgba(34,197,94,0.75)]" style={{ left: `${(zombie.x / GAME_WIDTH) * 100}%`, top: `${(zombie.y / GAME_HEIGHT) * 100}%`, transform: "translate(-50%, -50%)" }} />
+            <div key={zombie.id} className="pointer-events-none absolute z-10 size-20 bg-[url('/games/vocabulary/wizard-vs-zombie/zombie_3x3_pose_sheet.webp')] bg-[length:300%_300%] bg-[position:50%_0%] bg-no-repeat drop-shadow-[0_0_16px_rgba(34,197,94,0.75)]" style={{ left: `${(zombie.x / GAME_WIDTH) * 100}%`, top: `${(zombie.y / GAME_HEIGHT) * 100}%`, transform: "translate(-50%, -50%)" }} />
           ))}
           <div className="pointer-events-none absolute z-20 transition-all duration-100" style={{ left: `${(gameState.player.x / GAME_WIDTH) * 100}%`, top: `${(gameState.player.y / GAME_HEIGHT) * 100}%`, transform: "translate(-50%, -50%)" }}>
             {tutorialShockwave && <div className="absolute left-1/2 top-1/2 size-48 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full border-8 border-cyan-300/90" />}
-            <div className="size-28 bg-[url('/games/vocabulary/wizard-vs-zombie/player_3x3_pose_sheet.png')] bg-[length:300%_300%] bg-[position:50%_0%] bg-no-repeat drop-shadow-[0_14px_15px_rgba(0,0,0,0.8)]" />
+            <div className="size-28 bg-[url('/games/vocabulary/wizard-vs-zombie/player_3x3_pose_sheet.webp')] bg-[length:300%_300%] bg-[position:50%_0%] bg-no-repeat drop-shadow-[0_14px_15px_rgba(0,0,0,0.8)]" />
           </div>
         </div>
 

@@ -80,10 +80,10 @@ interface EnchantedLibraryGameProps {
 const LIVE_GAME_DURATION_MS = 60_000;
 const MAX_ROUND_WORDS = 10;
 const LIBRARY_ASSET_PATHS = {
-  player: "/games/vocabulary/enchanted-library/player_3x3_pose_sheet.png",
-  spirit: "/games/vocabulary/enchanted-library/spirit_3x3_pose_sheet.png",
-  book: "/games/vocabulary/enchanted-library/book_3x1_sheet.png",
-  floor: "/games/vocabulary/enchanted-library/library_background.png",
+  player: "/games/vocabulary/enchanted-library/player_3x3_pose_sheet.webp",
+  spirit: "/games/vocabulary/enchanted-library/spirit_3x3_pose_sheet.webp",
+  book: "/games/vocabulary/enchanted-library/book_3x1_sheet.webp",
+  floor: "/games/vocabulary/enchanted-library/library_background.webp",
 };
 
 const buildRoundVocabulary = (items: VocabularyItem[]) =>
@@ -813,8 +813,6 @@ export function EnchantedLibraryGame({
                 x={burst.x}
                 y={burst.y}
                 spriteUrl={assets.book.src}
-                frameWidth={grids.book.fw}
-                frameHeight={grids.book.fh}
                 frameIndex={burst.frameIndex}
                 variant={burst.variant}
                 onComplete={() =>

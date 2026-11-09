@@ -15,6 +15,8 @@ import { RankingDialog } from "./RankingDialog";
 import { useScopedI18n } from "@/locales/client";
 
 import { withBasePath } from "@/lib/games/basePath";
+import { loadGameImage } from "@/lib/games/gameAssetPreloader";
+import { GameAssetLoadFailure, GameAssetLoading } from "@/components/games/GameAssetLoadFailure";
 import {
   advanceDragonFlightTime,
   calculateBossPower,
@@ -39,12 +41,10 @@ type DragonFlightAssets = {
   gates: HTMLImageElement;
   boss: HTMLImageElement;
   player: HTMLImageElement;
-  playerCamera: HTMLImageElement;
   army: HTMLImageElement;
   parallaxTop: HTMLImageElement;
   parallaxMiddle: HTMLImageElement;
   parallaxBottom: HTMLImageElement;
-  loadingBackground: HTMLImageElement | null;
   projectileFireball: HTMLImageElement;
   projectileBoss: HTMLImageElement;
 };
@@ -119,39 +119,16 @@ type FlightLayout = {
 };
 
 const ASSETS = {
-  gates: withBasePath(
-    "/games/vocabulary/dragon-flight/gates-3x3-sheet-facing-up.png",
-  ),
-  boss: withBasePath(
-    "/games/vocabulary/dragon-flight/boss-3x3-sheet-facing-up.png",
-  ),
-  player: withBasePath(
-    "/games/vocabulary/dragon-flight/player-3x3-sheet-facing-down.png",
-  ),
-  playerCamera: withBasePath(
-    "/games/vocabulary/dragon-flight/player-3x3-sheet-facing-camera.png",
-  ),
-  army: withBasePath(
-    "/games/vocabulary/dragon-flight/dragon-army-3x3-sheet-facing-up.png",
-  ),
-  parallaxTop: withBasePath(
-    "/games/vocabulary/dragon-flight/parallax-top-tiling.png",
-  ),
-  parallaxMiddle: withBasePath(
-    "/games/vocabulary/dragon-flight/parallax-middle-tiling.png",
-  ),
-  parallaxBottom: withBasePath(
-    "/games/vocabulary/dragon-flight/parallax-bottom-tiling.png",
-  ),
-  loadingBackground: withBasePath(
-    "/games/vocabulary/dragon-flight/loading-screen-background.png",
-  ),
-  projectileFireball: withBasePath(
-    "/games/vocabulary/dragon-flight/projectile-fireball.png",
-  ),
-  projectileBoss: withBasePath(
-    "/games/vocabulary/dragon-flight/projectile-boss.png",
-  ),
+  gates: "/games/vocabulary/dragon-flight/gates-3x3-sheet-facing-up.webp",
+  boss: "/games/vocabulary/dragon-flight/boss-3x3-sheet-facing-up.webp",
+  player: "/games/vocabulary/dragon-flight/player-3x3-sheet-facing-down.webp",
+  army: "/games/vocabulary/dragon-flight/dragon-army-3x3-sheet-facing-up.webp",
+  parallaxTop: "/games/vocabulary/dragon-flight/parallax-top-tiling.webp",
+  parallaxMiddle: "/games/vocabulary/dragon-flight/parallax-middle-tiling.webp",
+  parallaxBottom: "/games/vocabulary/dragon-flight/parallax-bottom-tiling.webp",
+  loadingBackground: "/games/vocabulary/dragon-flight/loading-screen-background.webp",
+  projectileFireball: "/games/vocabulary/dragon-flight/projectile-fireball.png",
+  projectileBoss: "/games/vocabulary/dragon-flight/projectile-boss.png",
 };
 
 const DEFAULT_STAGE: StageSize = { width: 960, height: 540 };
@@ -251,51 +228,54 @@ const getSpriteCrop = (grid: SpriteGrid, col: number, row: number) => ({
   height: grid.rows[row] ?? 0,
 });
 
-const loadImage = (src: string) =>
-  new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`Failed to load ${src}`));
-    image.src = src;
-  });
+const blankImage = () => {
+  const blank = document.createElement("canvas");
+  blank.width = 1;
+  blank.height = 1;
+  return blank as unknown as HTMLImageElement;
+};
+
+// Scenery and boss art must not stop a round: a missing or stalled one draws as nothing.
+const OPTIONAL_ART_WAIT_MS = 8_000;
+const loadOptionalImage = (src: string) =>
+  Promise.race([
+    loadGameImage(src).catch(blankImage),
+    new Promise<HTMLImageElement>((resolve) => {
+      setTimeout(() => resolve(blankImage()), OPTIONAL_ART_WAIT_MS);
+    }),
+  ]);
 
 const buildAssets = async (): Promise<DragonFlightAssets> => {
   const [
     gates,
-    boss,
     player,
-    playerCamera,
     army,
+    boss,
     parallaxTop,
     parallaxMiddle,
     parallaxBottom,
-    loadingBackground,
     projectileFireball,
     projectileBoss,
   ] = await Promise.all([
-    loadImage(ASSETS.gates),
-    loadImage(ASSETS.boss),
-    loadImage(ASSETS.player),
-    loadImage(ASSETS.playerCamera),
-    loadImage(ASSETS.army),
-    loadImage(ASSETS.parallaxTop),
-    loadImage(ASSETS.parallaxMiddle),
-    loadImage(ASSETS.parallaxBottom),
-    loadImage(ASSETS.loadingBackground),
-    loadImage(ASSETS.projectileFireball),
-    loadImage(ASSETS.projectileBoss),
+    loadGameImage(ASSETS.gates),
+    loadGameImage(ASSETS.player),
+    loadGameImage(ASSETS.army),
+    loadOptionalImage(ASSETS.boss),
+    loadOptionalImage(ASSETS.parallaxTop),
+    loadOptionalImage(ASSETS.parallaxMiddle),
+    loadOptionalImage(ASSETS.parallaxBottom),
+    loadOptionalImage(ASSETS.projectileFireball),
+    loadOptionalImage(ASSETS.projectileBoss),
   ]);
 
   return {
     gates,
     boss,
     player,
-    playerCamera,
     army,
     parallaxTop,
     parallaxMiddle,
     parallaxBottom,
-    loadingBackground,
     projectileFireball,
     projectileBoss,
   };
@@ -473,6 +453,7 @@ export function DragonFlightGame({
     preloadedAssets ?? null,
   );
   const [isLoading, setIsLoading] = useState(!preloadedAssets);
+  const [assetLoadAttempt, setAssetLoadAttempt] = useState(0);
   const [state, setState] = useState<DragonFlightState>(() => {
     return createDragonFlightState(gameVocabulary, {
       durationMs: gameDurationMs,
@@ -573,7 +554,7 @@ export function DragonFlightGame({
     return () => {
       isMounted = false;
     };
-  }, [preloadedAssets]);
+  }, [preloadedAssets, assetLoadAttempt]);
 
   const resetGame = useCallback(() => {
     const nextState = createDragonFlightState(gameVocabulary, {
@@ -990,8 +971,17 @@ export function DragonFlightGame({
     ); // Pass elapsed time
     setResults(nextResults);
     setShowResults(false);
-    onCompleteRef.current?.(nextResults);
+    // Every gate of the round counts, so skipping one costs the same as missing it.
+    const totalWords = Math.max(gameVocabulary.length, 1);
+    const correctWords = Math.min(state.correctAnswers, totalWords);
+    onCompleteRef.current?.({
+      ...nextResults,
+      accuracy: correctWords / totalWords,
+      correctAnswers: correctWords,
+      totalAttempts: totalWords,
+    });
   }, [
+    gameVocabulary.length,
     isBossPhase,
     state.correctAnswers,
     state.attempts,
@@ -1101,9 +1091,22 @@ export function DragonFlightGame({
       : "ready";
 
   if (!assets && !isLoading) {
+    const giveUpLoading = () => {
+      const totalWords = Math.max(gameVocabulary.length, 1);
+      onCompleteRef.current?.({
+        ...getDragonFlightResults({ correctAnswers: 0, totalAttempts: totalWords, dragonCount: 0, difficulty }, 0),
+        accuracy: 0,
+      });
+    };
     return (
-      <div className="rounded-3xl border border-red-500/40 bg-red-950/30 p-6 text-sm text-red-200">
-        {appT("interactivePlay.dragonFlightAssetError")}
+      <div className="relative h-dvh min-h-0 w-full bg-slate-950">
+        <GameAssetLoadFailure
+          onRetry={() => {
+            setIsLoading(true);
+            setAssetLoadAttempt((attempt) => attempt + 1);
+          }}
+          onGiveUp={autoStart && !tutorialMode ? giveUpLoading : undefined}
+        />
       </div>
     );
   }
@@ -1134,10 +1137,11 @@ export function DragonFlightGame({
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: `url(${ASSETS.loadingBackground})`,
+          backgroundImage: `url(${withBasePath(ASSETS.loadingBackground)})`,
         }}
       />
       <div className="absolute inset-0 bg-slate-950/55" />
+      {hasStarted && !assets && <GameAssetLoading />}
 
       {canRenderGame && (
         <DragonFlightCanvas

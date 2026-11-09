@@ -9,8 +9,6 @@ interface BookPickupBurstProps {
   x: number;
   y: number;
   spriteUrl: string;
-  frameWidth: number;
-  frameHeight: number;
   frameIndex: number;
   variant: BookPickupVariant;
   onComplete: () => void;
@@ -20,13 +18,12 @@ export function BookPickupBurst({
   x,
   y,
   spriteUrl,
-  frameWidth,
-  frameHeight,
   frameIndex,
   variant,
   onComplete,
 }: BookPickupBurstProps) {
-  const backgroundPosition = `${-frameIndex * frameWidth}px 0px`;
+  // The sheet holds 3 frames in a row; percentages keep it right at any image size.
+  const backgroundPosition = `${frameIndex * 50}% 0%`;
   const glow = variant === "glow";
 
   return (
@@ -66,7 +63,7 @@ export function BookPickupBurst({
             backgroundImage: `url(${spriteUrl})`,
             backgroundRepeat: "no-repeat",
             backgroundPosition,
-            backgroundSize: `${frameWidth * 3}px ${frameHeight}px`,
+            backgroundSize: "300% 100%",
           }}
           data-frame-index={frameIndex}
           data-testid="burst-sprite"

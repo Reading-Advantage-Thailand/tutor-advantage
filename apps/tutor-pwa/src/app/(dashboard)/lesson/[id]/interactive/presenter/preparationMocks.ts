@@ -89,12 +89,13 @@ export function createPreparationGameResult(
   student: Participant,
   index: number,
 ): NonNullable<GamePhaseState["results"][string]> {
+  const correct = category === "vocabulary" ? [9, 8, 7, 6][index] : [8, 7, 6, 5][index];
   return {
     studentId: student.studentId,
     name: student.name,
     gameId,
-    score: category === "vocabulary" ? [92, 84, 76, 68][index] : [88, 81, 73, 65][index],
-    correct: [9, 8, 7, 6][index],
+    score: correct,
+    correct,
     total: 10,
     durationMs: 42000 + index * 3500,
     submittedAt: Date.now(),

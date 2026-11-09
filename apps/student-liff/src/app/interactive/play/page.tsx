@@ -115,7 +115,7 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
   const [devPairPreview, setDevPairPreview] = useState<0 | 1 | 2>(0);
   const currentPhase = devPairPreview ? LESSON_PHASE.PAIR_CONVERSATION : (sessionData?.currentPhase ?? 0);
   const submittedGameKeyRef = useRef<string | null>(null);
-  const [pendingGameResult, setPendingGameResult] = useState<{ key: string; score: number } | null>(null);
+  const [pendingGameResult, setPendingGameResult] = useState<{ key: string; score: number; correct?: number; total?: number } | null>(null);
   const gameState = sessionData?.gameState ?? null;
   const gamePhaseKey = gameState
     ? `${gameState.phase}:${gameState.selectedGameId || ""}`
@@ -647,7 +647,7 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
     if (submittedGameKeyRef.current === key) return;
 
     submittedGameKeyRef.current = key;
-    setPendingGameResult({ key, score: result.score });
+    setPendingGameResult({ key, score: result.score, correct: result.correct, total: result.total });
     submitGameResult(result);
   };
 
@@ -710,12 +710,19 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
 
     if (myResult || pendingResult) {
       const displayedScore = myResult?.score ?? pendingResult?.score ?? 0;
+      const displayedCorrect = myResult?.correct ?? pendingResult?.correct;
+      const displayedTotal = myResult?.total ?? pendingResult?.total;
       return (
         <PhaseColumn>
           <section role="status" className="rounded-[var(--radius-card)] border border-success-border bg-success-bg px-5 py-6 text-center">
             <p className="text-[13px] leading-[1.5] font-bold text-success-fg">{t("interactivePlay.gameComplete")}</p>
             <p className="mt-1 text-[56px] leading-[1.15] font-black text-success-fg tabular-nums">{displayedScore}</p>
             <p className="text-[13px] leading-[1.5] text-fg-muted">{t("interactivePlay.score")}</p>
+            {typeof displayedCorrect === "number" && typeof displayedTotal === "number" && (
+              <p className="mt-1 text-[15px] leading-[1.5] font-semibold text-fg tabular-nums">
+                {t("interactivePlay.gameCorrectCount")} {displayedCorrect}/{displayedTotal}
+              </p>
+            )}
             <p className="mt-3 text-[15px] leading-[1.5] font-semibold text-fg">{t("interactivePlay.gameWaitTeacher")}</p>
           </section>
           <MobileLeaderboard participants={participants} studentId={studentId} />

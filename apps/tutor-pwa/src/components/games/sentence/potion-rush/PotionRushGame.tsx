@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Stage, Layer, Image as KonvaImage, Group, Rect, Text } from "react-konva";
 import { usePotionRushStore, SentenceItem } from "@/store/usePotionRushStore";
-import { withBasePath } from "@/lib/games/basePath";
+import { useGameImages } from "@/lib/games/useGameImages";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { Beaker, Hand, MousePointer2, RotateCcw, Trash2, Trophy } from "lucide-react";
 import { GameStartScreen } from "@/components/games/game/GameStartScreen";
@@ -16,6 +16,14 @@ import TrashPortal from "./TrashPortal";
 import PotionRushEffectsLayer from "./PotionRushEffectsLayer";
 import PotionRushSoundController from "./PotionRushSoundController";
 import { tx } from "@/lib/games/gameText";
+
+const SHOP_IMAGES = {
+  wall: "/games/sentence/potion-rush/shop-wall.webp",
+  floor: "/games/sentence/potion-rush/shop-floor.webp",
+  counter: "/games/sentence/potion-rush/shop-counter.webp",
+};
+// The shop art is scenery: a slow or failed image must not hold the round back.
+const SHOP_IMAGE_WAIT_MS = 4_000;
 
 export interface PotionRushGameResult {
   xp: number;
@@ -51,8 +59,9 @@ export default function PotionRushGame({
   const { containerRef: fsContainerRef, enterFullscreen, exitFullscreen } = useGameFullscreen();
   useAccessibilitySettings(); // Verify hook is integrated
 
-  const [images, setImages] = useState<Record<string, HTMLImageElement>>({});
-  const assetsLoaded = Object.keys(images).length === 3;
+  const { images, settled: shopImagesSettled } = useGameImages(SHOP_IMAGES);
+  const [waitedForImages, setWaitedForImages] = useState(false);
+  const assetsLoaded = shopImagesSettled || waitedForImages;
   const showControls = autoStart || tutorialMode;
   // Below lg the strip sits under the board. The tutorial overlay already walks
   // through each step and its spotlight targets the full-height board, so the
@@ -61,34 +70,8 @@ export default function PotionRushGame({
 
 
   useEffect(() => {
-    const assets = {
-      wall: withBasePath("/games/sentence/potion-rush/shop-wall.png"),
-      floor: withBasePath("/games/sentence/potion-rush/shop-floor.png"),
-      counter: withBasePath("/games/sentence/potion-rush/shop-counter.png"),
-    };
-
-    const loadedImgs: Record<string, HTMLImageElement> = {};
-    let count = 0;
-    const sources = Object.entries(assets);
-
-    sources.forEach(([key, src]) => {
-      const img = new window.Image();
-      img.src = src;
-      img.onload = () => {
-        loadedImgs[key] = img;
-        count++;
-        if (count === sources.length) {
-          setImages(loadedImgs);
-        }
-      };
-      img.onerror = () => {
-        console.error(`Failed to load: ${src}`);
-        count++;
-        if (count === sources.length) {
-          setImages(loadedImgs);
-        }
-      };
-    });
+    const timer = setTimeout(() => setWaitedForImages(true), SHOP_IMAGE_WAIT_MS);
+    return () => clearTimeout(timer);
   }, []);
 
   const startGame = usePotionRushStore((state) => state.startGame);

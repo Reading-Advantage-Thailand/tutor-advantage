@@ -17,7 +17,6 @@ import {
   Image as KonvaImage,
   Circle,
 } from "react-konva";
-import { AlertCircle, RefreshCcw } from "lucide-react";
 import {
   createRuneMatchState,
   initializeGrid,
@@ -36,8 +35,8 @@ import {
   type MonsterType,
 } from "@/lib/games/runeMatchConfig";
 import type { VocabularyItem } from "@/store/useGameStore";
-import { withBasePath } from "@/lib/games/basePath";
-import { Button } from "@/components/ui/button";
+import { GameAssetLoadFailure } from "@/components/games/GameAssetLoadFailure";
+import { loadGameImage } from "@/lib/games/gameAssetPreloader";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { calculateXP } from "@/lib/games/xp";
@@ -102,18 +101,11 @@ const getRuneMatchScore = (state: RuneMatchState) => {
   return Math.min(10, state.correctAnswers);
 };
 
+// Rounds always fight the goblin, and power-up runes are off (spawnRate 0), so
+// only these three images are ever drawn.
 type RuneMatchAssets = {
-  monsters: {
-    goblin: HTMLImageElement;
-    skeleton: HTMLImageElement;
-    orc: HTMLImageElement;
-    dragon: HTMLImageElement;
-  };
-  runes: {
-    base: HTMLImageElement;
-    heal: HTMLImageElement;
-    shield: HTMLImageElement;
-  };
+  monster: HTMLImageElement;
+  rune: HTMLImageElement;
   background: HTMLImageElement;
 };
 
@@ -136,7 +128,8 @@ export function RuneMatchGame({
     return moves.length > 0 ? moves[0] : null;
   }, [tutorialMode, gameState?.grid]);
 
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const boardReadyRef = useRef(false);
   const [retryCount, setRetryCount] = useState(0);
   const hasReportedRef = useRef(false);
   const instructionsId = useId();
@@ -253,11 +246,17 @@ export function RuneMatchGame({
   }, [gameState?.status, enterFullscreen, exitFullscreen, disableAutoFullscreen, tutorialMode]);
 
   useEffect(() => {
+    boardReadyRef.current = Boolean(assets) && dimensions.width > 0;
+  }, [assets, dimensions.width]);
+
+  useEffect(() => {
     let lastTime = performance.now();
     const intervalId = window.setInterval(() => {
       const now = performance.now();
       const dt = Math.min(now - lastTime, 250);
       lastTime = now;
+      // The round's time only runs once the student can see the board.
+      if (!boardReadyRef.current) return;
       setGameState((current) => {
         if (!current || current.status !== "playing") return current;
         return advanceTime(current, dt);
@@ -268,39 +267,18 @@ export function RuneMatchGame({
 
   useEffect(() => {
     let mounted = true;
-    setLoadError(null);
+    setLoadFailed(false);
     const load = async () => {
-      const loadImage = (src: string): Promise<HTMLImageElement> =>
-        new Promise((res, rej) => {
-          const img = new Image();
-          img.src = withBasePath(src);
-          img.onload = () => res(img);
-          img.onerror = () => rej(new Error(`Failed to load image: ${src}`));
-        });
       try {
-        const [goblin, skeleton, orc, dragon, base, heal, shield, background] =
-          await Promise.all([
-            loadImage("/games/vocabulary/rune-match/monsters/goblin_3x4_pose_sheet.png"),
-            loadImage("/games/vocabulary/rune-match/monsters/skeleton_3x4_pose_sheet.png"),
-            loadImage("/games/vocabulary/rune-match/monsters/orc_3x4_pose_sheet.png"),
-            loadImage("/games/vocabulary/rune-match/monsters/dragon_3x4_pose_sheet.png"),
-            loadImage("/games/vocabulary/rune-match/runes/rune_base_3x2_pose_sheet.png"),
-            loadImage("/games/vocabulary/rune-match/runes/rune_heal_3x2_pose_sheet.png"),
-            loadImage("/games/vocabulary/rune-match/runes/rune_shield_3x2_pose_sheet.png"),
-            loadImage("/games/vocabulary/rune-match/ui/background-tiled.png"),
-          ]);
-        if (mounted)
-          setAssets({
-            monsters: { goblin, skeleton, orc, dragon },
-            runes: { base, heal, shield },
-            background,
-          });
+        const [monster, rune, background] = await Promise.all([
+          loadGameImage("/games/vocabulary/rune-match/monsters/goblin_3x4_pose_sheet.webp"),
+          loadGameImage("/games/vocabulary/rune-match/runes/rune_base_3x2_pose_sheet.webp"),
+          loadGameImage("/games/vocabulary/rune-match/ui/background-tiled.webp"),
+        ]);
+        if (mounted) setAssets({ monster, rune, background });
       } catch (e) {
         console.error("Failed to load assets", e);
-        if (mounted)
-          setLoadError(
-            "Failed to load game assets. Please check your connection.",
-          );
+        if (mounted) setLoadFailed(true);
       }
     };
     load();
@@ -308,6 +286,20 @@ export function RuneMatchGame({
       mounted = false;
     };
   }, [retryCount]);
+
+  const giveUpLoading = useCallback(() => {
+    if (hasReportedRef.current) return;
+    hasReportedRef.current = true;
+    onComplete({
+      xp: 0,
+      accuracy: 0,
+      score: 0,
+      correctAnswers: 0,
+      totalAttempts: RUNE_MATCH_CONFIG.game.targetMatches,
+      monsterType: "goblin",
+      difficulty: MONSTER_DIFFICULTY.goblin,
+    });
+  }, [onComplete]);
 
   const createPlayingGame = useCallback((monsterType: MonsterType = "goblin") => {
     const config = RUNE_MATCH_CONFIG.monsters[monsterType];
@@ -539,7 +531,8 @@ export function RuneMatchGame({
               : 0,
         score,
         correctAnswers: gameState.correctAnswers,
-        totalAttempts: gameState.totalAttempts,
+        // Read as pairs out of the round's target; wrong tries live in accuracy.
+        totalAttempts: RUNE_MATCH_CONFIG.game.targetMatches,
         monsterType: gameState.monster?.type,
         difficulty:
           MONSTER_DIFFICULTY[
@@ -660,20 +653,11 @@ export function RuneMatchGame({
         className="relative flex h-full min-h-[420px] w-full items-center justify-center overflow-hidden rounded-none border border-white/10 bg-slate-950 sm:rounded-2xl"
       >
         <div className="flex flex-col items-center gap-4 text-center p-4">
-          {loadError ? (
-            <>
-              <AlertCircle className="h-12 w-12 text-red-500 mb-2" />
-              <p className="text-sm text-red-400 font-medium">{loadError}</p>
-              <Button
-                onClick={() => setRetryCount((c) => c + 1)}
-                variant="outline"
-                size="sm"
-                className="mt-2 text-white border-white/20 hover:bg-white/10"
-              >
-                <RefreshCcw className="mr-2 h-4 w-4" />
-                {tx("Retry Loading")}
-              </Button>
-            </>
+          {loadFailed ? (
+            <GameAssetLoadFailure
+              onRetry={() => setRetryCount((c) => c + 1)}
+              onGiveUp={!tutorialMode && !restartOnComplete ? giveUpLoading : undefined}
+            />
           ) : (
             <>
               <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-white"></div>
@@ -832,7 +816,7 @@ export function RuneMatchGame({
                     {gameState.monster && (
                       <Group>
                         <KonvaImage
-                          image={assets.monsters[gameState.monster.type]}
+                          image={assets.monster}
                           x={(layout.sidebarWidth - 80) / 2}
                           y={20}
                           width={80}
@@ -840,7 +824,7 @@ export function RuneMatchGame({
                           crop={{
                             x:
                               monsterAnimFrame *
-                              (assets.monsters[gameState.monster.type].width /
+                              (assets.monster.width /
                                 3),
                             y:
                               (gameState.monsterState === "idle"
@@ -850,12 +834,12 @@ export function RuneMatchGame({
                                   : gameState.monsterState === "hurt"
                                     ? 2
                                     : 3) *
-                              (assets.monsters[gameState.monster.type].height /
+                              (assets.monster.height /
                                 4),
                             width:
-                              assets.monsters[gameState.monster.type].width / 3,
+                              assets.monster.width / 3,
                             height:
-                              assets.monsters[gameState.monster.type].height /
+                              assets.monster.height /
                               4,
                           }}
                         />
@@ -1085,7 +1069,7 @@ export function RuneMatchGame({
                     {gameState.monster && (
                       <Group>
                         <KonvaImage
-                          image={assets.monsters[gameState.monster.type]}
+                          image={assets.monster}
                           x={14}
                           y={12}
                           width={58}
@@ -1093,7 +1077,7 @@ export function RuneMatchGame({
                           crop={{
                             x:
                               monsterAnimFrame *
-                              (assets.monsters[gameState.monster.type].width /
+                              (assets.monster.width /
                                 3),
                             y:
                               (gameState.monsterState === "idle"
@@ -1103,12 +1087,12 @@ export function RuneMatchGame({
                                   : gameState.monsterState === "hurt"
                                     ? 2
                                     : 3) *
-                              (assets.monsters[gameState.monster.type].height /
+                              (assets.monster.height /
                                 4),
                             width:
-                              assets.monsters[gameState.monster.type].width / 3,
+                              assets.monster.width / 3,
                             height:
-                              assets.monsters[gameState.monster.type].height /
+                              assets.monster.height /
                               4,
                           }}
                         />
@@ -1183,12 +1167,7 @@ export function RuneMatchGame({
                       gameState.selectedCell?.row === r &&
                       gameState.selectedCell?.col === c;
                     const runeSize = layout.cellSize - 4;
-                    const spriteSheet =
-                      rune.type === "vocabulary"
-                        ? assets.runes.base
-                        : rune.type === "heal"
-                          ? assets.runes.heal
-                          : assets.runes.shield;
+                    const spriteSheet = assets.rune;
                     const fw = spriteSheet.width / 3;
                     const fh = spriteSheet.height / 2;
                     const crop = {

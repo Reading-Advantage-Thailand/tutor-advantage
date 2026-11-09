@@ -357,6 +357,23 @@ describe("lessonSessionService", () => {
     expect(session.gameState?.results).toEqual({});
   });
 
+  it("caps oversized game counts instead of dropping the result", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
+    service.lockGameVote(session.sessionId);
+    service.markGamePlaying(session.sessionId);
+    const gameId = session.gameState?.selectedGameId ?? undefined;
+
+    expect(service.submitGameResult(session.sessionId, "student-1", { gameId, score: 4, correct: 4, total: -1 })).toBeNull();
+    expect(service.submitGameResult(session.sessionId, "student-1", { gameId, score: 4, correct: 1.5, total: 10 })).toBeNull();
+    expect(service.submitGameResult(session.sessionId, "student-1", { gameId, score: 4, correct: 9, total: 5 })).toBeNull();
+
+    const submitted = service.submitGameResult(session.sessionId, "student-1", { gameId, score: 4, correct: 4, total: 240 });
+    expect(submitted?.accepted).toBe(true);
+    expect(submitted?.gameState.results["student-1"]).toMatchObject({ score: 4, correct: 4, total: 100 });
+  });
+
   it("finishes a game when the tutor kicks the last student still playing", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");

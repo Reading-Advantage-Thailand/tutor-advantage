@@ -1,3 +1,5 @@
+import { wordProgressPoints } from "@/lib/games/sentenceRound";
+
 // Game world dimensions (MUST match Wizard vs Zombie)
 export const GAME_WIDTH = 800;
 export const GAME_HEIGHT = 600;
@@ -169,6 +171,12 @@ export type CastleDefenseState = {
   incorrectWordCollections: number;
   completedSentences: number;
   maxSentences: number;
+  /** Words that earn full marks; null keeps the old whole-sentence score. */
+  wordBudget: number | null;
+  /** Words earned in sentences the round has moved past. */
+  bankedWords: number;
+  /** Furthest word reached in the current sentence; a wrong touch does not lower it. */
+  sentenceHighMark: number;
   durationMs: number;
   usedSentenceTerms: string[];
   grassMap: number[][];
@@ -411,7 +419,7 @@ export function getRoadTileInfo(
 // Create initial game state
 export function createCastleDefenseState(
   vocabulary: SentenceItem[],
-  options: { difficulty: "easy" | "medium" | "hard"; maxSentences?: number; durationMs?: number } = {
+  options: { difficulty: "easy" | "medium" | "hard"; maxSentences?: number; durationMs?: number; wordBudget?: number } = {
     difficulty: "medium",
   },
 ): CastleDefenseState {
@@ -487,6 +495,9 @@ export function createCastleDefenseState(
     incorrectWordCollections: 0,
     completedSentences: 0,
     maxSentences,
+    wordBudget: options.wordBudget ?? null,
+    bankedWords: 0,
+    sentenceHighMark: 0,
     durationMs: options.durationMs ?? 60_000,
     usedSentenceTerms: firstSentence.term ? [firstSentence.term] : [],
     grassMap: Array.from({ length: 12 }, () =>
@@ -895,6 +906,10 @@ export function buildTowerAtSlot(
     sentenceWords: nextSentenceWords,
     collectedWordIndices: [],
     sentenceCompleted: false,
+    bankedWords:
+      state.bankedWords +
+      Math.max(state.sentenceHighMark, state.collectedWordIndices.length),
+    sentenceHighMark: 0,
     words: nextWords,
     towers: [...state.towers, newTower],
     usedSentenceTerms: nextSentence.term
@@ -1181,6 +1196,9 @@ export function advanceCastleDefenseTime(
   let correctWordCollections = state.correctWordCollections;
   let incorrectWordCollections = state.incorrectWordCollections;
   let completedSentences = state.completedSentences;
+  let bankedWords = state.bankedWords;
+  let sentenceHighMark = state.sentenceHighMark;
+  let usedSentenceTerms = state.usedSentenceTerms;
 
   if (collection.collectedWord) {
     if (collection.invalidCollection) {
@@ -1202,6 +1220,7 @@ export function advanceCastleDefenseTime(
     collectedWordIndices = resetState.collectedWordIndices;
     sentenceCompleted = resetState.sentenceCompleted;
   }
+  sentenceHighMark = Math.max(sentenceHighMark, collectedWordIndices.length);
 
   // 4. Check tower activation (sentence-complete flow)
   let towers = state.towers;
@@ -1230,6 +1249,7 @@ export function advanceCastleDefenseTime(
           words,
           collectedWordIndices,
           sentenceCompleted,
+          sentenceHighMark,
         },
         buildSlot.id,
         vocabulary,
@@ -1244,6 +1264,9 @@ export function advanceCastleDefenseTime(
       currentSentenceThai = buildState.currentSentenceThai;
       sentenceWords = buildState.sentenceWords;
       completedSentences = buildState.completedSentences;
+      bankedWords = buildState.bankedWords;
+      sentenceHighMark = buildState.sentenceHighMark;
+      usedSentenceTerms = buildState.usedSentenceTerms;
     }
   }
 
@@ -1280,44 +1303,58 @@ export function advanceCastleDefenseTime(
   let waveMessage = state.waveMessage;
   const wavesCompleted = state.wavesCompleted;
 
-  // Score = number of completed sentences (1 pt each, max 10)
-  let score = Math.min(10, completedSentences);
-
+  let roundWon = false;
   if (isSentenceComplete(collectedWordIndices, sentenceWords.length)) {
     if (!sentenceCompleted) {
       sentenceCompleted = true;
       completedSentences += 1;
-      score = Math.min(10, completedSentences);
-      if (completedSentences >= state.maxSentences) {
-        return {
-          ...state,
-          status: "victory",
-          player,
-          enemies,
-          towers,
-          projectiles,
-          words,
-          currentSentenceThai,
-          currentSentenceEnglish,
-          sentenceWords,
-          collectedWordIndices,
-          sentenceCompleted,
-          base,
-          score,
-          spawnTimer: state.spawnTimer,
-          enemiesSpawnedThisWave,
-          enemiesKilledThisWave,
-          gameTime,
-          waveCompleteTimer,
-          waveMessage,
-          wavesCompleted,
-          totalEnemiesDefeated,
-          correctWordCollections,
-          incorrectWordCollections,
-          completedSentences,
-        };
-      }
+      // With a word budget, only words or the clock end the round.
+      roundWon = state.wordBudget === null && completedSentences >= state.maxSentences;
     }
+  }
+
+  // Lesson rounds score words, so a long sentence still earns what was finished.
+  // Without a word budget, the score is completed sentences (1 pt each, max 10).
+  const wordProgress = bankedWords + sentenceHighMark;
+  const score =
+    state.wordBudget === null
+      ? Math.min(10, completedSentences)
+      : wordProgressPoints(wordProgress, state.wordBudget);
+  if (state.wordBudget !== null && wordProgress >= state.wordBudget) {
+    roundWon = true;
+  }
+
+  if (roundWon) {
+    return {
+      ...state,
+      status: "victory",
+      player,
+      enemies,
+      towers,
+      projectiles,
+      words,
+      currentSentenceThai,
+      currentSentenceEnglish,
+      sentenceWords,
+      collectedWordIndices,
+      sentenceCompleted,
+      base,
+      score,
+      spawnTimer: state.spawnTimer,
+      enemiesSpawnedThisWave,
+      enemiesKilledThisWave,
+      gameTime,
+      waveCompleteTimer,
+      waveMessage,
+      wavesCompleted,
+      totalEnemiesDefeated,
+      correctWordCollections,
+      incorrectWordCollections,
+      completedSentences,
+      bankedWords,
+      sentenceHighMark,
+      usedSentenceTerms,
+    };
   }
 
   // 10. Wave complete / spawn / transition
@@ -1364,8 +1401,8 @@ export function advanceCastleDefenseTime(
       const mapConfig = loadMapForWave(nextWave);
       const nextSentence = pickRandomSentence(
         vocabulary,
-        state.currentSentenceEnglish,
-        state.usedSentenceTerms,
+        currentSentenceEnglish,
+        usedSentenceTerms,
       );
       const nextSentenceWords = parseSentenceWords(nextSentence.term);
       const nextTowerSlots = mapConfig.towerSlots.map((slot, i) => ({
@@ -1394,6 +1431,8 @@ export function advanceCastleDefenseTime(
         sentenceWords: nextSentenceWords,
         collectedWordIndices: [],
         sentenceCompleted: false,
+        bankedWords: wordProgress,
+        sentenceHighMark: 0,
         enemiesSpawnedThisWave: 0,
         enemiesKilledThisWave: 0,
         totalEnemiesThisWave:
@@ -1406,8 +1445,8 @@ export function advanceCastleDefenseTime(
         correctWordCollections,
         incorrectWordCollections,
         usedSentenceTerms: nextSentence.term
-          ? [...state.usedSentenceTerms, nextSentence.term]
-          : state.usedSentenceTerms,
+          ? [...usedSentenceTerms, nextSentence.term]
+          : usedSentenceTerms,
       };
     }
     return {
@@ -1432,6 +1471,9 @@ export function advanceCastleDefenseTime(
       correctWordCollections,
       incorrectWordCollections,
       completedSentences,
+      bankedWords,
+      sentenceHighMark,
+      usedSentenceTerms,
     };
   }
 
@@ -1469,8 +1511,15 @@ export function advanceCastleDefenseTime(
     correctWordCollections,
     incorrectWordCollections,
     completedSentences,
+    bankedWords,
+    sentenceHighMark,
+    usedSentenceTerms,
   };
 }
+
+/** Words earned this round: earlier sentences plus the furthest point in the current one. */
+export const getCastleWordProgress = (state: CastleDefenseState) =>
+  state.bankedWords + state.sentenceHighMark;
 
 // ---------------------------------------------------------------------------
 // Camera / viewport fitting

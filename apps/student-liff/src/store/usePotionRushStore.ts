@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 
+import { roundWordBudget, wordProgressPoints } from '@/lib/games/sentenceRound'
+
 // --- Types ---
 
 export interface SentenceItem {
@@ -32,6 +34,8 @@ export interface Customer {
   state: 'WAITING' | 'LEAVING_ANGRY' | 'LEAVING_HAPPY'
   cauldronId?: number // If served, which cauldron served them (for animation)
   leaveTimer?: number
+  /** How many words of this order already earned credit. */
+  creditedWords?: number
 }
 
 export interface Ingredient {
@@ -80,6 +84,10 @@ interface PotionRushState {
   
   // Logic State
   activeWordPool: string[]
+  /** Words brewed in order this round, each order position counted once. */
+  placedWords: number
+  /** Words that earn full marks this round. */
+  wordBudget: number
   completedSentences: number
   totalXpEarned: number
   timeToNextCustomerSpawn: number
@@ -131,6 +139,22 @@ const EFFECT_DURATIONS: Record<PotionRushEffectType, number> = {
   SUCCESS: 0.9,
 }
 const BASE_PATIENCE = 60
+// Full marks. Measured on a phone: a flawless bot pausing 1 second per move brews 19 words in 60 seconds.
+const ROUND_WORD_BUDGET = 20
+// Belt speed grows with each served order, up to this much.
+const MAX_BELT_SPEED_FACTOR = 1.3
+// How often the next spawned word is one a waiting customer needs right now.
+const NEEDED_WORD_CHANCE = 0.6
+
+/** The word this order needs next, or null while its pot must be emptied or served. */
+function nextWordForOrder(customer: Customer, cauldron: Cauldron | undefined): string | null {
+  const words = customer.request.term.split(' ')
+  if (!cauldron || cauldron.state === 'IDLE') return words[0] ?? null
+  if (cauldron.state === 'BREWING' && cauldron.targetSentence?.term === customer.request.term) {
+    return words[cauldron.currentWords.length] ?? null
+  }
+  return null
+}
 
 export const usePotionRushStore = create<PotionRushState>((set, get) => ({
   gameState: 'MENU',
@@ -154,6 +178,8 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
   difficulty: 'normal',
   
   activeWordPool: [],
+  placedWords: 0,
+  wordBudget: 0,
   completedSentences: 0,
   totalXpEarned: 0,
   timeToNextCustomerSpawn: 0,
@@ -179,6 +205,8 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
       conveyorItems: [],
       effects: [],
       activeWordPool: [],
+      placedWords: 0,
+      wordBudget: roundWordBudget(vocabList, ROUND_WORD_BUDGET, term => term.split(' ').length),
       completedSentences: 0,
       totalXpEarned: 0,
       beltSpeed: diffSettings.baseBeltSpeed,
@@ -211,6 +239,8 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
       score: 0,
       reputation: 100,
       activeWordPool: [],
+      placedWords: 0,
+      wordBudget: 0,
       completedSentences: 0,
       vocabList: [],
       totalXpEarned: 0,
@@ -352,7 +382,7 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
       // --- 2. MOVEMENT & TIMERS ---
 
       // Calculate speed
-      const targetSpeed = baseBeltSpeed * Math.pow(1.1, completedSentences)
+      const targetSpeed = baseBeltSpeed * Math.min(MAX_BELT_SPEED_FACTOR, Math.pow(1.1, completedSentences))
 
       // Move Conveyor Items & Recycle Words
       const recycledWords: string[] = []
@@ -412,9 +442,20 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
       
       let nextIngredientTimer = timeToNextIngredientSpawn - dt
       if (nextIngredientTimer <= 0) {
-          if (nextActiveWordPool.length > 0) {
-              const poolIndex = Math.floor(Math.random() * nextActiveWordPool.length)
-              const randomWord = nextActiveWordPool[poolIndex]
+          // Favour the word someone is waiting for, or a round turns into waiting for
+          // one word. It may also have left the pool (trashed or served elsewhere).
+          const neededWords = nextCustomers.flatMap((customer, index) => {
+              if (!customer || customer.state !== 'WAITING') return []
+              const word = nextWordForOrder(customer, nextCauldrons[index])
+              return word && !nextItems.some(item => item.word.toLowerCase() === word.toLowerCase()) ? [word] : []
+          })
+          const neededWord = neededWords.length > 0 && Math.random() < NEEDED_WORD_CHANCE
+              ? neededWords[Math.floor(Math.random() * neededWords.length)]
+              : null
+          if (neededWord || nextActiveWordPool.length > 0) {
+              const neededPoolIndex = neededWord ? nextActiveWordPool.indexOf(neededWord) : -1
+              const poolIndex = neededWord ? neededPoolIndex : Math.floor(Math.random() * nextActiveWordPool.length)
+              const randomWord = neededWord ?? nextActiveWordPool[poolIndex]
               
               const types: Ingredient['type'][] = ['potion', 'mushroom', 'mineral', 'herb']
               const randomType = types[Math.floor(Math.random() * types.length)]
@@ -430,7 +471,7 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
               }
               
               nextItems.push(newItem)
-              nextActiveWordPool.splice(poolIndex, 1)
+              if (poolIndex >= 0) nextActiveWordPool.splice(poolIndex, 1)
           }
           nextIngredientTimer = spawnRate / 1000
       }
@@ -537,6 +578,23 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
 
     const nextCauldrons = [...cauldrons]
     nextCauldrons[cauldronIndex] = nextCauldron
+
+    // Score words, so a long order earns what was brewed. Each position counts once,
+    // so ruining a pot and refilling it earns nothing.
+    const placedInOrder =
+      nextCauldron.state !== 'WARNING' && nextCauldron.currentWords.length > cauldron.currentWords.length
+    if (placedInOrder && targetCustomer && nextCauldron.currentWords.length > (targetCustomer.creditedWords ?? 0)) {
+      const { placedWords, wordBudget } = get()
+      const nextPlacedWords = placedWords + 1
+      const nextCustomers = [...customers]
+      nextCustomers[cauldronIndex] = { ...targetCustomer, creditedWords: nextCauldron.currentWords.length }
+      set({
+        customers: nextCustomers,
+        placedWords: nextPlacedWords,
+        score: wordProgressPoints(nextPlacedWords, wordBudget),
+        ...(nextPlacedWords >= wordBudget ? { gameState: 'GAME_OVER' as const } : {}),
+      })
+    }
     set({ cauldrons: nextCauldrons })
   },
 
@@ -562,7 +620,7 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
   },
 
   handleServeCustomer: (customerId, cauldronIndex, servePosition) => {
-     const { customers, cauldrons, activeWordPool, completedSentences, vocabList } = get()
+     const { customers, cauldrons, activeWordPool, completedSentences, timeToNextCustomerSpawn } = get()
      const cauldron = cauldrons[cauldronIndex]
      
      if (cauldron.state !== 'COMPLETED') return
@@ -595,21 +653,18 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
          shake: false
      }
 
-       // SCORING LOGIC
-       // Score = completed sentences, max 10. Game ends in victory when 10 sentences are completed.
+       // The score comes from brewed words, so only the word budget or the timer ends the round.
        const newCompletedSentences = completedSentences + 1
-       const newScore = Math.min(10, newCompletedSentences)
-       const maxSentencesTarget = Math.min(10, vocabList.length || 10)
-       const isWin = newCompletedSentences >= maxSentencesTarget
+       const anotherCustomerWaiting = nextCustomers.some(c => c?.state === 'WAITING')
 
        // Update state
        set({ 
            customers: nextCustomers, 
            cauldrons: nextCauldrons, 
-           score: newScore,
            activeWordPool: nextActiveWordPool,
            completedSentences: newCompletedSentences,
-           gameState: isWin ? 'GAME_OVER' : 'PLAYING'
+           // Nobody left to serve: bring the next customer in now instead of idling.
+           timeToNextCustomerSpawn: anotherCustomerWaiting ? timeToNextCustomerSpawn : Math.min(timeToNextCustomerSpawn, 1),
        })
        
        // Calculate XP based on updated state

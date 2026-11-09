@@ -13,7 +13,7 @@ type MonsterSelectionProps = {
 }
 
 const MONSTER_METADATA: Record<MonsterType, { label: string; color: string; description: string; image: string }> = {
-  goblin: { label: tx("Goblin"), color: 'bg-green-900/50 text-green-400 border-green-500/30', description: tx("Weak but fast."), image: '/games/vocabulary/rune-match/monsters/goblin_3x4_pose_sheet.png' },
+  goblin: { label: tx("Goblin"), color: 'bg-green-900/50 text-green-400 border-green-500/30', description: tx("Weak but fast."), image: '/games/vocabulary/rune-match/monsters/goblin_3x4_pose_sheet.webp' },
   skeleton: { label: tx("Skeleton"), color: 'bg-slate-800/50 text-slate-300 border-slate-500/30', description: tx("Restless undead."), image: '/games/vocabulary/rune-match/monsters/skeleton_3x4_pose_sheet.png' },
   orc: { label: tx("Orc"), color: 'bg-red-900/50 text-red-400 border-red-500/30', description: tx("A fierce warrior."), image: '/games/vocabulary/rune-match/monsters/orc_3x4_pose_sheet.png' },
   dragon: { label: tx("Dragon"), color: 'bg-amber-900/50 text-amber-400 border-amber-500/30', description: tx("The ultimate challenge."), image: '/games/vocabulary/rune-match/monsters/dragon_3x4_pose_sheet.png' },

@@ -20,6 +20,7 @@ import {
   createEnchantedLibraryState,
   advanceEnchantedLibraryTime,
   calculateEnchantedLibraryXP,
+  countFirstTryWords,
   GAME_WIDTH,
   GAME_HEIGHT,
   type EnchantedLibraryState,
@@ -31,6 +32,7 @@ import { useDirectionalInput } from "@/hooks/useDirectionalInput";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { VirtualDPad } from "@/components/ui/VirtualDPad";
 import { getCachedGameImage, loadGameImage } from "@/lib/games/gameAssetPreloader";
+import { GameAssetLoadFailure } from "@/components/games/GameAssetLoadFailure";
 import { motion } from "framer-motion";
 import { Book, BookOpen, Shield, Sparkles } from "lucide-react";
 
@@ -81,10 +83,10 @@ interface EnchantedLibraryGameProps {
 const LIVE_GAME_DURATION_MS = 60_000;
 const MAX_ROUND_WORDS = 10;
 const LIBRARY_ASSET_PATHS = {
-  player: "/games/vocabulary/enchanted-library/player_3x3_pose_sheet.png",
-  spirit: "/games/vocabulary/enchanted-library/spirit_3x3_pose_sheet.png",
-  book: "/games/vocabulary/enchanted-library/book_3x1_sheet.png",
-  floor: "/games/vocabulary/enchanted-library/library_background.png",
+  player: "/games/vocabulary/enchanted-library/player_3x3_pose_sheet.webp",
+  spirit: "/games/vocabulary/enchanted-library/spirit_3x3_pose_sheet.webp",
+  book: "/games/vocabulary/enchanted-library/book_3x1_sheet.webp",
+  floor: "/games/vocabulary/enchanted-library/library_background.webp",
 };
 
 const buildRoundVocabulary = (items: VocabularyItem[]) =>
@@ -178,6 +180,8 @@ export function EnchantedLibraryGame({
     book: HTMLImageElement;
     floor: HTMLImageElement;
   } | null>(() => getCachedLibraryAssets());
+  const [assetLoadFailed, setAssetLoadFailed] = useState(false);
+  const [assetLoadAttempt, setAssetLoadAttempt] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -298,13 +302,27 @@ export function EnchantedLibraryGame({
         if (mounted) setAssets({ player, spirit, book, floor });
       } catch (e) {
         console.error("Failed to load assets", e);
+        if (mounted) setAssetLoadFailed(true);
       }
     };
     load();
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [assetLoadAttempt]);
+
+  const giveUpLoading = useCallback(() => {
+    if (hasReportedRef.current) return;
+    hasReportedRef.current = true;
+    onComplete({
+      xp: 0,
+      accuracy: 0,
+      gameTime: 0,
+      correctAnswers: 0,
+      totalAttempts: Math.max(gameVocabulary.length, 1),
+      durationMs: 0,
+    });
+  }, [gameVocabulary.length, onComplete]);
 
   const resetGame = useCallback(() => {
     if (gameVocabulary.length > 0) {
@@ -471,7 +489,7 @@ export function EnchantedLibraryGame({
     if (gameState.status === "victory") {
       const totalWords = Math.max(gameVocabulary.length, 1);
       const correctWords = autoStart || tutorialMode
-        ? Array.from(gameState.vocabularyProgress.values()).filter((count) => count >= 1).length
+        ? countFirstTryWords(gameState)
         : correctAnswers;
       const resultTotal = autoStart || tutorialMode ? totalWords : Math.max(totalAttempts, 1);
       const accuracy = resultTotal > 0 ? correctWords / resultTotal : 0;
@@ -505,7 +523,7 @@ export function EnchantedLibraryGame({
     if (gameState.status === "gameover") {
       const totalWords = Math.max(gameVocabulary.length, 1);
       const correctWords = autoStart || tutorialMode
-        ? Array.from(gameState.vocabularyProgress.values()).filter((count) => count >= 1).length
+        ? countFirstTryWords(gameState)
         : correctAnswers;
       const resultTotal = autoStart || tutorialMode ? totalWords : Math.max(totalAttempts, 1);
       const accuracy = resultTotal > 0 ? correctWords / resultTotal : 0;
@@ -658,9 +676,19 @@ export function EnchantedLibraryGame({
         ref={mergedContainerRef}
         className="relative h-[50vh] sm:h-[60vh] w-full overflow-hidden rounded-2xl bg-gradient-to-b from-amber-100 to-amber-200 flex items-center justify-center border border-amber-300 md:aspect-video md:h-auto"
       >
-        <div className="text-amber-800 animate-pulse font-mono tracking-widest uppercase text-base">
-          {t("loading")}
-        </div>
+        {assetLoadFailed ? (
+          <GameAssetLoadFailure
+            onRetry={() => {
+              setAssetLoadFailed(false);
+              setAssetLoadAttempt((attempt) => attempt + 1);
+            }}
+            onGiveUp={autoStart && !tutorialMode && !restartOnComplete ? giveUpLoading : undefined}
+          />
+        ) : (
+          <div className="text-amber-800 animate-pulse font-mono tracking-widest uppercase text-base">
+            {t("loading")}
+          </div>
+        )}
       </div>
     );
   }
@@ -815,8 +843,6 @@ export function EnchantedLibraryGame({
                 x={burst.x}
                 y={burst.y}
                 spriteUrl={assets.book.src}
-                frameWidth={grids.book.fw}
-                frameHeight={grids.book.fh}
                 frameIndex={burst.frameIndex}
                 variant={burst.variant}
                 onComplete={() =>
