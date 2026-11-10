@@ -11,7 +11,7 @@
 // Before resizing a sheet, check how its game scales it. Frame sizes come from
 // the loaded image, but Dragon Flight clamps its player, boss and army scale
 // against the frame width, so those three keep their source width.
-import { existsSync, statSync } from "node:fs";
+import { existsSync, readdirSync, statSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -76,6 +76,13 @@ const MANIFEST = {
   "sentence/potion-rush/mushroom.png": SPRITE,
   "sentence/potion-rush/potion.png": SPRITE,
 };
+
+// Covers of the game lists and vote boards. Drawn at most about 450 px wide, or
+// faint behind a screen.
+const COVER = { width: 800, quality: 72 };
+for (const name of readdirSync(path.join(ROOT, APPS[0], "public/games/cover"))) {
+  if (name.endsWith(".png")) MANIFEST[`cover/${name}`] = COVER;
+}
 
 let before = 0;
 let after = 0;

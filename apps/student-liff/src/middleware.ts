@@ -44,7 +44,7 @@ function withSecurityHeaders(response: NextResponse, request?: NextRequest) {
     "font-src 'self' data: https://fonts.gstatic.com",
     "connect-src 'self' https://api.line.me https://access.line.me https://liff.line.me https://liff-shortcut.line.me https://*.line-apps.com https://*.line.me https://liffsdk.line-scdn.net https://*.line-scdn.net https://vault.omise.co https://api.omise.co http://localhost:3001 http://localhost:3002 ws://localhost:3001 ws://localhost:3002 https://*.ngrok-free.app wss://*.ngrok-free.app https://*.ngrok-free.dev wss://*.ngrok-free.dev",
     "frame-src 'self' https://liff.line.me https://*.line.me https://cdn.omise.co",
-    "media-src 'self' blob:",
+    "media-src 'self' blob: https://storage.googleapis.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

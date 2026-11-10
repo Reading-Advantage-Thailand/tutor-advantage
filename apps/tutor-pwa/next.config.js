@@ -19,6 +19,15 @@ const withSerwist = require("@serwist/next").default({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  // Game art names are not hashed, so a day fresh and then a background refresh for a week.
+  async headers() {
+    return [
+      {
+        source: "/games/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
+    ];
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "10mb",

@@ -1,3 +1,9 @@
+/** Why the round ended and the words to read again. Shown to the student; never sent to the server. */
+export type RoundReview = {
+  heading: string;
+  missed: { term: string; meaning: string }[];
+};
+
 /** What a game hands to the lesson runtime. Games report counts; the rule below sets the points. */
 export type ArcadeResult = {
   score?: number;
@@ -8,6 +14,9 @@ export type ArcadeResult = {
   correctWords?: number;
   total?: number;
   durationMs?: number;
+  review?: RoundReview;
+  /** Keep the game on screen this long for its own finish. The result is already safe meanwhile. */
+  outroMs?: number;
 };
 
 export type LessonGameResult = {
@@ -15,6 +24,7 @@ export type LessonGameResult = {
   correct: number;
   total: number;
   durationMs: number;
+  review?: RoundReview;
 };
 
 const MAX_GAME_POINTS = 10;
@@ -36,5 +46,6 @@ export function toLessonGameResult(result: ArcadeResult, elapsedMs: number): Les
     correct,
     total: Math.round(total),
     durationMs: Math.max(0, Math.round(result.durationMs ?? elapsedMs)),
+    ...(result.review ? { review: result.review } : {}),
   };
 }

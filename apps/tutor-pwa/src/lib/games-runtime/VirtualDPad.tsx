@@ -1,6 +1,8 @@
 'use client'
 
-import React, { useCallback, useRef, useState, memo } from 'react'
+import React, { useCallback, useEffect, useRef, useState, memo } from 'react'
+
+import { stickVector } from '@/lib/games/moveVector'
 
 /**
  * Props for the canonical VirtualDPad component.
@@ -27,15 +29,40 @@ export const VirtualDPad = memo(function VirtualDPad({ onInput, activeVector }: 
   const [active, setActive] = useState(false)
   const [thumbPos, setThumbPos] = useState({ x: 0, y: 0 })
   const centerRef = useRef<{ x: number; y: number } | null>(null)
+  // The finger that started on the stick. Other fingers on the screen, even one
+  // that lands on the stick later, never steer it.
+  const touchIdRef = useRef<number | null>(null)
+  const lastTouchAtRef = useRef(0)
   const inputCallbackRef = useRef(onInput)
   inputCallbackRef.current = onInput
 
   const handleEnd = useCallback(() => {
     setActive(false)
     centerRef.current = null
+    touchIdRef.current = null
     setThumbPos({ x: 0, y: 0 })
     inputCallbackRef.current({ dx: 0, dy: 0 })
   }, [])
+
+  // A phone can suspend the page before it reports the touch ending. Window blur
+  // is left out on purpose: it can fire with the finger still down and would
+  // freeze the stick until the next press.
+  useEffect(() => {
+    const stopIfHidden = () => {
+      if (document.visibilityState === 'hidden' && centerRef.current) handleEnd()
+    }
+    const stop = () => {
+      if (centerRef.current) handleEnd()
+    }
+    document.addEventListener('visibilitychange', stopIfHidden)
+    window.addEventListener('pagehide', stop)
+    return () => {
+      document.removeEventListener('visibilitychange', stopIfHidden)
+      window.removeEventListener('pagehide', stop)
+      // Never leave the game walking after the stick is gone.
+      if (centerRef.current) inputCallbackRef.current({ dx: 0, dy: 0 })
+    }
+  }, [handleEnd])
 
   const updateInput = useCallback((clientX: number, clientY: number) => {
     if (!centerRef.current) return
@@ -45,9 +72,10 @@ export const VirtualDPad = memo(function VirtualDPad({ onInput, activeVector }: 
     const distance = Math.sqrt(dxRaw * dxRaw + dyRaw * dyRaw)
     const maxRadius = 40
 
-    if (distance < 5) {
+    const vector = stickVector(dxRaw, dyRaw)
+    if (vector.dx === 0 && vector.dy === 0) {
       setThumbPos({ x: 0, y: 0 })
-      inputCallbackRef.current({ dx: 0, dy: 0 })
+      inputCallbackRef.current(vector)
       return
     }
 
@@ -59,17 +87,7 @@ export const VirtualDPad = memo(function VirtualDPad({ onInput, activeVector }: 
       y: Math.sin(angle) * displayRadius,
     })
 
-    let dx = Math.cos(angle)
-    let dy = Math.sin(angle)
-
-    if (Math.abs(dx) < 0.2) dx = 0
-    if (Math.abs(dy) < 0.2) dy = 0
-    if (dx > 0.8) dx = 1
-    if (dx < -0.8) dx = -1
-    if (dy > 0.8) dy = 1
-    if (dy < -0.8) dy = -1
-
-    inputCallbackRef.current({ dx, dy })
+    inputCallbackRef.current(vector)
   }, [])
 
   const startInput = useCallback((clientX: number, clientY: number, target: HTMLElement) => {
@@ -83,22 +101,41 @@ export const VirtualDPad = memo(function VirtualDPad({ onInput, activeVector }: 
   }, [updateInput])
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    startInput(e.touches[0].clientX, e.touches[0].clientY, e.currentTarget as HTMLElement)
+    lastTouchAtRef.current = Date.now()
+    if (touchIdRef.current !== null) return
+    const touch = e.changedTouches[0]
+    touchIdRef.current = touch.identifier
+    startInput(touch.clientX, touch.clientY, e.currentTarget as HTMLElement)
   }, [startInput])
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    // A phone follows every tap with a fake mouse press: ignore those.
+    if (Date.now() - lastTouchAtRef.current < 800) return
     startInput(e.clientX, e.clientY, e.currentTarget as HTMLElement)
   }, [startInput])
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!active) return
-    updateInput(e.touches[0].clientX, e.touches[0].clientY)
-  }, [active, updateInput])
+    lastTouchAtRef.current = Date.now()
+    if (touchIdRef.current === null) return
+    const touch = Array.from(e.touches).find((t) => t.identifier === touchIdRef.current)
+    if (touch) updateInput(touch.clientX, touch.clientY)
+    else handleEnd()
+  }, [handleEnd, updateInput])
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    lastTouchAtRef.current = Date.now()
+    const ended = Array.from(e.changedTouches).some((t) => t.identifier === touchIdRef.current)
+    if (ended) handleEnd()
+  }, [handleEnd])
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!active) return
     updateInput(e.clientX, e.clientY)
   }, [active, updateInput])
+
+  const handleMouseEnd = useCallback(() => {
+    if (touchIdRef.current === null) handleEnd()
+  }, [handleEnd])
 
   const effectiveVector = activeVector && (activeVector.dx !== 0 || activeVector.dy !== 0);
   const displayThumbPos = active ? thumbPos : (effectiveVector ? { x: activeVector.dx * 28, y: activeVector.dy * 28 } : thumbPos);
@@ -111,11 +148,12 @@ export const VirtualDPad = memo(function VirtualDPad({ onInput, activeVector }: 
       }`}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
-      onTouchEnd={handleEnd}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
-      onMouseUp={handleEnd}
-      onMouseLeave={handleEnd}
+      onMouseUp={handleMouseEnd}
+      onMouseLeave={handleMouseEnd}
       onContextMenu={(e) => e.preventDefault()}
     >
       <div className="absolute inset-0 rounded-full border border-white/10 pointer-events-none" />

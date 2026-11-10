@@ -51,11 +51,20 @@ export function useDirectionalInput() {
   }, [])
 
   useEffect(() => {
+    // A key released while the page is away never reports keyup, and the walk would not stop.
+    const releaseKeys = () => setKeys((prev) => (prev.size ? new Set() : prev))
+    const releaseIfHidden = () => {
+      if (document.visibilityState === 'hidden') releaseKeys()
+    }
     window.addEventListener('keydown', handleKeyDown)
     window.addEventListener('keyup', handleKeyUp)
+    window.addEventListener('blur', releaseKeys)
+    document.addEventListener('visibilitychange', releaseIfHidden)
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
+      window.removeEventListener('blur', releaseKeys)
+      document.removeEventListener('visibilitychange', releaseIfHidden)
     }
   }, [handleKeyDown, handleKeyUp])
 

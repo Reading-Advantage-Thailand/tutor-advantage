@@ -20,6 +20,17 @@ export function GameAssetLoadFailure({ onRetry, onGiveUp }: GameAssetLoadFailure
     onGiveUpRef.current = onGiveUp;
   }, [onGiveUp]);
   const canGiveUp = Boolean(onGiveUp);
+  const onRetryRef = useRef(onRetry);
+  useEffect(() => {
+    onRetryRef.current = onRetry;
+  }, [onRetry]);
+
+  // The usual cause is a short network drop, so try again as soon as it is back.
+  useEffect(() => {
+    const retry = () => onRetryRef.current();
+    window.addEventListener("online", retry);
+    return () => window.removeEventListener("online", retry);
+  }, []);
 
   useEffect(() => {
     if (!canGiveUp) return;

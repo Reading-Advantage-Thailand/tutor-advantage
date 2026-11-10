@@ -10,6 +10,16 @@ const FINANCE_URL  = process.env.FINANCE_SERVICE_URL  || "http://localhost:3003"
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Game art names are not hashed, so a day fresh and then a background refresh
+  // for a week. Without this, every visit re-checks each file on a class's network.
+  async headers() {
+    return [
+      {
+        source: "/games/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

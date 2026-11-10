@@ -4,6 +4,10 @@ export interface VocabularyItem {
   term: string
   translation: string
   id?: string
+  /** Sentence games: real Thai for this sentence, only if the lesson stores it. See lib/games/useSentencePrompt. */
+  thaiTranslation?: string
+  /** The recording of this word or sentence. */
+  audioUrl?: string
 }
 
 export type Difficulty = 'easy' | 'normal' | 'hard' | 'extreme'

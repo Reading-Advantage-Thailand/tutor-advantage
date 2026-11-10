@@ -8,42 +8,47 @@ import {
   isGameLoaded,
   preloadGame,
   resolveGameId,
-} from "@/components/lesson/gameRegistry"
-import { toLessonGameResult, type ArcadeResult, type LessonGameResult } from "@/lib/games/lessonGameResult"
-import type { LiveLessonGameCategory } from "@/lib/liveLessonGames"
-import type { VocabularyItem } from "@/store/useGameStore"
+} from "./gameRegistry"
+import {
+  buildLessonSentences,
+  buildLessonVocabulary,
+  hasUsableSentences,
+  hasUsableVocabulary,
+  repeatThinSentences,
+  type LessonArticle,
+} from "@/lib/games/lessonContent"
+import { toLessonGameResult, type ArcadeResult, type LessonGameResult } from "../../lib/games/lessonGameResult"
+import { endRunningRoundsNow } from "@/lib/games/roundClock"
+import { getGameById, type LiveLessonGameCategory } from "@/lib/liveLessonGames"
 
-type LessonWord = {
-  id?: string
-  vocabulary?: string
-  word?: string
-  text?: string
-  translation?: string
-  definition?: { th?: string; en?: string }
-}
-
-type LessonSentence = string | {
-  id?: string
-  sentences?: string
-  sentence?: string
-  text?: string
-  translation?: string
-  meaning?: string
-}
-
-type ArticleData = {
-  words?: LessonWord[]
-  sentences?: LessonSentence[]
-}
+/** Time to read the result before the lesson screen takes over. The result is kept safe meanwhile. */
+const RESULT_HOLD_MS = 2_600
+const NO_CONTENT_HOLD_MS = 5_000
+const NO_CONTENT_RESULT: LessonGameResult = { score: 0, correct: 0, total: 0, durationMs: 0 }
+/** The longest a game may hold the screen for its own finish before the end screen. */
+const MAX_OUTRO_MS = 4_000
+/**
+ * After the class round closes, how long to wait for a game that was already in
+ * its own short end pause (its clock stopped, its result not sent yet) before
+ * saying this phone had nothing to hand in. Games pause for at most about 1.5 s.
+ */
+const ROUND_CLOSE_SETTLE_MS = 2_000
 
 type AdvantageArcadeRuntimeProps = {
   gameId: string
   category: LiveLessonGameCategory
-  articleData?: ArticleData | null
+  articleData?: LessonArticle | null
   autoStart?: boolean
   /** Allow a game child to start a fresh round after completion. */
   restartOnComplete?: boolean
   tutorialMode?: boolean
+  /**
+   * The class round is over for everyone (the tutor ended the game). A round
+   * still running ends now, and its result is handed over without the pause.
+   */
+  roundClosed?: boolean
+  /** The class round closed before this phone's round started, so there is nothing to hand in. */
+  onRoundUnplayed?: () => void
   onComplete: (result: LessonGameResult) => void
 }
 
@@ -74,73 +79,6 @@ const {
   WizardZombieGame,
 } = ArcadeGames
 
-const wordText = (word: LessonWord, index: number) =>
-  word.vocabulary || word.word || word.text || `Word ${index + 1}`
-
-const wordTranslation = (word: LessonWord, fallback: string) =>
-  word.definition?.th || word.translation || word.definition?.en || fallback
-
-const sentenceText = (sentence: LessonSentence, index: number) => {
-  if (typeof sentence === "string") return sentence
-  return sentence.sentences || sentence.sentence || sentence.text || `Sentence ${index + 1}`
-}
-
-const sentenceTranslation = (sentence: LessonSentence, fallback: string) => {
-  if (typeof sentence === "string") return fallback
-  return sentence.translation || sentence.meaning || fallback
-}
-
-function buildVocabulary(articleData?: ArticleData | null): VocabularyItem[] {
-  const words = articleData?.words ?? []
-  // A word listed twice could never be answered twice, so a perfect round could not reach full marks.
-  const seenTerms = new Set<string>()
-  const vocabulary = words
-    .map((word, index) => {
-      const term = wordText(word, index)
-      return {
-        id: word.id ?? `word-${index}`,
-        term,
-        translation: wordTranslation(word, term),
-      }
-    })
-    .filter((word) => {
-      if (!word.term || !word.translation) return false
-      const key = word.term.trim().toLowerCase()
-      if (seenTerms.has(key)) return false
-      seenTerms.add(key)
-      return true
-    })
-
-  return vocabulary.length
-    ? vocabulary
-    : [
-        { id: "fallback-1", term: "analyze", translation: "study carefully" },
-        { id: "fallback-2", term: "predict", translation: "say what may happen" },
-        { id: "fallback-3", term: "compare", translation: "find similarities" },
-      ]
-}
-
-function buildSentences(articleData?: ArticleData | null): VocabularyItem[] {
-  const sentences = articleData?.sentences ?? []
-  const sentenceItems = sentences
-    .map((sentence, index) => {
-      const term = sentenceText(sentence, index)
-      return {
-        id: typeof sentence === "string" ? `sentence-${index}` : sentence.id ?? `sentence-${index}`,
-        term,
-        translation: sentenceTranslation(sentence, term),
-      }
-    })
-    .filter((sentence) => sentence.term)
-
-  return sentenceItems.length
-    ? sentenceItems
-    : [
-        { id: "fallback-sentence-1", term: "Students read the article carefully", translation: "Students read the article carefully" },
-        { id: "fallback-sentence-2", term: "The teacher asks a follow up question", translation: "The teacher asks a follow up question" },
-      ]
-}
-
 export function AdvantageArcadeRuntime({
   gameId,
   category,
@@ -148,6 +86,8 @@ export function AdvantageArcadeRuntime({
   autoStart = true,
   restartOnComplete = true,
   tutorialMode = false,
+  roundClosed = false,
+  onRoundUnplayed,
   onComplete,
 }: AdvantageArcadeRuntimeProps) {
   const startedAt = useRef(Date.now())
@@ -156,9 +96,15 @@ export function AdvantageArcadeRuntime({
   const resolvedGameId = resolveGameId(gameId, category)
   // Live lessons auto-start once; finishing a round must not start another one.
   const childAutoStart = autoStart
-  const vocabulary = useMemo(() => buildVocabulary(articleData), [articleData])
-  const sentences = useMemo(() => buildSentences(articleData), [articleData])
-  const [hasCompleted, setHasCompleted] = useState(false)
+  const vocabulary = useMemo(() => buildLessonVocabulary(articleData), [articleData])
+  const sentences = useMemo(() => repeatThinSentences(buildLessonSentences(articleData)), [articleData])
+  const usesWords = (getGameById(resolvedGameId)?.category ?? category) === "vocabulary"
+  // No word from outside the lesson may be played or scored, so say so and hand back 0.
+  const hasContent = usesWords ? hasUsableVocabulary(vocabulary) : hasUsableSentences(sentences)
+  const [roundResult, setRoundResult] = useState<LessonGameResult | null>(null)
+  const [handedBack, setHandedBack] = useState(false)
+  const [outroPlaying, setOutroPlaying] = useState(false)
+  const outroMsRef = useRef(0)
   // The auto-start clicker must wait for the game's chunk; a preloaded game is ready on mount.
   const [readyGameId, setReadyGameId] = useState(() => (isGameLoaded(resolvedGameId) ? resolvedGameId : null))
   const gameReady = readyGameId === resolvedGameId
@@ -233,24 +179,113 @@ export function AdvantageArcadeRuntime({
   useEffect(() => {
     onCompleteRef.current = onComplete
   }, [onComplete])
+  const onRoundUnplayedRef = useRef(onRoundUnplayed)
+  useEffect(() => {
+    onRoundUnplayedRef.current = onRoundUnplayed
+  }, [onRoundUnplayed])
+
+  // A result is handed over once, whichever comes first: the pause, the student
+  // leaving, the class round closing, or this screen going away.
+  const handedOverRef = useRef(false)
+  const handOver = useCallback((result: LessonGameResult) => {
+    if (handedOverRef.current) return
+    handedOverRef.current = true
+    setHandedBack(true)
+    onCompleteRef.current(result)
+  }, [])
+
+  const roundClosedRef = useRef(roundClosed)
 
   const handleComplete = useCallback((result: ArcadeResult) => {
     if (completedRef.current) return
     completedRef.current = true
-    setHasCompleted(true)
+    outroMsRef.current = Math.min(Math.max(result.outroMs ?? 0, 0), MAX_OUTRO_MS)
+    setOutroPlaying(outroMsRef.current > 0)
+    const elapsedMs = Date.now() - startedAt.current
+    const lessonResult = toLessonGameResult(result, elapsedMs)
+    // A round cut short still reports its full length from some games.
+    lessonResult.durationMs = Math.min(lessonResult.durationMs, Math.max(0, Math.round(elapsedMs)))
+    setRoundResult(lessonResult)
+    // The class round is already over, so hand it in now. This also covers a
+    // game that reports while this screen is being taken down.
+    if (roundClosedRef.current) handOver(lessonResult)
+  }, [handOver])
 
-    onCompleteRef.current(toLessonGameResult(result, Date.now() - startedAt.current))
-  }, [])
+  useEffect(() => {
+    if (hasContent || completedRef.current) return
+    completedRef.current = true
+    setRoundResult(NO_CONTENT_RESULT)
+  }, [hasContent])
+
+  // Show the result for a moment before handing it over, because the lesson page
+  // replaces this screen as soon as it has the result. A student who leaves
+  // during the pause must not lose the score, so leaving hands it over at once.
+  useEffect(() => {
+    if (!roundResult) return
+    const send = () => handOver(roundResult)
+    const handOverIfHidden = () => {
+      if (document.visibilityState === "hidden") send()
+    }
+    const outroMs = outroMsRef.current
+    const outroTimer = window.setTimeout(() => setOutroPlaying(false), outroMs)
+    const timer = window.setTimeout(send, (hasContent ? RESULT_HOLD_MS : NO_CONTENT_HOLD_MS) + outroMs)
+    document.addEventListener("visibilitychange", handOverIfHidden)
+    window.addEventListener("pagehide", send)
+    // The round can run out with the page already in the background, where timers may never fire.
+    handOverIfHidden()
+    return () => {
+      window.clearTimeout(outroTimer)
+      window.clearTimeout(timer)
+      document.removeEventListener("visibilitychange", handOverIfHidden)
+      window.removeEventListener("pagehide", send)
+      send()
+    }
+  }, [roundResult, hasContent, handOver])
+
+  // The tutor ended the round for the class. Finish this phone's round now so the
+  // points earned so far count, and hand them in without the usual pause.
+  useEffect(() => {
+    roundClosedRef.current = roundClosed
+    if (!roundClosed) return
+    if (roundResult) {
+      handOver(roundResult)
+      return
+    }
+    // The game already reported; its result reaches state on the next render.
+    if (completedRef.current) return
+    if (endRunningRoundsNow() > 0) return
+    // No clock was running. Either the round never started here, or the game is
+    // in its own end pause and reports in a moment.
+    const timer = window.setTimeout(() => {
+      if (!completedRef.current) onRoundUnplayedRef.current?.()
+    }, ROUND_CLOSE_SETTLE_MS)
+    return () => window.clearTimeout(timer)
+  }, [roundClosed, roundResult, handOver])
 
   const commonClass = "h-dvh min-h-0 w-full overflow-hidden bg-background"
 
-  if (hasCompleted) {
+  if (!hasContent) {
     return (
-      <div className={`${commonClass} flex items-center justify-center bg-slate-950 text-center text-white`}>
+      <div role="status" data-testid="arcade-no-content" className={`${commonClass} flex items-center justify-center bg-slate-950 px-6 text-center text-white`}>
+        <div className="max-w-sm">
+          <div className="mx-auto flex size-16 items-center justify-center rounded-3xl bg-amber-400/15 text-3xl">📖</div>
+          <p className="mt-4 text-lg font-black">{usesWords ? "บทเรียนนี้ยังไม่มีคำศัพท์สำหรับเกมนี้" : "บทเรียนนี้ยังไม่มีประโยคสำหรับเกมนี้"}</p>
+          <p className="mt-1 text-sm font-semibold text-white/60">รอบนี้ได้ 0 คะแนน รอคุณครูไปขั้นต่อไปนะ</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (roundResult && !outroPlaying) {
+    return (
+      <div role="status" data-testid="arcade-round-end" className={`${commonClass} flex items-center justify-center bg-slate-950 px-6 text-center text-white`}>
         <div>
           <div className="mx-auto flex size-16 items-center justify-center rounded-3xl bg-emerald-400/15 text-3xl">✓</div>
-          <p className="mt-4 text-lg font-black">ส่งผลคะแนนแล้ว</p>
-          <p className="mt-1 text-sm font-semibold text-white/60">กำลังรอระบบอัปเดตคะแนนของทุกคน...</p>
+          <p className="mt-4 text-lg font-black">{roundResult.review?.heading ?? "จบเกมแล้ว!"}</p>
+          <p className="mt-3 text-6xl font-black tabular-nums text-emerald-300">{roundResult.score}</p>
+          <p className="text-sm font-bold text-white/70">คะแนน</p>
+          <p className="mt-3 text-lg font-black tabular-nums">ตอบถูก {roundResult.correct} จาก {roundResult.total}</p>
+          <p className="mt-4 text-sm font-semibold text-white/60">{handedBack ? "ส่งผลคะแนนแล้ว รอคะแนนของทุกคน..." : "กำลังส่งคะแนน..."}</p>
         </div>
       </div>
     )
