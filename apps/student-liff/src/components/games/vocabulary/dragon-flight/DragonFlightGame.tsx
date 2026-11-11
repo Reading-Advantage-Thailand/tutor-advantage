@@ -3,6 +3,7 @@
 import React, {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -10,7 +11,7 @@ import React, {
 import Konva from "konva";
 import { Group, Image as KonvaImage, Layer, Rect, Stage } from "react-konva";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Flame, Trophy } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Flame, Trophy, X } from "lucide-react";
 import { RankingDialog } from "./RankingDialog";
 import { useScopedI18n } from "@/locales/client";
 
@@ -18,20 +19,36 @@ import { withBasePath } from "@/lib/games/basePath";
 import { loadGameImage } from "@/lib/games/gameAssetPreloader";
 import { GameAssetLoadFailure, GameAssetLoading } from "@/components/games/GameAssetLoadFailure";
 import {
-  advanceDragonFlightTime,
-  calculateBossPower,
+  answerGate,
+  applyGateAnswer,
+  bossFightTiming,
+  bossHealthAt,
   createDragonFlightState,
+  createGateQueue,
+  endDragonFlightRound,
+  gateLabelTopAt,
+  gateOpensAt,
+  gateYAt,
   getDragonFlightResults,
+  isGateGone,
+  MS_PER_WORD,
+  setDragonFlightTimeLeft,
+  startGate,
+  stepGate,
 } from "@/lib/games/dragonFlight";
 import type {
   DragonFlightResults,
-  DragonFlightRound,
   DragonFlightState,
+  DragonGate,
+  GateQueue,
   GateSide,
 } from "@/lib/games/dragonFlight";
+import { createRoundClock, splitFrameTime } from "@/lib/games/roundClock";
+import type { RoundClock } from "@/lib/games/roundClock";
 import type { VocabularyItem } from "@/store/useGameStore";
 import { useInterval } from "@/hooks/useInterval";
 import { useSound } from "@/hooks/useSound";
+import { useTtsPlayer } from "@/hooks/useTtsPlayer";
 import { useAdaptiveDifficulty } from "@/hooks/useAdaptiveDifficulty";
 import { registerDifficultyParams } from "@/lib/adaptive-difficulty/registerDifficultyParams";
 import { t as appT } from "@/lib/i18n";
@@ -60,23 +77,13 @@ type DragonFlightGameProps = {
   tutorialMode?: boolean;
 };
 
-type GateFeedback = {
-  pairId: string;
-  side: GateSide;
-  outcome: "correct" | "incorrect";
-};
-
-type GatePair = {
+type FeedbackPill = {
   id: string;
-  round: DragonFlightRound;
-  y: number;
+  tone: "correct" | "incorrect" | "missed";
+  text: string;
 };
 
-type PendingSelection = {
-  pairId: string;
-  side: GateSide;
-  outcome: "correct" | "incorrect";
-};
+type GatePair = DragonGate & { y: number };
 
 type SpriteGrid = {
   columns: number[];
@@ -133,18 +140,19 @@ const ASSETS = {
 
 const DEFAULT_STAGE: StageSize = { width: 960, height: 540 };
 const TICK_MS = 1000 / 60;
-const GATE_ANIM_MS = 160;
+const GATE_ANIM_MS = 220;
 const MAX_ROUND_WORDS = 10;
-const MS_PER_WORD = 5000;
 const PLAYER_LERP = 0.22;
 const PLAYER_ANIM_MS = 120;
 const BOSS_ANIM_MS = 180;
-const BOSS_HEALTH_TICK_MS = 450;
 const RESULTS_REVEAL_MS = 900;
 const GATE_SCALE_FACTOR = 0.5;
 const PLAYER_BASE_SCALE = 0.22;
 const BOSS_BASE_SCALE = 0.55;
 const ARMY_BASE_SCALE = 0.12;
+const FEEDBACK_PILL_MS = 900;
+// How long the runtime keeps the boss finish on screen. The score is already safe by then.
+const BOSS_OUTRO_MS = 3200;
 
 export type Difficulty = "easy" | "normal" | "hard" | "extreme";
 
@@ -381,48 +389,21 @@ const getGateLabels = (round: DragonFlightState["round"]) => {
   return { left, right };
 };
 
-const pickRandomIndex = (max: number) =>
-  Math.min(max - 1, Math.floor(Math.random() * max));
-
 const shuffleVocabulary = (items: VocabularyItem[]) =>
   [...items].sort(() => Math.random() - 0.5);
 
-const buildGateRound = (
-  vocabulary: VocabularyItem[],
-  preferredItem?: VocabularyItem,
-): DragonFlightRound => {
-  if (vocabulary.length === 0) {
-    return {
-      term: "",
-      correctTranslation: "",
-      decoyTranslation: "",
-      correctSide: "left",
-    };
-  }
-
-  const correctItem = preferredItem ?? vocabulary[pickRandomIndex(vocabulary.length)];
-  const correctIndex = vocabulary.findIndex((item) => item.id === correctItem.id);
-  let decoyIndex = pickRandomIndex(vocabulary.length);
-  if (decoyIndex === correctIndex && vocabulary.length > 1) {
-    decoyIndex = (correctIndex + 1) % vocabulary.length;
-  }
-
-  const decoyItem = vocabulary[decoyIndex];
-
-  return {
-    term: correctItem.term,
-    correctTranslation: correctItem.translation,
-    decoyTranslation: decoyItem.translation,
-    correctSide: Math.random() < 0.5 ? "left" : "right",
-  };
+// Terms and Thai meanings vary a lot in length, so the longest ones get a smaller size rather than a cut.
+const termSizeClass = (term: string) => {
+  if (term.length <= 12) return "text-3xl sm:text-4xl";
+  if (term.length <= 18) return "text-2xl sm:text-3xl";
+  if (term.length <= 26) return "text-xl sm:text-2xl";
+  return "text-base sm:text-xl";
 };
 
-const getActiveGatePair = (pairs: GatePair[]) => {
-  if (pairs.length === 0) return null;
-  return pairs.reduce(
-    (current, pair) => (pair.y > current.y ? pair : current),
-    pairs[0],
-  );
+const labelSizeClass = (text: string) => {
+  if (text.length <= 16) return "text-lg sm:text-2xl";
+  if (text.length <= 44) return "text-base sm:text-xl";
+  return "text-sm sm:text-lg";
 };
 
 export function DragonFlightGame({
@@ -438,6 +419,10 @@ export function DragonFlightGame({
   const t = useScopedI18n("pages.student.gamesPage");
   const [DIFFICULTY_SETTINGS] = useState(() => getDifficultySettings(t));
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const hudRef = useRef<HTMLDivElement | null>(null);
+  const arrowsRef = useRef<HTMLDivElement | null>(null);
+  const leftLabelRef = useRef<HTMLDivElement | null>(null);
+  const rightLabelRef = useRef<HTMLDivElement | null>(null);
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
   const [showRanking, setShowRanking] = useState(false);
   const gameVocabulary = useMemo(
@@ -472,10 +457,16 @@ export function DragonFlightGame({
     adaptive,
   });
 
-  const initialRoundRef = useRef<DragonFlightRound>(state.round);
-  const [gatePairs, setGatePairs] = useState<GatePair[]>([]);
+  const [gate, setGate] = useState<DragonGate | null>(null);
+  const gateRef = useRef<DragonGate | null>(null);
   const gateIdRef = useRef(0);
-  const [feedback, setFeedback] = useState<GateFeedback | null>(null);
+  const queueRef = useRef<GateQueue | null>(null);
+  const clockRef = useRef<RoundClock | null>(null);
+  const [pill, setPill] = useState<FeedbackPill | null>(null);
+  const [reveal, setReveal] = useState<{ term: string; meaning: string } | null>(null);
+  const [hasAnswered, setHasAnswered] = useState(false);
+  const [chrome, setChrome] = useState({ hudBottom: 0, arrowsTop: DEFAULT_STAGE.height });
+  const [labelHeight, setLabelHeight] = useState(48);
   const [results, setResults] = useState<DragonFlightResults | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [gateFrame, setGateFrame] = useState(0);
@@ -485,10 +476,8 @@ export function DragonFlightGame({
   const [hasStarted, setHasStarted] = useState(autoStart || tutorialMode);
   const [tutorialStep, setTutorialStep] = useState(0);
   const tutorialSelectionRef = useRef<(side: GateSide) => void>(() => undefined);
-  const [lockedPairId, setLockedPairId] = useState<string | null>(null);
-  const [displayDragonCount, setDisplayDragonCount] = useState(1);
-  const [bossHealth, setBossHealth] = useState(0);
-  const [bossY, setBossY] = useState(DEFAULT_STAGE.height * 0.28);
+  const [bossHealth, setBossHealth] = useState(1);
+  const [bossY, setBossY] = useState(-1000);
   const [bossSequenceDone, setBossSequenceDone] = useState(false);
 
   useEffect(() => {
@@ -502,19 +491,24 @@ export function DragonFlightGame({
     }
   }, [autoStart, difficulty, hasStarted, DIFFICULTY_SETTINGS]);
   const { playSound } = useSound();
+  const { speak: speakWord } = useTtsPlayer();
   const resultsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pendingSelectionRef = useRef<PendingSelection | null>(null);
-  const playerTargetRef = useRef<number | null>(null);
-  const answeredPairIdsRef = useRef<Set<string>>(new Set());
-  const questionQueueRef = useRef<VocabularyItem[]>([]);
+  const playerTargetRef = useRef<GateSide | null>(null);
+  // Words still wrong or missed. Getting one right in the bonus gates takes it off the list.
+  const missedWordsRef = useRef<Map<string, string>>(new Map());
 
-  const getNextVocabularyItem = useCallback(() => {
-    if (gameVocabulary.length === 0) return undefined;
-    if (questionQueueRef.current.length === 0) {
-      questionQueueRef.current = shuffleVocabulary(gameVocabulary);
+  const spawnGate = useCallback(() => {
+    if (!queueRef.current) {
+      // Wrong answers may come from the whole lesson, which also makes elimination harder.
+      queueRef.current = createGateQueue(gameVocabulary, vocabulary);
     }
-    return questionQueueRef.current.shift();
-  }, [gameVocabulary]);
+    const entry = queueRef.current.next();
+    gateIdRef.current += 1;
+    const next = entry ? startGate(entry, `gate-${gateIdRef.current}`) : null;
+    gateRef.current = next;
+    playerTargetRef.current = null;
+    setGate(next);
+  }, [gameVocabulary, vocabulary]);
 
   const measureStage = useCallback(() => {
     const element = containerRef.current;
@@ -560,21 +554,23 @@ export function DragonFlightGame({
     const nextState = createDragonFlightState(gameVocabulary, {
       durationMs: gameDurationMs,
     });
-    initialRoundRef.current = nextState.round;
+    clockRef.current?.stop();
+    clockRef.current = null;
+    queueRef.current = null;
+    gateRef.current = null;
+    playerTargetRef.current = null;
+    missedWordsRef.current = new Map();
     setState(nextState);
-    setGatePairs([]);
-    setFeedback(null);
+    setGate(null);
+    setPill(null);
+    setReveal(null);
+    setHasAnswered(false);
     setResults(null);
     setShowResults(false);
-    setLockedPairId(null);
     setPlayerX(DEFAULT_STAGE.width / 2);
-    setDisplayDragonCount(1);
-    setBossHealth(0);
+    setBossHealth(1);
+    setBossY(-1000);
     setBossSequenceDone(false);
-    pendingSelectionRef.current = null;
-    playerTargetRef.current = null;
-    answeredPairIdsRef.current = new Set();
-    questionQueueRef.current = shuffleVocabulary(gameVocabulary);
   }, [gameVocabulary, gameDurationMs]);
 
   // Initialize game on mount only - do not auto-reset to avoid loops
@@ -657,6 +653,7 @@ export function DragonFlightGame({
     if (!gateGrid || !playerGrid || !bossGrid || !armyGrid) return null;
     return buildLayout(stageSize, gateGrid, playerGrid, bossGrid, armyGrid);
   }, [stageSize, gateGrid, playerGrid, bossGrid, armyGrid]);
+  const canRenderGame = Boolean(hasStarted && layout && assets);
 
   useEffect(() => {
     if (!layout) return;
@@ -666,158 +663,104 @@ export function DragonFlightGame({
     );
   }, [layout]);
 
-  useEffect(() => {
-    if (!layout) return;
-    if (state.status === "boss") {
-      setBossY(-layout.bossFrameHeight * layout.bossScale);
-      setBossHealth(calculateBossPower(state.attempts));
-      setDisplayDragonCount(state.dragonCount);
-      setBossSequenceDone(false);
-    } else {
-      setBossY(layout.bossY);
-      setBossHealth(0);
-      setBossSequenceDone(false);
-    }
-  }, [layout, state.status, state.attempts, state.dragonCount]);
+  // Answer labels stop below the top bar and above the arrows, so both have to be measured.
+  const measureChrome = useCallback(() => {
+    const root = containerRef.current?.getBoundingClientRect();
+    if (!root) return;
+    const hud = hudRef.current?.getBoundingClientRect();
+    const arrows = arrowsRef.current?.getBoundingClientRect();
+    const hudBottom = hud ? Math.round(hud.bottom - root.top) : 0;
+    const arrowsTop = arrows ? Math.round(arrows.top - root.top) : Math.round(root.height);
+    setChrome((prev) =>
+      prev.hudBottom === hudBottom && prev.arrowsTop === arrowsTop
+        ? prev
+        : { hudBottom, arrowsTop },
+    );
+  }, []);
 
-  useEffect(() => {
-    if (state.status === "boss") return;
-    setDisplayDragonCount(state.dragonCount);
-  }, [state.dragonCount, state.status]);
+  useLayoutEffect(() => {
+    if (!canRenderGame) return undefined;
+    measureChrome();
+    if (typeof ResizeObserver === "undefined" || !hudRef.current) return undefined;
+    const observer = new ResizeObserver(measureChrome);
+    observer.observe(hudRef.current);
+    return () => observer.disconnect();
+  }, [canRenderGame, measureChrome, stageSize]);
 
-  const createGatePair = useCallback(
-    (round?: DragonFlightRound) => {
-      if (!layout || gameVocabulary.length === 0) return null;
-      const nextWord = round ? undefined : getNextVocabularyItem();
-
-      gateIdRef.current += 1;
-      return {
-        id: `gate-${gateIdRef.current}`,
-        round: round ?? buildGateRound(gameVocabulary, nextWord),
-        y: -layout.leftGate.height,
-      };
-    },
-    [gameVocabulary, getNextVocabularyItem, layout],
-  );
+  const currentGateId = gate?.id;
+  useLayoutEffect(() => {
+    const tallest = Math.max(
+      leftLabelRef.current?.offsetHeight ?? 0,
+      rightLabelRef.current?.offsetHeight ?? 0,
+    );
+    if (tallest > 0) setLabelHeight(tallest);
+  }, [currentGateId, stageSize]);
 
   useEffect(() => {
     if (state.status !== "running" || !layout || !hasStarted) {
       return () => undefined;
     }
 
+    // Time left is real time, so every phone ends together and a hidden tab still
+    // ends its round. Tutorials have no round to end.
+    if (!tutorialMode && !clockRef.current) {
+      clockRef.current = createRoundClock({
+        durationMs: state.durationMs,
+        onExpire: () => setState(endDragonFlightRound),
+      });
+      clockRef.current.start();
+    }
+
     let frameId = 0;
-    let lastFrameTime = performance.now();
+    let lastFrameTime: number | null = null;
+
+    const closeGate = (closed: DragonGate) => {
+      queueRef.current?.review(closed.item);
+      missedWordsRef.current.set(closed.round.term, closed.round.correctTranslation);
+      setPill({ id: closed.id, tone: "missed", text: "หมดเวลา" });
+      setReveal({ term: closed.round.term, meaning: closed.round.correctTranslation });
+    };
+
+    const moveGate = (stepMs: number) => {
+      const current = gateRef.current;
+      if (!current) return;
+      const moved = stepGate(current, stepMs);
+      if (isGateGone(moved)) {
+        spawnGate();
+        return;
+      }
+      if (moved.outcome === "missed" && !current.outcome) closeGate(moved);
+      gateRef.current = moved;
+    };
 
     const tick = (frameTime: number) => {
-      const deltaMs = Math.min(frameTime - lastFrameTime, 50);
-      lastFrameTime = frameTime;
-      const deltaSeconds = deltaMs / 1000;
-
-      if (!tutorialMode) {
-        setState((prev) => advanceDragonFlightTime(prev, deltaMs));
+      let stepsMs: number[];
+      const clock = clockRef.current;
+      if (clock) {
+        const frame = clock.tick(frameTime);
+        stepsMs = frame.stepsMs;
+        setState((prev) => setDragonFlightTimeLeft(prev, frame.remainingMs));
+        if (frame.isOver) return;
+      } else {
+        stepsMs = splitFrameTime(lastFrameTime === null ? 0 : frameTime - lastFrameTime);
+        lastFrameTime = frameTime;
       }
 
-      if (!layout) return;
+      stepsMs.forEach(moveGate);
+      setGate(gateRef.current);
 
-      const gateStartY = -layout.leftGate.height;
-      const gateEndY = stageSize.height + layout.leftGate.height;
-      const gateSpeed = (gateEndY - gateStartY) / (MS_PER_WORD / 1000);
-
-      setGatePairs((prev) => {
-        const nextPairs = prev
-          .map((pair) => ({ ...pair, y: pair.y + gateSpeed * deltaSeconds }))
-          .filter((pair) => pair.y <= gateEndY);
-        const visibleIds = new Set(nextPairs.map((pair) => pair.id));
-        answeredPairIdsRef.current.forEach((pairId) => {
-          if (!visibleIds.has(pairId)) {
-            answeredPairIdsRef.current.delete(pairId);
-          }
-        });
-
-        if (nextPairs.length === 0) {
-          const nextPair = createGatePair();
-          return nextPair ? [nextPair] : nextPairs;
-        }
-
-        return nextPairs.slice(0, 1);
-      });
-
+      const movedMs = stepsMs.reduce((sum, stepMs) => sum + stepMs, 0);
+      const targetSide = playerTargetRef.current;
+      const target =
+        targetSide === "left"
+          ? layout.leftGate.left + layout.leftGate.width / 2
+          : targetSide === "right"
+            ? layout.rightGate.left + layout.rightGate.width / 2
+            : layout.playerX;
+      const lerpAmount = 1 - Math.pow(1 - PLAYER_LERP, movedMs / TICK_MS);
       setPlayerX((prev) => {
-        const target = playerTargetRef.current ?? layout.playerX;
-        const lerpAmount = 1 - Math.pow(1 - PLAYER_LERP, deltaMs / TICK_MS);
         const next = prev + (target - prev) * lerpAmount;
-        const isNearTarget = Math.abs(target - next) < 1.5;
-
-        if (isNearTarget && pendingSelectionRef.current) {
-          const pending = pendingSelectionRef.current;
-          pendingSelectionRef.current = null;
-
-          setFeedback({
-            pairId: pending.pairId,
-            side: pending.side,
-            outcome: pending.outcome,
-          });
-
-          setState((prevState) => {
-            const settings = DIFFICULTY_SETTINGS[difficulty];
-            let nextDragonCount = prevState.dragonCount;
-            let nextCorrectAnswers = prevState.correctAnswers;
-            let isGameOver = false;
-
-            if (pending.outcome === "correct") {
-              nextDragonCount += 1;
-              nextCorrectAnswers += 1;
-            } else {
-              if (settings.gameOverOnMiss) {
-                isGameOver = true;
-              } else {
-                nextDragonCount = Math.max(
-                  1,
-                  prevState.dragonCount - settings.penalty,
-                );
-              }
-            }
-
-            if (isGameOver) {
-              return {
-                ...prevState,
-                dragonCount: 0,
-                status: "boss",
-                attempts: prevState.attempts + 1,
-              };
-            }
-
-            return {
-              ...prevState,
-              attempts: prevState.attempts + 1,
-              correctAnswers: nextCorrectAnswers,
-              dragonCount: nextDragonCount,
-            };
-          });
-
-          playSound(pending.outcome === "correct" ? "success" : "error");
-
-          // Record adaptive difficulty response
-          recordAdaptiveResponse(
-            pending.outcome === "correct",
-            1500, // Approximate response time
-          );
-
-          // Delay return to center to let player reach the gate first
-          setTimeout(() => {
-            playerTargetRef.current = layout.playerX;
-          }, 1500); // Wait 1500ms before returning to center
-        }
-
-        if (
-          isNearTarget &&
-          playerTargetRef.current !== null &&
-          !pendingSelectionRef.current
-        ) {
-          playerTargetRef.current = null;
-        }
-
-        return isNearTarget ? target : next;
+        return Math.abs(target - next) < 1.5 ? target : next;
       });
 
       frameId = requestAnimationFrame(tick);
@@ -827,30 +770,25 @@ export function DragonFlightGame({
     return () => {
       cancelAnimationFrame(frameId);
     };
-  }, [
-    DIFFICULTY_SETTINGS,
-    createGatePair,
-    difficulty,
-    hasStarted,
-    layout,
-    playSound,
-    recordAdaptiveResponse,
-    stageSize.height,
-    state.status,
-    tutorialMode,
-  ]);
+  }, [hasStarted, layout, spawnGate, state.durationMs, state.status, tutorialMode]);
+
+  useEffect(
+    () => () => {
+      clockRef.current?.stop();
+      clockRef.current = null;
+    },
+    [],
+  );
 
   useEffect(() => {
-    if (!layout || gatePairs.length > 0) return;
-    const initialPair = createGatePair(initialRoundRef.current);
-    if (initialPair) {
-      setGatePairs([initialPair]);
-    }
-  }, [layout, createGatePair, gatePairs.length]);
+    if (!layout || !hasStarted || state.status !== "running" || gateRef.current) return;
+    spawnGate();
+  }, [gate, hasStarted, layout, spawnGate, state.status]);
 
   useInterval(
     () => {
-      setGateFrame((prev) => (prev + 1) % 3);
+      // Only the two blue frames: the third is orange, too close to the wrong-answer gate.
+      setGateFrame((prev) => (prev + 1) % 2);
     },
     hasStarted ? GATE_ANIM_MS : null,
   );
@@ -869,70 +807,46 @@ export function DragonFlightGame({
     state.status === "boss" && hasStarted ? BOSS_ANIM_MS : null,
   );
 
+  // The boss finish is display only: the result has already gone to the runtime.
   useEffect(() => {
     if (state.status !== "boss" || !layout || !hasStarted) {
       return () => undefined;
     }
 
+    const startY = -layout.bossFrameHeight * layout.bossScale;
+    const { enterMs } = bossFightTiming(state.dragonCount);
+    const startedAt = performance.now();
     let frameId = 0;
-    let lastFrameTime = performance.now();
 
     const tick = (frameTime: number) => {
-      const deltaMs = Math.min(frameTime - lastFrameTime, 50);
-      lastFrameTime = frameTime;
-      if (!layout) return;
-      const gateStartY = -layout.leftGate.height;
-      const gateEndY = stageSize.height + layout.leftGate.height;
-      const gateSpeed = (gateEndY - gateStartY) / (MS_PER_WORD / 1000);
-      const deltaSeconds = deltaMs / 1000;
-      const targetY = layout.playerY;
-
-      setBossY((prev) => {
-        const next = prev + gateSpeed * deltaSeconds;
-        return next >= targetY ? targetY : next;
-      });
-
-      frameId = requestAnimationFrame(tick);
+      const elapsedMs = Math.max(frameTime - startedAt, 0);
+      const entered = Math.min(elapsedMs / enterMs, 1);
+      const health = bossHealthAt(elapsedMs, state.dragonCount);
+      setBossY(startY + (layout.bossY - startY) * entered);
+      setBossHealth(health);
+      if (entered < 1 || health > 0) {
+        frameId = requestAnimationFrame(tick);
+      }
     };
 
     frameId = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(frameId);
     };
-  }, [hasStarted, layout, stageSize.height, state.status]);
-
-  useInterval(
-    () => {
-      setBossHealth((prev) => Math.max(0, prev - 1));
-      setDisplayDragonCount((prev) => Math.max(0, prev - 1));
-    },
-    state.status === "boss" &&
-      bossHealth > 0 &&
-      displayDragonCount > 0 &&
-      hasStarted
-      ? BOSS_HEALTH_TICK_MS
-      : null,
-  );
+  }, [hasStarted, layout, state.dragonCount, state.status]);
 
   useEffect(() => {
-    if (feedback) {
-      const timeout = setTimeout(() => {
-        setFeedback(null);
-        setLockedPairId(null);
-      }, 450);
-      return () => clearTimeout(timeout);
-    }
-    return () => undefined;
-  }, [feedback]);
+    if (!pill) return undefined;
+    const timeout = setTimeout(() => setPill(null), FEEDBACK_PILL_MS);
+    return () => clearTimeout(timeout);
+  }, [pill]);
 
   useEffect(() => {
     if (state.status !== "boss" || !layout) return;
-    const bossHit = bossY >= layout.playerY;
-    const battleOver = bossHealth <= 0 || displayDragonCount <= 0;
-    if (bossHit && battleOver) {
+    if (bossY >= layout.bossY && bossHealth <= 0) {
       setBossSequenceDone(true);
     }
-  }, [bossHealth, bossY, displayDragonCount, layout, state.status]);
+  }, [bossHealth, bossY, layout, state.status]);
 
   // Keep the latest onComplete without making it an effect dependency: parents
   // (AdvantageArcadeRuntime, the play page) pass a fresh callback every render.
@@ -960,38 +874,41 @@ export function DragonFlightGame({
 
   useEffect(() => {
     if (!isBossPhase) return;
+    clockRef.current?.stop();
+    // Every word of the round counts, so skipping one costs the same as missing it.
+    const totalWords = Math.max(gameVocabulary.length, 1);
     const nextResults = getDragonFlightResults(
       {
-        correctAnswers: state.correctAnswers,
-        totalAttempts: state.attempts,
+        correctAnswers: Math.min(state.correctAnswers, totalWords),
+        totalAttempts: totalWords,
         dragonCount: state.dragonCount,
         difficulty,
       },
       state.elapsedMs,
-    ); // Pass elapsed time
+    );
     setResults(nextResults);
     setShowResults(false);
-    // Every gate of the round counts, so skipping one costs the same as missing it.
-    const totalWords = Math.max(gameVocabulary.length, 1);
-    const correctWords = Math.min(state.correctAnswers, totalWords);
     onCompleteRef.current?.({
       ...nextResults,
-      accuracy: correctWords / totalWords,
-      correctAnswers: correctWords,
-      totalAttempts: totalWords,
+      // Nobody is watching a hidden page, so its result goes straight through.
+      outroMs: document.visibilityState === "hidden" ? 0 : BOSS_OUTRO_MS,
+      review: {
+        heading: nextResults.correctAnswers > 0 ? "ปราบบอสสำเร็จ!" : "จบเกมแล้ว!",
+        missed: Array.from(missedWordsRef.current, ([term, meaning]) => ({ term, meaning })),
+      },
     });
   }, [
     gameVocabulary.length,
     isBossPhase,
     state.correctAnswers,
-    state.attempts,
     state.dragonCount,
     state.elapsedMs,
     difficulty,
   ]);
 
   useEffect(() => {
-    if (!bossSequenceDone) return;
+    // In a lesson the runtime takes over after the boss finish; only a practice round has this card.
+    if (!bossSequenceDone || autoStart) return;
     resultsTimeoutRef.current = setTimeout(() => {
       setShowResults(true);
     }, RESULTS_REVEAL_MS);
@@ -1001,44 +918,88 @@ export function DragonFlightGame({
         resultsTimeoutRef.current = null;
       }
     };
-  }, [bossSequenceDone]);
+  }, [autoStart, bossSequenceDone]);
 
-  const activePair = useMemo(() => {
-    if (lockedPairId) {
-      return gatePairs.find((pair) => pair.id === lockedPairId) ?? null;
-    }
-    return getActiveGatePair(gatePairs);
-  }, [gatePairs, lockedPairId]);
+  const dragonCount = state.dragonCount;
+  const dragonPenalty = DIFFICULTY_SETTINGS[difficulty].penalty;
+  const gameOverOnMiss = DIFFICULTY_SETTINGS[difficulty].gameOverOnMiss;
 
   const handleGateSelection = useCallback(
     (side: GateSide) => {
-      if (!hasStarted) return;
+      if (!hasStarted || !layout) return;
       if (state.status !== "running") return;
-      if (pendingSelectionRef.current) return;
-      if (lockedPairId) return;
 
-      const pair = activePair;
-      if (!pair || !layout) return;
-      if (answeredPairIdsRef.current.has(pair.id)) return;
+      const current = gateRef.current;
+      if (!current) return;
+      const label =
+        side === current.round.correctSide
+          ? current.round.correctTranslation
+          : current.round.decoyTranslation;
+      if (!label) return;
 
-      const isCorrect = side === pair.round.correctSide;
-      const targetX =
-        side === "left"
-          ? layout.leftGate.left + layout.leftGate.width / 2
-          : layout.rightGate.left + layout.rightGate.width / 2;
-
-      pendingSelectionRef.current = {
-        pairId: pair.id,
+      const answered = answerGate(
+        current,
         side,
-        outcome: isCorrect ? "correct" : "incorrect",
-      };
-      playerTargetRef.current = targetX;
-      answeredPairIdsRef.current.add(pair.id);
+        gateOpensAt(layout.leftGate.height, stageSize.height),
+      );
+      if (!answered) return;
 
-      setLockedPairId(pair.id);
-      setFeedback(null);
+      // The answer counts now. The dragon flying to the gate is only animation.
+      const isCorrect = answered.outcome === "correct";
+      gateRef.current = answered;
+      playerTargetRef.current = side;
+      setGate(answered);
+      setHasAnswered(true);
+      setState((prev) =>
+        applyGateAnswer(prev, {
+          correct: isCorrect,
+          bonus: current.bonus,
+          penalty: dragonPenalty,
+          gameOverOnMiss,
+        }),
+      );
+
+      const wrongText = gameOverOnMiss
+        ? tx("GAME OVER")
+        : dragonCount > 1
+          ? `ผิด -${Math.min(dragonPenalty, dragonCount - 1)} มังกร`
+          : "ผิด";
+      setPill({
+        id: answered.id,
+        tone: isCorrect ? "correct" : "incorrect",
+        text: isCorrect ? "ถูก! +1 มังกร" : wrongText,
+      });
+      if (isCorrect) {
+        missedWordsRef.current.delete(current.round.term);
+      } else {
+        queueRef.current?.review(current.item);
+        missedWordsRef.current.set(current.round.term, current.round.correctTranslation);
+        setReveal({ term: current.round.term, meaning: current.round.correctTranslation });
+      }
+
+      playSound(isCorrect ? "success" : "error");
+      // A tap is the one moment a phone reliably lets a word play out loud.
+      if (!tutorialMode) speakWord(current.item.term, current.item.audioUrl);
+
+      // Record adaptive difficulty response
+      recordAdaptiveResponse(
+        isCorrect,
+        1500, // Approximate response time
+      );
     },
-    [activePair, hasStarted, layout, lockedPairId, state.status],
+    [
+      dragonCount,
+      dragonPenalty,
+      gameOverOnMiss,
+      hasStarted,
+      layout,
+      playSound,
+      recordAdaptiveResponse,
+      speakWord,
+      stageSize.height,
+      state.status,
+      tutorialMode,
+    ],
   );
 
   useEffect(() => {
@@ -1061,16 +1022,13 @@ export function DragonFlightGame({
     return () => window.removeEventListener("keydown", handleKey);
   }, [handleGateSelection, hasStarted, state.status]);
 
-  const promptRound = activePair?.round ?? state.round;
   const remainingRatio =
     state.durationMs > 0
       ? Math.max(0, 1 - state.elapsedMs / state.durationMs)
       : 0;
 
-  const dragonCountDisplay =
-    state.status === "boss" ? displayDragonCount : state.dragonCount;
-  const activePairId = activePair?.id ?? null;
-  const activeCorrectSide = activePair?.round.correctSide;
+  const activePairId = gate?.id ?? null;
+  const activeCorrectSide = gate?.round.correctSide;
 
   useEffect(() => {
     if (!tutorialMode || !activePairId || !activeCorrectSide) return;
@@ -1090,13 +1048,25 @@ export function DragonFlightGame({
       ? state.status
       : "ready";
 
+  const gateHeight = layout?.leftGate.height ?? 0;
+  // Keep the label out of the viewport while the gate is still entering from
+  // above. This prevents iOS Safari from showing the answer before its gate.
+  const gateLabelVisible = Boolean(
+    gate && layout && gate.progress >= gateOpensAt(gateHeight, stageSize.height),
+  );
+  const gateIsOpen = gateLabelVisible && !gate?.outcome;
+
+  // The last wrong or missed word stays up until the next gate's answers appear.
+  useEffect(() => {
+    if (gateIsOpen) setReveal(null);
+  }, [gateIsOpen]);
+
   if (!assets && !isLoading) {
     const giveUpLoading = () => {
       const totalWords = Math.max(gameVocabulary.length, 1);
-      onCompleteRef.current?.({
-        ...getDragonFlightResults({ correctAnswers: 0, totalAttempts: totalWords, dragonCount: 0, difficulty }, 0),
-        accuracy: 0,
-      });
+      onCompleteRef.current?.(
+        getDragonFlightResults({ correctAnswers: 0, totalAttempts: totalWords, dragonCount: 0, difficulty }, 0),
+      );
     };
     return (
       <div className="relative h-dvh min-h-0 w-full bg-slate-950">
@@ -1111,17 +1081,64 @@ export function DragonFlightGame({
     );
   }
 
-  const canRenderGame = Boolean(hasStarted && layout && assets);
-  const gateLabels =
-    canRenderGame && activePair ? getGateLabels(activePair.round) : null;
-  const gateLabelTop = canRenderGame
-    ? activePair
-      ? activePair.y + layout!.leftGate.height + 8
-      : layout!.leftGate.top + layout!.leftGate.height + 8
+  const gateY = gate ? gateYAt(gate.progress, gateHeight, stageSize.height) : 0;
+  const gatePairs: GatePair[] = gate ? [{ ...gate, y: gateY }] : [];
+  const gateLabels = canRenderGame && gate ? getGateLabels(gate.round) : null;
+  // Labels stay where they were once the gate is answered, so the right answer can be read.
+  const gateLabelTop = gate
+    ? gateLabelTopAt({
+        gateY: gateYAt(gate.settledAt ?? gate.progress, gateHeight, stageSize.height),
+        gateHeight,
+        hudBottom: chrome.hudBottom,
+        arrowsTop: chrome.arrowsTop,
+        labelHeight,
+      })
     : 0;
-  // Keep the label out of the viewport while the gate is still entering from
-  // above. This prevents iOS Safari from showing the answer before its gate.
-  const gateLabelVisible = Boolean(activePair && activePair.y >= 0);
+  const labelAbove = gateLabelTop - 48;
+  const pillTop = labelAbove > chrome.hudBottom + 8 ? labelAbove : gateLabelTop + labelHeight + 12;
+
+  // Two equal boxes that cannot touch each other or the screen edge, each under its gate.
+  const labelWidth = Math.min(stageSize.width / 2 - 12, 420);
+  const labelX: Record<GateSide, number> = layout
+    ? {
+        left: clamp(
+          layout.leftGate.left + layout.leftGate.width / 2 - labelWidth / 2,
+          8,
+          stageSize.width / 2 - 4 - labelWidth,
+        ),
+        right: clamp(
+          layout.rightGate.left + layout.rightGate.width / 2 - labelWidth / 2,
+          stageSize.width / 2 + 4,
+          stageSize.width - 8 - labelWidth,
+        ),
+      }
+    : { left: 8, right: 8 };
+
+  const isTutorialTarget = (side: GateSide) =>
+    tutorialMode &&
+    (tutorialStep === 1 || (tutorialStep === 2 && gate?.round.correctSide === side));
+
+  const labelTone = (side: GateSide) => {
+    if (!gate?.outcome) {
+      return isTutorialTarget(side)
+        ? "border-amber-300 bg-black/80 ring-8 ring-amber-300/25"
+        : "border-white/10 bg-black/80";
+    }
+    if (gate.round.correctSide === side) {
+      return "border-emerald-300 bg-emerald-800/95 ring-2 ring-emerald-300/70";
+    }
+    return gate.picked === side
+      ? "border-rose-300 bg-rose-800/95 ring-2 ring-rose-300/70"
+      : "border-white/10 bg-black/70";
+  };
+
+  const bossDown = isBossPhase && bossHealth <= 0;
+  const bossAttacking = isBossPhase && Boolean(layout) && bossY >= (layout?.bossY ?? 0);
+  const bossMessage = bossDown
+    ? `มังกร ${dragonCount} ตัว ปราบบอสได้แล้ว!`
+    : bossAttacking
+      ? `มังกร ${dragonCount} ตัว กำลังโจมตีบอส!`
+      : appT("interactivePlay.bossApproaches");
 
   return (
     <div
@@ -1147,40 +1164,50 @@ export function DragonFlightGame({
         <DragonFlightCanvas
           stageSize={stageSize}
           assets={assets!}
-          feedback={feedback}
           gatePairs={gatePairs}
-          activePairId={activePairId}
           layout={layout!}
           gateFrame={gateFrame}
           playerFrame={playerFrame}
           playerX={playerX}
-          dragonCount={dragonCountDisplay}
+          dragonCount={dragonCount}
           bossFrame={bossFrame}
           bossY={bossY}
           bossHealth={bossHealth}
-          onSelectGate={handleGateSelection}
-          showBoss={state.status === "boss"}
+          showBoss={isBossPhase}
         />
       )}
 
       {canRenderGame && (
-        <div className="absolute inset-0 z-10 pointer-events-none p-2 sm:p-6 flex flex-col justify-between">
-          {/* Top HUD Bar */}
-          <div className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 sm:gap-4">
-            {/* Left: Prompt */}
-            <div className={`min-w-[84px] rounded-2xl border bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg transition-all ${tutorialMode && tutorialStep === 0 ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}>
-              <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-white/70 mb-0.5">
-                {t("dragonFlight.prompt")}
-              </div>
-              <div className="text-base sm:text-2xl font-bold text-white leading-tight">
-                {promptRound.term || "—"}
-              </div>
-            </div>
-
-            {/* Center: Progress Bar */}
-            <div className="mt-1 min-w-0 px-1 sm:mt-4 sm:px-4">
+        <div className="absolute inset-0 z-10 pointer-events-none p-2 sm:p-6 [@media(max-height:500px)]:p-2">
+          {/* The whole left or right half of the screen answers, so nobody has to aim at a moving gate. */}
+          {state.status === "running" && (
+            <>
               <div
-                className="relative h-5 sm:h-6 w-full overflow-hidden rounded-full bg-black/30 backdrop-blur-sm border border-white/10"
+                aria-hidden="true"
+                data-testid="dragon-flight-zone-left"
+                className="pointer-events-auto absolute bottom-0 left-0 w-1/2"
+                style={{ top: chrome.hudBottom }}
+                onPointerDown={() => handleGateSelection("left")}
+              />
+              <div
+                aria-hidden="true"
+                data-testid="dragon-flight-zone-right"
+                className="pointer-events-auto absolute bottom-0 right-0 w-1/2"
+                style={{ top: chrome.hudBottom }}
+                onPointerDown={() => handleGateSelection("right")}
+              />
+            </>
+          )}
+
+          {/* Top bar */}
+          <div
+            ref={hudRef}
+            className="relative z-20 flex w-full flex-col gap-1.5 sm:gap-3 [@media(max-height:500px)]:flex-row [@media(max-height:500px)]:items-start [@media(max-height:500px)]:gap-2"
+          >
+            {/* Time and dragons */}
+            <div className="flex items-center gap-2 sm:gap-4 [@media(max-height:500px)]:order-2 [@media(max-height:500px)]:w-2/5 [@media(max-height:500px)]:shrink-0">
+              <div
+                className="relative h-7 min-w-0 flex-1 overflow-hidden rounded-full border border-white/15 bg-black/55 backdrop-blur-sm sm:h-8"
                 role="progressbar"
                 aria-label={appT("interactivePlay.runTimer")}
                 aria-valuenow={Math.max(0, Math.ceil((state.durationMs - state.elapsedMs) / 1000))}
@@ -1194,7 +1221,7 @@ export function DragonFlightGame({
                   transition={{ duration: 0.2, ease: "linear" }}
                   style={{ borderRadius: 999 }}
                 />
-                <div className="absolute inset-0 z-10 flex items-center justify-center text-xs font-bold text-white drop-shadow-md tracking-widest">
+                <div className="absolute inset-0 z-10 flex items-center justify-center text-sm font-bold text-white drop-shadow-md tracking-widest">
                   {Math.max(
                     0,
                     Math.ceil((state.durationMs - state.elapsedMs) / 1000),
@@ -1202,34 +1229,69 @@ export function DragonFlightGame({
                   s
                 </div>
               </div>
-            </div>
-
-            {/* Right: Dragon Count */}
-            <div className={`min-w-[84px] rounded-2xl border bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg text-right transition-all ${tutorialMode && tutorialStep === 3 ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}>
-              <div className="flex items-center justify-end gap-1 sm:gap-1.5 mb-0.5">
-                <Flame className="h-3 w-3 text-amber-400" />
-                <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-white/70">
+              <div className={`flex shrink-0 items-center gap-1.5 rounded-full border bg-black/60 px-3 py-1 shadow-lg backdrop-blur-md transition-all sm:px-4 sm:py-1.5 ${tutorialMode && tutorialStep === 3 ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/15"}`}>
+                <Flame className="h-4 w-4 text-amber-400" />
+                <span className="text-xs font-semibold text-white/80 sm:text-sm">
                   {t("dragonFlight.dragons")}
                 </span>
+                <motion.div
+                  key={dragonCount}
+                  data-testid="dragon-flight-dragon-count"
+                  className="text-lg font-bold leading-none text-white sm:text-2xl"
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                >
+                  {dragonCount}
+                </motion.div>
               </div>
-              <motion.div
-                key={dragonCountDisplay}
-                data-testid="dragon-flight-dragon-count"
-                className="text-base sm:text-2xl font-bold text-white leading-none"
-                initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-              >
-                {dragonCountDisplay}
-              </motion.div>
             </div>
+
+            {/* The word to read */}
+            <div className={`min-w-0 flex-1 rounded-2xl border bg-slate-950/85 px-3 py-1.5 shadow-lg backdrop-blur-md transition-all sm:px-5 sm:py-3 ${tutorialMode && tutorialStep === 0 ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/15"}`}>
+              {isBossPhase ? (
+                <div data-testid="dragon-flight-boss" className="py-1.5 text-center text-lg font-bold leading-tight text-white sm:text-2xl">
+                  {bossMessage}
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between gap-2 text-xs font-semibold text-white/80 sm:text-sm">
+                    <span>{gate?.bonus ? "รอบโบนัส เก็บมังกรเพิ่ม" : t("dragonFlight.prompt")}</span>
+                    {gate && !gate.bonus && (
+                      <span data-testid="dragon-flight-word-number" className="tabular-nums">
+                        คำที่ {gate.wordNumber}/{gameVocabulary.length}
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    data-testid="dragon-flight-word"
+                    className={`text-center font-bold leading-tight text-white break-words ${termSizeClass(gate?.round.term ?? "")} [@media(max-height:500px)]:text-xl`}
+                  >
+                    {gate?.round.term || "—"}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* The meaning of the word just missed. It floats, so the top bar keeps its height. */}
+            {reveal && !isBossPhase && (
+              <div
+                data-testid="dragon-flight-reveal"
+                className="absolute inset-x-0 top-full mt-1 rounded-xl border border-emerald-300/70 bg-slate-950/95 px-3 py-1 text-center text-sm font-bold text-white shadow-lg sm:text-lg"
+              >
+                {reveal.term} = <span className="text-emerald-300">{reveal.meaning}</span>
+              </div>
+            )}
           </div>
 
-          {/* Navigation Arrows (Bottom Center) - Only show when running */}
+          {/* Navigation arrows - only while running, always above the labels */}
           {state.status === "running" && (
-            <div className="absolute bottom-14 sm:bottom-24 left-0 right-0 flex justify-center gap-16 sm:gap-32 pointer-events-auto">
+            <div
+              ref={arrowsRef}
+              className="pointer-events-none absolute bottom-14 sm:bottom-24 left-0 right-0 z-20 flex justify-center gap-16 sm:gap-32 [@media(max-height:500px)]:bottom-2 [@media(max-height:500px)]:justify-between [@media(max-height:500px)]:px-3"
+            >
               <button
                 type="button"
-                className={`flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-95 shadow-lg ${tutorialMode && tutorialStep === 2 && activePair?.round.correctSide === "left" ? "border-amber-300 ring-8 ring-amber-300/35 animate-pulse" : "border-white/20"}`}
+                className={`pointer-events-auto flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-95 shadow-lg [@media(max-height:500px)]:h-12 [@media(max-height:500px)]:w-12 ${tutorialMode && tutorialStep === 2 && gate?.round.correctSide === "left" ? "border-amber-300 ring-8 ring-amber-300/35 animate-pulse" : "border-white/20"}`}
                 onPointerDown={() => handleGateSelection("left")}
                 aria-label={appT("interactivePlay.chooseLeftGate")}
               >
@@ -1238,7 +1300,7 @@ export function DragonFlightGame({
               </button>
               <button
                 type="button"
-                className={`flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-95 shadow-lg ${tutorialMode && tutorialStep === 2 && activePair?.round.correctSide === "right" ? "border-amber-300 ring-8 ring-amber-300/35 animate-pulse" : "border-white/20"}`}
+                className={`pointer-events-auto flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-95 shadow-lg [@media(max-height:500px)]:h-12 [@media(max-height:500px)]:w-12 ${tutorialMode && tutorialStep === 2 && gate?.round.correctSide === "right" ? "border-amber-300 ring-8 ring-amber-300/35 animate-pulse" : "border-white/20"}`}
                 onPointerDown={() => handleGateSelection("right")}
                 aria-label={appT("interactivePlay.chooseRightGate")}
               >
@@ -1248,53 +1310,71 @@ export function DragonFlightGame({
             </div>
           )}
 
-          {/* Gate Labels (Absolute positioning based on canvas) */}
-          {gateLabels && layout && activePair && state.status !== "boss" && (
-            <>
-              <div
-                className={`absolute rounded-xl border bg-black/80 px-3 py-2 text-sm font-bold text-white shadow-xl backdrop-blur-md transition-[border-color,box-shadow] sm:px-6 sm:py-3 sm:text-2xl ${gateLabelVisible ? "opacity-100" : "opacity-0"} ${tutorialMode && (tutorialStep === 1 || (tutorialStep === 2 && activePair.round.correctSide === "left")) ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}
-                style={{
-                  left: layout.leftGate.left + layout.leftGate.width / 2,
-                  top: 0,
-                  transform: `translate3d(-50%, ${gateLabelTop}px, 0)`,
-                  willChange: "transform",
-                }}
-              >
-                {gateLabels?.left}
-              </div>
-              <div
-                className={`absolute rounded-xl border bg-black/80 px-3 py-2 text-sm font-bold text-white shadow-xl backdrop-blur-md transition-[border-color,box-shadow] sm:px-6 sm:py-3 sm:text-2xl ${gateLabelVisible ? "opacity-100" : "opacity-0"} ${tutorialMode && (tutorialStep === 1 || (tutorialStep === 2 && activePair.round.correctSide === "right")) ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}
-                style={{
-                  left: layout.rightGate.left + layout.rightGate.width / 2,
-                  top: 0,
-                  transform: `translate3d(-50%, ${gateLabelTop}px, 0)`,
-                  willChange: "transform",
-                }}
-              >
-                {gateLabels?.right}
-              </div>
-            </>
+          {/* Gate labels, positioned from the canvas layout */}
+          {gateLabels && layout && gate && state.status !== "boss" &&
+            (["left", "right"] as const).map((side) => {
+              const text = gateLabels[side];
+              if (!text) return null;
+              const isRight = gate.outcome && gate.round.correctSide === side;
+              const isPickedWrong = gate.outcome && gate.picked === side && !isRight;
+              const isOtherWrong = gate.outcome && !isRight && !isPickedWrong;
+              return (
+                <div
+                  key={side}
+                  ref={side === "left" ? leftLabelRef : rightLabelRef}
+                  data-testid={`dragon-flight-label-${side}`}
+                  data-mark={isRight ? "right" : isPickedWrong ? "wrong" : "none"}
+                  className={`absolute z-10 rounded-xl border px-2 py-2 text-center font-bold leading-snug text-white shadow-xl backdrop-blur-md transition-[border-color,box-shadow,background-color] [text-wrap:balance] sm:px-6 sm:py-3 ${labelSizeClass(text)} [@media(max-height:500px)]:py-1 [@media(max-height:500px)]:text-sm ${labelTone(side)} ${!gateLabelVisible ? "opacity-0" : isOtherWrong ? "opacity-70" : "opacity-100"}`}
+                  style={{
+                    left: labelX[side],
+                    top: 0,
+                    width: labelWidth,
+                    transform: `translate3d(0, ${gateLabelTop}px, 0)`,
+                    willChange: "transform",
+                  }}
+                >
+                  {isRight && <Check className="mr-1 inline size-4 align-[-2px]" strokeWidth={3} aria-label="คำตอบที่ถูก" />}
+                  {isPickedWrong && <X className="mr-1 inline size-4 align-[-2px]" strokeWidth={3} aria-label="ตอบผิด" />}
+                  {text}
+                </div>
+              );
+            })}
+
+          {state.status === "running" && !hasAnswered && !tutorialMode && gateIsOpen && (
+            <div className="absolute inset-x-0 bottom-3 z-10 text-center sm:bottom-8 [@media(max-height:500px)]:bottom-4">
+              <span data-testid="dragon-flight-hint" className="rounded-full bg-black/75 px-4 py-1.5 text-sm font-bold text-white shadow-lg sm:text-base">
+                แตะฝั่งคำตอบที่ถูก
+              </span>
+            </div>
           )}
 
-          <AnimatePresence>
-            {feedback && (
-              <motion.div
-                className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.2 }}
-              >
-                {feedback.outcome === "correct"
-                  ? appT("interactivePlay.plusDragon")
-                  : DIFFICULTY_SETTINGS[difficulty].gameOverOnMiss
-                    ? tx("GAME OVER")
-                    : DIFFICULTY_SETTINGS[difficulty].penalty === 1
-                      ? appT("interactivePlay.minusDragon")
-                      : `-${DIFFICULTY_SETTINGS[difficulty].penalty} ${appT("interactivePlay.dragons")}`}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Answer feedback, next to the labels the student is reading */}
+          <div className="pointer-events-none absolute inset-x-0 z-30 flex justify-center" style={{ top: pillTop }}>
+            <AnimatePresence>
+              {pill && !isBossPhase && (
+                <motion.div
+                  key={`${pill.id}-${pill.tone}`}
+                  data-testid="dragon-flight-feedback"
+                  data-tone={pill.tone}
+                  className={`flex items-center gap-1.5 rounded-full px-5 py-2 text-base font-bold shadow-xl ${
+                    pill.tone === "correct"
+                      ? "bg-emerald-600 text-white"
+                      : pill.tone === "incorrect"
+                        ? "bg-rose-600 text-white"
+                        : "bg-amber-400 text-slate-950"
+                  }`}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.08 }}
+                >
+                  {pill.tone === "correct" && <Check className="size-5" strokeWidth={3} aria-hidden="true" />}
+                  {pill.tone === "incorrect" && <X className="size-5" strokeWidth={3} aria-hidden="true" />}
+                  {pill.text}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           {tutorialMode && (
             <div className="pointer-events-none absolute inset-x-3 bottom-3 z-30 mx-auto flex max-w-xl items-center gap-3 rounded-3xl border border-amber-300/35 bg-slate-950/90 p-4 text-white shadow-2xl backdrop-blur sm:bottom-5">
@@ -1316,20 +1396,20 @@ export function DragonFlightGame({
 
       {canRenderGame && (
         <div className="absolute inset-0 z-20 pointer-events-none">
-          <AnimatePresence>
-            {state.status === "boss" && !showResults && (
-              <motion.div
-                className="absolute inset-x-0 top-24 mx-auto flex w-fit items-center gap-3 rounded-full border border-white/10 bg-slate-900/70 px-5 py-2 text-sm uppercase tracking-[0.2em] text-white"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                data-testid="dragon-flight-boss"
-              >
-                {appT("interactivePlay.bossApproaches")}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {isBossPhase && !bossDown && layout && (
+            <div
+              data-testid="dragon-flight-boss-health"
+              className="absolute left-1/2 h-3 w-40 -translate-x-1/2 overflow-hidden rounded-full border border-white/50 bg-black/70"
+              style={{
+                top: Math.max(
+                  bossY - (layout.bossFrameHeight * layout.bossScale) / 2 - 20,
+                  chrome.hudBottom + 4,
+                ),
+              }}
+            >
+              <div className="h-full bg-rose-500" style={{ width: `${bossHealth * 100}%` }} />
+            </div>
+          )}
 
           <AnimatePresence>
             {showResults && results && (
@@ -1765,9 +1845,7 @@ export function DragonFlightGame({
 type DragonFlightCanvasProps = {
   stageSize: StageSize;
   assets: DragonFlightAssets;
-  feedback: GateFeedback | null;
   gatePairs: GatePair[];
-  activePairId: string | null;
   layout: FlightLayout;
   gateFrame: number;
   playerFrame: number;
@@ -1776,17 +1854,17 @@ type DragonFlightCanvasProps = {
   bossFrame: number;
   bossY: number;
   bossHealth: number;
-  onSelectGate: (side: GateSide) => void;
   showBoss: boolean;
 };
 
-type ParallaxRefs = {
-  topA: Konva.Image | null;
-  topB: Konva.Image | null;
-  middleA: Konva.Image | null;
-  middleB: Konva.Image | null;
-  bottomA: Konva.Image | null;
-  bottomB: Konva.Image | null;
+const PARALLAX_SPEEDS = { bottom: 18, middle: 28, top: 40 } as const;
+type ParallaxKey = keyof typeof PARALLAX_SPEEDS;
+const PARALLAX_KEYS = Object.keys(PARALLAX_SPEEDS) as ParallaxKey[];
+
+// A glow follows the gate's shape, where a tint would draw a box around it.
+const gateGlow = (row: number) => {
+  if (row === 0) return {};
+  return { shadowColor: row === 1 ? "#34d399" : "#f43f5e", shadowBlur: 45, shadowOpacity: 1 };
 };
 
 const buildParallaxMetrics = (image: HTMLImageElement, stageWidth: number) => {
@@ -1811,9 +1889,7 @@ const PROJECTILE_SPEED = 600;
 const DragonFlightCanvas = ({
   stageSize,
   assets,
-  feedback,
   gatePairs,
-  activePairId,
   layout,
   gateFrame,
   playerFrame,
@@ -1822,7 +1898,6 @@ const DragonFlightCanvas = ({
   bossFrame,
   bossY,
   bossHealth,
-  onSelectGate,
   showBoss,
 }: DragonFlightCanvasProps) => {
   const bottomLayerRef = useRef<Konva.Layer | null>(null);
@@ -1830,15 +1905,12 @@ const DragonFlightCanvas = ({
   const topLayerRef = useRef<Konva.Layer | null>(null);
   const projectileLayerRef = useRef<Konva.Layer | null>(null);
 
-  const parallaxRefs = useRef<ParallaxRefs>({
-    topA: null,
-    topB: null,
-    middleA: null,
-    middleB: null,
-    bottomA: null,
-    bottomB: null,
+  const parallaxGroups = useRef<Record<ParallaxKey, Konva.Group | null>>({
+    bottom: null,
+    middle: null,
+    top: null,
   });
-  const parallaxOffsets = useRef({ top: 0, middle: 0, bottom: 0 });
+  const parallaxOffsets = useRef<Record<ParallaxKey, number>>({ bottom: 0, middle: 0, top: 0 });
   const projectilesRef = useRef<Projectile[]>([]);
   const projectileSpritesRef = useRef<Map<number, Konva.Image>>(new Map());
   const lastFireTimeRef = useRef<{ player: number; boss: number }>({
@@ -1891,18 +1963,14 @@ const DragonFlightCanvas = ({
     )
       return;
 
-    const topMetrics = buildParallaxMetrics(
-      assets.parallaxTop,
-      stageSize.width,
-    );
-    const middleMetrics = buildParallaxMetrics(
-      assets.parallaxMiddle,
-      stageSize.width,
-    );
-    const bottomMetrics = buildParallaxMetrics(
-      assets.parallaxBottom,
-      stageSize.width,
-    );
+    const parallaxPeriods: Record<ParallaxKey, number> = {
+      top: buildParallaxMetrics(assets.parallaxTop, stageSize.width).height * 2,
+      middle: buildParallaxMetrics(assets.parallaxMiddle, stageSize.width).height * 2,
+      bottom: buildParallaxMetrics(assets.parallaxBottom, stageSize.width).height * 2,
+    };
+
+    // Whole device pixels only: a join on a fraction of a pixel shows as a hairline.
+    const pixelRatio = window.devicePixelRatio || 1;
 
     const animation = new Konva.Animation(
       (frame) => {
@@ -1911,43 +1979,32 @@ const DragonFlightCanvas = ({
         const now = Date.now();
 
         // Use ref for latest state to avoid loop restarts
-        const { bossY, bossHealth, showBoss, layout } =
+        const { bossY, bossHealth, showBoss, layout, dragonCount } =
           gameStateRef.current;
 
         // --- Parallax ---
-        parallaxOffsets.current.top =
-          (parallaxOffsets.current.top + delta * 40) % topMetrics.height;
-        parallaxOffsets.current.middle =
-          (parallaxOffsets.current.middle + delta * 28) % middleMetrics.height;
-        parallaxOffsets.current.bottom =
-          (parallaxOffsets.current.bottom + delta * 18) % bottomMetrics.height;
-
-        const { topA, topB, middleA, middleB, bottomA, bottomB } =
-          parallaxRefs.current;
-        if (topA && topB) {
-          topA.y(parallaxOffsets.current.top);
-          topB.y(parallaxOffsets.current.top - topMetrics.height);
-        }
-        if (middleA && middleB) {
-          middleA.y(parallaxOffsets.current.middle);
-          middleB.y(parallaxOffsets.current.middle - middleMetrics.height);
-        }
-        if (bottomA && bottomB) {
-          bottomA.y(parallaxOffsets.current.bottom);
-          bottomB.y(parallaxOffsets.current.bottom - bottomMetrics.height);
-        }
+        PARALLAX_KEYS.forEach((key) => {
+          const period = parallaxPeriods[key];
+          parallaxOffsets.current[key] =
+            (parallaxOffsets.current[key] + delta * PARALLAX_SPEEDS[key]) % period;
+          parallaxGroups.current[key]?.y(
+            Math.round((parallaxOffsets.current[key] - period) * pixelRatio) / pixelRatio,
+          );
+        });
 
         // --- Projectiles ---
-        if (showBoss && bossHealth > 0 && layout) {
-          // Spawn Player Projectile
+        if (showBoss && bossHealth > 0 && layout && bossY >= layout.bossY) {
+          // Spawn Player Projectile: the bigger the flock, the more fireballs
+          const flockSize = Math.max(dragonCount, 1);
           if (
             now - lastFireTimeRef.current.player >
-            400 + Math.random() * 200
+            Math.max(90, 420 - (flockSize - 1) * 40) + Math.random() * 80
           ) {
             const id = now + Math.random();
+            const spread = Math.min(flockSize, 12) * 8;
             projectilesRef.current.push({
               id,
-              x: layout.playerX,
+              x: layout.playerX + (Math.random() - 0.5) * spread,
               y: layout.playerY - 50,
               vx: 0,
               vy: -PROJECTILE_SPEED,
@@ -2071,97 +2128,61 @@ const DragonFlightCanvas = ({
       : showBoss && bossY > layout.bossY * 0.3
         ? 1
         : 0;
-  const bossCol = bossFrame % 3;
+  // A fallen boss stays down instead of looping its fall.
+  const bossCol = bossHealth <= 0 ? 2 : bossFrame % 3;
 
-  const armyCount = Math.min(dragonCount, 12);
+  // The lead dragon is one of the count, so what is drawn matches the number on screen.
+  const armyCount = Math.min(Math.max(dragonCount - 1, 0), 12);
   const armyItems = Array.from({ length: armyCount }, (_, index) => ({
     index,
     row: Math.floor(index / 3) % 3,
     col: index % 3,
   }));
 
-  const topMetrics = buildParallaxMetrics(assets.parallaxTop, stageSize.width);
-  const middleMetrics = buildParallaxMetrics(
-    assets.parallaxMiddle,
-    stageSize.width,
-  );
-  const bottomMetrics = buildParallaxMetrics(
-    assets.parallaxBottom,
-    stageSize.width,
-  );
+  // Enough tile copies for any screen height. Every other copy is flipped, so
+  // each join meets its own mirror image and no hard seam shows.
+  const renderParallax = (
+    key: ParallaxKey,
+    image: HTMLImageElement,
+    opacity: number,
+    layerRef: React.RefObject<Konva.Layer | null>,
+  ) => {
+    const { scale, height } = buildParallaxMetrics(image, stageSize.width);
+    const copies = Math.ceil(stageSize.height / height) + 2;
+    // A solid layer overlaps its neighbour by a pixel so nothing shows through at a join.
+    const scaleY = opacity === 1 ? scale * ((height + 1) / height) : scale;
+    return (
+      <Layer ref={layerRef} listening={false}>
+        <Group
+          y={height * -2}
+          ref={(node) => {
+            parallaxGroups.current[key] = node;
+          }}
+        >
+          {Array.from({ length: copies }, (_, index) => {
+            const flipped = index % 2 === 1;
+            return (
+              <KonvaImage
+                key={index}
+                image={image}
+                x={0}
+                y={flipped ? (index + 1) * height : index * height}
+                scaleX={scale}
+                scaleY={flipped ? -scaleY : scaleY}
+                opacity={opacity}
+              />
+            );
+          })}
+        </Group>
+      </Layer>
+    );
+  };
 
   return (
-    <Stage width={stageSize.width} height={stageSize.height}>
-      <Layer ref={bottomLayerRef}>
-        <KonvaImage
-          image={assets.parallaxBottom}
-          x={0}
-          y={0}
-          scaleX={bottomMetrics.scale}
-          scaleY={bottomMetrics.scale}
-          ref={(node) => {
-            parallaxRefs.current.bottomA = node;
-          }}
-        />
-        <KonvaImage
-          image={assets.parallaxBottom}
-          x={0}
-          y={bottomMetrics.height * -1}
-          scaleX={bottomMetrics.scale}
-          scaleY={bottomMetrics.scale}
-          ref={(node) => {
-            parallaxRefs.current.bottomB = node;
-          }}
-        />
-      </Layer>
-      <Layer ref={middleLayerRef}>
-        <KonvaImage
-          image={assets.parallaxMiddle}
-          x={0}
-          y={0}
-          scaleX={middleMetrics.scale}
-          scaleY={middleMetrics.scale}
-          opacity={0.85}
-          ref={(node) => {
-            parallaxRefs.current.middleA = node;
-          }}
-        />
-        <KonvaImage
-          image={assets.parallaxMiddle}
-          x={0}
-          y={middleMetrics.height * -1}
-          scaleX={middleMetrics.scale}
-          scaleY={middleMetrics.scale}
-          opacity={0.85}
-          ref={(node) => {
-            parallaxRefs.current.middleB = node;
-          }}
-        />
-      </Layer>
-      <Layer ref={topLayerRef}>
-        <KonvaImage
-          image={assets.parallaxTop}
-          x={0}
-          y={0}
-          scaleX={topMetrics.scale}
-          scaleY={topMetrics.scale}
-          opacity={0.7}
-          ref={(node) => {
-            parallaxRefs.current.topA = node;
-          }}
-        />
-        <KonvaImage
-          image={assets.parallaxTop}
-          x={0}
-          y={topMetrics.height * -1}
-          scaleX={topMetrics.scale}
-          scaleY={topMetrics.scale}
-          opacity={0.7}
-          ref={(node) => {
-            parallaxRefs.current.topB = node;
-          }}
-        />
-      </Layer>
+    <Stage width={stageSize.width} height={stageSize.height} listening={false}>
+      {renderParallax("bottom", assets.parallaxBottom, 1, bottomLayerRef)}
+      {renderParallax("middle", assets.parallaxMiddle, 0.85, middleLayerRef)}
+      {renderParallax("top", assets.parallaxTop, 0.7, topLayerRef)}
 
       <Layer ref={projectileLayerRef} />
 
@@ -2210,6 +2231,16 @@ const DragonFlightCanvas = ({
 
         {showBoss && (
           <>
+            {/* Dims the clouds so the dark boss art reads against them */}
+            <Rect
+              x={0}
+              y={0}
+              width={stageSize.width}
+              height={stageSize.height}
+              fill="black"
+              opacity={0.4}
+            />
+
             {/* Red flash effect when boss appears */}
             <Rect
               x={0}
@@ -2269,19 +2300,18 @@ const DragonFlightCanvas = ({
         {!showBoss &&
           gatePairs.map((pair) => {
             const gateCenterY = pair.y + layout.leftGate.height / 2;
-            const isActive = pair.id === activePairId;
-            const isFeedbackPair = feedback?.pairId === pair.id;
-            const leftRow = isFeedbackPair
+            // Once answered or closed the gate stays marked until it leaves the screen.
+            const revealed = Boolean(pair.outcome);
+            const leftRow = revealed
               ? pair.round.correctSide === "left"
                 ? 1
                 : 2
               : 0;
-            const rightRow = isFeedbackPair
+            const rightRow = revealed
               ? pair.round.correctSide === "right"
                 ? 1
                 : 2
               : 0;
-            const gateOpacity = isActive ? 1 : 0.7;
 
             return (
               <React.Fragment key={pair.id}>
@@ -2290,11 +2320,6 @@ const DragonFlightCanvas = ({
                   y={gateCenterY}
                   scaleX={layout.gateScale}
                   scaleY={layout.gateScale}
-                  opacity={gateOpacity}
-                  listening={isActive}
-                  onPointerDown={
-                    isActive ? () => onSelectGate("left") : undefined
-                  }
                 >
                   <KonvaImage
                     image={assets.gates}
@@ -2303,20 +2328,8 @@ const DragonFlightCanvas = ({
                     height={layout.gateFrameHeight}
                     offsetX={layout.gateFrameWidth / 2}
                     offsetY={layout.gateFrameHeight / 2}
+                    {...gateGlow(leftRow)}
                   />
-                  {isFeedbackPair && (
-                    <Rect
-                      width={layout.gateFrameWidth}
-                      height={layout.gateFrameHeight}
-                      offsetX={layout.gateFrameWidth / 2}
-                      offsetY={layout.gateFrameHeight / 2}
-                      fill={
-                        leftRow === 1
-                          ? "rgba(34,197,94,0.2)"
-                          : "rgba(239,68,68,0.2)"
-                      }
-                    />
-                  )}
                 </Group>
 
                 <Group
@@ -2324,11 +2337,6 @@ const DragonFlightCanvas = ({
                   y={gateCenterY}
                   scaleX={layout.gateScale}
                   scaleY={layout.gateScale}
-                  opacity={gateOpacity}
-                  listening={isActive}
-                  onPointerDown={
-                    isActive ? () => onSelectGate("right") : undefined
-                  }
                 >
                   <KonvaImage
                     image={assets.gates}
@@ -2337,20 +2345,8 @@ const DragonFlightCanvas = ({
                     height={layout.gateFrameHeight}
                     offsetX={layout.gateFrameWidth / 2}
                     offsetY={layout.gateFrameHeight / 2}
+                    {...gateGlow(rightRow)}
                   />
-                  {isFeedbackPair && (
-                    <Rect
-                      width={layout.gateFrameWidth}
-                      height={layout.gateFrameHeight}
-                      offsetX={layout.gateFrameWidth / 2}
-                      offsetY={layout.gateFrameHeight / 2}
-                      fill={
-                        rightRow === 1
-                          ? "rgba(34,197,94,0.2)"
-                          : "rgba(239,68,68,0.2)"
-                      }
-                    />
-                  )}
                 </Group>
               </React.Fragment>
             );

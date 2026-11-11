@@ -12,7 +12,6 @@ import {
   Layer,
   Rect,
   Circle,
-  Text,
   Image as KonvaImage,
   Group,
 } from "react-konva";
@@ -30,7 +29,10 @@ import { VirtualDPad } from "@/components/games/ui/VirtualDPad";
 import { useDirectionalInput } from "@/hooks/useDirectionalInput";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
+import { useSound, type GameSoundType } from "@/hooks/useSound";
 import { getCachedGameImage, loadGameImage } from "@/lib/games/gameAssetPreloader";
+import { splitFrameTime } from "@/lib/games/roundClock";
+import { pickShortSentences } from "@/lib/games/sentenceRound";
 
 import {
   GAME_WIDTH,
@@ -44,20 +46,24 @@ import {
   advanceCastleDefenseTime,
   isSentenceComplete,
   CastleDefenseState,
-  WORD_RADIUS,
   inRange,
   calculateCastleDefenseXP,
+  castleCue,
   computeCastleDefenseCamera,
+  type CastleCue,
   type CastleDefenseCameraFit,
   updateProjectiles,
   updateTowers,
+  wordsInPlay,
   type SentenceItem,
   type Enemy,
   type TowerSlot,
   type Word,
 } from "@/lib/games/castleDefense";
 import { BackgroundLayer } from "./BackgroundLayer";
+import { WordOrb } from "./WordOrb";
 import { tx } from "@/lib/games/gameText";
+import { hasThaiText } from "@/lib/games/lessonContent";
 
 const buildSpriteGrid = (width: number, height: number) => {
   const fw = width / 3;
@@ -102,11 +108,25 @@ type Props = {
   fit?: CastleDefenseCameraFit;
   /** "contain" only: px at the bottom kept clear of the board (host overlays). */
   insetBottom?: number;
+  /** Stage scale on a projector: the HUD, the sentence and the word orbs are drawn bigger. */
+  presenterScale?: number;
   onTutorialStepChange?: (step: number) => void;
 };
 
 const GAME_DURATION_MS = 60_000;
 const MAX_ROUND_SENTENCES = 10;
+const MAX_SENTENCE_WORDS = 12;
+const WRONG_MESSAGE_MS = 1_400;
+const WRONG_FLASH_MS = 500;
+const ORB_FONT_SIZE = 17;
+// Word orbs are drawn in map units, which a big screen already enlarges a little.
+const ORB_PRESENTER_BOOST = 0.92;
+const CUE_SOUNDS: Record<CastleCue, GameSoundType> = {
+  word: "clinking",
+  wrong: "error",
+  sentence: "success",
+  tower: "missile-hit",
+};
 const CASTLE_ASSET_PATHS = {
   player: "/games/sentence/castle-defense/player_3x3_pose_sheet.webp",
   soldier: "/games/sentence/castle-defense/goblin_3x3_pose_sheet.webp",
@@ -118,7 +138,9 @@ const CASTLE_ASSET_PATHS = {
 };
 
 const buildRoundSentences = (items: SentenceItem[]) =>
-  [...items].sort(() => Math.random() - 0.5).slice(0, MAX_ROUND_SENTENCES);
+  pickShortSentences(items, MAX_SENTENCE_WORDS)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, MAX_ROUND_SENTENCES);
 
 const getCachedCastleAssets = (): GameAssets | null => {
   const player = getCachedGameImage(CASTLE_ASSET_PATHS.player);
@@ -149,6 +171,7 @@ export function CastleDefenseGame({
   onTutorialStepChange,
   fit = "cover",
   insetBottom = 0,
+  presenterScale = 1,
 }: Props) {
   const t = useScopedI18n("pages.student.gamesPage.castleDefense");
   const gameVocabulary = useMemo(() => buildRoundSentences(vocabulary), [vocabulary]);
@@ -197,6 +220,7 @@ export function CastleDefenseGame({
   const containerRef = useRef<HTMLDivElement>(null);
   const hudRef = useRef<HTMLDivElement>(null);
   const sentencePromptRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   // Height of the top HUD (relative to the game root). In "contain" mode the
   // board is laid out below it so the HUD never covers word orbs.
   const [hudInset, setHudInset] = useState(0);
@@ -216,6 +240,7 @@ export function CastleDefenseGame({
   const inputRef = useRef({ dx: 0, dy: 0, cast: false });
   const { enterFullscreen, exitFullscreen } = useGameFullscreen();
   const { getEffectiveTextSize } = useAccessibilitySettings();
+  const { playSound } = useSound();
 
   const { input, setVirtualInput, triggerCast, consumeCast } = useDirectionalInput();
 
@@ -229,9 +254,10 @@ export function CastleDefenseGame({
     buildEffectsRef.current = buildEffects;
   }, [buildEffects]);
 
+  // The scripted tutorial changes state through React. The play loop writes this ref itself.
   useEffect(() => {
-    gameStateRef.current = gameState;
-  }, [gameState]);
+    if (tutorialMode) gameStateRef.current = gameState;
+  }, [gameState, tutorialMode]);
 
   useEffect(() => {
     onCompleteRef.current = onComplete;
@@ -377,11 +403,13 @@ export function CastleDefenseGame({
     setTutorialPointer(null);
     setTutorialDirection({ dx: 0, walking: false });
     setTutorialCycle(0);
-    setGameState(createCastleDefenseState(gameVocabulary, {
+    const round = createCastleDefenseState(gameVocabulary, {
       difficulty,
       maxSentences: Math.min(MAX_ROUND_SENTENCES, gameVocabulary.length || 1),
       durationMs: GAME_DURATION_MS,
-    }));
+    });
+    gameStateRef.current = round;
+    setGameState(round);
     setHasStarted(true);
     enterFullscreen();
   }, [gameVocabulary, difficulty, enterFullscreen]);
@@ -618,10 +646,11 @@ export function CastleDefenseGame({
       setStep(0);
       const prompt = sentencePromptRef.current?.getBoundingClientRect();
       const root = containerRef.current?.getBoundingClientRect();
+      const readLabel = hasThaiText(gameStateRef.current?.currentSentenceThai) ? "อ่านคำแปลก่อน" : "อ่านประโยคก่อน";
       movePointer(
         prompt && root
-          ? { x: prompt.left - root.left + prompt.width / 2, y: prompt.top - root.top + prompt.height / 2 + 16, label: "อ่านคำแปลก่อน", screen: true }
-          : { x: GAME_WIDTH / 2, y: 112, label: "อ่านคำแปลก่อน" },
+          ? { x: prompt.left - root.left + prompt.width / 2, y: prompt.top - root.top + prompt.height / 2 + 16, label: readLabel, screen: true }
+          : { x: GAME_WIDTH / 2, y: 112, label: readLabel },
       );
       await wait(1500);
       if (cancelled) return;
@@ -717,77 +746,81 @@ export function CastleDefenseGame({
     const loop = (timestamp: number) => {
       const delta = lastFrameRef.current ? timestamp - lastFrameRef.current : GAME_TICK_MS;
       lastFrameRef.current = timestamp;
-      const clampedDelta = Math.min(delta, 50);
 
-      setGameState((prevState) => {
-        if (!prevState || prevState.status !== "playing") return prevState;
+      const previous = gameStateRef.current;
+      if (!previous || previous.status !== "playing") return;
 
-        const currentInput = inputRef.current;
-        const nextState = advanceCastleDefenseTime(
-          prevState,
-          clampedDelta,
-          { dx: currentInput.dx, dy: currentInput.dy, drop: currentInput.cast },
-          gameVocabulary,
-        );
+      const stepsMs = splitFrameTime(delta);
+      const { dx, dy, cast } = inputRef.current;
+      let nextState = previous;
+      let drop = cast;
+      let elapsedMs = 0;
+      for (const stepMs of stepsMs) {
+        nextState = advanceCastleDefenseTime(nextState, stepMs, { dx, dy, drop }, gameVocabulary);
+        drop = false;
+        elapsedMs += stepMs;
+        if (nextState.status !== "playing") break;
+      }
+      if (cast && stepsMs.length > 0) {
+        inputRef.current = { dx, dy, cast: false };
+        consumeCast();
+      }
 
-        // Update camera (always sized to the measured container, never the viewport)
-        if (dimensions.width > 0 && dimensions.height > 0) {
-          setCamera(computeCastleDefenseCamera(dimensions, nextState.player, cameraOptionsRef.current));
-        }
+      // Update camera (always sized to the measured container, never the viewport)
+      if (dimensions.width > 0 && dimensions.height > 0) {
+        setCamera(computeCastleDefenseCamera(dimensions, nextState.player, cameraOptionsRef.current));
+      }
 
-        // Animation frames
-        animTimerRef.current += clampedDelta;
-        if (animTimerRef.current >= ANIMATION_FRAME_MS) {
-          animTimerRef.current = 0;
-          setPlayerFrame((f) => (f + 1) % 3);
-          setEnemyFrame((f) => (f + 1) % 3);
-        }
+      // Animation frames
+      animTimerRef.current += elapsedMs;
+      if (animTimerRef.current >= ANIMATION_FRAME_MS) {
+        animTimerRef.current = 0;
+        setPlayerFrame((f) => (f + 1) % 3);
+        setEnemyFrame((f) => (f + 1) % 3);
+      }
 
-        // Build effects cleanup
-        setBuildEffects((prev) =>
-          prev.filter((effect) => Date.now() - effect.createdAt < 600),
-        );
+      // Build effects cleanup
+      setBuildEffects((prev) => {
+        if (prev.length === 0) return prev;
+        return prev.filter((effect) => Date.now() - effect.createdAt < 600);
+      });
 
-        // Handle game end
-        if (
-          (nextState.status === "gameover" || nextState.status === "victory") &&
-          onCompleteRef.current &&
-          !completedRef.current
-        ) {
-          completedRef.current = true;
-          const totalAttempts =
-            nextState.correctWordCollections +
-            nextState.incorrectWordCollections;
-          const accuracy =
-            totalAttempts > 0
-              ? nextState.correctWordCollections / totalAttempts
-              : 0;
-          onCompleteRef.current({
-            xp: calculateCastleDefenseXP(nextState),
-            score: nextState.score,
-            accuracy,
-            correctAnswers: nextState.completedSentences,
-            totalAttempts: nextState.maxSentences,
-            difficulty: nextState.difficulty,
-            durationMs: Math.min(GAME_DURATION_MS, Math.max(0, nextState.gameTime)),
+      const cue = castleCue(previous, nextState);
+      if (cue) playSound(CUE_SOUNDS[cue]);
+
+      // Handle game end
+      if (nextState.status !== "playing" && !completedRef.current) {
+        completedRef.current = true;
+        const totalAttempts =
+          nextState.correctWordCollections +
+          nextState.incorrectWordCollections;
+        const accuracy =
+          totalAttempts > 0
+            ? nextState.correctWordCollections / totalAttempts
+            : 0;
+        onCompleteRef.current?.({
+          xp: calculateCastleDefenseXP(nextState),
+          score: nextState.score,
+          accuracy,
+          correctAnswers: nextState.completedSentences,
+          totalAttempts: nextState.maxSentences,
+          difficulty: nextState.difficulty,
+          durationMs: Math.min(GAME_DURATION_MS, Math.max(0, nextState.gameTime)),
+        });
+        if (autoStart || tutorialMode) {
+          completedRef.current = false;
+          nextState = createCastleDefenseState(gameVocabulary, {
+            difficulty,
+            maxSentences: Math.min(MAX_ROUND_SENTENCES, gameVocabulary.length || 1),
+            durationMs: GAME_DURATION_MS,
           });
-          if (autoStart || tutorialMode) {
-            completedRef.current = false;
-            return createCastleDefenseState(gameVocabulary, {
-              difficulty,
-              maxSentences: Math.min(MAX_ROUND_SENTENCES, gameVocabulary.length || 1),
-              durationMs: GAME_DURATION_MS,
-            });
-          }
+        } else {
           exitFullscreen();
         }
+      }
 
-        if (inputRef.current.cast) {
-          consumeCast();
-        }
-
-        return nextState;
-      });
+      gameStateRef.current = nextState;
+      setGameState(nextState);
 
       rafRef.current = requestAnimationFrame(loop);
     };
@@ -798,7 +831,17 @@ export function CastleDefenseGame({
       lastFrameRef.current = 0;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState?.status, assets, hasStarted, gameVocabulary, dimensions.width, dimensions.height, consumeCast, exitFullscreen, tutorialMode]);
+  }, [gameState?.status, assets, hasStarted, gameVocabulary, dimensions.width, dimensions.height, consumeCast, exitFullscreen, playSound, tutorialMode]);
+
+  // A wrong touch shakes the sentence, because that is where the loss shows.
+  const lastWrongAt = gameState?.lastWrongHit?.at;
+  useEffect(() => {
+    if (lastWrongAt === undefined) return;
+    progressRef.current?.animate?.(
+      [-7, 7, -5, 5, -2, 0].map((x) => ({ transform: `translateX(${x}px)` })),
+      { duration: 360 },
+    );
+  }, [lastWrongAt]);
 
   const grids = useMemo(() => {
     if (!assets) return null;
@@ -921,6 +964,12 @@ export function CastleDefenseGame({
     );
   }
 
+  const nextWordIndex = gameState?.collectedWordIndices.length ?? 0;
+  const hudText = (px: number) => ({ fontSize: px * presenterScale });
+  const lastWrongHit = gameState?.lastWrongHit ?? null;
+  const wrongAge = gameState && lastWrongHit ? gameState.gameTime - lastWrongHit.at : Infinity;
+  const ringPulse = gameState ? (Math.sin(gameState.gameTime / 160) + 1) / 2 : 0;
+
   return (
     <div
       ref={containerRef}
@@ -948,14 +997,15 @@ export function CastleDefenseGame({
                     <Circle
                       x={slot.x}
                       y={slot.y}
-                      radius={TILE_SIZE * 0.6}
+                      radius={TILE_SIZE * 0.6 + ringPulse * 8}
+                      fill="rgba(250, 204, 21, 0.18)"
                       stroke={
                         activeBuildSlot?.id === slot.id
                           ? "#22c55e"
-                          : "rgba(250, 204, 21, 0.9)"
+                          : "rgba(250, 204, 21, 0.95)"
                       }
-                      strokeWidth={activeBuildSlot?.id === slot.id ? 4 : 2}
-                      dash={activeBuildSlot?.id === slot.id ? [6, 4] : [4, 6]}
+                      strokeWidth={activeBuildSlot?.id === slot.id ? 5 : 3 + ringPulse * 2}
+                      dash={[6, 5]}
                     />
                   )}
                 <KonvaImage
@@ -1069,7 +1119,7 @@ export function CastleDefenseGame({
                   )}
                   <Rect
                     x={enemy.x - 15}
-                    y={enemy.y - size / 2 - 10}
+                    y={enemy.y - size * 0.42}
                     width={30}
                     height={4}
                     fill="#333"
@@ -1077,7 +1127,7 @@ export function CastleDefenseGame({
                   />
                   <Rect
                     x={enemy.x - 15}
-                    y={enemy.y - size / 2 - 10}
+                    y={enemy.y - size * 0.42}
                     width={30 * (enemy.hp / enemy.maxHp)}
                     height={4}
                     fill={enemy.hp > enemy.maxHp * 0.5 ? "#22c55e" : "#ef4444"}
@@ -1087,32 +1137,14 @@ export function CastleDefenseGame({
               );
             })}
 
-            {gameState.words
-              .filter((w) => !w.isCollected)
-              .map((word) => (
-                <Group key={word.term + word.x} x={word.x} y={word.y}>
-                  <Circle
-                    radius={WORD_RADIUS}
-                    fill="white"
-                    stroke="#111"
-                    strokeWidth={2}
-                  />
-                  <Text
-                    text={word.translation}
-                    fontSize={getEffectiveTextSize(Math.max(12, Math.min(18, Math.floor((word.radius * 1.45) / Math.max(word.translation.length, 1)) * 2)))}
-                    fontStyle="bold"
-                    fill="black"
-                    offsetX={word.radius}
-                    offsetY={word.radius}
-                    width={word.radius * 2}
-                    height={word.radius * 2}
-                    align="center"
-                    verticalAlign="middle"
-                    wrap="none"
-                    ellipsis
-                  />
-                </Group>
-              ))}
+            {wordsInPlay(gameState.words, gameState.sentenceWords, gameState.collectedWordIndices).map((word) => (
+              <WordOrb
+                key={word.id}
+                word={word}
+                fontSize={getEffectiveTextSize(ORB_FONT_SIZE) * Math.max(1, presenterScale * ORB_PRESENTER_BOOST)}
+                flash={wrongAge < WRONG_FLASH_MS && lastWrongHit?.wordId === word.id}
+              />
+            ))}
 
             {grids && (
               <KonvaImage
@@ -1143,24 +1175,36 @@ export function CastleDefenseGame({
           <div className="flex w-full items-center justify-between gap-2">
             {/* Score */}
             <div className="flex flex-col items-center bg-slate-950/80 border border-white/10 px-2.5 py-1 rounded-xl shadow-lg backdrop-blur min-w-[52px]">
-              <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wide leading-none">{t("hud.score")}</span>
-              <span className="text-sm font-black text-white leading-tight">{gameState.score}</span>
+              <span className="font-bold text-slate-300 leading-none" style={hudText(11)}>{t("hud.score")}</span>
+              <span className="font-black text-white leading-tight" style={hudText(14)}>{gameState.score}</span>
             </div>
 
-            {/* Center: Timer + Sentences */}
-            <div className="flex items-center gap-1.5">
-              <div className="rounded-full border border-white/10 bg-slate-950/80 px-3 py-1 text-[11px] font-black text-white shadow-lg backdrop-blur">
+            {/* Center: Timer + Sentences + Wave (+ frozen-time badge while the tutorial demo runs) */}
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
+              <div className="rounded-full border border-white/10 bg-slate-950/80 px-3 py-1 font-black text-white shadow-lg backdrop-blur" style={hudText(11)}>
                 ⏱ {Math.max(0, Math.ceil((gameState.durationMs - gameState.gameTime) / 1000))}s
               </div>
-              <div className="rounded-full border border-white/10 bg-slate-950/80 px-3 py-1 text-[11px] font-black text-white shadow-lg backdrop-blur">
+              <div className="rounded-full border border-white/10 bg-slate-950/80 px-3 py-1 font-black text-white shadow-lg backdrop-blur" style={hudText(11)}>
                 {gameState.completedSentences}/{gameState.maxSentences}
               </div>
+              <div className="bg-slate-950/70 border border-white/10 px-3 py-1 rounded-full shadow-lg text-white font-bold uppercase tracking-wide" style={hudText(11)}>
+                {t("hud.wave", {
+                  current: gameState.wave,
+                  killed: gameState.enemiesKilledThisWave,
+                  total: gameState.totalEnemiesThisWave,
+                })}
+              </div>
+              {tutorialMode && (
+                <div className="rounded-full border border-violet-300/50 bg-slate-950/90 px-3 py-1 font-black uppercase tracking-widest text-violet-200 shadow-xl backdrop-blur-md" style={hudText(10)}>
+                  ⏸ หยุดเวลา · สาธิตอัตโนมัติ
+                </div>
+              )}
             </div>
 
             {/* Castle HP */}
             <div className="flex flex-col items-center bg-slate-950/80 border border-white/10 px-2.5 py-1 rounded-xl shadow-lg backdrop-blur min-w-[52px]">
-              <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wide leading-none">{t("hud.castleHp")}</span>
-              <span className="text-sm font-black text-rose-400 leading-tight">{gameState.base.hp}</span>
+              <span className="font-bold text-slate-300 leading-none" style={hudText(11)}>{t("hud.castleHp")}</span>
+              <span className="font-black text-rose-400 leading-tight" style={hudText(14)}>{gameState.base.hp}</span>
               <div className="w-10 h-1 bg-slate-700 rounded-full overflow-hidden mt-0.5">
                 <div
                   className="h-full bg-rose-500 transition-all duration-300"
@@ -1170,44 +1214,30 @@ export function CastleDefenseGame({
             </div>
           </div>
 
-          {/* Wave info (+ frozen-time badge while the tutorial demo runs) */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5">
-            <div className="bg-slate-950/70 border border-white/10 px-3 py-0.5 rounded-full shadow-lg text-white text-[11px] font-bold uppercase tracking-wide">
-              {t("hud.wave", {
-                current: gameState.wave,
-                killed: gameState.enemiesKilledThisWave,
-                total: gameState.totalEnemiesThisWave,
-              })}
-            </div>
-            {tutorialMode && (
-              <div className="rounded-full border border-violet-300/50 bg-slate-950/90 px-3 py-0.5 text-[10px] font-black uppercase tracking-widest text-violet-200 shadow-xl backdrop-blur-md">
-                ⏸ หยุดเวลา · สาธิตอัตโนมัติ
-              </div>
-            )}
-          </div>
-
           {/* Thai sentence prompt */}
           {gameState.currentSentenceThai && (
             <div ref={sentencePromptRef} className="bg-blue-900/90 border border-blue-400/40 px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md w-full">
-              <div className="text-white text-sm font-black text-center leading-snug" style={{ fontSize: getEffectiveTextSize(15) }}>
+              <div className="text-white text-sm font-black text-center leading-snug" style={{ fontSize: presenterScale > 1 ? 20 * presenterScale : getEffectiveTextSize(15) }}>
                 {gameState.currentSentenceThai}
               </div>
             </div>
           )}
 
           {/* Progress (blank slots) */}
-          <div className="bg-slate-950/70 border border-white/10 px-3 py-1 rounded-xl shadow-lg backdrop-blur-md text-center w-full">
-            <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wide block leading-none mb-0.5">
+          <div ref={progressRef} className="bg-slate-950/70 border border-white/10 px-3 py-1 rounded-xl shadow-lg backdrop-blur-md text-center w-full">
+            <span className="font-bold text-slate-300 block leading-none mb-0.5" style={hudText(11)}>
               {t("hud.progress")}
             </span>
-            <div className="text-xs font-semibold text-white">
+            <div className="font-semibold text-white" style={hudText(presenterScale > 1 ? 16 : 12)}>
               {gameState.sentenceWords.map((word, idx) => (
                 <span
                   key={`${word}-${idx}`}
                   className={
                     gameState.collectedWordIndices.includes(idx)
                       ? "text-emerald-300"
-                      : "text-slate-400"
+                      : idx === nextWordIndex
+                        ? "font-black text-amber-300"
+                        : "text-slate-400"
                   }
                 >
                   {gameState.collectedWordIndices.includes(idx) ? word : "___"}{" "}
@@ -1215,11 +1245,30 @@ export function CastleDefenseGame({
               ))}
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Sentence complete badge */}
+      {/* Short messages under the HUD. They sit outside it, so the board never moves for them. */}
+      {gameState && (
+        <div
+          className="pointer-events-none absolute inset-x-0 z-20 flex flex-col items-center gap-1 px-3 text-center font-black text-white"
+          style={{ top: hudInset, fontSize: presenterScale > 1 ? 16 * presenterScale : 12 }}
+        >
+          {wrongAge < WRONG_MESSAGE_MS && (
+            <div className="rounded-full border border-red-200/70 bg-red-600 px-3 py-1 shadow-lg">
+              {t(lastWrongHit?.lostWord ? "messages.wrongWordLost" : "messages.wrongWord")}
+            </div>
+          )}
           {gameState.sentenceCompleted && (
-            <div className="bg-emerald-600/90 border border-emerald-300/60 px-3 py-0.5 rounded-full shadow-lg text-white text-[11px] font-black uppercase tracking-wide">
+            <div className="rounded-full border border-emerald-300/60 bg-emerald-600 px-3 py-1 shadow-lg">
               {t("messages.sentenceComplete")}
+            </div>
+          )}
+          {gameState.waveResult && (
+            <div className="whitespace-nowrap rounded-full border border-amber-200/60 bg-amber-600 px-3 py-1 shadow-lg">
+              {gameState.waveResult.breached
+                ? t("messages.waveNext")
+                : t("messages.waveDefended", { wave: gameState.waveResult.wave })}
             </div>
           )}
         </div>
@@ -1243,7 +1292,7 @@ export function CastleDefenseGame({
                 <MousePointer2 size={25} fill="currentColor" />
               </div>
             </div>
-            <span className="whitespace-nowrap rounded-full border border-violet-200/60 bg-slate-950/95 px-3 py-1 text-xs font-black text-white shadow-2xl">
+            <span className="whitespace-nowrap rounded-full border border-violet-200/60 bg-slate-950/95 px-3 py-1 font-black text-white shadow-2xl" style={hudText(12)}>
               {tutorialPointer.label}
             </span>
           </div>
@@ -1260,18 +1309,11 @@ export function CastleDefenseGame({
         </div>
       )}
 
-      {gameState?.waveMessage && (
-        <div className="absolute top-[30%] md:top-24 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-          <div className="bg-amber-500/90 border border-amber-200/60 px-5 md:px-6 py-1.5 md:py-2 rounded-full shadow-xl text-white font-black uppercase tracking-widest text-[10px] md:text-xs" style={{ fontSize: getEffectiveTextSize(16) }}>
-            {gameState.waveMessage}
-          </div>
-        </div>
-      )}
-
       {!tutorialMode && (
         <>
           <div
-            className="absolute bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] left-1/2 z-30 -translate-x-1/2 scale-90 pointer-events-auto md:scale-100"
+            className="absolute bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] left-3 z-30 origin-bottom-left scale-90 pointer-events-auto md:left-6 md:scale-100"
+            style={{ zoom: presenterScale }}
             data-testid="virtual-dpad"
           >
             <VirtualDPad onInput={setVirtualInput} />
@@ -1279,11 +1321,15 @@ export function CastleDefenseGame({
 
           <button
             type="button"
+            aria-disabled={!gameState?.sentenceCompleted}
+            style={{ zoom: presenterScale }}
             onPointerDown={(event) => {
               event.preventDefault();
               triggerCast();
             }}
-            className="absolute bottom-[calc(env(safe-area-inset-bottom)+2.25rem)] right-5 z-30 flex size-16 items-center justify-center rounded-full border-2 border-emerald-300/60 bg-emerald-500 text-xs font-black text-white shadow-2xl shadow-emerald-950/40 active:scale-95 md:bottom-8 md:right-8 md:size-20 md:text-sm"
+            className={`absolute bottom-[calc(env(safe-area-inset-bottom)+2.25rem)] right-5 z-30 flex size-16 items-center justify-center rounded-full border-2 border-emerald-300/60 text-sm font-black text-white shadow-2xl shadow-emerald-950/40 active:scale-95 md:bottom-8 md:right-8 md:size-20 ${
+              gameState?.sentenceCompleted ? "animate-pulse bg-emerald-500 ring-4 ring-amber-300" : "bg-emerald-800/70 opacity-60"
+            }`}
           >
             {t("controls.build")}
           </button>

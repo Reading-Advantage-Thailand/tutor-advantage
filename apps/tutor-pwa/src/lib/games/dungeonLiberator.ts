@@ -1,3 +1,5 @@
+import { clampMoveVector } from '@/lib/games/moveVector'
+
 export type SentenceItem = {
   term: string
   translation: string
@@ -155,13 +157,7 @@ export function advanceDungeonLiberatorTime(
 function updatePlayer(state: DungeonLiberatorState, input: InputState, dt: number): DungeonLiberatorState {
   let { player } = state
 
-  let moveX = input.dx
-  let moveY = input.dy
-  if (moveX !== 0 && moveY !== 0) {
-    const invSqrt2 = 0.70710678118
-    moveX *= invSqrt2
-    moveY *= invSqrt2
-  }
+  const { dx: moveX, dy: moveY } = clampMoveVector(input.dx, input.dy)
 
   const speedFactor = dt / 16.6
   let newX = player.x + moveX * player.speed * speedFactor

@@ -29,7 +29,8 @@ export function BookPickupBurst({
   return (
     <div
       className="absolute pointer-events-none"
-      style={{ left: `${x}%`, top: `${y}%` }}
+      // Centred on the book, not hanging from its corner.
+      style={{ left: `${x}%`, top: `${y}%`, transform: "translate(-50%, -50%)" }}
       data-variant={variant}
       aria-hidden="true"
       data-testid="book-pickup-burst"

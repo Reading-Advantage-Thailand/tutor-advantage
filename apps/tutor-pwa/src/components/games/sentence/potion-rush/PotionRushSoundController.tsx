@@ -7,15 +7,15 @@ import { useSound } from '@/hooks/useSound'
 export default function PotionRushSoundController() {
   const { playSound } = useSound()
   const lastServed = useRef(0)
-  const lastReputation = useRef(100)
-  const lastCauldronStates = useRef<string[]>([])
+  const lastAngry = useRef(0)
+  const lastRejection = useRef<number | null>(null)
   const lastCauldronWordCounts = useRef<number[]>([0, 0, 0])
 
   useEffect(() => {
     const state = usePotionRushStore.getState()
     lastServed.current = state.completedSentences
-    lastReputation.current = state.reputation
-    lastCauldronStates.current = state.cauldrons.map(c => c.state)
+    lastAngry.current = state.angryCustomers
+    lastRejection.current = state.lastRejection?.seq ?? null
     lastCauldronWordCounts.current = state.cauldrons.map(c => c.currentWords.length)
 
     const unsubscribe = usePotionRushStore.subscribe((state) => {
@@ -24,28 +24,22 @@ export default function PotionRushSoundController() {
       }
       lastServed.current = state.completedSentences
 
-      if (state.reputation < lastReputation.current) {
+      if (state.angryCustomers > lastAngry.current) {
         playSound('angry-grunt')
       }
-      lastReputation.current = state.reputation
+      lastAngry.current = state.angryCustomers
+
+      const rejection = state.lastRejection?.seq ?? null
+      if (rejection !== null && rejection !== lastRejection.current) {
+        playSound('error')
+      }
+      lastRejection.current = rejection
 
       state.cauldrons.forEach((cauldron, index) => {
-        const prevState = lastCauldronStates.current[index]
-        const prevCount = lastCauldronWordCounts.current[index]
-
-        if (cauldron.state !== prevState) {
-          if (cauldron.state === 'BREWING' && (prevState === 'IDLE')) {
-            playSound('bubbling')
-          } else if (cauldron.state === 'WARNING') {
-            playSound('error')
-          } else if (cauldron.state === 'COMPLETED') {
-            playSound('success')
-          }
-        } else if (cauldron.state === 'BREWING' && cauldron.currentWords.length > prevCount) {
+        if (cauldron.state === 'BREWING' && cauldron.currentWords.length > lastCauldronWordCounts.current[index]) {
           playSound('bubbling')
         }
       })
-      lastCauldronStates.current = state.cauldrons.map(c => c.state)
       lastCauldronWordCounts.current = state.cauldrons.map(c => c.currentWords.length)
     })
 

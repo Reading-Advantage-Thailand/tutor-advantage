@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import type Konva from 'konva'
 import { Group, Rect, Text, Image as KonvaImage, Circle } from 'react-konva'
 import { usePotionRushStore, Ingredient } from '@/store/usePotionRushStore'
 import { useGameImages } from '@/lib/games/useGameImages'
 import { useSound } from '@/hooks/useSound'
+import { resolveDropZone, type DropZoneLayout } from '@/lib/games/potionRushOrders'
 
 const BELT_IMAGES = {
   herb: '/games/sentence/potion-rush/herb.webp',
@@ -12,178 +13,196 @@ const BELT_IMAGES = {
   potion: '/games/sentence/potion-rush/potion.webp',
 }
 
-interface LayoutConfig {
-  cauldronY: number
-  trashX: number
-  trashY: number
-}
+const HOLD_SLOT_Y = 510
+const ROLLER_SPACING = 100
+const LABEL_FONT_SIZE = 16
+const LABEL_HEIGHT = 22
+const MISSED_DROP_HINT = 'วางลงในหม้อ'
 
 interface ConveyorBeltProps {
   y: number
   width: number
-  dragBoundFunc: (pos: { x: number; y: number }) => { x: number; y: number }
-  layout: LayoutConfig
+  layout: DropZoneLayout & { cauldronY: number }
+  /** Above 1 on a projected stage. Phones never set this. */
+  labelScale?: number
 }
 
-export default function ConveyorBelt({ y, width, layout }: ConveyorBeltProps) {
-  const items = usePotionRushStore(state => state.conveyorItems)
-  const handleDrop = usePotionRushStore(state => state.handleDropIngredient)
-  const discardIngredient = usePotionRushStore(state => state.discardIngredient)
-  const setIngredientDragging = usePotionRushStore(state => state.setIngredientDragging)
-  const handleHold = usePotionRushStore(state => state.handleHoldIngredient)
-  const releaseHold = usePotionRushStore(state => state.releaseHold)
-  const gameState = usePotionRushStore(state => state.gameState)
-  const beltSpeed = usePotionRushStore(state => state.beltSpeed)
-  
+let measureContext: CanvasRenderingContext2D | null = null
+
+/** Width of a belt label as Konva will draw it. */
+function labelWidth(word: string, fontSize: number): number {
+  if (typeof document === 'undefined') return word.length * fontSize * 0.56
+  measureContext = measureContext ?? document.createElement('canvas').getContext('2d')
+  if (!measureContext) return word.length * fontSize * 0.56
+  measureContext.font = `bold ${fontSize}px Arial`
+  return measureContext.measureText(word).width
+}
+
+function potCentre(slot: number, width: number, cauldronY: number) {
+  return { x: (width / 3) * (slot + 0.5), y: cauldronY - 20 }
+}
+
+export default function ConveyorBelt({ y, width, layout, labelScale = 1 }: ConveyorBeltProps) {
+  // Only the list of words re-renders. Positions change every frame and are set on the nodes directly.
+  const itemIds = usePotionRushStore(state => state.conveyorItems.map(item => item.id).join(','))
+  const items = useMemo(
+    () => usePotionRushStore.getState().conveyorItems,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [itemIds],
+  )
+
   const { images } = useGameImages(BELT_IMAGES)
-  const [beltOffset, setBeltOffset] = useState(0)
-  const lastFrameRef = useRef<number | null>(null)
+  const nodesRef = useRef(new Map<string, Konva.Group>())
+  const rollersRef = useRef<Konva.Group | null>(null)
+  const heldY = HOLD_SLOT_Y - y
 
   useEffect(() => {
-    if (gameState !== 'PLAYING') {
-      lastFrameRef.current = null
-      return
+    let lastGameTime = usePotionRushStore.getState().gameTime
+    let rollerOffset = 0
+
+    const place = (state: ReturnType<typeof usePotionRushStore.getState>) => {
+      const elapsed = Math.max(0, state.gameTime - lastGameTime)
+      lastGameTime = state.gameTime
+      rollerOffset = (rollerOffset + state.beltSpeed * elapsed) % ROLLER_SPACING
+      rollersRef.current?.x(-rollerOffset)
+
+      state.conveyorItems.forEach(item => {
+        const node = nodesRef.current.get(item.id)
+        if (!node || item.isDragging || node.isDragging()) return
+        node.position({ x: item.x, y: item.isHeld ? heldY : 0 })
+      })
+      rollersRef.current?.getLayer()?.batchDraw()
     }
 
-    let frameId: number
-    const spacing = 100
+    place(usePotionRushStore.getState())
+    return usePotionRushStore.subscribe(place)
+  }, [heldY])
 
-    const loop = (time: number) => {
-      if (lastFrameRef.current === null) {
-        lastFrameRef.current = time
-      }
-      const dt = (time - lastFrameRef.current) / 1000
-      lastFrameRef.current = time
-      setBeltOffset(prev => (prev + beltSpeed * dt) % spacing)
-      frameId = requestAnimationFrame(loop)
+  const handleDrop = (item: Ingredient, itemCentre: { x: number; y: number }, finger: { x: number; y: number }) => {
+    const store = usePotionRushStore.getState()
+    const zone = resolveDropZone(itemCentre, finger, width, layout)
+    switch (zone.kind) {
+      case 'trash':
+        return store.discardIngredient(item.id)
+      case 'hold':
+        return store.handleHoldIngredient(item.id, zone.slot, width)
+      case 'belt':
+        return store.releaseHold(item.id)
+      case 'pot':
+        return store.handleDropIngredient(zone.slot, item.id, potCentre(zone.slot, width, layout.cauldronY))
+      case 'none':
+        return store.showHint(MISSED_DROP_HINT)
     }
+  }
 
-    frameId = requestAnimationFrame(loop)
-    return () => cancelAnimationFrame(frameId)
-  }, [gameState, beltSpeed])
-
-  const checkDropZone = (x: number, y: number, item: Ingredient) => {
-      const stationWidth = width / 3
-      const cauldronY = layout.cauldronY
-      const cauldronHeight = 150
-      
-      const trashDist = Math.sqrt(Math.pow(x - layout.trashX, 2) + Math.pow(y - layout.trashY, 2))
-      if (trashDist < 55) {
-          discardIngredient(item.id)
-          return
-      }
-
-      // Check if dropped in holding slots (Y between 460 and 560)
-      if (y > 460 && y < 560) {
-          const slotIndex = Math.floor(x / stationWidth)
-          if (slotIndex >= 0 && slotIndex <= 2) {
-              handleHold(item.id, slotIndex, width)
-              return
-          }
-      }
-
-      // Check if dropped back on conveyor belt (Y >= 670)
-      if (y >= 670) {
-          releaseHold(item.id)
-          return
-      }
-
-      if (y > cauldronY - 50 && y < cauldronY + cauldronHeight + 50) {
-          if (x < stationWidth) return handleDrop(0, item.id, { x, y })
-          if (x < stationWidth * 2) return handleDrop(1, item.id, { x, y })
-          return handleDrop(2, item.id, { x, y })
-      }
+  const dragTargetAt = (itemCentre: { x: number; y: number }, finger: { x: number; y: number }) => {
+    const zone = resolveDropZone(itemCentre, finger, width, layout)
+    usePotionRushStore.getState().setDragTargetSlot(zone.kind === 'pot' ? zone.slot : null)
   }
 
   return (
     <Group y={y}>
-        <Rect 
-            width={width} 
-            height={80} 
-            fill="#333" 
+        <Rect
+            width={width}
+            height={80}
+            fill="#333"
             stroke="#111"
             strokeWidth={4}
+            listening={false}
         />
-        
-        {Array.from({ length: Math.ceil(width / 100) + 2 }).map((_, i) => (
-            <Circle 
-                key={i} 
-                x={i * 100 + 50 - beltOffset} 
-                y={40} 
-                radius={8} 
-                fill="#555" 
-            />
-        ))}
+
+        <Group ref={rollersRef} listening={false}>
+          {Array.from({ length: Math.ceil(width / ROLLER_SPACING) + 2 }).map((_, i) => (
+              <Circle
+                  key={i}
+                  x={i * ROLLER_SPACING + 50}
+                  y={40}
+                  radius={8}
+                  fill="#555"
+              />
+          ))}
+        </Group>
 
         {items.map(item => (
-            <IngredientItem 
-                key={item.id} 
-                item={item} 
-                onDrop={checkDropZone}
+            <IngredientItem
+                key={item.id}
+                item={item}
+                nodes={nodesRef.current}
+                beltY={y}
+                heldY={heldY}
                 images={images}
-                onDragStateChange={setIngredientDragging}
-                heldYOffset={510 - y}
+                labelScale={labelScale}
+                onDragMove={dragTargetAt}
+                onDrop={handleDrop}
             />
         ))}
     </Group>
   )
 }
 
-function IngredientItem({ item, onDrop, images, onDragStateChange, heldYOffset }: { 
-    item: Ingredient, 
-    onDrop: (x: number, y: number, item: Ingredient) => void,
-    images: Record<string, HTMLImageElement>;
-    onDragStateChange: (ingredientId: string, isDragging: boolean) => void;
-    heldYOffset: number;
+function IngredientItem({ item, nodes, beltY, heldY, images, labelScale, onDragMove, onDrop }: {
+    item: Ingredient,
+    nodes: Map<string, Konva.Group>,
+    beltY: number,
+    heldY: number,
+    images: Record<string, HTMLImageElement>,
+    labelScale: number,
+    onDragMove: (itemCentre: { x: number; y: number }, finger: { x: number; y: number }) => void,
+    onDrop: (item: Ingredient, itemCentre: { x: number; y: number }, finger: { x: number; y: number }) => void,
 }) {
     const { playSound } = useSound()
-    const [isDragging, setIsDragging] = React.useState(false)
-    const [dragPosition, setDragPosition] = React.useState<{ x: number; y: number } | null>(null)
     const img = images[item.type]
     const groupRef = useRef<Konva.Group | null>(null)
+    const fontSize = LABEL_FONT_SIZE * labelScale
+    const boxWidth = useMemo(() => Math.ceil(labelWidth(item.word, fontSize)) + 12, [item.word, fontSize])
 
-    const renderX = isDragging && dragPosition ? dragPosition.x : item.x
-    const renderY = isDragging && dragPosition ? dragPosition.y : (item.isHeld ? heldYOffset : 0)
-
-    useEffect(() => {
-        if (!isDragging && groupRef.current) {
-            groupRef.current.x(item.x)
-            groupRef.current.y(item.isHeld ? heldYOffset : 0)
+    useLayoutEffect(() => {
+        const node = groupRef.current
+        if (!node) return
+        const current = usePotionRushStore.getState().conveyorItems.find(i => i.id === item.id)
+        node.position({ x: current?.x ?? item.x, y: current?.isHeld ? heldY : 0 })
+        nodes.set(item.id, node)
+        return () => {
+            nodes.delete(item.id)
         }
-    }, [isDragging, item.x, item.isHeld, heldYOffset])
+    // Mounted once per word: the belt moves the node after that.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [item.id])
+
+    const dragPoints = (e: Konva.KonvaEventObject<DragEvent>) => {
+        const stage = e.target.getStage()
+        const pointer = stage?.getPointerPosition()
+        if (!pointer || !stage) return null
+        const scale = stage.scaleX()
+        const stagePos = stage.position()
+        return {
+            itemCentre: { x: e.target.x(), y: e.target.y() + beltY },
+            finger: { x: (pointer.x - stagePos.x) / scale, y: (pointer.y - stagePos.y) / scale },
+        }
+    }
 
     return (
         <Group
             ref={groupRef}
-            x={renderX}
-            y={renderY} 
             draggable
-            onDragStart={(e) => {
+            onDragStart={() => {
                 playSound('clinking')
-                setIsDragging(true)
-                setDragPosition({ x: e.target.x(), y: e.target.y() })
-                onDragStateChange(item.id, true)
+                usePotionRushStore.getState().setIngredientDragging(item.id, true)
             }}
             onDragMove={(e) => {
-                setDragPosition({ x: e.target.x(), y: e.target.y() })
+                const points = dragPoints(e)
+                if (points) onDragMove(points.itemCentre, points.finger)
             }}
             onDragEnd={(e) => {
-                setIsDragging(false)
-                setDragPosition(null)
-                onDragStateChange(item.id, false)
-                const stage = e.target.getStage()
-                const pointer = stage?.getPointerPosition()
-                if (pointer && stage) {
-                    const scale = stage.scaleX()
-                    const stagePos = stage.position()
-                    const virtualX = (pointer.x - stagePos.x) / scale
-                    const virtualY = (pointer.y - stagePos.y) / scale
-                    onDrop(virtualX, virtualY, item)
-                }
+                const points = dragPoints(e)
+                const store = usePotionRushStore.getState()
+                store.setDragTargetSlot(null)
+                store.setIngredientDragging(item.id, false)
+                if (points) onDrop(item, points.itemCentre, points.finger)
             }}
         >
             {img ? (
-                <KonvaImage 
+                <KonvaImage
                     image={img}
                     x={-40}
                     y={-40}
@@ -193,23 +212,24 @@ function IngredientItem({ item, onDrop, images, onDragStateChange, heldYOffset }
             ) : (
                 <Rect width={40} height={40} x={-20} y={-20} fill="#fff" />
             )}
-            
+
             <Group y={40}>
-                <Rect 
-                    x={-item.word.length * 4 - 5}
-                    width={item.word.length * 8 + 10}
-                    height={20}
-                    fill="rgba(0,0,0,0.7)"
+                <Rect
+                    x={-boxWidth / 2}
+                    width={boxWidth}
+                    height={LABEL_HEIGHT * labelScale}
+                    fill="rgba(0,0,0,0.75)"
                     cornerRadius={4}
                 />
-                <Text 
-                    text={item.word} 
-                    fill="white" 
-                    fontSize={16} 
+                <Text
+                    text={item.word}
+                    fill="white"
+                    fontSize={fontSize}
                     fontStyle="bold"
                     align="center"
-                    x={-item.word.length * 4}
-                    y={2}
+                    x={-boxWidth / 2}
+                    width={boxWidth}
+                    y={3 * labelScale}
                 />
             </Group>
         </Group>

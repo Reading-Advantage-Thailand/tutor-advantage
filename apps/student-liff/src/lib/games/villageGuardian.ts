@@ -1,3 +1,4 @@
+import { clampMoveVector } from '@/lib/games/moveVector'
 import type { VocabularyItem } from '@/store/useGameStore'
 import type { Difficulty } from '@/store/useGameStore'
 import type { OpponentType } from './villageGuardianConfig'
@@ -268,14 +269,7 @@ function updateKnight(
 ): VillageGuardianState {
   let { knight } = state
 
-  let moveX = input.dx
-  let moveY = input.dy
-
-  if (moveX !== 0 && moveY !== 0) {
-    const invSqrt2 = 0.70710678118
-    moveX *= invSqrt2
-    moveY *= invSqrt2
-  }
+  const { dx: moveX, dy: moveY } = clampMoveVector(input.dx, input.dy)
 
   const speedFactor = deltaMs / 16.6
   const size = VILLAGE_GUARDIAN_CONFIG.knightSize / 2

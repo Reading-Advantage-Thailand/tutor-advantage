@@ -15,6 +15,7 @@
 import {
   Component,
   createElement,
+  useMemo,
   useState,
   type ComponentProps,
   type ComponentType,
@@ -25,6 +26,7 @@ import dynamic from "next/dynamic";
 import { Gamepad2, RotateCcw } from "lucide-react";
 import { Spinner } from "@/components/app";
 import { Button } from "@/components/ui/button";
+import { hasUsableSentences, hasUsableVocabulary } from "@/lib/games/lessonContent";
 import { t } from "@/lib/i18n";
 import type { CastleDefenseTeachingGame as CastleDefenseComponent } from "./CastleDefenseTeachingGame";
 import type { DragonFlightTeachingGame as DragonFlightComponent } from "./DragonFlightTeachingGame";
@@ -180,7 +182,7 @@ export const LazyCastleDefenseTeachingGame = teachingGame<ComponentProps<typeof 
 export const LazyPotionRushTeachingGame = teachingGame<ComponentProps<typeof PotionRushComponent>>("potion-rush");
 export const LazyFlashcardTeachingGame = teachingGame<ComponentProps<typeof FlashcardComponent>>("flashcard");
 
-type WordItem = { term: string; translation: string };
+type WordItem = { term: string; translation: string; thaiTranslation?: string; audioUrl?: string };
 
 export interface TeachingGameStageProps {
   gameId: string;
@@ -193,8 +195,38 @@ export interface TeachingGameStageProps {
   onPotionRushTeacherDemoComplete?: () => void;
 }
 
+const SENTENCE_GAME_IDS = new Set(["castle-defense", "potion-rush"]);
+
+/**
+ * A list with the same content keeps its identity. Games restart when their list
+ * changes, and a reconnect can hand over a new object holding the same article.
+ */
+function useStableContent<T>(value: T): T {
+  const key = JSON.stringify(value);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => value, [key]);
+}
+
 /** Renders the teaching game for `gameId`, or null when there is none. */
-export function TeachingGameStage({
+export function TeachingGameStage(props: TeachingGameStageProps) {
+  const vocabulary = useStableContent(props.vocabulary);
+  const sentences = useStableContent(props.sentences);
+  const game = renderTeachingGame({ ...props, vocabulary, sentences });
+  if (!game) return null;
+  const isSentenceGame = SENTENCE_GAME_IDS.has(props.gameId);
+  const usesSamples = isSentenceGame ? !hasUsableSentences(sentences) : !hasUsableVocabulary(vocabulary);
+  if (!usesSamples) return game;
+  return (
+    <>
+      <p className="mb-2 w-fit shrink-0 rounded-full border border-warning-border bg-warning-bg px-3 py-1 text-sm font-semibold text-warning-fg">
+        {isSentenceGame ? "ประโยคตัวอย่าง: บทเรียนนี้ยังไม่มีประโยคให้เล่นเกมนี้" : "คำตัวอย่าง: บทเรียนนี้ยังมีคำศัพท์ไม่พอให้เล่นเกมนี้"}
+      </p>
+      {game}
+    </>
+  );
+}
+
+function renderTeachingGame({
   gameId,
   mode,
   vocabulary,

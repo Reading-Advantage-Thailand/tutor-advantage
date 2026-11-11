@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Stage, Layer, Image as KonvaImage, Group, Rect, Text } from "react-konva";
-import { usePotionRushStore, SentenceItem } from "@/store/usePotionRushStore";
+import { potionRushAccuracy, usePotionRushStore, SentenceItem } from "@/store/usePotionRushStore";
 import { useGameImages } from "@/lib/games/useGameImages";
-import { AnimatePresence, motion, useAnimation } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Beaker, Hand, MousePointer2, RotateCcw, Trash2, Trophy } from "lucide-react";
+import { GameAssetLoading } from "@/components/games/GameAssetLoadFailure";
 import { GameStartScreen } from "@/components/games/game/GameStartScreen";
 import { useScopedI18n } from "@/locales/client";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
@@ -15,7 +16,9 @@ import CustomerQueue from "./CustomerQueue";
 import TrashPortal from "./TrashPortal";
 import PotionRushEffectsLayer from "./PotionRushEffectsLayer";
 import PotionRushSoundController from "./PotionRushSoundController";
+import { DragHint, GameHint, OrderBanner, RoundTimer } from "./PotionRushOverlays";
 import { tx } from "@/lib/games/gameText";
+import { pickShortSentences } from "@/lib/games/sentenceRound";
 
 const SHOP_IMAGES = {
   wall: "/games/sentence/potion-rush/shop-wall.webp",
@@ -24,6 +27,18 @@ const SHOP_IMAGES = {
 };
 // The shop art is scenery: a slow or failed image must not hold the round back.
 const SHOP_IMAGE_WAIT_MS = 4_000;
+// A longer order cannot be brewed in a 60 second round.
+const MAX_ORDER_WORDS = 8;
+const POT_Y = 380;
+const BELT_CENTRE_Y = 720;
+const HINT_Y = 462;
+const SCORE_LINE_HEIGHT = 48;
+const BANNER_MARGIN = 8;
+// Read from the back of the room once the board is big enough.
+const LARGE_BOARD_WIDTH = 768;
+const LARGE_BOARD_FONT_SCALE = 1.35;
+// Belt words are drawn in scene units, which a big screen already enlarges a little.
+const BELT_WORD_PRESENTER_BOOST = 1.13;
 
 export interface PotionRushGameResult {
   xp: number;
@@ -42,6 +57,8 @@ interface PotionRushGameProps {
   autoStart?: boolean;
   tutorialMode?: boolean;
   manageFullscreen?: boolean;
+  /** Stage scale on a projector: words, the order and the HUD are drawn bigger. */
+  presenterScale?: number;
 }
 
 export default function PotionRushGame({
@@ -51,11 +68,14 @@ export default function PotionRushGame({
   autoStart = false,
   tutorialMode = false,
   manageFullscreen = true,
+  presenterScale = 1,
 }: PotionRushGameProps) {
   const t = useScopedI18n("pages.student.gamesPage.potionRush");
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
+  // A state setter is a stable ref callback, and it re-runs the observer below.
+  const [containerNode, containerRef] = useState<HTMLDivElement | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
+  const roundSentences = useMemo(() => pickShortSentences(vocabList, MAX_ORDER_WORDS), [vocabList]);
   const { containerRef: fsContainerRef, enterFullscreen, exitFullscreen } = useGameFullscreen();
   useAccessibilitySettings(); // Verify hook is integrated
 
@@ -79,23 +99,11 @@ export default function PotionRushGame({
   const gameState = usePotionRushStore((state) => state.gameState);
   const reset = usePotionRushStore((state) => state.reset);
   const score = usePotionRushStore((state) => state.score);
-  const reputation = usePotionRushStore((state) => state.reputation);
   const completedSentences = usePotionRushStore(
     (state) => state.completedSentences,
   );
-  const totalXpEarned = usePotionRushStore((state) => state.totalXpEarned);
-  const gameTime = usePotionRushStore((state) => state.gameTime);
 
-  const controls = useAnimation();
-  const prevReputation = useRef(reputation);
   const completionReported = useRef(false);
-
-  useEffect(() => {
-    if (reputation < prevReputation.current) {
-      controls.start("damage");
-    }
-    prevReputation.current = reputation;
-  }, [reputation, controls]);
 
   useEffect(() => {
     if (gameState === "PLAYING") {
@@ -109,16 +117,17 @@ export default function PotionRushGame({
     // teaching game to silently begin another 60-second round at time-out.
     completionReported.current = true;
     if (manageFullscreen) exitFullscreen();
+    const finished = usePotionRushStore.getState();
     onComplete({
-      xp: totalXpEarned,
-      accuracy: Math.max(0, Math.min(reputation, 100)) / 100,
+      xp: finished.totalXpEarned,
+      accuracy: potionRushAccuracy(finished),
       difficulty,
-      score,
-      correctAnswers: completedSentences,
+      score: finished.score,
+      correctAnswers: finished.completedSentences,
       totalAttempts: Math.min(10, vocabList.length || 10),
-      durationMs: Math.round(gameTime * 1000),
+      durationMs: Math.round(finished.gameTime * 1000),
     });
-  }, [gameState, manageFullscreen, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList.length, gameTime, onComplete, exitFullscreen]);
+  }, [gameState, manageFullscreen, difficulty, vocabList.length, onComplete, exitFullscreen]);
 
   // Keep the original portrait scene as the minimum layout, but let a wide
   // viewport grow horizontally instead of leaving most of the screen empty.
@@ -137,20 +146,34 @@ export default function PotionRushGame({
   const stageX = Math.max(0, (dimensions.width - virtualWidth * scale) / 2);
   const stageY = (dimensions.height - VIRTUAL_HEIGHT * scale) / 2;
 
+  const scoreLineHeight = SCORE_LINE_HEIGHT * presenterScale;
+  const beltLabelScale = Math.max(1, presenterScale * BELT_WORD_PRESENTER_BOOST);
+  const orderFontScale = Math.max(dimensions.width >= LARGE_BOARD_WIDTH ? LARGE_BOARD_FONT_SCALE : 1, presenterScale * 1.25);
+
   const LAYOUT = {
     wallH: 420,
     floorH: 424,
     counterY: 300,
     customerY: 301,
     cauldronY: 400,
-    beltY: 720,
+    beltY: BELT_CENTRE_Y,
     trashX: virtualWidth / 2,
     trashY: 620,
-    isPortrait: !isLandscape,
   };
 
+  const toScreen = (x: number, y: number) => ({ x: stageX + x * scale, y: stageY + y * scale });
+  const potCentres = [0, 1, 2].map((slot) => toScreen((virtualWidth * (slot + 0.5)) / 3, POT_Y)) as [
+    { x: number; y: number },
+    { x: number; y: number },
+    { x: number; y: number },
+  ];
+  const bannerLeft = stageX + BANNER_MARGIN;
+  const slotCentres = potCentres.map((pot) => pot.x - bannerLeft) as [number, number, number];
+
+  // The placeholder below is swapped for the real frame, so watch whichever is
+  // mounted. Otherwise entering fullscreen leaves a stale size and clips the belt.
   useEffect(() => {
-    const el = containerRef.current;
+    const el = containerNode;
     if (!el) return;
 
     const observer = new ResizeObserver((entries) => {
@@ -165,7 +188,7 @@ export default function PotionRushGame({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [containerNode]);
 
   // Game loop with requestAnimationFrame
   const lastFrameRef = useRef<number>(0);
@@ -199,12 +222,12 @@ export default function PotionRushGame({
   }, [reset]);
 
   useEffect(() => {
-    if ((autoStart || tutorialMode) && assetsLoaded && !hasStarted && vocabList.length > 0) {
+    if ((autoStart || tutorialMode) && assetsLoaded && !hasStarted && roundSentences.length > 0) {
       setHasStarted(true);
       if (manageFullscreen) enterFullscreen();
-      startGame(vocabList, difficulty);
+      startGame(roundSentences, difficulty);
     }
-  }, [autoStart, tutorialMode, manageFullscreen, assetsLoaded, hasStarted, vocabList, difficulty, enterFullscreen, startGame]);
+  }, [autoStart, tutorialMode, manageFullscreen, assetsLoaded, hasStarted, roundSentences, difficulty, enterFullscreen, startGame]);
 
   const setFullscreenContainerRef = (node: HTMLDivElement | null) => {
     (fsContainerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
@@ -216,7 +239,7 @@ export default function PotionRushGame({
         ref={setFullscreenContainerRef}
         className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-slate-950 lg:flex-row"
       >
-        {showControls && <PotionRushControlPanel variant="sidebar" />}
+        {showControls && <PotionRushControlPanel variant="sidebar" presenterScale={presenterScale} />}
         <div ref={containerRef} className="min-h-0 min-w-0 flex-1 bg-slate-950" />
         {showBottomControls && <PotionRushControlPanel variant="bottom" />}
       </div>
@@ -231,7 +254,7 @@ export default function PotionRushGame({
       className="relative flex h-full min-h-0 w-full flex-col overflow-hidden bg-slate-950 font-sans touch-none select-none lg:flex-row"
     >
       <PotionRushSoundController />
-      {showControls && <PotionRushControlPanel variant="sidebar" />}
+      {showControls && <PotionRushControlPanel variant="sidebar" presenterScale={presenterScale} />}
 
       <div
         ref={containerRef}
@@ -267,42 +290,45 @@ export default function PotionRushGame({
             onStart={() => {
               setHasStarted(true);
               enterFullscreen();
-              startGame(vocabList, difficulty);
+              startGame(roundSentences, difficulty);
             }}
           />
         )}
       </AnimatePresence>
 
       {hasStarted && (
-        <div className="absolute inset-x-0 top-0 z-10 grid grid-cols-[1fr_auto_1fr] items-start gap-2 p-2 text-white pointer-events-none sm:p-4">
-          <div>
-            <div className="text-base sm:text-xl font-bold text-amber-400 drop-shadow-lg">
-              {t("hud.score")}: {score}
-            </div>
-            <div className="text-xs sm:text-sm text-slate-300 drop-shadow-md">
-              {t("hud.reputation")}: {Math.max(0, Math.round(reputation))}%
-            </div>
+        <div
+          className="absolute inset-x-0 top-0 z-10 grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-2 text-white pointer-events-none"
+          style={{ height: scoreLineHeight }}
+        >
+          <div />
+          <div style={{ zoom: presenterScale }} className="justify-self-center text-lg sm:text-2xl font-bold tabular-nums text-amber-400 drop-shadow-lg bg-black/40 border border-amber-500/35 px-3 py-0.5 rounded-full flex items-center gap-1.5 backdrop-blur-sm">
+            ⏱️ <RoundTimer />
           </div>
-          <div className="justify-self-center text-lg sm:text-2xl font-bold text-amber-400 drop-shadow-lg bg-black/40 border border-amber-500/35 px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-sm">
-            ⏱️ {Math.max(0, Math.ceil(60 - gameTime))}s
-          </div>
-          <div className="justify-self-end text-right text-lg sm:text-2xl font-bold text-white drop-shadow-lg bg-black/30 px-2 sm:px-4 py-1 rounded-full">
-            {t("hud.served")}: {completedSentences}
+          <div style={{ zoom: presenterScale }} className="justify-self-end text-right text-base sm:text-xl font-bold text-white drop-shadow-lg bg-black/40 px-2 sm:px-4 py-0.5 rounded-full">
+            {t("hud.served")} {completedSentences}
           </div>
         </div>
       )}
 
-      <motion.div
-        animate={controls}
-        variants={{
-          default: { x: 0 },
-          damage: {
-            x: [0, -10, 10, -10, 10, 0],
-            transition: { duration: 0.4 },
-          },
-        }}
-        className="relative"
-      >
+      {!hasStarted && (autoStart || tutorialMode) && <GameAssetLoading />}
+
+      {hasStarted && gameState !== "GAME_OVER" && (
+        <>
+          <OrderBanner
+            top={scoreLineHeight}
+            left={bannerLeft}
+            right={Math.max(0, stageX) + BANNER_MARGIN}
+            slotCentres={slotCentres}
+            promptEnabled={false}
+            fontScale={orderFontScale}
+          />
+          <GameHint top={toScreen(0, HINT_Y).y} />
+          {!tutorialMode && <DragHint from={toScreen(virtualWidth / 2, BELT_CENTRE_Y)} potCentres={potCentres} />}
+        </>
+      )}
+
+      <div className="relative">
         <Stage
           width={dimensions.width}
           height={dimensions.height}
@@ -311,7 +337,8 @@ export default function PotionRushGame({
           x={stageX}
           y={stageY}
         >
-          <Layer>
+          {/* Three layers, so the moving words do not redraw the shop every frame. */}
+          <Layer listening={false}>
             {images.wall && (
               <KonvaImage
                 image={images.wall}
@@ -328,7 +355,9 @@ export default function PotionRushGame({
                 height={LAYOUT.floorH}
               />
             )}
+          </Layer>
 
+          <Layer>
             <CustomerQueue y={LAYOUT.customerY} width={virtualWidth} />
 
             {images.counter && (
@@ -337,19 +366,17 @@ export default function PotionRushGame({
                 y={LAYOUT.counterY}
                 width={virtualWidth}
                 height={160}
+                listening={false}
               />
             )}
 
             <CauldronStation
               y={LAYOUT.cauldronY}
               width={virtualWidth}
-              layout={LAYOUT}
             />
 
-            <TrashPortal x={LAYOUT.trashX} y={LAYOUT.trashY} />
-
             {/* Word Holding Area (3 slots) */}
-            <Group y={510}>
+            <Group y={510} listening={false}>
               {[0, 1, 2].map((i) => {
                 const slotX = (virtualWidth * (i + 0.5)) / 3;
                 return (
@@ -367,9 +394,9 @@ export default function PotionRushGame({
                     />
                     <Text
                       text={tx("HOLD")}
-                      fontSize={11}
+                      fontSize={Math.min(16, 11 * beltLabelScale)}
                       fontStyle="bold"
-                      fill="rgba(255, 255, 255, 0.35)"
+                      fill="rgba(255, 255, 255, 0.8)"
                       align="center"
                       width={80}
                       x={-40}
@@ -380,30 +407,22 @@ export default function PotionRushGame({
               })}
             </Group>
 
+          </Layer>
+
+          <Layer>
+            <TrashPortal x={LAYOUT.trashX} y={LAYOUT.trashY} />
+
             <ConveyorBelt
               y={LAYOUT.beltY}
               width={virtualWidth}
-              dragBoundFunc={(pos) => pos}
               layout={LAYOUT}
+              labelScale={beltLabelScale}
             />
 
             <PotionRushEffectsLayer />
           </Layer>
         </Stage>
-      </motion.div>
-
-      <motion.div
-        className="absolute inset-0 bg-red-500 pointer-events-none z-40"
-        initial={{ opacity: 0 }}
-        animate={controls}
-        variants={{
-          default: { opacity: 0 },
-          damage: {
-            opacity: [0, 0.3, 0],
-            transition: { duration: 0.4 },
-          },
-        }}
-      />
+      </div>
 
       {gameState === "GAME_OVER" && (
         <motion.div
@@ -426,7 +445,7 @@ export default function PotionRushGame({
               type="button"
               onClick={() => {
                 if (manageFullscreen) enterFullscreen();
-                startGame(vocabList, difficulty);
+                startGame(roundSentences, difficulty);
               }}
               className="mt-8 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-emerald-400 px-5 text-base font-black text-emerald-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-300 active:scale-[0.98]"
             >
@@ -442,7 +461,7 @@ export default function PotionRushGame({
   );
 }
 
-function PotionRushControlPanel({ variant }: { variant: "sidebar" | "bottom" }) {
+function PotionRushControlPanel({ variant, presenterScale = 1 }: { variant: "sidebar" | "bottom"; presenterScale?: number }) {
   const t = useScopedI18n("pages.student.gamesPage.potionRush");
   const items = [
     { icon: MousePointer2, text: t("howToPlay.drag") },
@@ -465,6 +484,7 @@ function PotionRushControlPanel({ variant }: { variant: "sidebar" | "bottom" }) 
             ? "rounded-3xl border border-violet-400/25 bg-violet-500/10 p-4 backdrop-blur-md"
             : "w-full max-w-2xl rounded-2xl border border-violet-400/30 bg-violet-500/10 px-3 py-2"
         }
+        style={variant === "sidebar" ? { zoom: Math.min(presenterScale, 1.25) } : undefined}
       >
         <div
           className={`flex items-center gap-2 text-xs font-black text-violet-200 ${

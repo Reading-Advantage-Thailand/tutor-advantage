@@ -42,10 +42,13 @@ describe("Castle Defense word score", () => {
   it("keeps earned words after a wrong touch and does not pay for them again", () => {
     let state = touchWord(touchWord(newRound(8), 0), 1);
     state = touchWord(state, 3);
-    expect(state.collectedWordIndices).toEqual([]);
+    expect(state.collectedWordIndices).toEqual([0, 1]);
+    state = touchWord({ ...state, wrongGraceUntil: 0, touchingWordIds: [] }, 3);
+    expect(state.collectedWordIndices).toEqual([0]);
     expect(getCastleWordProgress(state)).toBe(2);
 
-    state = touchWord(state, 0);
+    state = touchWord(state, 1);
+    expect(state.collectedWordIndices).toEqual([0, 1]);
     expect(getCastleWordProgress(state)).toBe(2);
   });
 

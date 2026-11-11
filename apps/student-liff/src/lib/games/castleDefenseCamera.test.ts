@@ -18,15 +18,41 @@ describe("computeCastleDefenseCamera", () => {
     { width: 788, height: 591 },
   ];
 
-  it.each(sizes)("cover fills the %o viewport without gaps and follows the player", (view) => {
+  it.each(sizes)("cover keeps the board across the full width of the %o viewport", (view) => {
     for (const focus of [{ x: 0, y: 0 }, { x: 400, y: 300 }, { x: 800, y: 600 }]) {
-      const cam = computeCastleDefenseCamera(view, focus);
-      const r = boardRect(view, cam);
+      const r = boardRect(view, computeCastleDefenseCamera(view, focus));
       expect(r.left).toBeLessThanOrEqual(0.001);
-      expect(r.top).toBeLessThanOrEqual(0.001);
       expect(r.right).toBeGreaterThanOrEqual(view.width - 0.001);
-      expect(r.bottom).toBeGreaterThanOrEqual(view.height - 0.001);
     }
+  });
+
+  it("cover shows more of the map on a phone than zooming by height did", () => {
+    const cam = computeCastleDefenseCamera({ width: 390, height: 844 }, { x: 400, y: 300 }, { insetTop: 140, insetBottom: 130 });
+    expect(cam.scale).toBeCloseTo(0.8, 5);
+    expect(390 / cam.scale).toBeGreaterThan(480);
+  });
+
+  it.each([
+    { width: 390, height: 844, insetTop: 140, insetBottom: 130 },
+    { width: 360, height: 640, insetTop: 150, insetBottom: 130 },
+    { width: 844, height: 390, insetTop: 110, insetBottom: 0 },
+    { width: 1366, height: 768, insetTop: 140, insetBottom: 0 },
+  ])("cover can bring every spot into the band between HUD and controls on %o", ({ insetTop, insetBottom, ...view }) => {
+    for (const y of [0, 100, 300, 500, 600]) {
+      const cam = computeCastleDefenseCamera(view, { x: 400, y }, { insetTop, insetBottom });
+      const screenY = cam.y + y * cam.scale;
+      expect(screenY).toBeGreaterThanOrEqual(insetTop - 0.001);
+      expect(screenY).toBeLessThanOrEqual(view.height - insetBottom + 0.001);
+    }
+  });
+
+  it("cover centres a short board in the band and a tall one on the player", () => {
+    const short = computeCastleDefenseCamera({ width: 390, height: 844 }, { x: 400, y: 100 }, { insetTop: 140, insetBottom: 130 });
+    const boardHeight = GAME_HEIGHT * short.scale;
+    expect(short.y).toBeCloseTo(140 + (844 - 140 - 130 - boardHeight) / 2, 5);
+
+    const tall = computeCastleDefenseCamera({ width: 844, height: 390 }, { x: 400, y: 300 }, { insetTop: 110 });
+    expect(tall.y + 300 * tall.scale).toBeCloseTo((110 + 390) / 2, 5);
   });
 
   it.each(sizes)("contain keeps the whole board inside the %o viewport below the HUD inset", (view) => {

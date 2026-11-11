@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { RuneMatchGame } from "@/components/games/vocabulary/rune-match/RuneMatchGame";
-import { Sparkles, MousePointerClick, Swords, Zap } from "lucide-react";
+import { hasUsableVocabulary } from "@/lib/games/lessonContent";
+import { TeachingEndCard } from "./TeachingEndCard";
+import { TEACHING_STAGE_HEIGHT, useStageScale } from "./teachingStageSize";
 
 export type RuneMatchTeachingWord = {
   term: string;
@@ -24,67 +26,42 @@ const FALLBACK_WORDS: RuneMatchTeachingWord[] = [
   { term: "mystery", translation: "ปริศนา" },
 ];
 
-const TUTORIAL_STEPS = [
-  {
-    step: 1,
-    title: "1. สังเกตรูนคำศัพท์ & คำแปล",
-    detail: "มองหาแผ่นรูนภาษาอังกฤษและแผ่นรูนคำแปลภาษาไทยที่ตรงกันบนกระดาน 4x4",
-    icon: Sparkles,
-  },
-  {
-    step: 2,
-    title: "2. คลิกจับคู่แผ่นรูนที่ติดกัน",
-    detail: "กดเลือกรูน 2 แผ่นในแนวตั้งหรือแนวนอนเพื่อสลับตำแหน่งให้คู่ตรงกันจับคู่กัน",
-    icon: MousePointerClick,
-  },
-  {
-    step: 3,
-    title: "3. ทำคอมโบโจมทีมอนสเตอร์",
-    detail: "เมื่อจับคู่สำเร็จ รูนจะระเบิดสร้างพลังเวทโจมตีลดเลือดมอนสเตอร์ด้านบน",
-    icon: Swords,
-  },
-  {
-    step: 4,
-    title: "4. ใช้สกิลช่วยเหลือพิเศษ",
-    detail: "ใช้ปุ่มสลับ (สับกระดาน), แช่แข็ง (หยุดมอนสเตอร์) หรือคำใบ้ เมื่อหาคู่ไม่เจอ",
-    icon: Zap,
-  },
-];
+// RuneMatchGame draws the steps itself; this only moves it to the next one.
+const TUTORIAL_STEP_COUNT = 4;
 
 export function RuneMatchTeachingGame({ vocabulary, mode, fullscreen = false }: RuneMatchTeachingGameProps) {
   const words = React.useMemo(() => {
     const usable = vocabulary.filter((w) => w.term && w.translation);
-    return usable.length >= 4 ? usable : FALLBACK_WORDS;
+    return hasUsableVocabulary(usable) ? usable : FALLBACK_WORDS;
   }, [vocabulary]);
 
+  const { stageRef, scale } = useStageScale<HTMLDivElement>();
   const [key, setKey] = useState(0);
   const [tutorialStep, setTutorialStep] = useState(0);
+  const [roundEnd, setRoundEnd] = useState<{ won: boolean; correctAnswers: number } | null>(null);
 
   useEffect(() => {
     if (mode !== "tutorial") return;
     const interval = setInterval(() => {
-      setTutorialStep((prev) => (prev + 1) % TUTORIAL_STEPS.length);
+      setTutorialStep((prev) => (prev + 1) % TUTORIAL_STEP_COUNT);
     }, 4500);
     return () => clearInterval(interval);
   }, [mode]);
 
-  const handleComplete = React.useCallback(() => {
-    if (mode === "teacher" || mode === "tutorial") return;
-    setKey((prev) => prev + 1);
-  }, [mode]);
-
-  const currentStep = TUTORIAL_STEPS[tutorialStep];
-  const StepIcon = currentStep.icon;
+  // Demos have no result to hand over: the end card below is where a teacher demo stops.
+  const handleComplete = React.useCallback(() => {}, []);
 
   return (
     <div
-      key={key}
+      ref={stageRef}
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${
-        fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none pb-28 sm:pb-28" : "h-[max(520px,calc(100dvh-13rem))] rounded-[32px] shadow-2xl"
+        fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none" : `${TEACHING_STAGE_HEIGHT} rounded-[32px] shadow-2xl`
       }`}
       data-testid={`rune-match-${mode}`}
     >
       <RuneMatchGame
+        key={key}
+        presenter={mode === "teacher" ? { scale, onRoundEnd: setRoundEnd } : { scale }}
         vocabulary={words}
         tutorialMode={mode === "tutorial"}
         tutorialStep={tutorialStep}
@@ -100,6 +77,17 @@ export function RuneMatchTeachingGame({ vocabulary, mode, fullscreen = false }: 
         }
         onComplete={handleComplete}
       />
+      {roundEnd && (
+        <TeachingEndCard
+          title={roundEnd.won ? "ชนะ! จับคู่ครบ" : "หมดเวลา"}
+          detail={`จับคู่ได้ ${roundEnd.correctAnswers} คู่`}
+          scale={scale}
+          onReplay={() => {
+            setRoundEnd(null);
+            setKey((prev) => prev + 1);
+          }}
+        />
+      )}
     </div>
   );
 }

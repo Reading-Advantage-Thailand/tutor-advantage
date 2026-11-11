@@ -3,10 +3,15 @@
 import React, { useEffect, useState } from "react";
 import { CastleDefenseGame } from "@/components/games/sentence/castle-defense/CastleDefenseGame";
 import { BookOpen, Compass, Hammer, Shield } from "lucide-react";
+import { hasThaiText } from "@/lib/games/lessonContent";
+import { TeachingEndCard } from "./TeachingEndCard";
+import { TEACHING_STAGE_HEIGHT, useStageScale } from "./teachingStageSize";
 
 export type CastleDefenseTeachingSentence = {
   term: string;
   translation?: string;
+  thaiTranslation?: string;
+  audioUrl?: string;
 };
 
 type TeachingMode = "teacher" | "tutorial";
@@ -17,18 +22,29 @@ type CastleDefenseTeachingGameProps = {
   fullscreen?: boolean;
 };
 
+// The round on the phones, which the demo plays too.
+const ROUND_MS = 60_000;
+
 const FALLBACK_SENTENCES: CastleDefenseTeachingSentence[] = [
   { term: "Students read the article carefully", translation: "นักเรียนใช้วิธีอ่านบทความอย่างละเอียด" },
   { term: "The teacher asks a follow up question", translation: "คุณครูถามคำถามติดตามผลเพิ่มเติม" },
 ];
 
-const TUTORIAL_STEPS = [
-  {
-    step: 1,
-    title: "1. อ่านประโยคแปลภาษาไทย",
-    detail: "ดูคำแปลประโยคภาษาไทยด้านบนเพื่อหาคำศัพท์ภาษาอังกฤษที่หายไป",
-    icon: BookOpen,
-  },
+// Most lessons store no Thai for their sentences, so step 1 must not promise it.
+const FIRST_STEP_WITH_THAI = {
+  step: 1,
+  title: "1. อ่านประโยคแปลภาษาไทย",
+  detail: "ดูคำแปลประโยคภาษาไทยด้านบนเพื่อหาคำศัพท์ภาษาอังกฤษที่หายไป",
+  icon: BookOpen,
+};
+const FIRST_STEP_WITHOUT_THAI = {
+  step: 1,
+  title: "1. อ่านประโยคเป้าหมาย",
+  detail: "อ่านประโยคด้านบนและจำลำดับคำให้ได้",
+  icon: BookOpen,
+};
+
+const NEXT_TUTORIAL_STEPS = [
   {
     step: 2,
     title: "2. เดินเก็บลูกแก้วคำศัพท์เรียงประโยค",
@@ -38,7 +54,7 @@ const TUTORIAL_STEPS = [
   {
     step: 3,
     title: "3. สร้างป้อมปราการป้องกันทางเดิน",
-    detail: "เมื่อเรียงประโยคสมบูรณ์ ระบบจะเดินไปที่จุดสร้างป้อมและกด Build ให้ดูอัตโนมัติ",
+    detail: "ครบประโยคแล้วกดปุ่มสร้าง หรือเดินไปที่วงกลมเหลือง ป้อมจะตั้งขึ้นทันที",
     icon: Hammer,
   },
   {
@@ -55,8 +71,10 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
     return usable.length >= 1 ? usable : FALLBACK_SENTENCES;
   }, [vocabulary]);
 
+  const { stageRef, scale } = useStageScale<HTMLDivElement>();
   const [key, setKey] = useState(0);
   const [tutorialStep, setTutorialStep] = useState(0);
+  const [roundEnd, setRoundEnd] = useState<{ score: number; sentences: number; castleFell: boolean } | null>(null);
   const tutorialCardRef = React.useRef<HTMLDivElement>(null);
   const [tutorialCardInset, setTutorialCardInset] = useState(0);
 
@@ -83,44 +101,71 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
       id: `sent-${idx}`,
       term: s.term,
       translation: s.translation || "",
+      thaiTranslation: s.thaiTranslation,
+      audioUrl: s.audioUrl,
     }));
   }, [sentences]);
 
+  const promptHasThai = sentences.some((s) => hasThaiText(s.thaiTranslation || s.translation));
+  const TUTORIAL_STEPS = [promptHasThai ? FIRST_STEP_WITH_THAI : FIRST_STEP_WITHOUT_THAI, ...NEXT_TUTORIAL_STEPS];
   const currentStep = TUTORIAL_STEPS[tutorialStep];
   const StepIcon = currentStep.icon;
   const handleTutorialStepChange = React.useCallback((step: number) => {
-    setTutorialStep(Math.max(0, Math.min(TUTORIAL_STEPS.length - 1, step)));
+    setTutorialStep(Math.max(0, Math.min(NEXT_TUTORIAL_STEPS.length, step)));
   }, []);
-  const handleComplete = React.useCallback(() => {
-    if (mode !== "tutorial") setKey((k) => k + 1);
+  // The demo stops at the end of its round and the tutor replays when ready.
+  const handleComplete = React.useCallback((results: { score?: number; correctAnswers?: number; durationMs?: number }) => {
+    if (mode === "tutorial") return;
+    // A round that stops before its minute is up ended because the castle fell.
+    const castleFell = (results.durationMs ?? ROUND_MS) < ROUND_MS - 1000;
+    setRoundEnd({ score: results.score ?? 0, sentences: results.correctAnswers ?? 0, castleFell });
   }, [mode]);
+  const replay = React.useCallback(() => {
+    setRoundEnd(null);
+    setKey((k) => k + 1);
+  }, []);
 
   return (
     <div
-      key={key}
+      ref={stageRef}
       // The game sizes itself to this frame (not the viewport), so the frame
       // needs a definite height: a 4:3 board-shaped stage capped to the screen
       // inline, or the remaining presenter stage in fullscreen.
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${
         fullscreen
           ? "h-full min-h-[360px] flex-1 rounded-none shadow-none"
-          : "aspect-[4/3] max-h-[max(420px,calc(100dvh-13rem))] min-h-[420px] rounded-[32px] shadow-2xl"
+          : `${TEACHING_STAGE_HEIGHT} rounded-[32px] shadow-2xl`
       }`}
       data-testid={`castle-defense-${mode}`}
     >
-      <CastleDefenseGame
-        vocabulary={formattedVocab as any}
-        autoStart={true}
-        tutorialMode={mode === "tutorial"}
-        onTutorialStepChange={handleTutorialStepChange}
-        onComplete={handleComplete}
-        fit="contain"
-        insetBottom={mode === "tutorial" ? tutorialCardInset : 0}
-      />
+      {roundEnd ? (
+        <>
+          <div className="absolute inset-0 bg-[url('/games/cover/castle-defense-cover.webp')] bg-cover bg-center" />
+          <TeachingEndCard
+            title={roundEnd.castleFell ? "ปราสาทแตก!" : "หมดเวลา"}
+            lost={roundEnd.castleFell}
+            detail={`ได้ ${roundEnd.score} คะแนน · ครบ ${roundEnd.sentences} ประโยค`}
+            scale={scale}
+            onReplay={replay}
+          />
+        </>
+      ) : (
+        <CastleDefenseGame
+          key={key}
+          vocabulary={formattedVocab as any}
+          autoStart={true}
+          tutorialMode={mode === "tutorial"}
+          onTutorialStepChange={handleTutorialStepChange}
+          onComplete={handleComplete}
+          fit="contain"
+          insetBottom={mode === "tutorial" ? tutorialCardInset : 0}
+          presenterScale={scale}
+        />
+      )}
 
       {mode === "tutorial" && (
-        <div ref={tutorialCardRef} className="absolute bottom-3 left-1/2 -translate-x-1/2 z-40 w-full max-w-xl px-4 pointer-events-none">
-          <div className="flex items-center gap-3 rounded-2xl border border-emerald-400/50 bg-slate-950/95 px-3 py-2.5 shadow-2xl backdrop-blur-md">
+        <div ref={tutorialCardRef} className="absolute bottom-3 left-1/2 -translate-x-1/2 z-40 w-full max-w-[min(100%,calc(36rem*var(--stage-scale)))] px-4 pointer-events-none" style={{ "--stage-scale": scale } as React.CSSProperties}>
+          <div style={{ zoom: scale }} className="flex items-center gap-3 rounded-2xl border border-emerald-400/50 bg-slate-950/95 px-3 py-2.5 shadow-2xl backdrop-blur-md">
             <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/25">
               <StepIcon size={20} />
             </div>
@@ -131,7 +176,7 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
                 </span>
               </div>
               <p className="mt-0.5 text-base font-black text-white leading-tight">{currentStep.title}</p>
-              <p className="line-clamp-1 text-xs font-semibold text-white/70 leading-snug mt-0.5">{currentStep.detail}</p>
+              <p className="text-sm font-semibold text-white/70 leading-snug mt-0.5">{currentStep.detail}</p>
             </div>
             <div className="flex items-center gap-1.5 shrink-0" aria-hidden="true">
               {TUTORIAL_STEPS.map((_, idx) => (

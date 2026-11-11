@@ -24,20 +24,23 @@ export type RuneMatchConfig = {
     targetMatches: number;
   };
   monsters: Record<MonsterType, MonsterConfig>;
-  combat: {
-    attackIntervalMs: number;
-    match3Damage: number;
-    match4Damage: number;
-    match5Damage: number;
-    lShapeDamage: number;
-    cascadeBonus: number;
-    powerRuneMultiplier: number;
-    invalidSwapPenalty: number;
+  board: {
+    /** Different unfinished words on the board at once; the rest wait their turn. */
+    wordsOnBoard: number;
+    /** Tiles one unfinished word may hold, so the last words do not fill the board. */
+    tilesPerWord: number;
+    /** Tiles one finished word may keep as a decoy. */
+    decoyTilesPerWord: number;
+    /** Touching pairs a new board always starts with. */
+    newBoardPairs: number;
+    /** Touching pairs left after every match. */
+    refillPairs: number;
   };
-  powerUps: {
-    healAmount: number;
-    shieldDuration: number;
-    spawnRate: number;
+  friction: {
+    /** Tiles stop answering after a wrong pair, longer each time in a row. */
+    wrongPairLockMs: number[];
+    /** A second tap on the same tile this soon is a shaky double tap, not a cancel. */
+    doubleTapMs: number;
   };
   grid: {
     columns: number;
@@ -59,23 +62,19 @@ export const RUNE_MATCH_CONFIG: RuneMatchConfig = {
     orc: { hp: 180, attack: 6, xp: 9 },
     dragon: { hp: 240, attack: 8, xp: 12 },
   },
-  combat: {
-    attackIntervalMs: 5000,
-    match3Damage: 10,
-    match4Damage: 20,
-    match5Damage: 30,
-    lShapeDamage: 25,
-    cascadeBonus: 5,
-    powerRuneMultiplier: 2,
-    invalidSwapPenalty: 1,
+  board: {
+    wordsOnBoard: 7,
+    tilesPerWord: 4,
+    decoyTilesPerWord: 3,
+    newBoardPairs: 4,
+    refillPairs: 3,
   },
-  powerUps: {
-    healAmount: 5,
-    shieldDuration: 1,
-    spawnRate: 0,
+  friction: {
+    wrongPairLockMs: [800, 1600, 2600, 3600],
+    doubleTapMs: 300,
   },
   grid: {
-    columns: 6,
-    rows: 8,
+    columns: 4,
+    rows: 6,
   },
 };

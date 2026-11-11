@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
-import { Group, Rect, Text, Image as KonvaImage, Line } from 'react-konva'
-import { usePotionRushStore, Customer, CustomerType } from '@/store/usePotionRushStore'
+import React from 'react'
+import { Circle, Group, Rect, Text, Image as KonvaImage } from 'react-konva'
+import { usePotionRushStore, CustomerType } from '@/store/usePotionRushStore'
 import { useGameImages } from '@/lib/games/useGameImages'
+import { orderWords } from '@/lib/games/potionRushOrders'
 
 const CUSTOMER_IMAGES = {
   sheet1: '/games/sentence/potion-rush/character-sheet-adjusted.webp',
@@ -23,126 +24,121 @@ const CUSTOMER_ASSETS: Record<CustomerType, { sheetKey: 'sheet1' | 'sheet2', row
     skeleton: { sheetKey: 'sheet1', row: 0 }
 }
 
+// The bar moves in steps, so waiting customers do not redraw the counter every frame.
+const PATIENCE_STEPS = 40
+// The sheets are not cut exactly in thirds: a little of the next row shows as a thin line otherwise.
+const CROP_INSET = 0.015
+
 export default function CustomerQueue({ y, width }: CustomerQueueProps) {
-  const customers = usePotionRushStore(state => state.customers)
   const slotWidth = width / 3
-
   const { images } = useGameImages(CUSTOMER_IMAGES)
-  const [focusedIndex, setFocusedIndex] = useState<number>(0)
-
-  // Create render order: put the focused slot index last so it gets rendered on top in Konva
-  const renderOrder = [0, 1, 2]
-  if (customers[focusedIndex]) {
-    const idx = renderOrder.indexOf(focusedIndex)
-    if (idx > -1) {
-      renderOrder.splice(idx, 1)
-      renderOrder.push(focusedIndex)
-    }
-  } else {
-    // If current focused is empty, find first active and make it last
-    const firstActive = customers.findIndex(c => c !== null)
-    if (firstActive > -1) {
-      const idx = renderOrder.indexOf(firstActive)
-      if (idx > -1) {
-        renderOrder.splice(idx, 1)
-        renderOrder.push(firstActive)
-      }
-    }
-  }
 
   return (
     <Group y={y}>
-        {renderOrder.map((i) => {
-             const customer = customers[i]
-             if (!customer) return null
-             
-             return (
-                  <SingleCustomer 
-                     key={customer.id} 
-                     customer={customer} 
-                     x={slotWidth * i + slotWidth / 2} 
-                     y={0} 
-                     sheet={images[CUSTOMER_ASSETS[customer.type].sheetKey]}
-                     row={CUSTOMER_ASSETS[customer.type].row}
-                     index={i}
-                    onClick={() => setFocusedIndex(i)}
-                  />
-             )
-        })}
+      {[0, 1, 2].map((slot) => (
+        <CustomerSlot key={slot} slot={slot} x={slotWidth * slot + slotWidth / 2} slotWidth={slotWidth} images={images} />
+      ))}
     </Group>
   )
 }
 
-function SingleCustomer({ customer, x, y, sheet, row, index, onClick }: { 
-    customer: Customer, 
-    x: number, 
-    y: number, 
-    sheet: HTMLImageElement | undefined,
-    row: number,
-    index: number,
-    onClick: () => void
+function CustomerSlot({ slot, x, slotWidth, images }: {
+    slot: number,
+    x: number,
+    slotWidth: number,
+    images: Record<string, HTMLImageElement>
 }) {
-    const isAngry = customer.state === 'LEAVING_ANGRY'
-    const isHappy = customer.state === 'LEAVING_HAPPY'
-    
+    const customerId = usePotionRushStore(state => state.customers[slot]?.id ?? null)
+    if (!customerId) return null
+    return <SingleCustomer key={customerId} slot={slot} x={x} slotWidth={slotWidth} images={images} />
+}
+
+function SingleCustomer({ slot, x, slotWidth, images }: {
+    slot: number,
+    x: number,
+    slotWidth: number,
+    images: Record<string, HTMLImageElement>
+}) {
+    const type = usePotionRushStore(state => state.customers[slot]?.type ?? 'human')
+    const customerState = usePotionRushStore(state => state.customers[slot]?.state ?? 'WAITING')
+    const term = usePotionRushStore(state => state.customers[slot]?.request.term ?? '')
+    const patienceStep = usePotionRushStore(state => {
+        const customer = state.customers[slot]
+        return customer ? Math.ceil((customer.patience / customer.maxPatience) * PATIENCE_STEPS) : 0
+    })
+    const placedWords = usePotionRushStore(state => state.cauldrons[slot]?.currentWords.length ?? 0)
+    const isFocused = usePotionRushStore(state => state.focusedSlot === slot)
+    const setFocusedSlot = usePotionRushStore(state => state.setFocusedSlot)
+
+    const { sheetKey, row } = CUSTOMER_ASSETS[type]
+    const sheet = images[sheetKey]
+    const isAngry = customerState === 'LEAVING_ANGRY'
+    const isHappy = customerState === 'LEAVING_HAPPY'
+    const isWaiting = customerState === 'WAITING'
+
     const col = isHappy ? 1 : isAngry ? 2 : 0
 
     const cellW = sheet ? sheet.width / 3 : 300
     const cellH = sheet ? sheet.height / 3 : 300
 
-    const patienceRatio = customer.patience / customer.maxPatience
+    const patienceRatio = patienceStep / PATIENCE_STEPS
     const patienceColor = patienceRatio > 0.5 ? '#22c55e' : patienceRatio > 0.2 ? '#facc15' : '#ef4444'
+    const totalWords = orderWords(term).length
+    const focus = () => setFocusedSlot(slot)
 
     return (
-        <Group x={x} y={y} opacity={isHappy ? 0.5 : 1} onClick={onClick} onTouchStart={onClick}>
+        <Group x={x} opacity={isHappy ? 0.5 : 1} onClick={focus} onTap={focus}>
+            {isFocused && isWaiting && (
+                <Circle y={-96} radius={64} fill="rgba(251, 191, 36, 0.22)" stroke="#fbbf24" strokeWidth={3} listening={false} />
+            )}
+
             {sheet ? (
-                <KonvaImage 
+                <KonvaImage
                     image={sheet}
                     x={-100}
                     y={-200}
                     width={200}
                     height={200}
+                    listening={false}
                     crop={{
                         x: col * cellW,
-                        y: row * cellH,
+                        y: (row + CROP_INSET) * cellH,
                         width: cellW,
-                        height: cellH
+                        height: (1 - 2 * CROP_INSET) * cellH
                     }}
                 />
             ) : (
-                <Rect width={100} height={150} x={-50} y={-150} fill="#666" cornerRadius={10} />
+                <Rect width={100} height={150} x={-50} y={-150} fill="#666" cornerRadius={10} listening={false} />
             )}
 
-            <Group y={-220}>
-                <Rect x={-40} width={80} height={10} fill="#333" cornerRadius={5} />
-                <Rect x={-40} width={80 * patienceRatio} height={10} fill={patienceColor} cornerRadius={5} />
-            </Group>
+            {/* The sprites overlap their neighbours, so tapping goes by column. */}
+            <Rect x={-slotWidth / 2} y={-200} width={slotWidth} height={200} fill="transparent" />
 
-            <Group 
-                x={index === 0 ? 10 : index === 1 ? -80 : -170} 
-                y={-180}
-            >
-                <Rect width={160} height={60} fill="white" stroke="black" strokeWidth={2} cornerRadius={10} />
-                {index === 0 && (
-                    <Line points={[0, 30, -15, 30, 0, 40]} fill="white" stroke="black" strokeWidth={2} closed tension={0} />
-                )}
-                {index === 1 && (
-                    <Line points={[80, 60, 80, 75, 90, 60]} fill="white" stroke="black" strokeWidth={2} closed tension={0} />
-                )}
-                {index === 2 && (
-                    <Line points={[160, 30, 175, 30, 160, 40]} fill="white" stroke="black" strokeWidth={2} closed tension={0} />
-                )}
-                <Text 
-                    text={customer.request.translation} 
-                    width={150} 
-                    align="center" 
-                    y={15} 
-                    x={5}
-                    fontSize={16} 
-                    fontStyle="bold"
-                    fill="black"
-                />
-            </Group>
+            {isWaiting && (
+                <Group y={-40} listening={false}>
+                    <Rect
+                        x={-26}
+                        width={52}
+                        height={22}
+                        fill="rgba(15, 23, 42, 0.88)"
+                        stroke={isFocused ? '#fbbf24' : 'rgba(255, 255, 255, 0.45)'}
+                        strokeWidth={2}
+                        cornerRadius={11}
+                    />
+                    <Text
+                        text={`${placedWords}/${totalWords}`}
+                        x={-26}
+                        y={4}
+                        width={52}
+                        align="center"
+                        fontSize={14}
+                        fontStyle="bold"
+                        fill="white"
+                    />
+                    <Rect x={-40} y={27} width={80} height={8} fill="#1f2937" cornerRadius={4} />
+                    <Rect x={-40} y={27} width={80 * patienceRatio} height={8} fill={patienceColor} cornerRadius={4} />
+                </Group>
+            )}
         </Group>
     )
 }

@@ -1,8 +1,9 @@
 "use client";
 
 import { Group, Image as KonvaImage } from "react-konva";
-import { useMemo } from "react";
-import { getRoadTileInfo, TILE_SIZE } from "@/lib/games/castleDefense";
+import { useEffect, useMemo, useRef } from "react";
+import type { Group as KonvaGroup } from "konva/lib/Group";
+import { GAME_HEIGHT, GAME_WIDTH, getRoadTileInfo, TILE_SIZE } from "@/lib/games/castleDefense";
 import { useGameImages } from "@/lib/games/useGameImages";
 
 const ASSETS = {
@@ -22,6 +23,8 @@ const ASSETS = {
 /** Map tiles, so the game can hold its clock until the map can be drawn. */
 export const CASTLE_BACKGROUND_PATHS = [...ASSETS.grass, ASSETS.road.EW, ASSETS.road.NS, ASSETS.road.CORNER];
 const TILE_IMAGES = Object.fromEntries(CASTLE_BACKGROUND_PATHS.map((src) => [src, src]));
+// Sharp up to about 2 device pixels per board unit, which is a phone at the play zoom.
+const MAP_CACHE_PIXEL_RATIO = 2;
 
 interface BackgroundLayerProps {
   grassMap: number[][];
@@ -91,5 +94,18 @@ export function BackgroundLayer({ grassMap, path }: BackgroundLayerProps) {
     return grid;
   }, [images, grassMap, path]);
 
-  return <Group listening={false}>{tiles}</Group>;
+  // The map never changes during a round, so it is drawn once and then shown as
+  // one picture. Each newly arrived tile image redraws it.
+  const groupRef = useRef<KonvaGroup>(null);
+  useEffect(() => {
+    const group = groupRef.current;
+    if (!group || tiles.length === 0) return;
+    group.cache({ x: 0, y: 0, width: GAME_WIDTH, height: GAME_HEIGHT, pixelRatio: MAP_CACHE_PIXEL_RATIO });
+    group.getLayer()?.batchDraw();
+    return () => {
+      group.clearCache();
+    };
+  }, [tiles]);
+
+  return <Group ref={groupRef} listening={false}>{tiles}</Group>;
 }

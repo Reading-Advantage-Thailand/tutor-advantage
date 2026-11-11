@@ -435,13 +435,10 @@ export const GAME_TEXT_TH: Record<string, string> = {
   Power: "พลัง",
 
   Shuffle: "สลับ",
-  Bomb: "ระเบิด",
-  Freeze: "แช่แข็ง",
   Hint: "คำใบ้",
   "BLOCKED!": "กันได้!",
   "HURRY!": "เร็วเข้า!",
   "SHUFFLE!": "สลับแล้ว!",
-  "FROZEN!": "แช่แข็ง!",
   "SHIELD!": "โล่!",
   "POWER!": "พลัง!",
   "COMBO x{count}!": "คอมโบ x{count}!",

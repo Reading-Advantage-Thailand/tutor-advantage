@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { EnchantedLibraryGame } from "@/components/games/vocabulary/enchanted-library/EnchantedLibraryGame";
 import { BookOpen, Compass, Shield, Sparkles, CheckCircle2, Ghost } from "lucide-react";
+import { hasUsableVocabulary } from "@/lib/games/lessonContent";
+import { TeachingEndCard } from "./TeachingEndCard";
+import { TEACHING_STAGE_HEIGHT, useStageScale } from "./teachingStageSize";
 
 export type EnchantedLibraryTeachingWord = {
   term: string;
@@ -28,7 +31,7 @@ const TUTORIAL_STEPS = [
   {
     step: 1,
     title: "1. อ่านคำศัพท์ภาษาอังกฤษเป้าหมาย",
-    detail: "สังเกตกล่องหาคำแปลมุมขวาบน เพื่อเตรียมหาคำแปลภาษาไทย",
+    detail: "สังเกตกล่องหาคำแปลด้านบน เพื่อเตรียมหาคำแปลภาษาไทย",
     icon: Sparkles,
   },
   {
@@ -40,19 +43,19 @@ const TUTORIAL_STEPS = [
   {
     step: 3,
     title: "3. ค้นหาแท่นหนังสือคำแปลภาษาไทย",
-    detail: "มองหาแท่นหนังสือที่มีคำแปลตรงกัน (สังเกตวงแหวนออร่าสีทองล้อมรอบหนังสือ)",
+    detail: "อ่านป้ายคำแปลใต้หนังสือแต่ละเล่ม (หนังสือจริงมีวงแหวนสีทองล้อมรอบ)",
     icon: BookOpen,
   },
   {
     step: 4,
     title: "4. เดินชนหนังสือเพื่อสะสมคะแนนและมานา",
-    detail: "เมื่อจอมเวทเดินชนหนังสือที่ถูกต้อง จะเกิดแสงประกาย ✨ และได้คะแนนทันที",
+    detail: "ชนเล่มที่ถูกตั้งแต่ครั้งแรกจึงได้คะแนน ✨ ถ้าชนเล่มผิด เกมจะบอกคำตอบแล้วถามคำนั้นอีกครั้งตอนท้าย",
     icon: CheckCircle2,
   },
   {
     step: 5,
     title: "5. สังเกตและระวังผีวิญญาณสปีริต",
-    detail: "อย่าให้ผีวิญญาณลอยเข้ามาชน หากโดนชน มานาจะลดลง",
+    detail: "ป้าย ผี! บอกทิศที่ผีจะมา หากโดนชน มานาลดและจอมเวทชะงักครู่หนึ่ง แต่เกมไม่จบ เกมจบเมื่อหมดเวลาหรือเก็บครบ",
     icon: Ghost,
   },
   {
@@ -66,11 +69,13 @@ const TUTORIAL_STEPS = [
 export function EnchantedLibraryTeachingGame({ vocabulary, mode, fullscreen = false }: EnchantedLibraryTeachingGameProps) {
   const words = React.useMemo(() => {
     const usable = vocabulary.filter((w) => w.term && w.translation);
-    return usable.length >= 2 ? usable : FALLBACK_WORDS;
+    return hasUsableVocabulary(usable) ? usable : FALLBACK_WORDS;
   }, [vocabulary]);
 
+  const { stageRef, scale } = useStageScale<HTMLDivElement>();
   const [key, setKey] = useState(0);
   const [tutorialStep, setTutorialStep] = useState(0);
+  const [roundEnd, setRoundEnd] = useState<{ heading: string; words: number } | null>(null);
 
   useEffect(() => {
     if (mode !== "tutorial") return;
@@ -93,32 +98,53 @@ export function EnchantedLibraryTeachingGame({ vocabulary, mode, fullscreen = fa
 
   return (
     <div
-      key={key}
+      ref={stageRef}
       // The game sizes its stage to this frame, so the frame needs a definite
       // height: a board-shaped (4:3) stage capped to the screen inline, or the
       // remaining presenter stage in fullscreen.
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${
         fullscreen
           ? "h-full min-h-[360px] flex-1 rounded-none shadow-none"
-          : "aspect-[4/3] max-h-[max(420px,calc(100dvh-13rem))] min-h-[420px] rounded-[32px] shadow-2xl"
+          : `${TEACHING_STAGE_HEIGHT} rounded-[32px] shadow-2xl`
       }`}
       data-testid={`enchanted-library-${mode}`}
     >
-      <EnchantedLibraryGame
-        vocabulary={formattedVocab as any}
-        difficulty="normal"
-        onDifficultyChange={() => {}}
-        rankings={{ easy: [], normal: [], hard: [], extreme: [] }}
-        autoStart={true}
-        tutorialMode={mode === "tutorial"}
-        tutorialStep={tutorialStep}
-        fullscreen={fullscreen}
-        onComplete={() => setKey((k) => k + 1)}
-      />
+      {roundEnd ? (
+        <>
+          <div className="absolute inset-0 bg-[url('/games/cover/enchanted-library-cover.webp')] bg-cover bg-center" />
+          <TeachingEndCard
+            title={roundEnd.heading}
+            detail={`ถูกตั้งแต่ครั้งแรก ${roundEnd.words} คำ`}
+            scale={scale}
+            onReplay={() => {
+              setRoundEnd(null);
+              setKey((k) => k + 1);
+            }}
+          />
+        </>
+      ) : (
+        <EnchantedLibraryGame
+          key={key}
+          vocabulary={formattedVocab as any}
+          difficulty="normal"
+          onDifficultyChange={() => {}}
+          rankings={{ easy: [], normal: [], hard: [], extreme: [] }}
+          autoStart={true}
+          tutorialMode={mode === "tutorial"}
+          tutorialStep={tutorialStep}
+          fullscreen={fullscreen}
+          presenterScale={scale}
+          // The demo stops at the end of its round and the tutor replays when ready.
+          onComplete={(results) => {
+            if (mode === "tutorial") setKey((k) => k + 1);
+            else setRoundEnd({ heading: results.review?.heading ?? "จบรอบ", words: results.correctAnswers ?? 0 });
+          }}
+        />
+      )}
 
       {mode === "tutorial" && (
-        <div className="absolute top-3 left-1/2 z-[70] w-full max-w-xl -translate-x-1/2 px-4 pointer-events-none">
-          <div className="flex items-center gap-3.5 rounded-2xl border border-amber-400/50 bg-slate-950/95 p-3.5 shadow-2xl backdrop-blur-md">
+        <div className="absolute top-3 left-1/2 z-[70] w-full max-w-[min(100%,calc(36rem*var(--stage-scale)))] -translate-x-1/2 px-4 pointer-events-none" style={{ "--stage-scale": scale } as React.CSSProperties}>
+          <div style={{ zoom: scale }} className="flex items-center gap-3.5 rounded-2xl border border-amber-400/50 bg-slate-950/95 p-3.5 shadow-2xl backdrop-blur-md">
             <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20">
               <StepIcon size={22} />
             </div>
@@ -129,7 +155,7 @@ export function EnchantedLibraryTeachingGame({ vocabulary, mode, fullscreen = fa
                 </span>
               </div>
               <p className="mt-0.5 text-base font-black text-white leading-tight">{currentStep.title}</p>
-              <p className="text-[11px] font-semibold text-white/70 leading-snug">{currentStep.detail}</p>
+              <p className="text-xs font-semibold text-white/70 leading-snug">{currentStep.detail}</p>
             </div>
             <div className="flex items-center gap-1 shrink-0">
               {TUTORIAL_STEPS.map((_, idx) => (

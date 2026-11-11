@@ -8,5 +8,7 @@ export function mapInputVectorToDirectional(input: InputVector): DirectionalInpu
     up: input.dy < 0,
     down: input.dy > 0,
     cast: Boolean(input.cast),
+    dx: input.dx,
+    dy: input.dy,
   }
 }

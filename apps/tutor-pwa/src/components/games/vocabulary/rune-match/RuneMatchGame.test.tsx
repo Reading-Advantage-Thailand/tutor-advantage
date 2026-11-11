@@ -4,21 +4,20 @@ import React, { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { RuneMatchGame } from "./RuneMatchGame";
 import * as runeMatchLib from "../../../../lib/games/runeMatch";
-import type { VocabularyItem } from "../../../../store/useGameStore";
 
 vi.mock("react-konva", () => ({
   Stage: ({ children }: any) => <div data-testid="konva-stage">{children}</div>,
   Layer: ({ children }: any) => <div data-testid="konva-layer">{children}</div>,
-  Group: ({ children, onClick }: any) => (
-    <div data-testid="konva-group" onClick={onClick}>
+  Group: ({ children, onClick, onTap }: any) => (
+    <div data-testid="konva-group" onClick={onClick ?? onTap}>
       {children}
     </div>
   ),
-  Rect: (props: any) => <div data-testid="konva-rect" {...props} />,
-  Circle: (props: any) => <div data-testid="konva-circle" {...props} />,
-  Line: (props: any) => <div data-testid="konva-line" {...props} />,
+  Rect: () => <div data-testid="konva-rect" />,
+  Circle: () => <div data-testid="konva-circle" />,
+  Line: () => <div data-testid="konva-line" />,
   Text: (props: any) => <span data-testid="konva-text">{props.text}</span>,
-  Image: (props: any) => <div data-testid="konva-image" {...props} />,
+  Image: () => <div data-testid="konva-image" />,
 }));
 
 const mockVocabulary: any[] = [
@@ -27,6 +26,9 @@ const mockVocabulary: any[] = [
   { id: "3", word: "sun", meaning: "พระอาทิตย์", term: "sun", translation: "พระอาทิตย์" },
   { id: "4", word: "moon", meaning: "พระจันทร์", term: "moon", translation: "พระจันทร์" },
 ];
+
+/** The end of a round stays on screen this long before the score moves on. */
+const HOLD_MS = 1_200;
 
 describe("RuneMatchGame flow and performance tests", () => {
   let container: HTMLDivElement;
@@ -82,6 +84,12 @@ describe("RuneMatchGame flow and performance tests", () => {
     }
   };
 
+  const playOutTheClock = async () => {
+    await act(async () => {
+      vi.advanceTimersByTime(60_100);
+    });
+  };
+
   afterEach(async () => {
     await act(async () => {
       root.unmount();
@@ -92,36 +100,91 @@ describe("RuneMatchGame flow and performance tests", () => {
     vi.restoreAllMocks();
   });
 
-  it("calls onComplete when victory occurs and disableAutoFullscreen is true", async () => {
-    const onComplete = vi.fn();
-
+  const renderLive = async (onComplete: (result: any) => void, vocabulary = mockVocabulary) => {
     await act(async () => {
       root.render(
         <RuneMatchGame
-          vocabulary={mockVocabulary}
+          vocabulary={vocabulary}
           disableAutoFullscreen={true}
           restartOnComplete={false}
           onComplete={onComplete}
-        />
+        />,
       );
     });
+  };
 
+  it("calls onComplete after the end of the round is shown", async () => {
+    const onComplete = vi.fn();
+    await renderLive(onComplete);
     await waitForGameReady();
+    await playOutTheClock();
 
-    // The game is already in 'playing' status with Goblin.
-    // Advance time until 60 seconds expire (defeat by duration)
+    // Time is up and "หมดเวลา!" is on screen, but the score has not moved on yet.
+    expect(onComplete).not.toHaveBeenCalled();
+    expect(container.textContent).toContain("หมดเวลา!");
+
     await act(async () => {
-      // 60 seconds in 50ms ticks
-      vi.advanceTimersByTime(60_100);
+      vi.advanceTimersByTime(HOLD_MS);
     });
 
-    // onComplete MUST have been called despite disableAutoFullscreen being true!
     expect(onComplete).toHaveBeenCalledTimes(1);
     expect(onComplete).toHaveBeenCalledWith(
       expect.objectContaining({
         monsterType: "goblin",
-      })
+        score: 0,
+        correctAnswers: 0,
+        totalAttempts: 10,
+      }),
     );
+  });
+
+  it("reports play time without the moment on screen", async () => {
+    const onComplete = vi.fn();
+    await renderLive(onComplete);
+    await waitForGameReady();
+    await playOutTheClock();
+    await act(async () => {
+      vi.advanceTimersByTime(HOLD_MS);
+    });
+    const { durationMs } = onComplete.mock.calls[0][0];
+    expect(durationMs).toBeGreaterThanOrEqual(59_500);
+    expect(durationMs).toBeLessThan(61_000);
+  });
+
+  it("hands the score over at once if the game is removed during the end moment", async () => {
+    const onComplete = vi.fn();
+    await renderLive(onComplete);
+    await waitForGameReady();
+    await playOutTheClock();
+    expect(onComplete).not.toHaveBeenCalled();
+
+    await act(async () => {
+      root.unmount();
+    });
+    expect(onComplete).toHaveBeenCalledTimes(1);
+
+    // afterEach unmounts again.
+    root = createRoot(container);
+  });
+
+  it("keeps the round when a reconnect hands over the same words in a new list", async () => {
+    const createState = vi.spyOn(runeMatchLib, "createRuneMatchState");
+    const onComplete = vi.fn();
+    await renderLive(onComplete);
+    await waitForGameReady();
+    expect(createState).toHaveBeenCalledTimes(1);
+
+    await renderLive(
+      onComplete,
+      mockVocabulary.map((item) => ({ ...item })),
+    );
+    await waitForGameReady();
+    expect(createState).toHaveBeenCalledTimes(1);
+
+    // Different words are a new round.
+    await renderLive(onComplete, [...mockVocabulary, { id: "5", term: "tree", translation: "ต้นไม้" }]);
+    await waitForGameReady();
+    expect(createState).toHaveBeenCalledTimes(2);
   });
 
   it("does NOT call onComplete and auto-restarts when restartOnComplete is true", async () => {
@@ -134,18 +197,12 @@ describe("RuneMatchGame flow and performance tests", () => {
           disableAutoFullscreen={true}
           restartOnComplete={true}
           onComplete={onComplete}
-        />
+        />,
       );
     });
 
     await waitForGameReady();
-
-    // Advance 60 seconds so duration runs out
-    await act(async () => {
-      vi.advanceTimersByTime(60_100);
-    });
-
-    // onComplete should NOT be called because restartOnComplete is true
+    await playOutTheClock();
     expect(onComplete).not.toHaveBeenCalled();
 
     // After 1.5s restart delay, the game should auto-restart
@@ -154,6 +211,7 @@ describe("RuneMatchGame flow and performance tests", () => {
     });
 
     expect(onComplete).not.toHaveBeenCalled();
+    expect(container.textContent).not.toContain("หมดเวลา!");
   });
 
   it("does NOT calculate findPossibleMoves every tick when not in tutorialMode", async () => {
@@ -165,7 +223,7 @@ describe("RuneMatchGame flow and performance tests", () => {
           vocabulary={mockVocabulary}
           tutorialMode={false}
           onComplete={() => {}}
-        />
+        />,
       );
     });
 
@@ -183,5 +241,26 @@ describe("RuneMatchGame flow and performance tests", () => {
     // ran unconditionally without checking tutorialMode.
     const callsDuringTicks = spy.mock.calls.length - callsBeforeTicks;
     expect(callsDuringTicks).toBe(0);
+  });
+
+  it("offers only the two skills that do something", async () => {
+    await act(async () => {
+      root.render(<RuneMatchGame vocabulary={mockVocabulary} disableAutoFullscreen onComplete={() => {}} />);
+    });
+    await waitForGameReady();
+    expect(container.textContent).toContain("สลับกระดาน");
+    expect(container.textContent).toContain("คำใบ้");
+    expect(container.textContent).not.toContain("ระเบิด");
+    expect(container.textContent).not.toContain("แช่แข็ง");
+    expect(container.textContent).not.toContain("คำเป้าหมาย");
+  });
+
+  it("states the rule on screen before the first tap", async () => {
+    await act(async () => {
+      root.render(<RuneMatchGame vocabulary={mockVocabulary} disableAutoFullscreen onComplete={() => {}} />);
+    });
+    await waitForGameReady();
+    const noSpaces = (text: string) => text.replace(/\s+/g, "");
+    expect(noSpaces(container.textContent ?? "")).toContain(noSpaces(runeMatchLib.RUNE_RULE_LINES.join("")));
   });
 });

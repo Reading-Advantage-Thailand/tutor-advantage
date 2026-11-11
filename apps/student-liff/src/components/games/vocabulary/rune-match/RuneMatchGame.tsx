@@ -8,25 +8,17 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  Stage,
-  Layer,
-  Rect,
-  Text,
-  Group,
-  Image as KonvaImage,
-  Circle,
-} from "react-konva";
+import { Stage, Rect, Text, Group, Circle } from "react-konva";
 import {
   createRuneMatchState,
   initializeGrid,
-  swapRunes,
-  applyPairMatchResult,
-  isRunePairMatch,
   advanceTime,
-  shuffleGrid,
-  freezeMonster,
+  applyHint,
   findPossibleMoves,
+  needsFastTick,
+  RUNE_RULE_LINES,
+  shuffleGrid,
+  tapRune,
   type RuneMatchState,
 } from "@/lib/games/runeMatch";
 import {
@@ -37,14 +29,22 @@ import {
 import type { VocabularyItem } from "@/store/useGameStore";
 import { GameAssetLoadFailure } from "@/components/games/GameAssetLoadFailure";
 import { loadGameImage } from "@/lib/games/gameAssetPreloader";
+import { createRoundClock, type RoundClock } from "@/lib/games/roundClock";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
+import { playGameSound } from "@/hooks/useSound";
 import { calculateXP } from "@/lib/games/xp";
 import {
+  cellPosition,
+  clampLabelCenter,
+  computeRuneMatchLayout,
   fitRuneLabel,
   getTimePresentation,
+  type RuneLabelPresentation,
+  type RuneMatchLayout,
 } from "@/lib/games/runeMatchPresentation";
 import { tx } from "@/lib/games/gameText";
+import { BackdropLayer, BoardLayer, messageColor, StatusLayer } from "./RuneMatchLayers";
 
 export type RuneMatchGameResult = {
   xp: number;
@@ -52,6 +52,7 @@ export type RuneMatchGameResult = {
   score: number;
   correctAnswers: number;
   totalAttempts: number;
+  durationMs?: number;
   monsterType?: string;
   difficulty?: string;
 };
@@ -68,10 +69,25 @@ export type RuneMatchGameProps = {
    * full height; on narrow layouts a strip is reserved for it under the board.
    */
   statusBanner?: React.ReactNode;
+  /** Set only by the tutor's projected demo. Phones never pass this. */
+  presenter?: RuneMatchPresenter;
   onComplete: (result: RuneMatchGameResult) => void;
 };
 
+export type RuneMatchPresenter = {
+  /** Stage scale. Above 1, the time, the pair count and each pair's meaning also show large. */
+  scale: number;
+  /** The demo round stays on its last frame instead of restarting, and the host decides what comes next. */
+  onRoundEnd?: (result: { won: boolean; correctAnswers: number }) => void;
+};
+
+/** Checks the clock this often, but only redraws at this rate while something is moving. */
 const GAME_TICK_INTERVAL_MS = 50;
+/** With nothing moving the screen only needs the seconds to stay right. */
+const IDLE_TICK_MS = 250;
+/** Long enough to see the goblin fall or read "time's up" before the score screen. */
+const END_OF_ROUND_HOLD_MS = 1_200;
+const DEMO_RESTART_MS = 1_500;
 
 const RUNE_MATCH_TUTORIAL_STEPS = [
   {
@@ -79,16 +95,16 @@ const RUNE_MATCH_TUTORIAL_STEPS = [
     detail: "ดูคู่รูนภาษาอังกฤษและภาษาไทยที่มีความหมายตรงกัน (มีกรอบแดง/ทองชี้นำ)",
   },
   {
-    title: "2. แตะเลือก 2 แผ่นติดกันเพื่อสลับจับคู่",
-    detail: "แตะแผ่นแรกให้เกิดกรอบเลือก แล้วแตะแผ่นที่สองที่อยู่ติดกันเพื่อสลับตำแหน่ง",
+    title: "2. แตะ 2 แผ่นที่อยู่ติดกัน",
+    detail: "แตะแผ่นแรก แล้วแตะแผ่นที่ติดกัน (บน-ล่าง หรือ ซ้าย-ขวา) ที่เป็นคำศัพท์กับคำแปลของกัน",
   },
   {
-    title: "3. รูนระเบิดยิงเวทมนตร์โจมทีมอนสเตอร์",
-    detail: "เมื่อจับคู่ถูกต้อง รูนจะระเบิดเป็นลำแสงพลังเวทยิงลดเลือด (HP) มอนสเตอร์ด้านบน",
+    title: "3. จับคู่ถูกได้ 1 คะแนน",
+    detail: "คู่ถูกแล้วรูนจะแตก มอนสเตอร์เลือดลด จับให้ครบ 10 คู่ภายใน 60 วินาที ถ้าผิด แผ่นจะหยุดรับการแตะสักครู่",
   },
   {
-    title: "4. ใช้สกิลสลับกระดาน / แช่แข็งมอนสเตอร์",
-    detail: "แตะปุ่มสกิลด้านข้าง เช่น แช่แข็ง ❄️ เพื่อหยุดมอนสเตอร์ หรือ สลับ 🔀 เพื่อสลับกระดาน",
+    title: "4. ใช้ปุ่มช่วยเมื่อหาคู่ไม่เจอ",
+    detail: "แตะ สลับกระดาน 🔀 เพื่อเปลี่ยนแผ่นใหม่ หรือ คำใบ้ 💡 เพื่อดูคู่ที่จับได้",
   },
 ];
 
@@ -97,12 +113,55 @@ const MOBILE_GAME_CONTAINER_CLASS =
   // stage); a fixed 80vh box left a band below the board or cut its bottom off.
   "relative h-full min-h-[420px] w-full overflow-hidden rounded-none border border-sky-200/30 bg-slate-800 shadow-2xl backdrop-blur-sm sm:rounded-2xl";
 
+/** What a canvas sidebar cannot show from the back of a room: the time, the pairs, and which pair just matched. */
+function RunePresenterOverlay({
+  state,
+  layout,
+  stageWidth,
+  scale,
+}: {
+  state: RuneMatchState;
+  layout: RuneMatchLayout;
+  stageWidth: number;
+  scale: number;
+}) {
+  const gutter = stageWidth - (layout.gridX + layout.gridWidth);
+  const seconds = Math.ceil(state.player.hp / 1000);
+  const pair = state.message && state.message.tone !== "info" ? state.message : null;
+  return (
+    <>
+      {gutter >= 110 && (
+        <div
+          data-testid="rune-presenter-hud"
+          className="pointer-events-none absolute top-3 z-30 flex flex-col items-center gap-2 font-black tabular-nums text-white"
+          style={{ left: layout.gridX + layout.gridWidth + gutter / 2, transform: "translateX(-50%)", fontSize: 22 * scale }}
+        >
+          <span className={`rounded-2xl border border-white/15 bg-slate-950/85 px-4 py-1 ${seconds <= 10 ? "text-rose-300" : "text-emerald-300"}`}>⏱ {seconds}</span>
+          <span className="rounded-2xl border border-white/15 bg-slate-950/85 px-4 py-1">
+            {state.correctAnswers}/{RUNE_MATCH_CONFIG.game.targetMatches}
+          </span>
+        </div>
+      )}
+      {pair && (
+        <div
+          data-testid="rune-presenter-pair"
+          className={`pointer-events-none absolute z-30 w-max max-w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-2xl border-2 bg-slate-950/95 px-6 py-3 text-center font-black shadow-2xl ${
+            pair.tone === "good" ? "border-emerald-300 text-emerald-200" : "border-rose-300 text-rose-200"
+          }`}
+          style={{ left: layout.gridX + layout.gridWidth / 2, top: layout.gridY + layout.gridHeight / 2, fontSize: 24 * scale }}
+        >
+          {pair.text}
+        </div>
+      )}
+    </>
+  );
+}
+
 const getRuneMatchScore = (state: RuneMatchState) => {
   return Math.min(10, state.correctAnswers);
 };
 
-// Rounds always fight the goblin, and power-up runes are off (spawnRate 0), so
-// only these three images are ever drawn.
+// Rounds always fight the goblin, so only these three images are ever drawn.
 type RuneMatchAssets = {
   monster: HTMLImageElement;
   rune: HTMLImageElement;
@@ -116,9 +175,11 @@ export function RuneMatchGame({
   disableAutoFullscreen = false,
   restartOnComplete = false,
   statusBanner,
+  presenter,
   onComplete,
 }: RuneMatchGameProps) {
   const [gameState, setGameState] = useState<RuneMatchState | null>(null);
+  const [roundId, setRoundId] = useState(0);
   const [assets, setAssets] = useState<RuneMatchAssets | null>(null);
 
   const targetTutorialMove = useMemo(() => {
@@ -135,13 +196,36 @@ export function RuneMatchGame({
   const instructionsId = useId();
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const shakeRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [animFrame, setAnimFrame] = useState(0);
-  const [monsterAnimFrame, setMonsterAnimFrame] = useState(0);
   const [tutProgress, setTutProgress] = useState(0);
 
   const { containerRef: fullscreenRef, enterFullscreen, exitFullscreen } = useGameFullscreen();
-  const { settings, getEffectiveTextSize } = useAccessibilitySettings();
+  const { settings } = useAccessibilitySettings();
+  const textScale = settings.textSizeMultiplier;
+
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+  const onDemoRoundEndRef = useRef(presenter?.onRoundEnd);
+  useEffect(() => {
+    onDemoRoundEndRef.current = presenter?.onRoundEnd;
+  }, [presenter?.onRoundEnd]);
+
+  const gameStateRef = useRef<RuneMatchState | null>(null);
+  useEffect(() => {
+    gameStateRef.current = gameState;
+  }, [gameState]);
+
+  const clockRef = useRef<RoundClock | null>(null);
+  const roundStartedAtRef = useRef(0);
+
+  // A reconnect hands the game a new list with the same words. Only different
+  // words may restart the round, or a dropped connection would wipe the score.
+  const vocabularyKey = vocabulary.map((item) => `${item.term}\u0000${item.translation}`).join("\u0001");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const stableVocabulary = useMemo(() => vocabulary, [vocabularyKey]);
 
   const mergedRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -152,76 +236,10 @@ export function RuneMatchGame({
   );
 
   const hasStatusBanner = Boolean(statusBanner);
-  const layout = useMemo(() => {
-    const padding = 12;
-    const isMobile = dimensions.width < 768;
-    // Only reserve space under the board for something that is drawn there:
-    // the tutorial step card, or the host banner on narrow layouts. (A flat
-    // 90px whenever auto-fullscreen was off shrank the presenter's tiles.)
-    const bottomOffset = tutorialMode ? 90 : hasStatusBanner && isMobile ? 72 : 0;
-
-    if (isMobile) {
-      const monsterAreaHeight = Math.min(124, (dimensions.height - bottomOffset) * 0.22);
-      const availableGridArea = dimensions.height - monsterAreaHeight - bottomOffset - 72;
-      const availableGridWidth = dimensions.width - padding * 2;
-      const availableGridHeight = Math.max(180, availableGridArea);
-      const cellSize = Math.min(
-        availableGridWidth / RUNE_MATCH_CONFIG.grid.columns,
-        availableGridHeight / RUNE_MATCH_CONFIG.grid.rows,
-      );
-      const gridWidth = cellSize * RUNE_MATCH_CONFIG.grid.columns;
-      const gridHeight = cellSize * RUNE_MATCH_CONFIG.grid.rows;
-      const gridX = (dimensions.width - gridWidth) / 2;
-      const gridY = monsterAreaHeight + Math.max(0, (availableGridHeight - gridHeight) / 2);
-      return {
-        cellSize,
-        gridX,
-        gridY,
-        gridWidth,
-        gridHeight,
-        sidebarWidth: 0,
-        monsterAreaHeight,
-        isMobile: true,
-      };
-    } else {
-      const sidebarWidth = Math.min(220, dimensions.width * 0.27);
-      const gridAreaWidth = dimensions.width - sidebarWidth - padding * 2;
-      // Reserve the 28px strip above the board (labels) inside the height so
-      // the last row is never pushed below the frame.
-      const topReserve = 28;
-      const availableHeight = dimensions.height - bottomOffset - padding - topReserve;
-      const cellSize = Math.min(
-        gridAreaWidth / RUNE_MATCH_CONFIG.grid.columns,
-        availableHeight / RUNE_MATCH_CONFIG.grid.rows,
-      );
-      const gridWidth = cellSize * RUNE_MATCH_CONFIG.grid.columns;
-      const gridHeight = cellSize * RUNE_MATCH_CONFIG.grid.rows;
-      const gridX = sidebarWidth + (gridAreaWidth - gridWidth) / 2 + padding;
-      const gridY = topReserve + Math.max(0, (availableHeight - gridHeight) / 2);
-      return {
-        cellSize,
-        gridX,
-        gridY,
-        gridWidth,
-        gridHeight,
-        sidebarWidth,
-        monsterAreaHeight: 0,
-        isMobile: false,
-      };
-    }
-  }, [dimensions, tutorialMode, hasStatusBanner]);
-
-  useEffect(() => {
-    const rInt = setInterval(() => setAnimFrame((f) => (f + 1) % 3), 500);
-    const mInt = setInterval(
-      () => setMonsterAnimFrame((f) => (f + 1) % 3),
-      150,
-    );
-    return () => {
-      clearInterval(rInt);
-      clearInterval(mInt);
-    };
-  }, []);
+  const layout = useMemo(
+    () => computeRuneMatchLayout(dimensions.width, dimensions.height, { tutorialMode, hasStatusBanner }),
+    [dimensions.width, dimensions.height, tutorialMode, hasStatusBanner],
+  );
 
   useEffect(() => {
     if (!tutorialMode) return;
@@ -233,37 +251,63 @@ export function RuneMatchGame({
     return () => clearInterval(interval);
   }, [tutorialMode, tutorialStep]);
 
+  // Stays full screen through the end-of-round moment; leaving the game exits.
+  const inRound = Boolean(gameState && gameState.status !== "selection");
   useEffect(() => {
-    if (disableAutoFullscreen || tutorialMode) return;
-    if (gameState?.status === "playing") {
-      enterFullscreen();
-    } else {
-      exitFullscreen();
-    }
+    if (disableAutoFullscreen || tutorialMode || !inRound) return;
+    enterFullscreen();
     return () => {
       exitFullscreen();
     };
-  }, [gameState?.status, enterFullscreen, exitFullscreen, disableAutoFullscreen, tutorialMode]);
+  }, [inRound, enterFullscreen, exitFullscreen, disableAutoFullscreen, tutorialMode]);
+
+  const boardReady = Boolean(assets) && dimensions.width > 0 && Boolean(gameState);
+  const isLiveRound = !tutorialMode && !restartOnComplete;
 
   useEffect(() => {
-    boardReadyRef.current = Boolean(assets) && dimensions.width > 0;
-  }, [assets, dimensions.width]);
+    boardReadyRef.current = boardReady;
+  }, [boardReady]);
+
+  // The round's time only runs once the student can see the board. Demos have no
+  // round to end, so they keep counting frames and start over by themselves.
+  useEffect(() => {
+    if (!boardReady || !isLiveRound) return;
+    const clock = createRoundClock({
+      durationMs: RUNE_MATCH_CONFIG.game.durationMs,
+      onExpire: () => setGameState((current) => (current ? advanceTime(current, 0, 0) : current)),
+    });
+    clock.start();
+    clockRef.current = clock;
+    roundStartedAtRef.current = performance.now();
+    return () => {
+      clock.stop();
+      clockRef.current = null;
+    };
+  }, [boardReady, isLiveRound, roundId]);
 
   useEffect(() => {
     let lastTime = performance.now();
+    let owedMs = 0;
     const intervalId = window.setInterval(() => {
       const now = performance.now();
       const dt = Math.min(now - lastTime, 250);
       lastTime = now;
-      // The round's time only runs once the student can see the board.
       if (!boardReadyRef.current) return;
-      setGameState((current) => {
-        if (!current || current.status !== "playing") return current;
-        return advanceTime(current, dt);
-      });
+      const current = gameStateRef.current;
+      if (!current || current.status !== "playing") {
+        owedMs = 0;
+        return;
+      }
+      owedMs += dt;
+      if (owedMs < IDLE_TICK_MS && !needsFastTick(current)) return;
+      const step = owedMs;
+      owedMs = 0;
+      // The tutorial explains the game with time standing still, as the others do.
+      const remainingMs = tutorialMode ? RUNE_MATCH_CONFIG.game.durationMs : clockRef.current?.tick().remainingMs;
+      setGameState((state) => (state ? advanceTime(state, step, remainingMs) : state));
     }, GAME_TICK_INTERVAL_MS);
     return () => window.clearInterval(intervalId);
-  }, []);
+  }, [tutorialMode]);
 
   useEffect(() => {
     let mounted = true;
@@ -290,7 +334,7 @@ export function RuneMatchGame({
   const giveUpLoading = useCallback(() => {
     if (hasReportedRef.current) return;
     hasReportedRef.current = true;
-    onComplete({
+    onCompleteRef.current({
       xp: 0,
       accuracy: 0,
       score: 0,
@@ -299,12 +343,11 @@ export function RuneMatchGame({
       monsterType: "goblin",
       difficulty: MONSTER_DIFFICULTY.goblin,
     });
-  }, [onComplete]);
+  }, []);
 
   const createPlayingGame = useCallback((monsterType: MonsterType = "goblin") => {
     const config = RUNE_MATCH_CONFIG.monsters[monsterType];
-    const initialState = createRuneMatchState(vocabulary);
-    const vocabToUse = initialState.activeVocabulary || initialState.vocabulary;
+    const initialState = createRuneMatchState(stableVocabulary);
     return {
       ...initialState,
       status: "playing" as const,
@@ -316,159 +359,52 @@ export function RuneMatchGame({
         attack: config.attack,
         xp: config.xp,
       },
-      grid: initializeGrid(vocabToUse, { rng: initialState.rng }),
+      grid: initializeGrid(initialState.activeVocabulary, { rng: initialState.rng }),
     };
-  }, [vocabulary]);
+  }, [stableVocabulary]);
 
   useEffect(() => {
-    if (vocabulary.length === 0) return;
+    if (stableVocabulary.length === 0) return;
     hasReportedRef.current = false;
     setGameState(createPlayingGame("goblin"));
-  }, [createPlayingGame, vocabulary.length]);
+    setRoundId((id) => id + 1);
+  }, [createPlayingGame, stableVocabulary]);
 
-  const handleCellClick = useCallback((row: number, col: number) => {
-    setGameState((prev) => {
-      if (!prev || prev.status !== "playing") return prev;
-      const selected = prev.selectedCell;
-      if (!selected) return { ...prev, selectedCell: { row, col } };
-
-      if (selected.row === row && selected.col === col) {
-        return { ...prev, selectedCell: null };
-      }
-
-      const isAdjacent =
-        (Math.abs(selected.row - row) === 1 && selected.col === col) ||
-        (Math.abs(selected.col - col) === 1 && selected.row === row);
-
-      if (!isAdjacent) {
-        return { ...prev, selectedCell: { row, col } };
-      }
-
-      const gridAfterSwap = swapRunes(prev.grid, selected, { row, col });
-      const firstRune = gridAfterSwap[selected.row]?.[selected.col];
-      const secondRune = gridAfterSwap[row]?.[col];
-
-      if (isRunePairMatch(firstRune, secondRune)) {
-        const vocabToUse = prev.activeVocabulary || prev.vocabulary;
-        const newState = {
-          ...applyPairMatchResult(
-            { ...prev, grid: gridAfterSwap },
-            selected,
-            { row, col },
-          ),
-          currentStreak: prev.currentStreak + 1,
-          hintCells: [],
-        };
-
-        if (findPossibleMoves(newState.grid).length === 0) {
-          newState.grid = initializeGrid(vocabToUse, { rng: prev.rng });
-          newState.floatingTexts = [
-            ...newState.floatingTexts,
-            {
-              id: Math.random().toString(36).substring(2, 9),
-              text: tx("RESHUFFLE!"),
-              x: -1,
-              y: -1,
-              offsetX: 0,
-              offsetY: 0,
-              color: "#22c55e",
-              opacity: 1,
-              scale: 1,
-              duration: 1600,
-              maxDuration: 1600,
-            },
-          ];
-        }
-
-        if (newState.isFrozen) {
-          newState.isFrozen = false;
-        }
-
-        newState.powerWord =
-          prev.vocabulary[
-            Math.floor(prev.rng() * prev.vocabulary.length)
-          ].translation;
-
-        return newState;
-      }
-
-      return {
-        ...prev,
-        selectedCell: null,
-        totalAttempts:
-          firstRune?.type === "vocabulary" && secondRune?.type === "vocabulary"
-            ? prev.totalAttempts + 1
-            : prev.totalAttempts,
-        currentStreak: 0,
-        floatingTexts: [
-          ...prev.floatingTexts,
-          {
-            id: Math.random().toString(36).substring(2, 9),
-            text: tx("WRONG PAIR"),
-            x: col,
-            y: row,
-            offsetX: 0,
-            offsetY: 0,
-            color: "#ef4444",
-            opacity: 1,
-            scale: 1,
-            duration: 1500,
-            maxDuration: 1500,
-          },
-        ],
-        shakeIntensity: 0.5,
-      };
-    });
+  const handleTileTap = useCallback((row: number, col: number) => {
+    const nowMs = performance.now();
+    setGameState((prev) => (prev ? tapRune(prev, { row, col }, nowMs) : prev));
   }, []);
 
   const handleShuffle = useCallback(() => {
     setGameState((prev) => (prev ? shuffleGrid(prev) : prev));
   }, []);
 
-  const handleFreeze = useCallback(() => {
-    setGameState((prev) => (prev ? freezeMonster(prev) : prev));
-  }, []);
-
   const handleHint = useCallback(() => {
-    setGameState((prev) => {
-      if (!prev || prev.grid.length === 0) return prev;
-      if (
-        prev.selectedMonster !== "goblin" &&
-        prev.selectedMonster !== "skeleton"
-      )
-        return prev;
-
-      if (prev.hintsRemaining <= 0) return prev;
-
-      const possibleMoves = findPossibleMoves(prev.grid);
-      if (possibleMoves.length > 0) {
-        const randomMove =
-          possibleMoves[Math.floor(prev.rng() * possibleMoves.length)];
-        return {
-          ...prev,
-          hintsRemaining: prev.hintsRemaining - 1,
-          hintCells: [randomMove.from, randomMove.to],
-          floatingTexts: [
-            ...prev.floatingTexts,
-            {
-              id: Math.random().toString(36).substring(2, 9),
-              text: tx("💡 HINT!"),
-              x: -1,
-              y: -1,
-              offsetX: 0,
-              offsetY: 0,
-              color: "#facc15",
-              opacity: 1,
-              scale: 1,
-              duration: 2000,
-              maxDuration: 2000,
-            },
-          ],
-        };
-      }
-      return prev;
-    });
+    setGameState((prev) => (prev ? applyHint(prev) : prev));
   }, []);
+
+  const correctAnswers = gameState?.correctAnswers ?? 0;
+  useEffect(() => {
+    if (correctAnswers > 0) playGameSound("success");
+  }, [correctAnswers]);
+
+  // A wrong pair: a small shake of the whole stage, moved by the browser so no canvas redraws.
+  const wrongAttempts = gameState?.wrongAttempts ?? 0;
+  useEffect(() => {
+    if (wrongAttempts === 0) return;
+    playGameSound("error");
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    shakeRef.current?.animate?.(
+      [
+        { transform: "translate(0, 0)" },
+        { transform: "translate(-4px, 1px)" },
+        { transform: "translate(4px, -1px)" },
+        { transform: "translate(-2px, 0)" },
+        { transform: "translate(0, 0)" },
+      ],
+      { duration: 240 },
+    );
+  }, [wrongAttempts]);
 
   const hasGameView = Boolean(assets && gameState) && dimensions.width > 0;
   useEffect(() => {
@@ -500,67 +436,91 @@ export function RuneMatchGame({
     // when the game view mounts, or the stage keeps the loading box's size.
   }, [hasGameView]);
 
+  const roundOver = gameState?.status === "victory" || gameState?.status === "defeat";
   useEffect(() => {
-    if (!gameState) return;
-    if (hasReportedRef.current) return;
-    if (gameState.status === "victory" || gameState.status === "defeat") {
-      hasReportedRef.current = true;
-      if (tutorialMode || restartOnComplete) {
-        const timer = setTimeout(() => {
-          hasReportedRef.current = false;
-          setGameState(createPlayingGame("goblin"));
-        }, 1500);
-        return () => clearTimeout(timer);
-      }
-      const score = getRuneMatchScore(gameState);
-      const xp =
-        gameState.status === "victory"
-          ? calculateXP(
-              score,
-              gameState.correctAnswers,
-              gameState.totalAttempts,
-            )
-          : 0;
-      onComplete({
-        xp,
-        accuracy:
-          gameState.totalAttempts > 0
-            ? gameState.correctAnswers / gameState.totalAttempts
-            : gameState.status === "victory"
-              ? 1
-              : 0,
-        score,
-        correctAnswers: gameState.correctAnswers,
-        // Read as pairs out of the round's target; wrong tries live in accuracy.
-        totalAttempts: RUNE_MATCH_CONFIG.game.targetMatches,
-        monsterType: gameState.monster?.type,
-        difficulty:
-          MONSTER_DIFFICULTY[
-            (gameState.monster?.type || "goblin") as MonsterType
-          ],
-      });
+    if (!roundOver || hasReportedRef.current) return;
+    hasReportedRef.current = true;
+
+    if (tutorialMode || restartOnComplete) {
+      const timer = setTimeout(() => {
+        const ended = gameStateRef.current;
+        if (!tutorialMode && onDemoRoundEndRef.current && ended) {
+          onDemoRoundEndRef.current({ won: ended.status === "victory", correctAnswers: ended.correctAnswers });
+          return;
+        }
+        hasReportedRef.current = false;
+        setGameState(createPlayingGame("goblin"));
+        setRoundId((id) => id + 1);
+      }, DEMO_RESTART_MS);
+      return () => clearTimeout(timer);
     }
-  }, [gameState, onComplete, tutorialMode, restartOnComplete, createPlayingGame]);
+
+    const ended = gameStateRef.current;
+    if (!ended) return;
+    clockRef.current?.stop();
+    const score = getRuneMatchScore(ended);
+    const result: RuneMatchGameResult = {
+      xp: ended.status === "victory" ? calculateXP(score, ended.correctAnswers, ended.totalAttempts) : 0,
+      accuracy:
+        ended.totalAttempts > 0
+          ? ended.correctAnswers / ended.totalAttempts
+          : ended.status === "victory"
+            ? 1
+            : 0,
+      score,
+      correctAnswers: ended.correctAnswers,
+      // Read as pairs out of the round's target; wrong tries live in accuracy.
+      totalAttempts: RUNE_MATCH_CONFIG.game.targetMatches,
+      // Measured here: the moment on screen below must not count as play time.
+      durationMs: Math.round(performance.now() - roundStartedAtRef.current),
+      monsterType: ended.monster?.type,
+      difficulty: MONSTER_DIFFICULTY[(ended.monster?.type || "goblin") as MonsterType],
+    };
+
+    // Hold the last frame so the round has an ending, and never lose the score:
+    // leaving or being replaced during the hold hands it over at once.
+    let sent = false;
+    const send = () => {
+      if (sent) return;
+      sent = true;
+      onCompleteRef.current(result);
+    };
+    const sendIfHidden = () => {
+      if (document.visibilityState === "hidden") send();
+    };
+    const timer = setTimeout(send, END_OF_ROUND_HOLD_MS);
+    document.addEventListener("visibilitychange", sendIfHidden);
+    window.addEventListener("pagehide", send);
+    sendIfHidden();
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("visibilitychange", sendIfHidden);
+      window.removeEventListener("pagehide", send);
+      send();
+    };
+  }, [roundOver, roundId, tutorialMode, restartOnComplete, createPlayingGame]);
 
   const tutVisuals = useMemo(() => {
     if (!tutorialMode || !gameState || gameState.grid.length === 0) return null;
     const move = targetTutorialMove;
     if (!move) return null;
 
-    const fromX = layout.gridX + move.from.col * layout.cellSize + layout.cellSize / 2;
-    const fromY = layout.gridY + move.from.row * layout.cellSize + layout.cellSize / 2;
-    const toX = layout.gridX + move.to.col * layout.cellSize + layout.cellSize / 2;
-    const toY = layout.gridY + move.to.row * layout.cellSize + layout.cellSize / 2;
+    const half = layout.cellSize / 2;
+    const fromCell = cellPosition(layout, move.from.row, move.from.col);
+    const toCell = cellPosition(layout, move.to.row, move.to.col);
+    const fromX = fromCell.x + half;
+    const fromY = fromCell.y + half;
+    const toX = toCell.x + half;
+    const toY = toCell.y + half;
 
-    const fromRow = move.from.row;
-    const toRow = move.to.row;
+    const badgeY = (cell: { y: number }, centerY: number) =>
+      cell.y - layout.gridY < layout.cellSize / 2 ? centerY + half + 4 : centerY - half - 26;
+    const fromBadgeY = badgeY(fromCell, fromY);
+    const toBadgeY = badgeY(toCell, toY);
 
-    const fromBadgeY = fromRow === 0 ? fromY + layout.cellSize / 2 + 4 : fromY - layout.cellSize / 2 - 26;
-    const toBadgeY = toRow === 0 ? toY + layout.cellSize / 2 + 4 : toY - layout.cellSize / 2 - 26;
-
-    const isMobile = layout.isMobile;
-    const skillX = isMobile ? dimensions.width / 2 - 35 : 50;
-    const skillY = isMobile ? layout.gridY + layout.gridHeight + 30 : 340;
+    // The hand ends on สลับกระดาน, the first of the two buttons.
+    const skillX = layout.skills.x + layout.skills.width / 4;
+    const skillY = layout.skills.y + layout.skills.height / 2;
 
     let handX = fromX;
     let handY = fromY;
@@ -623,27 +583,30 @@ export function RuneMatchGame({
       isTapping,
       step,
     };
-  }, [tutorialMode, gameState, targetTutorialMove, layout, dimensions, tutorialStep, tutProgress]);
+  }, [tutorialMode, gameState, targetTutorialMove, layout, tutorialStep, tutProgress]);
 
-  const runePresentationById = useMemo(() => {
-    const presentation = new Map<
-      string,
-      { text: string; fontSize: number; lineHeight: number }
-    >();
-    const grid = gameState?.grid;
-    if (!grid) return presentation;
-
+  // Words come back on the board again and again; measuring text is the slow part.
+  const labelCache = useMemo(
+    () => new Map<string, RuneLabelPresentation>(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [layout.cellSize, settings.textSizeMultiplier],
+  );
+  const grid = gameState?.grid;
+  const runeLabels = useMemo(() => {
+    const labels = new Map<string, RuneLabelPresentation>();
+    if (!grid) return labels;
     for (const row of grid) {
       for (const rune of row) {
-        if (rune.type !== "vocabulary") continue;
-        presentation.set(
-          rune.id,
-          fitRuneLabel(rune.text, layout.cellSize, settings.textSizeMultiplier),
-        );
+        let label = labelCache.get(rune.text);
+        if (!label) {
+          label = fitRuneLabel(rune.text, layout.cellSize, settings.textSizeMultiplier);
+          labelCache.set(rune.text, label);
+        }
+        labels.set(rune.id, label);
       }
     }
-    return presentation;
-  }, [gameState?.grid, layout.cellSize, settings.textSizeMultiplier]);
+    return labels;
+  }, [grid, labelCache, layout.cellSize, settings.textSizeMultiplier]);
 
   if (!assets || !gameState || dimensions.width === 0) {
     return (
@@ -669,103 +632,24 @@ export function RuneMatchGame({
     );
   }
 
-  const renderHealthBar = (
-    x: number,
-    y: number,
-    width: number,
-    current: number,
-    max: number,
-    color: string,
-    label: string,
-  ) => {
-    const height = 20;
-    const progress = Math.max(0, Math.min(1, current / max));
-    const displayValue =
-      label === "TIME"
-        ? tx("{seconds}s", { seconds: Math.ceil(current / 1000) })
-        : `${Math.ceil(current)}/${max}`;
-    // "TIME" is a mode flag; monster bars pass the monster type (e.g. "goblin").
-    const displayLabel =
-      label === "TIME" ? tx("Time") : tx(label.charAt(0).toUpperCase() + label.slice(1).toLowerCase());
-    return (
-      <Group x={x} y={y}>
-        <Rect
-          width={width}
-          height={height}
-          fill="rgba(0, 0, 0, 0.5)"
-          cornerRadius={height / 2}
-          stroke="rgba(255, 255, 255, 0.2)"
-          strokeWidth={1}
-        />
-        <Rect
-          width={Math.max(height, width * progress)}
-          height={height}
-          fill={color}
-          cornerRadius={height / 2}
-        />
-        <Text
-          text={`${displayLabel}: ${displayValue}`}
-          width={width}
-          height={height}
-          fontSize={getEffectiveTextSize(16)}
-          fill="white"
-          align="center"
-          verticalAlign="middle"
-          fontStyle="bold"
-          fontFamily="Arial"
-        />
-      </Group>
-    );
-  };
-
-  const timePresentation = getTimePresentation(
-    gameState.player.hp,
-    gameState.player.maxHp,
-  );
+  const { monster } = gameState;
+  const timePresentation = getTimePresentation(gameState.player.hp, gameState.player.maxHp);
   const selectedRune = gameState.selectedCell
     ? gameState.grid[gameState.selectedCell.row]?.[gameState.selectedCell.col]
     : null;
-  const selectedRuneText =
-    selectedRune?.type === "vocabulary" ? selectedRune.text : null;
 
-  const renderStatCard = (
-    x: number,
-    y: number,
-    width: number,
-    label: string,
-    value: string,
-    accent: string,
-    background = "rgba(15, 23, 42, 0.92)",
-  ) => (
-    <Group x={x} y={y}>
-      <Rect
-        width={width}
-        height={32}
-        fill={background}
-        stroke={accent}
-        strokeWidth={1.5}
-        cornerRadius={9}
-      />
-      <Text
-        text={label}
-        x={8}
-        y={4}
-        width={width - 16}
-        fontSize={getEffectiveTextSize(10)}
-        fill="#cbd5e1"
-        fontStyle="bold"
-      />
-      <Text
-        text={value}
-        x={8}
-        y={15}
-        width={width - 16}
-        fontSize={getEffectiveTextSize(14)}
-        fill={accent}
-        fontStyle="bold"
-      />
-    </Group>
-  );
+  // The strip states the rule until there is something more useful to say.
+  const stripText = roundOver
+    ? ""
+    : gameState.message?.text ??
+      (selectedRune
+        ? `เลือก “${selectedRune.text}” แล้วแตะแผ่นที่ติดกัน`
+        : RUNE_RULE_LINES.join(layout.isMobile ? " " : "\n"));
+  const stripColor = gameState.message
+    ? messageColor(gameState.message.tone)
+    : selectedRune
+      ? "#fef08a"
+      : "#e2e8f0";
 
   return (
     <div
@@ -775,798 +659,207 @@ export function RuneMatchGame({
       role="application"
       aria-describedby={instructionsId}
     >
-      <Stage width={dimensions.width} height={dimensions.height}>
-        <Layer>
-          <Group
-            x={gameState.shakeIntensity * (Math.random() * 10 - 5)}
-            y={gameState.shakeIntensity * (Math.random() * 10 - 5)}
+      <div ref={shakeRef} className="absolute inset-0">
+        <Stage width={dimensions.width} height={dimensions.height}>
+          <BackdropLayer
+            width={dimensions.width}
+            height={dimensions.height}
+            background={assets.background}
+            layout={layout}
+          />
+          <BoardLayer
+            grid={gameState.grid}
+            selectedCell={gameState.selectedCell}
+            hintCells={gameState.hintCells}
+            layout={layout}
+            labels={runeLabels}
+            sheet={assets.rune}
+            shuffleCount={gameState.specialMoves.shuffle}
+            hintCount={gameState.hintsRemaining}
+            textScale={textScale}
+            onTileTap={handleTileTap}
+            onShuffle={handleShuffle}
+            onHint={handleHint}
+          />
+          <StatusLayer
+            state={gameState}
+            layout={layout}
+            stageWidth={dimensions.width}
+            monsterImage={assets.monster}
+            monsterLabel={monster ? `${tx("Goblin")}: ${monster.hp}/${monster.maxHp}` : ""}
+            timeLabel={`${timePresentation.seconds} วินาที`}
+            timeColor={timePresentation.color}
+            timeBackground={timePresentation.background}
+            timeBarText={`${tx("Time")}: ${tx("{seconds}s", { seconds: timePresentation.seconds })}`}
+            matchesText={tx("MATCHES {correctAnswers}/{targetMatches}", {
+              correctAnswers: gameState.correctAnswers,
+              targetMatches: RUNE_MATCH_CONFIG.game.targetMatches,
+            })}
+            comboText={
+              gameState.currentStreak > 0
+                ? tx("🔥 COMBO x{currentStreak}", { currentStreak: gameState.currentStreak })
+                : null
+            }
+            stripText={stripText}
+            stripColor={stripColor}
+            targetMatches={RUNE_MATCH_CONFIG.game.targetMatches}
+            textScale={textScale}
           >
-            <Rect
-              width={dimensions.width}
-              height={dimensions.height}
-              fill="#17324d"
-            />
-            <KonvaImage
-              image={assets.background}
-              width={dimensions.width}
-              height={dimensions.height}
-              opacity={0.42}
-            />
-            <Rect
-              width={dimensions.width}
-              height={dimensions.height}
-              fill="rgba(255, 255, 255, 0.05)"
-            />
-            {(gameState.status === "playing" ||
-              gameState.status === "victory" ||
-              gameState.status === "defeat") && (
+            {tutorialMode && tutVisuals && (
               <Group>
-                {/* Desktop: Left Sidebar */}
-                {!layout.isMobile && (
+                {/* Steps 0 & 1: Clean Red & Gold Glowing Frames around target runes */}
+                {(tutVisuals.step === 0 || tutVisuals.step === 1) && (
                   <Group>
+                    {/* Glowing Red Frame around Cell 1 */}
                     <Rect
-                      x={0}
-                      y={0}
-                      width={layout.sidebarWidth}
-                      height={dimensions.height}
-                      fill="rgba(8, 20, 36, 0.9)"
-                      stroke="rgba(125, 211, 252, 0.35)"
-                      strokeWidth={1}
+                      x={tutVisuals.fromX - layout.cellSize / 2 - 2}
+                      y={tutVisuals.fromY - layout.cellSize / 2 - 2}
+                      width={layout.cellSize + 4}
+                      height={layout.cellSize + 4}
+                      fill="rgba(239, 68, 68, 0.25)"
+                      stroke="#ef4444"
+                      strokeWidth={4}
+                      cornerRadius={10}
+                      shadowColor="#ef4444"
+                      shadowBlur={16}
+                      perfectDrawEnabled={false}
+                      shadowForStrokeEnabled={false}
                     />
-                    {gameState.monster && (
-                      <Group>
-                        <KonvaImage
-                          image={assets.monster}
-                          x={(layout.sidebarWidth - 80) / 2}
-                          y={20}
-                          width={80}
-                          height={80}
-                          crop={{
-                            x:
-                              monsterAnimFrame *
-                              (assets.monster.width /
-                                3),
-                            y:
-                              (gameState.monsterState === "idle"
-                                ? 0
-                                : gameState.monsterState === "attack"
-                                  ? 1
-                                  : gameState.monsterState === "hurt"
-                                    ? 2
-                                    : 3) *
-                              (assets.monster.height /
-                                4),
-                            width:
-                              assets.monster.width / 3,
-                            height:
-                              assets.monster.height /
-                              4,
-                          }}
-                        />
-                        {renderHealthBar(
-                          10,
-                          110,
-                          layout.sidebarWidth - 20,
-                          gameState.monster.hp,
-                          gameState.monster.maxHp,
-                          "#ef4444",
-                          gameState.monster.type,
-                        )}
-                      </Group>
-                    )}
-                    <Text
-                      text={selectedRuneText ? tx("SELECTED RUNE") : tx("POWER WORD")}
-                      x={10}
-                      y={160}
-                      width={layout.sidebarWidth - 20}
-                      fontSize={getEffectiveTextSize(16)}
-                      fill="#bae6fd"
-                      fontStyle="bold"
-                      align="center"
-                      fontFamily="Arial"
+                    {/* Glowing Gold Frame around Cell 2 */}
+                    <Rect
+                      x={tutVisuals.toX - layout.cellSize / 2 - 2}
+                      y={tutVisuals.toY - layout.cellSize / 2 - 2}
+                      width={layout.cellSize + 4}
+                      height={layout.cellSize + 4}
+                      fill="rgba(250, 204, 21, 0.25)"
+                      stroke="#facc15"
+                      strokeWidth={4}
+                      cornerRadius={10}
+                      shadowColor="#facc15"
+                      shadowBlur={16}
+                      perfectDrawEnabled={false}
+                      shadowForStrokeEnabled={false}
                     />
-                    <Text
-                      text={selectedRuneText || gameState.powerWord?.toUpperCase() || ""}
-                      x={10}
-                      y={175}
-                      width={layout.sidebarWidth - 20}
-                      fontSize={getEffectiveTextSize(16)}
-                      fill="#fef08a"
-                      fontStyle="bold"
-                      align="center"
-                      fontFamily="Sarabun, Arial"
-                    />
-                    {renderHealthBar(
-                      10,
-                      210,
-                      layout.sidebarWidth - 20,
-                      gameState.player.hp,
-                      gameState.player.maxHp,
-                      "#22c55e",
-                      "TIME",
-                    )}
-                    <Text
-                      text={tx("MATCHES {correctAnswers}/{targetMatches}", { correctAnswers: gameState.correctAnswers, targetMatches: RUNE_MATCH_CONFIG.game.targetMatches })}
-                      x={10}
-                      y={238}
-                      width={layout.sidebarWidth - 20}
-                      fontSize={getEffectiveTextSize(16)}
-                      fill="#86efac"
-                      fontStyle="bold"
-                      align="center"
-                    />
-                    {gameState.player.hasShield && (
+                    {/* Floating badge over Cell 1 */}
+                    <Group x={clampLabelCenter(tutVisuals.fromX, 90, dimensions.width) - 45} y={tutVisuals.fromBadgeY}>
+                      <Rect
+                        width={90}
+                        height={22}
+                        fill="#991b1b"
+                        stroke="#fca5a5"
+                        strokeWidth={1.5}
+                        cornerRadius={11}
+                        perfectDrawEnabled={false}
+                      />
                       <Text
-                        text={tx("🛡️ SHIELD")}
-                        x={10}
-                        y={240}
-                        width={layout.sidebarWidth - 20}
-                        fontSize={getEffectiveTextSize(16)}
-                        fill="#60a5fa"
+                        text="1️⃣ เลือกแผ่นนี้"
+                        width={90}
+                        height={22}
+                        fontSize={12}
+                        fill="#fef2f2"
                         fontStyle="bold"
                         align="center"
+                        verticalAlign="middle"
                       />
-                    )}
-                    {gameState.currentStreak > 0 && (
+                    </Group>
+                    {/* Floating badge over Cell 2 */}
+                    <Group x={clampLabelCenter(tutVisuals.toX, 90, dimensions.width) - 45} y={tutVisuals.toBadgeY}>
+                      <Rect
+                        width={90}
+                        height={22}
+                        fill="#854d0e"
+                        stroke="#fde047"
+                        strokeWidth={1.5}
+                        cornerRadius={11}
+                        perfectDrawEnabled={false}
+                      />
                       <Text
-                        text={tx("🔥 COMBO x{currentStreak}", { currentStreak: gameState.currentStreak })}
-                        x={10}
-                        y={260}
-                        width={layout.sidebarWidth - 20}
-                        fontSize={getEffectiveTextSize(16)}
-                        fill="#fb923c"
+                        text="2️⃣ คู่ตรงกัน"
+                        width={90}
+                        height={22}
+                        fontSize={12}
+                        fill="#fefce8"
                         fontStyle="bold"
                         align="center"
-                      />
-                    )}
-                    <Text
-                      text={tx("SKILLS")}
-                      x={10}
-                      y={290}
-                      width={layout.sidebarWidth - 20}
-                      fontSize={getEffectiveTextSize(16)}
-                      fill="#94a3b8"
-                      fontStyle="bold"
-                      align="center"
-                      fontFamily="Arial"
-                    />
-
-                    {/* Skill Buttons Grid */}
-                    {(() => {
-                      const gap = 10;
-                      const cols = 2;
-                      const width =
-                        (layout.sidebarWidth - 20 - gap * (cols - 1)) / cols;
-                      const height = 50;
-                      const startY = 310;
-
-                      const renderButton = (
-                        index: number,
-                        label: string,
-                        icon: string,
-                        count: number,
-                        color: string,
-                        onClick?: () => void,
-                      ) => {
-                        const col = index % cols;
-                        const row = Math.floor(index / cols);
-                        const x = 10 + col * (width + gap);
-                        const y = startY + row * (height + gap);
-                        const isDisabled = count <= 0;
-
-                        return (
-                          <Group
-                            key={label}
-                            x={x}
-                            y={y}
-                            onClick={!isDisabled ? onClick : undefined}
-                            onTap={!isDisabled ? onClick : undefined}
-                            opacity={isDisabled ? 0.5 : 1}
-                          >
-                            <Rect
-                              width={width}
-                              height={height}
-                              fill={isDisabled ? "#1e293b" : "#0f2942"}
-                              stroke={isDisabled ? "#334155" : color}
-                              strokeWidth={isDisabled ? 1 : 2}
-                              cornerRadius={8}
-                              shadowColor={isDisabled ? "transparent" : color}
-                              shadowBlur={isDisabled ? 0 : 5}
-                              shadowOpacity={0.2}
-                            />
-                            <Text
-                              text={icon}
-                              x={0}
-                              y={8}
-                              width={width}
-                              align="center"
-                              fontSize={20}
-                            />
-                            <Text
-                              text={label}
-                              x={0}
-                              y={32}
-                              width={width}
-                              align="center"
-                              fontSize={getEffectiveTextSize(13)}
-                              fill={isDisabled ? "#94a3b8" : "#f8fafc"}
-                              fontStyle="bold"
-                            />
-                            <Group x={width - 16} y={-5}>
-                              <Circle radius={8} fill={color} />
-                              <Text
-                                text={count.toString()}
-                                x={-8}
-                                y={-5}
-                                width={16}
-                                align="center"
-                                fontSize={getEffectiveTextSize(16)}
-                                fill="#ffffff"
-                                fontStyle="bold"
-                              />
-                            </Group>
-                          </Group>
-                        );
-                      };
-
-                      return (
-                        <Group>
-                          {renderButton(
-                            0,
-                            tx("Shuffle"),
-                            "🔀",
-                            gameState.specialMoves.shuffle,
-                            "#22c55e",
-                            handleShuffle,
-                          )}
-                          {renderButton(
-                            1,
-                            tx("Bomb"),
-                            "💣",
-                            gameState.specialMoves.bomb,
-                            "#f59e0b",
-                          )}
-                          {renderButton(
-                            2,
-                            tx("Freeze"),
-                            "❄️",
-                            gameState.specialMoves.freeze,
-                            "#60a5fa",
-                            handleFreeze,
-                          )}
-                          {(gameState.selectedMonster === "goblin" ||
-                            gameState.selectedMonster === "skeleton") &&
-                            renderButton(
-                              3,
-                              tx("Hint"),
-                              "💡",
-                              gameState.hintsRemaining,
-                              "#facc15",
-                              handleHint,
-                            )}
-                        </Group>
-                      );
-                    })()}
-                  </Group>
-                )}
-
-                {/* Mobile Header Top Bar */}
-                {layout.isMobile && (
-                  <Group>
-                    <Rect
-                      x={8}
-                      y={6}
-                      width={dimensions.width - 16}
-                      height={108}
-                      fill="rgba(8, 20, 36, 0.94)"
-                      stroke="rgba(125, 211, 252, 0.55)"
-                      strokeWidth={1.5}
-                      cornerRadius={14}
-                      shadowColor="#020617"
-                      shadowBlur={10}
-                      shadowOpacity={0.45}
-                    />
-                    {gameState.monster && (
-                      <Group>
-                        <KonvaImage
-                          image={assets.monster}
-                          x={14}
-                          y={12}
-                          width={58}
-                          height={58}
-                          crop={{
-                            x:
-                              monsterAnimFrame *
-                              (assets.monster.width /
-                                3),
-                            y:
-                              (gameState.monsterState === "idle"
-                                ? 0
-                                : gameState.monsterState === "attack"
-                                  ? 1
-                                  : gameState.monsterState === "hurt"
-                                    ? 2
-                                    : 3) *
-                              (assets.monster.height /
-                                4),
-                            width:
-                              assets.monster.width / 3,
-                            height:
-                              assets.monster.height /
-                              4,
-                          }}
-                        />
-                        {renderHealthBar(
-                          80,
-                          13,
-                          dimensions.width - 94,
-                          gameState.monster.hp,
-                          gameState.monster.maxHp,
-                          "#ef4444",
-                          gameState.monster.type,
-                        )}
-                      </Group>
-                    )}
-                    {renderStatCard(
-                      80,
-                      40,
-                      (dimensions.width - 102) / 2,
-                      "จับคู่แล้ว",
-                      `${gameState.correctAnswers}/${RUNE_MATCH_CONFIG.game.targetMatches}`,
-                      "#86efac",
-                    )}
-                    {renderStatCard(
-                      86 + (dimensions.width - 102) / 2,
-                      40,
-                      (dimensions.width - 102) / 2,
-                      "เวลาที่เหลือ",
-                      `${timePresentation.seconds} วินาที`,
-                      timePresentation.color,
-                      timePresentation.background,
-                    )}
-                    <Text
-                      text={selectedRuneText ? "เลือกแล้ว" : "คำเป้าหมาย"}
-                      x={80}
-                      y={78}
-                      width={60}
-                      fontSize={getEffectiveTextSize(11)}
-                      fill="#bae6fd"
-                      fontStyle="bold"
-                    />
-                    <Text
-                      text={selectedRuneText || gameState.powerWord || "จับคู่คำที่มีความหมายตรงกัน"}
-                      x={140}
-                      y={75}
-                      width={dimensions.width - 154}
-                      height={28}
-                      fontSize={getEffectiveTextSize(16)}
-                      fill="#fef08a"
-                      fontStyle="bold"
-                      align="right"
-                      verticalAlign="middle"
-                      ellipsis
-                      wrap="char"
-                    />
-                  </Group>
-                )}
-
-                {/* Grid */}
-                <Rect
-                  x={layout.gridX - 6}
-                  y={layout.gridY - 6}
-                  width={layout.gridWidth + 12}
-                  height={layout.gridHeight + 12}
-                  fill="rgba(226, 232, 240, 0.18)"
-                  cornerRadius={12}
-                  stroke="rgba(186, 230, 253, 0.7)"
-                  strokeWidth={2}
-                />
-                {gameState.grid.map((row, r) =>
-                  row.map((rune, c) => {
-                    const isSelected =
-                      gameState.selectedCell?.row === r &&
-                      gameState.selectedCell?.col === c;
-                    const runeSize = layout.cellSize - 4;
-                    const spriteSheet = assets.rune;
-                    const fw = spriteSheet.width / 3;
-                    const fh = spriteSheet.height / 2;
-                    const crop = {
-                      x: animFrame * fw,
-                      y: 0,
-                      width: fw,
-                      height: fh,
-                    };
-                    const isHinted = gameState.hintCells.some(
-                      (cell) => cell.row === r && cell.col === c,
-                    );
-                    const labelPresentation = runePresentationById.get(rune.id);
-                    return (
-                      <Group
-                        key={rune.id}
-                        x={layout.gridX + c * layout.cellSize + 2}
-                        y={layout.gridY + r * layout.cellSize + 2}
-                        onClick={() => handleCellClick(r, c)}
-                        onTap={() => handleCellClick(r, c)}
-                      >
-                        {isHinted && (
-                          <Rect
-                            width={runeSize + 8}
-                            height={runeSize + 8}
-                            x={-4}
-                            y={-4}
-                            fill="rgba(250, 204, 21, 0.3)"
-                            cornerRadius={8}
-                            stroke="#facc15"
-                            strokeWidth={3}
-                          />
-                        )}
-                        {isSelected && (
-                          <Rect
-                            width={runeSize + 8}
-                            height={runeSize + 8}
-                            x={-4}
-                            y={-4}
-                            fill="rgba(96, 165, 250, 0.3)"
-                            cornerRadius={8}
-                            stroke="#60a5fa"
-                            strokeWidth={2}
-                          />
-                        )}
-                        <KonvaImage
-                          image={spriteSheet}
-                          width={runeSize}
-                          height={runeSize}
-                          cornerRadius={6}
-                          crop={crop}
-                        />
-                        {rune.type === "vocabulary" && (
-                          <Group>
-                            <Rect
-                              x={2}
-                              y={runeSize * 0.1}
-                              width={runeSize - 4}
-                              height={runeSize * 0.8}
-                              fill="rgba(8, 20, 36, 0.92)"
-                              stroke="rgba(224, 242, 254, 0.9)"
-                              strokeWidth={1}
-                              cornerRadius={Math.max(5, runeSize * 0.1)}
-                              shadowColor="#020617"
-                              shadowBlur={4}
-                              shadowOpacity={0.65}
-                            />
-                            <Text
-                              text={labelPresentation?.text || rune.text}
-                              width={runeSize - 8}
-                              height={runeSize * 0.8 - 4}
-                              x={4}
-                              y={runeSize * 0.1 + 2}
-                              fontSize={labelPresentation?.fontSize || 12}
-                              lineHeight={labelPresentation?.lineHeight || 1.05}
-                              fill="#ffffff"
-                              align="center"
-                              verticalAlign="middle"
-                              fontFamily="Sarabun, Arial"
-                              fontStyle="bold"
-                              wrap="none"
-                            />
-                          </Group>
-                        )}
-                      </Group>
-                    );
-                  }),
-                )}
-
-                {/* Mobile Bottom Skill Bar */}
-                {layout.isMobile && (
-                  <Group y={layout.gridY + layout.gridHeight + 10}>
-                    {(() => {
-                      const gap = 8;
-                      const cols = 4;
-                      const availableWidth = dimensions.width - 20;
-                      const buttonWidth =
-                        (availableWidth - gap * (cols - 1)) / cols;
-                      const height = 50;
-
-                      const renderButton = (
-                        index: number,
-                        label: string,
-                        icon: string,
-                        count: number,
-                        color: string,
-                        onClick?: () => void,
-                      ) => {
-                        const x = 10 + index * (buttonWidth + gap);
-                        const y = 0;
-                        const isDisabled = count <= 0;
-
-                        return (
-                          <Group
-                            key={label}
-                            x={x}
-                            y={y}
-                            onClick={!isDisabled ? onClick : undefined}
-                            onTap={!isDisabled ? onClick : undefined}
-                            opacity={isDisabled ? 0.62 : 1}
-                          >
-                            <Rect
-                              width={buttonWidth}
-                              height={height}
-                              fill={isDisabled ? "#1e293b" : "#0f2942"}
-                              stroke={isDisabled ? "#334155" : color}
-                              strokeWidth={isDisabled ? 1 : 2}
-                              cornerRadius={8}
-                              shadowColor={isDisabled ? "transparent" : color}
-                              shadowBlur={isDisabled ? 0 : 4}
-                              shadowOpacity={0.2}
-                            />
-                            <Text
-                              text={icon}
-                              x={0}
-                              y={7}
-                              width={buttonWidth}
-                              align="center"
-                              fontSize={18}
-                            />
-                            <Text
-                              text={label}
-                              x={0}
-                              y={29}
-                              width={buttonWidth}
-                              align="center"
-                              fontSize={getEffectiveTextSize(13)}
-                              fill={isDisabled ? "#94a3b8" : "#f8fafc"}
-                              fontStyle="bold"
-                            />
-                            <Group x={buttonWidth - 14} y={-4}>
-                              <Circle radius={7} fill={color} />
-                              <Text
-                                text={count.toString()}
-                                x={-7}
-                                y={-4}
-                                width={14}
-                                align="center"
-                                fontSize={getEffectiveTextSize(11)}
-                                fill="#ffffff"
-                                fontStyle="bold"
-                              />
-                            </Group>
-                          </Group>
-                        );
-                      };
-
-                      return (
-                        <Group>
-                          {renderButton(
-                            0,
-                            tx("Shuffle"),
-                            "🔀",
-                            gameState.specialMoves.shuffle,
-                            "#22c55e",
-                            handleShuffle,
-                          )}
-                          {renderButton(
-                            1,
-                            tx("Bomb"),
-                            "💣",
-                            gameState.specialMoves.bomb,
-                            "#f59e0b",
-                          )}
-                          {renderButton(
-                            2,
-                            tx("Freeze"),
-                            "❄️",
-                            gameState.specialMoves.freeze,
-                            "#60a5fa",
-                            handleFreeze,
-                          )}
-                          {(gameState.selectedMonster === "goblin" ||
-                            gameState.selectedMonster === "skeleton") &&
-                            renderButton(
-                              3,
-                              tx("Hint"),
-                              "💡",
-                              gameState.hintsRemaining,
-                              "#facc15",
-                              handleHint,
-                            )}
-                        </Group>
-                      );
-                    })()}
-                  </Group>
-                )}
-
-                {/* Animated Tutorial Overlay Elements */}
-                {tutorialMode && tutVisuals && (
-                  <Group>
-                    {/* Steps 0 & 1: Clean Red & Gold Glowing Frames around target runes */}
-                    {(tutVisuals.step === 0 || tutVisuals.step === 1) && (
-                      <Group>
-                        {/* Glowing Red Frame around Cell 1 */}
-                        <Rect
-                          x={tutVisuals.fromX - layout.cellSize / 2 - 2}
-                          y={tutVisuals.fromY - layout.cellSize / 2 - 2}
-                          width={layout.cellSize + 4}
-                          height={layout.cellSize + 4}
-                          fill="rgba(239, 68, 68, 0.25)"
-                          stroke="#ef4444"
-                          strokeWidth={4}
-                          cornerRadius={10}
-                          shadowColor="#ef4444"
-                          shadowBlur={16}
-                        />
-                        {/* Glowing Gold Frame around Cell 2 */}
-                        <Rect
-                          x={tutVisuals.toX - layout.cellSize / 2 - 2}
-                          y={tutVisuals.toY - layout.cellSize / 2 - 2}
-                          width={layout.cellSize + 4}
-                          height={layout.cellSize + 4}
-                          fill="rgba(250, 204, 21, 0.25)"
-                          stroke="#facc15"
-                          strokeWidth={4}
-                          cornerRadius={10}
-                          shadowColor="#facc15"
-                          shadowBlur={16}
-                        />
-                        {/* Floating badge over Cell 1 */}
-                        <Group x={tutVisuals.fromX - 45} y={tutVisuals.fromBadgeY}>
-                          <Rect
-                            width={90}
-                            height={22}
-                            fill="#991b1b"
-                            stroke="#fca5a5"
-                            strokeWidth={1.5}
-                            cornerRadius={11}
-                            shadowColor="#ef4444"
-                            shadowBlur={8}
-                          />
-                          <Text
-                            text="1️⃣ เลือกแผ่นนี้"
-                            width={90}
-                            height={22}
-                            fontSize={12}
-                            fill="#fef2f2"
-                            fontStyle="bold"
-                            align="center"
-                            verticalAlign="middle"
-                          />
-                        </Group>
-                        {/* Floating badge over Cell 2 */}
-                        <Group x={tutVisuals.toX - 45} y={tutVisuals.toBadgeY}>
-                          <Rect
-                            width={90}
-                            height={22}
-                            fill="#854d0e"
-                            stroke="#fde047"
-                            strokeWidth={1.5}
-                            cornerRadius={11}
-                            shadowColor="#facc15"
-                            shadowBlur={8}
-                          />
-                          <Text
-                            text="2️⃣ คู่ตรงกัน"
-                            width={90}
-                            height={22}
-                            fontSize={12}
-                            fill="#fefce8"
-                            fontStyle="bold"
-                            align="center"
-                            verticalAlign="middle"
-                          />
-                        </Group>
-                      </Group>
-                    )}
-
-                    {/* Step 2: Clean Attack Indicator at Monster HP */}
-                    {tutVisuals.step === 2 && (
-                      <Group>
-                        <Circle
-                          x={dimensions.width / 2}
-                          y={layout.isMobile ? 45 : 80}
-                          radius={24}
-                          fill="rgba(239, 68, 68, 0.35)"
-                          stroke="#ef4444"
-                          strokeWidth={3}
-                          shadowColor="#ef4444"
-                          shadowBlur={14}
-                        />
-                        <Text
-                          text={tx("💥 ATTACK! -100 HP")}
-                          x={dimensions.width / 2 - 100}
-                          y={layout.isMobile ? 75 : 115}
-                          width={200}
-                          fontSize={16}
-                          fill="#f87171"
-                          fontStyle="bold"
-                          align="center"
-                          shadowColor="black"
-                          shadowBlur={6}
-                        />
-                      </Group>
-                    )}
-
-                    {/* Step 3: Skill Highlight Ring */}
-                    {tutVisuals.step === 3 && (
-                      <Group x={tutVisuals.handX} y={tutVisuals.handY}>
-                        <Circle radius={26} fill="rgba(239, 68, 68, 0.3)" stroke="#ef4444" strokeWidth={3} shadowColor="#ef4444" shadowBlur={12} />
-                        <Text
-                          text="กดตรงนี้!"
-                          x={-40}
-                          y={-42}
-                          width={80}
-                          fontSize={12}
-                          fill="#fca5a5"
-                          fontStyle="bold"
-                          align="center"
-                        />
-                      </Group>
-                    )}
-
-                    {/* Animated Hand Cursor Pointer Icon 👆 */}
-                    <Group
-                      x={tutVisuals.handX}
-                      y={tutVisuals.handY}
-                      scaleX={tutVisuals.handScale}
-                      scaleY={tutVisuals.handScale}
-                    >
-                      <Circle
-                        radius={20}
-                        fill={tutVisuals.isTapping ? "rgba(239, 68, 68, 0.5)" : "rgba(99, 102, 241, 0.4)"}
-                        stroke={tutVisuals.isTapping ? "#ef4444" : "#818cf8"}
-                        strokeWidth={3}
-                        shadowColor={tutVisuals.isTapping ? "#ef4444" : "#818cf8"}
-                        shadowBlur={10}
-                      />
-                      <Text
-                        text="👆"
-                        x={-13}
-                        y={-13}
-                        fontSize={26}
+                        verticalAlign="middle"
                       />
                     </Group>
                   </Group>
                 )}
+
+                {/* Step 2: Attack indicator on the goblin */}
+                {tutVisuals.step === 2 && (
+                  <Group>
+                    <Circle
+                      x={layout.goblin.x + layout.goblin.width / 2}
+                      y={layout.goblin.y + layout.goblin.height / 2}
+                      radius={Math.min(layout.goblin.width, layout.goblin.height) / 2}
+                      fill="rgba(239, 68, 68, 0.35)"
+                      stroke="#ef4444"
+                      strokeWidth={3}
+                      perfectDrawEnabled={false}
+                    />
+                    <Text
+                      text="💥 โจมตี!"
+                      x={layout.goblin.x + layout.goblin.width / 2 - 60}
+                      y={layout.goblin.y + layout.goblin.height}
+                      width={120}
+                      fontSize={16}
+                      fill="#f87171"
+                      fontStyle="bold"
+                      align="center"
+                      shadowColor="black"
+                      shadowBlur={6}
+                    />
+                  </Group>
+                )}
+
+                {/* Step 3: Skill Highlight Ring */}
+                {tutVisuals.step === 3 && (
+                  <Group x={tutVisuals.handX} y={tutVisuals.handY}>
+                    <Circle radius={26} fill="rgba(239, 68, 68, 0.3)" stroke="#ef4444" strokeWidth={3} perfectDrawEnabled={false} />
+                    <Text
+                      text="กดตรงนี้!"
+                      x={-40}
+                      y={-42}
+                      width={80}
+                      fontSize={12}
+                      fill="#fca5a5"
+                      fontStyle="bold"
+                      align="center"
+                    />
+                  </Group>
+                )}
+
+                {/* Animated Hand Cursor Pointer Icon 👆 */}
+                <Group
+                  x={tutVisuals.handX}
+                  y={tutVisuals.handY}
+                  scaleX={tutVisuals.handScale}
+                  scaleY={tutVisuals.handScale}
+                >
+                  <Circle
+                    radius={20}
+                    fill={tutVisuals.isTapping ? "rgba(239, 68, 68, 0.5)" : "rgba(99, 102, 241, 0.4)"}
+                    stroke={tutVisuals.isTapping ? "#ef4444" : "#818cf8"}
+                    strokeWidth={3}
+                    perfectDrawEnabled={false}
+                  />
+                  <Text text="👆" x={-13} y={-13} fontSize={26} />
+                </Group>
               </Group>
             )}
-
-            {/* Floating Texts */}
-            {gameState.floatingTexts.map((ft) => {
-              let screenX = dimensions.width / 2;
-              let screenY = layout.monsterAreaHeight / 2;
-              if (ft.x !== -1) {
-                screenX =
-                  layout.gridX + ft.x * layout.cellSize + layout.cellSize / 2;
-                screenY =
-                  layout.gridY + ft.y * layout.cellSize + layout.cellSize / 2;
-              }
-              return (
-                <Text
-                  key={ft.id}
-                  text={tx(ft.text)}
-                  x={screenX + ft.offsetX}
-                  y={screenY + ft.offsetY - 20}
-                  fontSize={28}
-                  scaleX={ft.scale}
-                  scaleY={ft.scale}
-                  fill={ft.color}
-                  opacity={ft.opacity}
-                  fontStyle="bold"
-                  fontFamily="Arial"
-                  align="center"
-                  shadowColor="black"
-                  shadowBlur={4}
-                  shadowOpacity={0.8}
-                  offsetX={50}
-                />
-              );
-            })}
-          </Group>
-        </Layer>
-      </Stage>
+          </StatusLayer>
+        </Stage>
+      </div>
       <p id={instructionsId} className="sr-only">
-        จับคู่รูน: เลือกรูนสองแผ่นที่อยู่ติดกันเพื่อจับคู่คำศัพท์กับคำแปล
-        ดูเวลา จำนวนคู่ และคำเป้าหมายได้จากแถบสถานะด้านบน
-        ปุ่มสกิลที่จางลงคือสกิลที่ยังใช้ไม่ได้หรือใช้หมดแล้ว
+        จับคู่รูน: แตะรูนสองแผ่นที่อยู่ติดกัน บน-ล่าง หรือ ซ้าย-ขวา ที่เป็นคำศัพท์กับคำแปลของกัน
+        จับให้ครบ 10 คู่ภายใน 60 วินาที ดูเวลาและจำนวนคู่ได้จากแถบสถานะ
+        ปุ่มสลับกระดานและคำใบ้ใช้ได้จำนวนจำกัด
       </p>
+      {presenter && presenter.scale > 1 && !layout.isMobile && (
+        <RunePresenterOverlay state={gameState} layout={layout} stageWidth={dimensions.width} scale={presenter.scale} />
+      )}
       {statusBanner && !tutorialMode && (
         <div
           className="absolute z-40 pointer-events-none"
