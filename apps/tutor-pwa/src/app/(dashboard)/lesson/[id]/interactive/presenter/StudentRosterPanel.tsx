@@ -5,7 +5,7 @@
  * answered the current question / submitted the game, and their score.
  * (Replaces the old dark "Leaderboard" sidebar.)
  */
-import { Check, Clock3, UserMinus, Users } from "lucide-react";
+import { Check, Clock3, UserMinus, Users, WifiOff } from "lucide-react";
 import { Chip, UserAvatar } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import type { Participant } from "@/lib/lesson-types";
@@ -85,13 +85,19 @@ export function StudentRosterPanel({
         <ol className="min-h-0 flex-1 divide-y divide-hairline overflow-y-auto">
           {sorted.map((p, i) => {
             const answered = answeredIds.has(p.studentId);
+            const offline = Boolean(p.offlineSince);
             return (
               <li key={p.studentId || i} className="flex items-center gap-3 px-4 py-2.5">
                 <span className="w-5 shrink-0 text-center text-sm font-semibold tabular-nums text-fg-subtle">{i + 1}</span>
                 <UserAvatar name={p.name} src={p.pictureUrl} size="sm" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[0.9375rem] font-medium text-fg">{p.name}</p>
-                  {statusVisible ? (
+                  {offline && !answered ? (
+                    <p className="flex min-w-0 items-center gap-1 text-[0.8125rem] font-medium text-warning-fg">
+                      <WifiOff aria-hidden="true" className="size-3.5 shrink-0" />
+                      <span className="truncate">{t("lesson.live.statusOffline")}</span>
+                    </p>
+                  ) : statusVisible ? (
                     <p className={cn("flex min-w-0 items-center gap-1 text-[0.8125rem]", answered ? "text-success-fg" : "text-fg-subtle")}>
                       {answered ? <Check aria-hidden="true" className="size-3.5 shrink-0" /> : <Clock3 aria-hidden="true" className="size-3.5 shrink-0" />}
                       <span className="truncate">{answered ? labels.done : labels.waiting}</span>

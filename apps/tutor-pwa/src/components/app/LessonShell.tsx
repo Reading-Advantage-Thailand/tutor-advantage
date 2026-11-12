@@ -12,6 +12,19 @@ import { Toaster } from "./Toast";
 
 const ACTIONS_SLOT_ID = "lesson-bar-actions";
 
+// Set by a page that must not be left by one stray click. Returns true to keep the page.
+let lessonExitGuard: (() => boolean) | null = null;
+
+/** Lets a live lesson page intercept the bar's exit link, e.g. to confirm first. */
+export function useLessonExitGuard(guard: () => boolean) {
+  useEffect(() => {
+    lessonExitGuard = guard;
+    return () => {
+      if (lessonExitGuard === guard) lessonExitGuard = null;
+    };
+  }, [guard]);
+}
+
 function useFullscreen() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [supported, setSupported] = useState(false);
@@ -36,6 +49,9 @@ function LessonBar({ exitHref, exitLabel }: { exitHref: string; exitLabel: strin
     <header className="lesson-bar">
       <Link
         href={exitHref}
+        onClick={(event) => {
+          if (lessonExitGuard?.()) event.preventDefault();
+        }}
         className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 text-sm font-medium text-fg-muted hover:bg-press hover:text-fg"
       >
         <X aria-hidden="true" className="size-5" />

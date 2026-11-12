@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Bot, DoorOpen, Hourglass, MessageCircleQuestion, PenLine, SearchX, WifiOff } from 'lucide-react';
+import { Bot, DoorOpen, Hourglass, Lock, MessageCircleQuestion, PenLine, SearchX, WifiOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLessonSocket } from '@/hooks/useLessonSocket';
 import { useLiff } from '@/components/providers/LiffProvider';
@@ -23,6 +23,8 @@ import { buildLobbyUrl } from '@/components/lesson/lessonRoutes';
 import { PaymentRequiredScreen } from '@/components/lesson/PaymentRequiredScreen';
 import { getPhaseMeta } from '@/components/lesson/phaseMeta';
 import { getGameById, getGameTutorial } from '@/lib/liveLessonGames';
+import type { RoundReview } from '@/lib/games/lessonGameResult';
+import { RoundReviewList } from '@/components/lesson/RoundReviewList';
 import { preloadGameAssets } from '@/lib/games/gameAssetPreloader';
 import { VocabularyFlashcardPhase } from '@/components/lesson/VocabularyFlashcardPhase';
 import { GAME_PHASES, LESSON_PHASE, TOTAL_LESSON_PHASES } from '@/lib/lessonPhases';
@@ -46,6 +48,9 @@ import { getScoreStars } from '@/components/lesson/aiScore';
 import { getVotingDeck, isLookAtScreenPhase, MCQ_PHASES } from './_components/playModel';
 
 const FINAL_LEADERBOARD_PHASE = TOTAL_LESSON_PHASES;
+// How long a phone still playing when the tutor ends the round gets to hand in
+// its points so far. Games hold their end for up to about 1.5 s first.
+const CLOSED_ROUND_HANDOVER_MS = 6_000;
 
 const cardClass = 'rounded-[var(--radius-card)] border border-hairline bg-surface shadow-[var(--shadow-card)]';
 
@@ -85,6 +90,10 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
     submitAnswer,
     kicked,
     removedByTutor,
+    roomInterrupted,
+    tutorAway,
+    connectionLost,
+    clockOffsetMs,
     flagCounts,
     flagSentence,
     submitGameVote,
@@ -115,7 +124,7 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
   const [devPairPreview, setDevPairPreview] = useState<0 | 1 | 2>(0);
   const currentPhase = devPairPreview ? LESSON_PHASE.PAIR_CONVERSATION : (sessionData?.currentPhase ?? 0);
   const submittedGameKeyRef = useRef<string | null>(null);
-  const [pendingGameResult, setPendingGameResult] = useState<{ key: string; score: number; correct?: number; total?: number } | null>(null);
+  const [pendingGameResult, setPendingGameResult] = useState<{ key: string; score: number; correct?: number; total?: number; review?: RoundReview } | null>(null);
   const gameState = sessionData?.gameState ?? null;
   const gamePhaseKey = gameState
     ? `${gameState.phase}:${gameState.selectedGameId || ""}`
@@ -126,6 +135,11 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
   const gameStatusForPreload = gameState?.status || "";
   const [gameStartedAt, setGameStartedAt] = useState<number | null>(null);
   const [gameSelections, setGameSelections] = useState<Record<number, string>>({});
+  // The tutor can end a round while this phone is still playing it. The game
+  // stays on screen to end its own round and hand in the points so far; this
+  // key marks a round that had nothing to hand in or ran out of time to do it.
+  const [closedRoundDoneKey, setClosedRoundDoneKey] = useState<string | null>(null);
+  const closingRoundKey = gameState?.status === "results" && gameStartedAt ? gamePhaseKey : null;
 
   useEffect(() => {
     if (isEveryoneReady) {
@@ -184,6 +198,12 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
     submittedGameKeyRef.current = null;
     setPendingGameResult(null);
   }, [gamePhaseKey]);
+
+  useEffect(() => {
+    if (!closingRoundKey) return;
+    const timer = window.setTimeout(() => setClosedRoundDoneKey(closingRoundKey), CLOSED_ROUND_HANDOVER_MS);
+    return () => window.clearTimeout(timer);
+  }, [closingRoundKey]);
 
   useEffect(() => {
     if (gameState?.status === "playing" && !gameStartedAt) {
@@ -267,6 +287,8 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
   );
 
   if (kicked) {
+    // Only a lesson the tutor finished is really over.
+    const canRejoin = removedByTutor || roomInterrupted;
     return (
       <Screen>
         <AppBar title={t("interactivePlay.topBarTitle")} back fallbackHref="/dashboard" />
@@ -274,16 +296,22 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
           icon={DoorOpen}
           tone="neutral"
           title={removedByTutor ? t("interactivePlay.removedTitle") : kicked}
-          description={removedByTutor ? t("interactivePlay.removedDescription") : t("interactivePlay.lessonEnded")}
+          description={
+            removedByTutor
+              ? t("interactivePlay.removedDescription")
+              : roomInterrupted
+                ? t("interactivePlay.roomInterruptedDescription")
+                : t("interactivePlay.lessonEnded")
+          }
           primaryAction={
-            removedByTutor ? (
+            canRejoin ? (
               <Button variant="brand" size="cta" className="w-full" onClick={onReconnect}>
                 {t("interactivePlay.rejoin")}
               </Button>
             ) : homeLink
           }
           secondaryAction={
-            removedByTutor ? (
+            canRejoin ? (
               <Link href="/dashboard" className={cn(buttonVariants({ variant: "ghost", size: "cta" }), "w-full text-fg-muted")}>
                 {t("interactivePlay.backHome")}
               </Link>
@@ -641,13 +669,13 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
     });
   };
 
-  const submitCurrentGameResult = (result: { gameId: string; score: number; correct?: number; total?: number; durationMs?: number }) => {
+  const submitCurrentGameResult = (result: { gameId: string; score: number; correct?: number; total?: number; durationMs?: number }, review?: RoundReview) => {
     if (phaseReadOnly || !gameState) return;
     const key = `${gameState.phase}:${gameState.selectedGameId || result.gameId}`;
     if (submittedGameKeyRef.current === key) return;
 
     submittedGameKeyRef.current = key;
-    setPendingGameResult({ key, score: result.score, correct: result.correct, total: result.total });
+    setPendingGameResult({ key, score: result.score, correct: result.correct, total: result.total, review });
     submitGameResult(result);
   };
 
@@ -705,39 +733,47 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
     const myResult = gameState.results?.[gameActorId] || gameState.results?.[studentId];
     const currentResultKey = `${gameState.phase}:${gameState.selectedGameId || ""}`;
     const pendingResult = pendingGameResult?.key === currentResultKey ? pendingGameResult : null;
-    const countdownLeft = gameState.countdownEndsAt ? Math.max(0, Math.ceil((gameState.countdownEndsAt - Date.now()) / 1000)) : 0;
+    // On the server's clock: this phone's own clock may be wrong by minutes.
+    const countdownLeft = gameState.countdownEndsAt ? Math.max(0, Math.ceil((gameState.countdownEndsAt - (Date.now() + clockOffsetMs)) / 1000)) : 0;
     const categoryLabel = gameState.category === "vocabulary" ? t("interactivePlay.gameCategoryVocab") : t("interactivePlay.gameCategorySentence");
 
     if (myResult || pendingResult) {
       const displayedScore = myResult?.score ?? pendingResult?.score ?? 0;
       const displayedCorrect = myResult?.correct ?? pendingResult?.correct;
       const displayedTotal = myResult?.total ?? pendingResult?.total;
+      const review = pendingResult?.review;
       return (
         <PhaseColumn>
           <section role="status" className="rounded-[var(--radius-card)] border border-success-border bg-success-bg px-5 py-6 text-center">
-            <p className="text-[13px] leading-[1.5] font-bold text-success-fg">{t("interactivePlay.gameComplete")}</p>
+            <p className="text-[13px] leading-[1.5] font-bold text-success-fg">{review?.heading ?? t("interactivePlay.gameComplete")}</p>
             <p className="mt-1 text-[56px] leading-[1.15] font-black text-success-fg tabular-nums">{displayedScore}</p>
-            <p className="text-[13px] leading-[1.5] text-fg-muted">{t("interactivePlay.score")}</p>
-            {typeof displayedCorrect === "number" && typeof displayedTotal === "number" && (
+            <p className="text-[13px] leading-[1.5] text-fg-muted">{t("interactivePlay.gameScoreLabel")}</p>
+            {typeof displayedCorrect === "number" && typeof displayedTotal === "number" && (displayedCorrect > 0 || displayedTotal > 1) && (
               <p className="mt-1 text-[15px] leading-[1.5] font-semibold text-fg tabular-nums">
-                {t("interactivePlay.gameCorrectCount")} {displayedCorrect}/{displayedTotal}
+                {t("interactivePlay.gameCorrectPrefix")} {displayedCorrect} {t("interactivePlay.gameCorrectOf")} {displayedTotal} {t("interactivePlay.gameCorrectSuffix")}
               </p>
             )}
+            <RoundReviewList review={review} />
             <p className="mt-3 text-[15px] leading-[1.5] font-semibold text-fg">{t("interactivePlay.gameWaitTeacher")}</p>
           </section>
-          <MobileLeaderboard participants={participants} studentId={studentId} />
+          <MobileLeaderboard participants={participants} studentId={studentId} title={t("interactivePlay.totalScoreTitle")} />
         </PhaseColumn>
       );
     }
 
+    // This phone was playing when the round closed for the class: keep the game
+    // mounted so it ends its round and hands in what it has.
+    const finishingClosedRound =
+      gameState.status === "results" && gameStartedAt !== null && !phaseReadOnly && closedRoundDoneKey !== currentResultKey;
+
     // A result phase normally means every participant has submitted. Keep a
     // late/reconnected student in a waiting state instead of rendering the
     // legacy quick-game fallback with no way to submit the selected game.
-    if (gameState.status === "results") {
+    if (gameState.status === "results" && !finishingClosedRound) {
       return (
         <PhaseColumn>
-          <StatusCard tone="warning" emoji="🎮" eyebrow={t("interactivePlay.gameComplete")} title={t("interactivePlay.gameWaitTeacher")} />
-          <MobileLeaderboard participants={participants} studentId={studentId} />
+          <StatusCard tone="warning" emoji="🎮" eyebrow={t("interactivePlay.gameRoundOverEyebrow")} title={t("interactivePlay.gameWaitTeacher")} />
+          <MobileLeaderboard participants={participants} studentId={studentId} title={t("interactivePlay.totalScoreTitle")} />
         </PhaseColumn>
       );
     }
@@ -760,7 +796,7 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
                   onClick={() => submitGameVote(game.id)}
                   aria-pressed={isMine}
                   className={cn(
-                    "pressable relative flex h-[400px] w-[272px] shrink-0 flex-col overflow-hidden rounded-[28px] border-2 text-left shadow-[var(--shadow-card)]",
+                    "pressable relative flex h-[400px] w-[272px] shrink-0 flex-col overflow-hidden rounded-[28px] border-2 text-left shadow-[var(--shadow-card)] [@media(max-height:480px)]:h-[calc(100dvh-176px)] [@media(max-height:480px)]:min-h-[190px]",
                     isMine ? "border-brand-vivid" : "border-transparent",
                   )}
                 >
@@ -779,10 +815,10 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
                       ) : null}
                     </div>
                     <h3 lang="en" className="text-[22px] leading-[1.3] font-extrabold text-white">{game.title}</h3>
-                    <p className="mt-1.5 line-clamp-3 text-sm leading-[1.6] text-white/85">{game.description}</p>
+                    <p className="mt-1.5 line-clamp-3 text-sm leading-[1.6] text-white/85 [@media(max-height:480px)]:hidden!">{game.description}</p>
                     <span
                       className={cn(
-                        "mt-4 flex h-12 items-center justify-center rounded-2xl text-[15px] font-bold",
+                        "mt-4 flex h-12 items-center justify-center [@media(max-height:480px)]:mt-2 rounded-2xl text-[15px] font-bold",
                         isMine ? "bg-brand-solid text-white" : "bg-white text-slate-950",
                       )}
                     >
@@ -793,7 +829,7 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
               );
             })}
             {deck.hasMore ? (
-              <div className="flex h-[400px] w-[200px] shrink-0 flex-col items-center justify-center gap-2 rounded-[28px] border-2 border-dashed border-hairline bg-surface px-5 text-center">
+              <div className="flex h-[400px] w-[200px] shrink-0 flex-col items-center justify-center gap-2 rounded-[28px] border-2 border-dashed border-hairline bg-surface px-5 text-center [@media(max-height:480px)]:h-[calc(100dvh-176px)] [@media(max-height:480px)]:min-h-[190px]">
                 <span aria-hidden="true" className="text-[40px] leading-[1.2]">🎁</span>
                 <p className="text-[15px] leading-[1.5] font-bold text-fg">{t("interactivePlay.moreGamesSoonTitle")}</p>
                 <p className="text-[13px] leading-[1.6] text-fg-muted">{t("interactivePlay.moreGamesSoonDescription")}</p>
@@ -859,18 +895,18 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
         <div className="phase-enter fixed inset-0 z-50 h-dvh w-screen overflow-y-auto overscroll-contain bg-slate-950 p-5 text-white">
           {selected?.cover && <Image src={selected.cover} alt="" fill sizes="100vw" className="fixed inset-0 size-full object-cover opacity-20" />}
           <div className="fixed inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/95 to-black" />
-          <div className="relative z-10 mx-auto flex min-h-full w-full max-w-sm flex-col justify-center pt-[var(--safe-top)] pb-[calc(24px+var(--safe-bottom))]">
-            <h2 className="text-[28px] leading-[1.3] font-extrabold">{t("interactivePlay.tutorialEyebrow")} {selectedTitle}</h2>
-            <p className="mt-2 text-sm leading-[1.6] text-white/75">{t("interactivePlay.tutorialHint")}</p>
-            <ol className="mt-7 grid gap-3">
+          <div className="relative z-10 mx-auto flex min-h-full w-full max-w-sm flex-col justify-center pt-[var(--safe-top)] pb-[calc(24px+var(--safe-bottom))] [@media(max-height:480px)]:max-w-3xl [@media(max-height:480px)]:pb-[var(--safe-bottom)]">
+            <h2 className="text-[28px] leading-[1.3] font-extrabold [@media(max-height:480px)]:text-[20px]">{t("interactivePlay.tutorialEyebrow")} {selectedTitle}</h2>
+            <p className="mt-2 text-sm leading-[1.6] text-white/75 [@media(max-height:480px)]:mt-0.5">{t("interactivePlay.tutorialHint")}</p>
+            <ol className="mt-7 grid gap-3 [@media(max-height:480px)]:mt-3 [@media(max-height:480px)]:grid-cols-3 [@media(max-height:480px)]:gap-2">
               {tutorialSteps.map((step, index) => (
-                <li key={step} className="flex gap-4 rounded-3xl border border-white/15 bg-white/10 p-5">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-300 text-lg font-black text-emerald-950">{index + 1}</span>
-                  <p className="self-center text-[15px] leading-[1.6] font-semibold text-white">{step}</p>
+                <li key={step} className="flex gap-4 rounded-3xl border border-white/15 bg-white/10 p-5 [@media(max-height:480px)]:flex-col [@media(max-height:480px)]:gap-1.5 [@media(max-height:480px)]:rounded-2xl [@media(max-height:480px)]:p-3">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-300 text-lg font-black text-emerald-950 [@media(max-height:480px)]:size-7 [@media(max-height:480px)]:rounded-xl [@media(max-height:480px)]:text-sm">{index + 1}</span>
+                  <p className="self-center text-[15px] leading-[1.6] font-semibold text-white [@media(max-height:480px)]:self-start [@media(max-height:480px)]:text-[13px] [@media(max-height:480px)]:leading-[1.45]">{step}</p>
                 </li>
               ))}
             </ol>
-            <p role="status" className="mt-7 flex items-center justify-center gap-2 rounded-2xl bg-amber-400/15 px-4 py-3 text-[15px] leading-[1.5] font-bold text-amber-200">
+            <p role="status" className="mt-7 [@media(max-height:480px)]:mt-3 [@media(max-height:480px)]:py-2 flex items-center justify-center gap-2 rounded-2xl bg-amber-400/15 px-4 py-3 text-[15px] leading-[1.5] font-bold text-amber-200">
               <span aria-hidden="true" className="size-2 rounded-full bg-amber-300" />
               {t("interactivePlay.tutorialWaiting")}
             </p>
@@ -910,7 +946,17 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
       );
     }
 
-    if (gameState.status === "playing") {
+    if (gameState.status === "playing" && phaseReadOnly) {
+      // Going back to a game left mid-round: it cannot be played or scored again.
+      return (
+        <PhaseColumn>
+          <StatusCard emoji="🎮" title={t("interactivePlay.gameReviewTitle")} description={t("interactivePlay.gameReviewDescription")} />
+          <MobileLeaderboard participants={participants} studentId={studentId} title={t("interactivePlay.totalScoreTitle")} />
+        </PhaseColumn>
+      );
+    }
+
+    if (gameState.status === "playing" || finishingClosedRound) {
       return (
         // data-motion="full": game sprites/feedback animations must keep running
         // even when the device asks for reduced motion (global CSS rule).
@@ -921,6 +967,8 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
             category={gameState.category}
             articleData={articleData}
             restartOnComplete={false}
+            roundClosed={gameState.status === "results"}
+            onRoundUnplayed={() => setClosedRoundDoneKey(currentResultKey)}
             onComplete={(result) => {
               if (phaseReadOnly) return;
               submitCurrentGameResult({
@@ -929,7 +977,7 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
                 correct: result.correct,
                 total: result.total,
                 durationMs: result.durationMs,
-              });
+              }, result.review);
             }}
           />
         </div>
@@ -1030,10 +1078,22 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
       <LessonTopBar
         phase={currentPhase}
         articleTitle={articleTitle}
-        reconnecting={connection === "reconnecting"}
+        reconnecting={connection === "reconnecting" || connectionLost}
         readOnly={phaseReadOnly}
+        tutorAway={tutorAway}
         onExit={() => router.replace('/dashboard')}
       />
+
+      {/* The game screens cover the bar above, so keep it small and out of the way. */}
+      {GAME_PHASES.includes(currentPhase) && gameState && ["teacher_demo", "tutorial", "countdown", "playing"].includes(gameState.status) && (tutorAway || connectionLost) ? (
+        <div
+          role="status"
+          className="pointer-events-none fixed bottom-[calc(4px+var(--safe-bottom))] left-1/2 z-[60] flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/80 px-3 py-1 text-[11px] leading-[1.4] font-semibold text-white"
+        >
+          {connectionLost ? <WifiOff aria-hidden="true" className="size-3 shrink-0" /> : <Hourglass aria-hidden="true" className="size-3 shrink-0" />}
+          <span className="whitespace-nowrap">{connectionLost ? t("interactivePlay.reconnecting") : t("interactivePlay.tutorAwayTitle")}</span>
+        </div>
+      ) : null}
 
       <div className="flex flex-1 flex-col items-center px-4 pt-4 pb-[calc(24px+var(--safe-bottom))]">
 

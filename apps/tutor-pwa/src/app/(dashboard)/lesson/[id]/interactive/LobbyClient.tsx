@@ -35,6 +35,7 @@ import {
   LessonDock,
   ProgressBar,
   Spinner,
+  useLessonExitGuard,
   UserAvatar,
   useShellTitle,
 } from "@/components/app";
@@ -192,10 +193,12 @@ export default function TutorLobbyClient({
     allAnsweredData,
     questionEnded,
     error,
+    connectionLost,
     flagCounts,
     changePhase,
     syncActiveSentence,
     endQuestion,
+    endGame,
     startGameVote,
     lockGameVote,
     startGameIntro,
@@ -227,11 +230,20 @@ export default function TutorLobbyClient({
   const [lobbyNotificationStatus, setLobbyNotificationStatus] = React.useState<string | null>(null);
   const [isFinishingSession, setIsFinishingSession] = React.useState(false);
   const [closeRoomOpen, setCloseRoomOpen] = React.useState(false);
+  const [exitConfirmOpen, setExitConfirmOpen] = React.useState(false);
   const startPhasePendingRef = React.useRef(false);
   const [isStartingPhase, setIsStartingPhase] = React.useState(false);
 
   const articleTitle = articleData?.title || "";
   const isLive = Boolean(sessionData && sessionData.currentPhase > 0);
+  // Leaving mid-lesson is not a stray click away from losing the room.
+  useLessonExitGuard(
+    React.useCallback(() => {
+      if (!isLive || demo) return false;
+      setExitConfirmOpen(true);
+      return true;
+    }, [demo, isLive]),
+  );
   useShellTitle(
     isLive
       ? articleTitle || t("lesson.live.lessonFallbackTitle")
@@ -294,6 +306,15 @@ export default function TutorLobbyClient({
     }
   };
 
+  if (isFinishingSession) {
+    return (
+      <div className="flex min-h-[var(--lesson-viewport-h)] flex-col items-center justify-center gap-3 p-4 text-center">
+        <Spinner className="text-brand-fg [&_svg]:size-8" />
+        <p className="text-base font-medium text-fg-muted">{t("lesson.live.finishing")}</p>
+      </div>
+    );
+  }
+
   // ── Live presenter ───────────────────────────────────────────────────────
   if (sessionData && sessionData.currentPhase > 0) {
     return (
@@ -315,6 +336,8 @@ export default function TutorLobbyClient({
           changePhase={changePhase}
           syncActiveSentence={syncActiveSentence}
           endQuestion={endQuestion}
+          endGame={endGame}
+          connectionLost={connectionLost}
           startGameVote={startGameVote}
           lockGameVote={lockGameVote}
           startGameIntro={startGameIntro}
@@ -325,17 +348,43 @@ export default function TutorLobbyClient({
             void handleFinishAndNavigate();
           }}
         />
+        <ConfirmDialog
+          open={exitConfirmOpen}
+          onOpenChange={setExitConfirmOpen}
+          title={t("lesson.live.exitConfirmTitle")}
+          description={t("lesson.live.exitConfirmDescription")}
+          confirmLabel={t("lesson.live.exitStepOut")}
+          cancelLabel={t("lesson.live.keepTeaching")}
+          onConfirm={() => {
+            setExitConfirmOpen(false);
+            router.push(backHref);
+          }}
+        >
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full"
+            onClick={() => {
+              setExitConfirmOpen(false);
+              void handleFinishAndNavigate();
+            }}
+          >
+            {t("lesson.live.finishLessonShort")}
+          </Button>
+        </ConfirmDialog>
       </>
     );
   }
 
   if (error) {
+    // A room closed elsewhere is not a failure to create one, and reloading would open a new room.
+    const sessionCancelled = error === t("app.lessonSessionCancelled");
     return (
       <div className="flex min-h-[var(--lesson-viewport-h)] items-center justify-center p-4">
         <ErrorState
-          title={t("lesson.interactive.sessionCreateError")}
-          description={error}
-          onRetry={() => window.location.reload()}
+          title={sessionCancelled ? error : t("lesson.interactive.sessionCreateError")}
+          description={sessionCancelled ? t("lesson.live.sessionCancelledHelp") : error}
+          onRetry={sessionCancelled ? undefined : () => window.location.reload()}
           retryLabel={t("lesson.live.retry")}
           action={
             <Link href={backHref} className={buttonVariants({ variant: "outline" })}>
@@ -366,8 +415,8 @@ export default function TutorLobbyClient({
     !canStart ||
     isStartingPhase ||
     assessment.busy ||
-    Boolean(assessment.state?.paused) ||
-    (assessmentSelected && assessment.state?.status !== "LOBBY");
+    // "Paused" is about the assessment. It must not block starting the lesson.
+    (assessmentSelected && (Boolean(assessment.state?.paused) || assessment.state?.status !== "LOBBY"));
   const assessmentModeLabel = (pre: string, post: string) => (assessment.state?.mode === "PRE" ? pre : post);
   const startLabel = !activitySelectionReady
     ? t("lesson.live.loadingActivity")
@@ -485,6 +534,7 @@ export default function TutorLobbyClient({
                         >
                           {participant.isReady ? <Check aria-hidden="true" className="size-3.5" /> : null}
                           {participant.isReady ? t("lesson.live.statusReady") : t("lesson.live.statusWaiting")}
+                          {participant.offlineSince ? ` · ${t("lesson.live.statusOffline")}` : null}
                         </p>
                       </div>
                       <div className="flex shrink-0 items-center">

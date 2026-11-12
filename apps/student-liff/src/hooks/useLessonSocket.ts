@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { getLessonErrorKind } from '../components/lesson/lessonConnection';
+import { setLiveRoundStartedAt } from '../lib/games/roundClock';
 
 const getSocketUrl = () => {
   const configuredUrl = process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL;
@@ -73,7 +75,18 @@ export interface GamePhaseState {
   teacherDemoEnabled?: boolean;
   countdownEndsAt?: number;
   results: Record<string, GamePhaseResult>;
+  /** Server time when play began. */
+  playingStartedAt?: number;
+  /** Server time when this state was sent, for a phone with a wrong clock. */
+  serverNow?: number;
 }
+
+type GameResultPayload = { gameId: string; score: number; correct?: number; total?: number; durationMs?: number };
+
+// How often a student whose room ended asks whether it has come back, and for how
+// long. A tutor who was cut off usually reopens the room within minutes.
+const ROOM_RETURN_CHECK_MS = 20_000;
+const ROOM_RETURN_WATCH_MS = 30 * 60_000;
 
 export interface LessonSessionData {
   sessionId: string;
@@ -91,6 +104,7 @@ export interface LessonSessionData {
   phaseRestored?: boolean;
   resumePhase?: number;
   flagCounts?: Record<number, number>;
+  tutorAway?: boolean;
 }
 
 export interface LessonParticipant {
@@ -162,12 +176,22 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const [languageAnswer, setLanguageAnswer] = useState<{ question: string; answer: string } | null>(null);
   const [phaseReadOnly, setPhaseReadOnly] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
+  // The socket dropped and is reconnecting. Nothing is lost, so no alarm is needed.
+  const [connectionLost, setConnectionLost] = useState(false);
+  // The tutor's connection is gone; the room stays open for them to return.
+  const [tutorAway, setTutorAway] = useState(false);
+  // The room ended without the tutor finishing the lesson, so it may come back.
+  const [roomInterrupted, setRoomInterrupted] = useState(false);
+  const [clockOffsetMs, setClockOffsetMs] = useState(0);
 
   const socketRef = useRef<Socket | null>(null);
   const hasAnsweredRef = useRef(false);
   const submissionPendingRef = useRef(false);
   const phaseVersionRef = useRef(0);
   const phaseChangeIdRef = useRef<string | null>(null);
+  const sessionIdRef = useRef<string | null>(null);
+  const roomReturnTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastGameResultRef = useRef<{ key: string; result: GameResultPayload } | null>(null);
 
   useEffect(() => {
     hasAnsweredRef.current = hasAnswered;
@@ -178,6 +202,23 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
 
     let activeSocket: Socket | null = null;
     let cancelled = false;
+    const stopWatchingForRoom = () => {
+      if (roomReturnTimerRef.current) clearInterval(roomReturnTimerRef.current);
+      roomReturnTimerRef.current = null;
+    };
+    // Keep asking whether the room is open, so a student goes in by themselves
+    // when the tutor opens it or comes back. join_success stops this.
+    const watchForRoom = (socket: Socket) => {
+      if (roomReturnTimerRef.current) return;
+      const watchStartedAt = Date.now();
+      roomReturnTimerRef.current = setInterval(() => {
+        if (Date.now() - watchStartedAt > ROOM_RETURN_WATCH_MS) {
+          stopWatchingForRoom();
+          return;
+        }
+        if (socket.connected) socket.emit('join_class', { classId, studentId, name, pictureUrl });
+      }, ROOM_RETURN_CHECK_MS);
+    };
     const init = async () => {
       try {
         const tokenResponse = await fetch("/api/auth/socket-token", {
@@ -218,6 +259,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     newSocket.on('connect', () => {
       if (cancelled) return;
       setError(null);
+      setConnectionLost(false);
       newSocket.emit('join_class', { classId, studentId, name, pictureUrl });
     });
 
@@ -227,10 +269,12 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     });
 
     newSocket.on('disconnect', (reason) => {
+      const wasSubmitting = submissionPendingRef.current;
       submissionPendingRef.current = false;
-      if (!cancelled && reason !== 'io client disconnect') {
-        setSubmissionError('การเชื่อมต่อห้องเรียนขาดหาย ระบบกำลังเชื่อมต่อใหม่');
-      }
+      if (cancelled || reason === 'io client disconnect') return;
+      setConnectionLost(true);
+      // Only an answer lost on the way needs saying out loud.
+      if (wasSubmitting) setSubmissionError('การเชื่อมต่อห้องเรียนขาดหาย ระบบกำลังเชื่อมต่อใหม่');
     });
 
     newSocket.on('join_success', (data: LessonSessionData) => {
@@ -239,11 +283,38 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       const incomingPhaseVersion = hasPhaseVersion
         ? Number(data.phaseVersion)
         : 0;
-      if (incomingPhaseVersion < phaseVersionRef.current || (!hasPhaseVersion && phaseVersionRef.current > 0)) {
+      const isSameRoom = sessionIdRef.current === data.sessionId;
+      if (isSameRoom && (incomingPhaseVersion < phaseVersionRef.current || (!hasPhaseVersion && phaseVersionRef.current > 0))) {
         // A reconnect response can race with a newer phase event already
         // received on this socket. Never let that older snapshot move the
-        // student back to a previous question.
+        // student back to a previous question. A new room counts from zero.
         return;
+      }
+      sessionIdRef.current = data.sessionId;
+      stopWatchingForRoom();
+      setKicked(null);
+      setRoomInterrupted(false);
+      setError(null);
+      setTutorAway(Boolean(data.tutorAway));
+      const incomingGame = data.gameState;
+      if (typeof incomingGame?.serverNow === 'number') setClockOffsetMs(incomingGame.serverNow - Date.now());
+      // Joined a round already running: play the time left, not a fresh round.
+      // A game whose clock is already running (a socket reconnect) is unaffected.
+      setLiveRoundStartedAt(
+        incomingGame?.status === 'playing' && incomingGame.playingStartedAt && incomingGame.serverNow
+          ? performance.now() - Math.max(0, incomingGame.serverNow - incomingGame.playingStartedAt)
+          : null,
+      );
+      // A result sent just as the connection died may never have arrived.
+      const lastResult = lastGameResultRef.current;
+      if (
+        lastResult &&
+        incomingGame &&
+        lastResult.key === `${incomingGame.phase}:${incomingGame.selectedGameId || ''}` &&
+        ['playing', 'results'].includes(incomingGame.status) &&
+        !incomingGame.results?.[data.currentStudentId || studentId]
+      ) {
+        newSocket.emit('submit_game_result', { sessionId: data.sessionId, result: lastResult.result });
       }
       phaseVersionRef.current = incomingPhaseVersion;
       phaseChangeIdRef.current = typeof data.phaseChangeId === 'string'
@@ -251,7 +322,9 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
         : null;
       const answered = Boolean(data.hasAnswered);
       setSessionData(data);
-      setArticleData(data.articleData ?? null);
+      // Keep the same object on a reconnect: a game restarts its round when its
+      // words change identity.
+      setArticleData((previous) => (isSameRoom && previous ? previous : data.articleData ?? null));
       setPhaseReadOnly(Boolean(data.phaseRestored));
       setFlagCounts(data.flagCounts || {});
       setHasAnswered(answered);
@@ -276,11 +349,21 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       newSocket.disconnect();
     });
 
-    newSocket.on('session_deleted', (data: { message: string }) => {
+    newSocket.on('session_deleted', (data: { message: string; reason?: string }) => {
       setKicked(data.message);
       setRemovedByTutor(false);
-      newSocket.disconnect();
+      setTutorAway(false);
+      if (!data.reason || data.reason === 'finished') {
+        newSocket.disconnect();
+        return;
+      }
+      // The room ended without the lesson finishing: go back in if it returns.
+      setRoomInterrupted(true);
+      watchForRoom(newSocket);
     });
+
+    newSocket.on('tutor_away', () => setTutorAway(true));
+    newSocket.on('tutor_back', () => setTutorAway(false));
 
     newSocket.on('all_answered_broadcast', () => {
       setIsEveryoneReady(true);
@@ -290,6 +373,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
 
     newSocket.on('error', (data: { message: string }) => {
       setError(data.message);
+      if (getLessonErrorKind(data.message) === 'notStarted') watchForRoom(newSocket);
     });
 
     newSocket.on('payment_required', (data: PaymentRequiredData) => {
@@ -328,6 +412,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setLanguageAnswer(null);
       submissionPendingRef.current = false;
       setSubmissionError(null);
+      setLiveRoundStartedAt(null);
+      if (typeof data.gameState?.serverNow === 'number') setClockOffsetMs(data.gameState.serverNow - Date.now());
       // Sentence flags reset at the start of a fresh instructional cycle
       if (data.phase === 1) setFlagCounts({});
     });
@@ -364,6 +450,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
 
     const handleGameState = (data: { gameState: GamePhaseState }) => {
       setSessionData(prev => prev ? { ...prev, gameState: data.gameState } : prev);
+      if (typeof data.gameState.serverNow === 'number') setClockOffsetMs(data.gameState.serverNow - Date.now());
+      if (data.gameState.status !== 'playing') setLiveRoundStartedAt(null);
       if (data.gameState.results?.[studentId]) {
         setHasAnswered(true);
         hasAnsweredRef.current = true;
@@ -383,6 +471,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     return () => {
       cancelled = true;
       submissionPendingRef.current = false;
+      stopWatchingForRoom();
+      setLiveRoundStartedAt(null);
       activeSocket?.disconnect();
       if (socketRef.current === activeSocket) {
         socketRef.current = null;
@@ -390,6 +480,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       }
       phaseChangeIdRef.current = null;
       phaseVersionRef.current = 0;
+      sessionIdRef.current = null;
     };
   }, [classId, studentId, name, pictureUrl]);
 
@@ -439,9 +530,11 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     }
   };
 
-  const submitGameResult = (result: { gameId: string; score: number; correct?: number; total?: number; durationMs?: number }) => {
+  const submitGameResult = (result: GameResultPayload) => {
     if (phaseReadOnly) return;
     if (socketRef.current && sessionData) {
+      const game = sessionData.gameState;
+      if (game) lastGameResultRef.current = { key: `${game.phase}:${game.selectedGameId || ''}`, result };
       socketRef.current.emit('submit_game_result', {
         sessionId: sessionData.sessionId,
         result,
@@ -454,7 +547,12 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const rejoin = () => {
     setKicked(null);
     setRemovedByTutor(false);
-    socketRef.current?.connect();
+    setRoomInterrupted(false);
+    if (socketRef.current?.connected) {
+      socketRef.current.emit('join_class', { classId, studentId, name, pictureUrl });
+    } else {
+      socketRef.current?.connect();
+    }
   };
 
   return {
@@ -472,6 +570,10 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     nudgeMessage,
     kicked,
     removedByTutor,
+    roomInterrupted,
+    tutorAway,
+    connectionLost,
+    clockOffsetMs,
     rejoin,
     flagCounts,
     languageAnswer,

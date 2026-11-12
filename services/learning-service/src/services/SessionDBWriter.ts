@@ -2,7 +2,13 @@ import { logger } from "@tutor-advantage/shared-config";
 import { prisma } from "@tutor-advantage/database";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const ACTIVE_SESSION_LOCK_STALE_MS = 45_000;
+// lastHeartbeatAt means "the tutor's socket was alive", so a lesson whose tutor
+// dropped stops heartbeating. Keep the lock past the tutor's reconnect grace
+// (TUTOR_RECONNECT_GRACE_MS), or a tutor returning through another instance would
+// claim a new room at phase 0 and lose the lesson.
+export const ACTIVE_SESSION_LOCK_STALE_MS = 11 * 60_000;
+// A lock whose room cannot be restored is only an obstacle. Clear it this soon.
+export const UNRESTORABLE_LOCK_STALE_MS = 45_000;
 
 export type ActiveSessionLockResult =
   | { acquired: true }
@@ -13,6 +19,7 @@ export const claimActiveSession = async (
   classId: string | undefined,
   sessionId: string,
   tutorUserId: string,
+  staleAfterMs: number = ACTIVE_SESSION_LOCK_STALE_MS,
 ): Promise<ActiveSessionLockResult> => {
   if (!classId || !UUID_RE.test(classId) || !UUID_RE.test(sessionId) || !UUID_RE.test(tutorUserId)) {
     // Demo/legacy identifiers are not persisted, so retain their in-memory
@@ -30,7 +37,7 @@ export const claimActiveSession = async (
       const existing = await prisma.activeLessonSessionLock.findUnique({ where: { classId } });
       if (!existing) return { acquired: false, existingSessionId: "" };
 
-      const stale = Date.now() - existing.lastHeartbeatAt.getTime() > ACTIVE_SESSION_LOCK_STALE_MS;
+      const stale = Date.now() - existing.lastHeartbeatAt.getTime() > staleAfterMs;
       if (stale) {
         const removed = await prisma.activeLessonSessionLock.deleteMany({
           where: {
@@ -298,27 +305,41 @@ export const persistAnswer = async (params: {
       update: {}
     });
 
-    // 2. Create Answer log
-    await prisma.sessionAnswer.create({
-      data: {
+    // 2. Save the answer. A phase can be played again after the tutor goes back,
+    // and the live score then counts only the new attempt, so replace the old row.
+    const answerKey = {
+      sessionId_studentUserId_phase: {
         sessionId: params.sessionId,
         studentUserId: resolvedStudentId,
         phase: params.phase,
-        answerText: params.answerText,
-        isCorrect: params.isCorrect,
-        score: params.score,
-        aiFeedback: params.aiFeedback,
-        questionText: params.questionText,
-        correctAnswer: params.correctAnswer,
-        options: params.options || undefined
-      }
+      },
+    };
+    const previous = await prisma.sessionAnswer.findUnique({ where: answerKey, select: { score: true } });
+    const answerFields = {
+      answerText: params.answerText,
+      isCorrect: params.isCorrect,
+      score: params.score,
+      aiFeedback: params.aiFeedback,
+      questionText: params.questionText,
+      correctAnswer: params.correctAnswer,
+      options: params.options || undefined,
+    };
+    await prisma.sessionAnswer.upsert({
+      where: answerKey,
+      create: {
+        sessionId: params.sessionId,
+        studentUserId: resolvedStudentId,
+        phase: params.phase,
+        ...answerFields,
+      },
+      update: { ...answerFields, answeredAt: new Date() },
     });
 
-    // 3. Update running total on participant tally in the DB
+    // 3. Update running total on participant tally in the DB by the difference
     await prisma.sessionParticipant.update({
       where: { sessionId_studentUserId: { sessionId: params.sessionId, studentUserId: resolvedStudentId } },
       data: {
-        score: { increment: params.score }
+        score: { increment: params.score - (previous?.score ?? 0) }
       }
     });
   } catch (error) {

@@ -3,8 +3,12 @@ import {
   COMPREHENSION_PHASE,
   GUIDED_RESPONSE_PHASE,
   KEY_SENTENCES_PHASE,
+  MAX_GAME_SCORE,
   SENTENCE_GAME_PHASE,
+  TUTOR_LOBBY_GRACE_MS,
+  TUTOR_RECONNECT_GRACE_MS,
   VOCABULARY_GAME_PHASE,
+  getTutorGraceMs,
   lessonSessionService as service,
 } from "./LessonSessionService";
 
@@ -163,6 +167,114 @@ describe("lessonSessionService", () => {
       latestAnswer: "answer",
       socketId: "socket-a",
     });
+  });
+
+  it("follows a student who reconnected on another instance, so the dropped socket here cannot mark them offline", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    const localSockets = new Set<string>();
+
+    service.applyRemoteEvent(session.sessionId, "participants_updated", {
+      participants: [{ studentId: "student-1", name: "Ada", socketId: "socket-b" }],
+    }, { isLocalSocket: (id) => localSockets.has(id) });
+
+    expect(session.participants.get("student-1")?.socketId).toBe("socket-b");
+    expect(service.markParticipantOffline(session.sessionId, "student-1", "socket-a")).toBeUndefined();
+    expect(session.participants.get("student-1")?.offlineSince).toBeUndefined();
+  });
+
+  it("takes the newer connection even while a dropped socket here has not timed out", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    const joinedHere = session.participants.get("student-1")!.connectedAt!;
+    // socket-a is dead but still listed as connected until the ping timeout.
+    const stillListed = (id: string) => id === "socket-a";
+
+    service.applyRemoteEvent(session.sessionId, "participants_updated", {
+      participants: [{ studentId: "student-1", name: "Ada", socketId: "socket-b", connectedAt: joinedHere + 3_000 }],
+    }, { isLocalSocket: stillListed });
+    expect(session.participants.get("student-1")).toMatchObject({ socketId: "socket-b", connectedAt: joinedHere + 3_000 });
+
+    // A late list from an instance that still has the old socket, marked offline there.
+    service.applyRemoteEvent(session.sessionId, "participants_updated", {
+      participants: [{ studentId: "student-1", name: "Ada", socketId: "socket-a", connectedAt: joinedHere, offlineSince: joinedHere + 50_000 }],
+    }, { isLocalSocket: stillListed });
+    expect(session.participants.get("student-1")?.socketId).toBe("socket-b");
+    expect(session.participants.get("student-1")?.offlineSince).toBeUndefined();
+  });
+
+  it("never lets a database placeholder stand in for a real connection", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "restored:student-1");
+    expect(session.participants.get("student-1")?.connectedAt).toBeUndefined();
+
+    // A real connection elsewhere replaces the placeholder here.
+    service.applyRemoteEvent(session.sessionId, "participants_updated", {
+      participants: [{ studentId: "student-1", name: "Ada", socketId: "socket-b" }],
+    }, { isLocalSocket: () => false });
+    expect(session.participants.get("student-1")?.socketId).toBe("socket-b");
+
+    // Marked offline here; a list from an instance that only knows the student
+    // from the database must not clear that.
+    service.joinSessionByClassId("class-1", "student-2", "Ben", "socket-c");
+    expect(service.markParticipantOffline(session.sessionId, "student-2", "socket-c")).toBeTruthy();
+    service.applyRemoteEvent(session.sessionId, "participants_updated", {
+      participants: [{ studentId: "student-2", name: "Ben", socketId: "restored:student-2" }],
+    }, { isLocalSocket: () => true });
+    expect(session.participants.get("student-2")).toMatchObject({ socketId: "socket-c" });
+    expect(session.participants.get("student-2")?.offlineSince).toEqual(expect.any(Number));
+  });
+
+  it("keeps a student's socket that is connected to this instance", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    const localSockets = new Set(["socket-a"]);
+
+    service.applyRemoteEvent(session.sessionId, "participants_updated", {
+      participants: [{ studentId: "student-1", name: "Ada", socketId: "socket-old" }],
+    }, { isLocalSocket: (id) => localSockets.has(id) });
+    service.applyRemoteEvent(session.sessionId, "participants_updated", {
+      participants: [{ studentId: "student-1", name: "Ada", socketId: "restored:student-1" }],
+    }, { isLocalSocket: () => false });
+
+    expect(session.participants.get("student-1")?.socketId).toBe("socket-a");
+  });
+
+  it("does not let a lagging instance reopen a game the tutor ended, or drop its results", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    const round = { phase: VOCABULARY_GAME_PHASE, category: "vocabulary", selectedGameId: "dragon-flight", votes: {}, voteFirstSeen: {}, playingStartedAt: 1_000 };
+    const resultOf = (studentId: string, score: number) => ({ studentId, name: studentId, gameId: "dragon-flight", score, submittedAt: 2_000 });
+    session.currentPhase = VOCABULARY_GAME_PHASE;
+    session.gameState = { ...round, status: "results", results: { a: resultOf("a", 4) } } as never;
+
+    service.applyRemoteEvent(session.sessionId, "game_results_updated", {
+      gameState: { ...round, status: "playing", results: { b: resultOf("b", 6) } },
+    });
+    expect(session.gameState?.status).toBe("results");
+    expect(Object.keys(session.gameState?.results ?? {}).sort()).toEqual(["a", "b"]);
+
+    // Two last results that landed on two instances at once close the round once merged.
+    service.joinSessionByClassId("class-1", "a", "A", "socket-a");
+    service.joinSessionByClassId("class-1", "b", "B", "socket-b");
+    session.gameState = { ...round, status: "playing", results: { a: resultOf("a", 4) }, expectedStudentIds: ["a", "b"] } as never;
+    service.applyRemoteEvent(session.sessionId, "game_results_updated", {
+      gameState: { ...round, status: "playing", results: { b: resultOf("b", 6) }, expectedStudentIds: ["a", "b"] },
+    });
+    expect(session.gameState?.status).toBe("results");
+
+    // A result from a phase the room has left is stale and changes nothing.
+    const before = session.gameState;
+    service.applyRemoteEvent(session.sessionId, "game_results_updated", {
+      gameState: { ...round, phase: VOCABULARY_GAME_PHASE - 1, status: "playing", results: {} },
+    });
+    expect(session.gameState).toBe(before);
+
+    // A new round of play replaces the old one.
+    service.applyRemoteEvent(session.sessionId, "game_state_changed", {
+      gameState: { ...round, playingStartedAt: 9_000, status: "playing", results: {} },
+    });
+    expect(session.gameState?.status).toBe("playing");
+    expect(session.gameState?.results).toEqual({});
   });
 
   it("keeps the synchronized game payload when applying a versioned phase event", () => {
@@ -501,5 +613,327 @@ describe("lessonSessionService", () => {
       teacherDemoEnabled: false,
       tutorialEnabled: false,
     })).toMatchObject({ status: "countdown", selectedGameId: "castle-defense" });
+  });
+
+  describe("tutor connection", () => {
+    it("waits minutes for a tutor mid-lesson but not for one in the lobby", () => {
+      expect(getTutorGraceMs({ currentPhase: 10, isDemo: false })).toBe(TUTOR_RECONNECT_GRACE_MS);
+      expect(TUTOR_RECONNECT_GRACE_MS).toBeGreaterThanOrEqual(5 * 60_000);
+      expect(getTutorGraceMs({ currentPhase: 0, isDemo: false })).toBe(TUTOR_LOBBY_GRACE_MS);
+      expect(getTutorGraceMs({ currentPhase: 10, isDemo: true })).toBe(TUTOR_LOBBY_GRACE_MS);
+    });
+
+    it("keeps the room, phase and game running while the tutor is away, and hands them back", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+      service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
+      service.lockGameVote(session.sessionId);
+      service.markGamePlaying(session.sessionId);
+
+      expect(service.markTutorAway(session.sessionId, 1_000)).toBe(true);
+      expect(service.markTutorAway(session.sessionId, 2_000)).toBe(false);
+      expect(session.tutorAwaySince).toBe(1_000);
+      expect(service.submitGameResult(session.sessionId, "student-1", { score: 3, correct: 3, total: 10 })?.accepted).toBe(true);
+
+      const back = service.createSession("tutor-1", "socket-2", "article-1", {}, "class-1");
+      expect(back).toBe(session);
+      expect(back.currentPhase).toBe(VOCABULARY_GAME_PHASE);
+      expect(back.gameState?.results["student-1"]?.score).toBe(3);
+      expect(service.clearTutorAway(session.sessionId)).toBe(true);
+      expect(service.clearTutorAway(session.sessionId)).toBe(false);
+    });
+
+    it("does not treat a student reconnecting as the tutor returning", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
+      service.markTutorAway(session.sessionId);
+
+      service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+
+      expect(session.tutorSocketId).toBe("socket-1");
+      expect(session.tutorAwaySince).toBeTruthy();
+    });
+
+    it("mirrors the tutor's state from another instance", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+
+      service.applyRemoteEvent(session.sessionId, "tutor_away", { since: 5_000 });
+      expect(session.tutorAwaySince).toBe(5_000);
+      service.applyRemoteEvent(session.sessionId, "tutor_back", {});
+      expect(session.tutorAwaySince).toBeUndefined();
+    });
+  });
+
+  describe("ending a game", () => {
+    const startGame = (studentIds: string[]) => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      for (const id of studentIds) service.joinSessionByClassId("class-1", id, id, `socket-${id}`);
+      service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
+      service.lockGameVote(session.sessionId);
+      service.markGamePlaying(session.sessionId);
+      return session;
+    };
+
+    it("lets the tutor end a game with nothing submitted", () => {
+      const session = startGame(["student-1", "student-2"]);
+
+      const ended = service.endGame(session.sessionId);
+
+      expect(ended?.gameState.status).toBe("results");
+      expect(ended?.gameState.results).toEqual({});
+    });
+
+    it("only ends a running game", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
+      expect(service.endGame(session.sessionId)).toBeNull();
+      service.lockGameVote(session.sessionId);
+      service.startGameCountdown(session.sessionId);
+      expect(service.endGame(session.sessionId)).toBeNull();
+    });
+
+    it("keeps a late result, and it does not reopen the game", () => {
+      const session = startGame(["student-1", "student-2", "student-3"]);
+      service.submitGameResult(session.sessionId, "student-1", { score: 5 });
+      service.endGame(session.sessionId);
+
+      const late = service.submitGameResult(session.sessionId, "student-2", { score: 4 });
+
+      expect(late?.accepted).toBe(true);
+      expect(late?.allSubmitted).toBe(false);
+      expect(session.gameState?.status).toBe("results");
+      expect(session.participants.get("student-2")?.score).toBe(4);
+    });
+
+    it("does not wait for a student who joined after play began", () => {
+      const session = startGame(["student-1", "student-2"]);
+      service.joinSessionByClassId("class-1", "late", "Late", "socket-late");
+      expect(session.gameState?.expectedStudentIds).toEqual(["student-1", "student-2"]);
+
+      service.submitGameResult(session.sessionId, "student-1", { score: 1 });
+      const second = service.submitGameResult(session.sessionId, "student-2", { score: 2 });
+
+      expect(second?.allSubmitted).toBe(true);
+      expect(session.gameState?.status).toBe("results");
+      // The late joiner can still play and submit.
+      expect(service.submitGameResult(session.sessionId, "late", { score: 3 })?.accepted).toBe(true);
+      expect(session.participants.get("late")?.score).toBe(3);
+    });
+
+    it("still counts a late joiner who plays before the others finish, without waiting for them", () => {
+      const session = startGame(["student-1"]);
+      service.joinSessionByClassId("class-1", "late", "Late", "socket-late");
+
+      const late = service.submitGameResult(session.sessionId, "late", { score: 3 });
+
+      expect(late?.allSubmitted).toBe(false);
+      expect(session.gameState?.status).toBe("playing");
+    });
+
+    it("does not wait again for a kicked student who rejoins mid-game", () => {
+      const session = startGame(["student-1", "student-2"]);
+      service.kickParticipant(session.sessionId, "student-2");
+      service.joinSessionByClassId("class-1", "student-2", "student-2", "socket-new");
+
+      const first = service.submitGameResult(session.sessionId, "student-1", { score: 1 });
+
+      expect(first?.allSubmitted).toBe(true);
+      expect(session.gameState?.status).toBe("results");
+    });
+
+    it("records when play began, for phones that join a running round", () => {
+      const session = startGame(["student-1"]);
+      const payload = service.getGameStatePayload(session);
+
+      expect(payload?.playingStartedAt).toBeTypeOf("number");
+      expect(payload?.serverNow).toBeGreaterThanOrEqual(payload?.playingStartedAt ?? 0);
+    });
+
+    it("shows a game left mid-round as ended when the tutor goes back to it", () => {
+      const session = startGame(["student-1"]);
+      service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE + 1);
+
+      service.rewindPhase(session.sessionId, VOCABULARY_GAME_PHASE);
+
+      expect(session.phaseRestored).toBe(true);
+      expect(session.gameState?.status).toBe("results");
+    });
+
+    it("caps an impossible score instead of rejecting the result", () => {
+      const session = startGame(["student-1", "student-2"]);
+
+      const forged = service.submitGameResult(session.sessionId, "student-1", { score: 100_000, correct: 1, total: 10 });
+      expect(forged?.accepted).toBe(true);
+      expect(forged?.gameState.results["student-1"]?.score).toBe(MAX_GAME_SCORE);
+      expect(session.participants.get("student-1")?.score).toBe(MAX_GAME_SCORE);
+
+      const huge = service.submitGameResult(session.sessionId, "student-2", { score: 5_000_000 });
+      expect(huge?.gameState.results["student-2"]?.score).toBe(MAX_GAME_SCORE);
+    });
+
+    it("leaves a score that could be real alone, and still rejects garbage", () => {
+      const session = startGame(["student-1", "student-2"]);
+      expect(service.submitGameResult(session.sessionId, "student-1", { score: 11, correct: 5, total: 10 })?.gameState.results["student-1"]?.score).toBe(11);
+      expect(service.submitGameResult(session.sessionId, "student-2", { score: -1 })).toBeNull();
+      expect(service.submitGameResult(session.sessionId, "student-2", { score: 1.5 })).toBeNull();
+    });
+  });
+
+  describe("reconnecting students", () => {
+    it("keeps the live score when the database is behind", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+      session.participants.get("student-1")!.score = 3;
+
+      service.mergePersistedParticipant(session.sessionId, "student-1", "Ada", undefined, 8, { keepLiveScore: true });
+      expect(session.participants.get("student-1")?.score).toBe(3);
+
+      // After a missed phase memory is stale, so the database wins.
+      service.mergePersistedParticipant(session.sessionId, "student-1", "Ada", undefined, 8);
+      expect(session.participants.get("student-1")?.score).toBe(8);
+    });
+
+    it("restores the saved score of a student rebuilt from the database", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+
+      service.mergePersistedParticipant(session.sessionId, "student-1", "Ada", undefined, 7);
+
+      expect(session.participants.get("student-1")).toMatchObject({ score: 7, socketId: "restored:student-1" });
+    });
+
+    it("marks a student offline only if they did not come back on a new socket", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+      expect(service.findParticipantBySocketId("socket-a")).toEqual({ sessionId: session.sessionId, studentId: "student-1" });
+
+      service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-b");
+      expect(service.markParticipantOffline(session.sessionId, "student-1", "socket-a")).toBeUndefined();
+      expect(session.participants.get("student-1")?.offlineSince).toBeUndefined();
+
+      expect(service.markParticipantOffline(session.sessionId, "student-1", "socket-b")).toBe(session);
+      expect(session.participants.get("student-1")?.offlineSince).toBeTypeOf("number");
+      // Only the first report changes the roster.
+      expect(service.markParticipantOffline(session.sessionId, "student-1", "socket-b")).toBeUndefined();
+
+      service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-c");
+      expect(session.participants.get("student-1")?.offlineSince).toBeUndefined();
+      expect(session.participants.get("student-1")?.score).toBe(0);
+    });
+
+    it("carries offline state across instances", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        participants: [{ studentId: "student-1", name: "Ada", offlineSince: 123 }],
+      });
+      expect(session.participants.get("student-1")?.offlineSince).toBe(123);
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        participants: [{ studentId: "student-1", name: "Ada" }],
+      });
+      expect(session.participants.get("student-1")?.offlineSince).toBeUndefined();
+    });
+  });
+
+  describe("votes", () => {
+    const openVote = (studentIds: string[]) => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      for (const id of studentIds) service.joinSessionByClassId("class-1", id, id, `socket-${id}`);
+      service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
+      return session;
+    };
+
+    it("sends the same winner the vote will pick when a tie goes to the first vote", () => {
+      vi.useFakeTimers();
+      try {
+        const session = openVote(["a", "b"]);
+        vi.setSystemTime(1_000);
+        service.submitGameVote(session.sessionId, "a", "rune-match");
+        vi.setSystemTime(2_000);
+        const state = service.submitGameVote(session.sessionId, "b", "dragon-flight");
+
+        expect(state?.leadingGameId).toBe("rune-match");
+        expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("rune-match");
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("gives the tie to whichever game was voted for first, in either order", () => {
+      vi.useFakeTimers();
+      try {
+        const session = openVote(["a", "b"]);
+        vi.setSystemTime(1_000);
+        service.submitGameVote(session.sessionId, "a", "dragon-flight");
+        vi.setSystemTime(2_000);
+        const state = service.submitGameVote(session.sessionId, "b", "rune-match");
+
+        expect(state?.leadingGameId).toBe("dragon-flight");
+        expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("dragon-flight");
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("names the default game before anyone votes", () => {
+      const session = openVote(["a"]);
+      expect(service.getGameStatePayload(session)?.leadingGameId).toBe("dragon-flight");
+    });
+
+    it("lets a game lose its first-vote priority once nobody votes for it", () => {
+      vi.useFakeTimers();
+      try {
+        const session = openVote(["a", "b", "c"]);
+        vi.setSystemTime(1_000);
+        service.submitGameVote(session.sessionId, "a", "rune-match");
+        vi.setSystemTime(2_000);
+        service.submitGameVote(session.sessionId, "b", "dragon-flight");
+        vi.setSystemTime(3_000);
+        service.submitGameVote(session.sessionId, "a", "wizard-vs-zombie");
+        expect(session.gameState?.voteFirstSeen["rune-match"]).toBeUndefined();
+        vi.setSystemTime(4_000);
+        const state = service.submitGameVote(session.sessionId, "c", "rune-match");
+
+        // All three have one vote; rune-match's first vote now dates from 4 s.
+        expect(state?.leadingGameId).toBe("dragon-flight");
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("drops a kicked student's vote so it cannot decide the game", () => {
+      vi.useFakeTimers();
+      try {
+        const session = openVote(["a", "b", "c"]);
+        vi.setSystemTime(1_000);
+        service.submitGameVote(session.sessionId, "a", "dragon-flight");
+        vi.setSystemTime(2_000);
+        service.submitGameVote(session.sessionId, "b", "rune-match");
+        vi.setSystemTime(3_000);
+        service.submitGameVote(session.sessionId, "c", "rune-match");
+
+        const kicked = service.kickParticipant(session.sessionId, "c");
+
+        expect(kicked?.votesChanged).toBe(true);
+        expect(session.gameState?.votes).toEqual({ a: "dragon-flight", b: "rune-match" });
+        expect(service.getGameStatePayload(session)?.leadingGameId).toBe("dragon-flight");
+        expect(service.kickParticipant(session.sessionId, "b")?.votesChanged).toBe(true);
+        expect(session.gameState?.voteFirstSeen["rune-match"]).toBeUndefined();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("keeps the result of a closed vote when a voter is kicked", () => {
+      const session = openVote(["a", "b"]);
+      service.submitGameVote(session.sessionId, "a", "rune-match");
+      service.lockGameVote(session.sessionId);
+
+      const kicked = service.kickParticipant(session.sessionId, "a");
+
+      expect(kicked?.votesChanged).toBe(false);
+      expect(session.gameState?.selectedGameId).toBe("rune-match");
+    });
   });
 });

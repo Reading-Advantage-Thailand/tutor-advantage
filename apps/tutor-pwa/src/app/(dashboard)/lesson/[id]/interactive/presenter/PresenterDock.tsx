@@ -46,8 +46,8 @@ export interface PresenterDockProps {
   returnLobbyDisabled?: boolean;
   onPrevious: () => void;
   previousDisabled: boolean;
-  /** Shown only while the question can be closed early. */
-  endQuestion?: { onClick: () => void; disabled?: boolean; title?: string } | null;
+  /** Shown only while the question or game can be closed early. */
+  endQuestion?: { onClick: () => void; disabled?: boolean; title?: string; label?: string } | null;
   primary: {
     label: React.ReactNode;
     onClick: () => void;
@@ -188,7 +188,7 @@ export function PresenterDock({
               className="bg-warning-solid text-on-warning hover:bg-warning-solid/90"
             >
               <SquareStop aria-hidden="true" />
-              {t("lesson.live.endQuestion")}
+              {endQuestion.label ?? t("lesson.live.endQuestion")}
             </Button>
           ) : null}
           <Button

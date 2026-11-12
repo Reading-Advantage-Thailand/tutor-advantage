@@ -16,7 +16,7 @@
 // Shells
 export { AppShell, type AppShellProps } from "./AppShell";
 export { SIDEBAR_COOKIE, HELP_URL, fieldControlClass } from "./constants";
-export { LessonShell, LessonBarActions, LessonDock, LessonContent, type LessonShellProps } from "./LessonShell";
+export { LessonShell, LessonBarActions, LessonDock, LessonContent, useLessonExitGuard, type LessonShellProps } from "./LessonShell";
 export { ShellProvider, ShellTitle, useShell, useShellTitle, useTutor, type ShellUser } from "./ShellContext";
 export { NotificationsProvider, useNotifications, NOTIFICATIONS_POLL_MS, type NotificationsSummary } from "./Notifications";
 export { NotificationBell, CountBadge } from "./NotificationBell";

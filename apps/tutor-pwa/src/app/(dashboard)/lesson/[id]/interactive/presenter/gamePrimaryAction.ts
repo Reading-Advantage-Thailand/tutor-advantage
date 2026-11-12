@@ -16,6 +16,8 @@ export interface GamePrimaryActionInput {
   preparationFreeExplore: boolean;
   votesCount: number;
   totalParticipants: number;
+  /** Students the class is still waiting for, shown once it matters. */
+  waitingNames?: string[];
 }
 
 export function getGamePrimaryAction({
@@ -28,7 +30,12 @@ export function getGamePrimaryAction({
   preparationFreeExplore,
   votesCount,
   totalParticipants,
+  waitingNames = [],
 }: GamePrimaryActionInput): { label: string; disabled: boolean } {
+  const waitingLabel =
+    waitingNames.length > 0
+      ? `${t("lesson.live.waitingFor")} ${waitingNames[0]}${waitingNames.length > 1 ? ` +${waitingNames.length - 1}` : ""}`
+      : t("lesson.interactive.gamePlaying");
   const label =
     status === "voting" && !hasPlayableGame
       ? t("lesson.interactive.gamesComingSoon")
@@ -52,7 +59,7 @@ export function getGamePrimaryAction({
                   ? t("lesson.live.showSampleResults")
                   : status === "countdown"
                     ? t("lesson.interactive.countdownInProgress")
-                    : t("lesson.interactive.gamePlaying");
+                    : waitingLabel;
   const disabled =
     status === "countdown" ||
     (status === "playing" && !preparationFreeExplore) ||

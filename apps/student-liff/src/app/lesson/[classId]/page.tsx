@@ -99,6 +99,7 @@ function LessonLobby({ classId, onReconnect }: { classId: string; onReconnect: (
     nudgeMessage,
     kicked,
     removedByTutor,
+    roomInterrupted,
     rejoin,
   } = useLessonSocket(classInfo?.isEnrolled ? classId : undefined, studentId, studentName, pictureUrl);
   const assessment = useLiveAssessment(socket, sessionData?.sessionId, sessionData?.currentPhase);
@@ -191,23 +192,31 @@ function LessonLobby({ classId, onReconnect }: { classId: string; onReconnect: (
   );
 
   if (kicked) {
+    // A room that ended without the lesson finishing can come back.
+    const canRejoin = removedByTutor || roomInterrupted;
     return (
       <Screen>
         <AppBar title={t("lessonLobby.lobbyTitle")} back fallbackHref="/dashboard" />
         <StatusScreen
           icon={DoorOpen}
-          tone={removedByTutor ? "neutral" : "red"}
+          tone={canRejoin ? "neutral" : "red"}
           title={removedByTutor ? t("lessonLobby.removedTitle") : kicked}
-          description={removedByTutor ? t("lessonLobby.removedDescription") : t("lessonLobby.contactTutorIfMistake")}
+          description={
+            removedByTutor
+              ? t("lessonLobby.removedDescription")
+              : roomInterrupted
+                ? t("interactivePlay.roomInterruptedDescription")
+                : t("lessonLobby.contactTutorIfMistake")
+          }
           primaryAction={
-            removedByTutor ? (
+            canRejoin ? (
               <Button variant="brand" size="cta" className="w-full" onClick={rejoin}>
                 {t("lessonLobby.rejoin")}
               </Button>
             ) : homeLink
           }
           secondaryAction={
-            removedByTutor ? (
+            canRejoin ? (
               <Link href="/dashboard" className={cn(buttonVariants({ variant: "ghost", size: "cta" }), "w-full text-fg-muted")}>
                 {t("lessonLobby.backHome")}
               </Link>

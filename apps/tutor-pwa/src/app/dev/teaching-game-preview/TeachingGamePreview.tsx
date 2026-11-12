@@ -15,6 +15,12 @@ const SENTENCES = [
   { term: "We started a long journey", translation: "เราเริ่มการเดินทางที่ยาวไกล" },
 ];
 
+/** What most real lessons look like: English sentences with no stored Thai. */
+const SENTENCES_WITHOUT_THAI = [
+  { term: "The dragon flew over the forest", translation: "The dragon flew over the forest" },
+  { term: "We started a long journey", translation: "We started a long journey" },
+];
+
 /**
  * Mirrors the presenter shell (PhaseManager + GamePhaseStage) closely enough to
  * catch games that size themselves to the viewport instead of their stage.
@@ -23,13 +29,22 @@ export function TeachingGamePreview({
   gameId,
   mode,
   fullscreen,
+  content,
 }: {
   gameId: string;
   mode: "teacher" | "tutorial";
   fullscreen: boolean;
+  /** "real": sentences with no Thai, as in most lessons. "none": an empty lesson. */
+  content?: string;
 }) {
   const stage = (
-    <TeachingGameStage gameId={gameId} mode={mode} vocabulary={VOCABULARY} sentences={SENTENCES} fullscreen={fullscreen} />
+    <TeachingGameStage
+      gameId={gameId}
+      mode={mode}
+      vocabulary={content === "none" ? [] : VOCABULARY}
+      sentences={content === "none" ? [] : content === "real" ? SENTENCES_WITHOUT_THAI : SENTENCES}
+      fullscreen={fullscreen}
+    />
   );
 
   return (

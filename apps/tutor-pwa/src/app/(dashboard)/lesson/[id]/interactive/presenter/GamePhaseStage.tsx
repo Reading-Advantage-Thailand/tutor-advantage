@@ -6,9 +6,10 @@
  * live monitor → ranking. Teaching games are code-split (teachingGameRegistry).
  */
 import React from "react";
-import { Check, Gamepad2, GraduationCap, Lock, Timer, Trophy, Vote } from "lucide-react";
+import { Check, Gamepad2, GraduationCap, Lock, Scale, Timer, Trophy, Vote, WifiOff } from "lucide-react";
 import { Chip, UserAvatar } from "@/components/app";
 import { TeachingGameStage, isTeachingGameId } from "@/components/lesson/teachingGameRegistry";
+import { buildLessonSentences, buildLessonVocabulary } from "@/lib/games/lessonContent";
 import type { GamePhaseState, Participant } from "@/lib/lesson-types";
 import { getGameById, getGamesByCategory, getGameTutorial } from "@/lib/liveLessonGames";
 import { t } from "@/lib/i18n";
@@ -23,6 +24,8 @@ export interface GamePhaseStageProps {
   gameState: GamePhaseState | null;
   participants: Participant[];
   totalParticipants: number;
+  /** Results from students still in the room; a kicked student's stays on the board but does not count. */
+  submittedCount: number;
   articleData?: any;
   isFullscreen: boolean;
   preparationMode?: boolean;
@@ -37,35 +40,55 @@ export interface GamePhaseStageProps {
   roster: React.ReactNode;
 }
 
-/** Re-render every 250ms while a countdown is running. */
-function useCountdownSeconds(endsAt?: number, active = false) {
+/** Difference between the server's clock and this device's, from the last game state. */
+function useServerClockOffset(serverNow?: number) {
+  const [offset, setOffset] = React.useState(0);
+  React.useEffect(() => {
+    if (serverNow) setOffset(serverNow - Date.now());
+  }, [serverNow]);
+  return offset;
+}
+
+/** The time on the server's clock, re-rendering every tickMs while a timer is on screen. */
+function useServerNow(offset: number, tickMs: number | null) {
   const [now, setNow] = React.useState(() => Date.now());
   React.useEffect(() => {
-    if (!active || !endsAt) return;
-    const timer = window.setInterval(() => setNow(Date.now()), 250);
+    if (!tickMs) return;
+    setNow(Date.now());
+    const timer = window.setInterval(() => setNow(Date.now()), tickMs);
     return () => window.clearInterval(timer);
-  }, [active, endsAt]);
-  return endsAt ? Math.max(0, Math.ceil((endsAt - now) / 1000)) : 0;
+  }, [tickMs]);
+  return now + offset;
+}
+
+function formatElapsed(ms: number) {
+  const seconds = Math.max(0, Math.floor(ms / 1000));
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+}
+
+// Game rounds are 60 s. Past this, a phone that has not answered is probably stuck.
+const GAME_ROUND_MS = 60_000;
+const GAME_OVERTIME_MS = 75_000;
+// Dragon Flight is the one round whose length comes from its words: one gate each, up to ten.
+const DRAGON_FLIGHT_MS_PER_WORD = 5_000;
+const DRAGON_FLIGHT_MAX_WORDS = 10;
+// More students than fit one column on a projector go into a grid, so nobody scrolls during a game.
+const ROSTER_GRID_FROM = 9;
+
+/** How long a round lasts on the students' phones. */
+export function gameRoundMs(gameId: string | null | undefined, wordCount: number) {
+  if (gameId !== "dragon-flight") return GAME_ROUND_MS;
+  return Math.max(1, Math.min(DRAGON_FLIGHT_MAX_WORDS, wordCount)) * DRAGON_FLIGHT_MS_PER_WORD;
 }
 
 export function buildGameContent(articleData: any, category: Category) {
   const articleWords = (articleData?.words || articleData?.content?.words || []) as any[];
   const articleSentences = (articleData?.sentences || articleData?.content?.sentences || []) as any[];
-  const vocabulary = articleWords
-    .map((word, index) => ({
-      term: String(word?.vocabulary || word?.word || word?.text || `Word ${index + 1}`),
-      translation: String(word?.definition?.th || word?.translation || word?.meaning || word?.definition?.en || ""),
-    }))
-    .filter((word) => word.term && word.translation);
-  const sentences = articleSentences
-    .map((sentence, index) => ({
-      term: typeof sentence === "string" ? sentence : String(sentence?.sentences || sentence?.sentence || sentence?.text || `Sentence ${index + 1}`),
-      translation:
-        typeof sentence === "string"
-          ? sentence
-          : String(sentence?.translation || sentence?.meaning || sentence?.sentences || sentence?.text || ""),
-    }))
-    .filter((s) => s.term);
+  const vocabulary = buildLessonVocabulary({ words: articleWords });
+  const sentences = buildLessonSentences({
+    sentences: articleSentences,
+    translated_passage: articleData?.translated_passage ?? articleData?.content?.translated_passage,
+  });
   const demoWord = articleWords[0];
   const demoPrompt =
     category === "vocabulary" ? demoWord?.vocabulary || demoWord?.word || demoWord?.text || "example" : "เรียงคำให้เป็นประโยคที่ถูกต้อง";
@@ -86,8 +109,17 @@ export function buildGameContent(articleData: any, category: Category) {
   return { vocabulary, sentences, demoPrompt: String(demoPrompt), demoCorrectAnswer: String(demoCorrectAnswer), demoAnswers };
 }
 
-/** Vote tally per game, enabled games first, then by votes, then catalogue order. */
-export function rankGameVotes(category: Category, votes: Record<string, string>, participants: Participant[]) {
+/**
+ * Vote tally per game, enabled games first, then by votes, then catalogue order.
+ * `leadingGameId` is the server's winner, so the board can never name a different
+ * game from the one that starts. Preparation mode has no server and uses the order.
+ */
+export function rankGameVotes(
+  category: Category,
+  votes: Record<string, string>,
+  participants: Participant[],
+  leadingGameId?: string,
+) {
   const games = getGamesByCategory(category);
   const voteCounts = games.map((game) => ({
     ...game,
@@ -97,11 +129,29 @@ export function rankGameVotes(category: Category, votes: Record<string, string>,
   const rankedGames = [...voteCounts].sort(
     (a, b) =>
       Number(b.enabled !== false) - Number(a.enabled !== false) ||
+      Number(b.id === leadingGameId) - Number(a.id === leadingGameId) ||
       b.count - a.count ||
       games.findIndex((game) => game.id === a.id) - games.findIndex((game) => game.id === b.id),
   );
   const leadingGame = rankedGames.find((game) => game.enabled !== false) || rankedGames[0];
-  return { games, rankedGames, leadingGame, enabledCount: games.filter((g) => g.enabled !== false).length };
+  const isTie =
+    (leadingGame?.count ?? 0) > 0 &&
+    rankedGames.filter((game) => game.enabled !== false && game.count === leadingGame?.count).length > 1;
+  return { games, rankedGames, leadingGame, isTie, enabledCount: games.filter((g) => g.enabled !== false).length };
+}
+
+/** Results ranked with shared places for equal scores, and no place for a score of zero. */
+export function rankGameResults<T extends { score: number }>(results: T[]): Array<T & { rank: number | null }> {
+  const sorted = [...results].sort((a, b) => b.score - a.score);
+  let lastScore: number | null = null;
+  let lastRank = 0;
+  return sorted.map((result, index) => {
+    if (result.score !== lastScore) {
+      lastScore = result.score;
+      lastRank = index + 1;
+    }
+    return { ...result, rank: result.score > 0 ? lastRank : null };
+  });
 }
 
 const STATUS_KEYS: Record<string, Parameters<typeof t>[0]> = {
@@ -120,6 +170,7 @@ export function GamePhaseStage({
   gameState,
   participants,
   totalParticipants,
+  submittedCount,
   articleData,
   isFullscreen,
   preparationMode = false,
@@ -137,12 +188,24 @@ export function GamePhaseStage({
   const votes = gameState?.votes || {};
   const results = Object.values(gameState?.results || {}).sort((a, b) => b.score - a.score);
   const selectedGame = getGameById(gameState?.selectedGameId);
-  const content = buildGameContent(articleData, category);
-  const { rankedGames, leadingGame, enabledCount } = rankGameVotes(category, votes, participants);
+  // Every socket event re-renders this. Fresh lists here would restart the demo under the tutor's hands.
+  const content = React.useMemo(() => buildGameContent(articleData, category), [articleData, category]);
+  const { rankedGames, leadingGame, isTie, enabledCount } = rankGameVotes(category, votes, participants, gameState?.leadingGameId);
   const totalVotes = Object.keys(votes).length;
-  const countdownLeft = useCountdownSeconds(gameState?.countdownEndsAt, status === "countdown");
+  const clockOffset = useServerClockOffset(gameState?.serverNow);
+  const serverNow = useServerNow(clockOffset, status === "countdown" ? 250 : status === "playing" ? 1000 : null);
+  const countdownLeft = gameState?.countdownEndsAt ? Math.max(0, Math.ceil((gameState.countdownEndsAt - serverNow) / 1000)) : 0;
+  const elapsedMs = status === "playing" && gameState?.playingStartedAt ? serverNow - gameState.playingStartedAt : null;
   const showScoreRanking = ["playing", "countdown", "in_game", "active", "results"].includes(status || "");
   const tour = (target: string) => (preparationMode ? target : undefined);
+
+  // The dock button that started the demo keeps focus, so a stray Space would skip
+  // the demo or start the game for everyone. Tab still reaches the dock from here.
+  const demoStageRef = React.useRef<HTMLDivElement>(null);
+  const showsDemo = status === "teacher_demo" || status === "tutorial";
+  React.useEffect(() => {
+    if (showsDemo) demoStageRef.current?.focus({ preventScroll: true });
+  }, [showsDemo, status]);
 
   const statusLine = status
     ? status === "countdown"
@@ -192,6 +255,9 @@ export function GamePhaseStage({
         results={results}
         participants={participants}
         totalParticipants={totalParticipants}
+        submittedCount={submittedCount}
+        elapsedMs={elapsedMs}
+        roundMs={gameRoundMs(selectedGame?.id, content.vocabulary.length)}
         isFullscreen={isFullscreen}
         tourTarget={tour("game-results-summary")}
       />
@@ -248,7 +314,7 @@ export function GamePhaseStage({
     );
   } else if (status === "teacher_demo") {
     body = (
-      <div data-tour-target={tour(`phase-${currentPhase}-teacher-demo`)} className={cn("w-full", isFullscreen && "flex min-h-0 flex-1 flex-col")}>
+      <div ref={demoStageRef} tabIndex={-1} data-tour-target={tour(`phase-${currentPhase}-teacher-demo`)} className={cn("w-full outline-none", isFullscreen && "flex min-h-0 flex-1 flex-col")}>
         {teachingStage("teacher") ?? (
           <StagePanel as="div" className="grid gap-6 p-6 xl:grid-cols-[0.8fr_1.2fr] xl:items-center">
             <div>
@@ -297,7 +363,7 @@ export function GamePhaseStage({
   } else if (status === "tutorial") {
     const tutorialSteps = getGameTutorial(gameState?.selectedGameId, category);
     body = (
-      <div data-tour-target={tour(`phase-${currentPhase}-tutorial`)} className={cn("w-full", isFullscreen && "flex min-h-0 flex-1 flex-col")}>
+      <div ref={demoStageRef} tabIndex={-1} data-tour-target={tour(`phase-${currentPhase}-tutorial`)} className={cn("w-full outline-none", isFullscreen && "flex min-h-0 flex-1 flex-col")}>
         {teachingStage("tutorial") ?? (
           <StagePanel as="div" className="p-6">
             <StageEyebrow icon={Gamepad2}>{t("lesson.live.tutorialBadge")}</StageEyebrow>
@@ -322,6 +388,7 @@ export function GamePhaseStage({
       <GameVoteBoard
         rankedGames={rankedGames}
         leadingGame={leadingGame}
+        isTie={isTie}
         totalVotes={totalVotes}
         participantsCount={participants.length}
         enabledCount={enabledCount}
@@ -361,6 +428,7 @@ function GameCover({ src, alt, className }: { src?: string; alt: string; classNa
 function GameVoteBoard({
   rankedGames,
   leadingGame,
+  isTie,
   totalVotes,
   participantsCount,
   enabledCount,
@@ -369,14 +437,19 @@ function GameVoteBoard({
 }: {
   rankedGames: RankedGame[];
   leadingGame?: RankedGame;
+  isTie: boolean;
   totalVotes: number;
   participantsCount: number;
   enabledCount: number;
   isFullscreen: boolean;
   tourTarget?: string;
 }) {
-  const others = rankedGames.filter((game) => game.id !== leadingGame?.id);
+  // Students see only playable games plus a teaser, so the board does the same.
+  const others = rankedGames.filter((game) => game.id !== leadingGame?.id && game.enabled !== false);
+  const lockedCount = rankedGames.filter((game) => game.id !== leadingGame?.id && game.enabled === false).length;
   const leaderLocked = leadingGame?.enabled === false;
+  const noVotes = !leaderLocked && (leadingGame?.count ?? 0) === 0;
+  const leaderHint = isTie ? t("lesson.live.voteTieHint") : noVotes ? t("lesson.live.voteDefaultHint") : null;
   return (
     <div data-tour-target={tourTarget} className={cn("grid min-h-0 gap-4 md:grid-cols-[minmax(260px,340px)_minmax(0,1fr)]", isFullscreen && "flex-1")}>
       <StagePanel as="div" className="relative flex min-h-[340px] flex-col overflow-hidden">
@@ -389,8 +462,14 @@ function GameVoteBoard({
             </div>
           ) : null}
           <span className="absolute left-3 top-3">
-            <Chip tone="brand" icon={Trophy} className="bg-surface">
-              {leaderLocked ? t("lesson.interactive.locked") : t("lesson.interactive.mostVoted")}
+            <Chip tone="brand" icon={isTie ? Scale : noVotes ? Vote : Trophy} className="bg-surface">
+              {leaderLocked
+                ? t("lesson.interactive.locked")
+                : noVotes
+                  ? t("lesson.interactive.noVotesYet")
+                  : isTie
+                    ? t("lesson.live.voteTieChip")
+                    : t("lesson.interactive.mostVoted")}
             </Chip>
           </span>
         </div>
@@ -399,6 +478,7 @@ function GameVoteBoard({
           <p className="line-clamp-2 text-sm text-fg-muted">
             {leaderLocked ? t("lesson.interactive.gamesComingSoon") : leadingGame?.description || t("lesson.interactive.gameVoteStageHelp")}
           </p>
+          {leaderHint ? <p className="text-sm font-medium text-fg">{leaderHint}</p> : null}
           <div className="flex items-end justify-between gap-3 pt-1">
             <p className="text-5xl font-bold tabular-nums leading-none text-fg">
               {leadingGame?.count || 0}
@@ -430,36 +510,29 @@ function GameVoteBoard({
         <ul className="grid min-h-0 flex-1 content-start gap-2 overflow-y-auto pr-1 xl:grid-cols-2">
           {others.map((game) => {
             const pct = participantsCount ? Math.round((game.count / participantsCount) * 100) : 0;
-            const locked = game.enabled === false;
             return (
-              <li
-                key={game.id}
-                className={cn("flex items-center gap-3 rounded-lg border border-hairline p-2", locked ? "bg-surface-muted opacity-60" : "bg-surface")}
-              >
+              <li key={game.id} className="flex items-center gap-3 rounded-lg border border-hairline bg-surface p-2">
                 <span className="relative h-14 w-11 shrink-0 overflow-hidden rounded-md">
                   <GameCover src={game.cover} alt="" className="size-full" />
-                  {locked ? (
-                    <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-white">
-                      <Lock aria-hidden="true" className="size-4" />
-                    </span>
-                  ) : null}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-baseline justify-between gap-2">
                     <span className="truncate text-base font-medium text-fg">{game.title}</span>
-                    <span className="shrink-0 text-base font-semibold tabular-nums text-fg">
-                      {locked ? <span className="text-sm font-normal text-fg-subtle">{t("lesson.interactive.comingSoon")}</span> : game.count}
-                    </span>
+                    <span className="shrink-0 text-base font-semibold tabular-nums text-fg">{game.count}</span>
                   </span>
-                  {!locked ? (
-                    <span className="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-fill-muted">
-                      <span className="block h-full rounded-full bg-brand-vivid transition-[width] duration-500" style={{ width: `${pct}%` }} />
-                    </span>
-                  ) : null}
+                  <span className="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-fill-muted">
+                    <span className="block h-full rounded-full bg-brand-vivid transition-[width] duration-500" style={{ width: `${pct}%` }} />
+                  </span>
                 </span>
               </li>
             );
           })}
+          {lockedCount > 0 ? (
+            <li className="flex items-center gap-2 rounded-lg border border-dashed border-hairline-strong px-3 py-2 text-sm text-fg-muted">
+              <Lock aria-hidden="true" className="size-4 shrink-0" />
+              +{lockedCount} {t("lesson.live.moreGamesSuffix")}
+            </li>
+          ) : null}
         </ul>
       </StagePanel>
     </div>
@@ -473,6 +546,9 @@ function GameRanking({
   results,
   participants,
   totalParticipants,
+  submittedCount,
+  elapsedMs,
+  roundMs,
   isFullscreen,
   tourTarget,
 }: {
@@ -482,21 +558,26 @@ function GameRanking({
   results: GamePhaseState["results"][string][];
   participants: Participant[];
   totalParticipants: number;
+  submittedCount: number;
+  elapsedMs: number | null;
+  roundMs: number;
   isFullscreen: boolean;
   tourTarget?: string;
 }) {
   const participantById = new Map(participants.map((participant) => [participant.studentId, participant]));
   const submittedIds = new Set(results.map((r) => r.studentId));
   const rows = [
-    ...results.map((result) => ({
+    ...rankGameResults(results).map((result) => ({
       studentId: result.studentId,
       name: result.name,
       score: result.score,
+      rank: result.rank,
       correct: result.correct,
       total: result.total,
       durationMs: result.durationMs,
       pictureUrl: participantById.get(result.studentId)?.pictureUrl,
       isSubmitted: true,
+      isOffline: false,
     })),
     ...participants
       .filter((p) => !submittedIds.has(p.studentId))
@@ -504,16 +585,23 @@ function GameRanking({
         studentId: p.studentId,
         name: p.name,
         score: 0,
+        rank: null as number | null,
         correct: undefined as number | undefined,
         total: undefined as number | undefined,
         durationMs: undefined as number | undefined,
         pictureUrl: p.pictureUrl,
         isSubmitted: false,
+        isOffline: Boolean(p.offlineSince),
       })),
   ];
-  const topScore = Math.max(...results.map((r) => r.score), 1);
+  const topScore = Math.max(...results.map((r) => r.score), 0);
+  // Only for bar width: the number on screen is the real top score.
+  const barMax = Math.max(topScore, 1);
   const isResults = status === "results";
-  const podium = [rows[1], rows[0], rows[2]].filter((row) => row?.isSubmitted);
+  // Nobody scored: nothing to celebrate, and no order to put on a podium.
+  const podium = topScore > 0 ? [rows[1], rows[0], rows[2]].filter((row) => row?.isSubmitted && row.score > 0) : [];
+  const useGrid = rows.length >= ROSTER_GRID_FROM;
+  const roundIsOn = elapsedMs !== null && elapsedMs < roundMs;
 
   return (
     <StagePanel as="div" data-tour-target={tourTarget} className={cn("flex min-h-0 flex-col p-5", isFullscreen && "flex-1")}>
@@ -526,7 +614,7 @@ function GameRanking({
             {isResults ? t("lesson.interactive.gameRankingHeading") : `${t("lesson.live.studentsPlaying")} ${selectedGameTitle || ""}`}
           </h3>
           <p className="mt-0.5 text-base text-fg-muted">
-            {selectedGameTitle || t("lesson.interactive.gameSelectedFallback")} · {results.length} / {totalParticipants}{" "}
+            {selectedGameTitle || t("lesson.interactive.gameSelectedFallback")} · {submittedCount} / {totalParticipants}{" "}
             {t("lesson.interactive.studentsSubmittedSuffix")}
           </p>
         </div>
@@ -536,9 +624,31 @@ function GameRanking({
             <p className="text-4xl font-bold tabular-nums text-warning-fg">{countdownLeft}</p>
           </div>
         ) : (
-          <div className="rounded-xl border border-hairline bg-surface-muted px-5 py-3 text-center">
-            <p className="text-3xl font-bold tabular-nums text-fg">{results.length > 0 ? topScore : "-"}</p>
-            <p className="text-sm text-fg-muted">{t("lesson.interactive.topScore")}</p>
+          <div className="flex flex-wrap items-stretch gap-3">
+            {elapsedMs !== null ? (
+              <div
+                role="timer"
+                className={cn(
+                  "rounded-xl border px-5 py-3 text-center",
+                  elapsedMs > GAME_OVERTIME_MS ? "border-warning-border bg-warning-bg" : "border-hairline bg-surface-muted",
+                )}
+              >
+                <p className={cn("text-3xl font-bold tabular-nums", elapsedMs > GAME_OVERTIME_MS ? "text-warning-fg" : "text-fg")}>
+                  {formatElapsed(roundIsOn ? roundMs - elapsedMs + 999 : elapsedMs)}
+                </p>
+                <p className={cn("text-sm", elapsedMs > GAME_OVERTIME_MS ? "font-medium text-warning-fg" : "text-fg-muted")}>
+                  {elapsedMs > GAME_OVERTIME_MS
+                    ? t("lesson.live.elapsedOverHint")
+                    : roundIsOn
+                      ? t("lesson.live.timeLeftLabel")
+                      : t("lesson.live.elapsedLabel")}
+                </p>
+              </div>
+            ) : null}
+            <div className="rounded-xl border border-hairline bg-surface-muted px-5 py-3 text-center">
+              <p className="text-3xl font-bold tabular-nums text-fg">{results.length > 0 ? topScore : "-"}</p>
+              <p className="text-sm text-fg-muted">{t("lesson.interactive.topScore")}</p>
+            </div>
           </div>
         )}
       </div>
@@ -546,21 +656,21 @@ function GameRanking({
       <div className={cn("grid min-h-0 flex-1 gap-4", podium.length > 0 ? "xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]" : "")}>
         {podium.length > 0 ? (
           <div className="grid grid-cols-3 items-end gap-3 rounded-xl bg-surface-muted p-4">
-            {[2, 1, 3].map((rank) => {
-              const row = rows[rank - 1];
-              if (!row?.isSubmitted) return <div key={rank} />;
+            {[2, 1, 3].map((place) => {
+              const row = rows[place - 1];
+              if (!row?.isSubmitted || row.score <= 0) return <div key={place} />;
               return (
                 <div key={row.studentId} className="game-rank-card flex min-w-0 flex-col items-center gap-1.5">
-                  <UserAvatar name={row.name} src={row.pictureUrl} size="lg" className={rank === 1 ? "ring-4 ring-brand-soft-border" : undefined} />
+                  <UserAvatar name={row.name} src={row.pictureUrl} size="lg" className={place === 1 ? "ring-4 ring-brand-soft-border" : undefined} />
                   <p className="max-w-full truncate text-base font-semibold text-fg">{row.name}</p>
-                  <p className={cn("font-bold tabular-nums", rank === 1 ? "text-4xl text-brand-fg" : "text-2xl text-fg")}>{row.score}</p>
+                  <p className={cn("font-bold tabular-nums", place === 1 ? "text-4xl text-brand-fg" : "text-2xl text-fg")}>{row.score}</p>
                   <div
                     className={cn(
                       "flex w-full items-start justify-center rounded-t-lg pt-1.5 text-2xl font-bold",
-                      rank === 1 ? "h-24 bg-brand-solid text-on-brand" : rank === 2 ? "h-16 bg-surface text-fg-muted" : "h-12 bg-surface text-fg-muted",
+                      place === 1 ? "h-24 bg-brand-solid text-on-brand" : place === 2 ? "h-16 bg-surface text-fg-muted" : "h-12 bg-surface text-fg-muted",
                     )}
                   >
-                    {rank}
+                    {row.rank ?? place}
                   </div>
                 </div>
               );
@@ -568,19 +678,27 @@ function GameRanking({
           </div>
         ) : null}
 
-        <ol className="flex min-h-0 flex-col gap-2 overflow-y-auto pr-1">
+        <ol
+          className={cn(
+            "min-h-0 gap-2 overflow-y-auto pr-1",
+            useGrid
+              ? "grid content-start [grid-template-columns:repeat(auto-fill,minmax(min(100%,17rem),1fr))]"
+              : "flex flex-col",
+          )}
+        >
           {rows.map((row, index) => {
-            const pct = row.isSubmitted ? Math.max(6, Math.round((row.score / topScore) * 100)) : 0;
+            const pct = row.isSubmitted && row.score > 0 ? Math.max(6, Math.round((row.score / barMax) * 100)) : 0;
             return (
               <li
                 key={row.studentId}
                 className={cn(
-                  "game-rank-card flex items-center gap-3 rounded-lg border px-3 py-2.5",
-                  row.isSubmitted && index === 0 ? "border-brand-soft-border bg-brand-soft" : "border-hairline bg-surface",
+                  "game-rank-card flex items-center gap-3 rounded-lg border px-3",
+                  useGrid ? "py-1.5" : "py-2.5",
+                  row.rank === 1 ? "border-brand-soft-border bg-brand-soft" : "border-hairline bg-surface",
                 )}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                <span className="w-6 shrink-0 text-center text-base font-semibold tabular-nums text-fg-subtle">{row.isSubmitted ? index + 1 : "–"}</span>
+                <span className="w-6 shrink-0 text-center text-base font-semibold tabular-nums text-fg-subtle">{row.rank ?? "–"}</span>
                 <UserAvatar name={row.name} src={row.pictureUrl} size="md" />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-3">
@@ -594,10 +712,19 @@ function GameRanking({
                       </div>
                       <p className="mt-1 text-[0.8125rem] text-fg-muted">
                         <span className="font-medium text-success-fg">{t("lesson.live.submittedCheck")}</span>
-                        {typeof row.correct === "number" ? ` · ${row.correct}/${row.total} ${t("lesson.interactive.correctUnit")}` : ""}
+                        {typeof row.correct === "number" && (row.correct > 0 || (row.total ?? 0) > 1)
+                          ? ` · ${row.correct}/${row.total} ${t("lesson.interactive.correctUnit")}`
+                          : ""}
                         {typeof row.durationMs === "number" ? ` · ${(row.durationMs / 1000).toFixed(1)} ${t("lesson.live.secondsUnit")}` : ""}
                       </p>
                     </>
+                  ) : isResults ? (
+                    <p className="mt-0.5 text-[0.8125rem] text-fg-muted">{t("lesson.live.statusNotPlayed")}</p>
+                  ) : row.isOffline ? (
+                    <p className="mt-0.5 inline-flex items-center gap-1.5 text-[0.8125rem] font-medium text-warning-fg">
+                      <WifiOff aria-hidden="true" className="size-3.5" />
+                      {t("lesson.live.statusOffline")}
+                    </p>
                   ) : (
                     <p className="mt-0.5 inline-flex items-center gap-1.5 text-[0.8125rem] text-fg-muted">
                       <span aria-hidden="true" className="size-2 rounded-full bg-info-solid motion-safe:animate-pulse" />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, LogOut } from "lucide-react";
+import { Hourglass, Lock, LogOut } from "lucide-react";
 import { formatPhaseStep, getPhaseMeta, getPhaseProgress } from "@/components/lesson/phaseMeta";
 import { AppBar, ConfirmSheet, IconButton, ProgressBar, Spinner } from "@/components/mobile";
 import { t } from "@/lib/i18n";
@@ -14,6 +14,8 @@ interface LessonTopBarProps {
   reconnecting?: boolean;
   /** The tutor went back to an earlier phase: answers do not count. */
   readOnly?: boolean;
+  /** The tutor's connection dropped; the room stays open for them to return. */
+  tutorAway?: boolean;
   /** Leave the lesson (after the confirm sheet). */
   onExit: () => void;
 }
@@ -23,7 +25,7 @@ interface LessonTopBarProps {
  * button with a confirm sheet, and sticky status strips (reconnecting,
  * read-only) so they stay visible while the phase content scrolls.
  */
-export function LessonTopBar({ phase, articleTitle, reconnecting, readOnly, onExit }: LessonTopBarProps) {
+export function LessonTopBar({ phase, articleTitle, reconnecting, readOnly, tutorAway, onExit }: LessonTopBarProps) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const hasPhase = phase > 0;
   const step = hasPhase ? formatPhaseStep(phase) : null;
@@ -49,6 +51,18 @@ export function LessonTopBar({ phase, articleTitle, reconnecting, readOnly, onEx
                 <p className="min-w-0 text-[13px] leading-[1.5]">
                   <span className="font-bold text-warning-fg">{t("interactivePlay.reconnecting")}</span>{" "}
                   <span className="text-fg-muted">{t("interactivePlay.reconnectingHint")}</span>
+                </p>
+              </div>
+            ) : null}
+            {tutorAway ? (
+              <div
+                role="status"
+                className="flex items-center gap-2.5 rounded-xl border border-info-border bg-info-bg px-3 py-2"
+              >
+                <Hourglass aria-hidden="true" className="size-4 shrink-0 text-info-fg" />
+                <p className="min-w-0 text-[13px] leading-[1.5]">
+                  <span className="font-bold text-info-fg">{t("interactivePlay.tutorAwayTitle")}</span>{" "}
+                  <span className="text-fg-muted">{t("interactivePlay.tutorAwayHint")}</span>
                 </p>
               </div>
             ) : null}

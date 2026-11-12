@@ -26,10 +26,16 @@ let scheduleReconnect: (() => void) | null = null;
  * when Redis is not available. The database-backed session lease/state makes
  * reconnects safe; this bus mirrors room events to sockets on other instances.
  */
+/**
+ * `onRemoteEvent` applies an event from another instance. When it returns a
+ * value, that payload goes to this instance's sockets instead of the one sent,
+ * for state this instance merges rather than copies. Returning null drops a
+ * stale event: nothing is sent to this instance's sockets.
+ */
 export async function startLessonSocketBus(
   io: Server,
   sourceInstanceId: string,
-  onRemoteEvent?: (event: LessonBusEvent) => void,
+  onRemoteEvent?: (event: LessonBusEvent) => unknown,
 ) {
   if (process.env.NODE_ENV === "test" || !process.env.DATABASE_URL) return;
 
@@ -59,19 +65,22 @@ export async function startLessonSocketBus(
         try {
           const event = JSON.parse(message.payload) as LessonBusEvent;
           if (!event.sessionId || event.sourceInstanceId === instanceId) return;
+          let outgoing: unknown = event.payload;
           try {
-            onRemoteEvent?.(event);
+            const merged = onRemoteEvent?.(event);
+            if (merged === null) return;
+            if (merged !== undefined) outgoing = merged;
           } catch (error) {
             logger.warn("[LessonBus] Failed to apply remote lesson state:", error);
           }
           if (event.targetUserId) {
             for (const socket of io.sockets.sockets.values()) {
               if (socket.data.actor?.userId === event.targetUserId) {
-                socket.emit(event.event, event.payload);
+                socket.emit(event.event, outgoing);
               }
             }
           } else {
-            io.to(event.sessionId).emit(event.event, event.payload);
+            io.to(event.sessionId).emit(event.event, outgoing);
           }
         } catch (error) {
           logger.warn("[LessonBus] Ignoring malformed cross-instance event:", error);

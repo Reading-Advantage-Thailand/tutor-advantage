@@ -115,7 +115,7 @@ export async function assessmentSnapshot(session: LessonSession, studentId?: str
     prisma.activeLessonSessionLock.findUnique({ where: { classId: session.classId } }),
   ]);
   if (!live) return blank;
-  const paused = !lock || lock.sessionId !== session.sessionId || Date.now() - lock.lastHeartbeatAt.getTime() > 45_000 || live.currentPhase !== 0 || live.status !== "ACTIVE";
+  const paused = !lock || lock.sessionId !== session.sessionId || Date.now() - lock.lastHeartbeatAt.getTime() > 45_000 || live.currentPhase !== 0 || !["ACTIVE", "FINISHED"].includes(live.status);
   const activeForm = live.assessmentMode === "PRE" || live.assessmentMode === "POST" ? bank.forms[live.assessmentMode] : [];
   const attempts = live.assessmentMode === "LESSON" ? [] : await prisma.assessmentAttempt.findMany({ where: { classBookCycleId: cycle.classBookCycleId, articleId: session.articleId, stage: live.assessmentMode, ...(studentId ? { studentUserId: studentId } : {}) }, include: { student: { select: { displayName: true } } } });
   const own = studentId ? attempts.find(a => a.studentUserId === studentId) : undefined;

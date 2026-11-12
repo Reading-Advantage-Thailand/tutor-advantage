@@ -14,11 +14,11 @@
  * student app's protocol: do not change them here.
  */
 import React from "react";
-import { AlertTriangle, Users } from "lucide-react";
+import { AlertTriangle, Users, WifiOff } from "lucide-react";
 import { ArticleDisplay } from "./ArticleDisplay";
 import { playSound } from "@/lib/sounds";
 import { t } from "@/lib/i18n";
-import { Chip, ConfirmDialog } from "@/components/app";
+import { Chip, Spinner } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import type { Participant, TutorSessionData, AnswerData, ArticleData, GamePhaseState, LessonPair } from "@/lib/lesson-types";
 import { getGamesByCategory } from "@/lib/liveLessonGames";
@@ -56,6 +56,7 @@ import { LanguageQuestionsStage, ReflectionStage, ShortAnswerStage, WritingStage
 import { FinalLeaderboardStage, PairConversationStage } from "./presenter/WrapUpStages";
 import { GamePhaseStage, rankGameVotes } from "./presenter/GamePhaseStage";
 import { PresenterDock, type DevTool } from "./presenter/PresenterDock";
+import { PresenterConfirm } from "./presenter/PresenterConfirm";
 import { getGamePrimaryAction } from "./presenter/gamePrimaryAction";
 import { StageEmpty } from "./presenter/primitives";
 import { fireConfetti } from "./presenter/confetti";
@@ -85,6 +86,10 @@ interface PhaseManagerProps {
   changePhase: (phase: number) => Promise<boolean>;
   syncActiveSentence: (index: number) => void;
   endQuestion?: () => void;
+  /** Closes a running game. Students without a result simply did not play. */
+  endGame?: () => void;
+  /** The tutor's own connection is down and reconnecting. */
+  connectionLost?: boolean;
   startGameVote: (phase?: number) => void;
   lockGameVote: () => void;
   startGameIntro: (options: { tutorialEnabled: boolean; teacherDemoEnabled: boolean }) => void;
@@ -116,6 +121,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   changePhase,
   syncActiveSentence,
   endQuestion,
+  endGame,
+  connectionLost = false,
   startGameVote,
   lockGameVote,
   startGameIntro,
@@ -148,6 +155,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     setKickTarget(participant);
     setKickConfirmOpen(true);
   }, []);
+  // Actions that throw away a lesson or a game ask first.
+  const [pendingConfirm, setPendingConfirm] = React.useState<"finish" | "lobby" | "previous" | null>(null);
+  // Ending a game takes a second tap on the same button.
+  const [endGameArmed, setEndGameArmed] = React.useState(false);
   const [isToolbarHidden, setIsToolbarHidden] = React.useState(false);
   const [tutorialEnabled, setTutorialEnabled] = React.useState(true);
   const [teacherDemoEnabled, setTeacherDemoEnabled] = React.useState(false);
@@ -226,7 +237,6 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const gameState = preparationMode
     ? preparationGameState ?? (isGamePhase ? createPreparationGameState(currentPhase) : liveGameState)
     : liveGameState;
-  const gameResultsCount = Object.keys(gameState?.results || {}).length;
   const currentGameCategory =
     currentPhase === VOCAB_GAME_PHASE ? "vocabulary" : currentPhase === SENTENCE_GAME_PHASE ? "sentence" : null;
   const hasPlayableGameForPhase = currentGameCategory
@@ -240,6 +250,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           : 0,
       }))
     : liveParticipants;
+  // Only students still in the room count. A kicked student's result stays on the
+  // board, but it must not stand in for someone still playing.
+  const gameResultsCount = participants.filter((p) => gameState?.results?.[p.studentId]).length;
   const allAnsweredData = preparationMode ? preparationAnsweredData : liveAllAnsweredData;
   const totalAnswered = preparationMode ? preparationAnsweredData.length : liveTotalAnswered;
   const questionEnded = preparationMode ? preparationQuestionEnded : liveQuestionEnded;
@@ -476,22 +489,27 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         totalParticipants === 0 ||
         preparationAnswersReadyToEnd ||
         (isGamePhase && !hasPlayableGameForPhase) ||
-        (isGamePhase && gameState?.status === "results" && gameResultsCount > 0) ||
-        (isGamePhase && totalParticipants > 0 && gameResultsCount >= totalParticipants) ||
-        questionEnded ||
-        totalAnswered >= totalParticipants ||
-        showQuestionResults;
+        // Games are over when the server says so: everyone expected has submitted,
+        // or the tutor ended the game, even with nothing submitted.
+        (isGamePhase && gameState?.status === "results") ||
+        (!isGamePhase && (questionEnded || totalAnswered >= totalParticipants || showQuestionResults));
+
+  // After End game, phones still playing end their round and hand in what they
+  // have, some after a short pause of their own. Moving on closes the game, so
+  // give those results a moment to arrive first.
+  const gameEndedEarly =
+    isGamePhase && gameState?.status === "results" && gameResultsCount < totalParticipants;
 
   React.useEffect(() => {
     if (preparationFreeExplore) {
       setCanProceedDelayed(true);
     } else if (canProceed) {
-      const timer = setTimeout(() => setCanProceedDelayed(true), 1000); // 1 sec delay before allowing proceeding
+      const timer = setTimeout(() => setCanProceedDelayed(true), gameEndedEarly ? 3000 : 1000);
       return () => clearTimeout(timer);
     } else {
       setCanProceedDelayed(false);
     }
-  }, [canProceed, preparationFreeExplore]);
+  }, [canProceed, preparationFreeExplore, gameEndedEarly]);
 
   const nextPhaseTarget =
     isRewoundPhase && sessionData?.resumePhase && sessionData.resumePhase > currentPhase
@@ -508,10 +526,34 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     }
   }, [isChangingPhase, canProceedDelayed, preparationFreeExplore, requestPhaseChange, nextPhaseTarget]);
 
-  const handlePreviousPhase = React.useCallback(() => {
+  const goToPreviousPhase = React.useCallback(() => {
     if (currentPhase <= 1 || isChangingPhase) return;
     requestPhaseChange(currentPhase - 1);
   }, [currentPhase, isChangingPhase, requestPhaseChange]);
+
+  const gameIsRunning = isGamePhase && !preparationMode && ["countdown", "playing"].includes(gameState?.status || "");
+  const handlePreviousPhase = React.useCallback(() => {
+    if (gameIsRunning) setPendingConfirm("previous");
+    else goToPreviousPhase();
+  }, [gameIsRunning, goToPreviousPhase]);
+
+  const handleFinishRequest = React.useCallback(() => {
+    // Rehearsal passes its own close action here, and it loses nothing.
+    if (preparationMode || currentPhase >= FINAL_LEADERBOARD_PHASE) onFinishSession?.();
+    else setPendingConfirm("finish");
+  }, [currentPhase, onFinishSession, preparationMode]);
+
+  // A confirmation cannot outlive the state it asked about.
+  React.useEffect(() => {
+    setPendingConfirm(null);
+    setEndGameArmed(false);
+  }, [currentPhase, gameState?.status]);
+
+  React.useEffect(() => {
+    if (!endGameArmed) return;
+    const timer = window.setTimeout(() => setEndGameArmed(false), 4000);
+    return () => window.clearTimeout(timer);
+  }, [endGameArmed]);
 
   const handleEndQuestion = React.useCallback(() => {
     if (isRewoundPhase || questionEnded || totalParticipants === 0) return;
@@ -564,13 +606,15 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       // Don't hijack arrow keys while the tutor types or uses a control.
       const target = e.target as HTMLElement | null;
       if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
+      // During a game the arrow keys drive the demo, and the dock button moves the game on.
+      if (isGamePhase && gameState?.status && gameState.status !== "results") return;
       if (e.key === "ArrowRight" && (preparationFreeExplore || canProceedDelayed) && !isChangingPhase) {
         handleNextPhase();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleNextPhase, canProceedDelayed, isChangingPhase, preparationFreeExplore, currentPhase, isFullscreen]);
+  }, [handleNextPhase, canProceedDelayed, isChangingPhase, preparationFreeExplore, currentPhase, isFullscreen, isGamePhase, gameState?.status]);
 
   React.useEffect(() => {
     const fullscreenElement = fullscreenRef.current;
@@ -618,11 +662,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   // loader. The leader can change while voting; each candidate is cached.
   const voteLeaderId = React.useMemo(() => {
     if (!currentGameCategory || gameState?.status !== "voting") return null;
-    const { leadingGame } = rankGameVotes(currentGameCategory, gameState.votes || {}, participants);
+    const { leadingGame } = rankGameVotes(currentGameCategory, gameState.votes || {}, participants, gameState.leadingGameId);
     return leadingGame && leadingGame.enabled !== false ? leadingGame.id : null;
     // participants only affects voter names, not the leader
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentGameCategory, gameState?.status, gameState?.votes]);
+  }, [currentGameCategory, gameState?.status, gameState?.votes, gameState?.leadingGameId]);
   React.useEffect(() => {
     if (voteLeaderId) void preloadTeachingGame(voteLeaderId);
   }, [voteLeaderId]);
@@ -641,13 +685,16 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         gameVoting
           ? { done: t("lesson.live.statusVoted"), waiting: t("lesson.live.statusNotVoted"), count: t("lesson.live.dockVoted") }
           : gameInPlay
-            ? { done: t("lesson.live.submittedCheck"), waiting: t("lesson.live.statusPlaying"), count: t("lesson.live.rosterSubmitted") }
+            ? {
+                done: t("lesson.live.submittedCheck"),
+                waiting: gameState?.status === "results" ? t("lesson.live.statusNotPlayed") : t("lesson.live.statusPlaying"),
+                count: t("lesson.live.rosterSubmitted"),
+              }
             : undefined
       }
       preparationMode={preparationMode}
       preparationFreeExplore={preparationFreeExplore}
-      // The confirm dialog is portaled to <body>, which the browser hides in real fullscreen.
-      onRemoveStudent={!preparationMode && !isFullscreen && kickStudent ? requestKick : undefined}
+      onRemoveStudent={!preparationMode && kickStudent ? requestKick : undefined}
     />
   );
   const questionContext = {
@@ -764,6 +811,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             gameState={gameState}
             participants={participants}
             totalParticipants={totalParticipants}
+            submittedCount={gameResultsCount}
             articleData={articleData}
             isFullscreen={isFullscreen}
             preparationMode={preparationMode}
@@ -809,6 +857,28 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const isNextDisabled = (preparationFreeExplore ? false : !canProceedDelayed) || isChangingPhase;
   const gameStatus = gameState?.status;
   const hasGameResults = isGamePhase && gameResultsCount > 0;
+  const canEndGame = isGamePhase && !isRewoundPhase && !preparationMode && gameStatus === "playing" && Boolean(endGame);
+  const handleEndGame = () => {
+    if (!endGameArmed) {
+      setEndGameArmed(true);
+      return;
+    }
+    setEndGameArmed(false);
+    playSound("submit");
+    endGame?.();
+  };
+  const expectedStudentIds = gameState?.expectedStudentIds;
+  const studentsStillPlaying =
+    gameStatus === "playing"
+      ? participants.filter(
+          (p) => !gameState?.results?.[p.studentId] && (!expectedStudentIds || expectedStudentIds.includes(p.studentId)),
+        )
+      : [];
+  // Name them once there is someone to name: a phone that dropped, or everyone else done.
+  const waitingNames =
+    !preparationMode && (hasGameResults || studentsStillPlaying.some((p) => p.offlineSince))
+      ? [...studentsStillPlaying].sort((a, b) => Number(Boolean(b.offlineSince)) - Number(Boolean(a.offlineSince))).map((p) => p.name)
+      : [];
   const canEndQuestion =
     isInteractivePhase &&
     !isRewoundPhase &&
@@ -816,7 +886,12 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     totalParticipants > 0 &&
     totalAnswered < totalParticipants &&
     (!preparationMode || preparationFreeExplore || preparationAnswersReadyToEnd);
-  const useGamePrimaryAction = isGamePhase && !isRewoundPhase && !hasGameResults && hasPlayableGameForPhase;
+  const useGamePrimaryAction =
+    isGamePhase &&
+    !isRewoundPhase &&
+    hasPlayableGameForPhase &&
+    // The rehearsal guide points at the next button once mock results come in.
+    (preparationMode ? !hasGameResults : gameStatus !== "results");
   const gameAction = getGamePrimaryAction({
     status: gameStatus,
     hasPlayableGame: hasPlayableGameForPhase,
@@ -827,6 +902,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     preparationFreeExplore,
     votesCount: Object.keys(gameState?.votes || {}).length,
     totalParticipants,
+    waitingNames,
   });
 
   const handleGamePrimaryAction = () => {
@@ -979,10 +1055,20 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       style={{ "--highlight-bg": "var(--warning-bg)", "--highlight-text": "var(--warning-fg)" } as React.CSSProperties}
       className={
         isFullscreen
-          ? "fixed inset-0 z-[100] flex h-dvh w-screen flex-col overflow-hidden bg-app pb-28"
+          ? // The stage keeps clear of the dock, and takes its room back when the dock is hidden.
+            `fixed inset-0 z-[100] flex h-dvh w-screen flex-col overflow-hidden bg-app ${isToolbarHidden ? "" : "pb-28"}`
           : "relative flex min-h-[var(--lesson-viewport-h,100dvh)] flex-1 flex-col bg-app"
       }
     >
+      {connectionLost ? (
+        <div role="status" className="mx-4 mt-2 flex items-center justify-center gap-2.5 rounded-lg border border-warning-border bg-warning-bg px-4 py-2 text-sm text-warning-fg lg:mx-6">
+          <WifiOff aria-hidden="true" className="size-4 shrink-0" />
+          <span className="font-semibold">{t("lesson.live.reconnectingTitle")}</span>
+          <span className="hidden text-fg-muted sm:inline">{t("lesson.live.reconnectingHint")}</span>
+          <Spinner className="text-warning-fg" />
+        </div>
+      ) : null}
+
       {/* Warning overlay when everyone left */}
       {currentPhase > 0 && participants.length === 0 && !bypassEmptyStudentGuard ? (
         <div role="alertdialog" aria-labelledby="students-left-title" className="absolute inset-0 z-50 flex items-center justify-center bg-app/85 p-4">
@@ -1038,18 +1124,26 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             </Chip>
           ) : undefined
         }
-        onReturnLobby={preparationMode ? undefined : () => requestPhaseChange(0)}
+        onReturnLobby={preparationMode ? undefined : () => setPendingConfirm("lobby")}
         returnLobbyDisabled={isChangingPhase}
         onPrevious={handlePreviousPhase}
         previousDisabled={currentPhase <= 1 || isChangingPhase}
         endQuestion={
-          canEndQuestion
+          canEndGame
             ? {
-                onClick: handleEndQuestion,
-                disabled: !preparationMode && !endQuestion,
-                title: `${t("lesson.live.endQuestionTitle")} ${totalAnswered}/${totalParticipants} ${t("lesson.interactive.peopleUnit")}`,
+                onClick: handleEndGame,
+                label: endGameArmed
+                  ? t("lesson.live.endGameConfirm")
+                  : `${t("lesson.live.endGame")} (${gameResultsCount}/${totalParticipants})`,
+                title: t("lesson.live.endGameTitle"),
               }
-            : null
+            : canEndQuestion
+              ? {
+                  onClick: handleEndQuestion,
+                  disabled: !preparationMode && !endQuestion,
+                  title: `${t("lesson.live.endQuestionTitle")} ${totalAnswered}/${totalParticipants} ${t("lesson.interactive.peopleUnit")}`,
+                }
+              : null
         }
         primary={
           useGamePrimaryAction
@@ -1072,7 +1166,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 hint: nextHint,
               }
         }
-        onFinish={onFinishSession}
+        onFinish={onFinishSession ? handleFinishRequest : undefined}
         finishEmphasis={currentPhase === FINAL_LEADERBOARD_PHASE}
         devTools={devTools}
         tour={tour}
@@ -1090,17 +1184,52 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           </div>
         </div>
       ) : null}
-      <ConfirmDialog
+      <PresenterConfirm
         open={kickConfirmOpen}
-        onOpenChange={setKickConfirmOpen}
+        onCancel={() => setKickConfirmOpen(false)}
         title={`${t("lesson.live.removeConfirmTitle")} ${kickTarget?.name ?? ""}`.trim()}
         description={t("lesson.live.removeConfirmDescription")}
         confirmLabel={t("lesson.live.removeConfirm")}
         cancelLabel={t("lesson.live.removeCancel")}
-        tone="danger"
         onConfirm={() => {
           if (kickTarget) kickStudent?.(kickTarget.studentId);
           setKickConfirmOpen(false);
+        }}
+      />
+      <PresenterConfirm
+        open={pendingConfirm === "finish"}
+        onCancel={() => setPendingConfirm(null)}
+        title={t("lesson.live.finishConfirmTitle")}
+        description={`${t("lesson.live.finishConfirmStepPrefix")} ${currentPhase}/${TOTAL_PHASES} ${t("lesson.live.finishConfirmDescription")}`}
+        confirmLabel={t("lesson.live.finishLessonShort")}
+        cancelLabel={t("lesson.live.keepTeaching")}
+        onConfirm={() => {
+          setPendingConfirm(null);
+          onFinishSession?.();
+        }}
+      />
+      <PresenterConfirm
+        open={pendingConfirm === "lobby"}
+        onCancel={() => setPendingConfirm(null)}
+        title={t("lesson.live.lobbyConfirmTitle")}
+        description={t("lesson.live.lobbyConfirmDescription")}
+        confirmLabel={t("lesson.interactive.returnLobby")}
+        cancelLabel={t("lesson.live.keepTeaching")}
+        onConfirm={() => {
+          setPendingConfirm(null);
+          requestPhaseChange(0);
+        }}
+      />
+      <PresenterConfirm
+        open={pendingConfirm === "previous"}
+        onCancel={() => setPendingConfirm(null)}
+        title={t("lesson.live.previousConfirmTitle")}
+        description={t("lesson.live.previousConfirmDescription")}
+        confirmLabel={t("lesson.live.previousConfirm")}
+        cancelLabel={t("lesson.live.keepTeaching")}
+        onConfirm={() => {
+          setPendingConfirm(null);
+          goToPreviousPhase();
         }}
       />
       {guideOverlay}

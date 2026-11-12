@@ -13,7 +13,9 @@ import {
   SENTENCE_ORDER_PHASE,
   SENTENCE_PRACTICE_PHASE,
   VOCABULARY_PRACTICE_PHASE,
+  getTutorGraceMs,
   lessonSessionService,
+  TUTOR_RECONNECT_GRACE_MS,
 } from "../services/LessonSessionService";
 import { evaluateShortAnswer, evaluateWriting, answerLanguageQuestion } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
@@ -38,6 +40,21 @@ export {
   verifySocketActor,
 } from "./lessonAuthorization";
 
+// A reload or short drop should not flash "waiting for the teacher" at students.
+const TUTOR_AWAY_NOTICE_MS = 8_000;
+// A phone on bad Wi-Fi often drops and returns within seconds; do not flash it
+// as offline on the tutor's roster.
+const STUDENT_OFFLINE_NOTICE_MS = 12_000;
+// Rooms rebuilt from the database for a student have no tutor socket here.
+const SHARED_TUTOR_SOCKET_PREFIX = "shared-tutor:";
+const REMOTE_GAME_STATE_EVENTS = new Set(["game_state_changed", "game_votes_updated", "game_results_updated"]);
+const REMOTE_ROSTER_EVENTS = new Set(["participants_updated", "participant_joined", "participant_left"]);
+const TUTORLESS_ROOM_CHECK_MS = 30_000;
+// lastHeartbeatAt is written every 15 s while the tutor is connected.
+const TUTOR_HEARTBEAT_FRESH_MS = 45_000;
+const TUTOR_LOST_MESSAGE = "การเชื่อมต่อของคุณครูขาดหาย บทเรียนจึงหยุดลง";
+const LESSON_FINISHED_MESSAGE = "บทเรียนจบแล้ว ขอบคุณที่เข้าร่วมเรียนครับ";
+
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
   const result = [...array];
   if (!seedInput) return result;
@@ -58,8 +75,35 @@ function seededShuffle<T>(array: T[], seedInput: string): T[] {
 
 export const setupLessonSocket = (io: Server) => {
   const instanceId = uuidv4();
+  const isLocalSocket = (socketId: string) => io.sockets.sockets.has(socketId);
   void startLessonSocketBus(io, instanceId, (event) => {
-    lessonSessionService.applyRemoteEvent(event.sessionId, event.event, event.payload);
+    lessonSessionService.applyRemoteEvent(event.sessionId, event.event, event.payload, { isLocalSocket });
+    // The tutor now owns the room through a socket on another instance, so the
+    // heartbeat is that instance's job. One left running here would keep the
+    // room looking attended after the tutor leaves for good, because this
+    // instance no longer knows the old socket and its disconnect stops nothing.
+    if (event.event === "tutor_owner_changed") {
+      const owner = lessonSessionService.getSession(event.sessionId)?.tutorSocketId;
+      if (owner && !isLocalSocket(owner)) stopSessionHeartbeat(event.sessionId);
+    }
+    // Game state and rosters from another instance are merged into ours, so
+    // screens here get the merged view: a lagging instance must not show a
+    // closed game as open, and a placeholder must not show an offline student
+    // as online.
+    const session = lessonSessionService.getSession(event.sessionId);
+    if (!session || !event.payload || typeof event.payload !== "object") return undefined;
+    const payload = event.payload as Record<string, unknown>;
+    if (REMOTE_GAME_STATE_EVENTS.has(event.event)) {
+      const incomingPhase = (payload.gameState as { phase?: unknown } | null | undefined)?.phase;
+      // A game from a phase this room has left: drop it rather than show it.
+      if (typeof incomingPhase === "number" && incomingPhase !== session.currentPhase) return null;
+      const gameState = lessonSessionService.getGameStatePayload(session);
+      if (gameState) return { ...payload, gameState };
+    }
+    if (REMOTE_ROSTER_EVENTS.has(event.event) && Array.isArray(payload.participants)) {
+      return { ...payload, participants: Array.from(session.participants.values()) };
+    }
+    return undefined;
   });
   const broadcastSession = (sessionId: string, event: string, payload: unknown) => {
     io.to(sessionId).emit(event, payload);
@@ -158,11 +202,20 @@ export const setupLessonSocket = (io: Server) => {
 
   const startSessionHeartbeat = (classId: string | undefined, sessionId: string) => {
     if (!classId || sessionHeartbeats.has(sessionId)) return;
-    // Mark a newly recovered owner immediately. This is also used by the
-    // disconnect grace-period check to distinguish a real reconnect on another
-    // service instance from a stale socket.
+    // The heartbeat means "a tutor socket is alive", so only the tutor's own
+    // connection may start it; a student reconnecting must not count. Mark a newly
+    // recovered owner immediately, because the grace-period check reads this to
+    // tell a real reconnect on another service instance from a stale socket.
     void dbWriter.heartbeatActiveSession(classId, sessionId);
     const timer = setInterval(() => {
+      // Only a tutor connected here keeps the room attended. The owner may have
+      // moved to another instance, or this socket may never have become the
+      // owner (it dropped while the room was being set up).
+      const owner = lessonSessionService.getSession(sessionId)?.tutorSocketId;
+      if (!owner || !isLocalSocket(owner)) {
+        stopSessionHeartbeat(sessionId);
+        return;
+      }
       void dbWriter.heartbeatActiveSession(classId, sessionId);
     }, 15_000);
     if (typeof timer.unref === "function") timer.unref();
@@ -174,6 +227,162 @@ export const setupLessonSocket = (io: Server) => {
     if (!timer) return;
     clearInterval(timer);
     sessionHeartbeats.delete(sessionId);
+  };
+
+  const isAssessmentRunning = async (sessionId: string) => {
+    try {
+      const row = await prisma.interactiveSession.findUnique({
+        where: { sessionId },
+        select: { assessmentStatus: true },
+      });
+      return row?.assessmentStatus === "RUNNING";
+    } catch (error) {
+      logger.warn(`[Socket] Could not read assessment state for ${sessionId}:`, error);
+      return false;
+    }
+  };
+
+  const tutorAbsences = new Map<string, NodeJS.Timeout[]>();
+  const tutorlessRoomWatches = new Map<string, NodeJS.Timeout>();
+
+  const cancelTutorAbsence = (sessionId: string) => {
+    tutorAbsences.get(sessionId)?.forEach((timer) => clearTimeout(timer));
+    tutorAbsences.delete(sessionId);
+  };
+
+  const stopTutorlessRoomWatch = (sessionId: string) => {
+    const timer = tutorlessRoomWatches.get(sessionId);
+    if (timer) clearInterval(timer);
+    tutorlessRoomWatches.delete(sessionId);
+  };
+
+  /**
+   * The status a round keeps when its room closes. A round already closed as
+   * FINISHED (final phase, or returning to the lobby) stays that way: a tutor who
+   * reached the end and just closed the tab has still taught the lesson.
+   */
+  const getRoundEndStatus = (
+    session: { currentPhase: number; currentDbSessionId?: string },
+    unfinishedStatus: string,
+  ): string | null => {
+    if (session.currentPhase >= FINAL_LEADERBOARD_PHASE) return "FINISHED";
+    if (session.currentPhase > 0) return unfinishedStatus;
+    return session.currentDbSessionId ? null : "CANCELLED";
+  };
+
+  /** The room is over without the tutor having ended it, so say so plainly. */
+  const closeRoomAfterTutorLoss = async (
+    session: { sessionId: string; classId?: string; isDemo?: boolean; currentDbSessionId?: string; currentPhase: number },
+  ) => {
+    const { sessionId } = session;
+    broadcastSession(
+      sessionId,
+      "session_deleted",
+      session.currentPhase >= FINAL_LEADERBOARD_PHASE
+        ? { message: LESSON_FINISHED_MESSAGE, reason: "finished" }
+        : { message: TUTOR_LOST_MESSAGE, reason: "tutor_lost" },
+    );
+    stopSessionHeartbeat(sessionId);
+    cancelTutorAbsence(sessionId);
+    stopTutorlessRoomWatch(sessionId);
+    await dbWriter.releaseActiveSession(session.classId, sessionId);
+    const status = session.isDemo ? null : getRoundEndStatus(session, "INTERRUPTED");
+    if (status) await dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, status);
+    lessonSessionService.deleteSession(sessionId);
+  };
+
+  /**
+   * The tutor's socket is gone. The room stays open: students keep working, and
+   * the tutor can take it back at the same phase until the grace period ends.
+   */
+  const beginTutorAbsence = (session: { sessionId: string; isDemo?: boolean; currentPhase: number }, goneSocketId: string) => {
+    const { sessionId } = session;
+    const startedAt = Date.now();
+    cancelTutorAbsence(sessionId);
+
+    const tutorIsStillGone = async () => {
+      const latest = lessonSessionService.getSession(sessionId);
+      if (latest?.tutorSocketId !== goneSocketId) return false;
+      // A tutor may reconnect to a different Cloud Run instance. The in-memory
+      // socket id on this instance is then still stale, while the new owner has
+      // already written the heartbeat. The margin skips a heartbeat that was
+      // already on its way when the socket dropped.
+      const lock = await dbWriter.getActiveSessionLock(latest.classId || "");
+      const recovered = lock?.sessionId === sessionId && lock.lastHeartbeatAt.getTime() > startedAt + 2_000;
+      if (recovered) logger.info(`[Socket] Session ${sessionId} was recovered after tutor disconnect; keeping it active.`);
+      return !recovered;
+    };
+
+    const timers = [
+      setTimeout(async () => {
+        // Nobody is waiting for the tutor in a lobby or once the lesson has ended.
+        if (session.isDemo || session.currentPhase <= 0 || session.currentPhase >= FINAL_LEADERBOARD_PHASE) return;
+        if (!(await tutorIsStillGone())) return;
+        if (lessonSessionService.markTutorAway(sessionId, startedAt)) {
+          broadcastSession(sessionId, "tutor_away", { since: startedAt });
+        }
+      }, TUTOR_AWAY_NOTICE_MS),
+    ];
+    const closeIfStillGone = async () => {
+      if (!(await tutorIsStillGone())) return;
+      const latest = lessonSessionService.getSession(sessionId);
+      if (!latest) return;
+      // An assessment runs in the lobby phase and has work to lose. It already
+      // pauses for the tutor, so give it the same time as a lesson.
+      const remainingMs = startedAt + TUTOR_RECONNECT_GRACE_MS - Date.now();
+      if (latest.currentPhase <= 0 && remainingMs > 0 && (await isAssessmentRunning(sessionId))) {
+        const timer = setTimeout(closeIfStillGone, remainingMs);
+        if (typeof timer.unref === "function") timer.unref();
+        tutorAbsences.get(sessionId)?.push(timer);
+        return;
+      }
+      await closeRoomAfterTutorLoss(latest);
+      logger.info(`[Socket] Session ${sessionId} closed after the tutor grace period`);
+    };
+    timers.push(setTimeout(closeIfStillGone, getTutorGraceMs(session)));
+    for (const timer of timers) if (typeof timer.unref === "function") timer.unref();
+    tutorAbsences.set(sessionId, timers);
+  };
+
+  /**
+   * A room rebuilt from the database for a student has no tutor socket on this
+   * instance, so no disconnect will ever fire for it. Read the tutor's presence
+   * from the shared lock instead, so it still tells students and still ends.
+   */
+  const watchTutorlessRoom = (session: { sessionId: string; classId?: string; isDemo?: boolean; tutorSocketId: string }) => {
+    const { sessionId, classId } = session;
+    if (session.isDemo || !classId || tutorlessRoomWatches.has(sessionId)) return;
+    if (!session.tutorSocketId.startsWith(SHARED_TUTOR_SOCKET_PREFIX)) return;
+    const timer = setInterval(async () => {
+      const latest = lessonSessionService.getSession(sessionId);
+      if (!latest || !latest.tutorSocketId.startsWith(SHARED_TUTOR_SOCKET_PREFIX)) {
+        stopTutorlessRoomWatch(sessionId);
+        return;
+      }
+      const lock = await dbWriter.getActiveSessionLock(classId);
+      if (lock?.sessionId !== sessionId) return;
+      const silentFor = Date.now() - lock.lastHeartbeatAt.getTime();
+      if (silentFor > TUTOR_RECONNECT_GRACE_MS) {
+        await closeRoomAfterTutorLoss(latest);
+      } else if (silentFor > TUTOR_HEARTBEAT_FRESH_MS) {
+        if (lessonSessionService.markTutorAway(sessionId, lock.lastHeartbeatAt.getTime())) {
+          broadcastSession(sessionId, "tutor_away", { since: lock.lastHeartbeatAt.getTime() });
+        }
+      } else if (lessonSessionService.clearTutorAway(sessionId)) {
+        broadcastSession(sessionId, "tutor_back", {});
+      }
+    }, TUTORLESS_ROOM_CHECK_MS);
+    if (typeof timer.unref === "function") timer.unref();
+    tutorlessRoomWatches.set(sessionId, timer);
+  };
+
+  /** A real tutor socket owns the room again. */
+  const markTutorBack = (session: { sessionId: string; isDemo?: boolean; currentPhase: number }) => {
+    cancelTutorAbsence(session.sessionId);
+    stopTutorlessRoomWatch(session.sessionId);
+    lessonSessionService.clearTutorAway(session.sessionId);
+    // Students on another instance may have seen the notice, so always say it.
+    if (!session.isDemo && session.currentPhase > 0) broadcastSession(session.sessionId, "tutor_back", {});
   };
 
   const acquireAiSlot = (userId: string, requestKey: string) => {
@@ -214,6 +423,9 @@ export const setupLessonSocket = (io: Server) => {
     const lock = await dbWriter.getActiveSessionLock(classId);
     if (!lock) return undefined;
 
+    // A lock nobody has touched past the grace period is left over from a crash.
+    if (Date.now() - lock.lastHeartbeatAt.getTime() > dbWriter.ACTIVE_SESSION_LOCK_STALE_MS) return undefined;
+
     const sharedSession = await prisma.interactiveSession.findUnique({
       where: { sessionId: lock.sessionId },
     });
@@ -247,6 +459,7 @@ export const setupLessonSocket = (io: Server) => {
   const mergePersistedParticipants = async (
     session: ReturnType<typeof lessonSessionService.createSession>,
     sessionIds: string | string[],
+    options: { keepLiveScores?: boolean } = {},
   ) => {
     const orderedSessionIds = Array.from(new Set(
       (Array.isArray(sessionIds) ? sessionIds : [sessionIds]).filter(Boolean),
@@ -268,6 +481,7 @@ export const setupLessonSocket = (io: Server) => {
           participant.student.displayName || "Student",
           participant.student.profilePictureUrl || undefined,
           participant.score,
+          { keepLiveScore: options.keepLiveScores },
         );
       }
     }
@@ -288,7 +502,13 @@ export const setupLessonSocket = (io: Server) => {
       const articleData = await getArticleDetails(sharedSession.articleId, sharedSession.bookId || undefined);
       if (!articleData) return undefined;
 
-      restoredSession = lessonSessionService.createSession(
+      // The tutor may have opened the room on this instance while the article
+      // loaded. A student's restore keeps that room and its owner; recreating it
+      // would hand the room to the placeholder socket and stop the tutor's
+      // heartbeat. The tutor's own restore still takes the room over.
+      const appeared = expectedTutorId ? undefined : lessonSessionService.getSessionByClassId(classId);
+      const openedMeanwhile = appeared?.sessionId === sharedSession.sessionId ? appeared : undefined;
+      restoredSession = openedMeanwhile ?? lessonSessionService.createSession(
         sharedSession.tutorUserId,
         tutorSocketId,
         sharedSession.articleId,
@@ -317,11 +537,14 @@ export const setupLessonSocket = (io: Server) => {
       sharedSession.phaseVersion >= restoredSession.phaseVersion &&
       sharedSession.currentPhase === restoredSession.currentPhase;
     if (persistedStateIsCurrent) {
+      // Memory that has not missed a phase is ahead of the database: answers are
+      // written after they count, and a replayed phase still has its old row.
       await mergePersistedParticipants(
         restoredSession,
         [sharedSession.currentDbSessionId || "", sharedSession.sessionId],
+        { keepLiveScores: !phaseWasReconciled },
       );
-      await restorePersistedAnswerState(restoredSession);
+      if (phaseWasReconciled) await restorePersistedAnswerState(restoredSession);
     }
     if (phaseWasReconciled) {
       // Heal already-connected clients on other service instances that missed
@@ -329,7 +552,8 @@ export const setupLessonSocket = (io: Server) => {
       // authoritative state through join_success below.
       broadcastSession(restoredSession.sessionId, "phase_changed", getPhaseChangedPayload(restoredSession));
     }
-    startSessionHeartbeat(classId, restoredSession.sessionId);
+    // Only the tutor path passes expectedTutorId.
+    if (expectedTutorId) startSessionHeartbeat(classId, restoredSession.sessionId);
     return restoredSession;
   };
 
@@ -562,7 +786,7 @@ export const setupLessonSocket = (io: Server) => {
         }
         const proposedSessionId = localSession?.sessionId || uuidv4();
         if (classId && ownedClass && !localSession) {
-          const lock = await dbWriter.claimActiveSession(classId, proposedSessionId, ownedClass.tutorUserId);
+          let lock = await dbWriter.claimActiveSession(classId, proposedSessionId, ownedClass.tutorUserId);
           if (!lock.acquired) {
             // Another instance may own the socket room.  Rehydrate the
             // persisted session header/state locally instead of creating a
@@ -572,6 +796,7 @@ export const setupLessonSocket = (io: Server) => {
               if (!socket.connected) return;
               socket.join(restoredSession.sessionId);
               announceTutorOwner(restoredSession);
+              markTutorBack(restoredSession);
               socket.emit("session_created", {
                 sessionId: restoredSession.sessionId,
                 currentPhase: restoredSession.currentPhase,
@@ -592,12 +817,20 @@ export const setupLessonSocket = (io: Server) => {
               logger.info(`[Socket] Rehydrated shared session ${restoredSession.sessionId} for class ${classId}`);
               return;
             }
-            socket.emit("error", {
-              message: "ห้องเรียนนี้มีเซสชันกำลังสอนอยู่แล้ว กรุณาเชื่อมต่อเซสชันเดิม",
-              code: "ACTIVE_SESSION_EXISTS",
-              sessionId: lock.existingSessionId,
-            });
-            return;
+            lock = await dbWriter.claimActiveSession(
+              classId,
+              proposedSessionId,
+              ownedClass.tutorUserId,
+              dbWriter.UNRESTORABLE_LOCK_STALE_MS,
+            );
+            if (!lock.acquired) {
+              socket.emit("error", {
+                message: "ห้องเรียนนี้มีเซสชันกำลังสอนอยู่แล้ว กรุณาเชื่อมต่อเซสชันเดิม",
+                code: "ACTIVE_SESSION_EXISTS",
+                sessionId: lock.existingSessionId,
+              });
+              return;
+            }
           }
           claimedLock = { classId, sessionId: proposedSessionId };
           if (!socket.connected) {
@@ -638,8 +871,10 @@ export const setupLessonSocket = (io: Server) => {
         // Keep currentDbSessionId undefined initially, so the first cycle defaults to the standard sessionId!
         socket.join(session.sessionId);
 
-        // PERSIST START OF SESSION TO DB (This creates initial Cycle 1 record)
-        const sessionStartPersisted = await dbWriter.persistSessionStart(
+        // PERSIST START OF SESSION TO DB (This creates initial Cycle 1 record).
+        // A reconnecting tutor already has a row, and writing it again would
+        // reopen a round that has finished.
+        const sessionStartPersisted = sessionWasReused || await dbWriter.persistSessionStart(
           session.sessionId,
           tutorId,
           resolvedArticleId,
@@ -662,6 +897,7 @@ export const setupLessonSocket = (io: Server) => {
           throw new Error("Could not persist the new live lesson session.");
         }
         announceTutorOwner(session);
+        markTutorBack(session);
 
         socket.emit("session_created", {
           sessionId: session.sessionId,
@@ -724,7 +960,7 @@ export const setupLessonSocket = (io: Server) => {
 
       let activeSession = lessonSessionService.getSessionByClassId(classId);
       try {
-        const reconciledSession = await restoreSharedSession(classId, `shared-tutor:${classId}`);
+        const reconciledSession = await restoreSharedSession(classId, `${SHARED_TUTOR_SOCKET_PREFIX}${classId}`);
         if (reconciledSession) activeSession = reconciledSession;
       } catch (error) {
         logger.warn(`[Socket] Could not reconcile shared session for class ${classId}:`, error);
@@ -795,6 +1031,7 @@ export const setupLessonSocket = (io: Server) => {
       const session = lessonSessionService.joinSessionByClassId(classId, studentId, name, socket.id, pictureUrl, resolvedStudentId);
       if (session) {
         socket.join(session.sessionId);
+        watchTutorlessRoom(session);
         socket.emit("join_success", {
           sessionId: session.sessionId,
           classBookCycleId: session.classBookCycleId,
@@ -809,6 +1046,7 @@ export const setupLessonSocket = (io: Server) => {
           resumePhase: session.resumePhase,
           activeSentenceIndex: session.activeSentenceIndex,
           flagCounts: lessonSessionService.getFlagCounts(session),
+          tutorAway: Boolean(session.tutorAwaySince),
           // Reconnecting mid Pair Conversation still shows the student's pair
           pairs: session.currentPhase === PAIR_CONVERSATION_PHASE ? lessonSessionService.getPairsPayload(session) : null,
           gameState: lessonSessionService.getGameStatePayload(session),
@@ -1181,6 +1419,32 @@ export const setupLessonSocket = (io: Server) => {
           totalParticipants: submitted.session.participants.size,
         });
       }
+    });
+
+    // The tutor closes a running game, for example when a phone has gone silent.
+    socket.on("end_game", ({ sessionId }) => {
+      const activeSession = lessonSessionService.getSession(sessionId);
+      if (!isTutorSessionOwner(actor, socket.id, activeSession)) {
+        rejectForbidden("end_game");
+        return;
+      }
+
+      const ended = lessonSessionService.endGame(sessionId);
+      if (!ended) {
+        // Already over here, for example closed through another instance: make
+        // sure the tutor's screen says so instead of leaving End game dead.
+        if (activeSession?.gameState?.status === "results") {
+          socket.emit("game_results_updated", { gameState: lessonSessionService.getGameStatePayload(activeSession) });
+        }
+        return;
+      }
+      broadcastSession(sessionId, "game_results_updated", { gameState: ended.gameState });
+      broadcastSession(sessionId, "all_answered_broadcast", {
+        totalParticipants: ended.session.participants.size,
+      });
+      logger.info(
+        `[Socket] Tutor ended the game in session ${sessionId} with ${Object.keys(ended.gameState.results).length}/${ended.session.participants.size} results`,
+      );
     });
 
     socket.on("sync_active_sentence", ({ sessionId, index }) => {
@@ -1681,9 +1945,14 @@ export const setupLessonSocket = (io: Server) => {
       }
       publishLessonEvent(sessionId, "kicked", kickedPayload, studentId);
 
-      const { session: updatedSession, gameCompleted, allAnswered, flagsChanged } = kicked;
+      const { session: updatedSession, gameCompleted, allAnswered, flagsChanged, votesChanged } = kicked;
       const remaining = Array.from(updatedSession.participants.values());
       broadcastSession(sessionId, "participants_updated", { participants: remaining });
+      if (votesChanged) {
+        broadcastSession(sessionId, "game_votes_updated", {
+          gameState: lessonSessionService.getGameStatePayload(updatedSession),
+        });
+      }
       if (flagsChanged) {
         broadcastSession(sessionId, "flags_updated", {
           flagCounts: lessonSessionService.getFlagCounts(updatedSession),
@@ -1726,12 +1995,13 @@ export const setupLessonSocket = (io: Server) => {
       }
 
       if (session) {
-        broadcastSession(sessionId, "session_deleted", { message: "เซสชันถูกยกเลิกโดยคุณครู" });
+        broadcastSession(sessionId, "session_deleted", { message: "เซสชันถูกยกเลิกโดยคุณครู", reason: "cancelled" });
         stopSessionHeartbeat(sessionId);
+        cancelTutorAbsence(sessionId);
+        stopTutorlessRoomWatch(sessionId);
         await dbWriter.releaseActiveSession(session.classId, sessionId);
-        if (!session.isDemo) {
-          await dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "CANCELLED");
-        }
+        const status = session.isDemo ? null : getRoundEndStatus(session, "CANCELLED");
+        if (status) await dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, status);
         lessonSessionService.deleteSession(sessionId);
         logger.info(`[Socket] Session ${sessionId} deleted by tutor`);
       }
@@ -1759,8 +2029,10 @@ export const setupLessonSocket = (io: Server) => {
         await dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
       }
 
-      broadcastSession(sessionId, "session_deleted", { message: "บทเรียนจบแล้ว ขอบคุณที่เข้าร่วมเรียนครับ" });
+      broadcastSession(sessionId, "session_deleted", { message: LESSON_FINISHED_MESSAGE, reason: "finished" });
       stopSessionHeartbeat(sessionId);
+      cancelTutorAbsence(sessionId);
+      stopTutorlessRoomWatch(sessionId);
       await dbWriter.releaseActiveSession(session.classId, sessionId);
       lessonSessionService.deleteSession(sessionId);
       acknowledge?.({ ok: true });
@@ -1772,40 +2044,26 @@ export const setupLessonSocket = (io: Server) => {
 
       if (tutorSession) {
         const { sessionId } = tutorSession;
-        const disconnectedAt = Date.now();
         stopSessionHeartbeat(sessionId);
-        logger.info(`[Socket] Tutor disconnect detected for: ${socket.id}. Session ${sessionId} will close if tutor does not reconnect.`);
-
-        setTimeout(async () => {
-          const latestSession = lessonSessionService.getSession(sessionId);
-          if (latestSession?.tutorSocketId !== socket.id) {
-            return;
-          }
-
-          // A tutor may reconnect to a different Cloud Run instance. The
-          // in-memory socket id on this instance is then still stale, while
-          // the shared lease has already been heartbeated by the new owner.
-          // Keep the room alive in that case so students are not kicked out.
-          const activeLock = await dbWriter.getActiveSessionLock(latestSession.classId || "");
-          if (activeLock?.sessionId === sessionId && activeLock.lastHeartbeatAt.getTime() > disconnectedAt) {
-            logger.info("[Socket] Session " + sessionId + " was recovered after tutor disconnect; keeping it active.");
-            return;
-          }
-
-          broadcastSession(sessionId, "session_deleted", { message: "à¹€à¸‹à¸ªà¸Šà¸±à¸™à¸–à¸¹à¸à¸¢à¸à¹€à¸¥à¸´à¸à¹‚à¸”à¸¢à¸„à¸¸à¸“à¸„à¸£à¸¹" });
-          stopSessionHeartbeat(sessionId);
-          await dbWriter.releaseActiveSession(latestSession.classId, sessionId);
-          if (!latestSession.isDemo) {
-            await dbWriter.updateSessionStatus(latestSession.currentDbSessionId || sessionId, "CANCELLED");
-          }
-          lessonSessionService.deleteSession(sessionId);
-          logger.info(`[Socket] Session ${sessionId} deleted after tutor disconnect grace period`);
-        }, 15000);
-
+        logger.info(`[Socket] Tutor disconnect detected for: ${socket.id}. Session ${sessionId} stays open for the tutor to return.`);
+        beginTutorAbsence(tutorSession, socket.id);
         return;
       }
 
       logger.info(`[Socket] Disconnect detected for: ${socket.id}. Session state is preserved for auto-recovery.`);
+
+      const student = lessonSessionService.findParticipantBySocketId(socket.id);
+      if (student) {
+        const offlineTimer = setTimeout(() => {
+          const session = lessonSessionService.markParticipantOffline(student.sessionId, student.studentId, socket.id);
+          if (session) {
+            broadcastSession(student.sessionId, "participants_updated", {
+              participants: Array.from(session.participants.values()),
+            });
+          }
+        }, STUDENT_OFFLINE_NOTICE_MS);
+        if (typeof offlineTimer.unref === "function") offlineTimer.unref();
+      }
     });
   });
 };

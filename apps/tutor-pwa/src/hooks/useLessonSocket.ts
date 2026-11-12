@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { getTutorSessionToken } from '../app/dashboard/actions';
+import { toast } from '@/components/app/Toast';
 import { t } from '@/lib/i18n';
 
 
@@ -59,6 +60,8 @@ export const useLessonSocket = (
   const [articleData, setArticleData] = useState<ArticleData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [flagCounts, setFlagCounts] = useState<Record<number, number>>({});
+  // True while the tutor's socket is down after having had a session.
+  const [connectionLost, setConnectionLost] = useState(false);
 
   const socketRef = useRef<Socket | null>(null);
   const sessionDataRef = useRef<TutorSessionData | null>(null);
@@ -69,6 +72,16 @@ export const useLessonSocket = (
   const phaseChangeInFlightRef = useRef<Promise<boolean> | null>(null);
   const phaseChangeRequestIdRef = useRef(0);
   const phaseChangeCancelRef = useRef<(() => void) | null>(null);
+  // A problem during a running lesson is a notice, not a reason to replace the
+  // lesson with the error page, which the lobby would show on its next render.
+  const reportProblem = useCallback((message: string) => {
+    if ((sessionDataRef.current?.currentPhase ?? 0) > 0) {
+      // The server's own errors can be English; the presenter stays in Thai.
+      toast.error(/[฀-๿]/.test(message) ? message : t("lesson.live.actionFailed"));
+    } else {
+      setError(message);
+    }
+  }, []);
   const invalidatePhaseChange = useCallback(() => {
     phaseChangeCancelRef.current?.();
     phaseChangeCancelRef.current = null;
@@ -127,6 +140,7 @@ export const useLessonSocket = (
 
         socketInstance.on('connect', () => {
           if (cancelled) return;
+          setConnectionLost(false);
           // The socket can reconnect before the async create_session handler
           // finishes. Do not allow stale UI state to issue phase commands in
           // that gap.
@@ -139,25 +153,41 @@ export const useLessonSocket = (
         });
 
         socketInstance.on('connect_error', (err) => {
+          // During a lesson socket.io keeps retrying and the banner says so.
+          if ((sessionDataRef.current?.currentPhase ?? 0) > 0) {
+            setConnectionLost(true);
+            return;
+          }
           setError(err.message || 'Could not connect to the learning service.');
         });
 
         socketInstance.on('disconnect', () => {
           sessionReadyRef.current = false;
           invalidatePhaseChange();
+          if (sessionDataRef.current) setConnectionLost(true);
         });
 
         socketInstance.on('session_created', (data) => {
           if (cancelled || !socketInstance.connected) return;
           sessionReadyRef.current = true;
+          setConnectionLost(false);
           const hasPhaseVersion = Number.isInteger(data.phaseVersion) && Number(data.phaseVersion) >= 0;
           const incomingPhaseVersion = hasPhaseVersion
             ? Number(data.phaseVersion)
             : 0;
-          if (incomingPhaseVersion < phaseVersionRef.current || (!hasPhaseVersion && phaseVersionRef.current > 0)) {
+          const isSameRoom = sessionDataRef.current?.sessionId === data.sessionId;
+          if (isSameRoom && (incomingPhaseVersion < phaseVersionRef.current || (!hasPhaseVersion && phaseVersionRef.current > 0))) {
             // Do not let a delayed reconnect snapshot overwrite a newer
-            // phase event already rendered by this tutor socket.
+            // phase event already rendered by this tutor socket. A different
+            // room starts its own version count, so its snapshot always wins.
             return;
+          }
+          if (!isSameRoom) {
+            setTotalAnswered(0);
+            setAllAnsweredData([]);
+            setQuestionEnded(false);
+            // The tutor was away past the grace period and the lesson closed.
+            if ((sessionDataRef.current?.currentPhase ?? 0) > 0) toast.warning(t("lesson.live.roomExpired"));
           }
           phaseVersionRef.current = incomingPhaseVersion;
           phaseChangeIdRef.current = typeof data.phaseChangeId === 'string'
@@ -166,7 +196,18 @@ export const useLessonSocket = (
           sessionDataRef.current = data;
           setSessionData(data);
           setArticleData(data.articleData);
-          if (Array.isArray(data.participants)) setParticipants(data.participants);
+          if (Array.isArray(data.participants)) {
+            setParticipants(data.participants);
+            // Coming back to a question: pick up the answers already in.
+            if (!data.gameState) {
+              const answered = data.participants.filter((p: Participant) => p.hasAnsweredCurrentPhase);
+              setTotalAnswered(answered.length);
+              if (answered.length > 0 && answered.length === data.participants.length) {
+                setAllAnsweredData(answered.map((p: Participant) => ({ studentId: p.studentId, name: p.name, answer: p.latestAnswer })));
+                setQuestionEnded(true);
+              }
+            }
+          }
           setFlagCounts(data.flagCounts || {});
         });
 
@@ -247,13 +288,14 @@ export const useLessonSocket = (
         socketInstance.on('game_results_updated', handleGameState);
 
         socketInstance.on('error', (data) => {
-          setError(data.message);
+          reportProblem(data.message);
         });
 
-        socketInstance.on('session_deleted', (data) => {
+        socketInstance.on('session_deleted', () => {
           sessionDataRef.current = null;
           setSessionData(null);
-          setError(t("app.lessonSessionCancelled"));
+          // Finishing the class ends the room too, and the page is already leaving.
+          if (!finishRequestRef.current) setError(t("app.lessonSessionCancelled"));
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Could not prepare the tutor lesson lobby.');
@@ -285,8 +327,9 @@ export const useLessonSocket = (
       setTotalAnswered(0);
       setAllAnsweredData([]);
       setQuestionEnded(false);
+      setConnectionLost(false);
     };
-  }, [tutorId, articleId, classId, classBookCycleId, bookId, demo, lessonSocketUrl, invalidatePhaseChange]);
+  }, [tutorId, articleId, classId, classBookCycleId, bookId, demo, lessonSocketUrl, invalidatePhaseChange, reportProblem]);
 
   const changePhase = useCallback((phase: number): Promise<boolean> => {
     const pendingRequest = phaseChangeInFlightRef.current;
@@ -300,7 +343,7 @@ export const useLessonSocket = (
       !activeSocket.connected ||
       !sessionReadyRef.current
     ) {
-      setError('The lesson connection is unavailable. Please wait for it to reconnect and try again.');
+      reportProblem(t("lesson.live.connectionUnavailable"));
       return Promise.resolve(false);
     }
 
@@ -326,7 +369,7 @@ export const useLessonSocket = (
     phaseChangeCancelRef.current = () => settle(false);
 
     const timeout = setTimeout(() => {
-      setError('The lesson server did not confirm the phase change. Please check the connection and try again.');
+      reportProblem(t("lesson.live.phaseChangeTimeout"));
       settle(false);
     }, PHASE_CHANGE_TIMEOUT_MS);
 
@@ -336,7 +379,7 @@ export const useLessonSocket = (
         { sessionId: activeSession.sessionId, phase },
         (result?: PhaseChangeResult) => {
           if (!result?.ok) {
-            setError(result?.message || 'Could not change the lesson phase. Please try again.');
+            reportProblem(t("lesson.live.phaseChangeFailed"));
             settle(false);
             return;
           }
@@ -344,12 +387,12 @@ export const useLessonSocket = (
         },
       );
     } catch {
-      setError('Could not send the phase change. Please check the connection and try again.');
+      reportProblem(t("lesson.live.phaseChangeFailed"));
       settle(false);
     }
 
     return request;
-  }, []);
+  }, [reportProblem]);
 
   const syncActiveSentence = (index: number) => {
     if (socketRef.current && sessionData) {
@@ -361,6 +404,15 @@ export const useLessonSocket = (
     if (socketRef.current && sessionData) {
       socketRef.current.emit('end_question', { sessionId: sessionData.sessionId });
     }
+  };
+
+  const endGame = () => {
+    // Sent before the room is ours again, the server would refuse it.
+    if (!socketRef.current?.connected || !sessionReadyRef.current) {
+      reportProblem(t("lesson.live.connectionUnavailable"));
+      return;
+    }
+    if (sessionData) socketRef.current.emit('end_game', { sessionId: sessionData.sessionId });
   };
 
   const startGameVote = (phase?: number) => {
@@ -432,7 +484,7 @@ export const useLessonSocket = (
         if (settled) return;
         settled = true;
         finishRequestRef.current = null;
-        setError('Could not finish the lesson. Please try again while the connection is available.');
+        reportProblem(t("lesson.live.finishFailed"));
         resolve(false);
       }, 5000);
 
@@ -446,7 +498,7 @@ export const useLessonSocket = (
           finishRequestRef.current = null;
 
           if (!result?.ok) {
-            setError('Could not finish the lesson. Please try again.');
+            reportProblem(t("lesson.live.finishFailed"));
             resolve(false);
             return;
           }
@@ -473,10 +525,12 @@ export const useLessonSocket = (
     questionEnded,
     articleData,
     error,
+    connectionLost,
     flagCounts,
     changePhase,
     syncActiveSentence,
     endQuestion,
+    endGame,
     startGameVote,
     lockGameVote,
     startGameIntro,

@@ -5,6 +5,14 @@ const prisma = vi.hoisted(() => ({
   interactiveSession: {
     updateMany: vi.fn(),
   },
+  activeLessonSessionLock: {
+    create: vi.fn(),
+    deleteMany: vi.fn(),
+    findUnique: vi.fn(),
+  },
+  user: { findUnique: vi.fn() },
+  sessionParticipant: { upsert: vi.fn(), update: vi.fn() },
+  sessionAnswer: { findUnique: vi.fn(), upsert: vi.fn() },
 }));
 
 vi.mock("@tutor-advantage/database", () => ({ prisma }));
@@ -16,7 +24,101 @@ vi.mock("@tutor-advantage/shared-config", () => ({
   },
 }));
 
-import { persistLiveSessionState } from "./SessionDBWriter";
+import {
+  ACTIVE_SESSION_LOCK_STALE_MS,
+  UNRESTORABLE_LOCK_STALE_MS,
+  claimActiveSession,
+  persistAnswer,
+  persistLiveSessionState,
+} from "./SessionDBWriter";
+
+const CLASS_ID = "11111111-1111-4111-8111-111111111111";
+const SESSION_ID = "22222222-2222-4222-8222-222222222222";
+const OTHER_SESSION_ID = "33333333-3333-4333-8333-333333333333";
+const TUTOR_ID = "44444444-4444-4444-8444-444444444444";
+const STUDENT_ID = "55555555-5555-4555-8555-555555555555";
+
+describe("claimActiveSession", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    prisma.activeLessonSessionLock.create.mockRejectedValueOnce(new Error("unique"));
+  });
+
+  it("keeps a recent lock so a returning tutor rehydrates the lesson instead of starting over", async () => {
+    prisma.activeLessonSessionLock.findUnique.mockResolvedValue({
+      sessionId: OTHER_SESSION_ID,
+      lastHeartbeatAt: new Date(Date.now() - 5 * 60_000),
+    });
+
+    await expect(claimActiveSession(CLASS_ID, SESSION_ID, TUTOR_ID)).resolves.toEqual({
+      acquired: false,
+      existingSessionId: OTHER_SESSION_ID,
+    });
+    expect(prisma.activeLessonSessionLock.deleteMany).not.toHaveBeenCalled();
+  });
+
+  it("frees a lock left over from a crash", async () => {
+    prisma.activeLessonSessionLock.findUnique.mockResolvedValue({
+      sessionId: OTHER_SESSION_ID,
+      lastHeartbeatAt: new Date(Date.now() - ACTIVE_SESSION_LOCK_STALE_MS - 1_000),
+    });
+    prisma.activeLessonSessionLock.deleteMany.mockResolvedValue({ count: 1 });
+    prisma.activeLessonSessionLock.create.mockResolvedValueOnce({});
+
+    await expect(claimActiveSession(CLASS_ID, SESSION_ID, TUTOR_ID)).resolves.toEqual({ acquired: true });
+  });
+
+  it("frees a lock sooner when its room cannot be restored", async () => {
+    prisma.activeLessonSessionLock.findUnique.mockResolvedValue({
+      sessionId: OTHER_SESSION_ID,
+      lastHeartbeatAt: new Date(Date.now() - UNRESTORABLE_LOCK_STALE_MS - 1_000),
+    });
+    prisma.activeLessonSessionLock.deleteMany.mockResolvedValue({ count: 1 });
+    prisma.activeLessonSessionLock.create.mockResolvedValueOnce({});
+
+    await expect(
+      claimActiveSession(CLASS_ID, SESSION_ID, TUTOR_ID, UNRESTORABLE_LOCK_STALE_MS),
+    ).resolves.toEqual({ acquired: true });
+  });
+});
+
+describe("persistAnswer", () => {
+  const answer = { sessionId: SESSION_ID, studentId: STUDENT_ID, phase: 10, answerText: "{}", isCorrect: null };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    prisma.user.findUnique.mockResolvedValue({ userId: STUDENT_ID });
+    prisma.sessionParticipant.upsert.mockResolvedValue({});
+    prisma.sessionParticipant.update.mockResolvedValue({});
+    prisma.sessionAnswer.upsert.mockResolvedValue({});
+  });
+
+  it("adds the score of a first answer to the tally", async () => {
+    prisma.sessionAnswer.findUnique.mockResolvedValue(null);
+
+    await persistAnswer({ ...answer, score: 8 });
+
+    expect(prisma.sessionAnswer.upsert).toHaveBeenCalledWith(expect.objectContaining({
+      create: expect.objectContaining({ score: 8, phase: 10 }),
+    }));
+    expect(prisma.sessionParticipant.update).toHaveBeenCalledWith(expect.objectContaining({
+      data: { score: { increment: 8 } },
+    }));
+  });
+
+  it("replaces a replayed phase and moves the tally by the difference", async () => {
+    prisma.sessionAnswer.findUnique.mockResolvedValue({ score: 8 });
+
+    await persistAnswer({ ...answer, score: 3 });
+
+    expect(prisma.sessionAnswer.upsert).toHaveBeenCalledWith(expect.objectContaining({
+      update: expect.objectContaining({ score: 3 }),
+    }));
+    expect(prisma.sessionParticipant.update).toHaveBeenCalledWith(expect.objectContaining({
+      data: { score: { increment: -5 } },
+    }));
+  });
+});
 
 describe("persistLiveSessionState", () => {
   beforeEach(() => {

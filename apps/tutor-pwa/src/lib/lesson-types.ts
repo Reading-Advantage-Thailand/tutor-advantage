@@ -3,6 +3,8 @@ export interface Participant {
   name: string;
   pictureUrl?: string;
   score: number;
+  /** Set when the student's phone has been disconnected for a while. */
+  offlineSince?: number;
   [key: string]: any;
 }
 
@@ -73,6 +75,14 @@ export interface GamePhaseState {
   teacherDemoEnabled?: boolean;
   countdownEndsAt?: number;
   results: Record<string, GamePhaseResult>;
+  /** Server time when play began. */
+  playingStartedAt?: number;
+  /** Who the class waits for: students in the room when play began. */
+  expectedStudentIds?: string[];
+  /** The game that would win if the vote closed now (server's tie rule). */
+  leadingGameId?: string;
+  /** Server time when this state was sent, for a device with a wrong clock. */
+  serverNow?: number;
 }
 
 export interface TutorSessionData {

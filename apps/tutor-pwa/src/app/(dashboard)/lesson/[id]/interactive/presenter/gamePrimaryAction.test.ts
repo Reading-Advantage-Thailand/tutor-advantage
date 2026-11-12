@@ -27,6 +27,13 @@ describe("getGamePrimaryAction", () => {
     expect(getGamePrimaryAction({ ...base, status: "playing" }).disabled).toBe(true);
   });
 
+  it("names who the class is waiting for during play", () => {
+    const playing = { ...base, status: "playing" };
+    expect(getGamePrimaryAction({ ...playing, waitingNames: ["น้องพลอย"] })).toEqual({ label: "รอ น้องพลอย", disabled: true });
+    expect(getGamePrimaryAction({ ...playing, waitingNames: ["น้องพลอย", "น้องบีม", "น้องเจ"] }).label).toBe("รอ น้องพลอย +2");
+    expect(getGamePrimaryAction(playing).label).toBe("กำลังเล่นเกม");
+  });
+
   it("blocks voting when no game is playable", () => {
     expect(getGamePrimaryAction({ ...base, status: "voting", hasPlayableGame: false })).toEqual({
       label: "เกมอื่นๆ จะเปิดให้เล่นเร็วๆนี้",

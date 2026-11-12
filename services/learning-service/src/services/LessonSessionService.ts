@@ -11,6 +11,55 @@ export interface SessionParticipant {
   hasAnsweredCurrentPhase: boolean;
   latestAnswer?: any;
   isReady: boolean;
+  // Set when this student's socket has been gone for a while (see
+  // STUDENT_OFFLINE_NOTICE_MS in lessonHandler). Joining again clears it.
+  offlineSince?: number;
+  // When the current socket joined. Instances compare it to tell a student's
+  // newest connection from one that dropped but is not timed out yet.
+  connectedAt?: number;
+}
+
+/**
+ * Which connection of a student to keep when another instance reports one.
+ * The newest join wins; without join times (an older instance), a socket
+ * connected here wins over one reported from elsewhere. An offline mark belongs
+ * to the connection it was made for, so it comes along with that connection.
+ */
+function pickParticipantConnection(
+  existing: SessionParticipant | undefined,
+  raw: Record<string, unknown>,
+  isLocalSocket?: (socketId: string) => boolean,
+): { socketId: string; connectedAt?: number; offlineSince?: number } {
+  const studentId = String(raw.studentId);
+  const remoteSocketId = typeof raw.socketId === "string" ? raw.socketId : undefined;
+  const remoteConnectedAt = typeof raw.connectedAt === "number" ? raw.connectedAt : undefined;
+  const remoteOfflineSince = typeof raw.offlineSince === "number" ? raw.offlineSince : undefined;
+  const remote = {
+    socketId: remoteSocketId ?? "restored:" + studentId,
+    connectedAt: remoteConnectedAt,
+    offlineSince: remoteOfflineSince,
+  };
+  if (!existing?.socketId) return remote;
+  if (!remoteSocketId || remoteSocketId === existing.socketId) {
+    // The same connection, or a list without sockets: the sender's offline mark applies.
+    return {
+      socketId: existing.socketId,
+      connectedAt: existing.connectedAt ?? remoteConnectedAt,
+      offlineSince: remoteOfflineSince,
+    };
+  }
+  // The sender knows this student only from the database, so it knows nothing
+  // about their connection. Keep ours, offline mark included.
+  if (remoteSocketId.startsWith("restored:")) {
+    return { socketId: existing.socketId, connectedAt: existing.connectedAt, offlineSince: existing.offlineSince };
+  }
+  // A real connection elsewhere beats a database placeholder here.
+  if (existing.socketId.startsWith("restored:")) return remote;
+  const remoteIsNewer = remoteConnectedAt !== undefined && existing.connectedAt !== undefined
+    ? remoteConnectedAt > existing.connectedAt
+    : Boolean(isLocalSocket) && !isLocalSocket!(existing.socketId);
+  if (remoteIsNewer) return remote;
+  return { socketId: existing.socketId, connectedAt: existing.connectedAt, offlineSince: existing.offlineSince };
 }
 
 export interface PhaseSnapshot {
@@ -75,6 +124,16 @@ export interface GamePhaseState {
   countdownEndsAt?: number;
   results: Record<string, GamePhaseResult>;
   voteFirstSeen: Record<string, number>;
+  // Server time when play began. A phone that joins a running round uses it to
+  // play the time that is left instead of a fresh round.
+  playingStartedAt?: number;
+  // Who was in the room when play began. Only these students are waited for, so
+  // a late joiner can play and submit without holding up the class.
+  expectedStudentIds?: string[];
+  // Payload only: the game that would win if the vote closed now.
+  leadingGameId?: string;
+  // Payload only: lets a phone with a wrong clock read the server's timestamps.
+  serverNow?: number;
 }
 
 export interface LessonSession {
@@ -113,6 +172,9 @@ export interface LessonSession {
   gameState?: GamePhaseState;
   currentDbSessionId?: string; // Track active DB ID for dynamic restarting
   finalNotificationSent?: boolean;
+  // Set while the tutor's connection is gone. Students keep working and the
+  // tutor can take the room back at the same phase.
+  tutorAwaySince?: number;
   // Demo sessions are ephemeral previews: never persisted, never AI-scored, no class.
   isDemo?: boolean;
   // In-memory checkpoints for safe tutor-only phase rewind. These are scoped
@@ -137,6 +199,8 @@ export interface KickParticipantResult {
   /** Every remaining student has answered the current question. */
   allAnswered: boolean;
   flagsChanged: boolean;
+  /** The kicked student's vote was removed from a running vote. */
+  votesChanged: boolean;
 }
 
 export interface RestoredLiveSessionState {
@@ -217,6 +281,21 @@ const DEFAULT_GAME_BY_CATEGORY: Partial<Record<GameCategory, string>> = {
   vocabulary: "dragon-flight",
   sentence: "castle-defense",
 };
+
+// Clients should already stay at 10 per game; the extra room covers one that does
+// not. Game scores are client-reported and only count as lesson points.
+export const MAX_GAME_SCORE = 30;
+
+// How long a lesson waits for its tutor to reconnect before the room closes.
+export const TUTOR_RECONNECT_GRACE_MS = 10 * 60_000;
+// A lobby has nothing to lose, and a tutor who leaves it to pick another article
+// must not find the old article still holding the room.
+export const TUTOR_LOBBY_GRACE_MS = 15_000;
+
+/** The tutor's grace period for this room. */
+export function getTutorGraceMs(session: Pick<LessonSession, "isDemo" | "currentPhase">): number {
+  return session.isDemo || session.currentPhase <= 0 ? TUTOR_LOBBY_GRACE_MS : TUTOR_RECONNECT_GRACE_MS;
+}
 
 function isEnabledGameForCategory(category: GameCategory, gameId?: string | null): boolean {
   return !!gameId && ENABLED_GAME_BY_CATEGORY[category].has(gameId);
@@ -574,7 +653,9 @@ class LessonSessionService {
       score: previous ? previous.score : 0,
       hasAnsweredCurrentPhase: previous && samePhase ? previous.hasAnsweredCurrentPhase : false,
       latestAnswer: previous && samePhase ? previous.latestAnswer : undefined,
-      isReady: previous ? previous.isReady : false
+      isReady: previous ? previous.isReady : false,
+      // A "restored:" id is a student known only from the database, not a connection.
+      connectedAt: socketId.startsWith("restored:") ? undefined : Date.now(),
     });
 
     return session;
@@ -587,6 +668,7 @@ class LessonSessionService {
     name: string,
     pictureUrl: string | undefined,
     score: number,
+    options: { keepLiveScore?: boolean } = {},
   ): LessonSession | undefined {
     const session = this.sessions.get(sessionId);
     if (!session) return undefined;
@@ -594,7 +676,7 @@ class LessonSessionService {
     const existing = session.participants.get(studentId);
     if (!existing) {
       if (session.kickedParticipants?.has(studentId)) return session;
-      return this.joinSessionByClassId(
+      const joined = this.joinSessionByClassId(
         session.classId || "",
         studentId,
         name,
@@ -602,13 +684,54 @@ class LessonSessionService {
         pictureUrl,
         studentId,
       );
+      const restored = joined?.participants.get(studentId);
+      if (restored) restored.score = score;
+      return joined;
     }
 
     existing.resolvedUserId = existing.resolvedUserId || studentId;
     if (name) existing.name = name;
     if (pictureUrl) existing.pictureUrl = pictureUrl;
-    existing.score = score;
+    // A room alive in memory knows the score better than the database, whose
+    // writes run behind it. Overwriting here made scores jump on any reconnect.
+    if (!options.keepLiveScore) existing.score = score;
     return session;
+  }
+
+  /** The student whose current socket this is, if any. */
+  findParticipantBySocketId(socketId: string): { sessionId: string; studentId: string } | null {
+    for (const [sessionId, session] of this.sessions.entries()) {
+      for (const [studentId, participant] of session.participants.entries()) {
+        if (participant.socketId === socketId) return { sessionId, studentId };
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Marks a student offline unless they rejoined on a newer socket meanwhile.
+   * Returns the session only when the roster changed.
+   */
+  markParticipantOffline(sessionId: string, studentId: string, socketId: string): LessonSession | undefined {
+    const session = this.sessions.get(sessionId);
+    const participant = session?.participants.get(studentId);
+    if (!session || !participant || participant.socketId !== socketId || participant.offlineSince) return undefined;
+    participant.offlineSince = Date.now();
+    return session;
+  }
+
+  markTutorAway(sessionId: string, since = Date.now()): boolean {
+    const session = this.sessions.get(sessionId);
+    if (!session || session.tutorAwaySince) return false;
+    session.tutorAwaySince = since;
+    return true;
+  }
+
+  clearTutorAway(sessionId: string): boolean {
+    const session = this.sessions.get(sessionId);
+    if (!session?.tutorAwaySince) return false;
+    session.tutorAwaySince = undefined;
+    return true;
   }
 
   toggleReady(sessionId: string, studentId: string): LessonSession | undefined {
@@ -647,6 +770,17 @@ class LessonSessionService {
     }
 
     const gameState = session.gameState;
+    let votesChanged = false;
+    // A kicked student no longer counts: not in a running vote, and not as
+    // someone the class waits for if they rejoin mid-game.
+    if (gameState?.status === "voting" && gameState.votes[studentId]) {
+      delete gameState.votes[studentId];
+      this.pruneVoteFirstSeen(gameState);
+      votesChanged = true;
+    }
+    if (gameState?.expectedStudentIds) {
+      gameState.expectedStudentIds = gameState.expectedStudentIds.filter((id) => id !== studentId);
+    }
     let gameCompleted = false;
     let allAnswered = false;
     if (!session.phaseRestored) {
@@ -662,11 +796,14 @@ class LessonSessionService {
       }
     }
 
-    return { session, participant, gameCompleted, allAnswered, flagsChanged };
+    return { session, participant, gameCompleted, allAnswered, flagsChanged, votesChanged };
   }
 
   private hasEveryParticipantSubmittedGame(session: LessonSession, gameState: GamePhaseState): boolean {
+    const expected = gameState.expectedStudentIds;
     for (const studentId of session.participants.keys()) {
+      // A student who joined after play began may play but is never waited for.
+      if (expected && !expected.includes(studentId)) continue;
       if (!gameState.results[studentId]) return false;
     }
     return true;
@@ -782,8 +919,10 @@ class LessonSessionService {
       restoredParticipants.set(saved.studentId, {
         ...cloneJson(saved),
         // A participant may have reconnected since this checkpoint was made;
-        // never restore an obsolete socket id.
+        // never restore an obsolete socket id or connection state.
         socketId: liveParticipant?.socketId || saved.socketId,
+        offlineSince: liveParticipant?.offlineSince,
+        connectedAt: liveParticipant?.connectedAt,
       });
     }
 
@@ -816,6 +955,11 @@ class LessonSessionService {
     );
     session.pairs = cloneJson(snapshot.pairs);
     session.gameState = cloneJson(snapshot.gameState);
+    // A game left mid-round cannot resume in a review-only phase, so show it as
+    // ended. Otherwise phones mount the game and then never send a score.
+    if (session.gameState && ["countdown", "playing"].includes(session.gameState.status)) {
+      session.gameState.status = "results";
+    }
     session.currentDbSessionId = snapshot.currentDbSessionId;
 
     logger.info(`[Service] Rewound session ${sessionId} to phase ${phase}`);
@@ -850,7 +994,43 @@ class LessonSessionService {
       votes: { ...session.gameState.votes },
       results: { ...session.gameState.results },
       voteFirstSeen: { ...session.gameState.voteFirstSeen },
+      leadingGameId: session.gameState.status === "voting"
+        ? this.pickVoteWinner(session.gameState)
+        : session.gameState.selectedGameId,
+      serverNow: Date.now(),
     };
+  }
+
+  /**
+   * The one rule for who wins a vote: most votes, then the game voted for first,
+   * then the category's default game when nobody voted.
+   */
+  private pickVoteWinner(gameState: GamePhaseState): string | undefined {
+    const counts = new Map<string, number>();
+    for (const gameId of Object.values(gameState.votes)) {
+      counts.set(gameId, (counts.get(gameId) || 0) + 1);
+    }
+    let selectedGameId = getDefaultGameForCategory(gameState.category);
+    let selectedCount = -1;
+    let selectedFirstSeen = Number.POSITIVE_INFINITY;
+    for (const [gameId, count] of counts.entries()) {
+      if (!isEnabledGameForCategory(gameState.category, gameId)) continue;
+      const firstSeen = gameState.voteFirstSeen[gameId] || Number.POSITIVE_INFINITY;
+      if (count > selectedCount || (count === selectedCount && firstSeen < selectedFirstSeen)) {
+        selectedGameId = gameId;
+        selectedCount = count;
+        selectedFirstSeen = firstSeen;
+      }
+    }
+    return selectedGameId;
+  }
+
+  /** A game nobody votes for any more gives up its first-vote priority. */
+  private pruneVoteFirstSeen(gameState: GamePhaseState): void {
+    const stillVoted = new Set(Object.values(gameState.votes));
+    for (const gameId of Object.keys(gameState.voteFirstSeen)) {
+      if (!stillVoted.has(gameId)) delete gameState.voteFirstSeen[gameId];
+    }
   }
 
   startGameVote(sessionId: string, phase: number): GamePhaseState | null {
@@ -873,6 +1053,7 @@ class LessonSessionService {
     if (!session || session.phaseRestored || !session.gameState || session.gameState.status !== "voting") return null;
     if (!isEnabledGameForCategory(session.gameState.category, gameId)) return null;
     session.gameState.votes[studentId] = gameId;
+    this.pruneVoteFirstSeen(session.gameState);
     if (!session.gameState.voteFirstSeen[gameId]) {
       session.gameState.voteFirstSeen[gameId] = Date.now();
     }
@@ -882,22 +1063,7 @@ class LessonSessionService {
   lockGameVote(sessionId: string): GamePhaseState | null {
     const session = this.sessions.get(sessionId);
     if (!session || session.phaseRestored || !session.gameState) return null;
-    const counts = new Map<string, number>();
-    for (const gameId of Object.values(session.gameState.votes)) {
-      counts.set(gameId, (counts.get(gameId) || 0) + 1);
-    }
-    let selectedGameId = getDefaultGameForCategory(session.gameState.category);
-    let selectedCount = -1;
-    let selectedFirstSeen = Number.POSITIVE_INFINITY;
-    for (const [gameId, count] of counts.entries()) {
-      if (!isEnabledGameForCategory(session.gameState.category, gameId)) continue;
-      const firstSeen = session.gameState.voteFirstSeen[gameId] || Number.POSITIVE_INFINITY;
-      if (count > selectedCount || (count === selectedCount && firstSeen < selectedFirstSeen)) {
-        selectedGameId = gameId;
-        selectedCount = count;
-        selectedFirstSeen = firstSeen;
-      }
-    }
+    const selectedGameId = this.pickVoteWinner(session.gameState);
     if (selectedGameId) {
       session.gameState.selectedGameId = selectedGameId;
       session.gameState.status = "ready";
@@ -969,7 +1135,20 @@ class LessonSessionService {
       return null;
     }
     session.gameState.status = "playing";
+    session.gameState.playingStartedAt = Date.now();
+    session.gameState.expectedStudentIds = Array.from(session.participants.keys());
     return this.getGameStatePayload(session);
+  }
+
+  /**
+   * The tutor closes a running game. Anyone without a result simply has none,
+   * which is already what "did not play" means. A late result is still accepted.
+   */
+  endGame(sessionId: string): { session: LessonSession; gameState: GamePhaseState } | null {
+    const session = this.sessions.get(sessionId);
+    if (!session || session.phaseRestored || session.gameState?.status !== "playing") return null;
+    session.gameState.status = "results";
+    return { session, gameState: this.getGameStatePayload(session)! };
   }
 
   submitGameResult(
@@ -980,6 +1159,8 @@ class LessonSessionService {
     const session = this.sessions.get(sessionId);
     const gameState = session?.gameState;
     if (!session || session.phaseRestored || !gameState || !["playing", "results"].includes(gameState.status)) return null;
+    // A game left over from an earlier phase takes no more results.
+    if (gameState.phase !== session.currentPhase) return null;
     if (gameState.results[studentId]) {
       return {
         session,
@@ -1005,7 +1186,7 @@ class LessonSessionService {
     const correct = capCount(result.correct);
     const total = capCount(result.total);
     if (
-      !isBoundedInteger(result.score, 100_000) ||
+      !isBoundedInteger(result.score, Number.MAX_SAFE_INTEGER) ||
       !isBoundedInteger(result.correct, Number.MAX_SAFE_INTEGER) ||
       !isBoundedInteger(result.total, Number.MAX_SAFE_INTEGER) ||
       !isBoundedInteger(result.durationMs, 30 * 60 * 1000) ||
@@ -1014,11 +1195,11 @@ class LessonSessionService {
       return null;
     }
 
-    // Game results are client-reported, so validate and bound them above before
-    // using the score for the live lesson leaderboard. Game points are only
-    // lesson points; they are not used for money-bearing metrics.
+    // Game results are client-reported, so validate them above and cap the score
+    // rather than reject it: a dropped result leaves the student shown as still
+    // playing. Game points are only lesson points, not money-bearing metrics.
     // Keep this value in the participant tally so student and tutor views agree.
-    const score = result.score ?? 0;
+    const score = Math.min(result.score ?? 0, MAX_GAME_SCORE);
     const durationMs = result.durationMs;
     participant.score = (participant.score || 0) + score;
     participant.hasAnsweredCurrentPhase = true;
@@ -1039,7 +1220,10 @@ class LessonSessionService {
     // Count current participants only: a kicked student's earlier result
     // stays on the board but must not stand in for someone still playing.
     const allSubmitted = this.hasEveryParticipantSubmittedGame(session, gameState);
-    gameState.status = allSubmitted ? "results" : "playing";
+    // A late result after the tutor ended the game must not reopen it.
+    if (gameState.status !== "results") {
+      gameState.status = allSubmitted ? "results" : "playing";
+    }
     return {
       session,
       gameState: this.getGameStatePayload(session)!,
@@ -1099,12 +1283,32 @@ class LessonSessionService {
    * prevents a later answer/reconnect from being evaluated against an old
    * phase on that instance.
    */
-  applyRemoteEvent(sessionId: string, event: string, payload: unknown): void {
+  /**
+   * Applies an event another service instance published. `isLocalSocket` tells
+   * whether a socket id is connected to this instance.
+   */
+  applyRemoteEvent(
+    sessionId: string,
+    event: string,
+    payload: unknown,
+    options: { isLocalSocket?: (socketId: string) => boolean } = {},
+  ): void {
     const session = this.sessions.get(sessionId);
     if (!session) return;
 
     if (event === "session_deleted") {
       this.deleteSession(sessionId);
+      return;
+    }
+
+    if (event === "tutor_away") {
+      const since = isRecord(payload) ? Number(payload.since) : NaN;
+      session.tutorAwaySince = session.tutorAwaySince || (Number.isFinite(since) ? since : Date.now());
+      return;
+    }
+
+    if (event === "tutor_back") {
+      session.tutorAwaySince = undefined;
       return;
     }
 
@@ -1148,6 +1352,7 @@ class LessonSessionService {
           session.kickedParticipants?.delete(raw.studentId);
         }
         const existing = session.participants.get(raw.studentId);
+        const connection = pickParticipantConnection(existing, raw, options.isLocalSocket);
         const hasLatestAnswer = Object.prototype.hasOwnProperty.call(raw, "latestAnswer");
         const hasAnswered = Object.prototype.hasOwnProperty.call(raw, "hasAnsweredCurrentPhase");
         session.participants.set(raw.studentId, {
@@ -1159,8 +1364,8 @@ class LessonSessionService {
           pictureUrl: typeof raw.pictureUrl === "string"
             ? raw.pictureUrl
             : existing?.pictureUrl,
-          socketId: existing?.socketId
-            || (typeof raw.socketId === "string" ? raw.socketId : "restored:" + raw.studentId),
+          socketId: connection.socketId,
+          connectedAt: connection.connectedAt,
           score: typeof raw.score === "number" ? raw.score : existing?.score || 0,
           hasAnsweredCurrentPhase: hasAnswered
             ? raw.hasAnsweredCurrentPhase === true
@@ -1169,6 +1374,7 @@ class LessonSessionService {
           isReady: typeof raw.isReady === "boolean"
             ? raw.isReady
             : existing?.isReady === true,
+          offlineSince: connection.offlineSince,
         });
       }
       return;
@@ -1184,9 +1390,38 @@ class LessonSessionService {
       (event === "game_state_changed" || event === "game_votes_updated" || event === "game_results_updated")
       && isRecord(payload)
     ) {
-      session.gameState = isRecord(payload.gameState)
+      const incoming = isRecord(payload.gameState)
         ? cloneJson(payload.gameState as GamePhaseState)
         : undefined;
+      // A result accepted elsewhere just before the class moved on belongs to the
+      // phase that is over. Events arrive in order, so a current one is never
+      // behind its own phase change.
+      if (incoming && incoming.phase !== session.currentPhase) return;
+      const current = session.gameState;
+      const sameRound = Boolean(
+        incoming && current &&
+        incoming.phase === current.phase &&
+        incoming.selectedGameId === current.selectedGameId &&
+        incoming.playingStartedAt !== undefined &&
+        incoming.playingStartedAt === current.playingStartedAt,
+      );
+      if (incoming && current && sameRound) {
+        // Another instance may publish what it saw just before the tutor ended
+        // the game here, or before a result arrived here. Within one round,
+        // results only grow and a closed game stays closed.
+        incoming.results = { ...current.results, ...incoming.results };
+        if (current.status === "results" && incoming.status === "playing") incoming.status = "results";
+        // Two last results can land on two instances at once, each missing the
+        // other's. With both merged, the round is over.
+        if (
+          incoming.status === "playing" &&
+          session.participants.size > 0 &&
+          this.hasEveryParticipantSubmittedGame(session, incoming)
+        ) {
+          incoming.status = "results";
+        }
+      }
+      session.gameState = incoming;
     }
   }
 
