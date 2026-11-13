@@ -11,7 +11,7 @@ const prisma = vi.hoisted(() => ({
     findUnique: vi.fn(),
   },
   user: { findUnique: vi.fn() },
-  sessionParticipant: { upsert: vi.fn(), update: vi.fn() },
+  sessionParticipant: { upsert: vi.fn(), update: vi.fn(), updateMany: vi.fn() },
   sessionAnswer: { findUnique: vi.fn(), upsert: vi.fn() },
 }));
 
@@ -28,8 +28,10 @@ import {
   ACTIVE_SESSION_LOCK_STALE_MS,
   UNRESTORABLE_LOCK_STALE_MS,
   claimActiveSession,
+  markParticipantRemoved,
   persistAnswer,
   persistLiveSessionState,
+  persistSessionParticipant,
 } from "./SessionDBWriter";
 
 const CLASS_ID = "11111111-1111-4111-8111-111111111111";
@@ -79,6 +81,32 @@ describe("claimActiveSession", () => {
     await expect(
       claimActiveSession(CLASS_ID, SESSION_ID, TUTOR_ID, UNRESTORABLE_LOCK_STALE_MS),
     ).resolves.toEqual({ acquired: true });
+  });
+});
+
+describe("removed students", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    prisma.user.findUnique.mockResolvedValue({ userId: STUDENT_ID });
+    prisma.sessionParticipant.upsert.mockResolvedValue({});
+    prisma.sessionParticipant.updateMany.mockResolvedValue({ count: 2 });
+  });
+
+  it("marks the student removed in the room and its current round", async () => {
+    await markParticipantRemoved([OTHER_SESSION_ID, SESSION_ID, undefined, SESSION_ID], STUDENT_ID);
+
+    expect(prisma.sessionParticipant.updateMany).toHaveBeenCalledWith({
+      where: { sessionId: { in: [OTHER_SESSION_ID, SESSION_ID] }, studentUserId: STUDENT_ID },
+      data: { removedAt: expect.any(Date) },
+    });
+  });
+
+  it("clears the removal when the student joins again", async () => {
+    await persistSessionParticipant(SESSION_ID, STUDENT_ID);
+
+    expect(prisma.sessionParticipant.upsert).toHaveBeenCalledWith(expect.objectContaining({
+      update: { removedAt: null },
+    }));
   });
 });
 

@@ -12,6 +12,8 @@ import {
   lessonSessionService as service,
 } from "./LessonSessionService";
 
+const CLOCKED = { scoreClock: true };
+
 describe("lessonSessionService", () => {
   beforeEach(() => {
     service.resetForTest();
@@ -223,6 +225,375 @@ describe("lessonSessionService", () => {
     }, { isLocalSocket: () => true });
     expect(session.participants.get("student-2")).toMatchObject({ socketId: "socket-c" });
     expect(session.participants.get("student-2")?.offlineSince).toEqual(expect.any(Number));
+  });
+
+  describe("with several service instances", () => {
+    it("keeps each instance's newer points when two students score at once on two instances", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+      service.joinSessionByClassId("class-1", "y", "Y", "socket-y");
+      // X scores here.
+      const x = session.participants.get("x")!;
+      x.score = 10;
+      x.scoreAt = 5_000;
+
+      // The other instance counted Y and still has X at 0 from before.
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        participants: [
+          { studentId: "x", name: "X", socketId: "socket-x", score: 0, scoreAt: 1_000 },
+          { studentId: "y", name: "Y", socketId: "socket-y", score: 10, scoreAt: 5_001 },
+        ],
+      }, CLOCKED);
+
+      expect(session.participants.get("x")).toMatchObject({ score: 10, scoreAt: 5_000 });
+      expect(session.participants.get("y")).toMatchObject({ score: 10, scoreAt: 5_001 });
+    });
+
+    it("does not let a roster rebuilt from the database replace live points", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+      const x = session.participants.get("x")!;
+      x.score = 7;
+      x.scoreAt = 5_000;
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        participants: [{ studentId: "x", name: "X", socketId: "restored:x", score: 4 }],
+      }, CLOCKED);
+
+      expect(session.participants.get("x")?.score).toBe(7);
+    });
+
+    it("keeps a new lesson cycle's reset when an older roster arrives", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+      session.participants.get("x")!.score = 9;
+      session.participants.get("x")!.scoreAt = Date.now() - 60_000;
+      service.setPhase(session.sessionId, 1);
+      expect(session.participants.get("x")?.score).toBe(0);
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        participants: [{ studentId: "x", name: "X", socketId: "socket-x", score: 9, scoreAt: Date.now() - 60_000 }],
+      }, CLOCKED);
+
+      expect(session.participants.get("x")?.score).toBe(0);
+    });
+
+    it("keeps a kicked student out when another instance only knows them from the database", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+      service.kickParticipant(session.sessionId, "x");
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        participants: [{ studentId: "x", name: "X", socketId: "restored:x", score: 3 }],
+      }, CLOCKED);
+      // A real socket that connected before the kick is a stale list too.
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        participants: [{ studentId: "x", name: "X", socketId: "socket-old", connectedAt: Date.now() - 60_000 }],
+      }, CLOCKED);
+
+      expect(session.participants.has("x")).toBe(false);
+      expect(session.kickedParticipants?.has("x")).toBe(true);
+    });
+
+    it("lets a kicked student back after a real rejoin elsewhere, with the points they had", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+      session.participants.get("x")!.score = 6;
+      session.participants.get("x")!.scoreAt = Date.now() - 10_000;
+      service.kickParticipant(session.sessionId, "x");
+
+      // The other instance has no score history for X, so it reports 0 with no time.
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        participants: [{ studentId: "x", name: "X", socketId: "socket-new", connectedAt: Date.now() + 1_000, score: 0 }],
+      }, CLOCKED);
+
+      expect(session.kickedParticipants?.has("x")).toBe(false);
+      expect(session.participants.get("x")).toMatchObject({ socketId: "socket-new", score: 6 });
+    });
+  });
+
+  describe("review fixes for several instances", () => {
+    it("takes the sender's scores, as before, from a revision without score times", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+      session.participants.get("x")!.score = 3;
+      session.participants.get("x")!.scoreAt = Date.now();
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        participants: [{ studentId: "x", name: "X", socketId: "socket-x", score: 5 }],
+      });
+
+      expect(session.participants.get("x")).toMatchObject({ score: 5, scoreAt: undefined });
+    });
+
+    it("keeps its own value when another instance reports the same score time", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+      session.participants.get("x")!.score = 8;
+      session.participants.get("x")!.scoreAt = 5_000;
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        participants: [{ studentId: "x", name: "X", socketId: "socket-x", score: 2, scoreAt: 5_000 }],
+      }, CLOCKED);
+
+      expect(session.participants.get("x")?.score).toBe(8);
+    });
+
+    it("gives a score read from the database no change time", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+      session.participants.get("x")!.scoreAt = 5_000;
+
+      service.mergePersistedParticipant(session.sessionId, "x", "X", undefined, 12);
+
+      expect(session.participants.get("x")).toMatchObject({ score: 12, scoreAt: undefined });
+    });
+
+    it("rebuilds a removed student as a kick record that resumes their points on rejoin", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.restoreRemovedParticipant(session.sessionId, "x", "X", undefined, 15, 1_000);
+
+      expect(session.participants.has("x")).toBe(false);
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x2");
+      expect(session.participants.get("x")).toMatchObject({ score: 15, socketId: "socket-x2", hasAnsweredCurrentPhase: false });
+    });
+
+    it("starts a removed student at 0 in a new lesson cycle", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+      service.setPhase(session.sessionId, 18);
+      session.participants.get("x")!.score = 15;
+      service.kickParticipant(session.sessionId, "x");
+
+      service.setPhase(session.sessionId, 1);
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x2");
+
+      expect(session.participants.get("x")?.score).toBe(0);
+    });
+
+    it("keeps points counted elsewhere during a failed phase change, and undoes its own reset", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+      service.joinSessionByClassId("class-1", "y", "Y", "socket-y");
+      service.setPhase(session.sessionId, 18);
+      session.participants.get("x")!.score = 9;
+      session.participants.get("x")!.scoreAt = 1_000;
+      session.participants.get("y")!.score = 4;
+      session.participants.get("y")!.scoreAt = 1_000;
+      const before = service.captureTransitionState(session.sessionId)!;
+
+      // A new cycle resets everyone, then Y scores on another instance while it saves.
+      service.setPhase(session.sessionId, 1);
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        participants: [{ studentId: "y", name: "Y", socketId: "socket-y", score: 14, scoreAt: Date.now() + 5, hasAnsweredCurrentPhase: true }],
+      }, CLOCKED);
+
+      service.restoreTransitionState(session.sessionId, before);
+
+      expect(session.currentPhase).toBe(18);
+      expect(session.participants.get("x")?.score).toBe(9);
+      expect(session.participants.get("x")!.scoreAt!).toBeGreaterThan(1_000);
+      expect(session.participants.get("y")).toMatchObject({ score: 14, hasAnsweredCurrentPhase: true });
+    });
+  });
+
+  describe("rolling back a failed transition", () => {
+    it("does not mark a rewound phase's answers as answers to the phase the class returns to", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "a", "A", "socket-a");
+      service.setPhase(session.sessionId, 7);
+      session.participants.get("a")!.hasAnsweredCurrentPhase = true;
+      session.participants.get("a")!.latestAnswer = "phase 7 answer";
+      service.setPhase(session.sessionId, 9);
+      expect(session.participants.get("a")?.hasAnsweredCurrentPhase).toBe(false);
+      const before = service.captureTransitionState(session.sessionId)!;
+
+      service.rewindPhase(session.sessionId, 7);
+      expect(session.participants.get("a")?.hasAnsweredCurrentPhase).toBe(true);
+      service.restoreTransitionState(session.sessionId, before);
+
+      expect(session.currentPhase).toBe(9);
+      expect(session.participants.get("a")).toMatchObject({ hasAnsweredCurrentPhase: false, latestAnswer: undefined });
+    });
+
+    it("gives back the points of a student removed while a failed cycle reset was saving", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+      service.joinSessionByClassId("class-1", "k", "K", "socket-k");
+      service.setPhase(session.sessionId, 18);
+      session.participants.get("x")!.score = 9;
+      session.participants.get("k")!.score = 5;
+      service.kickParticipant(session.sessionId, "k");
+      const before = service.captureTransitionState(session.sessionId)!;
+
+      service.setPhase(session.sessionId, 1);
+      // While it saves: X is removed, K comes back.
+      service.kickParticipant(session.sessionId, "x");
+      service.joinSessionByClassId("class-1", "k", "K", "socket-k2");
+      service.restoreTransitionState(session.sessionId, before);
+
+      expect(session.kickedParticipants?.get("x")?.participant.score).toBe(9);
+      expect(session.participants.get("k")).toMatchObject({ score: 5, socketId: "socket-k2" });
+    });
+  });
+
+  describe("answer flags from other instances", () => {
+    it("ignores answer flags in a roster sent for the phase the class just left", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "s", "S", "socket-s");
+      service.setPhase(session.sessionId, 4);
+      const oldVersion = session.phaseVersion;
+      service.setPhase(session.sessionId, 5);
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        phaseVersion: oldVersion,
+        participants: [{ studentId: "s", name: "S", socketId: "socket-s", hasAnsweredCurrentPhase: true, latestAnswer: "A" }],
+      }, CLOCKED);
+
+      expect(session.participants.get("s")).toMatchObject({ hasAnsweredCurrentPhase: false, latestAnswer: undefined });
+    });
+
+    it("does not reopen an answer saved here when another instance's roster has not caught up", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "s", "S", "socket-s");
+      service.setPhase(session.sessionId, 4);
+      session.participants.get("s")!.hasAnsweredCurrentPhase = true;
+      session.participants.get("s")!.latestAnswer = "C";
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        phaseVersion: session.phaseVersion,
+        participants: [{ studentId: "s", name: "S", socketId: "socket-s", hasAnsweredCurrentPhase: false }],
+      }, CLOCKED);
+
+      expect(session.participants.get("s")).toMatchObject({ hasAnsweredCurrentPhase: true, latestAnswer: "C" });
+    });
+
+    it("still lets a reserved answer be released, and takes an answer saved elsewhere", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "r", "R", "socket-r");
+      service.joinSessionByClassId("class-1", "t", "T", "socket-t");
+      service.setPhase(session.sessionId, 8);
+      session.participants.get("r")!.hasAnsweredCurrentPhase = true; // reserved, AI still grading elsewhere
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        phaseVersion: session.phaseVersion,
+        participants: [
+          { studentId: "r", name: "R", socketId: "socket-r", hasAnsweredCurrentPhase: false },
+          { studentId: "t", name: "T", socketId: "socket-t", hasAnsweredCurrentPhase: true, latestAnswer: "essay" },
+        ],
+      }, CLOCKED);
+
+      expect(session.participants.get("r")?.hasAnsweredCurrentPhase).toBe(false);
+      expect(session.participants.get("t")).toMatchObject({ hasAnsweredCurrentPhase: true, latestAnswer: "essay" });
+    });
+  });
+
+  describe("last review", () => {
+    it("does not bring back an earlier phase's answer when a removed student rejoins elsewhere", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "s", "S", "socket-s");
+      service.setPhase(session.sessionId, 7);
+      session.participants.get("s")!.hasAnsweredCurrentPhase = true;
+      session.participants.get("s")!.latestAnswer = "phase 7";
+      service.kickParticipant(session.sessionId, "s");
+      service.setPhase(session.sessionId, 8);
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        phaseVersion: session.phaseVersion,
+        participants: [{ studentId: "s", name: "S", socketId: "socket-s2", connectedAt: Date.now() + 1_000, hasAnsweredCurrentPhase: false }],
+      }, CLOCKED);
+
+      expect(session.participants.get("s")).toMatchObject({ hasAnsweredCurrentPhase: false, latestAnswer: undefined });
+    });
+
+    it("keeps a reservation for a student connected here when another instance's roster lags", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "s", "S", "socket-s");
+      service.setPhase(session.sessionId, 8);
+      expect(service.reserveAnswer(session.sessionId, "s")?.accepted).toBe(true);
+
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        phaseVersion: session.phaseVersion,
+        participants: [{ studentId: "s", name: "S", socketId: "socket-s", hasAnsweredCurrentPhase: false }],
+      }, { ...CLOCKED, isLocalSocket: (id) => id === "socket-s" });
+
+      expect(session.participants.get("s")?.hasAnsweredCurrentPhase).toBe(true);
+      expect(service.reserveAnswer(session.sessionId, "s")?.accepted).toBe(false);
+    });
+
+    it("keeps an answer given on another instance while a failed rewind was saving, not the rewound one", () => {
+      const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+      service.joinSessionByClassId("class-1", "s", "S", "socket-s");
+      service.setPhase(session.sessionId, 11);
+      session.participants.get("s")!.hasAnsweredCurrentPhase = true;
+      session.participants.get("s")!.latestAnswer = "phase 11 answer";
+      service.setPhase(session.sessionId, 12);
+      const before = service.captureTransitionState(session.sessionId)!;
+      const versionBefore = session.phaseVersion;
+
+      service.rewindPhase(session.sessionId, 11);
+      // The other instance is still on phase 12 and S answers it there.
+      service.applyRemoteEvent(session.sessionId, "participants_updated", {
+        phaseVersion: versionBefore,
+        participants: [{ studentId: "s", name: "S", socketId: "socket-s", score: 1, scoreAt: Date.now() + 5, hasAnsweredCurrentPhase: true, latestAnswer: "phase 12 answer" }],
+      }, CLOCKED);
+      service.restoreTransitionState(session.sessionId, before);
+
+      expect(session.currentPhase).toBe(12);
+      expect(session.participants.get("s")).toMatchObject({ hasAnsweredCurrentPhase: true, latestAnswer: "phase 12 answer", score: 1 });
+    });
+  });
+
+  it("keeps the answer a removed student gave before being removed when they come back", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.setPhase(session.sessionId, 4);
+    service.restoreRemovedParticipant(session.sessionId, "x", "X", undefined, 3, 1_000);
+    service.markRemovedParticipantAnswered(session.sessionId, "x", "B");
+
+    service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+
+    expect(session.participants.get("x")).toMatchObject({ hasAnsweredCurrentPhase: true, latestAnswer: "B", score: 3 });
+  });
+
+  it("keeps scores on other instances when the tutor goes back to phase 1", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "l", "L", "socket-l");
+    service.setPhase(session.sessionId, 9);
+    session.participants.get("l")!.score = 4;
+
+    service.applyRemoteEvent(session.sessionId, "phase_changed", {
+      phase: 1, phaseVersion: session.phaseVersion + 1, phaseChangeId: "rewind-to-1", phaseRestored: true,
+    });
+    expect(session.participants.get("l")?.score).toBe(4);
+
+    service.applyRemoteEvent(session.sessionId, "phase_changed", {
+      phase: 1, phaseVersion: session.phaseVersion + 1, phaseChangeId: "new-cycle", phaseRestored: false,
+    });
+    expect(session.participants.get("l")?.score).toBe(0);
+  });
+
+  it("keeps live joins and reconnects when a failed phase change is rolled back", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "x", "X", "socket-x");
+    service.setPhase(session.sessionId, 3);
+    session.participants.get("x")!.score = 2;
+    const before = service.captureTransitionState(session.sessionId)!;
+
+    service.setPhase(session.sessionId, 4);
+    // While the phase change was saving: X reconnected, Z joined and answered on
+    // another instance, which was still on phase 3.
+    service.joinSessionByClassId("class-1", "x", "X", "socket-x2");
+    service.joinSessionByClassId("class-1", "z", "Z", "socket-z");
+    session.participants.get("z")!.hasAnsweredCurrentPhase = true;
+    session.participants.get("z")!.latestAnswer = "B";
+
+    service.restoreTransitionState(session.sessionId, before);
+
+    expect(session.currentPhase).toBe(3);
+    expect(session.participants.get("x")).toMatchObject({ socketId: "socket-x2", score: 2 });
+    // A forward move cleared every answer, so Z's answer is for phase 3 and stays.
+    expect(session.participants.get("z")).toMatchObject({ socketId: "socket-z", hasAnsweredCurrentPhase: true, latestAnswer: "B" });
+    expect(service.markParticipantOffline(session.sessionId, "x", "socket-x")).toBeUndefined();
   });
 
   it("keeps a student's socket that is connected to this instance", () => {

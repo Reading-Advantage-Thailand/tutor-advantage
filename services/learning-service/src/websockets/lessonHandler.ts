@@ -77,7 +77,10 @@ export const setupLessonSocket = (io: Server) => {
   const instanceId = uuidv4();
   const isLocalSocket = (socketId: string) => io.sockets.sockets.has(socketId);
   void startLessonSocketBus(io, instanceId, (event) => {
-    lessonSessionService.applyRemoteEvent(event.sessionId, event.event, event.payload, { isLocalSocket });
+    lessonSessionService.applyRemoteEvent(event.sessionId, event.event, event.payload, {
+      isLocalSocket,
+      scoreClock: event.scoreClock === true,
+    });
     // The tutor now owns the room through a socket on another instance, so the
     // heartbeat is that instance's job. One left running here would keep the
     // room looking attended after the tutor leaves for good, because this
@@ -107,7 +110,13 @@ export const setupLessonSocket = (io: Server) => {
   });
   const broadcastSession = (sessionId: string, event: string, payload: unknown) => {
     io.to(sessionId).emit(event, payload);
-    publishLessonEvent(sessionId, event, payload);
+    // A roster says which phase it describes, so an instance that has moved on
+    // does not read its answer flags as answers to the new phase.
+    const phaseVersion = lessonSessionService.getSession(sessionId)?.phaseVersion;
+    const stamped = REMOTE_ROSTER_EVENTS.has(event) && payload && typeof payload === "object" && phaseVersion !== undefined
+      ? { ...(payload as Record<string, unknown>), phaseVersion }
+      : payload;
+    publishLessonEvent(sessionId, event, stamped);
   };
   const broadcastToTutor = (
     session: { sessionId: string; tutorSocketId: string; tutorId: string },
@@ -174,10 +183,7 @@ export const setupLessonSocket = (io: Server) => {
         },
       });
       for (const answer of answers) {
-        const participant = session.participants.get(answer.studentUserId);
-        if (!participant) continue;
-        participant.hasAnsweredCurrentPhase = true;
-        participant.latestAnswer = [
+        const latestAnswer = [
           COMPREHENSION_PHASE,
           VOCABULARY_PRACTICE_PHASE,
           SENTENCE_PRACTICE_PHASE,
@@ -185,6 +191,14 @@ export const setupLessonSocket = (io: Server) => {
         ].includes(session.currentPhase)
           ? restoreChoiceAnswerLabel(answer.answerText)
           : answer.answerText ?? undefined;
+        const participant = session.participants.get(answer.studentUserId);
+        if (!participant) {
+          // Removed by the tutor after answering: joining again must not reopen the question.
+          lessonSessionService.markRemovedParticipantAnswered(session.sessionId, answer.studentUserId, latestAnswer);
+          continue;
+        }
+        participant.hasAnsweredCurrentPhase = true;
+        participant.latestAnswer = latestAnswer;
       }
     } catch (error) {
       logger.warn("[Socket] Could not restore answers for session " + session.sessionId + ":", error);
@@ -475,6 +489,19 @@ export const setupLessonSocket = (io: Server) => {
         // fallback for students whose enrollment write was missed.
         if (restoredStudentIds.has(participant.studentUserId)) continue;
         restoredStudentIds.add(participant.studentUserId);
+        if (participant.removedAt) {
+          // Removed by the tutor: keep them out until they join again, with their
+          // points ready for that. An older cycle's row holds an older cycle's points.
+          lessonSessionService.restoreRemovedParticipant(
+            session.sessionId,
+            participant.studentUserId,
+            participant.student.displayName || "Student",
+            participant.student.profilePictureUrl || undefined,
+            persistedSessionId === orderedSessionIds[0] ? participant.score : 0,
+            participant.removedAt.getTime(),
+          );
+          continue;
+        }
         lessonSessionService.mergePersistedParticipant(
           session.sessionId,
           participant.studentUserId,
@@ -1163,6 +1190,12 @@ export const setupLessonSocket = (io: Server) => {
             for (const pId of activePeers) {
                await dbWriter.persistSessionParticipant(newDbId, pId);
             }
+            // A student removed while this ran got a fresh, unmarked row above.
+            for (const pId of activePeers) {
+              if (!session.participants.has(pId) && session.kickedParticipants?.has(pId)) {
+                await dbWriter.markParticipantRemoved([newDbId], pId);
+              }
+            }
           }
         }
 
@@ -1252,9 +1285,26 @@ export const setupLessonSocket = (io: Server) => {
         // restore the complete in-memory transition (including rewind
         // checkpoints and cycle identity) so the next retry starts cleanly.
         if (!phaseBroadcasted && transitionSnapshot) {
-          lessonSessionService.restoreTransitionState(sessionId, transitionSnapshot);
+          const restored = lessonSessionService.restoreTransitionState(sessionId, transitionSnapshot);
           if (createdCycleId && createdCycleId !== transitionSnapshot.currentDbSessionId) {
             await dbWriter.updateSessionStatus(createdCycleId, "CANCELLED");
+          }
+          if (restored) {
+            // A roster may have gone out mid-transition; the restored one is stamped newer.
+            broadcastSession(sessionId, "participants_updated", {
+              participants: Array.from(restored.participants.values()),
+            });
+            // A removal during the wait was recorded on the round that was cancelled.
+            const removedBefore = new Set(transitionSnapshot.kickedParticipants.map(([studentId]) => studentId));
+            for (const studentId of restored.kickedParticipants?.keys() || []) {
+              if (removedBefore.has(studentId)) continue;
+              void dbWriter.markParticipantRemoved([restored.currentDbSessionId, sessionId], studentId);
+            }
+            // Back during the wait: their join cleared the cancelled round's row, not this one.
+            for (const studentId of removedBefore) {
+              if (!restored.participants.has(studentId)) continue;
+              void dbWriter.persistSessionParticipant(restored.currentDbSessionId || sessionId, studentId);
+            }
           }
         }
         logger.error(`[Socket] Failed to change session ${sessionId} to phase ${targetPhase}:`, error);
@@ -1494,6 +1544,14 @@ export const setupLessonSocket = (io: Server) => {
         return;
       }
 
+      // The phase is changing on this instance: memory already holds the next
+      // phase while the phone still shows this one, so it would be graded against
+      // the wrong question. The phone shows a retry message.
+      if (phaseChangesInFlight.has(sessionId)) {
+        socket.emit("answer_received", { success: false, code: "PHASE_CHANGING" });
+        return;
+      }
+
       const studentId = actor.userId;
       let aiSlotAcquired = false;
       let aiRequestKey: string | undefined;
@@ -1627,6 +1685,7 @@ export const setupLessonSocket = (io: Server) => {
           if (result.session.currentPhase === GUIDED_RESPONSE_PHASE || result.session.currentPhase === GUIDED_WRITING_PHASE) {
             // Guided Response (8) / Guided Writing (13) with AI score
             participant.score = (participant.score || 0) + (evaluatedAnswer.aiScore || 0);
+            participant.scoreAt = Date.now();
 
             // --- PERSIST DB ANSWER (AI-SCORED) ---
             dbWriter.persistAnswer({
@@ -1643,6 +1702,7 @@ export const setupLessonSocket = (io: Server) => {
           } else if (result.session.currentPhase === LANGUAGE_QUESTIONS_PHASE) {
             // Language Questions: participation point, store question + AI answer
             participant.score = (participant.score || 0) + 1;
+            participant.scoreAt = Date.now();
 
             dbWriter.persistAnswer({
               sessionId: result.session.currentDbSessionId || sessionId,
@@ -1824,6 +1884,7 @@ export const setupLessonSocket = (io: Server) => {
               : String(answer).trim().toUpperCase() === correctLabel.trim().toUpperCase();
             if (isCorrect) {
               participant.score = (participant.score || 0) + 1;
+              participant.scoreAt = Date.now();
             }
 
             // Add visual prefix indicator
@@ -1944,6 +2005,8 @@ export const setupLessonSocket = (io: Server) => {
         studentSocket.leave(sessionId);
       }
       publishLessonEvent(sessionId, "kicked", kickedPayload, studentId);
+      // Instances that rebuild this room from the database later never saw the kick.
+      void dbWriter.markParticipantRemoved([session?.currentDbSessionId, sessionId], studentId);
 
       const { session: updatedSession, gameCompleted, allAnswered, flagsChanged, votesChanged } = kicked;
       const remaining = Array.from(updatedSession.participants.values());

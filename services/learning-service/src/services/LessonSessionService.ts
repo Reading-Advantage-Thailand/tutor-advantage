@@ -17,6 +17,10 @@ export interface SessionParticipant {
   // When the current socket joined. Instances compare it to tell a student's
   // newest connection from one that dropped but is not timed out yet.
   connectedAt?: number;
+  // When `score` last changed on purpose (an answer, a result, a reset, a
+  // rewind). Instances take a student's score from another instance only when
+  // it is newer, so one instance's stale view cannot wipe another's points.
+  scoreAt?: number;
 }
 
 /**
@@ -62,6 +66,157 @@ function pickParticipantConnection(
   return { socketId: existing.socketId, connectedAt: existing.connectedAt, offlineSince: existing.offlineSince };
 }
 
+/**
+ * Whose score to keep when another instance reports a student. A score with a
+ * newer change time wins; without one on either side the sender's value is
+ * taken, as before. A list built from the database carries no time, so it never
+ * replaces points a live instance has counted.
+ */
+function pickParticipantScore(
+  existing: SessionParticipant | undefined,
+  raw: Record<string, unknown>,
+): { score: number; scoreAt?: number } {
+  const remoteScore = typeof raw.score === "number" ? raw.score : undefined;
+  const remoteScoreAt = typeof raw.scoreAt === "number" ? raw.scoreAt : undefined;
+  if (remoteScore === undefined) return { score: existing?.score || 0, scoreAt: existing?.scoreAt };
+  if (!existing) return { score: remoteScore, scoreAt: remoteScoreAt };
+  const takeRemote = remoteScoreAt !== undefined
+    ? existing.scoreAt === undefined || remoteScoreAt > existing.scoreAt
+    : existing.scoreAt === undefined;
+  return takeRemote
+    ? { score: remoteScore, scoreAt: remoteScoreAt ?? existing.scoreAt }
+    : { score: existing.score || 0, scoreAt: existing.scoreAt };
+}
+
+/**
+ * Which answer state to keep when another instance reports a student. A roster
+ * sent for another phase (one that arrives just after a phase change) says
+ * nothing about this phase. Within the same phase, an answer this instance has
+ * saved is never undone by a roster that has not caught up with it; a reserved
+ * answer (flag set, no answer yet) can still be released. A roster without a
+ * phase (an older revision) is taken as before.
+ */
+function pickParticipantAnswer(
+  existing: SessionParticipant | undefined,
+  raw: Record<string, unknown>,
+  rosterPhaseVersion: number | undefined,
+  phaseVersion: number,
+  isLocalSocket?: (socketId: string) => boolean,
+): { hasAnsweredCurrentPhase: boolean; latestAnswer: unknown } {
+  const reportsFlag = Object.prototype.hasOwnProperty.call(raw, "hasAnsweredCurrentPhase");
+  const reportsAnswer = Object.prototype.hasOwnProperty.call(raw, "latestAnswer");
+  const remote = {
+    hasAnsweredCurrentPhase: reportsFlag ? raw.hasAnsweredCurrentPhase === true : existing?.hasAnsweredCurrentPhase === true,
+    latestAnswer: reportsAnswer ? raw.latestAnswer : existing?.latestAnswer,
+  };
+  if (rosterPhaseVersion === undefined || !existing) return remote;
+  const local = { hasAnsweredCurrentPhase: existing.hasAnsweredCurrentPhase === true, latestAnswer: existing.latestAnswer };
+  if (rosterPhaseVersion !== phaseVersion) return local;
+  if (local.hasAnsweredCurrentPhase && local.latestAnswer !== undefined) return local;
+  // A reservation this instance holds (its student is connected here, the AI is
+  // still grading) is released here, never by another instance's copy.
+  if (local.hasAnsweredCurrentPhase && isLocalSocket?.(existing.socketId)) return local;
+  return remote;
+}
+
+/** A new lesson cycle starts removed students at 0 too, so a rejoin does not bring old points back. */
+function resetKickedScores(session: LessonSession, resetAt: number): void {
+  for (const kicked of session.kickedParticipants?.values() || []) {
+    kicked.participant.score = 0;
+    kicked.participant.scoreAt = resetAt;
+    kicked.participant.hasAnsweredCurrentPhase = false;
+    kicked.participant.latestAnswer = undefined;
+  }
+}
+
+/** A kicked student counts as back only through a real connection made after the kick. */
+function rejoinedAfterKick(raw: Record<string, unknown>, kicked: KickedParticipant): boolean {
+  const socketId = typeof raw.socketId === "string" ? raw.socketId : undefined;
+  if (!socketId || socketId.startsWith("restored:") || socketId === kicked.participant.socketId) return false;
+  const connectedAt = typeof raw.connectedAt === "number" ? raw.connectedAt : undefined;
+  if (connectedAt !== undefined && kicked.kickedAt !== undefined) return connectedAt > kicked.kickedAt;
+  return true;
+}
+
+/**
+ * Puts a saved roster back without losing what happened since it was saved:
+ * live connections stay, students who joined meanwhile stay (with no answer in
+ * the restored phase), and removed students stay out. The saved scores become
+ * the current ones.
+ */
+function mergeLiveParticipants(
+  saved: SessionParticipant[],
+  live: Map<string, SessionParticipant>,
+  kicked: Map<string, KickedParticipant> | undefined,
+  transition: {
+    scoreStamp?: number;
+    wasRewind: boolean;
+    savedKicked?: Map<string, KickedParticipant>;
+    savedPhaseVersion?: number;
+    answersElsewhere?: Map<string, unknown>;
+  },
+): Map<string, SessionParticipant> {
+  const merged = new Map<string, SessionParticipant>();
+  const restoredAt = Date.now();
+  for (const participant of saved) {
+    if (kicked?.has(participant.studentId)) continue;
+    const current = live.get(participant.studentId);
+    // The failed transition's own reset or rewind is undone, stamped as newest so
+    // any copy that already went out is undone too. Points counted meanwhile on
+    // another instance carry their own, newer time and stay.
+    const resetByTransition = current?.scoreAt !== undefined && current.scoreAt === transition.scoreStamp;
+    const scoredMeanwhile = !resetByTransition && current?.scoreAt !== undefined &&
+      (participant.scoreAt === undefined || current.scoreAt > participant.scoreAt);
+    // A forward move cleared every answer, so an answer here came in meanwhile,
+    // for the phase being restored. A rewind brought back another phase's answers.
+    // A forward move cleared every answer here, so one found now was given meanwhile
+    // for the restored phase. A rewind brought back another phase's answers, so
+    // only answers other instances reported for the restored phase count.
+    const answeredMeanwhile = !transition.wasRewind && current?.hasAnsweredCurrentPhase === true;
+    const elsewhere = transition.answersElsewhere?.has(participant.studentId);
+    merged.set(participant.studentId, {
+      ...cloneJson(participant),
+      socketId: current?.socketId || participant.socketId,
+      connectedAt: current?.connectedAt ?? participant.connectedAt,
+      offlineSince: current ? current.offlineSince : participant.offlineSince,
+      name: current?.name ?? participant.name,
+      pictureUrl: current?.pictureUrl ?? participant.pictureUrl,
+      resolvedUserId: current?.resolvedUserId ?? participant.resolvedUserId,
+      score: scoredMeanwhile ? current!.score : participant.score,
+      scoreAt: scoredMeanwhile ? current!.scoreAt : resetByTransition ? restoredAt : participant.scoreAt,
+      hasAnsweredCurrentPhase: elsewhere || answeredMeanwhile || participant.hasAnsweredCurrentPhase,
+      latestAnswer: elsewhere
+        ? transition.answersElsewhere!.get(participant.studentId)
+        : answeredMeanwhile ? current!.latestAnswer : participant.latestAnswer,
+    });
+  }
+  for (const [studentId, participant] of live.entries()) {
+    if (merged.has(studentId) || kicked?.has(studentId)) continue;
+    // Back from a removal while the failed reset was saving: their points as they were.
+    const before = participant.scoreAt !== undefined && participant.scoreAt === transition.scoreStamp
+      ? transition.savedKicked?.get(studentId)?.participant
+      : undefined;
+    // A forward move cleared every answer, so an answer here is for the restored
+    // phase. A student removed in this phase and back during the wait was checked
+    // against the uncommitted phase, so take the answer their removal kept.
+    const keptAnswer = !transition.wasRewind && participant.hasAnsweredCurrentPhase;
+    const removal = transition.savedKicked?.get(studentId);
+    const answerFromRemoval = removal && removal.phaseVersion === transition.savedPhaseVersion
+      ? removal.participant
+      : undefined;
+    const elsewhere = transition.answersElsewhere?.has(studentId);
+    merged.set(studentId, {
+      ...participant,
+      ...(before ? { score: before.score, scoreAt: before.scoreAt } : {}),
+      hasAnsweredCurrentPhase: elsewhere || keptAnswer || answerFromRemoval?.hasAnsweredCurrentPhase === true,
+      latestAnswer: elsewhere
+        ? transition.answersElsewhere!.get(studentId)
+        : keptAnswer ? participant.latestAnswer : answerFromRemoval?.latestAnswer,
+    });
+  }
+  return merged;
+}
+
 export interface PhaseSnapshot {
   currentPhase: number;
   status: LessonSession["status"];
@@ -90,6 +245,8 @@ export interface LessonSessionTransitionSnapshot {
   currentDbSessionId?: string;
   finalNotificationSent?: boolean;
   phaseSnapshots: Array<[number, PhaseSnapshot]>;
+  scoreResetAt?: number;
+  kickedParticipants: Array<[string, KickedParticipant]>;
 }
 
 export type GameCategory = "vocabulary" | "sentence";
@@ -184,11 +341,19 @@ export interface LessonSession {
   // kept aside so a DB/snapshot restore cannot bring them back as a ghost the
   // class waits for, and so their score resumes when they rejoin themselves.
   kickedParticipants?: Map<string, KickedParticipant>;
+  // The score time a cycle reset or rewind stamped on everyone, so rolling a
+  // failed transition back can tell its own change from points scored elsewhere.
+  scoreResetAt?: number;
+  // Answers other instances reported for a phase this instance had already left
+  // (a phase change was still saving here). A rollback to that phase uses them.
+  answersFromOtherPhases?: Map<string, { phaseVersion: number; latestAnswer: unknown }>;
 }
 
 export interface KickedParticipant {
   participant: SessionParticipant;
   phaseVersion: number;
+  // Only a connection made after this counts as the student rejoining elsewhere.
+  kickedAt?: number;
 }
 
 export interface KickParticipantResult {
@@ -503,6 +668,11 @@ class LessonSessionService {
         phase,
         cloneJson(snapshot),
       ]),
+      scoreResetAt: session.scoreResetAt,
+      kickedParticipants: Array.from(session.kickedParticipants?.entries() || []).map(([studentId, kicked]) => [
+        studentId,
+        cloneJson(kicked),
+      ]),
     };
   }
 
@@ -514,20 +684,50 @@ class LessonSessionService {
     const session = this.sessions.get(sessionId);
     if (!session) return undefined;
 
+    // What the failed transition did, read before anything is put back. Only a
+    // rewind sets phaseRestored; a forward move or a move to the lobby clears it.
+    const savedKicked = new Map(snapshot.kickedParticipants || []);
+    // Answers other instances gave to the restored phase while this one waited.
+    const answersElsewhere = new Map<string, unknown>();
+    for (const [studentId, reported] of session.answersFromOtherPhases || []) {
+      if (reported.phaseVersion !== snapshot.phaseVersion) continue;
+      answersElsewhere.set(studentId, reported.latestAnswer);
+      session.answersFromOtherPhases?.delete(studentId);
+    }
+    const transition = {
+      scoreStamp: session.scoreResetAt !== snapshot.scoreResetAt ? session.scoreResetAt : undefined,
+      wasRewind: session.phaseRestored === true,
+      savedKicked,
+      savedPhaseVersion: snapshot.phaseVersion,
+      answersElsewhere,
+    };
     session.currentPhase = snapshot.currentPhase;
     session.phaseVersion = snapshot.phaseVersion;
     session.phaseChangeId = snapshot.phaseChangeId;
     session.phaseRestored = snapshot.phaseRestored;
     session.resumePhase = snapshot.resumePhase;
     session.status = snapshot.status;
-    session.participants = new Map(
-      snapshot.participants
-        .filter((participant) => !session.kickedParticipants?.has(participant.studentId))
-        .map((participant) => [
-          participant.studentId,
-          cloneJson(participant),
-        ]),
+    session.participants = mergeLiveParticipants(
+      snapshot.participants,
+      session.participants,
+      session.kickedParticipants,
+      transition,
     );
+    session.scoreResetAt = snapshot.scoreResetAt;
+    // A cycle reset also cleared the points kept for removed students, including
+    // anyone removed while it was saving. Put back what they had before it.
+    if (transition.scoreStamp !== undefined) {
+      const savedParticipants = new Map(snapshot.participants.map((participant) => [participant.studentId, participant]));
+      for (const [studentId, kicked] of session.kickedParticipants || []) {
+        if (kicked.participant.scoreAt !== transition.scoreStamp) continue;
+        const saved = savedKicked.get(studentId)?.participant ?? savedParticipants.get(studentId);
+        if (!saved) continue;
+        kicked.participant.score = saved.score;
+        kicked.participant.scoreAt = saved.scoreAt;
+        kicked.participant.hasAnsweredCurrentPhase = saved.hasAnsweredCurrentPhase;
+        kicked.participant.latestAnswer = saved.latestAnswer;
+      }
+    }
     session.activeSentenceIndex = snapshot.activeSentenceIndex;
     session.phaseSelectedIndices = cloneJson(snapshot.phaseSelectedIndices);
     session.sentenceFlags = new Map(
@@ -651,6 +851,7 @@ class LessonSessionService {
       pictureUrl,
       socketId,
       score: previous ? previous.score : 0,
+      scoreAt: previous?.scoreAt,
       hasAnsweredCurrentPhase: previous && samePhase ? previous.hasAnsweredCurrentPhase : false,
       latestAnswer: previous && samePhase ? previous.latestAnswer : undefined,
       isReady: previous ? previous.isReady : false,
@@ -685,7 +886,10 @@ class LessonSessionService {
         studentId,
       );
       const restored = joined?.participants.get(studentId);
-      if (restored) restored.score = score;
+      if (restored) {
+        restored.score = score;
+        restored.scoreAt = undefined;
+      }
       return joined;
     }
 
@@ -694,8 +898,58 @@ class LessonSessionService {
     if (pictureUrl) existing.pictureUrl = pictureUrl;
     // A room alive in memory knows the score better than the database, whose
     // writes run behind it. Overwriting here made scores jump on any reconnect.
-    if (!options.keepLiveScore) existing.score = score;
+    if (!options.keepLiveScore) {
+      existing.score = score;
+      // Read from the database, so it carries no change time of its own.
+      existing.scoreAt = undefined;
+    }
     return session;
+  }
+
+  /**
+   * A student the tutor removed, read back from the database by an instance
+   * that is rebuilding the room. They stay out of the room, as a kick record
+   * holding their points, so joining again resumes those points.
+   */
+  restoreRemovedParticipant(
+    sessionId: string,
+    studentId: string,
+    name: string,
+    pictureUrl: string | undefined,
+    score: number,
+    removedAt: number,
+  ): void {
+    const session = this.sessions.get(sessionId);
+    if (!session || session.participants.has(studentId) || session.kickedParticipants?.has(studentId)) return;
+    if (!session.kickedParticipants) session.kickedParticipants = new Map();
+    session.kickedParticipants.set(studentId, {
+      participant: {
+        studentId,
+        resolvedUserId: studentId,
+        name,
+        pictureUrl,
+        socketId: `restored:${studentId}`,
+        score,
+        hasAnsweredCurrentPhase: false,
+        isReady: false,
+      },
+      // Never this phase's version: a rejoin does not bring back an answer.
+      phaseVersion: -1,
+      kickedAt: removedAt,
+    });
+  }
+
+  /**
+   * A removed student answered this phase before being removed: keep that, so
+   * joining again does not open the question a second time.
+   */
+  markRemovedParticipantAnswered(sessionId: string, studentId: string, latestAnswer: unknown): void {
+    const session = this.sessions.get(sessionId);
+    const kicked = session?.kickedParticipants?.get(studentId);
+    if (!session || !kicked) return;
+    kicked.participant.hasAnsweredCurrentPhase = true;
+    kicked.participant.latestAnswer = latestAnswer;
+    kicked.phaseVersion = session.phaseVersion;
   }
 
   /** The student whose current socket this is, if any. */
@@ -760,6 +1014,7 @@ class LessonSessionService {
     session.kickedParticipants.set(studentId, {
       participant: cloneJson(participant),
       phaseVersion: session.phaseVersion,
+      kickedAt: Date.now(),
     });
 
     let flagsChanged = false;
@@ -840,12 +1095,18 @@ class LessonSessionService {
     session.phaseChangeId = uuidv4();
     session.phaseRestored = false;
     session.resumePhase = undefined;
+    const resetAt = Date.now();
     for (const participant of session.participants.values()) {
       participant.hasAnsweredCurrentPhase = false;
       participant.latestAnswer = undefined;
       if (phase === 1) {
         participant.score = 0;
+        participant.scoreAt = resetAt;
       }
+    }
+    if (phase === 1) {
+      resetKickedScores(session, resetAt);
+      session.scoreResetAt = resetAt;
     }
     session.gameState = undefined;
 
@@ -912,6 +1173,7 @@ class LessonSessionService {
 
     const currentParticipants = session.participants;
     const restoredParticipants = new Map<string, SessionParticipant>();
+    const rewoundAt = Date.now();
 
     for (const saved of snapshot.participants) {
       if (session.kickedParticipants?.has(saved.studentId)) continue;
@@ -923,8 +1185,11 @@ class LessonSessionService {
         socketId: liveParticipant?.socketId || saved.socketId,
         offlineSince: liveParticipant?.offlineSince,
         connectedAt: liveParticipant?.connectedAt,
+        // The checkpoint's score is now the current one everywhere.
+        scoreAt: rewoundAt,
       });
     }
+    session.scoreResetAt = rewoundAt;
 
     // Keep students who joined after the checkpoint in the room. They remain
     // eligible for the live session but have not answered the restored phase.
@@ -1202,6 +1467,7 @@ class LessonSessionService {
     const score = Math.min(result.score ?? 0, MAX_GAME_SCORE);
     const durationMs = result.durationMs;
     participant.score = (participant.score || 0) + score;
+    participant.scoreAt = Date.now();
     participant.hasAnsweredCurrentPhase = true;
     participant.latestAnswer = { gameId, score, correct, total };
     gameState.results[studentId] = {
@@ -1291,7 +1557,12 @@ class LessonSessionService {
     sessionId: string,
     event: string,
     payload: unknown,
-    options: { isLocalSocket?: (socketId: string) => boolean } = {},
+    options: {
+      isLocalSocket?: (socketId: string) => boolean;
+      // The sender stamps score changes. Without it (an older revision during a
+      // deploy) the sender's scores are taken as before.
+      scoreClock?: boolean;
+    } = {},
   ): void {
     const session = this.sessions.get(sessionId);
     if (!session) return;
@@ -1342,19 +1613,43 @@ class LessonSessionService {
 
     if (event === "participants_updated" || event === "participant_joined" || event === "participant_left") {
       if (!isRecord(payload) || !Array.isArray(payload.participants)) return;
+      const rosterPhaseVersion = typeof payload.phaseVersion === "number" ? payload.phaseVersion : undefined;
       for (const raw of payload.participants) {
         if (!isRecord(raw) || typeof raw.studentId !== "string") continue;
         const kicked = session.kickedParticipants?.get(raw.studentId);
         if (kicked) {
-          // The same socket means a stale list sent before the kick arrived;
-          // a new socket means the student rejoined on another instance.
-          if (raw.socketId === kicked.participant.socketId) continue;
+          // Only a real connection made after the kick means the student rejoined
+          // on another instance. The same socket is a list sent before the kick
+          // arrived, and a "restored:" placeholder is an instance that rebuilt
+          // the room from the database and never saw the kick.
+          if (!rejoinedAfterKick(raw, kicked)) continue;
           session.kickedParticipants?.delete(raw.studentId);
         }
-        const existing = session.participants.get(raw.studentId);
+        // A student back from a kick keeps the points they had, and their answer
+        // only if the class is still on the phase they were removed in.
+        const fromKick = kicked && !session.participants.has(raw.studentId)
+          ? kicked.phaseVersion === session.phaseVersion
+            ? kicked.participant
+            : { ...kicked.participant, hasAnsweredCurrentPhase: false, latestAnswer: undefined }
+          : undefined;
+        const existing = session.participants.get(raw.studentId) ?? fromKick;
+        if (
+          rosterPhaseVersion !== undefined &&
+          rosterPhaseVersion !== session.phaseVersion &&
+          raw.hasAnsweredCurrentPhase === true &&
+          Object.prototype.hasOwnProperty.call(raw, "latestAnswer")
+        ) {
+          if (!session.answersFromOtherPhases) session.answersFromOtherPhases = new Map();
+          session.answersFromOtherPhases.set(raw.studentId, { phaseVersion: rosterPhaseVersion, latestAnswer: raw.latestAnswer });
+        }
+        const score = options.scoreClock
+          ? pickParticipantScore(existing, raw)
+          : {
+            score: typeof raw.score === "number" ? raw.score : existing?.score || 0,
+            scoreAt: typeof raw.score === "number" ? undefined : existing?.scoreAt,
+          };
         const connection = pickParticipantConnection(existing, raw, options.isLocalSocket);
-        const hasLatestAnswer = Object.prototype.hasOwnProperty.call(raw, "latestAnswer");
-        const hasAnswered = Object.prototype.hasOwnProperty.call(raw, "hasAnsweredCurrentPhase");
+        const answer = pickParticipantAnswer(existing, raw, rosterPhaseVersion, session.phaseVersion, options.isLocalSocket);
         session.participants.set(raw.studentId, {
           studentId: raw.studentId,
           resolvedUserId: typeof raw.resolvedUserId === "string"
@@ -1366,11 +1661,10 @@ class LessonSessionService {
             : existing?.pictureUrl,
           socketId: connection.socketId,
           connectedAt: connection.connectedAt,
-          score: typeof raw.score === "number" ? raw.score : existing?.score || 0,
-          hasAnsweredCurrentPhase: hasAnswered
-            ? raw.hasAnsweredCurrentPhase === true
-            : existing?.hasAnsweredCurrentPhase === true,
-          latestAnswer: hasLatestAnswer ? raw.latestAnswer : existing?.latestAnswer,
+          score: score.score,
+          scoreAt: score.scoreAt,
+          hasAnsweredCurrentPhase: answer.hasAnsweredCurrentPhase,
+          latestAnswer: answer.latestAnswer,
           isReady: typeof raw.isReady === "boolean"
             ? raw.isReady
             : existing?.isReady === true,
@@ -1506,11 +1800,19 @@ class LessonSessionService {
 
     session.status = phase > 0 ? "ACTIVE" : "LOBBY";
     if (phaseChanged) {
+      const resetAt = Date.now();
+      // A new cycle starts at phase 1; a tutor going back to phase 1 does not.
+      const newCycle = phase === 1 && payload.phaseRestored !== true;
       for (const participant of session.participants.values()) {
         participant.hasAnsweredCurrentPhase = false;
         participant.latestAnswer = undefined;
-        if (phase === 1) participant.score = 0;
+        if (newCycle) {
+          participant.score = 0;
+          // Newer than any list sent before the reset, so none can undo it.
+          participant.scoreAt = resetAt;
+        }
       }
+      if (newCycle) resetKickedScores(session, resetAt);
       if (phase === 1) session.sentenceFlags = new Map();
     }
   }

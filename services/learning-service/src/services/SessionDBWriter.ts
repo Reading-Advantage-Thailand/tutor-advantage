@@ -265,10 +265,30 @@ export const persistSessionParticipant = async (sessionId: string, studentId: st
         studentUserId: resolvedStudentId,
         score: 0
       },
-      update: {} // already exists
+      // Joining again undoes an earlier removal by the tutor.
+      update: { removedAt: null }
     });
   } catch (error) {
     logger.error(`[SessionDB] Error persisting session participant:`, error);
+  }
+};
+
+/**
+ * Records that the tutor removed a student from the live room, so an instance
+ * that rebuilds the room from the database leaves them out until they rejoin.
+ */
+export const markParticipantRemoved = async (sessionIds: Array<string | undefined>, studentId: string) => {
+  try {
+    const resolvedStudentId = await resolveUserId(studentId);
+    if (!resolvedStudentId) return;
+    const ids = Array.from(new Set(sessionIds.filter((id): id is string => Boolean(id))));
+    if (!ids.length) return;
+    await prisma.sessionParticipant.updateMany({
+      where: { sessionId: { in: ids }, studentUserId: resolvedStudentId },
+      data: { removedAt: new Date() },
+    });
+  } catch (error) {
+    logger.error(`[SessionDB] Error recording a removed participant:`, error);
   }
 };
 

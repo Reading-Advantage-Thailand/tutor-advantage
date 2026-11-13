@@ -37,6 +37,8 @@ function getAnswerSubmissionMessage(code?: string) {
       return "คำตอบข้อนี้ถูกส่งไปแล้ว";
     case "ANSWER_TOO_LONG":
       return "คำตอบยาวเกินกำหนด กรุณาย่อคำตอบแล้วลองใหม่";
+    case "PHASE_CHANGING":
+      return "คุณครูกำลังเปลี่ยนขั้น รอสักครู่แล้วลองส่งอีกครั้ง";
     case "SESSION_ACCESS_LOST":
     case "SESSION_NOT_FOUND":
     case "SESSION_STATE_LOST":

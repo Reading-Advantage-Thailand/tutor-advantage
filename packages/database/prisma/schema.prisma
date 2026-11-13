@@ -474,6 +474,9 @@ model SessionParticipant {
   studentUserId String   @map("student_user_id") @db.Uuid
   score         Int      @default(0)
   joinedAt      DateTime @default(now()) @map("joined_at") @db.Timestamptz
+  // Set when the tutor removes the student from the live room; cleared when
+  // they join again. A room rebuilt from the database leaves them out.
+  removedAt     DateTime? @map("removed_at") @db.Timestamptz
 
   session InteractiveSession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
   student User               @relation(fields: [studentUserId], references: [userId])
