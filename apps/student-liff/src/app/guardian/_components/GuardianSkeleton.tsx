@@ -3,10 +3,21 @@ import { t } from "@/lib/i18n";
 
 function StepSkeleton({ tall }: { tall?: boolean }) {
   return (
-    <div className="flex flex-col gap-3 rounded-[var(--radius-card)] border border-hairline bg-surface p-4 shadow-[var(--shadow-card)]">
-      <Skeleton className="h-4 w-20 rounded-full" />
-      <Skeleton className="h-3.5 w-1/2 rounded-full" />
-      <Skeleton className={tall ? "h-[104px] w-full rounded-xl" : "h-12 w-full rounded-xl"} />
+    <div className="flex flex-col gap-4 rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface p-5 shadow-[var(--shadow-card)]">
+      <div className="flex items-center gap-2.5">
+        <Skeleton className="size-8 shrink-0 rounded-full" />
+        <Skeleton className="h-3.5 w-16 rounded-full" />
+      </div>
+      <Skeleton className="h-4 w-1/2 rounded-full" />
+      {tall ? (
+        <div className="grid grid-cols-2 gap-3">
+          {Array.from({ length: 4 }, (_, index) => (
+            <Skeleton key={index} className="h-14 rounded-[var(--radius-ctl)]" />
+          ))}
+        </div>
+      ) : (
+        <Skeleton className="h-[52px] w-full rounded-[var(--radius-field)]" />
+      )}
     </div>
   );
 }
@@ -17,12 +28,13 @@ export function GuardianSkeleton() {
     <Screen>
       <AppBar title={t("guardian.title")} back fallbackHref="/profile" />
       <LoadingAnnouncement />
-      <div className="flex flex-col gap-4 px-4 pt-2 pb-6" aria-hidden="true">
-        <div className="flex items-center gap-3 rounded-[var(--radius-card)] border border-hairline bg-surface p-4">
-          <Skeleton className="size-12 shrink-0 rounded-[14px]" />
-          <div className="flex flex-1 flex-col gap-2">
-            <Skeleton className="h-4 w-2/3 rounded-full" />
-            <Skeleton className="h-3 w-full rounded-full" />
+      <div className="flex flex-col gap-4 px-4 pt-3 pb-6" aria-hidden="true">
+        <div className="flex items-start gap-4 rounded-[var(--radius-card)] border-[1.5px] border-brand-soft-border bg-brand-soft p-5">
+          <Skeleton className="size-14 shrink-0 rounded-[18px]" />
+          <div className="flex flex-1 flex-col gap-2.5 pt-1">
+            <Skeleton className="h-5 w-2/3 rounded-full" />
+            <Skeleton className="h-3.5 w-full rounded-full" />
+            <Skeleton className="h-3.5 w-4/5 rounded-full" />
           </div>
         </div>
         <StepSkeleton />
@@ -30,7 +42,7 @@ export function GuardianSkeleton() {
         <StepSkeleton />
       </div>
       <BottomActionBar>
-        <Skeleton className="h-[52px] flex-1 rounded-2xl" />
+        <Skeleton className="h-14 flex-1 rounded-[20px]" />
       </BottomActionBar>
     </Screen>
   );

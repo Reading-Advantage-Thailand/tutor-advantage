@@ -128,6 +128,29 @@ export function auditCategory(action: string): AuditCategory {
   return "system";
 }
 
+/**
+ * Category dot colour (8px, always next to the category word), shared by
+ * /audit and the overview's activity feed and legend (patterns.md A6): the
+ * chart palette (payments chart-1, discount codes/classes chart-2,
+ * adjustments chart-3, settlements chart-4, users chart-5), coupons in the
+ * amber icon colour (a category, not a "warning" status), risk in the danger
+ * solid and system in the subtle text colour.
+ */
+export const AUDIT_CATEGORY_DOT: Record<AuditCategory, string> = {
+  payment: "bg-chart-1",
+  class: "bg-chart-2",
+  adjustment: "bg-chart-3",
+  settlement: "bg-chart-4",
+  user: "bg-chart-5",
+  coupon: "bg-icon-amber",
+  risk: "bg-danger-solid",
+  system: "bg-fg-subtle",
+};
+
+export function auditCategoryLabel(category: AuditCategory): string {
+  return AUDIT_CATEGORIES.find((item) => item.id === category)?.label ?? t("audit.catSystem");
+}
+
 /** Chip tone by outcome: approvals green, rejections/suspensions red, creates blue. */
 export function auditActionTone(action: string): Tone {
   if (/(UNSUSPEND|UNFREEZE|RELEASE|VERIFY_APPROVE)/.test(action)) return "success";

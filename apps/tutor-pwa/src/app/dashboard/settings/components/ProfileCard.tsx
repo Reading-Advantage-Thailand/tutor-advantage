@@ -10,26 +10,32 @@ export function verificationLabel(status: string | undefined): string {
   return t("dashboardSettings.unverified");
 }
 
-/** Read-only profile summary. Server component. */
+/**
+ * Read-only profile summary (patterns.md T8, the first settings group): the
+ * avatar and name, the e-mail, then a well with the verification status chip
+ * (icon + word) and the role. Server component.
+ */
 export function ProfileCard({ user }: { user: SettingsUser }) {
   const name = user.displayName || t("dashboardSettings.displayNameFallback");
   const role = user.role?.replace("ROLE_", "");
   return (
-    <Surface padding="lg">
-      <div className="flex items-center gap-4">
+    <Surface padding="none" className="overflow-hidden">
+      <div className="flex items-center gap-4 p-4 md:p-5">
         <UserAvatar name={name} src={user.profilePictureUrl} size="lg" />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-lg font-semibold text-fg">{name}</p>
-          {user.email ? <p className="truncate text-sm text-fg-muted">{user.email}</p> : null}
-          <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            <StatusChip
-              status={user.verificationStatus || "UNVERIFIED"}
-              label={verificationLabel(user.verificationStatus)}
-              icon={ShieldCheck}
-            />
-            <Chip tone="neutral">{!role || role === "TUTOR" ? t("dashboardSettings.roleTutor") : role}</Chip>
-          </div>
+          <p className="type-section text-balance-th break-words text-fg">{name}</p>
+          {user.email ? (
+            <p className="type-body-s [overflow-wrap:anywhere] text-fg-muted">{user.email}</p>
+          ) : null}
         </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 border-t border-hairline bg-surface-muted px-4 py-3 md:px-5">
+        <StatusChip
+          status={user.verificationStatus || "UNVERIFIED"}
+          label={verificationLabel(user.verificationStatus)}
+          icon={ShieldCheck}
+        />
+        <Chip tone="neutral">{!role || role === "TUTOR" ? t("dashboardSettings.roleTutor") : role}</Chip>
       </div>
     </Surface>
   );

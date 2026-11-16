@@ -21,8 +21,8 @@ export function PageHeader({ title, subtitle, actions, children, className }: Pa
     <header className={cn("px-4 pt-[calc(var(--safe-top)+20px)] pb-3", className)}>
       <div className="flex items-end justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <h1 className="text-[28px] leading-[1.3] font-extrabold text-fg">{title}</h1>
-          {subtitle ? <p className="mt-0.5 text-sm leading-[1.5] text-fg-muted">{subtitle}</p> : null}
+          <h1 className="font-heading text-[28px] leading-[1.3] font-bold text-balance text-fg">{title}</h1>
+          {subtitle ? <p className="mt-0.5 text-sm leading-[1.6] text-fg-muted">{subtitle}</p> : null}
         </div>
         {actions ? <div className="-mr-1 flex shrink-0 items-center gap-1">{actions}</div> : null}
       </div>

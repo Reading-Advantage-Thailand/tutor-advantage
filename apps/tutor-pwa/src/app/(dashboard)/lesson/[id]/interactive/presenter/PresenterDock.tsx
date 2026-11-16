@@ -1,9 +1,13 @@
 "use client";
 
 /**
- * Bottom control dock for the presenter: phase/answer status on the left,
- * view tools in the middle, and prev / end question / next on the right.
- * It is sticky (LessonDock) so it never falls below a 720px projector, and
+ * Bottom control dock for the presenter (components.md §7 LessonDock): the
+ * phase/answer status on the left, view tools in the middle, and the lesson
+ * flow on the right: outline "ย้อนกลับ", then the one filled action. While a
+ * question can still be closed and "ถัดไป" waits, "ปิดคำถาม/จบเกม" is the
+ * filled action and the waiting "ถัดไป" steps back to outline; once answers
+ * are in, "ถัดไป" is filled. Controls are 44 tall (56 on touch screens). It
+ * is sticky (LessonDock) so it never falls below a 720px projector, and
  * floats over the stage in element fullscreen.
  */
 import React from "react";
@@ -35,6 +39,8 @@ export interface DevTool {
 export interface PresenterDockProps {
   isFullscreen: boolean;
   hidden: boolean;
+  /** Take the dock out of focus order (a blocking notice covers it). */
+  inert?: boolean;
   onShow: () => void;
   onHide: () => void;
   onToggleFullscreen: () => void;
@@ -66,9 +72,15 @@ export interface PresenterDockProps {
   tour?: (target: string) => string | undefined;
 }
 
+/** Flow buttons: 44 tall, 56 on touch screens (components.md §7). */
+const flowButtonClass = "pointer-coarse:min-h-14";
+/** View tools (icon buttons on phones): 44 square, 56 on touch screens. */
+const toolButtonClass = "pointer-coarse:min-h-14 pointer-coarse:min-w-14";
+
 export function PresenterDock({
   isFullscreen,
   hidden,
+  inert = false,
   onShow,
   onHide,
   onToggleFullscreen,
@@ -86,11 +98,16 @@ export function PresenterDock({
   tour = () => undefined,
 }: PresenterDockProps) {
   const [devOpen, setDevOpen] = React.useState(false);
+  // One filled action at a time: while the question can be closed and "next" still waits, closing leads.
+  const endLeads = Boolean(endQuestion && !endQuestion.disabled && primary.disabled && !primary.loading);
 
   if (hidden) {
     return (
-      <div className={cn("z-(--z-sticky) flex justify-end", isFullscreen ? "absolute bottom-5 right-5 z-[120]" : "sticky bottom-3 mt-auto px-4")}>
-        <Button variant="outline" size="lg" onClick={onShow} data-tour-target={tour("show-toolbar-button")} className="shadow-popover">
+      <div
+        inert={inert || undefined}
+        className={cn("z-(--z-sticky) flex justify-end", isFullscreen ? "absolute bottom-5 right-5 z-(--z-presenter-dock)" : "sticky bottom-3 mt-auto px-4")}
+      >
+        <Button variant="outline" size="lg" onClick={onShow} data-tour-target={tour("show-toolbar-button")} className="shadow-popover pointer-coarse:min-h-14">
           <Eye aria-hidden="true" />
           {t("lesson.interactive.showToolbar")}
         </Button>
@@ -102,15 +119,17 @@ export function PresenterDock({
     <div data-tour-target={tour("lesson-control-panel")} className="flex w-full flex-col gap-2">
       <div className="flex w-full flex-wrap items-center gap-2 lg:flex-nowrap">
         {/* Status */}
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="min-w-0 text-sm text-fg-muted">{status}</div>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <div className="min-w-0 text-sm text-fg-muted xl:text-base">{status}</div>
           {modeBadge}
         </div>
 
         {/* View tools */}
-        <div className="flex items-center gap-1 lg:mx-auto">
+        <div className="flex items-center gap-1 pointer-coarse:gap-2 lg:mx-auto">
           <Button
             variant="ghost"
+            size="lg"
+            className={cn("px-3", toolButtonClass)}
             onClick={onToggleFullscreen}
             data-tour-target={tour("fullscreen-button")}
             aria-label={isFullscreen ? t("lesson.interactive.exitFullscreen") : t("lesson.interactive.enterFullscreen")}
@@ -123,6 +142,8 @@ export function PresenterDock({
           </Button>
           <Button
             variant="ghost"
+            size="lg"
+            className={cn("px-3", toolButtonClass)}
             onClick={onHide}
             data-tour-target={tour("hide-toolbar-button")}
             aria-label={t("lesson.live.hideControls")}
@@ -132,7 +153,7 @@ export function PresenterDock({
             <span className="hidden xl:inline">{t("lesson.interactive.hideToolbar")}</span>
           </Button>
           {onReturnLobby ? (
-            <Button variant="ghost" onClick={onReturnLobby} disabled={returnLobbyDisabled} title={t("lesson.interactive.returnLobby")}>
+            <Button variant="ghost" size="lg" className={cn("px-3", toolButtonClass)} onClick={onReturnLobby} disabled={returnLobbyDisabled} title={t("lesson.interactive.returnLobby")}>
               <Undo2 aria-hidden="true" />
               <span className="hidden xl:inline">{t("lesson.interactive.returnLobby")}</span>
               <span className="sr-only xl:hidden">{t("lesson.interactive.returnLobby")}</span>
@@ -144,7 +165,7 @@ export function PresenterDock({
               size="sm"
               aria-pressed={devOpen}
               onClick={() => setDevOpen((open) => !open)}
-              className="text-fg-subtle"
+              className={cn("text-fg-subtle", toolButtonClass)}
               title="Developer tools"
             >
               <Wrench aria-hidden="true" />
@@ -154,14 +175,14 @@ export function PresenterDock({
         </div>
 
         {/* Lesson flow */}
-        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2 lg:ml-0 lg:flex-nowrap">
           {onFinish ? (
             <Button
               variant={finishEmphasis ? "default" : "outline"}
               size="lg"
               onClick={onFinish}
               data-tour-target={tour("preparation-exit-button")}
-              className={finishEmphasis ? "inline-flex" : "hidden md:inline-flex"}
+              className={cn(flowButtonClass, finishEmphasis ? "inline-flex" : "hidden md:inline-flex")}
             >
               <Check aria-hidden="true" />
               {t("lesson.live.finishLessonShort")}
@@ -174,6 +195,7 @@ export function PresenterDock({
             disabled={previousDisabled}
             data-tour-target={tour("previous-phase-button")}
             aria-label={t("lesson.interactive.previous")}
+            className={flowButtonClass}
           >
             <ChevronLeft aria-hidden="true" />
             <span className="hidden sm:inline">{t("lesson.interactive.previous")}</span>
@@ -181,11 +203,12 @@ export function PresenterDock({
           {endQuestion ? (
             <Button
               size="lg"
+              variant={endLeads ? "default" : "outline"}
               onClick={endQuestion.onClick}
               disabled={endQuestion.disabled}
               title={endQuestion.title}
               data-tour-target={tour("preparation-end-question-button")}
-              className="bg-warning-solid text-on-warning hover:bg-warning-solid/90"
+              className={flowButtonClass}
             >
               <SquareStop aria-hidden="true" />
               {endQuestion.label ?? t("lesson.live.endQuestion")}
@@ -193,14 +216,14 @@ export function PresenterDock({
           ) : null}
           <Button
             size="lg"
-            variant={finishEmphasis && onFinish ? "outline" : "default"}
+            variant={(finishEmphasis && onFinish) || endLeads ? "outline" : "default"}
             onClick={primary.onClick}
             disabled={primary.disabled}
             loading={primary.loading}
             data-tour-target={primary.tourTarget}
             data-lesson-action="primary"
             title={primary.hint}
-            className="min-w-36"
+            className={cn(flowButtonClass, "min-w-36")}
           >
             {primary.label}
             {primary.showChevron ? <ChevronRight aria-hidden="true" /> : null}
@@ -229,10 +252,17 @@ export function PresenterDock({
 
   if (isFullscreen) {
     return (
-      <div className="absolute bottom-4 left-1/2 z-[120] w-[min(1180px,calc(100vw-32px))] -translate-x-1/2 rounded-xl border border-hairline bg-surface-elevated p-3 shadow-popover">
+      <div
+        inert={inert || undefined}
+        className="absolute bottom-4 left-1/2 z-(--z-presenter-dock) w-[min(1180px,calc(100vw-32px))] -translate-x-1/2 rounded-(--radius-card) border border-clay-rim bg-surface-elevated p-3 shadow-popover"
+      >
         {dock}
       </div>
     );
   }
-  return <LessonDock className="mt-auto">{dock}</LessonDock>;
+  return (
+    <LessonDock className="mt-auto" inert={inert}>
+      {dock}
+    </LessonDock>
+  );
 }

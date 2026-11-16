@@ -20,7 +20,12 @@ const classOf = (count: number): Participant[] =>
 let root: Root | null = null;
 let host: HTMLDivElement | null = null;
 
-function render(gameState: GamePhaseState, participants: Participant[], category: GamePhaseStageProps["category"] = "vocabulary") {
+function render(
+  gameState: GamePhaseState,
+  participants: Participant[],
+  category: GamePhaseStageProps["category"] = "vocabulary",
+  isFullscreen = true,
+) {
   host = document.createElement("div");
   document.body.appendChild(host);
   root = createRoot(host);
@@ -33,7 +38,7 @@ function render(gameState: GamePhaseState, participants: Participant[], category
         participants={participants}
         totalParticipants={participants.length}
         submittedCount={0}
-        isFullscreen={true}
+        isFullscreen={isFullscreen}
         teacherDemoEnabled={false}
         onTeacherDemoEnabledChange={() => {}}
         tutorialEnabled={true}
@@ -79,6 +84,30 @@ describe("live monitor on the projector", () => {
     const view = render({ phase: 10, category: "vocabulary", status: "playing", votes: {}, results: {}, selectedGameId: "rune-match", playingStartedAt: Date.now() }, classOf(5));
     const list = [...view.querySelectorAll("ol")].find((ol) => ol.children.length === 5);
     expect(list!.className).not.toContain("grid");
+  });
+});
+
+describe("selected game name in the stage heading", () => {
+  const chips = (view: HTMLElement) => [...view.querySelectorAll("span")].filter((span) => span.textContent === "เกมที่เลือก: Rune Match" && span.className.includes("rounded"));
+
+  // The demo and tutorial status lines do not name the game, so the chip is the only place it shows.
+  it.each(["teacher_demo", "tutorial"] as const)("%s: beside the heading from 640px, on its own line under it on a phone", (status) => {
+    const view = render({ phase: 10, category: "vocabulary", status, votes: {}, results: {}, selectedGameId: "rune-match" }, classOf(3), "vocabulary", false);
+    const found = chips(view);
+    expect(found).toHaveLength(2);
+    const [aside, below] = found;
+    expect(aside.classList.contains("max-sm:hidden")).toBe(true);
+    expect(below.classList.contains("sm:hidden")).toBe(true);
+    // The phone copy is not inside the heading row: it comes after it.
+    const headingRow = aside.closest("div.flex.min-w-0.items-center");
+    expect(headingRow).toBeTruthy();
+    expect(headingRow!.contains(below)).toBe(false);
+    expect(headingRow!.compareDocumentPosition(below) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("adds no second chip in fullscreen, where the heading is hidden", () => {
+    const view = render({ phase: 10, category: "vocabulary", status: "tutorial", votes: {}, results: {}, selectedGameId: "rune-match" }, classOf(3));
+    expect(chips(view).filter((chip) => chip.classList.contains("sm:hidden"))).toHaveLength(0);
   });
 });
 

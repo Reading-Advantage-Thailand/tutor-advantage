@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { MessageCircle, SearchX } from "lucide-react";
+import { MessageCircle, SearchX, WifiOff } from "lucide-react";
 import { toast } from "sonner";
 import {
   AppBar,
@@ -101,7 +101,9 @@ export default function ChatListPage() {
     return (
       <Screen>
         <AppBar title={t("chat.title")} back fallbackHref="/dashboard" />
-        <LiffErrorState />
+        <div className="px-4 pt-2 pb-6">
+          <LiffErrorState card />
+        </div>
       </Screen>
     );
   }
@@ -115,11 +117,14 @@ export default function ChatListPage() {
     return (
       <Screen>
         <AppBar title={t("chat.title")} back fallbackHref="/dashboard" />
-        <ErrorState
-          description={t("chat.loadConversationsFailed")}
-          onRetry={retryAll}
-          retrying={conversationsRes.isValidating}
-        />
+        <div className="px-4 pt-3 pb-6">
+          <ErrorState
+            card
+            description={t("chat.loadConversationsFailed")}
+            onRetry={retryAll}
+            retrying={conversationsRes.isValidating}
+          />
+        </div>
       </Screen>
     );
   }
@@ -139,14 +144,20 @@ export default function ChatListPage() {
 
       <div className="flex flex-col gap-6 px-4 pt-3 pb-[calc(24px+var(--safe-bottom))]">
         {conversationsRes.error ? (
-          <p role="status" className="px-1 text-[13px] leading-[1.5] text-fg-muted">
+          <p
+            role="status"
+            className="flex items-start gap-2 rounded-[16px] border-[1.5px] border-warning-border bg-warning-bg px-3.5 py-2.5 text-[13px] leading-[1.6] font-semibold text-warning-fg"
+          >
+            <WifiOff aria-hidden="true" className="mt-0.5 size-4 shrink-0" strokeWidth={2.4} />
             {t("chat.reconnecting")}
           </p>
         ) : null}
 
         {showEmpty ? (
           <EmptyState
+            card
             icon={MessageCircle}
+            tone="blue"
             title={t("chat.emptyTitle")}
             description={t("chat.emptyDescription")}
             action={
@@ -159,16 +170,18 @@ export default function ChatListPage() {
 
         {showNoResults ? (
           <EmptyState
+            card
             icon={SearchX}
             tone="neutral"
+            mascot="sleepy"
             title={t("common.noResultsTitle")}
             description={t("common.noResultsDescription")}
           />
         ) : null}
 
         {filteredConversations.length > 0 ? (
-          <section className="flex flex-col gap-1">
-            <SectionHeader title={t("chat.recentSection")} className="px-1" />
+          <section className="flex flex-col gap-2">
+            <SectionHeader title={t("chat.recentSection")} count={filteredConversations.length} />
             <ListGroup>
               {filteredConversations.map((conversation) => (
                 <ConversationRow key={conversation.id} conversation={conversation} now={now} />
@@ -178,8 +191,8 @@ export default function ChatListPage() {
         ) : null}
 
         {classesLoading ? (
-          <section className="flex flex-col gap-1">
-            <SectionHeader title={t("chat.startSection")} className="px-1" />
+          <section className="flex flex-col gap-2">
+            <SectionHeader title={t("chat.startSection")} />
             <ListGroup>
               <ListRowSkeleton count={2} />
             </ListGroup>
@@ -200,8 +213,8 @@ export default function ChatListPage() {
             }
           />
         ) : filteredClasses.length > 0 ? (
-          <section className="flex flex-col gap-4">
-            <SectionHeader title={t("chat.startSection")} className="-mb-3 px-1" />
+          <section className="flex flex-col gap-3">
+            <SectionHeader title={t("chat.startSection")} className="-mb-1" />
             {filteredClasses.map((cls) => (
               <ClassChatGroup key={cls.id} cls={cls} initiating={initiating} onStart={handleStartChat} />
             ))}

@@ -1,18 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, CalendarDays, CheckCircle2, ExternalLink, Link2, Ticket } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  IconTile,
-  SelectField,
-  StickyActions,
-  TextField,
-} from "@/components/app";
-import { Button } from "@/components/ui/button";
+import { AlertCircle, BookOpen, CalendarDays, CheckCircle2, ExternalLink, Link2, Ticket } from "lucide-react";
+import { SelectField, StickyActions, TextField } from "@/components/app";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { scrollBehavior } from "@/lib/motion";
+import { thaiLabel } from "@/lib/thaiText";
+import { cn } from "@/lib/utils";
 import {
   MAX_CLASS_HOURS,
   buildScheduleDescription,
@@ -27,13 +24,14 @@ import {
 } from "@/lib/tutorClassFlow";
 import { createClass, validateCoupon } from "../actions";
 import { bookDisplayLabel, groupBooksByProgram, type BookOption } from "../components/book-options";
+import { FormSection } from "../components/FormSection";
 import { ScheduleEditor } from "../components/ScheduleEditor";
 
 export function NewClassForm({ books }: { books: BookOption[] }) {
   const router = useRouter();
   const nameRef = useRef<HTMLInputElement>(null);
   const bookRef = useRef<HTMLSelectElement>(null);
-  const scheduleRef = useRef<HTMLDivElement>(null);
+  const scheduleRef = useRef<HTMLElement>(null);
   const [loading, setLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
 
@@ -126,7 +124,7 @@ export function NewClassForm({ books }: { books: BookOption[] }) {
       setErrorText(t("tutorClass.form.fixErrors"));
       if (newErrors.name) nameRef.current?.focus();
       else if (newErrors.book) bookRef.current?.focus();
-      else scheduleRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      else scheduleRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
       return;
     }
 
@@ -148,12 +146,14 @@ export function NewClassForm({ books }: { books: BookOption[] }) {
   const today = startOfLocalDay();
 
   return (
-    <form id="create-class-form" onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
-      <Card as="section" aria-labelledby="new-class-info">
-        <CardHeader
-          icon={<IconTile icon={BookOpen} size="sm" />}
-          title={<span id="new-class-info">{t("tutorClass.newClass.classInfo")}</span>}
-        />
+    <form id="create-class-form" onSubmit={handleSubmit} noValidate className="flex flex-col gap-4 md:gap-5">
+      {/* 1. What the class is (required) */}
+      <FormSection
+        id="new-class-info"
+        icon={BookOpen}
+        title={t("tutorClass.newClass.classInfo")}
+        description={t("tutorClass.classPages.infoHelp")}
+      >
         <div className="flex flex-col gap-4">
           <TextField
             ref={nameRef}
@@ -201,45 +201,16 @@ export function NewClassForm({ books }: { books: BookOption[] }) {
             )}
           </SelectField>
         </div>
-      </Card>
+      </FormSection>
 
-      <Card as="section" aria-labelledby="new-class-meeting">
-        <CardHeader
-          icon={<IconTile icon={Link2} size="sm" tone="blue" />}
-          title={<span id="new-class-meeting">{t("tutorClass.newClass.meetingUrlTitle")}</span>}
-        />
-        <div className="flex flex-col gap-3">
-          <TextField
-            id="meeting-url"
-            type="url"
-            inputMode="url"
-            optional
-            label={t("tutorClass.newClass.meetingUrlProviderLabel")}
-            placeholder="https://meet.google.com/xxx-xxxx-xxx"
-            hint={t("tutorClass.newClass.meetingUrlHelp")}
-            value={form.meetingUrl}
-            onChange={(event) => setForm({ ...form, meetingUrl: event.target.value })}
-          />
-          <div className="flex flex-wrap items-center gap-2 text-[0.8125rem] text-fg-muted">
-            <span>{t("tutorClass.newClass.quickCreate")}</span>
-            <Button type="button" variant="outline" size="sm" onClick={() => window.open("https://meet.google.com/new", "_blank")}>
-              Google Meet
-              <ExternalLink aria-hidden="true" className="size-3.5" />
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => window.open("https://zoom.us/start/videoconference", "_blank")}>
-              Zoom
-              <ExternalLink aria-hidden="true" className="size-3.5" />
-            </Button>
-          </div>
-        </div>
-      </Card>
-
-      <Card as="section" aria-labelledby="new-class-coupon">
-        <CardHeader
-          icon={<IconTile icon={Ticket} size="sm" tone="amber" />}
-          title={<span id="new-class-coupon">{t("tutorClass.newClass.couponTitle")}</span>}
-          description={t("tutorClass.newClass.couponHelp")}
-        />
+      {/* 2. Coupon hours: before the schedule because they raise its hour budget. */}
+      <FormSection
+        id="new-class-coupon"
+        icon={Ticket}
+        tone="amber"
+        title={t("tutorClass.newClass.couponTitle")}
+        description={t("tutorClass.newClass.couponHelp")}
+      >
         <div className="flex items-start gap-2">
           <TextField
             id="coupon-code"
@@ -256,11 +227,12 @@ export function NewClassForm({ books }: { books: BookOption[] }) {
               setCouponError("");
             }}
           />
+          {/* Lines up with the input: the label line + the field's 6px gap. */}
           <Button
             type="button"
             variant="outline"
             size="lg"
-            className="mt-[1.6875rem]"
+            className="mt-[1.6875rem] pointer-coarse:min-h-12"
             onClick={handleCheckCoupon}
             loading={couponChecking}
             disabled={!form.couponCode.trim()}
@@ -269,72 +241,113 @@ export function NewClassForm({ books }: { books: BookOption[] }) {
           </Button>
         </div>
         {couponHours !== null && (
-          <p className="mt-2 flex items-center gap-1.5 text-[0.8125rem] font-medium text-success-fg" role="status">
-            <CheckCircle2 aria-hidden="true" className="size-4" />
-            {t("tutorClass.newClass.couponValid")}: {couponHours} {t("tutorClass.newClass.couponHoursUnit")}
+          <p className="mt-3 flex items-center gap-1.5 type-label text-success-fg" role="status">
+            <CheckCircle2 aria-hidden="true" className="size-4 shrink-0" />
+            <span>
+              {t("tutorClass.newClass.couponValid")}: <span className="font-semibold tabular">{couponHours}</span>{" "}
+              {t("tutorClass.newClass.couponHoursUnit")}
+            </span>
           </p>
         )}
-      </Card>
+      </FormSection>
 
-      <Card as="section" aria-labelledby="new-class-schedule">
-        <div ref={scheduleRef} className="scroll-mt-24">
-          <CardHeader
-            icon={<IconTile icon={CalendarDays} size="sm" tone="blue" />}
-            title={
-              <span id="new-class-schedule">
-                {t("tutorClass.schedule.sectionTitle")}
-                <span className="ml-0.5 text-danger-fg" aria-hidden="true">*</span>
-              </span>
-            }
+      {/* 3. Teaching days (required) */}
+      <FormSection
+        ref={scheduleRef}
+        id="new-class-schedule"
+        icon={CalendarDays}
+        tone="purple"
+        required
+        title={t("tutorClass.schedule.sectionTitle")}
+      >
+        <ScheduleEditor
+          idPrefix="new-class"
+          columnsFrom="lg"
+          dates={selectedDates}
+          times={dateTimes}
+          totalHours={totalHours}
+          maxHours={maxHours}
+          freeHours={freeHours}
+          genStart={genStart}
+          onGenStartChange={setGenStart}
+          onGenerate={handleGenerate}
+          onClear={() => {
+            setSelectedDates([]);
+            setDateTimes({});
+          }}
+          onSelectDates={handleSelectDates}
+          onTimeChange={(key, field, value) =>
+            setDateTimes((prev) => ({ ...prev, [key]: { ...prev[key], [field]: value } }))
+          }
+          isDayDisabled={(date) => date < today}
+          preview={schedule}
+          error={fieldErrors.schedule}
+        />
+      </FormSection>
+
+      {/* 4. Online room link (optional) */}
+      <FormSection id="new-class-meeting" icon={Link2} tone="blue" title={t("tutorClass.newClass.meetingUrlTitle")}>
+        <div className="flex flex-col gap-3">
+          <TextField
+            id="meeting-url"
+            type="url"
+            inputMode="url"
+            optional
+            label={t("tutorClass.newClass.meetingUrlProviderLabel")}
+            placeholder="https://meet.google.com/xxx-xxxx-xxx"
+            hint={t("tutorClass.newClass.meetingUrlHelp")}
+            value={form.meetingUrl}
+            onChange={(event) => setForm({ ...form, meetingUrl: event.target.value })}
           />
-          <ScheduleEditor
-            idPrefix="new-class"
-            columnsFrom="md"
-            dates={selectedDates}
-            times={dateTimes}
-            totalHours={totalHours}
-            maxHours={maxHours}
-            freeHours={freeHours}
-            genStart={genStart}
-            onGenStartChange={setGenStart}
-            onGenerate={handleGenerate}
-            onClear={() => {
-              setSelectedDates([]);
-              setDateTimes({});
-            }}
-            onSelectDates={handleSelectDates}
-            onTimeChange={(key, field, value) =>
-              setDateTimes((prev) => ({ ...prev, [key]: { ...prev[key], [field]: value } }))
-            }
-            isDayDisabled={(date) => date < today}
-            preview={schedule}
-            error={fieldErrors.schedule}
-          />
+          <div className="ds-well flex flex-col gap-2 px-3.5 py-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <span className="type-body-s text-fg-muted sm:mr-auto">{t("tutorClass.newClass.quickCreate")}</span>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" variant="outline" onClick={() => window.open("https://meet.google.com/new", "_blank")}>
+                Google Meet
+                <ExternalLink aria-hidden="true" />
+              </Button>
+              <Button type="button" variant="outline" onClick={() => window.open("https://zoom.us/start/videoconference", "_blank")}>
+                Zoom
+                <ExternalLink aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
         </div>
-      </Card>
+      </FormSection>
 
-      <StickyActions className="flex-col items-stretch md:flex-row md:items-center">
+      <StickyActions className="flex-col items-stretch gap-3 md:flex-row md:items-center">
         {errorText ? (
-          <p role="alert" className="text-[0.8125rem] font-medium text-danger-fg md:mr-auto">
-            {errorText}
+          <p role="alert" className="flex items-start gap-1.5 type-label text-danger-fg md:mr-auto">
+            <AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+            <span>{errorText}</span>
           </p>
         ) : (
-          <p className="hidden text-[0.8125rem] text-fg-muted md:mr-auto md:block">
-            {selectedDates.length
-              ? `${totalHours} / ${maxHours} ${t("tutorClass.newClass.hoursUnit")}`
-              : t("tutorClass.form.footerHint")}
+          <p className="hidden type-body-s text-fg-muted md:mr-auto md:block">
+            {selectedDates.length ? (
+              <span className="tabular">
+                {totalHours} / {maxHours} {t("tutorClass.newClass.hoursUnit")}
+              </span>
+            ) : (
+              t("tutorClass.form.footerHint")
+            )}
           </p>
         )}
-        <Button
-          id="btn-submit-create-class"
-          type="submit"
-          size="lg"
-          className="w-full md:w-auto"
-          loading={loading}
-          disabled={overLimit}
-        >
-          {loading ? t("tutorClass.newClass.creating") : t("tutorClass.newClass.submit")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard/classes" className={cn(buttonVariants({ variant: "outline", size: "xl" }), "md:h-11")}>
+            {t("shell.cancel")}
+          </Link>
+          <Button
+            id="btn-submit-create-class"
+            type="submit"
+            size="xl"
+            className="h-auto min-h-12 flex-1 py-2 whitespace-normal md:h-11 md:min-h-0 md:flex-none md:py-0"
+            loading={loading}
+            disabled={overLimit}
+          >
+            {/* One flex item, so "Referral Link" stays whole when the label wraps (same accessible name). */}
+            <span className="min-w-0">{thaiLabel(loading ? t("tutorClass.newClass.creating") : t("tutorClass.newClass.submit"))}</span>
+          </Button>
+        </div>
       </StickyActions>
     </form>
   );

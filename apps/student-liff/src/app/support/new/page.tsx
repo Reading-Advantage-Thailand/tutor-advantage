@@ -21,8 +21,10 @@ import { LiffErrorState } from "@/app/dashboard/_components/LiffErrorState";
 import { studentApi } from "@/lib/api";
 import { mutateResource, peekResource, useCachedResource } from "@/lib/cachedResource";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { supportTicketResourceKey, supportTicketsResourceKey } from "@/lib/resourceKeys";
 import { enrolledClassesResourceKey, type EnrolledClassesResponse } from "@/lib/schedule";
+import { getCategoryVisual } from "../_components/categoryVisuals";
 import { OptionPicker, type PickerOption } from "../_components/OptionPicker";
 import { NewRequestSkeleton } from "../_components/SupportSkeletons";
 import {
@@ -54,6 +56,7 @@ const FORM_ID = "support-new-form";
 const CATEGORY_OPTIONS: PickerOption[] = STUDENT_TICKET_CATEGORIES.map((category) => ({
   value: category,
   label: t(getCategoryLabelKey(category)),
+  ...getCategoryVisual(category),
 }));
 
 export default function NewSupportRequestPage() {
@@ -153,7 +156,9 @@ function NewSupportRequest() {
     return (
       <Screen>
         <AppBar title={t("support.newTitle")} back fallbackHref="/support" />
-        <LiffErrorState />
+        <div className="px-4 pt-2 pb-6">
+          <LiffErrorState card />
+        </div>
       </Screen>
     );
   }
@@ -195,20 +200,15 @@ function NewSupportRequest() {
     <Screen>
       <AppBar title={t("support.newTitle")} back fallbackHref="/support" />
 
-      <form id={FORM_ID} noValidate onSubmit={handleSubmit} className="flex flex-col gap-4 px-4 pt-2 pb-6">
-        <Surface tone="brand" className="flex items-start gap-3">
-          <IconTile icon={LifeBuoy} tone="blue" size="lg" />
-          <p className="min-w-0 text-sm leading-[1.6] text-fg-muted">{t("support.intro")}</p>
-        </Surface>
+      <form id={FORM_ID} noValidate onSubmit={handleSubmit} className="flex flex-col gap-5 px-4 pt-2 pb-6">
+        {/* What this form is for: one help line beside the support tile. */}
+        <div className="flex items-start gap-3.5">
+          <IconTile icon={LifeBuoy} tone="blue" />
+          <p className="min-w-0 flex-1 pt-0.5 text-[15px] leading-[1.65] text-fg-muted">{thaiCopy(t("support.intro"))}</p>
+        </div>
 
-        <Notice
-          tone="warning"
-          icon={ShieldAlert}
-          title={t("support.privacyTitle")}
-          description={t("support.privacyDescription")}
-        />
-
-        <Surface as="section" className="flex flex-col gap-3">
+        {/* Step 1: what it is about (2-column tappable category tiles). */}
+        <Surface as="section">
           <OptionPicker
             name="support-category"
             legend={t("support.categoryLabel")}
@@ -219,11 +219,22 @@ function NewSupportRequest() {
               clearError("category");
             }}
             error={errors.category ? t(errors.category) : undefined}
+            required
             firstOptionRef={categoryRef}
+            layout="tiles"
           />
         </Surface>
 
-        <Surface as="section" className="flex flex-col gap-4">
+        {/* Said right before the student starts typing. */}
+        <Notice
+          tone="warning"
+          icon={ShieldAlert}
+          title={t("support.privacyTitle")}
+          description={t("support.privacyDescription")}
+        />
+
+        {/* Step 2: subject + description. */}
+        <Surface as="section" className="flex flex-col gap-5">
           <TextField
             ref={subjectRef}
             label={t("support.subjectLabel")}
@@ -254,8 +265,9 @@ function NewSupportRequest() {
           />
         </Surface>
 
-        {classes.length > 0 ? (
-          <Surface as="section" className="flex flex-col gap-3">
+        {/* Optional details: the related class and a payment reference. */}
+        <Surface as="section" className="flex flex-col gap-5">
+          {classes.length > 0 ? (
             <OptionPicker
               name="support-class"
               legend={t("support.classLabel")}
@@ -263,10 +275,7 @@ function NewSupportRequest() {
               value={resolveClassId(classId, classes.map((item) => item.id))}
               onChange={setClassId}
             />
-          </Surface>
-        ) : null}
-
-        <Surface as="section">
+          ) : null}
           <TextField
             ref={refRef}
             label={t("support.refLabel")}
@@ -287,7 +296,7 @@ function NewSupportRequest() {
       </form>
 
       <BottomActionBar>
-        <Button type="submit" form={FORM_ID} variant="brand" size="cta" className="flex-1" loading={saving}>
+        <Button type="submit" form={FORM_ID} variant="brand" size="cta-lg" className="flex-1" loading={saving}>
           {saving ? null : <Send aria-hidden="true" />}
           {saving ? t("support.submitting") : t("support.submit")}
         </Button>

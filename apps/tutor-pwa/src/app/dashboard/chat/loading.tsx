@@ -9,8 +9,10 @@ export default function ChatLoading() {
         <PageHeaderSkeleton actions={false} />
         <ListSkeleton rows={6} leading />
       </div>
-      <div aria-hidden="true" className="hidden h-[calc(100dvh-64px)] items-center justify-center rounded-xl border border-hairline bg-surface lg:flex xl:h-[calc(100dvh-76px)]">
-        <Skeleton className="h-4 w-40" />
+      <div aria-hidden="true" className="ds-card hidden h-[calc(100dvh-64px)] flex-col items-center justify-center gap-4 lg:flex xl:h-[calc(100dvh-76px)]">
+        <Skeleton className="size-12 rounded-(--radius-tile)" />
+        <Skeleton className="h-5 w-40" />
+        <Skeleton className="h-3.5 w-64" />
       </div>
     </>
   );

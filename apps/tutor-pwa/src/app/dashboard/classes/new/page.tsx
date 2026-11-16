@@ -26,7 +26,8 @@ async function getBookOptions(): Promise<BookOption[]> {
 export default async function NewClassPage() {
   const books = await getBookOptions();
   return (
-    <Page width="narrow">
+    // Single column, max 720 (patterns.md T4), centred on desktop.
+    <Page width="narrow" className="max-w-[720px]">
       <PageHeader
         title={t("tutorClass.newClass.title")}
         description={t("tutorClass.newClass.subtitle")}

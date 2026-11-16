@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRight, BarChart2, BookOpen, CalendarDays, CheckCircle2, Link2Off, Users } from "lucide-react";
+import { AlertTriangle, ArrowRight, BarChart2, BookOpen, CalendarDays, CheckCircle2, Link2Off, Users } from "lucide-react";
 import { toast } from "sonner";
 import {
   BottomActionBar,
@@ -22,7 +22,7 @@ import { useLiff } from "@/components/providers/LiffProvider";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { studentApi } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
-import { getLevelTone } from "@/lib/cefr";
+import { getLevelTone, levelToneClass } from "@/lib/cefr";
 import { classDetailResourceKey } from "@/lib/classAccess";
 import { formatTHB, noOrphan } from "@/lib/format";
 import { t, type I18nKey } from "@/lib/i18n";
@@ -149,12 +149,16 @@ function EnrollContent() {
       <Screen>
         <EnrollAppBar />
         {isRetryableEnrollLoadError(kind) ? (
-          <ErrorState
-            title={t("enroll.loadErrorTitle")}
-            kind={resource.error instanceof TypeError ? "offline" : "error"}
-            onRetry={() => void resource.refetch()}
-            retrying={resource.isValidating}
-          />
+          <div className="mx-auto w-full max-w-2xl px-4 pt-2">
+            {/* Load errors sit in a normal card (patterns.md "Empty, error and loading"). */}
+            <ErrorState
+              card
+              title={t("enroll.loadErrorTitle")}
+              kind={resource.error instanceof TypeError ? "offline" : "error"}
+              onRetry={() => void resource.refetch()}
+              retrying={resource.isValidating}
+            />
+          </div>
         ) : (
           <StatusScreen
             icon={Link2Off}
@@ -176,20 +180,28 @@ function EnrollContent() {
     <Screen>
       <EnrollAppBar />
 
-      <div className="flex flex-col gap-4 px-4 pt-2 pb-6">
-        <section className="relative overflow-hidden rounded-[var(--radius-card)] bg-hero p-5 text-hero-fg shadow-[var(--shadow-card)]">
-          <span aria-hidden="true" className="pointer-events-none absolute -top-12 -right-10 size-36 rounded-full bg-hero-chip" />
-          <Chip tone="onBrand" size="md" icon={CheckCircle2} className="relative">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-2 pb-6">
+        {/* Class hero in the level's tone (flat, rim, no ledge). */}
+        <section
+          aria-labelledby="enroll-class-title"
+          className={cn(
+            "relative overflow-hidden rounded-[var(--radius-card)] border-[1.5px] border-clay-rim p-5",
+            levelToneClass[getLevelTone(classDetails.cefrLevel)].soft,
+          )}
+        >
+          <Chip tone="paper" size="md" icon={CheckCircle2}>
             {t("enroll.confirmClass")}
           </Chip>
-          <h2 className="relative mt-3 text-[22px] leading-[1.45] font-extrabold text-balance">{noOrphan(classDetails.className)}</h2>
-          <div className="relative mt-3 flex flex-wrap gap-2">
+          <h2 id="enroll-class-title" className="t-title-l mt-3 text-balance text-fg">
+            {noOrphan(classDetails.className)}
+          </h2>
+          <div className="mt-3 flex flex-wrap gap-2">
             {classDetails.cefrLevel ? (
-              <Chip tone="onBrand" size="md" icon={BarChart2}>
+              <Chip tone="paper" size="md" icon={BarChart2}>
                 {`${t("enroll.cefrChipPrefix")} ${classDetails.cefrLevel}`}
               </Chip>
             ) : null}
-            <Chip tone="onBrand" size="md" icon={Users}>
+            <Chip tone="paper" size="md" icon={Users} className="[&>span]:font-sans [&>span]:tabular-nums">
               {`${classDetails.currentStudents}/${classDetails.maxStudents}`}
             </Chip>
           </div>
@@ -211,25 +223,25 @@ function EnrollContent() {
             label={t("enroll.tutor")}
             value={classDetails.tutorName}
           />
-          <InfoRow leading={<IconTile icon={BookOpen} />} label={t("enroll.book")} value={classDetails.bookTitle} />
+          <InfoRow leading={<IconTile icon={BookOpen} size="sm" />} label={t("enroll.book")} value={classDetails.bookTitle} />
           <InfoRow
-            leading={<IconTile icon={BarChart2} tone={getLevelTone(classDetails.cefrLevel)} />}
+            leading={<IconTile icon={BarChart2} size="sm" tone={getLevelTone(classDetails.cefrLevel)} />}
             label={t("enroll.level")}
             value={classDetails.cefrLevel}
           />
           <InfoRow
-            leading={<IconTile icon={CalendarDays} tone="purple" />}
+            leading={<IconTile icon={CalendarDays} size="sm" tone="purple" />}
             label={t("enroll.schedule")}
             value={classDetails.schedule}
           />
         </ListGroup>
 
-        <Surface>
-          <div className="flex items-baseline justify-between gap-3 text-sm leading-[1.5]">
-            <span className="text-fg-muted">{t("enroll.students")}</span>
-            <span className="font-bold text-fg tabular-nums">
+        <Surface padding="none" className="p-[18px]">
+          <div className="flex items-baseline justify-between gap-3">
+            <span className="t-body-s text-fg-muted">{t("enroll.students")}</span>
+            <span className="text-base leading-[1.5] font-semibold text-fg tabular-nums">
               {classDetails.currentStudents}/{classDetails.maxStudents}{" "}
-              <span className="font-normal text-fg-muted">{t("enroll.peopleUnit")}</span>
+              <span className="text-sm font-normal text-fg-muted">{t("enroll.peopleUnit")}</span>
             </span>
           </div>
           <ProgressBar
@@ -239,7 +251,8 @@ function EnrollContent() {
             className="mt-2.5"
           />
           {seats.urgent ? (
-            <p className="mt-2 text-[13px] leading-[1.5] font-semibold text-danger-fg">
+            <p className="mt-2.5 flex items-center gap-1.5 text-sm leading-[1.6] font-semibold text-danger-fg">
+              <AlertTriangle aria-hidden="true" className="size-4 shrink-0" />
               {t("enroll.urgentSeatsPrefix")} {seats.spotsLeft} {t("enroll.urgentSeatsSuffix")}
             </p>
           ) : null}
@@ -254,7 +267,7 @@ function EnrollContent() {
         </ListGroup>
 
         {classDetails.totalHours ? (
-          <p className="px-1 text-[13px] leading-[1.5] text-fg-muted">
+          <p className="px-1 text-[13px] leading-[1.6] text-fg-muted">
             {t("enroll.hoursPrefix")} {classDetails.totalHours} {t("enroll.hoursSuffix")}
           </p>
         ) : null}
@@ -262,8 +275,8 @@ function EnrollContent() {
 
       <BottomActionBar>
         <div className="min-w-0 shrink-0">
-          <p className="text-xs leading-[1.5] text-fg-muted">{t("enroll.tuition")}</p>
-          <p className="text-xl leading-[1.3] font-extrabold text-fg tabular-nums">
+          <p className="text-xs leading-[1.6] font-medium text-fg-muted">{t("enroll.tuition")}</p>
+          <p className="text-[22px] leading-[1.3] font-semibold text-fg tabular-nums">
             {classDetails.price === 0 ? t("enroll.free") : formatTHB(classDetails.price)}
             {classDetails.price === 0 ? null : (
               <span className="ml-1 text-xs font-normal text-fg-muted">{t("enroll.perCourse")}</span>
@@ -272,7 +285,7 @@ function EnrollContent() {
         </div>
         <Button
           variant="brand"
-          size="cta"
+          size="cta-lg"
           className={cn("min-w-0 flex-1", seats.isFull && "bg-fill-muted text-fg-muted shadow-none")}
           onClick={handleAction}
           disabled={seats.isFull}

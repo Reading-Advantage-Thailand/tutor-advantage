@@ -11,7 +11,8 @@ import {
   ListRow,
   ListRowSkeleton,
   SectionHeader,
-  Surface,
+  StatStrip,
+  type StatStripItem,
 } from "@/components/mobile";
 import { classifyClassLoadError } from "@/lib/classAccess";
 import { t } from "@/lib/i18n";
@@ -55,26 +56,16 @@ function AttendanceRows({ records }: { records: AttendanceRecord[] }) {
   );
 }
 
-function SummaryChips({ summary }: { summary: MyClassAttendance["summary"] }) {
+/** Totals as one stat strip (rate when something is marked · present · late · absent), tabular numbers. */
+function SummaryStrip({ summary }: { summary: MyClassAttendance["summary"] }) {
   const ratePercent = attendanceRatePercent(summary.rate);
-  return (
-    <div className="mb-3 flex flex-wrap gap-2">
-      {ratePercent !== null ? (
-        <Chip tone="brand" size="md">
-          {`${t("classes.detail.attendance.ratePrefix")} ${ratePercent}%`}
-        </Chip>
-      ) : null}
-      <Chip tone={ATTENDANCE_STATUS_DISPLAY.PRESENT.tone} size="md">
-        {`${t("classes.detail.attendance.present")} ${summary.present}`}
-      </Chip>
-      <Chip tone={ATTENDANCE_STATUS_DISPLAY.LATE.tone} size="md">
-        {`${t("classes.detail.attendance.late")} ${summary.late}`}
-      </Chip>
-      <Chip tone={ATTENDANCE_STATUS_DISPLAY.ABSENT.tone} size="md">
-        {`${t("classes.detail.attendance.absent")} ${summary.absent}`}
-      </Chip>
-    </div>
-  );
+  const items: StatStripItem[] = [
+    ...(ratePercent !== null ? [{ value: `${ratePercent}%`, label: t("classes.detail.attendance.ratePrefix") }] : []),
+    { value: summary.present, label: t(ATTENDANCE_STATUS_DISPLAY.PRESENT.labelKey) },
+    { value: summary.late, label: t(ATTENDANCE_STATUS_DISPLAY.LATE.labelKey) },
+    { value: summary.absent, label: t(ATTENDANCE_STATUS_DISPLAY.ABSENT.labelKey) },
+  ];
+  return <StatStrip numbers="tabular" items={items} className="mb-3" />;
 }
 
 function AttendanceBody({ attendance }: { attendance: AttendanceState }) {
@@ -88,35 +79,35 @@ function AttendanceBody({ attendance }: { attendance: AttendanceState }) {
   }
   if (!data) {
     return (
-      <Surface padding="none">
-        <ErrorState
-          title={t("classes.detail.attendance.loadFailed")}
-          kind={classifyClassLoadError(error) === "offline" ? "offline" : "error"}
-          onRetry={attendance.refetch}
-          retrying={attendance.isValidating}
-          mascot={false}
-          className="py-6"
-        />
-      </Surface>
+      <ErrorState
+        card
+        headingLevel="h4"
+        title={t("classes.detail.attendance.loadFailed")}
+        kind={classifyClassLoadError(error) === "offline" ? "offline" : "error"}
+        onRetry={attendance.refetch}
+        retrying={attendance.isValidating}
+        mascot={false}
+        className="py-6"
+      />
     );
   }
   if (data.records.length === 0) {
     return (
-      <Surface padding="none">
-        <EmptyState
-          icon={ClipboardCheck}
-          tone="neutral"
-          mascot={false}
-          title={t("classes.detail.attendance.emptyTitle")}
-          description={t("classes.detail.attendance.emptyDescription")}
-          className="py-6"
-        />
-      </Surface>
+      <EmptyState
+        card
+        headingLevel="h4"
+        icon={ClipboardCheck}
+        tone="neutral"
+        mascot={false}
+        title={t("classes.detail.attendance.emptyTitle")}
+        description={t("classes.detail.attendance.emptyDescription")}
+        className="py-6"
+      />
     );
   }
   return (
     <>
-      <SummaryChips summary={data.summary} />
+      <SummaryStrip summary={data.summary} />
       <AttendanceRows records={selectAttendancePreview(data.records).preview} />
     </>
   );

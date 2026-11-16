@@ -3,24 +3,25 @@
 import { Ban, CheckCircle2, Pencil, Plus, TicketPercent, TicketX, UsersRound, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AdminStatusChip,
+  ColumnToggle,
   ConfirmDialog,
-  CopyButton,
   DataTable,
   DescriptionList,
   EmptyState,
   ErrorState,
   FilterBar,
-  Grid,
+  KpiStrip,
   Money,
   Page,
   PageHeader,
   Pagination,
-  SelectField,
+  SegmentedControl,
   StatCard,
   useAdminSession,
+  useColumnVisibility,
   type DataTableColumn,
 } from "@/components/app";
 import { toast } from "@/components/app/toastStore";
@@ -31,6 +32,10 @@ import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatThaiDate, formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { statusOptions } from "@/lib/status";
+import { CELL_CLAMP } from "../classes/components/cellText";
+import { focusSearchIn, rescueFocusTo } from "../classes/components/focusRescue";
+import { RowAction, RowActions, RowActionSlot } from "../classes/components/RowAction";
+import { CodeCell } from "../coupons/components/CodeCell";
 import { DiscountCodeFormSheet } from "./components/DiscountCodeFormSheet";
 import { OfflinePaidSheet } from "./components/OfflinePaidSheet";
 import { RedemptionsSheet } from "./components/RedemptionsSheet";
@@ -45,6 +50,7 @@ import {
   withoutCreateParam,
   type DiscountCode,
   type DiscountCodePage,
+  type DiscountCodeStatus,
 } from "./discountCodeForm";
 import { adminClassesKey, useClassLookup } from "./useClassLookup";
 import "@/locales/th/discountCodes";
@@ -52,11 +58,11 @@ import "@/locales/th/discountCodes";
 function ClassCell({ row }: { row: DiscountCode }) {
   return (
     <span className="flex min-w-0 flex-col">
-      <span className="block max-w-56 truncate text-fg" title={row.classTitle ?? undefined}>
+      <span className={`max-w-44 font-medium text-fg ${CELL_CLAMP}`} title={row.classTitle ?? undefined}>
         {row.classTitle ?? t("discountCodes.classUnknown")}
       </span>
       {row.tutorUserId ? (
-        <span className="block max-w-56 truncate text-[0.8125rem] text-fg-muted" title={row.tutorEmail ?? undefined}>
+        <span className={`max-w-44 text-[0.8125rem] text-fg-muted ${CELL_CLAMP}`} title={row.tutorEmail ?? undefined}>
           {row.tutorName || row.tutorEmail || t("discountCodes.tutorUnnamed")}
         </span>
       ) : null}
@@ -78,12 +84,13 @@ function RedeemedByCell({ row, onShowAll }: { row: DiscountCode; onShowAll: () =
   return (
     <span className="flex min-w-0 flex-col">
       <span className="flex min-w-0 items-center gap-1.5">
+        {/* Touch: the ::after grows the hit area to 44px tall without moving the text. */}
         <Link
           href={`/users/${encodeURIComponent(latest.studentUserId)}`}
-          className="block max-w-48 truncate text-fg hover:underline"
+          className="relative block max-w-48 min-w-0 text-fg hover:underline pointer-coarse:after:absolute pointer-coarse:after:-inset-x-1 pointer-coarse:after:-inset-y-3"
           title={contact || undefined}
         >
-          {redeemerLabel(latest) ?? t("discountCodes.redeemerUnknown")}
+          <span className={CELL_CLAMP}>{redeemerLabel(latest) ?? t("discountCodes.redeemerUnknown")}</span>
         </Link>
         {others > 0 ? (
           <Button
@@ -97,7 +104,7 @@ function RedeemedByCell({ row, onShowAll }: { row: DiscountCode; onShowAll: () =
           </Button>
         ) : null}
       </span>
-      <span className="text-[0.8125rem] whitespace-nowrap text-fg-muted">{formatThaiDateTime(latest.redeemedAt)}</span>
+      <span className="text-[0.8125rem] whitespace-nowrap text-fg-muted tabular">{formatThaiDateTime(latest.redeemedAt)}</span>
     </span>
   );
 }
@@ -136,6 +143,13 @@ export default function DiscountCodesPage() {
     if (me) invalidateResource(`${me.userId}:discount-codes:`);
   };
   const openCreate = (classId: string | null = null) => setForm((current) => ({ open: true, key: current.key + 1, classId }));
+  // The empty state's "ล้างตัวกรอง" and the class chip remove themselves: focus goes to the search
+  // box, not <body>. (FilterBar's own "ล้างตัวกรอง" moves focus by itself.)
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const resetFilters = () => {
+    table.reset();
+    focusSearchIn(toolbarRef.current);
+  };
 
   // "ออกโค้ดส่วนลด" on /classes links here with ?create=1&classId=…: open the
   // sheet once, then drop `create` (keep the class filter) so a reload doesn't reopen it.
@@ -156,19 +170,7 @@ export default function DiscountCodesPage() {
         sticky: true,
         alwaysVisible: true,
         mobile: "primary",
-        cell: (row) => (
-          <span className="flex min-w-0 flex-col">
-            <span className="inline-flex items-center gap-1 whitespace-nowrap">
-              <code className="font-mono text-sm font-semibold tracking-wide text-fg">{row.code}</code>
-              <CopyButton value={row.code} label={t("discountCodes.copyCode")} />
-            </span>
-            {row.note ? (
-              <span className="block max-w-56 truncate text-[0.8125rem] text-fg-muted" title={row.note}>
-                {row.note}
-              </span>
-            ) : null}
-          </span>
-        ),
+        cell: (row) => <CodeCell id={row.discountCodeId} code={row.code} note={row.note} copyLabel={t("discountCodes.copyCode")} />,
       },
       {
         key: "status",
@@ -216,7 +218,7 @@ export default function DiscountCodesPage() {
         header: t("discountCodes.colExpires"),
         sortable: true,
         cell: (row) => (
-          <span className={row.expiresAt ? "whitespace-nowrap" : "whitespace-nowrap text-fg-muted"}>
+          <span className={row.expiresAt ? "whitespace-nowrap tabular" : "whitespace-nowrap text-fg-muted"}>
             {row.expiresAt ? formatThaiDate(row.expiresAt) : t("discountCodes.noExpiry")}
           </span>
         ),
@@ -226,10 +228,15 @@ export default function DiscountCodesPage() {
         header: t("discountCodes.colCreated"),
         sortable: true,
         cell: (row) => (
-          <span className="flex flex-col whitespace-nowrap" title={formatThaiDateTime(row.createdAt)}>
-            <span>{formatThaiDate(row.createdAt)}</span>
+          <span className="flex min-w-0 flex-col" title={formatThaiDateTime(row.createdAt)}>
+            <span className="whitespace-nowrap tabular">{formatThaiDate(row.createdAt)}</span>
             {row.createdByName ? (
-              <span className="text-[0.8125rem] text-fg-muted">{t("discountCodes.createdBy", { name: row.createdByName })}</span>
+              <span
+                className={`max-w-40 text-[0.8125rem] text-fg-muted ${CELL_CLAMP}`}
+                title={t("discountCodes.createdBy", { name: row.createdByName })}
+              >
+                {t("discountCodes.createdBy", { name: row.createdByName })}
+              </span>
             ) : null}
           </span>
         ),
@@ -240,40 +247,53 @@ export default function DiscountCodesPage() {
         label: t("discountCodes.colActions"),
         align: "right",
         alwaysVisible: true,
+        // Phones: a full-width row of labelled buttons at the bottom of the card.
+        mobile: "actions",
+        // Fixed slots in the table: a missing optional action leaves an empty slot, so each
+        // icon sits in the same place on every row.
         cell: (row) => (
-          <span role="group" aria-label={t("discountCodes.rowActions", { code: row.code })} className="flex flex-wrap justify-end gap-1 md:flex-nowrap">
-            <Button size="sm" variant="ghost" onClick={() => setRedemptions({ open: true, code: row })}>
-              <UsersRound aria-hidden="true" />
-              {t("discountCodes.redemptionsAction")}
-            </Button>
+          <RowActions label={t("discountCodes.rowActions", { code: row.code })}>
+            <RowAction icon={UsersRound} label={t("discountCodes.redemptionsAction")} onClick={() => setRedemptions({ open: true, code: row })} />
             {canEditOfflinePaid(row) ? (
-              <Button
-                size="sm"
-                variant="ghost"
+              <RowAction
+                icon={Pencil}
+                label={t("discountCodes.editOfflinePaidAction")}
                 onClick={() => setAmountTarget((current) => ({ open: true, key: current.key + 1, code: row }))}
-              >
-                <Pencil aria-hidden="true" />
-                {t("discountCodes.editOfflinePaidAction")}
-              </Button>
-            ) : null}
+              />
+            ) : (
+              <RowActionSlot />
+            )}
             {isVoidable(row) ? (
-              <Button size="sm" variant="destructive" onClick={() => setVoidTarget({ code: row, idempotencyKey: newIdempotencyKey() })}>
-                <Ban aria-hidden="true" />
-                {t("discountCodes.voidAction")}
-              </Button>
-            ) : null}
-          </span>
+              <RowAction
+                icon={Ban}
+                danger
+                label={t("discountCodes.voidAction")}
+                onClick={() => setVoidTarget({ code: row, idempotencyKey: newIdempotencyKey() })}
+              />
+            ) : (
+              <RowActionSlot />
+            )}
+          </RowActions>
         ),
       },
     ],
     [],
   );
+  const visibility = useColumnVisibility("discount-codes", columns);
 
   const summary = data?.summary;
+  const tabCounts = classFilter || table.q.trim() ? undefined : summary;
   const rows = data?.items ?? [];
   const voidCode = voidTarget?.code;
   const createButton = (
     <Button onClick={() => openCreate(classFilter || null)}>
+      <Plus aria-hidden="true" />
+      {t("discountCodes.createAction")}
+    </Button>
+  );
+  // In the empty states: the header keeps the page's one primary, this is its tonal echo.
+  const createButtonTonal = (
+    <Button variant="tonal" onClick={() => openCreate(classFilter || null)}>
       <Plus aria-hidden="true" />
       {t("discountCodes.createAction")}
     </Button>
@@ -283,7 +303,7 @@ export default function DiscountCodesPage() {
     <Page>
       <PageHeader title={t("discountCodes.pageTitle")} description={t("discountCodes.pageDescription")} actions={createButton} />
 
-      <Grid cols={4} className="grid-cols-2">
+      <KpiStrip aria-label={t("discountCodes.statsLabel")}>
         <StatCard
           label={t("discountCodes.statActive")}
           value={summary ? formatNumber(summary.ACTIVE) : "–"}
@@ -316,38 +336,57 @@ export default function DiscountCodesPage() {
               : undefined
           }
         />
-      </Grid>
+      </KpiStrip>
 
       <div className="flex flex-col gap-3">
-        <FilterBar
-          search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("discountCodes.searchPlaceholder") }}
-          isFiltered={table.isFiltered}
-          onReset={table.reset}
-        >
-          <SelectField
-            aria-label={t("discountCodes.statusFilterLabel")}
-            containerClassName="w-full sm:w-44"
-            value={table.filters.status ?? ""}
-            onChange={(event) => table.setFilter("status", event.target.value)}
-            options={statusOptions("discountCode", { all: t("discountCodes.allStatus") })}
+        <div ref={toolbarRef} className="flex flex-col gap-3">
+          <FilterBar
+            tabs={
+              // Count tabs drive the same `status` filter the select did. Their counts are over
+              // all codes (the summary ignores the filters), so they hide while the class filter
+              // or a search narrows the list: the tabs still filter, without numbers it doesn't match.
+              <SegmentedControl<string>
+                aria-label={t("discountCodes.statusFilterLabel")}
+                value={table.filters.status ?? ""}
+                onValueChange={(value) => table.setFilter("status", value)}
+                items={[
+                  { value: "", label: t("discountCodes.tabAll"), count: tabCounts?.total },
+                  ...statusOptions("discountCode").map((option) => ({
+                    value: option.value,
+                    label: option.label,
+                    count: tabCounts?.[option.value as DiscountCodeStatus],
+                  })),
+                ]}
+              />
+            }
+            search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("discountCodes.searchPlaceholder") }}
+            isFiltered={table.isFiltered}
+            onReset={table.reset}
+            actions={<ColumnToggle id="discount-codes-columns" columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} />}
           />
           {classFilter ? (
-            <span className="inline-flex h-9 max-w-full min-w-0 items-center gap-1 rounded-lg border border-brand-soft-border bg-brand-soft pr-1 pl-3 text-sm font-medium text-brand-fg">
-              <span className="truncate">
-                {t("discountCodes.classFilter", { title: filteredClass.data?.title ?? t("discountCodes.classFilterSelected") })}
+            // Active filters as removable chips under the toolbar (patterns.md A2).
+            <div role="group" aria-label={t("discountCodes.activeFilters")} className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex h-8 max-w-full min-w-0 items-center gap-1 rounded-full border border-brand-soft-border bg-brand-soft pr-1 pl-3 text-[0.8125rem] font-medium text-brand-soft-fg pointer-coarse:h-11 pointer-coarse:pr-0">
+                <span className="truncate" title={filteredClass.data?.title ?? undefined}>
+                  {t("discountCodes.classFilter", { title: filteredClass.data?.title ?? t("discountCodes.classFilterSelected") })}
+                </span>
+                <button
+                  type="button"
+                  aria-label={t("discountCodes.classFilterClear")}
+                  title={t("discountCodes.classFilterClear")}
+                  onClick={() => {
+                    table.setFilter("classId", "");
+                    focusSearchIn(toolbarRef.current);
+                  }}
+                  className="relative flex size-6 shrink-0 items-center justify-center rounded-full after:absolute after:-inset-1.5 hover:bg-brand-soft-border pointer-coarse:size-11 pointer-coarse:after:inset-0"
+                >
+                  <X aria-hidden="true" className="size-4" />
+                </button>
               </span>
-              <button
-                type="button"
-                aria-label={t("discountCodes.classFilterClear")}
-                title={t("discountCodes.classFilterClear")}
-                onClick={() => table.setFilter("classId", "")}
-                className="flex size-7 shrink-0 items-center justify-center rounded-md hover:bg-press"
-              >
-                <X aria-hidden="true" className="size-4" />
-              </button>
-            </span>
+            </div>
           ) : null}
-        </FilterBar>
+        </div>
 
         {error && !data ? (
           <ErrorState onRetry={refetch} />
@@ -360,28 +399,29 @@ export default function DiscountCodesPage() {
             loading={isLoading || isValidating}
             sort={table.sort}
             onSortChange={table.toggleSort}
+            hiddenColumns={visibility.hidden}
             empty={
               table.isFiltered ? (
                 <EmptyState
-                  compact
                   icon={TicketPercent}
                   title={t("discountCodes.emptyFilteredTitle")}
                   description={t("discountCodes.emptyFilteredDescription")}
                   action={
                     <>
-                      <Button variant="outline" onClick={table.reset}>
+                      <Button variant="outline" onClick={resetFilters}>
                         {t("shell.clearFilters")}
                       </Button>
-                      {classFilter ? createButton : null}
+                      {classFilter ? createButtonTonal : null}
                     </>
                   }
                 />
               ) : (
                 <EmptyState
                   icon={TicketPercent}
+                  tone="brand"
                   title={t("discountCodes.emptyTitle")}
                   description={t("discountCodes.emptyFirstDescription")}
-                  action={createButton}
+                  action={createButtonTonal}
                 />
               )
             }
@@ -400,8 +440,9 @@ export default function DiscountCodesPage() {
         )}
       </div>
 
+      {/* Keys differ per sheet: both count openings from 1 and sit side by side. */}
       <DiscountCodeFormSheet
-        key={form.key}
+        key={`create-${form.key}`}
         open={form.open}
         initialClassId={form.classId}
         onOpenChange={(open) => setForm((current) => ({ ...current, open }))}
@@ -413,7 +454,7 @@ export default function DiscountCodesPage() {
 
       {amountTarget.code ? (
         <OfflinePaidSheet
-          key={amountTarget.key}
+          key={`amount-${amountTarget.key}`}
           open={amountTarget.open}
           code={amountTarget.code}
           onOpenChange={(open) => setAmountTarget((current) => ({ ...current, open }))}
@@ -477,6 +518,8 @@ export default function DiscountCodesPage() {
             throw err;
           }
           toast.success(t("discountCodes.voidSuccess", { code: voidTarget.code.code }));
+          // The row loses its void button once the list refreshes: keep focus in that row.
+          rescueFocusTo(voidTarget.code.discountCodeId);
           refreshAll();
         }}
       />

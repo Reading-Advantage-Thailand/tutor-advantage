@@ -1,15 +1,18 @@
 "use client";
 
-import { FlaskConical, LogIn } from "lucide-react";
+import { CircleAlert, FlaskConical, LogIn } from "lucide-react";
 import { useState } from "react";
-import { BrandMark, Notice, SegmentedControl, ThemeToggle } from "@/components/app";
+import { IconTile, Notice, PublicFrame, SegmentedControl } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
+import { keepRoleTerms } from "./keepRoleTerms";
 import type { LoginErrorCode } from "./loginParams";
 import "@/locales/th/login";
 
 type DevRole = "ADMIN" | "FINANCE_CHECKER";
 
+/** Google's official "G" mark: its four brand colours are fixed by Google's branding rules (like the LINE button), so they stay literal. */
 function GoogleIcon() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5">
@@ -64,19 +67,17 @@ export function LoginForm({ next, hasNext, error, devLogin }: LoginFormProps) {
   };
 
   return (
-    <main className="relative flex min-h-dvh flex-col items-center justify-center bg-app px-4 py-10">
-      <ThemeToggle className="absolute top-3 right-3" />
-      <div className="flex w-full max-w-[400px] flex-col gap-6">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <BrandMark className="size-12 rounded-xl text-base" />
-          <div className="flex flex-col gap-1">
-            <p className="text-sm font-medium text-fg-muted">{t("shell.brandName")} · {t("shell.brandRole")}</p>
-            <h1 className="text-2xl font-bold text-fg">{t("login.pageTitle")}</h1>
+    <PublicFrame
+      footer={<p className="mx-auto max-w-[400px] text-center text-xs leading-relaxed text-fg-subtle">{thaiCopy(t("login.footerPolicy"))}</p>}
+    >
+      <div className="flex w-full max-w-[400px] flex-col gap-4">
+        <section aria-labelledby="login-title" className="card flex flex-col gap-5 p-6 sm:p-8">
+          <div className="flex flex-col gap-1.5">
+            <h1 id="login-title" className="text-xl leading-[1.4] font-semibold text-fg text-balance-th sm:text-2xl sm:leading-[1.35]">
+              {t("login.pageTitle")}
+            </h1>
+            <p className="text-base text-fg-muted lg:text-sm">{keepRoleTerms(t("login.pageDescription"))}</p>
           </div>
-        </div>
-
-        <section className="flex flex-col gap-5 rounded-2xl border border-hairline bg-surface p-6 shadow-card">
-          <p className="text-sm leading-relaxed text-fg-muted">{t("login.pageDescription")}</p>
 
           {error ? (
             <Notice tone="danger" role="alert" title={t("login.errorTitle")}>
@@ -98,39 +99,44 @@ export function LoginForm({ next, hasNext, error, devLogin }: LoginFormProps) {
             {googleLoading ? null : <GoogleIcon />}
             {googleLoading ? t("login.googleRedirecting") : t("login.googleButton")}
           </Button>
-
-          {devLogin ? (
-            <div className="flex flex-col gap-3 rounded-xl border border-dashed border-warning-border bg-warning-bg/50 p-4">
-              <div className="flex items-start gap-2">
-                <FlaskConical aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-warning-fg" />
-                <div className="flex flex-col gap-0.5">
-                  <h2 className="text-sm font-semibold text-fg">{t("login.devSectionTitle")}</h2>
-                  <p className="text-[0.8125rem] text-fg-muted">{t("login.devSectionHint")}</p>
-                </div>
-              </div>
-              <SegmentedControl
-                aria-label={t("login.devRoleLabel")}
-                fullWidth
-                value={devRole}
-                onValueChange={setDevRole}
-                items={[
-                  { value: "ADMIN", label: t("login.devRoleAdmin") },
-                  { value: "FINANCE_CHECKER", label: t("login.devRoleChecker") },
-                ]}
-              />
-              {devError ? <p role="alert" className="text-[0.8125rem] text-danger-fg">{devError}</p> : null}
-              <Button type="button" variant="secondary" className="w-full" onClick={devSignIn} disabled={busy} loading={devLoading}>
-                {devLoading ? null : <LogIn aria-hidden="true" />}
-                {devLoading
-                  ? t("login.devSigningIn")
-                  : t("login.devButton", { role: devRole === "ADMIN" ? t("login.devRoleAdmin") : t("login.devRoleChecker") })}
-              </Button>
-            </div>
-          ) : null}
         </section>
 
-        <p className="px-2 text-center text-xs leading-relaxed text-fg-subtle">{t("login.footerPolicy")}</p>
+        {devLogin ? (
+          <section aria-labelledby="dev-login-title" className="card flex flex-col gap-4 p-5 sm:px-8 sm:py-6">
+            <div className="flex items-start gap-3">
+              <IconTile icon={FlaskConical} tone="amber" size="sm" />
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <h2 id="dev-login-title" className="text-[0.9375rem] leading-normal font-semibold text-fg">
+                  {t("login.devSectionTitle")}
+                </h2>
+                <p className="text-[0.8125rem] leading-[1.6] text-fg-muted">{thaiCopy(t("login.devSectionHint"))}</p>
+              </div>
+            </div>
+            <SegmentedControl
+              aria-label={t("login.devRoleLabel")}
+              fullWidth
+              value={devRole}
+              onValueChange={setDevRole}
+              items={[
+                { value: "ADMIN", label: t("login.devRoleAdmin") },
+                { value: "FINANCE_CHECKER", label: t("login.devRoleChecker") },
+              ]}
+            />
+            {devError ? (
+              <p role="alert" className="flex items-start gap-1.5 text-[0.8125rem] text-danger-fg">
+                <CircleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+                <span>{thaiCopy(devError)}</span>
+              </p>
+            ) : null}
+            <Button type="button" variant="secondary" className="w-full" onClick={devSignIn} disabled={busy} loading={devLoading}>
+              {devLoading ? null : <LogIn aria-hidden="true" />}
+              {devLoading
+                ? t("login.devSigningIn")
+                : t("login.devButton", { role: devRole === "ADMIN" ? t("login.devRoleAdmin") : t("login.devRoleChecker") })}
+            </Button>
+          </section>
+        ) : null}
       </div>
-    </main>
+    </PublicFrame>
   );
 }

@@ -5,9 +5,11 @@ import { useEffect, useId, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { errorMessage } from "@/lib/api";
 import { t } from "@/lib/i18n";
+import { keepThaiWords } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import { Notice } from "./Feedback";
 import { TextAreaField, TextField } from "./Fields";
+import type { FinalFocusTarget } from "./finalFocus";
 import { Sheet } from "./Sheet";
 
 export interface ConfirmReasonOptions {
@@ -47,6 +49,12 @@ export interface ConfirmDialogProps {
   details?: ReactNode;
   /** Show "การดำเนินการนี้ย้อนกลับไม่ได้" under the description. */
   irreversible?: boolean;
+  /**
+   * Where focus goes after the action when it removes or disables the control
+   * that opened the dialog (delete a row, "ล้างข้อมูล" once nothing is
+   * selected), instead of falling to <body>. See Sheet `finalFocus`.
+   */
+  finalFocus?: FinalFocusTarget;
   children?: ReactNode;
 }
 
@@ -70,6 +78,7 @@ export function ConfirmDialogImpl({
   reason,
   details,
   irreversible,
+  finalFocus,
   children,
 }: ConfirmDialogProps) {
   const [pending, setPending] = useState(false);
@@ -136,11 +145,15 @@ export function ConfirmDialogImpl({
       description={description}
       showClose={false}
       dismissible={!loading}
-      width={480}
+      width={400}
       bodyClassName={hasBody ? undefined : "hidden"}
+      finalFocus={finalFocus}
       footer={
-        <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
-          <Button variant="ghost" size="lg" className="md:h-9 md:px-3.5" disabled={loading} onClick={() => onOpenChange(false)}>
+        // DOM order = visual order at every width (Tab goes cancel → confirm):
+        // phones stack cancel above the full-width confirm; from 768px both sit
+        // on the right, cancel (secondary) then confirm (components.md §10).
+        <div className="flex flex-col gap-2 md:flex-row md:justify-end">
+          <Button variant="outline" size="lg" className="md:h-9 md:px-3.5" disabled={loading} onClick={() => onOpenChange(false)}>
             {cancelLabel ?? t("shell.cancel")}
           </Button>
           <Button
@@ -167,7 +180,7 @@ export function ConfirmDialogImpl({
       >
         {irreversible ? <p className="text-sm font-medium text-danger-fg">{t("shell.irreversible")}</p> : null}
         {details ? (
-          <div className={cn("rounded-xl border px-4 py-3", tone === "danger" ? "border-danger-border bg-danger-bg/50" : "border-hairline bg-surface-muted")}>
+          <div className={cn("rounded-(--radius-ctl) border px-4 py-3", tone === "danger" ? "border-danger-border bg-danger-bg" : "border-clay-rim bg-surface-muted")}>
             {details}
           </div>
         ) : null}
@@ -191,9 +204,9 @@ export function ConfirmDialogImpl({
           <TextField
             label={
               <>
-                {t("shell.typeToConfirm").split("{text}")[0]}
-                <code className="rounded bg-surface-muted px-1.5 py-0.5 font-mono text-[0.8125rem] text-fg">{requireText}</code>
-                {t("shell.typeToConfirm").split("{text}")[1]}
+                {keepThaiWords(t("shell.typeToConfirm").split("{text}")[0] ?? "")}
+                <code className="rounded-(--radius-ctl-sm) bg-surface-muted px-1.5 py-0.5 font-mono text-[0.8125rem] text-fg">{requireText}</code>
+                {keepThaiWords(t("shell.typeToConfirm").split("{text}")[1] ?? "")}
               </>
             }
             value={typed}

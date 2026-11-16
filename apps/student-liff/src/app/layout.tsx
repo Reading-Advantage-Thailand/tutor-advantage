@@ -10,11 +10,17 @@ import { NavigationTracker } from "@/components/layout/NavigationTracker";
 import { TabBar } from "@/components/layout/TabBar";
 import { cookies } from "next/headers";
 import { IDENTITY_URL } from "@/lib/service-urls";
+import { kodchasan, notoLooped } from "./fonts";
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#dcfce7",
+  // Browser chrome follows the top of the app: the flat home hero
+  // (--hero-bg-base) in each theme.
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#d4f5e6" },
+    { media: "(prefers-color-scheme: dark)", color: "#143a2f" },
+  ],
   viewportFit: "cover",
   // Android: the on-screen keyboard resizes the layout so sticky bottom
   // composers/CTAs stay above it instead of being covered.
@@ -92,7 +98,7 @@ export default async function RootLayout({
   return (
     <html
       lang="th"
-      className="font-sans"
+      className={`font-sans ${kodchasan.variable} ${notoLooped.variable}`}
       suppressHydrationWarning
       data-scroll-behavior="smooth"
     >
@@ -112,7 +118,8 @@ export default async function RootLayout({
                 {/* Persistent bottom tabs (tab roots only); its in-flow spacer must stay inside .liff-root */}
                 <TabBar />
               </div>
-              <Toaster position="top-center" richColors />
+              {/* Neutral toasts: the leading tone tile carries success/error (no rich colour fills). */}
+              <Toaster position="top-center" />
               <DevToolbarLoader />
             </ConsentProvider>
           </LiffProvider>

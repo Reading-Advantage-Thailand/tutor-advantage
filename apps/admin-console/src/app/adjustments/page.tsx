@@ -1,16 +1,18 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Plus, XCircle } from "lucide-react";
+import { CheckCircle2, FilePenLine, Plus, XCircle } from "lucide-react";
 import {
   AdminStatusChip,
+  ColumnToggle,
   ConfirmDialog,
   DataTable,
   DescriptionList,
-  ErrorState,
+  EmptyState,
   FilterBar,
   IdCell,
+  IdentityCell,
   Notice,
   Page,
   PageHeader,
@@ -21,6 +23,7 @@ import {
   TextAreaField,
   TextField,
   useAdminSession,
+  useColumnVisibility,
   type DataTableColumn,
 } from "@/components/app";
 import { Money } from "@/components/app/Money";
@@ -30,9 +33,10 @@ import { Button } from "@/components/ui/button";
 import { useTableState } from "@/hooks/useTableState";
 import { api, newIdempotencyKey } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
-import { currentBangkokMonth, formatPeriodMonth, formatSatang, formatThaiDateTime, shiftPeriodMonth } from "@/lib/format";
+import { currentBangkokMonth, formatPeriodMonth, formatSatang, shiftPeriodMonth } from "@/lib/format";
 import { statusLabel, statusOptions } from "@/lib/status";
 import { t } from "@/lib/i18n";
+import { DateTimeParts, focusToolbar, LoadError } from "../settlements/financeUi";
 import { TutorPicker, type PickedTutor } from "./TutorPicker";
 import { parseBahtToSatang } from "./money";
 import "@/locales/th/adjustments";
@@ -72,6 +76,22 @@ function periodChoices(): string[] {
   return Array.from({ length: 13 }, (_, index) => shiftPeriodMonth(current, 1 - index));
 }
 
+/**
+ * Maker / checker cell: the name wraps, and the date and the time are each
+ * kept whole but may sit on two lines, so the table fits its card at 1280.
+ * Same text as formatThaiDateTime(at, "short").
+ */
+function WhoWhen({ name, at }: { name: string | null; at: string }) {
+  return (
+    <span className="flex flex-col text-[0.8125rem] leading-snug">
+      <span className="text-balance break-words">{name}</span>
+      <span className="text-fg-muted tabular">
+        <DateTimeParts at={at} style="short" />
+      </span>
+    </span>
+  );
+}
+
 export default function AdjustmentsPage() {
   return (
     <Suspense>
@@ -90,6 +110,7 @@ function AdjustmentsView() {
     defaultFilters: { status: "PENDING" },
     defaultPageSize: 20,
   });
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   const key = me ? `${me.userId}:adjustments:${table.queryKey}` : null;
   const { data, error, isLoading, isValidating, refetch } = useCachedResource(
@@ -126,13 +147,9 @@ function AdjustmentsView() {
       header: t("adjustments.colTutor"),
       label: t("adjustments.colTutor"),
       mobile: "primary",
+      sticky: true,
       alwaysVisible: true,
-      cell: (row) => (
-        <span className="flex min-w-0 flex-col">
-          <span className="truncate font-medium text-fg">{row.tutorName}</span>
-          <IdCell id={row.tutorUserId} />
-        </span>
-      ),
+      cell: (row) => <IdentityCell name={row.tutorName} seed={row.tutorUserId} secondary={<IdCell id={row.tutorUserId} />} />,
     },
     {
       key: "status",
@@ -147,7 +164,7 @@ function AdjustmentsView() {
       label: t("adjustments.colAmount"),
       align: "right",
       mobile: "trailing",
-      cell: (row) => <Money satang={row.amountSatang} signed className="font-semibold" />,
+      cell: (row) => <Money satang={row.amountSatang} fractionDigits={2} signed className="font-semibold" />,
     },
     {
       key: "period",
@@ -156,7 +173,7 @@ function AdjustmentsView() {
       mobile: "field",
       cell: (row) => (
         <span className="flex flex-col items-start gap-1">
-          <Link href={`/settlements/${row.settlementRunId}`} className="text-brand-fg hover:underline">
+          <Link href={`/settlements/${row.settlementRunId}`} className="inline-flex items-center font-medium whitespace-nowrap text-brand-fg hover:underline pointer-coarse:min-h-11">
             {formatPeriodMonth(row.periodMonth)}
           </Link>
           {row.settlementRunStatus ? <AdminStatusChip domain="settlementRun" status={row.settlementRunStatus} /> : null}
@@ -168,19 +185,18 @@ function AdjustmentsView() {
       header: t("adjustments.colReason"),
       label: t("adjustments.colReason"),
       mobile: "field",
-      cell: (row) => <span className="line-clamp-3 max-w-72 text-[0.8125rem]">{row.reason}</span>,
+      cell: (row) => (
+        <span className="line-clamp-2 max-w-64 min-w-28 text-[0.8125rem] break-words" title={row.reason}>
+          {row.reason}
+        </span>
+      ),
     },
     {
       key: "maker",
       header: t("adjustments.colMaker"),
       label: t("adjustments.colMaker"),
       mobile: "field",
-      cell: (row) => (
-        <span className="flex flex-col text-[0.8125rem] leading-snug">
-          <span>{row.createdByName}</span>
-          <span className="text-fg-muted">{formatThaiDateTime(row.createdAt, "short")}</span>
-        </span>
-      ),
+      cell: (row) => <WhoWhen name={row.createdByName} at={row.createdAt} />,
     },
     {
       key: "checker",
@@ -189,10 +205,7 @@ function AdjustmentsView() {
       mobile: "field",
       cell: (row) =>
         row.approvedAt ? (
-          <span className="flex flex-col text-[0.8125rem] leading-snug">
-            <span>{row.approvedByName}</span>
-            <span className="text-fg-muted">{formatThaiDateTime(row.approvedAt, "short")}</span>
-          </span>
+          <WhoWhen name={row.approvedByName} at={row.approvedAt} />
         ) : (
           <span className="text-fg-subtle">–</span>
         ),
@@ -201,16 +214,19 @@ function AdjustmentsView() {
       key: "actions",
       header: <span className="sr-only">{t("adjustments.colActions")}</span>,
       label: t("adjustments.colActions"),
-      mobile: "field",
+      // Phones: a full-width row at the bottom of the card, not a half-width "จัดการ" field.
+      mobile: "actions",
       alwaysVisible: true,
       cell: (row) => {
         if (row.status !== "PENDING" || !canCheck) return null;
         if (row.createdByUserId === me?.userId) {
           return <span className="text-[0.8125rem] text-fg-muted">{t("adjustments.selfBlockedShort")}</span>;
         }
+        // Table: stacked below 1400px so the column claims no spare width (the maker/checker cells get it); side by
+        // side above. Phone cards: side by side in the card's full-width actions row.
         return (
-          <span className="flex flex-wrap gap-1.5">
-            <Button size="sm" onClick={() => setDecision({ row, kind: "approve", key: newIdempotencyKey() })}>
+          <span className="flex flex-col items-start gap-1.5 max-md:flex-row max-md:flex-wrap min-[1400px]:flex-row min-[1400px]:flex-wrap">
+            <Button size="sm" variant="tonal" onClick={() => setDecision({ row, kind: "approve", key: newIdempotencyKey() })}>
               <CheckCircle2 aria-hidden="true" />
               {t("adjustments.approve")}
             </Button>
@@ -230,7 +246,7 @@ function AdjustmentsView() {
       columns={1}
       items={[
         { label: t("adjustments.colTutor"), value: decisionRow.tutorName },
-        { label: t("adjustments.colAmount"), value: <Money satang={decisionRow.amountSatang} signed className="text-base font-semibold" /> },
+        { label: t("adjustments.colAmount"), value: <Money satang={decisionRow.amountSatang} fractionDigits={2} signed className="text-base font-semibold" /> },
         {
           label: t("adjustments.colPeriod"),
           value: `${formatPeriodMonth(decisionRow.periodMonth)}${
@@ -242,6 +258,30 @@ function AdjustmentsView() {
       ]}
     />
   ) : null;
+
+  const visibility = useColumnVisibility("adjustments", columns);
+  // The empty state's "ล้างตัวกรอง" removes itself: focus goes back to the toolbar.
+  // (FilterBar's own button moves focus by itself.)
+  const resetFilters = () => {
+    table.reset();
+    focusToolbar(toolbarRef.current);
+  };
+
+  // The period filter: inline from 768px, in the "ตัวกรอง" sheet on phones (patterns.md A2).
+  const periodSelect = (props: { id: string; label?: string; containerClassName: string }) => (
+    <SelectField
+      id={props.id}
+      aria-label={props.label ? undefined : t("adjustments.colPeriod")}
+      label={props.label}
+      containerClassName={props.containerClassName}
+      value={table.filters.period ?? ""}
+      onChange={(event) => table.setFilter("period", event.target.value)}
+      options={[
+        { value: "", label: t("adjustments.allPeriods") },
+        ...periods.map((value) => ({ value, label: formatPeriodMonth(value) })),
+      ]}
+    />
+  );
 
   return (
     <Page>
@@ -260,40 +300,60 @@ function AdjustmentsView() {
 
       <Notice tone="info">{t("adjustments.makerCheckerNote")}</Notice>
 
-      <FilterBar isFiltered={table.isFiltered} onReset={table.reset}>
-        <SelectField
-          aria-label={t("adjustments.colStatus")}
-          containerClassName="w-full sm:w-44"
-          value={table.filters.status ?? ""}
-          onChange={(event) => table.setFilter("status", event.target.value)}
-          options={statusOptions("adjustment", { all: t("adjustments.allStatus") })}
-        />
-        <SelectField
-          aria-label={t("adjustments.colPeriod")}
-          containerClassName="w-full sm:w-48"
-          value={table.filters.period ?? ""}
-          onChange={(event) => table.setFilter("period", event.target.value)}
-          options={[
-            { value: "", label: t("adjustments.allPeriods") },
-            ...periods.map((value) => ({ value, label: formatPeriodMonth(value) })),
-          ]}
-        />
-      </FilterBar>
+      <div ref={toolbarRef}>
+        <FilterBar
+          tabs={
+            <SegmentedControl
+              aria-label={t("adjustments.colStatus")}
+              value={table.filters.status ?? ""}
+              onValueChange={(next) => table.setFilter("status", next)}
+              items={statusOptions("adjustment", { all: t("adjustments.allStatus") })}
+            />
+          }
+          isFiltered={table.isFiltered}
+          onReset={table.reset}
+          actions={<ColumnToggle id="adjustments-columns" columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} />}
+          moreFilters={{
+            active: table.filters.period
+              ? [
+                  {
+                    key: "period",
+                    label: `${t("adjustments.colPeriod")}: ${formatPeriodMonth(table.filters.period)}`,
+                    onRemove: () => table.setFilter("period", ""),
+                  },
+                ]
+              : [],
+            onReset: () => table.setFilter("period", ""),
+            children: periodSelect({ id: "adjustments-period-sheet", label: t("adjustments.colPeriod"), containerClassName: "w-full" }),
+          }}
+        >
+          {periodSelect({ id: "adjustments-period", containerClassName: "hidden md:flex md:w-48" })}
+        </FilterBar>
+      </div>
 
       {error && !data ? (
-        <ErrorState onRetry={() => void refetch()} />
+        <LoadError error={error} onRetry={() => void refetch()} />
       ) : (
         <DataTable
           caption={t("adjustments.tableCaption")}
           columns={columns}
           rows={data?.adjustments ?? []}
           getRowKey={(row) => row.adjustmentId}
+          hiddenColumns={visibility.hidden}
           loading={isLoading || (isValidating && !data)}
           empty={
-            <div className="flex flex-col items-center gap-1 py-10 text-center">
-              <p className="font-medium text-fg">{t("adjustments.emptyTitle")}</p>
-              <p className="text-sm text-fg-muted">{t("adjustments.emptyFiltered")}</p>
-            </div>
+            <EmptyState
+              icon={FilePenLine}
+              title={t("adjustments.emptyTitle")}
+              description={t("adjustments.emptyFiltered")}
+              action={
+                table.isFiltered ? (
+                  <Button variant="outline" onClick={resetFilters}>
+                    {t("shell.clearFilters")}
+                  </Button>
+                ) : undefined
+              }
+            />
           }
           footer={
             <Pagination
@@ -387,6 +447,7 @@ function CreateAdjustmentSheet({
   const [amount, setAmount] = useState("");
   const [reason, setReason] = useState("");
   const [touched, setTouched] = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [requestKey, setRequestKey] = useState("");
 
@@ -430,9 +491,11 @@ function CreateAdjustmentSheet({
         }}
         title={t("adjustments.createTitle")}
         description={t("adjustments.createDescription")}
+        width={480}
         footer={
-          <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
-            <Button variant="ghost" size="lg" className="md:h-9" onClick={() => onOpenChange(false)}>
+          // DOM order = visual order on every width (cancel, then the primary below it on phones / to its right on desktop).
+          <div className="flex flex-col gap-2 md:flex-row md:justify-end">
+            <Button variant="outline" size="lg" className="md:h-9" onClick={() => onOpenChange(false)}>
               {t("adjustments.cancel")}
             </Button>
             <Button
@@ -440,7 +503,11 @@ function CreateAdjustmentSheet({
               className="md:h-9"
               onClick={() => {
                 setTouched(true);
-                if (!valid) return;
+                if (!valid) {
+                  // Move focus to the first invalid field so its error (aria-describedby) is read.
+                  requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
+                  return;
+                }
                 setRequestKey(newIdempotencyKey());
                 setConfirmOpen(true);
               }}
@@ -450,10 +517,15 @@ function CreateAdjustmentSheet({
           </div>
         }
       >
-        <div className="flex flex-col gap-4">
-          <TutorPicker value={tutor} onChange={setTutor} error={touched ? errors.tutor : undefined} />
+        {/* Two-column field grid from 768px (A4): period and direction share a row; everything else spans both. */}
+        <div ref={formRef} className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="min-w-0 md:col-span-2">
+            <TutorPicker value={tutor} onChange={setTutor} error={touched ? errors.tutor : undefined} />
+          </div>
           {tutor && tutor.verificationStatus && tutor.verificationStatus !== "VERIFIED" ? (
-            <Notice tone="warning">{t("adjustments.unverifiedTutorWarning")}</Notice>
+            <Notice tone="warning" className="md:col-span-2">
+              {t("adjustments.unverifiedTutorWarning")}
+            </Notice>
           ) : null}
           <SelectField
             label={t("adjustments.fieldPeriod")}
@@ -462,15 +534,8 @@ function CreateAdjustmentSheet({
             options={periods.map((value) => ({ value, label: formatPeriodMonth(value) }))}
             required
           />
-          {locked ? (
-            <Notice tone="danger">{t("adjustments.periodLocked", { status: statusLabel("settlementRun", targetRun!.status) })}</Notice>
-          ) : targetRun ? (
-            <Notice tone="info">{t("adjustments.periodHasRun", { status: statusLabel("settlementRun", targetRun.status) })}</Notice>
-          ) : runLookup.data ? (
-            <Notice tone="info">{t("adjustments.periodNoRun")}</Notice>
-          ) : null}
-          <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-fg">{t("adjustments.fieldDirection")}</span>
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <span className="text-[0.8125rem] leading-normal font-medium text-fg">{t("adjustments.fieldDirection")}</span>
             <SegmentedControl
               aria-label={t("adjustments.fieldDirection")}
               value={direction}
@@ -482,11 +547,27 @@ function CreateAdjustmentSheet({
               ]}
             />
           </div>
+          {locked ? (
+            <Notice tone="danger" className="md:col-span-2">
+              {t("adjustments.periodLocked", { status: statusLabel("settlementRun", targetRun!.status) })}
+            </Notice>
+          ) : targetRun ? (
+            <Notice tone="info" className="md:col-span-2">
+              {t("adjustments.periodHasRun", { status: statusLabel("settlementRun", targetRun.status) })}
+            </Notice>
+          ) : runLookup.data ? (
+            <Notice tone="info" className="md:col-span-2">
+              {t("adjustments.periodNoRun")}
+            </Notice>
+          ) : null}
           <TextField
             label={t("adjustments.fieldAmount")}
+            containerClassName="md:col-span-2"
             inputMode="decimal"
             autoComplete="off"
             placeholder="1,500.00"
+            startAddon="฿"
+            numeric
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
             required
@@ -497,8 +578,13 @@ function CreateAdjustmentSheet({
             }
             error={touched ? errors.amount : undefined}
           />
-          {direction === "deduct" ? <Notice tone="warning">{t("adjustments.deductNote")}</Notice> : null}
+          {direction === "deduct" ? (
+            <Notice tone="warning" className="md:col-span-2">
+              {t("adjustments.deductNote")}
+            </Notice>
+          ) : null}
           <TextAreaField
+            containerClassName="md:col-span-2"
             label={t("adjustments.fieldReason")}
             placeholder={t("adjustments.reasonPlaceholder")}
             rows={3}
@@ -524,7 +610,7 @@ function CreateAdjustmentSheet({
               items={[
                 { label: t("adjustments.colTutor"), value: tutor.name ?? tutor.email ?? tutor.id },
                 { label: t("adjustments.colPeriod"), value: formatPeriodMonth(period) },
-                { label: t("adjustments.colAmount"), value: <Money satang={signedSatang} signed className="text-base font-semibold" /> },
+                { label: t("adjustments.colAmount"), value: <Money satang={signedSatang} fractionDigits={2} signed className="text-base font-semibold" /> },
                 { label: t("adjustments.colReason"), value: reason.trim(), wide: true },
               ]}
             />

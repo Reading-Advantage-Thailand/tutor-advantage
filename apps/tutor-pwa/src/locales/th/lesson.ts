@@ -14,7 +14,7 @@ export const lesson = {
   shareClassLink: "แชร์ลิงก์หรือ QR Code",
   shareClassLinkDescription: "ให้นักเรียนเข้าผ่านลิงก์คลาสหรือ QR Code ของติวเตอร์เพื่อรอในห้องเรียน",
   teach: "สอน",
-  teachDescription: "ใช้ Phase Manager เพื่อควบคุมการไหลของบทเรียน 19 ขั้นตอน (4 คาบ)",
+  teachDescription: "ใช้ Phase Manager เพื่อควบคุมการไหลของบทเรียน 18 ขั้นตอน (4 คาบ)",
   select: {
     loadFailed: "ไม่สามารถดึงข้อมูลบทเรียนได้ กรุณาลองใหม่อีกครั้ง",
     required: "กรุณาเลือกบทเรียน",
@@ -45,7 +45,7 @@ export const lesson = {
     lessonLoading: "บทเรียนกำลังโหลด...",
     noDescription: "ไม่มีคำอธิบายสำหรับบทเรียนนี้",
     phasesCount: "จำนวนขั้นตอน",
-    steps14: "19 ขั้นตอน · 4 คาบ",
+    steps14: "18 ขั้นตอน · 4 คาบ",
     contentType: "ประเภทเนื้อหา",
     tutorTips: "Tutor Tips",
     tipWaitReady: "รอให้นักเรียนกด Ready ครบทุกคนก่อนเริ่มสอน",
@@ -66,7 +66,7 @@ export const lesson = {
     demoBadge: "Demo",
     demoSubtitle: "โหมดทดลองสอน · ฟรี ไม่บันทึกข้อมูล",
     demoEmptyTitle: "โหมด Demo ลองสอนคนเดียว",
-    demoEmptyMessage: "กดปุ่มเริ่มด้านล่างเพื่อลองเดินผ่านบทเรียน 19 ขั้นตอนได้เลย",
+    demoEmptyMessage: "กดปุ่มเริ่มด้านล่างเพื่อลองเดินผ่านบทเรียน 18 ขั้นตอนได้เลย",
     waitingStudents: "รอนักเรียนเข้าห้อง...",
     noJoinedYet: "ยังไม่มีนักเรียนเข้าร่วม",
     answerSummary: "สรุปผลการตอบ",
@@ -222,6 +222,8 @@ export const lesson = {
     pairTutorTip1: "เดินฟังแต่ละคู่ และช่วยเริ่มบทสนทนาถ้านักเรียนเงียบ",
     pairTutorTip2: "กระตุ้นให้ใช้คำศัพท์จากบทเรียนระหว่างคุย",
     pairTutorTip3: "ให้เวลาคุยคู่ละ 2-3 นาที แล้วสลับให้อีกฝ่ายพูดบ้าง",
+    // ── Presenter reveal chip and results label (components.md §6.1) ──
+    correctWord: "ถูกต้อง",
   },
   // ── G5: lesson pre-flow (hub · select · prepare · rehearsal) ──
   preflow: {
@@ -492,6 +494,9 @@ export const lesson = {
     playAudio: "เล่นเสียง",
     pauseAudio: "หยุดเสียงชั่วคราว",
     readingSpeed: "ความเร็วเสียงอ่าน",
+    audioPosition: "ตำแหน่งเสียงอ่าน",
+    // Screen-reader suffix after the count on a flagged sentence (same wording as the student app).
+    flaggedCountSuffix: "คนอยากฟัง",
     // Phase 2 flashcards
     flashcardEmptyTitle: "ยังไม่มีคำศัพท์สำหรับบัตรคำ",
     flashcardEmptyHelp: "เพิ่มคำศัพท์ในบทเรียนก่อนเริ่มเฟสนี้",
@@ -550,5 +555,7 @@ export const lesson = {
     voteTieHint: "คะแนนเท่ากัน เกมที่ถูกโหวตก่อนจะได้เล่น",
     voteDefaultHint: "ถ้าไม่มีใครโหวต จะเล่นเกมนี้",
     moreGamesSuffix: "เกมเร็วๆนี้",
+    // ── Presenter phase caption "ขั้นที่ 7/18" (components.md §6.2) ──
+    stepWord: "ขั้นที่",
   },
 } as const;

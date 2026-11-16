@@ -23,18 +23,23 @@ export interface LiffErrorScreenProps {
   retrying?: boolean;
 }
 
-/** Friendly full-screen LIFF start-up error: icon, plain Thai, one retry, optional technical details. */
+/**
+ * Friendly full-screen LIFF start-up error (patterns.md "Empty, error and
+ * loading"): Reedy with the cause as his badge, the title as the page h1 (no
+ * app bar here), plain Thai, one retry, optional technical details.
+ */
 export function LiffErrorScreen({ kind, details, onRetry, retrying }: LiffErrorScreenProps) {
   const copy = ERROR_COPY[kind];
   return (
     <Screen>
       <StatusScreen
+        as="h1"
         icon={copy.icon}
         tone={copy.tone}
         title={t(copy.title)}
         description={t(copy.description)}
         primaryAction={
-          <Button variant="brand" size="cta" className="w-full" onClick={onRetry} loading={retrying}>
+          <Button variant="brand" size="cta-lg" className="w-full" onClick={onRetry} loading={retrying}>
             {retrying ? null : <RotateCw aria-hidden="true" />}
             {t("common.retry")}
           </Button>
@@ -46,9 +51,9 @@ export function LiffErrorScreen({ kind, details, onRetry, retrying }: LiffErrorS
                 {t("entry.errorDetails")}
                 <ChevronDown aria-hidden="true" className="size-4 transition-transform group-open:rotate-180" />
               </summary>
-              <div className="mt-1 rounded-xl border border-hairline bg-surface p-3">
-                <p className="text-xs leading-[1.5] text-fg-muted">{t("entry.errorDetailsHint")}</p>
-                <p className="mt-2 font-mono text-xs leading-[1.5] break-words text-fg select-text">{details}</p>
+              <div className="mt-1 rounded-lg bg-surface-muted p-3">
+                <p className="text-xs leading-[1.6] text-fg-muted">{t("entry.errorDetailsHint")}</p>
+                <p className="mt-2 font-mono text-xs leading-[1.6] break-words text-fg select-text">{details}</p>
               </div>
             </details>
           ) : null

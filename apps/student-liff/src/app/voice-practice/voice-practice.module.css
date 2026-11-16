@@ -1,42 +1,1143 @@
-.page{--ink:#17352e;--muted:#71837e;width:100%;height:100dvh;overflow:hidden;background:radial-gradient(circle at 7% 18%,rgba(255,190,85,.18),transparent 21%),radial-gradient(circle at 95% 12%,rgba(34,201,139,.17),transparent 25%),linear-gradient(180deg,#f7fbf4 0%,#edf8f1 100%);color:var(--ink);font-family:var(--font-thai),var(--font-latin);position:relative}.page:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(rgba(17,112,82,.09) 1px,transparent 1px);background-size:24px 24px;mask-image:linear-gradient(to bottom,black,transparent 40%);opacity:.35}
-.header{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;max-width:540px;margin:auto;padding:calc(14px + var(--safe-top)) 18px 8px}.backButton{display:flex;align-items:center;gap:2px;min-width:44px;min-height:44px;padding:0 12px 0 6px;border-radius:14px;color:var(--ink);text-decoration:none;font-size:.9375rem;font-weight:800;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:background-color .15s,transform .15s}.backButton:active{background:rgba(23,53,46,.08);transform:scale(.97)}.timer{display:flex;align-items:center;gap:8px;padding:8px 13px;border:1px solid rgba(23,53,46,.08);border-radius:15px;background:rgba(255,255,255,.72);box-shadow:0 7px 24px rgba(20,78,62,.08)}.timer>svg{color:#0aaa74}.timer div{display:flex;flex-direction:column;line-height:1}.timer small{color:var(--muted);font-size:.75rem;font-weight:700}.timer strong{margin-top:3px;font-size:.9rem;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.02em}
-.content{position:relative;z-index:1;display:flex;max-width:460px;height:calc(100dvh - 68px - var(--safe-top));min-height:0;margin:auto;padding:8px 20px calc(14px + var(--safe-bottom));flex-direction:column;align-items:center;overflow:hidden;text-align:center}.intro{width:100%;flex:none}.coachBadge{display:inline-flex;align-items:center;gap:7px;padding:5px 10px 5px 6px;border:1px solid rgba(12,166,113,.16);border-radius:999px;background:rgba(255,255,255,.78);color:#087f5c;font-size:.66rem;font-weight:850;box-shadow:0 5px 18px rgba(12,117,85,.06)}.coachBadge>span{display:grid;width:23px;height:23px;place-items:center;border-radius:50%;background:linear-gradient(135deg,#ffb75e,#f47b35);color:white;font-size:.62rem;font-weight:950}.lessonLabel{margin-top:14px;color:var(--muted);font-size:.75rem;font-weight:800;letter-spacing:.02em}.intro h1{max-width:390px;margin:3px auto 0;font-size:clamp(1.45rem,7vw,2rem);font-weight:900;line-height:1.25;letter-spacing:-.04em}.intro>p:last-child{max-width:340px;margin:8px auto 0;color:var(--muted);font-size:.73rem;line-height:1.65}
-.coachArea{position:relative;display:flex;width:100%;min-height:257px;margin-top:4px;align-items:center;justify-content:center}.statusBubble{position:absolute;z-index:5;top:13px;left:50%;display:flex;align-items:center;gap:6px;padding:7px 11px;border:1px solid rgba(23,53,46,.08);border-radius:12px 12px 12px 3px;background:#fff;color:#4b625c;box-shadow:0 7px 22px rgba(25,80,63,.09);font-size:.64rem;font-weight:800;white-space:nowrap;transform:translateX(-4%)}.statusDot{width:7px;height:7px;border-radius:50%;background:#11bd7e;box-shadow:0 0 0 4px rgba(17,189,126,.12);animation:statusPulse 1.5s ease-out infinite}
-.mascotScene{--voice-level:.08;position:relative;width:240px;height:235px;margin-top:20px}.mascot{position:absolute;z-index:3;left:20px;top:18px;width:200px;height:200px;filter:drop-shadow(0 14px 13px rgba(90,74,40,.16));animation:mascotFloat 3s ease-in-out infinite;transform-origin:50% 90%}.mascotEyes{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}.mascotMouth{transform-box:fill-box;transform-origin:center}.mascotScene[data-state="speaking"] .mascotMouth{animation:talk .28s ease-in-out infinite alternate}.mascotScene[data-state="speaking"] .mascot{animation:talkBounce .48s ease-in-out infinite alternate}.mascotScene[data-state="thinking"] .mascot{animation:thinkTilt 1.4s ease-in-out infinite}.mascotScene[data-state="muted"] .mascot{filter:grayscale(.35) drop-shadow(0 14px 13px rgba(90,74,40,.12));opacity:.85}.mascotShadow{position:absolute;z-index:1;left:56px;bottom:9px;width:130px;height:22px;border-radius:50%;background:rgba(37,72,60,.12);filter:blur(8px);animation:shadowFloat 3s ease-in-out infinite}.voiceRing,.voiceRingTwo{position:absolute;z-index:0;inset:25px;border:2px solid rgba(21,189,126,.15);border-radius:50%;transform:scale(calc(.94 + var(--voice-level)*.15));transition:transform .1s ease}.voiceRingTwo{inset:7px;border-color:rgba(21,189,126,.08);transform:scale(calc(.9 + var(--voice-level)*.24))}.mascotScene[data-state="speaking"] .voiceRing,.mascotScene[data-state="listening"] .voiceRing{animation:ringPulse 1.4s ease-out infinite}.mascotScene[data-state="speaking"] .voiceRingTwo,.mascotScene[data-state="listening"] .voiceRingTwo{animation:ringPulse 1.4s .5s ease-out infinite}.sparkOne,.sparkTwo,.sparkThree{position:absolute;z-index:4;color:#f2a93b;animation:sparkle 2.4s ease-in-out infinite}.sparkOne{left:8px;top:60px;font-size:1.1rem}.sparkTwo{right:12px;top:99px;color:#20b985;font-size:.45rem;animation-delay:.8s}.sparkThree{right:25px;bottom:35px;color:#7f70e8;font-size:.8rem;animation-delay:1.4s}.headphones{position:absolute;z-index:4;left:36px;top:52px;width:168px;height:77px;border:8px solid #31504a;border-bottom:0;border-radius:88px 88px 0 0;pointer-events:none}.headphones:before,.headphones:after{content:"";position:absolute;top:49px;width:17px;height:39px;border-radius:10px;background:#31504a}.headphones:before{left:-12px}.headphones:after{right:-12px}.headphones span:first-child{position:absolute;left:-9px;top:54px;width:9px;height:27px;border-radius:6px;background:#73dfb8}.headphones span:last-child{position:absolute;right:-9px;top:54px;width:9px;height:27px;border-radius:6px;background:#73dfb8}
-.liveWave{position:absolute;z-index:7;right:1px;bottom:38px;display:flex;width:52px;height:35px;align-items:center;justify-content:center;gap:3px;padding:6px;border-radius:13px;background:#fff;box-shadow:0 8px 22px rgba(20,78,62,.12)}.liveWave span{width:3px;border-radius:10px;background:#15b87d;transition:height .08s linear}.captionCard{position:relative;display:flex;width:100%;min-height:60px;align-items:flex-start;gap:10px;padding:13px 15px;border:1px solid rgba(23,53,46,.08);border-radius:17px;background:rgba(255,255,255,.72);box-shadow:0 7px 26px rgba(25,80,63,.06);text-align:left}.captionCard:before{content:"";position:absolute;top:-7px;left:50%;width:14px;height:14px;border:1px solid rgba(23,53,46,.08);border-right:0;border-bottom:0;background:#fff;transform:rotate(45deg)}.captionCard svg{flex:none;margin-top:1px;color:#11a874}.captionCard p{color:#4a625b;font-size:.875rem;line-height:1.55}.captionCard[data-active] p{color:var(--ink);font-weight:700}.tips{display:flex;width:100%;margin-top:10px;align-items:center;justify-content:center;gap:7px;color:#72867f;font-size:.75rem;font-weight:700}.tips>div{display:flex;align-items:center;gap:3px}.tips svg{color:#e59a24}.tips>span{width:3px;height:3px;border-radius:50%;background:#b3c3be}
-.memoryCard{width:100%;height:58px;flex:none;margin:0 0 10px;border:1px solid rgba(23,53,46,.08);border-radius:19px;background:rgba(255,255,255,.82);box-shadow:0 9px 28px rgba(25,80,63,.07);overflow:hidden;text-align:left}.memoryHeader{display:flex;width:100%;height:58px;align-items:center;gap:10px;padding:10px 14px;background:transparent;color:var(--ink);text-align:left}.memoryIcon{display:grid;width:36px;height:36px;flex:none;place-items:center;border-radius:11px;background:#e4f8ef;color:#079c6a}.memoryHeader>span:nth-child(2),.sheetHeader>span:nth-child(2){display:flex;min-width:0;flex:1;flex-direction:column}.memoryHeader small,.sheetHeader small{color:#0a9b6d;font-size:.75rem;font-weight:900;letter-spacing:.06em}.memoryHeader strong,.sheetHeader strong{margin-top:2px;font-size:.76rem;font-weight:900}.memoryChevron{color:#7a8f88}.memoryOverlay{position:fixed;z-index:30;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:20px max(14px,env(safe-area-inset-right)) calc(14px + var(--safe-bottom));background:rgba(2,17,13,.6);animation:overlayIn .18s ease-out}.memorySheet{position:relative;display:flex;width:min(100%,460px);max-height:min(74dvh,650px);flex-direction:column;overflow:hidden;border:1px solid rgba(23,53,46,.1);border-radius:26px;background:#f9fdfb;box-shadow:0 24px 70px rgba(0,25,18,.3);text-align:left;animation:sheetIn .24s ease-out}.sheetHandle{width:38px;height:4px;flex:none;margin:9px auto 2px;border-radius:999px;background:#c5d5d0}.sheetHeader{display:flex;flex:none;align-items:center;gap:10px;padding:9px 14px 12px;color:var(--ink)}.sheetHeader>button{display:grid;width:38px;height:38px;flex:none;place-items:center;border-radius:12px;background:#eaf3ef;color:#526a63}.memoryBody{min-height:0;padding:0 16px calc(16px + var(--safe-bottom));border-top:1px solid rgba(23,53,46,.06);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}.memoryBody::-webkit-scrollbar{display:none}.memoryOverview{margin-top:13px;padding:11px 12px;border-radius:14px;background:#edf9f4}.memoryOverview>small,.keyPoints>small,.vocabularySection>small,.recallQuestions>small,.fullPassage>small{display:block;color:#07835e;font-size:.55rem;font-weight:900;letter-spacing:.04em}.memoryOverview>p{margin-top:5px;color:#405e55;font-size:.7rem;line-height:1.65}.keyPoints{margin-top:11px;padding:11px 12px;border:1px solid #e1ece8;border-radius:14px;background:#fff}.keyPoints ol{display:grid;margin-top:7px;gap:6px;counter-reset:memory-point}.keyPoints li{display:grid;grid-template-columns:20px 1fr;gap:7px;color:#35554c;font-size:.65rem;font-weight:700;line-height:1.5;counter-increment:memory-point}.keyPoints li:before{content:counter(memory-point);display:grid;width:20px;height:20px;place-items:center;border-radius:7px;background:#daf4e9;color:#07835e;font-size:.53rem;font-weight:950}.vocabularySection{margin-top:11px}.memoryWords{display:flex;margin-top:7px;flex-wrap:wrap;gap:7px}.memoryWords>span{display:flex;align-items:baseline;gap:5px;padding:6px 9px;border-radius:10px;background:#f0f8f4;color:#176b53}.memoryWords strong{font-size:.66rem;font-weight:900}.memoryWords small{color:#71857f;font-size:.56rem}.recallQuestions{margin-top:11px;padding:10px 11px;border-radius:12px;background:#eef6ff}.recallQuestions>small{color:#517095}.recallQuestions>p{margin-top:5px;color:#294c73;font-size:.65rem;font-weight:750;line-height:1.5}.recallQuestions>p:before{content:"•";margin-right:6px;color:#6194c4}.sentenceStarter{display:flex;margin-top:10px;align-items:center;justify-content:space-between;gap:10px;padding:9px 11px;border-radius:11px;background:#fff5df;color:#835a15}.sentenceStarter small{font-size:.56rem;font-weight:700}.sentenceStarter strong{font-size:.68rem;font-weight:900}.fullPassageButton{display:flex;width:100%;margin-top:11px;align-items:center;justify-content:space-between;padding:10px 11px;border:1px solid #dce9e4;border-radius:11px;background:#fff;color:#355b50;font-size:.63rem;font-weight:900}.fullPassageButton[aria-expanded="true"] svg{transform:rotate(180deg)}.fullPassageButton svg{transition:transform .18s}.fullPassage{margin-top:7px;padding:11px;border-radius:12px;background:#f3f5f4}.fullPassage>p{margin-top:6px;color:#536861;font-size:.65rem;line-height:1.7;white-space:pre-line}.memoryBody .memoryReassurance{margin-top:9px;color:#7c8d88;font-size:.58rem;font-weight:700;text-align:center}.memoryBody .memoryReassurance:before{content:"✓";margin-right:4px;color:#0aa672;font-weight:900}
-.startArea{display:flex;margin-top:14px;flex-direction:column;align-items:center}.startArea>strong{margin-top:10px;color:var(--ink);font-size:.78rem;font-weight:900}.startArea>small{margin-top:1px;color:var(--muted);font-size:.75rem;font-weight:700}.startButton{position:relative;isolation:isolate;display:grid;width:108px;height:108px;place-items:center;border:7px solid rgba(255,255,255,.78);border-radius:50%;background:linear-gradient(145deg,#20d994,#08a86f);color:#fff;box-shadow:0 17px 34px rgba(10,165,111,.28),inset 0 2px 1px rgba(255,255,255,.25);transition:transform .18s ease,box-shadow .18s ease}.startButton:before{content:"";position:absolute;z-index:-1;inset:8px;border:1px solid rgba(255,255,255,.24);border-radius:50%}.startButton svg{position:relative;z-index:3;filter:drop-shadow(0 3px 4px rgba(0,80,54,.18))}.startButton:active:not(:disabled){transform:scale(.94);box-shadow:0 8px 18px rgba(10,165,111,.23),inset 0 2px 1px rgba(255,255,255,.25)}.startButton:disabled{cursor:not-allowed;filter:saturate(.4);opacity:.55}.startRipple,.startRippleTwo{position:absolute;z-index:-2;inset:-10px;border:2px solid rgba(20,194,130,.2);border-radius:50%;animation:startPulse 2.2s ease-out infinite}.startRippleTwo{animation-delay:1.1s}.controls{display:flex;width:100%;margin-top:16px;justify-content:center;gap:14px}.controlButton{display:flex;min-width:98px;height:62px;align-items:center;justify-content:center;gap:7px;border:1px solid rgba(23,53,46,.09);border-radius:18px;background:#fff;color:var(--ink);box-shadow:0 8px 22px rgba(20,78,62,.1);font:inherit}.controlButton small{font-size:.75rem;font-weight:800}.controlButton.muted{background:#fff3dd;color:#a96308}.controlButton.endButton{border-color:transparent;background:#ef5c55;color:#fff}.controlButton:disabled{opacity:.5}
-.error{display:flex;width:100%;margin-top:10px;align-items:flex-start;gap:8px;padding:11px 13px;border:1px solid #f2b8b1;border-radius:13px;background:#fff2f0;color:#b83b34;text-align:left;font-size:.8125rem;line-height:1.55}.error svg{flex:none;margin-top:1px}.summary{width:100%;margin-top:14px;padding:17px;border:1px solid rgba(23,53,46,.08);border-radius:20px;background:#fff;box-shadow:0 12px 32px rgba(25,80,63,.08);text-align:left}.summaryHeading{display:flex;align-items:center;gap:10px}.summaryHeading>span{display:grid;width:38px;height:38px;place-items:center;border-radius:12px;background:#fff4d8}.summaryHeading small{color:#e39421;font-size:.55rem;font-weight:900;letter-spacing:.1em}.summaryHeading h2{font-size:.9rem;font-weight:900}.summary>p{margin-top:11px;color:var(--muted);font-size:.7rem;line-height:1.6}.scoreGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:12px}.scoreGrid>div{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:10px;background:#f2f7f4;color:#61736e;font-size:.6rem}.scoreGrid strong{color:var(--ink);font-size:.85rem}.scoreGrid strong small{font-size:.5rem}
-@keyframes mascotFloat{0%,100%{transform:translateY(2px) rotate(-1deg)}50%{transform:translateY(-7px) rotate(1deg)}}@keyframes shadowFloat{0%,100%{transform:scaleX(1);opacity:.7}50%{transform:scaleX(.86);opacity:.45}}@keyframes blink{0%,45%,49%,100%{transform:scaleY(1)}47%{transform:scaleY(.08)}}@keyframes talk{to{transform:scaleY(1.8) translateY(1px)}}@keyframes talkBounce{to{transform:translateY(-5px) rotate(1.5deg)}}@keyframes thinkTilt{0%,100%{transform:rotate(0) translateY(0)}50%{transform:rotate(-4deg) translateY(-5px)}}@keyframes ringPulse{0%{transform:scale(.82);opacity:.7}100%{transform:scale(1.15);opacity:0}}@keyframes sparkle{0%,100%{transform:scale(.8) rotate(0);opacity:.45}50%{transform:scale(1.25) rotate(25deg);opacity:1}}@keyframes statusPulse{0%{box-shadow:0 0 0 0 rgba(17,189,126,.32)}100%{box-shadow:0 0 0 7px rgba(17,189,126,0)}}@keyframes startPulse{0%{transform:scale(.82);opacity:.7}100%{transform:scale(1.28);opacity:0}}@keyframes overlayIn{from{opacity:0}}@keyframes sheetIn{from{transform:translateY(24px);opacity:.7}}
-@media(max-height:900px){.content{padding-top:0}.intro>p:last-child{display:none}.lessonLabel{margin-top:7px}.coachArea{min-height:0;height:180px;flex:none}.mascotScene{transform:scale(.68);margin:-22px 0 -28px}.memoryCard{height:52px;margin-bottom:7px}.memoryHeader{height:52px;padding-block:7px}.captionCard{min-height:50px;padding-block:10px}.tips{display:none}.startArea{margin-top:7px}.startButton{width:82px;height:82px;border-width:5px}.startButton svg{width:28px}.startArea>strong{margin-top:5px}}
-@media(max-width:360px){.content{padding-inline:14px}.intro h1{font-size:1.35rem}.statusBubble{top:18px}.coachArea{min-height:238px}.mascotScene{transform:scale(.92)}.tips{font-size:.75rem;gap:5px}}
-@media(prefers-reduced-motion:reduce){.mascot,.mascotEyes,.mascotMouth,.mascotShadow,.voiceRing,.voiceRingTwo,.sparkOne,.sparkTwo,.sparkThree,.statusDot,.startRipple,.startRippleTwo{animation:none}}
-:global(.dark) .page{--ink:#effaf6;--muted:#9fb6ae;background:radial-gradient(circle at 8% 16%,rgba(244,123,53,.12),transparent 22%),radial-gradient(circle at 95% 9%,rgba(22,189,127,.14),transparent 24%),linear-gradient(180deg,#10251f 0%,#091815 100%)}:global(.dark) .backButton{color:var(--ink)}:global(.dark) .timer,:global(.dark) .coachBadge,:global(.dark) .statusBubble,:global(.dark) .captionCard,:global(.dark) .controlButton,:global(.dark) .summary,:global(.dark) .memoryCard{border-color:rgba(255,255,255,.08);background:rgba(25,51,44,.9)}:global(.dark) .memorySheet{border-color:rgba(255,255,255,.09);background:#132c25}:global(.dark) .sheetHandle{background:#547068}:global(.dark) .sheetHeader>button{background:#203e35;color:#c4d8d1}:global(.dark) .memoryBody{border-color:rgba(255,255,255,.06)}:global(.dark) .memoryIcon{background:#173e32}:global(.dark) .memoryOverview{background:#173c30}:global(.dark) .memoryOverview>p{color:#c0d4cd}:global(.dark) .keyPoints{border-color:#2a4a40;background:#173029}:global(.dark) .keyPoints li{color:#bfd0ca}:global(.dark) .keyPoints li:before{background:#20513f;color:#80e8bf}:global(.dark) .memoryWords>span{background:#173a30;color:#7ce0bb}:global(.dark) .memoryWords small{color:#a8bcb5}:global(.dark) .recallQuestions{background:#142f3c}:global(.dark) .recallQuestions>small{color:#8fb8dc}:global(.dark) .recallQuestions>p{color:#c1d9ed}:global(.dark) .sentenceStarter{background:#3e321a;color:#f6d995}:global(.dark) .fullPassageButton{border-color:#315047;background:#19372f;color:#c5d8d1}:global(.dark) .fullPassage{background:#172b25}:global(.dark) .fullPassage>p{color:#b6c9c2}:global(.dark) .captionCard:before{border-color:rgba(255,255,255,.08);background:#19332c}:global(.dark) .captionCard p{color:#c2d5ce}:global(.dark) .lessonLabel,:global(.dark) .intro>p:last-child{color:#9fb6ae}:global(.dark) .liveWave{background:#19332c}:global(.dark) .scoreGrid>div{background:#17342c}:global(.dark) .error{border-color:rgba(239,92,85,.3);background:rgba(110,35,32,.5);color:#ffc4bf}
-.readTogetherButton{display:flex;align-items:center;gap:7px;flex:none;margin:4px 0 8px;padding:8px 14px;border:1px solid #63bd9870;border-radius:999px;color:var(--ink);font-size:12px;background:#62d5a51a}
-.readingOffer{flex:none;width:100%;padding:12px;border:1px solid #5bc994;border-radius:16px;background:#21986b18;font-size:13px}.readingOffer p{margin:4px 0 8px}.readingOffer>div{display:flex;gap:8px;justify-content:center}.readingOffer button{padding:8px 12px;border-radius:12px;background:#0b936a;color:white}.readingOffer button+button{background:transparent;color:var(--ink)}
-.content.readingMode{max-width:600px;padding-top:0;gap:8px}.readingMode .intro{height:90px;flex:none;padding:18px 125px 0 0;text-align:left}.readingMode .intro:after{content:"ค่อย ๆ อ่านไปด้วยกัน ♡";font-size:13px;font-weight:800;color:var(--ink)}.readingMode .intro>*{display:none}.readingMode .coachArea{position:absolute;right:16px;top:-12px;width:110px;height:100px;min-height:0;margin:0;pointer-events:none;animation:coachDock .4s ease-out;z-index:2}.readingMode .coachArea>div:first-of-type{transform:scale(.37);transform-origin:center;flex-shrink:0}.readingMode .liveWave{display:none}.readingMode .captionCard{flex:none;min-height:0;max-height:58px;overflow:auto;padding:8px 12px}.readingMode .captionCard:before{display:none}.readingMode .captionCard p{font-size:12px}.readingMode .controls{flex:none;margin:0;gap:10px}.readingMode .controlButton{height:44px;min-width:100px}.readingMode .tips{display:none}.readingMode .startArea{flex:none;margin:0;flex-direction:row;gap:12px}.readingMode .startButton{height:48px;width:48px;border-width:3px}.readingMode .startButton svg{width:22px}.readingMode .startArea>small{display:none}.readingMode .startArea>strong{margin:0;font-size:12px}.readingMode .startRipple,.readingMode .startRippleTwo{display:none}.readingMode .summary{max-height:120px;overflow:auto;flex:none;margin:0}
-@keyframes coachDock{from{opacity:.3;transform:translate(-60px,35px) scale(1.5)}}
-@media(prefers-reduced-motion:reduce){.readingMode .coachArea{animation:none}}
-.page{display:flex;flex-direction:column}.page>.header{flex:none;width:100%}.page>.content{flex:1;width:100%;height:auto;margin:0 auto}
-@media(max-height:700px){.page .content:not(.readingMode) .coachArea{height:140px;min-height:0;flex:none}.page .content:not(.readingMode) .coachArea>div:first-of-type{transform:scale(.58);flex-shrink:0}.page .content:not(.readingMode) .intro h1{font-size:1.35rem}.page .content:not(.readingMode) .lessonLabel{margin-top:3px}}
-.previewBadge{display:flex;align-items:center;justify-content:center;gap:7px;flex:none;border:1px dashed #4caf8b;padding:4px 10px;border-radius:20px;color:var(--ink);font-size:10px;background:#35ac8315}
-.interruptedSession{width:100%;margin-top:10px;padding:12px;border:1px solid #d5ac55;border-radius:16px;background:#fff8e9;text-align:left;font-size:12px}.interruptedSession strong{display:block;color:#694916}.interruptedSession p{margin-top:4px;color:#715f40;line-height:1.45}.interruptedSession>div{display:flex;gap:8px;margin-top:9px}.interruptedSession button{flex:1;padding:9px;border-radius:10px;background:#0b936a;color:#fff;font-weight:800}.interruptedSession button+button{border:1px solid #b7a179;background:transparent;color:#694916}.interruptedSession button:disabled{opacity:.5}
-.content{overflow-y:auto;overscroll-behavior:contain}
-.nextPractice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.nextPractice>div{display:flex;flex-direction:column;gap:5px;padding:11px;border-radius:12px;background:#ecf8f1}.nextPractice>div+div{background:#fff5e8}.nextPractice small,.repeatPractice small{font-size:11px;font-weight:800;color:#198764}.nextPractice strong{font-size:13px;line-height:1.5}.repeatPractice{display:flex;flex-direction:column;gap:6px;margin-top:10px;padding:12px;border:1px solid #aedec7;border-radius:12px;background:#f7fcf9}.repeatPractice strong{font-size:15px;line-height:1.5}.repeatPractice span{font-size:11px;color:var(--muted)}
-@media(max-width:360px){.nextPractice{grid-template-columns:1fr}}
-:global(.dark) .nextPractice>div{background:#173e32}:global(.dark) .nextPractice>div+div{background:#3e321a}:global(.dark) .repeatPractice{background:#17342c;border-color:#315047}
-.micCheck{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:8px}.micCheck p{width:100%;padding:8px 10px;border-radius:10px;background:#edf8f2;color:var(--ink);font-size:12px;line-height:1.4}.micCheck button,.readingFallback{padding:8px 12px;border:1px solid #8ccfb0;border-radius:10px;background:#f7fffa;color:#087f5c;font-size:12px;font-weight:800}.micCheck button:disabled,.readingFallback:disabled{opacity:.5}.readingFallback{flex:none;width:100%}
-:global(.dark) .micCheck p{background:#173e32}:global(.dark) .micCheck button,:global(.dark) .readingFallback{background:#173e32;color:#8de1bb}
-@media(max-height:700px){.content.readingMode .intro{height:54px;padding-top:10px}.content.readingMode .coachArea{top:-22px;height:80px}.content.readingMode .coachArea>div:first-of-type{transform:scale(.27)}.content.readingMode .captionCard{max-height:42px}}
-/* Small screens: the compact layout above starts at 900px tall (a 390x844 phone
-   no longer clips the status caption under the mic). The content column is the
-   scroll container, so anything that still does not fit scrolls instead of
-   being cut off; side and bottom insets respect the safe area. */
-.page>.content{padding-left:calc(20px + env(safe-area-inset-left,0px));padding-right:calc(20px + env(safe-area-inset-right,0px));padding-bottom:calc(18px + var(--safe-bottom));-webkit-overflow-scrolling:touch}
-.page>.header{padding-left:calc(18px + env(safe-area-inset-left,0px));padding-right:calc(18px + env(safe-area-inset-right,0px))}
-.content>*{flex-shrink:0}
-@media(max-width:360px){.page>.content{padding-left:calc(14px + env(safe-area-inset-left,0px));padding-right:calc(14px + env(safe-area-inset-right,0px))}}
-@media(max-height:600px){.page .content:not(.readingMode) .coachArea{height:112px}.page .content:not(.readingMode) .coachArea>div:first-of-type{transform:scale(.46)}.page .content:not(.readingMode) .startButton{width:72px;height:72px;border-width:4px}.page .content:not(.readingMode) .lessonLabel{display:none}}
-/* Tall-ish phones (e.g. 390x844): compact layout, but Reedy a bit bigger and the tips row back. */
-@media(min-height:761px) and (max-height:900px){.page .content:not(.readingMode) .coachArea{height:214px}.page .content:not(.readingMode) .tips{display:flex}}
-.intro h1{text-wrap:balance}
+/* Voice practice with Reedy (patterns.md S15). Semantic tokens only (both
+   themes come from globals.css); no gradients, glows or backdrop filters.
+   Reedy (the full voice-practice art) is the screen's hero and its one Reedy. */
+
+/* ─── Shell: app bar on top, the content column scrolls ─── */
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--surface-bg);
+  color: var(--text-primary);
+}
+.page > .content {
+  flex: 1;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Timer chip in the app bar: a ticking number, so the reading face + tabular figures. */
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-right: 4px;
+  padding: 4px 12px 4px 10px;
+  border: 1.5px solid var(--clay-rim);
+  border-radius: 999px;
+  background: var(--surface-muted);
+  color: var(--text-primary);
+}
+.timer > svg {
+  flex: none;
+  color: var(--brand-fg);
+}
+.timer div {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.timer small {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+}
+.timer strong {
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 480px;
+  min-height: 0;
+  padding: 12px calc(16px + env(safe-area-inset-right, 0px)) calc(24px + var(--safe-bottom)) calc(16px + env(safe-area-inset-left, 0px));
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  text-align: center;
+  gap: 14px;
+}
+.content > * {
+  flex-shrink: 0;
+}
+
+/* ─── Lesson context ─── */
+.intro {
+  width: 100%;
+}
+.lessonLabel {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.intro h2 {
+  max-width: 400px;
+  margin: 2px auto 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+.intro > p:last-child {
+  max-width: 340px;
+  margin: 4px auto 0;
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* ─── Hero stage: flat hero colour, two decorative blobs, Reedy in the middle ─── */
+.coachArea {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  width: 100%;
+  height: 268px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1.5px solid var(--hero-ring);
+  border-radius: var(--radius-card);
+  background: var(--hero-bg-base);
+}
+.coachArea::before,
+.coachArea::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.coachArea::before {
+  width: 210px;
+  height: 210px;
+  top: -84px;
+  right: -70px;
+  background: var(--hero-blob-a);
+  opacity: 0.8;
+}
+.coachArea::after {
+  width: 132px;
+  height: 132px;
+  bottom: -40px;
+  left: -52px;
+  background: var(--hero-blob-b);
+  opacity: 0.7;
+}
+.liveWave {
+  position: absolute;
+  z-index: 2;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  width: 56px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px;
+  border: 1.5px solid var(--clay-rim);
+  border-radius: 14px;
+  background: var(--surface-card);
+}
+/* Fixed-height bars scaled by the live mic level (inline scaleY from page.tsx):
+   transform only, never an animated height (README §7). */
+.liveWave span {
+  width: 3px;
+  height: 40px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--brand-vivid);
+  transform-origin: center;
+  transition: transform 0.08s linear;
+}
+
+/* Status line under Reedy: colour + dot + word, announced politely. */
+.statusLine {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 8px;
+  margin-top: -2px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--clay-rim);
+  border-radius: 999px;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.statusDot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+.statusLine[data-live] .statusDot {
+  background: var(--brand-vivid);
+  box-shadow: 0 0 0 3px var(--brand-soft);
+}
+
+/* ─── Mic: one large round button (72, jade, ledge), pulsing ring when ready ─── */
+.startArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+}
+.startArea > strong {
+  margin-top: 12px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.startArea > small {
+  margin-top: 2px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.startButton {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  width: 72px;
+  height: 72px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--brand-solid);
+  color: var(--on-brand);
+  box-shadow: 0 var(--ledge) 0 var(--brand-solid-edge);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--duration-press) var(--ease-out), box-shadow var(--duration-press) var(--ease-out);
+}
+.startButton svg {
+  width: 32px;
+  height: 32px;
+}
+.startButton:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--brand-solid-edge);
+}
+.startButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  box-shadow: none;
+}
+.startButton:disabled .startRipple,
+.startButton:disabled .startRippleTwo {
+  display: none;
+}
+.startRipple,
+.startRippleTwo {
+  position: absolute;
+  z-index: -1;
+  inset: -8px;
+  border: 2px solid var(--brand-vivid);
+  border-radius: 50%;
+  opacity: 0;
+  animation: startPulse 2.2s var(--ease-out) infinite;
+}
+.startRippleTwo {
+  animation-delay: 1.1s;
+}
+
+/* Live call: the mic toggle (same 72 circle) and "จบการฝึก" as a ghost button. */
+.controls {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 4px;
+}
+.controlButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 96px;
+  padding: 0 8px 4px;
+  border-radius: 20px;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.controlButton > span {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--brand-solid);
+  color: var(--on-brand);
+  box-shadow: 0 var(--ledge) 0 var(--brand-solid-edge);
+  transition: transform var(--duration-press) var(--ease-out), box-shadow var(--duration-press) var(--ease-out);
+}
+.controlButton > span svg {
+  width: 32px;
+  height: 32px;
+}
+.controlButton:active:not(:disabled) > span {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--brand-solid-edge);
+}
+.controlButton small {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.controlButton.muted > span {
+  border: 2px solid var(--field-border);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  box-shadow: 0 var(--ledge-sm) 0 var(--clay-ledge);
+}
+.controlButton.endButton {
+  flex-direction: row;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--radius-ctl-sm);
+  color: var(--brand-fg);
+}
+.controlButton.endButton svg {
+  width: 20px;
+  height: 20px;
+}
+.controlButton.endButton:active:not(:disabled) {
+  background: var(--press-tint);
+}
+.controlButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* ─── Transcript card (latest line of the conversation) ─── */
+.captionCard {
+  display: flex;
+  width: 100%;
+  min-height: 64px;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--clay-rim);
+  border-radius: var(--radius-card);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  text-align: left;
+}
+.captionCard > svg {
+  flex: none;
+  box-sizing: content-box;
+  width: 20px;
+  height: 20px;
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--tile-blue);
+  color: var(--icon-blue);
+}
+.captionCard p {
+  align-self: center;
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.65;
+}
+.captionCard[data-active] p {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.tips {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+.tips > div {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.tips svg {
+  color: var(--accent-fg);
+}
+.tips > span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+/* Error: danger tone card (role="alert" in the markup). */
+.error {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--danger-border);
+  border-radius: var(--radius-card);
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: left;
+}
+.error svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.micCheck {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.micCheck p {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--info-border);
+  border-radius: 16px;
+  background: var(--info-bg);
+  color: var(--info-fg);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Interrupted session: warning tone card with its two actions. */
+.interruptedSession {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--warning-border);
+  border-radius: var(--radius-card);
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+  text-align: left;
+}
+.interruptedSession strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.interruptedSession p {
+  margin-top: 2px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.interruptedSession > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.interruptedSession > div > button {
+  flex: 1 1 120px;
+}
+
+/* ─── Memory refresh: a tappable card (rim + clay ledge) that opens the sheet ─── */
+.memoryCard {
+  width: 100%;
+  border: 1.5px solid var(--clay-rim);
+  border-radius: var(--radius-card);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-tap);
+  overflow: hidden;
+  text-align: left;
+  transition: transform var(--duration-press) var(--ease-out), box-shadow var(--duration-press) var(--ease-out);
+}
+.memoryCard:has(> .memoryHeader:active) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--clay-ledge);
+}
+.memoryHeader {
+  display: flex;
+  width: 100%;
+  min-height: 64px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+.memoryHeader:focus-visible {
+  outline-offset: -3px;
+}
+.memoryIcon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--tile-brand);
+  color: var(--icon-brand);
+}
+.memoryHeader > span:nth-child(2),
+.sheetHeader > span:nth-child(2) {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+.memoryHeader small,
+.sheetHeader small {
+  color: var(--brand-fg);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.memoryHeader strong {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.memoryChevron {
+  flex: none;
+  color: var(--text-tertiary);
+}
+.sheetHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sheetHeader strong {
+  font-weight: 600;
+}
+
+/* Sheet body sections (wells inside the sheet). */
+.memoryOverview,
+.keyPoints,
+.recallQuestions,
+.fullPassage {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  text-align: left;
+}
+.memoryOverview {
+  margin-top: 4px;
+  background: var(--brand-soft);
+  color: var(--brand-soft-fg);
+}
+.memoryOverview > small,
+.keyPoints > small,
+.vocabularySection > small,
+.recallQuestions > small,
+.fullPassage > small {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.memoryOverview > p {
+  margin-top: 4px;
+  font-size: 16px;
+  line-height: 1.65;
+}
+.keyPoints {
+  border: 1.5px solid var(--clay-rim);
+  background: var(--surface-card);
+}
+.keyPoints > small {
+  color: var(--text-primary);
+}
+.keyPoints ol {
+  display: grid;
+  margin-top: 8px;
+  gap: 8px;
+  counter-reset: memory-point;
+  list-style: none;
+}
+.keyPoints li {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 10px;
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1.65;
+  counter-increment: memory-point;
+}
+.keyPoints li::before {
+  content: counter(memory-point);
+  display: grid;
+  width: 26px;
+  height: 26px;
+  margin-top: 1px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--tile-brand);
+  color: var(--icon-brand);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.vocabularySection {
+  margin-top: 12px;
+  text-align: left;
+}
+.vocabularySection > small {
+  color: var(--text-primary);
+}
+.memoryWords {
+  display: flex;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.memoryWords > span {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1.5px solid var(--brand-soft-border);
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand-soft-fg);
+}
+.memoryWords strong {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.memoryWords small {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.recallQuestions {
+  background: var(--info-bg);
+  color: var(--info-fg);
+}
+.recallQuestions > p {
+  margin-top: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+.recallQuestions > p::before {
+  content: "•";
+  margin-right: 6px;
+}
+.sentenceStarter {
+  display: flex;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 10px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  color: var(--accent-soft-fg);
+  text-align: left;
+}
+.sentenceStarter small {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.sentenceStarter strong {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.fullPassageButton {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 2px solid var(--field-border);
+  border-radius: var(--radius-ctl-sm);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  box-shadow: 0 var(--ledge-sm) 0 var(--clay-ledge);
+  -webkit-tap-highlight-color: transparent;
+}
+.fullPassageButton:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--clay-ledge);
+}
+.fullPassageButton svg {
+  transition: transform 0.18s;
+}
+.fullPassageButton[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+.fullPassage {
+  background: var(--surface-muted);
+  color: var(--text-primary);
+}
+.fullPassage > p {
+  margin-top: 6px;
+  font-size: 17px;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+.memoryReassurance {
+  margin-top: 14px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  text-align: center;
+}
+.memoryReassurance::before {
+  content: "✓";
+  margin-right: 4px;
+  color: var(--brand-fg);
+  font-weight: 700;
+}
+
+/* ─── Reading together: offer card, fallback button, dev preview badge ─── */
+.readingOffer {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--brand-soft-border);
+  border-radius: var(--radius-card);
+  background: var(--brand-soft);
+  color: var(--brand-soft-fg);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.readingOffer strong {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.readingOffer p {
+  margin: 2px 0 4px;
+}
+.readingOffer small {
+  font-size: 14px;
+}
+.readingOffer > div {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.readingOffer button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border-radius: var(--radius-ctl-sm);
+  background: var(--brand-solid);
+  color: var(--on-brand);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 var(--ledge-sm) 0 var(--brand-solid-edge);
+}
+.readingOffer button + button {
+  background: transparent;
+  color: var(--brand-soft-fg);
+  box-shadow: none;
+}
+.readingOffer button:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+}
+.readingFallback {
+  display: inline-flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border: 2px solid var(--field-border);
+  border-radius: var(--radius-ctl-sm);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 var(--ledge-sm) 0 var(--clay-ledge);
+}
+.readingFallback:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+}
+.previewBadge {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1.5px dashed var(--field-border);
+  border-radius: 999px;
+  background: var(--surface-muted);
+  color: var(--text-primary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ─── Result banner (S7 pattern): success card, then wells ─── */
+.summary {
+  width: 100%;
+  padding: 16px 18px 18px;
+  border: 1.5px solid var(--success-border);
+  border-radius: var(--radius-card);
+  background: var(--success-bg);
+  color: var(--text-primary);
+  text-align: left;
+  animation: summaryIn var(--duration-slow) var(--ease-spring) both;
+}
+.summaryHeading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--success-fg);
+}
+.summaryHeading > span {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--surface-card);
+  color: var(--success-fg);
+}
+.summaryHeading small {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.summaryHeading h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.summary > p {
+  margin-top: 10px;
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1.65;
+}
+.nextPractice {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.nextPractice > div,
+.repeatPractice,
+.scoreGrid > div {
+  border: 1.5px solid var(--clay-rim);
+  background: var(--surface-card);
+}
+.nextPractice > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 16px;
+}
+.nextPractice small,
+.repeatPractice small {
+  color: var(--brand-fg);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.nextPractice strong {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+.repeatPractice {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 16px;
+}
+.repeatPractice strong {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.repeatPractice span {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.scoreGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.scoreGrid > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.scoreGrid strong {
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.scoreGrid strong small {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+@keyframes startPulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+@keyframes summaryIn {
+  0% { opacity: 0; transform: scale(0.92); }
+  60% { opacity: 1; transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+@keyframes coachDock {
+  from { opacity: 0.3; transform: translate(-60px, 35px) scale(1.5); }
+}
+
+/* ─── Reading mode: the reader takes the column, Reedy docks top-right ─── */
+.content.readingMode {
+  max-width: 600px;
+  gap: 8px;
+  padding-top: 0;
+}
+.readingMode .intro {
+  height: 76px;
+  flex: none;
+  padding: 18px 120px 0 4px;
+  text-align: left;
+  text-wrap: balance;
+}
+/* No-break spaces keep "ๆ" and "♡" on their phrase's line (a line never starts with ๆ). */
+.readingMode .intro::after {
+  content: "ค่อย\00a0ๆ อ่านไปด้วยกัน\00a0♡";
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.readingMode .intro > * {
+  display: none;
+}
+.readingMode .coachArea {
+  position: absolute;
+  z-index: 2;
+  top: -4px;
+  right: 16px;
+  width: 110px;
+  height: 100px;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+  pointer-events: none;
+  animation: coachDock 0.4s ease-out;
+}
+.readingMode .coachArea::before,
+.readingMode .coachArea::after,
+.readingMode .liveWave {
+  display: none;
+}
+.readingMode .coachArea > div:first-of-type {
+  flex-shrink: 0;
+  transform: scale(0.37);
+  transform-origin: center;
+}
+/* Docked Reedy: his speech bubble and sparkles would be unreadably small. */
+.readingMode .coachArea > div:first-of-type > span {
+  display: none;
+}
+.readingMode .statusLine {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.readingMode .captionCard {
+  min-height: 0;
+  max-height: 64px;
+  overflow: auto;
+  padding: 8px 12px;
+}
+.readingMode .captionCard > svg {
+  padding: 4px;
+}
+.readingMode .captionCard p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.readingMode .controls {
+  flex-direction: row;
+  justify-content: center;
+  gap: 12px;
+  padding: 0;
+}
+.readingMode .controlButton {
+  flex-direction: row;
+  min-height: 48px;
+}
+.readingMode .controlButton > span {
+  width: 48px;
+  height: 48px;
+}
+.readingMode .controlButton > span svg {
+  width: 24px;
+  height: 24px;
+}
+.readingMode .tips {
+  display: none;
+}
+.readingMode .startArea {
+  flex-direction: row;
+  gap: 12px;
+  padding: 0;
+}
+.readingMode .startButton {
+  width: 48px;
+  height: 48px;
+}
+.readingMode .startButton svg {
+  width: 24px;
+  height: 24px;
+}
+.readingMode .startArea > small,
+.readingMode .startRipple,
+.readingMode .startRippleTwo {
+  display: none;
+}
+.readingMode .startArea > strong {
+  margin: 0;
+  font-size: 15px;
+}
+.readingMode .summary {
+  max-height: 120px;
+  overflow: auto;
+  animation: none;
+}
+
+/* ─── Shorter phones: the stage shrinks with Reedy (reedy.module.css scales the scene) ─── */
+@media (max-height: 900px) {
+  .content:not(.readingMode) .intro > p:last-child {
+    display: none;
+  }
+  .content:not(.readingMode) .coachArea {
+    height: 200px;
+  }
+}
+@media (min-height: 761px) and (max-height: 900px) {
+  .content:not(.readingMode) .coachArea {
+    height: 232px;
+  }
+}
+@media (max-height: 700px) {
+  .content:not(.readingMode) .coachArea {
+    height: 160px;
+  }
+  .content:not(.readingMode) .coachArea > div:first-of-type {
+    flex-shrink: 0;
+    transform: scale(0.58);
+  }
+  .content.readingMode .intro {
+    height: 54px;
+    padding-top: 10px;
+  }
+  .content.readingMode .coachArea {
+    top: -14px;
+    height: 80px;
+  }
+  .content.readingMode .coachArea > div:first-of-type {
+    transform: scale(0.27);
+  }
+  .content.readingMode .captionCard {
+    max-height: 48px;
+  }
+}
+@media (max-height: 600px) {
+  .content:not(.readingMode) .coachArea {
+    height: 128px;
+  }
+  .content:not(.readingMode) .coachArea > div:first-of-type {
+    transform: scale(0.46);
+  }
+  .content:not(.readingMode) .lessonLabel {
+    display: none;
+  }
+}
+@media (max-width: 360px) {
+  .nextPractice {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .startRipple,
+  .startRippleTwo {
+    display: none;
+    animation: none;
+  }
+  .summary,
+  .readingMode .coachArea {
+    animation: none;
+  }
+  .startButton,
+  .controlButton > span,
+  .liveWave span,
+  .memoryCard,
+  .fullPassageButton,
+  .fullPassageButton svg {
+    transition: none;
+  }
+}

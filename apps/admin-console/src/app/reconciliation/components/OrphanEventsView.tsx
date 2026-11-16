@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { CheckCircle2, Link2, XCircle } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { CheckCircle2, Link2, TriangleAlert, XCircle } from "lucide-react";
 import {
   AdminStatusChip,
   Chip,
@@ -9,7 +9,6 @@ import {
   DataTable,
   DescriptionList,
   EmptyState,
-  ErrorState,
   FilterBar,
   IdCell,
   Money,
@@ -24,9 +23,10 @@ import { Button } from "@/components/ui/button";
 import type { UseTableStateResult } from "@/hooks/useTableState";
 import { api, newIdempotencyKey } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
-import { formatThaiDateTime } from "@/lib/format";
+import { formatSatang, formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { statusLabel } from "@/lib/status";
+import { focusToolbar, LoadError } from "../../settlements/financeUi";
 import type { OrphanEvent, Paged } from "../types";
 import "@/locales/th/reconciliation";
 
@@ -35,6 +35,7 @@ type Pending = { kind: "link" | "dismiss"; row: OrphanEvent; key: string } | nul
 export function OrphanEventsView({ table, onMutated }: { table: UseTableStateResult; onMutated: () => void }) {
   const me = useAdminSession();
   const [pending, setPending] = useState<Pending>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const state = table.filters.state || "OPEN";
   const query = {
     state,
@@ -57,6 +58,7 @@ export function OrphanEventsView({ table, onMutated }: { table: UseTableStateRes
         label: t("reconciliation.columns.chargeId"),
         alwaysVisible: true,
         mobile: "primary",
+        sticky: true,
         cell: (row) => (
           <div className="flex min-w-0 flex-col">
             <span className="truncate font-mono text-[0.8125rem] text-fg">{row.chargeId ?? "–"}</span>
@@ -69,7 +71,7 @@ export function OrphanEventsView({ table, onMutated }: { table: UseTableStateRes
         header: t("reconciliation.columns.receivedAt"),
         sortable: true,
         mobile: "secondary",
-        cell: (row) => <span className="whitespace-nowrap">{formatThaiDateTime(row.createdAt)}</span>,
+        cell: (row) => <span className="whitespace-nowrap tabular">{formatThaiDateTime(row.createdAt)}</span>,
       },
       {
         key: "chargeStatus",
@@ -93,7 +95,7 @@ export function OrphanEventsView({ table, onMutated }: { table: UseTableStateRes
         key: "amount",
         header: t("reconciliation.columns.amount"),
         align: "right",
-        cell: (row) => (row.amountMinor != null ? <Money satang={row.amountMinor} /> : <span className="text-fg-subtle">–</span>),
+        cell: (row) => (row.amountMinor != null ? <Money satang={row.amountMinor} fractionDigits={2} /> : <span className="text-fg-subtle">–</span>),
       },
       {
         key: "candidate",
@@ -103,10 +105,13 @@ export function OrphanEventsView({ table, onMutated }: { table: UseTableStateRes
           row.candidate ? (
             <div className="flex flex-col items-start gap-1">
               <IdCell id={row.candidate.paymentIntentId} />
-              <AdminStatusChip domain="payment" status={row.candidate.status} />
+              <span className="flex flex-wrap items-center gap-1.5">
+                <AdminStatusChip domain="payment" status={row.candidate.status} />
+                <AmountMismatch event={row.amountMinor} candidate={row.candidate.amountMinor} />
+              </span>
             </div>
           ) : (
-            <span className="text-[0.8125rem] text-fg-muted">{t("reconciliation.noCandidate")}</span>
+            <span className="text-[0.8125rem] whitespace-nowrap text-fg-muted">{t("reconciliation.noCandidate")}</span>
           ),
       },
       {
@@ -136,11 +141,13 @@ export function OrphanEventsView({ table, onMutated }: { table: UseTableStateRes
         label: t("reconciliation.columns.actions"),
         alwaysVisible: true,
         align: "right",
+        // Phones: a full-width row at the bottom of the card, not a half-width field.
+        mobile: "actions",
         cell: (row) =>
           row.dismissed ? null : (
             <div className="flex flex-wrap justify-end gap-1.5">
               {row.candidate ? (
-                <Button size="sm" onClick={() => setPending({ kind: "link", row, key: newIdempotencyKey() })}>
+                <Button size="sm" variant="tonal" onClick={() => setPending({ kind: "link", row, key: newIdempotencyKey() })}>
                   <Link2 aria-hidden="true" />
                   {t("reconciliation.actions.link")}
                 </Button>
@@ -174,32 +181,63 @@ export function OrphanEventsView({ table, onMutated }: { table: UseTableStateRes
     onMutated();
   };
 
+  const isFiltered = table.q !== "" || state !== "OPEN";
+  // The empty state's "ล้างตัวกรอง" removes itself: focus goes back to the toolbar.
+  // (FilterBar's own button moves focus by itself.)
+  const resetFilters = () => {
+    table.reset();
+    focusToolbar(toolbarRef.current);
+  };
+  const stateOptions = [
+    { value: "OPEN", label: t("reconciliation.filters.stateOpen") },
+    { value: "DISMISSED", label: t("reconciliation.filters.stateDismissed") },
+    { value: "ALL", label: t("reconciliation.filters.stateAll") },
+  ];
+  // The state filter: inline from 768px, in the "ตัวกรอง" sheet on phones (patterns.md A2).
+  const stateSelect = (props: { id: string; label?: string; containerClassName: string }) => (
+    <SelectField
+      id={props.id}
+      aria-label={props.label ? undefined : t("reconciliation.filters.state")}
+      label={props.label}
+      containerClassName={props.containerClassName}
+      value={state}
+      onChange={(event) => table.setFilter("state", event.target.value)}
+      options={stateOptions}
+    />
+  );
+
   return (
     <div className="flex flex-col gap-3">
       <Notice tone="info">{t("reconciliation.orphansNotice")}</Notice>
-      <FilterBar
-        search={{
-          value: table.searchValue,
-          onValueChange: table.setSearchValue,
-          placeholder: t("reconciliation.filters.searchOrphans"),
-        }}
-        isFiltered={table.q !== "" || state !== "OPEN"}
-        onReset={table.reset}
-      >
-        <SelectField
-          aria-label={t("reconciliation.filters.state")}
-          containerClassName="w-full sm:w-44"
-          value={state}
-          onChange={(event) => table.setFilter("state", event.target.value)}
-          options={[
-            { value: "OPEN", label: t("reconciliation.filters.stateOpen") },
-            { value: "DISMISSED", label: t("reconciliation.filters.stateDismissed") },
-            { value: "ALL", label: t("reconciliation.filters.stateAll") },
-          ]}
-        />
-      </FilterBar>
+      <div ref={toolbarRef}>
+        <FilterBar
+          search={{
+            value: table.searchValue,
+            onValueChange: table.setSearchValue,
+            placeholder: t("reconciliation.filters.searchOrphans"),
+          }}
+          isFiltered={isFiltered}
+          onReset={table.reset}
+          moreFilters={{
+            active:
+              state !== "OPEN"
+                ? [
+                    {
+                      key: "state",
+                      label: `${t("reconciliation.filters.state")}: ${stateOptions.find((option) => option.value === state)?.label ?? state}`,
+                      onRemove: () => table.setFilter("state", "OPEN"),
+                    },
+                  ]
+                : [],
+            onReset: () => table.setFilter("state", "OPEN"),
+            children: stateSelect({ id: "recon-state-sheet", label: t("reconciliation.filters.state"), containerClassName: "w-full" }),
+          }}
+        >
+          {stateSelect({ id: "recon-state", containerClassName: "hidden md:flex md:w-44" })}
+        </FilterBar>
+      </div>
       {error && !data ? (
-        <ErrorState onRetry={refetch} />
+        <LoadError error={error} onRetry={refetch} />
       ) : (
         <DataTable
           caption={t("reconciliation.views.orphans")}
@@ -211,11 +249,17 @@ export function OrphanEventsView({ table, onMutated }: { table: UseTableStateRes
           onSortChange={table.toggleSort}
           empty={
             <EmptyState
-              compact
               icon={CheckCircle2}
               tone="teal"
               title={t("reconciliation.empty.orphansTitle")}
               description={t("reconciliation.empty.orphansDescription")}
+              action={
+                isFiltered ? (
+                  <Button variant="outline" onClick={resetFilters}>
+                    {t("shell.clearFilters")}
+                  </Button>
+                ) : undefined
+              }
             />
           }
           footer={
@@ -263,5 +307,23 @@ export function OrphanEventsView({ table, onMutated }: { table: UseTableStateRes
         onConfirm={runAction}
       />
     </div>
+  );
+}
+
+/**
+ * The webhook amount differs from the matching payment: a warning chip plus
+ * "ต่างกัน ฿X" in --warning-fg (patterns.md A5: never colour alone).
+ */
+function AmountMismatch({ event, candidate }: { event: number | null; candidate: number | null }) {
+  if (event == null || candidate == null || event === candidate) return null;
+  return (
+    <>
+      <Chip size="sm" tone="warning" icon={TriangleAlert}>
+        {t("reconciliation.amountMismatch")}
+      </Chip>
+      <span className="text-[0.8125rem] font-medium whitespace-nowrap text-warning-fg tabular">
+        {t("reconciliation.amountDiff", { amount: formatSatang(Math.abs(event - candidate), { fractionDigits: 2 }) })}
+      </span>
+    </>
   );
 }

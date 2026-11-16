@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { BookOpen, Check } from "lucide-react"
 
 import {
   ArcadeGames,
@@ -268,7 +269,7 @@ export function AdvantageArcadeRuntime({
     return (
       <div role="status" data-testid="arcade-no-content" className={`${commonClass} flex items-center justify-center bg-slate-950 px-6 text-center text-white`}>
         <div className="max-w-sm">
-          <div className="mx-auto flex size-16 items-center justify-center rounded-3xl bg-amber-400/15 text-3xl">📖</div>
+          <div aria-hidden="true" className="mx-auto flex size-16 items-center justify-center rounded-3xl bg-amber-400/15 text-amber-300"><BookOpen className="size-8" strokeWidth={2.2} /></div>
           <p className="mt-4 text-lg font-black">{usesWords ? "บทเรียนนี้ยังไม่มีคำศัพท์สำหรับเกมนี้" : "บทเรียนนี้ยังไม่มีประโยคสำหรับเกมนี้"}</p>
           <p className="mt-1 text-sm font-semibold text-white/60">รอบนี้ได้ 0 คะแนน รอคุณครูไปขั้นต่อไปนะ</p>
         </div>
@@ -280,7 +281,7 @@ export function AdvantageArcadeRuntime({
     return (
       <div role="status" data-testid="arcade-round-end" className={`${commonClass} flex items-center justify-center bg-slate-950 px-6 text-center text-white`}>
         <div>
-          <div className="mx-auto flex size-16 items-center justify-center rounded-3xl bg-emerald-400/15 text-3xl">✓</div>
+          <div aria-hidden="true" className="mx-auto flex size-16 items-center justify-center rounded-3xl bg-emerald-400/15 text-emerald-300"><Check className="size-8" strokeWidth={3} /></div>
           <p className="mt-4 text-lg font-black">{roundResult.review?.heading ?? "จบเกมแล้ว!"}</p>
           <p className="mt-3 text-6xl font-black tabular-nums text-emerald-300">{roundResult.score}</p>
           <p className="text-sm font-bold text-white/70">คะแนน</p>

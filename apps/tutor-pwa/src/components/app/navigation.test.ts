@@ -19,6 +19,16 @@ describe("navigation config", () => {
     expect(MORE_ITEMS.map((item) => item.id)).toEqual(["demo", "earnings", "network", "performance", "support", "settings"]);
     expect(new Set(NAV_ITEMS.map((item) => item.href)).size).toBe(NAV_ITEMS.length);
   });
+
+  it("gives the two long labels a short rail label that is part of the full label", () => {
+    expect(NAV_ITEMS.filter((item) => item.railLabel).map((item) => item.id)).toEqual(["demo", "support"]);
+    for (const item of NAV_ITEMS) {
+      if (!item.railLabel) continue;
+      // The link's accessible name stays `label`, so the visible short text must be in it (WCAG 2.5.3).
+      expect(item.label.startsWith(item.railLabel)).toBe(true);
+      expect(item.railLabel.length).toBeLessThan(item.label.length);
+    }
+  });
 });
 
 describe("isNavItemActive / getActiveNavItem", () => {

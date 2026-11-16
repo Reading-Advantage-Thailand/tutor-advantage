@@ -78,8 +78,8 @@ export function ThaiDateField({ label, value, onChange, error, disabled, noneHin
 
   const chip = (active: boolean) =>
     cn(
-      "inline-flex h-8 items-center rounded-full border px-3 text-[0.8125rem] font-medium transition-colors pointer-coarse:h-10",
-      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-solid disabled:opacity-50",
+      "inline-flex h-8 items-center rounded-full border px-3 text-[0.8125rem] font-medium whitespace-nowrap transition-colors pointer-coarse:h-11",
+      "focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-focus-ring disabled:opacity-50",
       active
         ? "border-brand-solid bg-brand-soft text-brand-fg"
         : "border-hairline bg-surface text-fg-muted hover:bg-surface-muted hover:text-fg",
@@ -89,7 +89,7 @@ export function ThaiDateField({ label, value, onChange, error, disabled, noneHin
     <Field label={label} optional hint={hint} error={error}>
       {({ id, describedBy }) => (
         <div role="group" aria-label={label} aria-describedby={describedBy} className="flex flex-col gap-2">
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             <button type="button" disabled={disabled} className={chip(none)} aria-pressed={none} onClick={() => onChange(EMPTY_DATE)}>
               {t("coupons.expiryNone")}
             </button>
@@ -110,7 +110,7 @@ export function ThaiDateField({ label, value, onChange, error, disabled, noneHin
               );
             })}
           </div>
-          <div className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.6fr)_minmax(0,1fr)] gap-2">
+          <div className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.4fr)_minmax(0,1.2fr)] gap-2">
             <SelectField
               id={id}
               aria-label={t("coupons.expiryDay")}

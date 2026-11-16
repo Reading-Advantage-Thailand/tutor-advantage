@@ -10,6 +10,7 @@ import {
   isPendingTransfer,
   projectWithholding,
   rateProgressPercent,
+  rateRemaining,
   type EarningsHistoryItem,
 } from "./earnings";
 
@@ -43,6 +44,12 @@ describe("rate helpers", () => {
     expect(rateProgressPercent({ rate: 0.4, volume: 5000, nextTarget: 10000 })).toBe(50);
     expect(rateProgressPercent({ rate: 0.4, volume: 20000, nextTarget: 10000 })).toBe(100);
     expect(rateProgressPercent({ rate: 0.5, volume: 1, nextTarget: 0 })).toBe(100);
+  });
+
+  it("gives the volume still needed for the next tier", () => {
+    expect(rateRemaining({ rate: 0.35, volume: 8450, nextTarget: 10000 })).toBe(1550);
+    expect(rateRemaining({ rate: 0.35, volume: 12000, nextTarget: 10000 })).toBe(0);
+    expect(rateRemaining({ rate: 0.5, volume: 1, nextTarget: 0 })).toBe(0);
   });
 });
 

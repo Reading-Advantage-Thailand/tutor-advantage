@@ -1,57 +1,38 @@
 "use client";
 
-import { FileSearch, GraduationCap, UserRound, Users } from "lucide-react";
+import { useRef } from "react";
+import { GraduationCap, Presentation, UserRound, Users } from "lucide-react";
 import {
   AdminStatusChip,
   Chip,
+  ColumnToggle,
   DataTable,
   EmptyState,
   ErrorState,
   FilterBar,
-  Grid,
+  IdentityCell,
   Page,
   PageHeader,
   Pagination,
-  SelectField,
-  StatCard,
-  UserAvatar,
+  SegmentedControl,
   useAdminSession,
+  useColumnVisibility,
   type DataTableColumn,
 } from "@/components/app";
+import { Button } from "@/components/ui/button";
 import { useTableState } from "@/hooks/useTableState";
-import { api } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { statusLabel } from "@/lib/status";
+import { InlineFilters, userMoreFilters } from "./components/UserFilters";
 import { documentExpiryChip, type ExpiryMessages } from "./documentExpiry";
 import type { UserListItem, UserListResponse } from "./types";
 import "@/locales/th/users";
 
-const ROLE_OPTIONS = [
-  { value: "", label: t("users.roleAll") },
-  { value: "TUTOR", label: statusLabel("userRole", "TUTOR") },
-  { value: "STUDENT", label: statusLabel("userRole", "STUDENT") },
-];
-const ACCOUNT_OPTIONS = [
-  { value: "", label: t("users.accountAll") },
-  { value: "ACTIVE", label: statusLabel("account", "ACTIVE") },
-  { value: "SUSPENDED", label: statusLabel("account", "SUSPENDED") },
-  { value: "ANONYMIZED", label: statusLabel("account", "ANONYMIZED") },
-];
-const VERIFICATION_OPTIONS = [
-  { value: "", label: t("users.verificationAll") },
-  { value: "REVIEW", label: t("users.verificationReview") },
-  { value: "UNVERIFIED", label: statusLabel("verification", "UNVERIFIED") },
-  { value: "PENDING", label: statusLabel("verification", "PENDING") },
-  { value: "VERIFIED", label: statusLabel("verification", "VERIFIED") },
-  { value: "REJECTED", label: statusLabel("verification", "REJECTED") },
-];
-const DOCUMENT_OPTIONS = [
-  { value: "", label: t("users.documentsAll") },
-  { value: "EXPIRING", label: t("users.documentsExpiring") },
-  { value: "EXPIRED", label: t("users.documentsExpired") },
-];
+/** Count tabs (patterns.md A2): they replace the four KPI tiles and the role select. */
+type RoleTab = "all" | "tutor" | "student" | "review";
 
 const EXPIRY_MESSAGES: ExpiryMessages = {
   passport: t("users.docPassport"),
@@ -61,14 +42,34 @@ const EXPIRY_MESSAGES: ExpiryMessages = {
   expired: t("users.expiryExpired"),
 };
 
+/**
+ * Role as an icon + word (not a chip: a role is not a status). On phones the
+ * row is a list row (identity, one status chip, chevron), so this line also
+ * carries the class count that the table shows in its own column.
+ */
+function RoleCell({ user }: { user: UserListItem }) {
+  const Icon = user.role === "TUTOR" ? Presentation : user.role === "STUDENT" ? GraduationCap : UserRound;
+  return (
+    <span className="inline-flex flex-wrap items-center gap-x-1.5 text-fg-muted">
+      <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+        <Icon aria-hidden="true" className="size-4 shrink-0" />
+        {statusLabel("userRole", user.role)}
+      </span>
+      <span className="whitespace-nowrap md:hidden">· {t("users.classesCount", { count: formatNumber(user.activeClasses) })}</span>
+    </span>
+  );
+}
+
 function VerificationCell({ user }: { user: UserListItem }) {
   if (user.role !== "TUTOR") {
     return user.guardianSetup ? (
-      <span className="text-fg-subtle">{t("users.notApplicable")}</span>
+      <span className="block text-fg-subtle">{t("users.notApplicable")}</span>
     ) : (
-      <Chip tone="warning" size="sm" dot>
-        {t("users.guardianMissing")}
-      </Chip>
+      <span className="flex">
+        <Chip tone="warning" size="sm" dot>
+          {t("users.guardianMissing")}
+        </Chip>
+      </span>
     );
   }
   const expiry = documentExpiryChip(user.documentExpiry, EXPIRY_MESSAGES);
@@ -96,48 +97,57 @@ const columns: DataTableColumn<UserListItem>[] = [
     sortable: true,
     mobile: "primary",
     alwaysVisible: true,
+    sticky: true,
     cell: (user) => (
-      <span className="flex min-w-0 items-center gap-3">
-        <UserAvatar name={user.name ?? ""} src={user.profilePictureUrl} size="sm" className="hidden md:inline-flex" />
-        <span className="flex min-w-0 flex-col">
-          <span className="truncate font-medium text-fg">{user.displayName || t("users.unnamed")}</span>
-          <span className="truncate text-[0.8125rem] text-fg-muted">{user.email ?? t("users.noEmail")}</span>
-        </span>
-      </span>
+      <IdentityCell
+        name={user.displayName || t("users.unnamed")}
+        secondary={user.email ?? t("users.noEmail")}
+        avatarSrc={user.profilePictureUrl}
+        seed={user.id}
+      />
     ),
   },
   {
     key: "role",
     header: t("users.colRole"),
     mobile: "secondary",
-    width: "120px",
-    cell: (user) => <AdminStatusChip domain="userRole" status={user.role} />,
+    width: "112px",
+    cell: (user) => <RoleCell user={user} />,
   },
   {
     key: "verification",
     header: t("users.colVerification"),
+    mobile: "secondary",
     cell: (user) => <VerificationCell user={user} />,
   },
   {
     key: "account",
     header: t("users.colAccount"),
     mobile: "trailing",
-    width: "130px",
+    width: "124px",
     cell: (user) => <AdminStatusChip domain="account" status={user.accountStatus} />,
   },
   {
     key: "classes",
     header: t("users.colClasses"),
     align: "right",
-    width: "90px",
+    width: "76px",
+    mobile: "hidden",
     cell: (user) => formatNumber(user.activeClasses),
   },
   {
     key: "createdAt",
     header: t("users.colJoined"),
     sortable: true,
-    width: "140px",
-    cell: (user) => formatThaiDate(user.createdAt),
+    width: "128px",
+    // Phones: under the account chip, small and muted (the column header is not shown there).
+    mobile: "trailing",
+    cell: (user) => (
+      <span className="whitespace-nowrap tabular max-md:text-[0.8125rem] max-md:font-normal max-md:text-fg-muted">
+        <span className="sr-only md:hidden">{t("users.colJoined")} </span>
+        {formatThaiDate(user.createdAt)}
+      </span>
+    ),
   },
 ];
 
@@ -148,6 +158,8 @@ export default function UsersPage() {
     sortKeys: ["createdAt", "name"],
     filterKeys: ["role", "status", "verification", "documents"],
   });
+  const visibility = useColumnVisibility("users", columns);
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   const { data, error, isLoading, isValidating, refetch } = useCachedResource(
     me ? `${me.userId}:users:list:${table.queryKey}` : null,
@@ -156,67 +168,61 @@ export default function UsersPage() {
   );
 
   const counts = data?.counts;
-  const reviewHref = "/users?role=TUTOR&verification=REVIEW";
+  const role = table.filters.role ?? "";
+  const verification = table.filters.verification ?? "";
+  const tab: RoleTab =
+    role === "TUTOR" ? (verification === "REVIEW" ? "review" : "tutor") : role === "STUDENT" ? "student" : "all";
+
+  // Same URL state as the old role select and the review KPI link (/users?role=TUTOR&verification=REVIEW).
+  const selectTab = (next: RoleTab) => {
+    if (next === "review") {
+      table.setFilters({ role: "TUTOR", verification: "REVIEW" });
+      return;
+    }
+    table.setFilters({
+      role: next === "tutor" ? "TUTOR" : next === "student" ? "STUDENT" : "",
+      verification: verification === "REVIEW" ? "" : verification,
+    });
+  };
 
   return (
     <Page>
       <PageHeader title={t("users.pageTitle")} description={t("users.pageDescription")} />
 
-      <Grid cols={4} className="grid-cols-2">
-        <StatCard label={t("users.statTotal")} value={counts ? formatNumber(counts.all) : "–"} icon={Users} tone="brand" />
-        <StatCard label={t("users.statTutors")} value={counts ? formatNumber(counts.tutors) : "–"} icon={UserRound} tone="purple" href="/users?role=TUTOR" />
-        <StatCard label={t("users.statStudents")} value={counts ? formatNumber(counts.students) : "–"} icon={GraduationCap} tone="teal" href="/users?role=STUDENT" />
-        <StatCard
-          label={t("users.statReview")}
-          value={counts ? formatNumber(counts.pendingReview) : "–"}
-          icon={FileSearch}
-          tone="amber"
-          hint={t("users.statReviewHint")}
-          href={reviewHref}
-        />
-      </Grid>
-
-      <FilterBar
-        search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("users.searchHint") }}
-        isFiltered={table.isFiltered}
-        onReset={table.reset}
-      >
-        <SelectField
-          aria-label={t("users.filterRole")}
-          containerClassName="w-full sm:w-40"
-          value={table.filters.role ?? ""}
-          onChange={(event) => table.setFilter("role", event.target.value)}
-          options={ROLE_OPTIONS}
-        />
-        <SelectField
-          aria-label={t("users.filterVerification")}
-          containerClassName="w-full sm:w-48"
-          value={table.filters.verification ?? ""}
-          onChange={(event) => table.setFilter("verification", event.target.value)}
-          options={VERIFICATION_OPTIONS}
-        />
-        <SelectField
-          aria-label={t("users.filterDocuments")}
-          containerClassName="w-full sm:w-52"
-          value={table.filters.documents ?? ""}
-          onChange={(event) => table.setFilter("documents", event.target.value)}
-          options={DOCUMENT_OPTIONS}
-        />
-        <SelectField
-          aria-label={t("users.filterAccount")}
-          containerClassName="w-full sm:w-44"
-          value={table.filters.status ?? ""}
-          onChange={(event) => table.setFilter("status", event.target.value)}
-          options={ACCOUNT_OPTIONS}
-        />
-      </FilterBar>
+      <div ref={toolbarRef}>
+        <FilterBar
+          tabs={
+            <SegmentedControl
+              aria-label={t("users.filterRole")}
+              value={tab}
+              onValueChange={selectTab}
+              items={[
+                { value: "all", label: t("users.tabAll"), count: counts?.all },
+                { value: "tutor", label: t("users.tabTutor"), count: counts?.tutors },
+                { value: "student", label: t("users.tabStudent"), count: counts?.students },
+                { value: "review", label: t("users.tabPendingDocs"), count: counts?.pendingReview },
+              ]}
+            />
+          }
+          search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("users.searchHint") }}
+          moreFilters={userMoreFilters(table)}
+          isFiltered={table.isFiltered}
+          onReset={table.reset}
+          actions={
+            <ColumnToggle id="users-columns" compact="2xl" columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} />
+          }
+        >
+          <InlineFilters table={table} />
+        </FilterBar>
+      </div>
 
       {error && !data ? (
-        <ErrorState onRetry={refetch} />
+        <ErrorState onRetry={refetch} digest={error instanceof ApiError ? (error.requestId ?? undefined) : undefined} />
       ) : (
         <DataTable
           caption={t("users.tableCaption")}
           columns={columns}
+          hiddenColumns={visibility.hidden}
           rows={data?.items ?? []}
           getRowKey={(user) => user.id}
           rowHref={(user) => `/users/${user.id}`}
@@ -228,6 +234,20 @@ export default function UsersPage() {
               icon={Users}
               title={t("users.emptyTitle")}
               description={table.isFiltered ? t("users.emptyFiltered") : undefined}
+              action={
+                table.isFiltered ? (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      table.reset();
+                      // The empty state (and this button) goes away: keep focus in the toolbar.
+                      toolbarRef.current?.querySelector<HTMLElement>('input[type="search"]')?.focus();
+                    }}
+                  >
+                    {t("shell.clearFilters")}
+                  </Button>
+                ) : undefined
+              }
             />
           }
           footer={
@@ -243,6 +263,7 @@ export default function UsersPage() {
           }
         />
       )}
+
     </Page>
   );
 }

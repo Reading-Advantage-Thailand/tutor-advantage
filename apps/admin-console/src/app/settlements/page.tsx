@@ -1,42 +1,46 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarClock, CheckCircle2, ClipboardCheck, FileClock, Play, RefreshCw } from "lucide-react";
+import { ClipboardCheck, Info, Play, ReceiptText, RefreshCw } from "lucide-react";
 import {
   AdminStatusChip,
   Chip,
+  ColumnToggle,
   ConfirmDialog,
   DataTable,
-  ErrorState,
+  EmptyState,
   FilterBar,
-  Grid,
+  IconTile,
+  IdentityCell,
   Notice,
   Page,
   PageHeader,
   Pagination,
+  SegmentedControl,
   SelectField,
-  StatCard,
   useAdminSession,
+  useColumnVisibility,
   type DataTableColumn,
 } from "@/components/app";
 import { toast } from "@/components/app/toastStore";
 import { useRefreshAdminSummary } from "@/components/app/adminSummaryContext";
 import { Button } from "@/components/ui/button";
-import { api, ApiError, errorMessage } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { useTableState } from "@/hooks/useTableState";
 import {
   currentBangkokMonth,
   formatNumber,
   formatPeriodMonth,
-  formatThaiDateTime,
   previousBangkokMonth,
   shiftPeriodMonth,
 } from "@/lib/format";
 import { statusOptions } from "@/lib/status";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { Money } from "@/components/app/Money";
+import { DateTimeParts, focusToolbar, LoadError } from "./financeUi";
 import type { SettlementListResponse, SettlementPreviewResult, SettlementRunRow } from "./types";
 import "@/locales/th/settlements";
 
@@ -75,6 +79,7 @@ function SettlementsList() {
   const refreshSummary = useRefreshAdminSummary();
   const isAdmin = me?.role === "ADMIN";
   const table = useTableState({ filterKeys: ["status"], defaultPageSize: 20 });
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   const listKey = me ? `${me.userId}:settlements:list:${table.queryKey}` : null;
   const { data, error, isLoading, isValidating, refetch } = useCachedResource(
@@ -131,14 +136,13 @@ function SettlementsList() {
     }
   };
 
-  // ── Stat cards (all runs, not just this page) ──
+  // ── Status counts for the tabs and the checker's notice (all runs, not just this page) ──
   const counts = useMemo(() => {
     const map = new Map((data?.statusCounts ?? []).map((row) => [row.status, row.count]));
     const total = (data?.statusCounts ?? []).reduce((sum, row) => sum + row.count, 0);
     return {
-      draft: (map.get("DRAFT") ?? 0) + (map.get("REJECTED") ?? 0) + (map.get("ADJUSTMENT_PENDING") ?? 0),
+      byStatus: map,
       submitted: map.get("SUBMITTED") ?? 0,
-      approved: map.get("APPROVED") ?? 0,
       total,
     };
   }, [data?.statusCounts]);
@@ -150,7 +154,14 @@ function SettlementsList() {
       label: t("settlements.colPeriod"),
       mobile: "primary",
       alwaysVisible: true,
-      cell: (row) => <span className="font-medium text-fg">{formatPeriodMonth(row.periodMonth)}</span>,
+      // The run list is wider than the card at 1024: the period stays in view while it scrolls.
+      sticky: true,
+      cell: (row) => (
+        <IdentityCell
+          leading={<IconTile icon={ReceiptText} tone="neutral" size="sm" />}
+          name={formatPeriodMonth(row.periodMonth)}
+        />
+      ),
     },
     {
       key: "status",
@@ -178,7 +189,7 @@ function SettlementsList() {
       label: t("settlements.colGross"),
       align: "right",
       mobile: "hidden",
-      cell: (row) => <Money satang={row.totalPayoutSatang} muted />,
+      cell: (row) => <Money satang={row.totalPayoutSatang} fractionDigits={2} muted />,
     },
     {
       key: "net",
@@ -186,7 +197,7 @@ function SettlementsList() {
       label: t("settlements.colNet"),
       align: "right",
       mobile: "trailing",
-      cell: (row) => <Money satang={row.totalNetPayoutSatang} className="font-semibold text-fg" />,
+      cell: (row) => <Money satang={row.totalNetPayoutSatang} fractionDigits={2} className="font-semibold text-fg" />,
     },
     {
       key: "pendingAdjustments",
@@ -196,7 +207,9 @@ function SettlementsList() {
       mobile: "field",
       cell: (row) =>
         row.pendingAdjustmentCount > 0 ? (
-          <Chip tone="warning" size="sm">{formatNumber(row.pendingAdjustmentCount)}</Chip>
+          <Chip tone="warning" size="sm" className="tabular">
+            {formatNumber(row.pendingAdjustmentCount)}
+          </Chip>
         ) : (
           <span className="text-fg-subtle">–</span>
         ),
@@ -205,9 +218,10 @@ function SettlementsList() {
       key: "people",
       header: t("settlements.colPeople"),
       label: t("settlements.colPeople"),
-      mobile: "field",
+      // Phones show the run as a list row (period, status, net); who did what is on the run's timeline.
+      mobile: "hidden",
       cell: (row) => (
-        <span className="flex flex-col text-[0.8125rem] leading-snug">
+        <span className="flex min-w-32 flex-col text-[0.8125rem] leading-[1.6] text-balance">
           <span>{t("settlements.createdByShort", { name: row.createdByName ?? t("settlements.unknownActor") })}</span>
           {row.approvedAt ? (
             <span className="text-fg-muted">
@@ -221,19 +235,32 @@ function SettlementsList() {
       key: "updated",
       header: t("settlements.colUpdated"),
       label: t("settlements.colUpdated"),
-      mobile: "field",
+      mobile: "hidden",
       defaultHidden: false,
       cell: (row) => (
-        <span className="text-[0.8125rem] text-fg-muted">
-          {formatThaiDateTime(row.approvedAt ?? row.previewedAt ?? row.createdAt, "short")}
+        <span className="text-[0.8125rem] text-fg-muted tabular">
+          <DateTimeParts at={row.approvedAt ?? row.previewedAt ?? row.createdAt} style="short" />
         </span>
       ),
     },
   ];
+  const visibility = useColumnVisibility("settlement-runs", columns);
 
   const statusFilterOptions = statusOptions("settlementRun", { all: t("settlements.filterAllStatus") }).filter(
     (option) => !["APPROVING", "REFRESHING", "PAID"].includes(option.value),
   );
+  // Count tabs over the same status filter (the counts cover every run, not just this page).
+  const statusTabs = statusFilterOptions.map((option) => ({
+    value: option.value,
+    label: option.label,
+    count: data ? (option.value === "" ? counts.total : (counts.byStatus.get(option.value) ?? 0)) : undefined,
+  }));
+  // The empty state's "ล้างตัวกรอง" removes itself: focus goes back to the toolbar.
+  // (FilterBar's own button moves focus by itself.)
+  const resetFilters = () => {
+    table.reset();
+    focusToolbar(toolbarRef.current);
+  };
 
   return (
     <Page>
@@ -262,51 +289,37 @@ function SettlementsList() {
         </Notice>
       ) : null}
 
-      <Grid cols={4} className="grid-cols-2">
-        <StatCard
-          label={t("settlements.statSubmitted")}
-          value={formatNumber(counts.submitted)}
+      {/* The count tabs below replace the four count tiles (patterns.md A2); the A5 money strip waits for run totals.
+          What only the tiles said, the checker's "waiting for you" line, stays as a link to the same filter. */}
+      {me?.role === "FINANCE_CHECKER" && counts.submitted > 0 && table.filters.status !== "SUBMITTED" ? (
+        <Notice
+          tone="warning"
           icon={ClipboardCheck}
-          tone="amber"
-          hint={me?.role === "FINANCE_CHECKER" ? t("settlements.statSubmittedHintChecker") : t("settlements.statSubmittedHint")}
+          title={`${t("settlements.statSubmitted")} ${formatNumber(counts.submitted)}`}
           href="/settlements?status=SUBMITTED"
-        />
-        <StatCard
-          label={t("settlements.statDraft")}
-          value={formatNumber(counts.draft)}
-          icon={FileClock}
-          tone="neutral"
-          hint={t("settlements.statDraftHint")}
-          href="/settlements?status=DRAFT"
-        />
-        <StatCard
-          label={t("settlements.statApproved")}
-          value={formatNumber(counts.approved)}
-          icon={CheckCircle2}
-          tone="teal"
-          href="/settlements?status=APPROVED"
-        />
-        <StatCard
-          label={t("settlements.statTotal")}
-          value={formatNumber(counts.total)}
-          icon={CalendarClock}
-          tone="blue"
-          hint={t("settlements.statTotalHint")}
-        />
-      </Grid>
+        >
+          {t("settlements.statSubmittedHintChecker")}
+        </Notice>
+      ) : null}
 
-      <FilterBar isFiltered={table.isFiltered} onReset={table.reset}>
-        <SelectField
-          aria-label={t("settlements.colStatus")}
-          containerClassName="w-full sm:w-52"
-          value={table.filters.status ?? ""}
-          onChange={(event) => table.setFilter("status", event.target.value)}
-          options={statusFilterOptions}
+      <div ref={toolbarRef}>
+        <FilterBar
+          tabs={
+            <SegmentedControl
+              aria-label={t("settlements.colStatus")}
+              value={table.filters.status ?? ""}
+              onValueChange={(next) => table.setFilter("status", next)}
+              items={statusTabs}
+            />
+          }
+          isFiltered={table.isFiltered}
+          onReset={table.reset}
+          actions={<ColumnToggle id="settlements-columns" columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} />}
         />
-      </FilterBar>
+      </div>
 
       {error && !data ? (
-        <ErrorState onRetry={() => void refetch()} />
+        <LoadError error={error} onRetry={() => void refetch()} />
       ) : (
         <DataTable
           caption={t("settlements.tableCaption")}
@@ -314,14 +327,21 @@ function SettlementsList() {
           rows={data?.settlements ?? []}
           getRowKey={(row) => row.snapshotId}
           rowHref={(row) => `/settlements/${row.snapshotId}`}
+          hiddenColumns={visibility.hidden}
           loading={isLoading || (isValidating && !data)}
           empty={
-            <div className="flex flex-col items-center gap-1 py-10 text-center">
-              <p className="font-medium text-fg">{t("settlements.emptyTitle")}</p>
-              <p className="text-sm text-fg-muted">
-                {isAdmin ? t("settlements.emptyHintAdmin") : t("settlements.emptyHintChecker")}
-              </p>
-            </div>
+            <EmptyState
+              icon={ReceiptText}
+              title={t("settlements.emptyTitle")}
+              description={isAdmin ? t("settlements.emptyHintAdmin") : t("settlements.emptyHintChecker")}
+              action={
+                table.isFiltered ? (
+                  <Button variant="outline" onClick={resetFilters}>
+                    {t("shell.clearFilters")}
+                  </Button>
+                ) : undefined
+              }
+            />
           }
           footer={
             <Pagination
@@ -335,7 +355,10 @@ function SettlementsList() {
         />
       )}
 
-      <p className="text-[0.8125rem] text-fg-muted">{t("settlements.cronNote")}</p>
+      <p className="flex items-start gap-2 text-[0.8125rem] text-fg-muted">
+        <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+        <span>{thaiCopy(t("settlements.cronNote"))}</span>
+      </p>
 
       <ConfirmDialog
         open={previewOpen}

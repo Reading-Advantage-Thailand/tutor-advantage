@@ -227,12 +227,25 @@ export function DevToolbar() {
       {/* ── Floating toggle button ───────────────────────────────────────── */}
       <button
         onClick={handleOpen}
-        className="fixed right-0 top-1/2 z-[9999] flex -translate-y-1/2 items-center gap-1 rounded-l-lg bg-orange-500 text-white shadow-lg shadow-orange-500/30 px-1.5 py-2 text-[10px] font-bold [writing-mode:vertical-rl] opacity-60 hover:opacity-100 hover:bg-orange-600 active:scale-95 transition-all"
+        // 12px label (the type floor) and a 44px target on touch (pointer: coarse); a slim tab on desktop.
+        // Just under the sticky layer, so sheets, dialogs, the bars and sticky action bars all cover it
+        // (it never sits on their buttons). On touch it sits low, just above the phone tab bar, instead
+        // of over the cards in mid-screen, and above a form's sticky action bar when the page has one.
+        // Colour: the warning pair (--on-warning on --warning-solid, 8.9:1 in both themes) at full
+        // opacity; the label is never dimmed. Hover only darkens the fill a little. Only filter and
+        // scale animate, so the focus ring (3px --focus-ring, 2px offset) appears at once.
+        // On touch it is a 44x44 square: no chevron and no padding along the label (the writing mode
+        // is vertical, so px-* is the top/bottom padding here).
+        className="fixed right-0 top-1/2 z-[calc(var(--z-sticky)_-_1)] flex -translate-y-1/2 items-center justify-center gap-1 rounded-l-lg bg-warning-solid px-1.5 py-2 text-xs font-bold text-on-warning shadow-popover [writing-mode:vertical-rl] transition-[filter,scale] duration-(--duration-press) ease-(--ease-out) hover:brightness-95 active:scale-95 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring pointer-coarse:min-h-11 pointer-coarse:min-w-11 pointer-coarse:px-0 pointer-coarse:top-auto pointer-coarse:bottom-[calc(env(safe-area-inset-bottom,0px)+5rem)] pointer-coarse:translate-y-0 pointer-coarse:[html:has(.sticky-actions)_&]:bottom-[calc(env(safe-area-inset-bottom,0px)+13rem)]"
         title="Dev Toolbar"
       >
         <Terminal className="h-3 w-3 rotate-90" />
         DEV
-        {open ? <ChevronDown className="h-3 w-3" /> : <ChevronUp className="h-3 w-3" />}
+        {open ? (
+          <ChevronDown className="h-3 w-3 pointer-coarse:hidden" />
+        ) : (
+          <ChevronUp className="h-3 w-3 pointer-coarse:hidden" />
+        )}
       </button>
 
       {/* ── Panel ────────────────────────────────────────────────────────── */}
@@ -476,7 +489,7 @@ export function DevToolbar() {
                     if (v > 0) { addVolume(v); setCustomVolume(""); }
                   }}
                   disabled={!customVolume || Number(customVolume) <= 0 || actionLoading !== null}
-                  className="px-2 py-1 rounded-lg text-[10px] font-bold bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-40 flex items-center gap-0.5 transition-colors"
+                  className="px-2 py-1 rounded-lg text-[10px] font-bold bg-brand-solid text-on-brand hover:bg-brand-solid-pressed disabled:opacity-40 flex items-center gap-0.5 transition-colors"
                 >
                   <PlusCircle className="h-3 w-3" />
                   เพิ่ม

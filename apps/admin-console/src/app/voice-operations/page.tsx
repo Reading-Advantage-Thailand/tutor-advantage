@@ -1,32 +1,38 @@
 "use client";
 
-import { AudioLines, PlugZap, Unplug, FileX2, Mic } from "lucide-react";
+import { AudioLines, Check, FileX2, Mic, Minus, PlugZap, Unplug } from "lucide-react";
 import {
   Card,
   CardHeader,
+  CardSkeleton,
   Chip,
   DataTable,
   DescriptionList,
   EmptyState,
   ErrorState,
-  Grid,
   IdCell,
+  KpiStrip,
+  LoadingAnnouncement,
   Page,
   PageHeader,
   Section,
   SegmentedControl,
   StatCard,
   StatGridSkeleton,
+  TableSkeleton,
   useAdminSession,
   type DataTableColumn,
+  type StatBarSegment,
   type Tone,
 } from "@/components/app";
+import { Button } from "@/components/ui/button";
 import { useTableState } from "@/hooks/useTableState";
-import { api, errorMessage } from "@/lib/api";
+import { api, ApiError, errorMessage } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatPercent, formatThaiDate, formatThaiTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { voice } from "@/locales/th/voice";
+import { focusWhenOrphaned } from "@/app/audit/_components/focusWhenOrphaned";
 
 type Metrics = {
   attempts: number;
@@ -104,6 +110,25 @@ function rateBadge(rate: number, total: number) {
   );
 }
 
+/**
+ * KPI micro-bar for a rate (bold graft): the filled share is the rate itself,
+ * in the badge's tone. The bar is an image whose label gives the words.
+ */
+function rateBar(rate: number, total: number): StatBarSegment[] | undefined {
+  if (!total) return undefined;
+  const tone: StatBarSegment["tone"] = rate < 0.05 ? "brand" : rate < 0.15 ? "warning" : "danger";
+  return [{ value: rate * 100, tone }];
+}
+
+function rateBarLabel(label: string, rate: number, total: number): string | undefined {
+  return total ? `${label} ${formatPercent(rate, { fractionDigits: 1 })}` : undefined;
+}
+
+/** "สูงผิดปกติ" rates (15% and up) get the KPI risk edge and a danger numeral. */
+function isHighRate(rate: number, total: number): boolean {
+  return Boolean(total) && rate >= 0.15;
+}
+
 export default function VoiceOperationsPage() {
   const me = useAdminSession();
   const table = useTableState({ filterKeys: ["days"], defaultFilters: { days: "30" } });
@@ -120,7 +145,12 @@ export default function VoiceOperationsPage() {
       key: "createdAt",
       header: t("voice.colTime"),
       mobile: "secondary",
-      cell: (s) => `${formatThaiDate(s.createdAt, "short")} ${formatThaiTime(s.createdAt, { suffix: true })}`,
+      cell: (s) => (
+        <span className="whitespace-nowrap tabular">
+          <span className="text-fg">{formatThaiDate(s.createdAt, "short")}</span>{" "}
+          <span className="text-fg-muted">{formatThaiTime(s.createdAt, { suffix: true })}</span>
+        </span>
+      ),
     },
     { key: "session", header: t("voice.colSession"), mobile: "primary", cell: (s) => <IdCell id={s.sessionId} /> },
     {
@@ -140,7 +170,18 @@ export default function VoiceOperationsPage() {
     {
       key: "summary",
       header: t("voice.colSummary"),
-      cell: (s) => (s.summaryAvailable ? t("voice.summaryYes") : <span className="text-fg-muted">{t("voice.summaryNo")}</span>),
+      cell: (s) =>
+        s.summaryAvailable ? (
+          <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-fg">
+            <Check aria-hidden="true" className="size-4 text-success-fg" />
+            {t("voice.summaryYes")}
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-fg-muted">
+            <Minus aria-hidden="true" className="size-4" />
+            {t("voice.summaryNo")}
+          </span>
+        ),
     },
     {
       key: "cost",
@@ -176,12 +217,21 @@ export default function VoiceOperationsPage() {
       />
 
       {error && !data ? (
-        <ErrorState description={errorMessage(error)} onRetry={refetch} />
+        <ErrorState
+          description={errorMessage(error)}
+          onRetry={refetch}
+          digest={error instanceof ApiError ? (error.requestId ?? undefined) : undefined}
+        />
       ) : !data ? (
-        <StatGridSkeleton count={3} />
+        <>
+          <LoadingAnnouncement />
+          <StatGridSkeleton count={4} />
+          <CardSkeleton lines={2} />
+          <TableSkeleton columns={6} />
+        </>
       ) : (
         <>
-          <Grid cols={4} className="grid-cols-2">
+          <KpiStrip>
             <StatCard
               label={t("voice.failedStarts")}
               value={formatPercent(data.failedStartRate, { fractionDigits: 1 })}
@@ -189,6 +239,9 @@ export default function VoiceOperationsPage() {
               tone="orange"
               badge={rateBadge(data.failedStartRate, data.attempts)}
               hint={t("voice.failedStartsHint", { count: formatNumber(data.failedStarts), total: formatNumber(data.attempts) })}
+              bar={rateBar(data.failedStartRate, data.attempts)}
+              barLabel={rateBarLabel(t("voice.failedStarts"), data.failedStartRate, data.attempts)}
+              risk={isHighRate(data.failedStartRate, data.attempts)}
             />
             <StatCard
               label={t("voice.disconnects")}
@@ -197,6 +250,9 @@ export default function VoiceOperationsPage() {
               tone="red"
               badge={rateBadge(data.disconnectRate, data.finished)}
               hint={t("voice.disconnectsHint", { count: formatNumber(data.disconnected), total: formatNumber(data.finished) })}
+              bar={rateBar(data.disconnectRate, data.finished)}
+              barLabel={rateBarLabel(t("voice.disconnects"), data.disconnectRate, data.finished)}
+              risk={isHighRate(data.disconnectRate, data.finished)}
             />
             <StatCard
               label={t("voice.summaryFailures")}
@@ -205,6 +261,9 @@ export default function VoiceOperationsPage() {
               tone="amber"
               badge={rateBadge(data.summaryFailureRate, data.finished)}
               hint={t("voice.summaryFailuresHint", { count: formatNumber(data.summaryFailures), total: formatNumber(data.finished) })}
+              bar={rateBar(data.summaryFailureRate, data.finished)}
+              barLabel={rateBarLabel(t("voice.summaryFailures"), data.summaryFailureRate, data.finished)}
+              risk={isHighRate(data.summaryFailureRate, data.finished)}
             />
             <StatCard
               label={t("voice.costTotal")}
@@ -213,16 +272,19 @@ export default function VoiceOperationsPage() {
               tone="brand"
               hint={`${t("voice.costAverage")} ${usd(data.averageMeasuredCostUsd)}`}
             />
-          </Grid>
+          </KpiStrip>
 
           <Card padding="lg">
             <CardHeader title={t("voice.costTitle")} description={t("voice.costNote")} />
             <DescriptionList
               columns={3}
               items={[
-                { label: t("voice.costRealtime"), value: usd(data.totalMeasuredRealtimeCostUsd) },
-                { label: t("voice.costTranscription"), value: usd(data.totalMeasuredTranscriptionCostUsd) },
-                { label: t("voice.costAverage"), value: usd(data.averageMeasuredCostUsd) },
+                { label: t("voice.costRealtime"), value: <span className="tabular">{usd(data.totalMeasuredRealtimeCostUsd)}</span> },
+                {
+                  label: t("voice.costTranscription"),
+                  value: <span className="tabular">{usd(data.totalMeasuredTranscriptionCostUsd)}</span>,
+                },
+                { label: t("voice.costAverage"), value: <span className="tabular">{usd(data.averageMeasuredCostUsd)}</span> },
                 {
                   label: t("voice.costCoverageLabel"),
                   value: [
@@ -247,9 +309,33 @@ export default function VoiceOperationsPage() {
               caption={t("voice.recentTitle")}
               columns={columns}
               rows={data.recentSessions}
+              density="compact"
               getRowKey={(s) => s.sessionId}
               loading={isLoading || isValidating}
-              empty={<EmptyState icon={Mic} title={t("voice.emptyTitle")} description={t("voice.emptyHint")} />}
+              empty={
+                <EmptyState
+                  as="h3"
+                  icon={Mic}
+                  title={t("voice.emptyTitle")}
+                  description={t("voice.emptyHint")}
+                  action={
+                    days !== "90" ? (
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          table.setFilter("days", "90");
+                          // This button goes away with the 90-day view: focus moves to the period tabs.
+                          focusWhenOrphaned(() =>
+                            document.querySelector<HTMLElement>(`[role="radiogroup"][aria-label="${t("voice.range")}"] [aria-checked="true"]`),
+                          );
+                        }}
+                      >
+                        {t("voice.days90")}
+                      </Button>
+                    ) : undefined
+                  }
+                />
+              }
             />
           </Section>
         </>

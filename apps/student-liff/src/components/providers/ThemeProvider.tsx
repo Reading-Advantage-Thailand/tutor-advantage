@@ -126,11 +126,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const { theme, resolvedTheme } = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
 
   // Safety net when the pre-paint script did not run (or disagrees): make the
-  // DOM match the stored preference. A no-op in the normal case.
+  // DOM match the stored preference. A no-op in the normal case. Also compares
+  // with <html> itself: when React re-creates the document after a hydration
+  // error it drops the class while the cached snapshot still says "dark".
   useEffect(() => {
     const current = getClientSnapshot();
     const expected = resolveTheme(current.theme);
-    if (expected !== current.resolvedTheme) {
+    const onPage: ResolvedTheme = document.documentElement.classList.contains("dark") ? "dark" : "light";
+    if (expected !== current.resolvedTheme || expected !== onPage) {
       applyTheme(expected);
       setSnapshot({ theme: current.theme, resolvedTheme: expected });
     }

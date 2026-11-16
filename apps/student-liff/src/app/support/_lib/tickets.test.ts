@@ -173,14 +173,17 @@ describe("getStatusEventCopy", () => {
 });
 
 describe("buildThreadItems", () => {
-  const now = new Date(2026, 10, 5, 12, 0, 0);
+  // November 2026 in Bangkok wall-clock time (UTC+7): day lines follow the
+  // Bangkok day, so the fixtures read the same in any machine time zone.
+  const bkk = (d: number, h: number, m: number, s = 0) => new Date(Date.UTC(2026, 10, d, h - 7, m, s));
+  const now = bkk(5, 12, 0);
 
   it("orders by time, adds day lines and groups bubbles by side", () => {
     const items = buildThreadItems(
       [
-        message({ messageId: "m3", author: "SUPPORT", body: "รับเรื่องแล้วค่ะ", createdAt: new Date(2026, 10, 5, 9, 0).toISOString() }),
-        message({ messageId: "m1", body: "หนังสือยังไม่มา", createdAt: new Date(2026, 10, 4, 9, 0).toISOString() }),
-        message({ messageId: "m2", body: "ช่วยดูให้หน่อย", createdAt: new Date(2026, 10, 4, 9, 5).toISOString() }),
+        message({ messageId: "m3", author: "SUPPORT", body: "รับเรื่องแล้วค่ะ", createdAt: bkk(5, 9, 0).toISOString() }),
+        message({ messageId: "m1", body: "หนังสือยังไม่มา", createdAt: bkk(4, 9, 0).toISOString() }),
+        message({ messageId: "m2", body: "ช่วยดูให้หน่อย", createdAt: bkk(4, 9, 5).toISOString() }),
         message({
           messageId: "s1",
           kind: "STATUS_CHANGE",
@@ -188,9 +191,9 @@ describe("buildThreadItems", () => {
           body: null,
           fromStatus: "OPEN",
           toStatus: "IN_PROGRESS",
-          createdAt: new Date(2026, 10, 5, 9, 0, 1).toISOString(),
+          createdAt: bkk(5, 9, 0, 1).toISOString(),
         }),
-        message({ messageId: "m4", author: "SUPPORT", body: "ส่งใหม่ให้แล้ว", createdAt: new Date(2026, 10, 5, 9, 1).toISOString() }),
+        message({ messageId: "m4", author: "SUPPORT", body: "ส่งใหม่ให้แล้ว", createdAt: bkk(5, 9, 1).toISOString() }),
       ],
       now,
     );
@@ -212,6 +215,18 @@ describe("buildThreadItems", () => {
       // A status line breaks the run, so the team name shows again.
       [false, true],
     ]);
+  });
+
+  it("splits the thread at Bangkok midnight", () => {
+    const items = buildThreadItems(
+      [
+        message({ messageId: "a", body: "ก่อนเที่ยงคืน", createdAt: "2026-11-04T16:59:00.000Z" }),
+        message({ messageId: "b", body: "หลังเที่ยงคืน", createdAt: "2026-11-04T17:01:00.000Z" }),
+      ],
+      new Date("2026-11-04T18:00:00.000Z"),
+    );
+
+    expect(items.filter((item) => item.kind === "date").map((item) => item.label)).toEqual(["เมื่อวาน", "วันนี้"]);
   });
 
   it("skips empty message bodies and handles no messages", () => {

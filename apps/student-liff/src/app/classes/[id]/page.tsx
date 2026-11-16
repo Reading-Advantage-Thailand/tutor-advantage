@@ -24,6 +24,7 @@ import { formatTHB } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { LiffStartupError } from "../_components/LiffStartupError";
+import { HeroOverlap, classLevelTone } from "@/components/mobile/Hero";
 import { AttendanceSection, type AttendanceState } from "./_components/AttendanceSection";
 import { ClassDetailAppBar, ClassDetailSkeleton } from "./_components/ClassDetailSkeleton";
 import { ClassHero } from "./_components/ClassHero";
@@ -41,17 +42,17 @@ interface PageProps {
 function PriceBlock({ label, price }: { label: string; price: number }) {
   return (
     <div className="min-w-0 shrink-0">
-      <p className="text-xs leading-[1.5] text-fg-muted">{label}</p>
-      <p className="text-xl leading-[1.3] font-extrabold text-fg tabular-nums">
+      <p className="text-xs leading-[1.5] font-medium text-fg-muted">{label}</p>
+      <p className="text-xl leading-[1.3] font-semibold text-fg tabular-nums">
         {price === 0 ? t("classes.free") : formatTHB(price)}
       </p>
     </div>
   );
 }
 
-/** Bottom bar: upgrade (price + next book) · enter the class · enroll (price + CTA). */
+/** Sticky bottom bar, the screen's one primary (lg 56): upgrade (price + next book) · enter the class · enroll (price + CTA). */
 function PrimaryActionBar({ action }: { action: ClassPrimaryAction }) {
-  const cta = cn(buttonVariants({ variant: "brand", size: "cta" }), "min-w-0 flex-1");
+  const cta = cn(buttonVariants({ variant: "brand", size: "cta-lg" }), "min-w-0 flex-1");
   if (action.kind === "upgrade") {
     return (
       <BottomActionBar>
@@ -156,7 +157,9 @@ export default function ClassDetailPage({ params }: PageProps) {
     return (
       <Screen>
         <ClassDetailAppBar />
-        <LiffStartupError />
+        <div className="px-4 pt-4">
+          <LiffStartupError card />
+        </div>
       </Screen>
     );
   }
@@ -170,6 +173,7 @@ export default function ClassDetailPage({ params }: PageProps) {
           <StatusScreen
             icon={SearchX}
             tone="neutral"
+            variant="notFound"
             title={t("classes.detail.notFound")}
             description={t("classes.detail.notFoundDescription")}
             primaryAction={
@@ -179,12 +183,15 @@ export default function ClassDetailPage({ params }: PageProps) {
             }
           />
         ) : (
-          <ErrorState
-            title={t("classes.detail.loadErrorTitle")}
-            kind={kind === "offline" ? "offline" : "error"}
-            onRetry={() => void detail.refetch()}
-            retrying={detail.isValidating}
-          />
+          <div className="px-4 pt-4">
+            <ErrorState
+              card
+              title={t("classes.detail.loadErrorTitle")}
+              kind={kind === "offline" ? "offline" : "error"}
+              onRetry={() => void detail.refetch()}
+              retrying={detail.isValidating}
+            />
+          </div>
         )}
       </Screen>
     );
@@ -192,14 +199,15 @@ export default function ClassDetailPage({ params }: PageProps) {
 
   const primaryAction = getClassPrimaryAction(cls, access);
   const openCalendar = () => setCalendarOpen(true);
+  const tone = classLevelTone(cls.cefr);
 
   return (
     <Screen>
-      <ClassDetailAppBar onShare={handleShare} />
+      <ClassDetailAppBar onShare={handleShare} tone={tone} />
+      <ClassHero cls={cls} tone={tone} />
 
-      <div className="flex flex-col gap-5 px-4 pt-2 pb-6">
-        <ClassHero cls={cls} />
-
+      {/* Order (patterns.md S5): what the student came to do first (next session, lessons), then status, then browsing. */}
+      <HeroOverlap>
         {cls.isEnrolled ? (
           <>
             {access.canReview ? (
@@ -221,8 +229,6 @@ export default function ClassDetailPage({ params }: PageProps) {
 
             <NextSessionCard cls={cls} onAddToCalendar={openCalendar} />
 
-            <AttendanceSection attendance={attendance} />
-
             <LessonsSection
               cls={cls}
               access={access}
@@ -235,6 +241,8 @@ export default function ClassDetailPage({ params }: PageProps) {
               <AssessmentPanel key={selectedCycleId} cycleId={selectedCycleId} classId={id} />
             ) : null}
 
+            <AttendanceSection attendance={attendance} />
+
             <TutorSection cls={cls} />
           </>
         ) : (
@@ -246,14 +254,14 @@ export default function ClassDetailPage({ params }: PageProps) {
                 description={t("classes.detail.pendingPaymentDescription")}
               />
             ) : null}
-            <TutorSection cls={cls} />
             <ScheduleSection cls={cls} onAddToCalendar={openCalendar} />
             <SeatsSection cls={cls} />
-            <CoursePreviewSection cls={cls} articles={articles} articlesRequested={articlesRequested} />
             <BenefitsSection cls={cls} />
+            <CoursePreviewSection cls={cls} articles={articles} articlesRequested={articlesRequested} />
+            <TutorSection cls={cls} />
           </>
         )}
-      </div>
+      </HeroOverlap>
 
       <PrimaryActionBar action={primaryAction} />
       <CalendarSheet cls={cls} liff={liff} open={calendarOpen} onOpenChange={setCalendarOpen} />

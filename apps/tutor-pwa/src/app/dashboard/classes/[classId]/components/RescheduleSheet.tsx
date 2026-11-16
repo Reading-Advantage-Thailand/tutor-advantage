@@ -175,12 +175,12 @@ export default function RescheduleSheet({
             </p>
           ) : null}
           <div className="flex flex-col-reverse gap-2 md:flex-row">
-            <Button variant="ghost" size="lg" className="md:h-9" onClick={() => onOpenChange(false)} disabled={loading}>
+            <Button variant="outline" size="lg" className="md:h-10 md:px-4" onClick={() => onOpenChange(false)} disabled={loading}>
               {t("tutorClass.detail.cancel")}
             </Button>
             <Button
               size="lg"
-              className="md:h-9"
+              className="md:h-10 md:px-4"
               onClick={handleSave}
               loading={loading}
               disabled={overLimit || selectedDates.length === 0}
@@ -199,7 +199,7 @@ export default function RescheduleSheet({
         ) : null}
         <ScheduleEditor
           idPrefix="reschedule"
-          columnsFrom="md"
+          columnsFrom="lg"
           dates={selectedDates}
           times={dateTimes}
           totalHours={totalHours}

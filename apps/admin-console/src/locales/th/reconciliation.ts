@@ -179,6 +179,11 @@ export const reconciliation = {
     linked: "จับคู่ webhook แล้ว",
     dismissed: "ปิดรายการ webhook แล้ว",
   },
+  // ── Redesign 2026-11 (period selector, KPI strip, mismatch chip) ──
+  kpiTitle: "ตัวเลขสำคัญของการชำระเงิน",
+  daysShort: "{days} วัน",
+  amountMismatch: "ยอดไม่ตรงกัน",
+  amountDiff: "ต่างกัน {amount}",
 } as const;
 
 registerMessages("reconciliation", reconciliation);

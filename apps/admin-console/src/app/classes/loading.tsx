@@ -1,6 +1,6 @@
-import { PageSkeleton } from "@/components/app";
+import { TablePageSkeleton } from "./components/TablePageSkeleton";
 
-/** Classes: header + table. */
+/** Classes: header + setup tabs/search toolbar + table. */
 export default function Loading() {
-  return <PageSkeleton stats={false} variant="table" />;
+  return <TablePageSkeleton columns={6} />;
 }

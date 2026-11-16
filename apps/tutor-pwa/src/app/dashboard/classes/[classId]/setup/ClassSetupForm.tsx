@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, CalendarDays, ExternalLink, Link2, Lock } from "lucide-react";
-import { Card, CardHeader, IconTile, StickyActions, TextField, toast } from "@/components/app";
+import { ExternalLink, Lock } from "lucide-react";
+import { StickyActions, TextField, toast } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { scrollBehavior } from "@/lib/motion";
 import {
   MAX_CLASS_HOURS,
   MAX_CLASS_TITLE_LENGTH,
@@ -24,6 +25,7 @@ import {
 } from "@/lib/tutorClassFlow";
 import { setupClass } from "../../actions";
 import { ScheduleEditor } from "../../components/ScheduleEditor";
+import { PanelCard } from "../components/PanelCard";
 
 export interface ClassSetupFormProps {
   classId: string;
@@ -32,6 +34,18 @@ export interface ClassSetupFormProps {
   bookLabel: string;
   initialMeetingUrl?: string;
   freeHours?: number;
+}
+
+/** Step number in a jade tile (decorative: the section titles carry the meaning). */
+function StepNumber({ n }: { n: number }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-flex size-10 shrink-0 items-center justify-center rounded-(--radius-tile) bg-brand-soft text-base font-semibold text-brand-soft-fg tabular"
+    >
+      {n}
+    </span>
+  );
 }
 
 /**
@@ -105,7 +119,7 @@ export function ClassSetupForm({ classId, initialName, bookLabel, initialMeeting
       setErrorText(t("tutorClass.setup.fixErrors"));
       if (newErrors.name) nameRef.current?.focus();
       else if (newErrors.meetingUrl) meetingUrlRef.current?.focus();
-      else scheduleRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      else scheduleRef.current?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
       return;
     }
 
@@ -132,11 +146,12 @@ export function ClassSetupForm({ classId, initialName, bookLabel, initialMeeting
 
   return (
     <form id="class-setup-form" onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
-      <Card as="section" aria-labelledby="class-setup-info">
-        <CardHeader
-          icon={<IconTile icon={BookOpen} size="sm" />}
-          title={<span id="class-setup-info">{t("tutorClass.newClass.classInfo")}</span>}
-        />
+      <PanelCard
+        id="class-setup-info"
+        leading={<StepNumber n={1} />}
+        title={t("tutorClass.newClass.classInfo")}
+        className="overflow-visible"
+      >
         <div className="flex flex-col gap-4">
           <TextField
             ref={nameRef}
@@ -162,13 +177,14 @@ export function ClassSetupForm({ classId, initialName, bookLabel, initialMeeting
             endAddon={<Lock aria-hidden="true" className="size-4" />}
           />
         </div>
-      </Card>
+      </PanelCard>
 
-      <Card as="section" aria-labelledby="class-setup-meeting">
-        <CardHeader
-          icon={<IconTile icon={Link2} size="sm" tone="blue" />}
-          title={<span id="class-setup-meeting">{t("tutorClass.newClass.meetingUrlTitle")}</span>}
-        />
+      <PanelCard
+        id="class-setup-meeting"
+        leading={<StepNumber n={2} />}
+        title={t("tutorClass.newClass.meetingUrlTitle")}
+        className="overflow-visible"
+      >
         <div className="flex flex-col gap-3">
           <TextField
             ref={meetingUrlRef}
@@ -186,8 +202,8 @@ export function ClassSetupForm({ classId, initialName, bookLabel, initialMeeting
               clearFieldError("meetingUrl");
             }}
           />
-          <div className="flex flex-wrap items-center gap-2 text-[0.8125rem] text-fg-muted">
-            <span>{t("tutorClass.newClass.quickCreate")}</span>
+          <div className="ds-well flex flex-wrap items-center gap-2 px-3 py-2.5 text-sm leading-[1.6] text-fg-muted">
+            <span className="mr-auto">{t("tutorClass.newClass.quickCreate")}</span>
             <Button type="button" variant="outline" size="sm" onClick={() => window.open("https://meet.google.com/new", "_blank")}>
               Google Meet
               <ExternalLink aria-hidden="true" className="size-3.5" />
@@ -198,23 +214,24 @@ export function ClassSetupForm({ classId, initialName, bookLabel, initialMeeting
             </Button>
           </div>
         </div>
-      </Card>
+      </PanelCard>
 
-      <Card as="section" aria-labelledby="class-setup-schedule">
-        <div ref={scheduleRef} className="scroll-mt-24">
-          <CardHeader
-            icon={<IconTile icon={CalendarDays} size="sm" tone="blue" />}
-            title={
-              <span id="class-setup-schedule">
-                {t("tutorClass.schedule.sectionTitle")}
-                <span className="ml-0.5 text-danger-fg" aria-hidden="true">*</span>
-              </span>
-            }
-            description={t("tutorClass.setup.notifyNote")}
-          />
+      <div ref={scheduleRef} className="scroll-mt-24">
+        <PanelCard
+          id="class-setup-schedule"
+          leading={<StepNumber n={3} />}
+          title={
+            <>
+              {t("tutorClass.schedule.sectionTitle")}
+              <span className="ml-0.5 text-danger-fg" aria-hidden="true">*</span>
+            </>
+          }
+          description={t("tutorClass.setup.notifyNote")}
+          className="overflow-visible"
+        >
           <ScheduleEditor
             idPrefix="class-setup"
-            columnsFrom="md"
+            columnsFrom="lg"
             dates={selectedDates}
             times={dateTimes}
             totalHours={totalHours}
@@ -235,8 +252,8 @@ export function ClassSetupForm({ classId, initialName, bookLabel, initialMeeting
             preview={schedule}
             error={fieldErrors.schedule}
           />
-        </div>
-      </Card>
+        </PanelCard>
+      </div>
 
       <StickyActions className="flex-col items-stretch md:flex-row md:items-center">
         {errorText ? (
@@ -244,7 +261,7 @@ export function ClassSetupForm({ classId, initialName, bookLabel, initialMeeting
             {errorText}
           </p>
         ) : (
-          <p className="hidden text-[0.8125rem] text-fg-muted md:mr-auto md:block">
+          <p className="hidden text-[0.8125rem] leading-[1.45] text-fg-muted tabular md:mr-auto md:block">
             {selectedDates.length
               ? `${totalHours} / ${maxHours} ${t("tutorClass.newClass.hoursUnit")}`
               : t("tutorClass.setup.footerHint")}

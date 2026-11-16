@@ -1,22 +1,20 @@
-import {
-  CardSkeleton,
-  LoadingAnnouncement,
-  PageHeaderSkeleton,
-  StatGridSkeleton,
-  TableSkeleton,
-} from "@/components/app/Skeletons";
+import { LoadingAnnouncement, Page, PageHeaderSkeleton, TableSkeleton } from "@/components/app";
+import { StatementSkeleton, StatStripSkeleton, WalletHeroSkeleton } from "./money-skeletons";
 
+/** Mirrors the earnings page: header, wallet hero + strip | statement, notice, history table. */
 export default function EarningsLoading() {
   return (
-    <div className="flex w-full flex-col gap-6 lg:gap-8">
+    <Page>
       <LoadingAnnouncement />
       <PageHeaderSkeleton />
-      <StatGridSkeleton count={4} />
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4">
-        <CardSkeleton lines={6} />
-        <CardSkeleton lines={3} />
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.85fr)_minmax(0,1fr)]">
+        <div className="flex min-w-0 flex-col gap-4">
+          <WalletHeroSkeleton />
+          <StatStripSkeleton cells={4} />
+        </div>
+        <StatementSkeleton rows={5} />
       </div>
-      <TableSkeleton rows={4} />
-    </div>
+      <TableSkeleton rows={4} columns={6} />
+    </Page>
   );
 }

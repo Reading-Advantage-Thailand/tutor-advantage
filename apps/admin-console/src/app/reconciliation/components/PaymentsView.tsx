@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { CheckCircle2, SearchCheck, UserRound, Zap } from "lucide-react";
 import {
   AdminStatusChip,
@@ -11,9 +11,9 @@ import {
   DataTable,
   DescriptionList,
   EmptyState,
-  ErrorState,
   FilterBar,
   IdCell,
+  IdentityCell,
   Money,
   Pagination,
   SelectField,
@@ -30,6 +30,7 @@ import { useCachedResource } from "@/lib/cachedResource";
 import { formatThaiDateTime } from "@/lib/format";
 import { t, type I18nKey } from "@/lib/i18n";
 import { statusLabel, statusOptions } from "@/lib/status";
+import { focusToolbar, LoadError } from "../../settlements/financeUi";
 import { ISSUE_TONE, ISSUE_TYPES, type IssueType, type PaymentsResponse, type ReconPayment } from "../types";
 import "@/locales/th/reconciliation";
 
@@ -55,6 +56,7 @@ export function PaymentsView({
   const me = useAdminSession();
   const isAdmin = useHasRole("ADMIN");
   const [pending, setPending] = useState<Pending>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const issue = table.filters.issue ?? "ISSUES";
   const status = table.filters.status ?? "";
 
@@ -81,15 +83,13 @@ export function PaymentsView({
         header: t("reconciliation.columns.student"),
         alwaysVisible: true,
         mobile: "primary",
+        sticky: true,
         cell: (row) => (
-          <div className="flex min-w-0 flex-col">
-            <span className="truncate font-medium text-fg">
-              {row.studentName ?? t("reconciliation.unknownStudent")}
-            </span>
-            <span className="truncate text-[0.8125rem] text-fg-muted">
-              {row.enrollmentPackageId ? t("reconciliation.packageTarget") : (row.classTitle ?? "–")}
-            </span>
-          </div>
+          <IdentityCell
+            name={row.studentName ?? t("reconciliation.unknownStudent")}
+            seed={row.studentUserId}
+            secondary={row.enrollmentPackageId ? t("reconciliation.packageTarget") : (row.classTitle ?? "–")}
+          />
         ),
       },
       {
@@ -97,7 +97,7 @@ export function PaymentsView({
         header: t("reconciliation.columns.createdAt"),
         sortable: true,
         mobile: "secondary",
-        cell: (row) => <span className="whitespace-nowrap">{formatThaiDateTime(row.createdAt)}</span>,
+        cell: (row) => <span className="whitespace-nowrap tabular">{formatThaiDateTime(row.createdAt)}</span>,
       },
       {
         key: "amount",
@@ -105,7 +105,7 @@ export function PaymentsView({
         align: "right",
         sortable: true,
         mobile: "trailing",
-        cell: (row) => <Money satang={row.amountMinor ?? 0} />,
+        cell: (row) => <Money satang={row.amountMinor ?? 0} fractionDigits={2} />,
       },
       {
         key: "paymentStatus",
@@ -157,12 +157,15 @@ export function PaymentsView({
         label: t("reconciliation.columns.actions"),
         alwaysVisible: true,
         align: "right",
+        // Phones: a full-width row at the bottom of the card, not a half-width field.
+        mobile: "actions",
         cell: (row) => (
-          <div className="flex flex-wrap justify-start gap-1.5 md:justify-end lg:flex-nowrap">
+          // One line from 1400px (the widest set, two buttons + the user link, still fits the 1440 card).
+          <div className="flex flex-wrap justify-start gap-1.5 md:justify-end min-[1400px]:flex-nowrap">
             {row.actions.includes("ACTIVATE_ENROLLMENT") ? (
               <Button
                 size="sm"
-                variant={row.issue.type === "SUCCESS_NOT_ACTIVE" ? "default" : "outline"}
+                variant={row.issue.type === "SUCCESS_NOT_ACTIVE" ? "tonal" : "outline"}
                 onClick={() => setPending({ kind: "activate", row, key: newIdempotencyKey() })}
               >
                 <Zap aria-hidden="true" />
@@ -235,7 +238,7 @@ export function PaymentsView({
       columns={2}
       items={[
         { label: t("reconciliation.columns.student"), value: target.studentName ?? t("reconciliation.unknownStudent") },
-        { label: t("reconciliation.columns.amount"), value: <Money satang={target.amountMinor ?? 0} /> },
+        { label: t("reconciliation.columns.amount"), value: <Money satang={target.amountMinor ?? 0} fractionDigits={2} className="font-semibold" /> },
         {
           label: t("reconciliation.columns.paymentStatus"),
           value: statusLabel("payment", target.status),
@@ -249,39 +252,90 @@ export function PaymentsView({
     />
   ) : null;
 
+  const isFiltered = table.q !== "" || issue !== "ISSUES" || status !== "" || days !== "30";
+  // The empty state's "ล้างตัวกรอง" removes itself: focus goes back to the toolbar.
+  // (FilterBar's own button moves focus by itself.)
+  const resetFilters = () => {
+    table.reset();
+    focusToolbar(toolbarRef.current);
+  };
+  const statusFilterOptions = statusOptions("payment", { all: t("reconciliation.filters.statusAll") }).filter(
+    (option) => option.value !== "PAID",
+  );
+  // Issue and status: inline from 768px, in the "ตัวกรอง" sheet on phones (patterns.md A2).
+  const issueSelect = (props: { id: string; label?: string; containerClassName: string }) => (
+    <SelectField
+      id={props.id}
+      aria-label={props.label ? undefined : t("reconciliation.filters.issue")}
+      label={props.label}
+      containerClassName={props.containerClassName}
+      value={issue}
+      onChange={(event) => table.setFilter("issue", event.target.value)}
+      options={issueOptions}
+    />
+  );
+  const statusSelect = (props: { id: string; label?: string; containerClassName: string }) => (
+    <SelectField
+      id={props.id}
+      aria-label={props.label ? undefined : t("reconciliation.filters.status")}
+      label={props.label}
+      containerClassName={props.containerClassName}
+      value={status}
+      onChange={(event) => table.setFilter("status", event.target.value)}
+      options={statusFilterOptions}
+    />
+  );
+
   return (
     <div className="flex flex-col gap-3">
-      <FilterBar
-        search={{
-          value: table.searchValue,
-          onValueChange: table.setSearchValue,
-          placeholder: t("reconciliation.filters.searchPayments"),
-        }}
-        isFiltered={table.q !== "" || issue !== "ISSUES" || status !== "" || days !== "30"}
-        onReset={table.reset}
-        actions={<ColumnToggle columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} />}
-      >
-        <SelectField
-          aria-label={t("reconciliation.filters.issue")}
-          containerClassName="w-full sm:w-52"
-          value={issue}
-          onChange={(event) => table.setFilter("issue", event.target.value)}
-          options={issueOptions}
-        />
-        <SelectField
-          aria-label={t("reconciliation.filters.status")}
-          containerClassName="w-full sm:w-40"
-          value={status}
-          onChange={(event) => table.setFilter("status", event.target.value)}
-          options={statusOptions("payment", { all: t("reconciliation.filters.statusAll") }).filter(
-            (option) => option.value !== "PAID",
-          )}
-        />
-        <DaysSelect value={days} onChange={(value) => table.setFilter("days", value)} />
-      </FilterBar>
+      {/* The period ("days") selector lives in the page header: it also drives the KPI strip. */}
+      <div ref={toolbarRef}>
+        <FilterBar
+          search={{
+            value: table.searchValue,
+            onValueChange: table.setSearchValue,
+            placeholder: t("reconciliation.filters.searchPayments"),
+          }}
+          isFiltered={isFiltered}
+          onReset={table.reset}
+          actions={<ColumnToggle id="recon-payments-columns" columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} />}
+          moreFilters={{
+            active: [
+              ...(issue !== "ISSUES"
+                ? [
+                    {
+                      key: "issue",
+                      label: `${t("reconciliation.filters.issue")}: ${issueOptions.find((option) => option.value === issue)?.label ?? issue}`,
+                      onRemove: () => table.setFilter("issue", "ISSUES"),
+                    },
+                  ]
+                : []),
+              ...(status
+                ? [
+                    {
+                      key: "status",
+                      label: `${t("reconciliation.filters.status")}: ${statusFilterOptions.find((option) => option.value === status)?.label ?? status}`,
+                      onRemove: () => table.setFilter("status", ""),
+                    },
+                  ]
+                : []),
+            ],
+            onReset: () => table.setFilters({ issue: "ISSUES", status: "" }),
+            children: (
+              <>
+                {issueSelect({ id: "recon-issue-sheet", label: t("reconciliation.filters.issue"), containerClassName: "w-full" })}
+                {statusSelect({ id: "recon-status-sheet", label: t("reconciliation.filters.status"), containerClassName: "w-full" })}
+              </>
+            ),
+          }}
+        >
+          {issueSelect({ id: "recon-issue", containerClassName: "hidden md:flex md:w-44 xl:w-52" })}
+          {statusSelect({ id: "recon-status", containerClassName: "hidden md:flex md:w-40" })}
+        </FilterBar>
+      </div>
 
       {error && !data ? (
-        <ErrorState onRetry={refetch} />
+        <LoadError error={error} onRetry={refetch} />
       ) : (
         <DataTable
           caption={t("reconciliation.views.payments")}
@@ -294,11 +348,17 @@ export function PaymentsView({
           hiddenColumns={visibility.hidden}
           empty={
             <EmptyState
-              compact
               icon={CheckCircle2}
               tone="teal"
               title={t("reconciliation.empty.paymentsTitle")}
               description={t("reconciliation.empty.paymentsDescription")}
+              action={
+                isFiltered ? (
+                  <Button variant="outline" onClick={resetFilters}>
+                    {t("shell.clearFilters")}
+                  </Button>
+                ) : undefined
+              }
             />
           }
           footer={
@@ -344,17 +404,5 @@ export function PaymentsView({
         onConfirm={runAction}
       />
     </div>
-  );
-}
-
-export function DaysSelect({ value, onChange }: { value: string; onChange: (value: string) => void }) {
-  return (
-    <SelectField
-      aria-label={t("reconciliation.filters.days")}
-      containerClassName="w-full sm:w-40"
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      options={["7", "30", "90", "180"].map((d) => ({ value: d, label: t("reconciliation.filters.daysOption", { days: d }) }))}
-    />
   );
 }

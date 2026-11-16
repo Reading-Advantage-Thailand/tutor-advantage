@@ -1,6 +1,6 @@
-import { PageSkeleton } from "@/components/app";
+import { TablePageSkeleton } from "../classes/components/TablePageSkeleton";
 
-/** Discount codes: header + 4 usage stats + table. */
+/** Discount codes: header + KPI strip + status count tabs/search toolbar + table. */
 export default function Loading() {
-  return <PageSkeleton stats variant="table" />;
+  return <TablePageSkeleton stats columns={7} />;
 }

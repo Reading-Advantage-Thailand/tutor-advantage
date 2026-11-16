@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import "./globals.css";
+import { notoThai } from "./fonts";
 import { AdminShell } from "@/components/app/AdminShell";
 import { SIDEBAR_COOKIE } from "@/components/app/constants";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -16,9 +17,10 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // Browser chrome matches the app bar (--surface-nav light #ffffff / dark #161c1b).
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#161b22" },
+    { media: "(prefers-color-scheme: dark)", color: "#161c1b" },
   ],
 };
 
@@ -32,16 +34,19 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const session = await verifyAdminToken(cookieStore.get(ADMIN_TOKEN_COOKIE)?.value);
   const picture = cookieStore.get("admin_picture")?.value || null;
   const user = session ? { ...session, picture: picture && /^https:\/\//.test(picture) ? picture : null } : null;
+  // No saved choice = "auto" (rail at 1024–1279px, full nav from 1280px, in CSS).
+  const savedSidebar = cookieStore.get(SIDEBAR_COOKIE)?.value;
+  const sidebarMode = savedSidebar === "rail" || savedSidebar === "full" ? savedSidebar : "auto";
 
   return (
-    <html lang="th" suppressHydrationWarning>
+    <html lang="th" className={notoThai.variable} suppressHydrationWarning>
       <body className="min-h-dvh bg-app text-fg antialiased">
         <ThemeProvider>
           <AdminShell
             user={user}
             environment={getAppEnvironment()}
             devRoutes={devRoutesEnabled()}
-            sidebarCollapsed={cookieStore.get(SIDEBAR_COOKIE)?.value === "rail"}
+            sidebarMode={sidebarMode}
           >
             {children}
           </AdminShell>

@@ -23,12 +23,15 @@ export default function ThaiCalendar({ className, classNames, formatters, ...pro
   return (
     <Calendar
       locale={th}
-      className={cn("w-full bg-transparent p-0 [--cell-size:2.5rem] sm:[--cell-size:2.75rem]", className)}
+      // Cells are a seventh of the nearest @container (the calendar card in
+      // ScheduleEditor), at most 44px, so seven columns always fit the card.
+      // The table stretches them up to the calendar's 24rem maximum width.
+      className={cn("w-full bg-transparent p-0 [--cell-size:min(2.75rem,calc(100cqi/7))]", className)}
       classNames={{
-        root: cn("w-full", defaults.root),
+        root: cn("w-full max-w-sm", defaults.root),
         month: cn("flex w-full flex-col gap-3", defaults.month),
         caption_label: cn("text-[0.9375rem] font-semibold text-fg select-none", defaults.caption_label),
-        weekday: cn("flex-1 text-[0.8125rem] font-normal text-fg-muted select-none", defaults.weekday),
+        weekday: cn("flex-1 text-center text-[0.8125rem] font-normal text-fg-muted select-none", defaults.weekday),
         ...classNames,
       }}
       formatters={{

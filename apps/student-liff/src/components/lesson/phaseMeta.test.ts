@@ -1,3 +1,4 @@
+import { BookOpen, Star } from "lucide-react";
 import { describe, expect, it } from "vitest";
 import { LESSON_PHASE, TOTAL_LESSON_PHASES } from "../../lib/lessonPhases";
 import { formatPhaseStep, getPhaseMeta, getPhaseProgress } from "./phaseMeta";
@@ -8,7 +9,7 @@ describe("getPhaseMeta", () => {
       const meta = getPhaseMeta(phase);
       expect(meta.label, `phase ${phase}`).not.toMatch(/missing|Phase/);
       expect(meta.label.length).toBeGreaterThan(0);
-      expect(meta.emoji.length).toBeGreaterThan(0);
+      expect(meta.icon, `phase ${phase} icon`).toBeTruthy();
     }
   });
 
@@ -19,8 +20,8 @@ describe("getPhaseMeta", () => {
   });
 
   it("keeps the look-at-screen labels and tips", () => {
-    expect(getPhaseMeta(LESSON_PHASE.LAUNCH)).toMatchObject({ label: "แนะนำบทเรียน", emoji: "📖", tip: "คุณครูกำลังแนะนำบทเรียนวันนี้" });
-    expect(getPhaseMeta(LESSON_PHASE.KEY_SENTENCES)).toMatchObject({ label: "ประโยคสำคัญ", emoji: "⭐" });
+    expect(getPhaseMeta(LESSON_PHASE.LAUNCH)).toMatchObject({ label: "แนะนำบทเรียน", icon: BookOpen, tip: "คุณครูกำลังแนะนำบทเรียนวันนี้" });
+    expect(getPhaseMeta(LESSON_PHASE.KEY_SENTENCES)).toMatchObject({ label: "ประโยคสำคัญ", icon: Star });
     expect(getPhaseMeta(LESSON_PHASE.COMPREHENSION).tip).toBeNull();
   });
 

@@ -2,17 +2,15 @@
 
 import dynamic from "next/dynamic";
 import { useState, type ReactNode } from "react";
-import { Briefcase, CheckCircle2, CreditCard, FileImage, IdCard, Landmark, MapPin, Pencil, Receipt, ShieldCheck, XCircle } from "lucide-react";
+import { CheckCircle2, FileImage, FileSearch, Landmark, Pencil, ShieldCheck, Wallet, XCircle } from "lucide-react";
 import {
   AdminStatusChip,
   Card,
-  CardHeader,
+  Chip,
   ConfirmDialog,
   DescriptionList,
-  Grid,
   IconTile,
   Notice,
-  Section,
   Sheet,
   TextField,
   useHasRole,
@@ -23,10 +21,15 @@ import { Button } from "@/components/ui/button";
 import { api, newIdempotencyKey } from "@/lib/api";
 import { formatThaiDateTime, PLACEHOLDER } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { statusLabel, statusMeta } from "@/lib/status";
+import { keepThaiWords, thaiCopy } from "@/lib/thaiText";
+import { cn } from "@/lib/utils";
 import {
   BANK_LABELS,
+  FIELD_ICONS,
   displayName,
   fieldLabel,
+  fieldStatusTone,
   invalidateUser,
   isPassportHolder,
   pendingFields,
@@ -40,8 +43,6 @@ import "@/locales/th/userDetail";
 import "@/locales/th/userHeader";
 
 const DocumentViewer = dynamic(() => import("../components/DocumentViewer").then((m) => m.DocumentViewer), { ssr: false });
-
-const FIELD_ICONS = { idCard: IdCard, bankBook: CreditCard, address: MapPin, taxInfo: Receipt, workPermit: Briefcase } as const;
 
 type DialogState =
   | { mode: "approveAll"; fields: VerificationField[] }
@@ -150,6 +151,38 @@ function payoutBlockText(block: NonNullable<UserDetailV2["identity"]>["payoutBlo
   return null;
 }
 
+/**
+ * A payout-setting card for the rail: icon + title + current value, then its
+ * one action underneath (the rail is too narrow for a button beside the title).
+ */
+function SettingCard({
+  icon,
+  title,
+  description,
+  action,
+  children,
+}: {
+  icon: ReactNode;
+  title: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  children?: ReactNode;
+}) {
+  return (
+    <Card padding="md" className="flex flex-col gap-3">
+      <div className="flex items-start gap-3">
+        {icon}
+        <div className="min-w-0 flex-1">
+          <h2 className="text-[0.9375rem] leading-[1.45] font-semibold text-fg">{title}</h2>
+          {description ? <p className="mt-0.5 text-[0.8125rem] leading-[1.6] text-fg-muted">{thaiCopy(description)}</p> : null}
+        </div>
+      </div>
+      {children}
+      {action ? <div className="flex min-w-0 pl-11">{action}</div> : null}
+    </Card>
+  );
+}
+
 /** ADMIN sets resident (3%, 50 ทวิ) or non-resident (15%, PND.54). */
 function TaxResidencyCard({ user, adminId, canEdit }: { user: UserDetailV2; adminId: string; canEdit: boolean }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -160,27 +193,26 @@ function TaxResidencyCard({ user, adminId, canEdit }: { user: UserDetailV2; admi
     value === "NON_RESIDENT" ? t("userDetail.taxResidencyNonResident") : t("userDetail.taxResidencyResident");
 
   return (
-    <Card padding="md">
-      <CardHeader
-        icon={<IconTile icon={Landmark} tone="neutral" size="sm" />}
-        title={t("userDetail.taxResidencyTitle")}
-        description={label(current)}
-        action={
-          canEdit ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setIdempotencyKey(newIdempotencyKey());
-                setConfirmOpen(true);
-              }}
-            >
-              <Pencil aria-hidden="true" />{" "}
-              {next === "NON_RESIDENT" ? t("userDetail.taxResidencySetNonResident") : t("userDetail.taxResidencySetResident")}
-            </Button>
-          ) : null
-        }
-      />
+    <SettingCard
+      icon={<IconTile icon={Landmark} tone="neutral" size="sm" />}
+      title={t("userDetail.taxResidencyTitle")}
+      description={label(current)}
+      action={
+        canEdit ? (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setIdempotencyKey(newIdempotencyKey());
+              setConfirmOpen(true);
+            }}
+          >
+            <Pencil aria-hidden="true" />{" "}
+            {next === "NON_RESIDENT" ? t("userDetail.taxResidencySetNonResident") : t("userDetail.taxResidencySetResident")}
+          </Button>
+        ) : null
+      }
+    >
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
@@ -192,8 +224,8 @@ function TaxResidencyCard({ user, adminId, canEdit }: { user: UserDetailV2; admi
         details={
           <DescriptionList
             items={[
-              { label: t("userDetail.taxResidencyFrom"), value: label(current) },
-              { label: t("userDetail.taxResidencyTo"), value: label(next) },
+              { label: t("userDetail.taxResidencyFrom"), value: thaiCopy(label(current)) },
+              { label: t("userDetail.taxResidencyTo"), value: thaiCopy(label(next)) },
             ]}
           />
         }
@@ -203,7 +235,7 @@ function TaxResidencyCard({ user, adminId, canEdit }: { user: UserDetailV2; admi
           invalidateUser(adminId, user.id);
         }}
       />
-    </Card>
+    </SettingCard>
   );
 }
 
@@ -216,24 +248,23 @@ function CardPaymentsTrustCard({ user, adminId }: { user: UserDetailV2; adminId:
   const actionLabel = trusted ? t("userDetail.cardTrustDisable") : t("userDetail.cardTrustEnable");
 
   return (
-    <Card padding="md">
-      <CardHeader
-        icon={<IconTile icon={ShieldCheck} tone={trusted ? "brand" : "neutral"} size="sm" />}
-        title={t("userDetail.cardTrustTitle")}
-        description={label(trusted)}
-        action={
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setIdempotencyKey(newIdempotencyKey());
-              setConfirmOpen(true);
-            }}
-          >
-            <Pencil aria-hidden="true" /> {actionLabel}
-          </Button>
-        }
-      />
+    <SettingCard
+      icon={<IconTile icon={ShieldCheck} tone={trusted ? "brand" : "neutral"} size="sm" />}
+      title={t("userDetail.cardTrustTitle")}
+      description={label(trusted)}
+      action={
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setIdempotencyKey(newIdempotencyKey());
+            setConfirmOpen(true);
+          }}
+        >
+          <Pencil aria-hidden="true" /> {actionLabel}
+        </Button>
+      }
+    >
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
@@ -245,8 +276,8 @@ function CardPaymentsTrustCard({ user, adminId }: { user: UserDetailV2; adminId:
         details={
           <DescriptionList
             items={[
-              { label: t("userDetail.cardTrustFrom"), value: label(trusted) },
-              { label: t("userDetail.cardTrustTo"), value: label(!trusted) },
+              { label: t("userDetail.cardTrustFrom"), value: thaiCopy(label(trusted)) },
+              { label: t("userDetail.cardTrustTo"), value: thaiCopy(label(!trusted)) },
             ]}
           />
         }
@@ -256,7 +287,7 @@ function CardPaymentsTrustCard({ user, adminId }: { user: UserDetailV2; adminId:
           invalidateUser(adminId, user.id);
         }}
       />
-    </Card>
+    </SettingCard>
   );
 }
 
@@ -281,45 +312,63 @@ function FieldCard({
   const doc = documentFor(user, field);
   const data = fieldData(user, field);
   const isPending = status === "PENDING";
-  const tone = status === "VERIFIED" ? "brand" : status === "REJECTED" ? "red" : isPending ? "amber" : "neutral";
+  const titleId = `verify-${field}-title`;
 
   return (
-    <Card padding="md" className="flex flex-col">
-      <CardHeader
-        icon={<IconTile icon={Icon} tone={tone} size="sm" />}
-        title={fieldLabel(field, user)}
-        description={
-          status === "UNVERIFIED"
-            ? t("userDetail.fieldNotSubmitted")
-            : item?.updatedAt
-              ? t("userDetail.fieldSubmittedAt", { date: formatThaiDateTime(item.updatedAt) })
-              : undefined
-        }
-        action={<AdminStatusChip domain="verification" status={status} />}
-      />
+    <article
+      aria-labelledby={titleId}
+      className={cn(
+        // A size container: the submitted data goes two-up only when the card itself is wide.
+        "card @container/card flex min-w-0 flex-col overflow-hidden",
+        // Waiting for review: warning rim + a 3px leading edge (the chip carries the word).
+        isPending && "border-warning-border shadow-[inset_3px_0_0_var(--warning-solid),var(--shadow-card)]",
+      )}
+    >
+      <div className="flex items-start gap-3 px-4 pt-4">
+        <IconTile icon={Icon} tone={fieldStatusTone(status)} size="sm" />
+        <div className="min-w-0 flex-1">
+          <h2 id={titleId} className="text-[0.9375rem] leading-[1.45] font-semibold text-fg">
+            {keepThaiWords(fieldLabel(field, user))}
+          </h2>
+          {status === "UNVERIFIED" ? (
+            <p className="text-[0.8125rem] leading-[1.6] text-fg-muted">{thaiCopy(t("userDetail.fieldNotSubmitted"))}</p>
+          ) : item?.updatedAt ? (
+            <p className="text-[0.8125rem] leading-[1.6] text-fg-muted tabular">
+              {t("userDetail.fieldSubmittedAt", { date: formatThaiDateTime(item.updatedAt) })}
+            </p>
+          ) : null}
+        </div>
+        <AdminStatusChip domain="verification" status={status} />
+      </div>
 
-      <div className="flex flex-1 flex-col gap-3">
+      <div className="flex flex-1 flex-col gap-3 p-4">
         {doc ? (
           doc.url ? (
             <button
               type="button"
               onClick={() => onView(doc.url!, fieldLabel(field, user))}
-              className="group relative flex h-40 items-center justify-center overflow-hidden rounded-lg border border-hairline bg-surface-muted outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
+              aria-label={`${t("userDetail.viewDocument")}: ${fieldLabel(field, user)}`}
+              className="group relative flex h-44 w-full items-center justify-center overflow-hidden rounded-lg border border-hairline bg-surface-muted"
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary document URL */}
-              <img src={doc.url} alt="" className="max-h-full max-w-full object-contain" />
-              <span className="absolute inset-x-2 bottom-2 inline-flex items-center justify-center gap-1.5 rounded-md bg-surface/90 px-2 py-1 text-[0.8125rem] font-medium text-fg shadow-card">
+              <img src={doc.url} alt="" loading="lazy" decoding="async" className="max-h-full max-w-full object-contain" />
+              <span className="absolute right-2 bottom-2 inline-flex items-center gap-1.5 rounded-(--radius-ctl) border border-clay-rim bg-surface px-2.5 py-1 text-[0.8125rem] font-medium text-fg shadow-card group-hover:bg-row-hover">
                 <FileImage aria-hidden="true" className="size-4" /> {t("userDetail.viewDocument")}
               </span>
             </button>
           ) : (
-            <p className="flex h-16 items-center justify-center rounded-lg border border-dashed border-hairline text-[0.8125rem] text-fg-muted">
+            <p className="flex h-16 items-center justify-center gap-2 rounded-lg bg-surface-muted px-3 text-center text-[0.8125rem] text-fg-muted">
+              <FileImage aria-hidden="true" className="size-4 shrink-0" />
               {doc.has ? t("userDetail.documentHidden") : t("userDetail.documentMissing")}
             </p>
           )
         ) : null}
 
-        {data.length ? <DescriptionList items={data} /> : null}
+        {/*
+          Two cards share a row at 1024 and 1440 (about 350px each): there a two-column list
+          splits Thai labels and dates mid-phrase, so it stays one column below a 32rem card.
+        */}
+        {data.length ? <DescriptionList items={data} columns={1} className="@lg/card:grid-cols-2" /> : null}
 
         {status === "REJECTED" && item?.comment ? (
           <Notice tone="danger" title={t("userDetail.fieldRejectReason")}>
@@ -327,21 +376,24 @@ function FieldCard({
           </Notice>
         ) : null}
         {item?.reviewedAt ? (
-          <p className="text-[0.8125rem] text-fg-muted">{t("userDetail.fieldReviewedAt", { date: formatThaiDateTime(item.reviewedAt) })}</p>
+          <p className="mt-auto inline-flex items-center gap-1.5 text-[0.8125rem] text-fg-muted tabular">
+            <CheckCircle2 aria-hidden="true" className="size-4 shrink-0" />
+            {t("userDetail.fieldReviewedAt", { date: formatThaiDateTime(item.reviewedAt) })}
+          </p>
         ) : null}
       </div>
 
       {canReview && isPending ? (
-        <div className="mt-4 flex gap-2 border-t border-hairline pt-4">
+        <div className="flex gap-2 border-t border-hairline px-4 py-3 sm:justify-end">
           <Button variant="outline" size="sm" className="flex-1 sm:flex-none" onClick={onReject}>
             <XCircle aria-hidden="true" /> {t("userDetail.rejectAction")}
           </Button>
-          <Button size="sm" className="flex-1 sm:flex-none" onClick={onApprove}>
+          <Button variant="soft" size="sm" className="flex-1 sm:flex-none" onClick={onApprove}>
             <CheckCircle2 aria-hidden="true" /> {t("userDetail.approveAction")}
           </Button>
         </div>
       ) : null}
-    </Card>
+    </article>
   );
 }
 
@@ -365,25 +417,27 @@ function OmiseRecipientCard({ user, adminId }: { user: UserDetailV2; adminId: st
   };
 
   return (
-    <Card padding="md">
-      <CardHeader
-        title={t("userDetail.omiseTitle")}
-        description={current ? undefined : t("userDetail.omiseNone")}
-        action={
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setValue(current ?? "");
-              setError(null);
-              setSheetOpen(true);
-            }}
-          >
-            <Pencil aria-hidden="true" /> {t("userDetail.omiseEdit")}
-          </Button>
-        }
-      />
-      {current ? <p className="font-mono text-sm break-all text-fg">{current}</p> : null}
+    <SettingCard
+      icon={<IconTile icon={Wallet} tone={current ? "brand" : "neutral"} size="sm" />}
+      title={t("userDetail.omiseTitle")}
+      description={current ? undefined : t("userDetail.omiseNone")}
+      action={
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setValue(current ?? "");
+            setError(null);
+            setSheetOpen(true);
+          }}
+        >
+          <Pencil aria-hidden="true" /> {t("userDetail.omiseEdit")}
+        </Button>
+      }
+    >
+      {current ? (
+        <p className="ml-11 rounded-lg bg-surface-muted px-3 py-2 font-mono text-[0.8125rem] break-all text-fg">{current}</p>
+      ) : null}
 
       <Sheet
         open={sheetOpen}
@@ -392,7 +446,7 @@ function OmiseRecipientCard({ user, adminId }: { user: UserDetailV2; adminId: st
         description={t("userDetail.omiseSheetDescription")}
         footer={
           <div className="flex w-full justify-end gap-2">
-            <Button variant="ghost" onClick={() => setSheetOpen(false)}>
+            <Button variant="outline" onClick={() => setSheetOpen(false)}>
               {t("shell.cancel")}
             </Button>
             <Button onClick={review}>{t("userDetail.reviewAndConfirm")}</Button>
@@ -435,7 +489,7 @@ function OmiseRecipientCard({ user, adminId }: { user: UserDetailV2; adminId: st
           invalidateUser(adminId, user.id);
         }}
       />
-    </Card>
+    </SettingCard>
   );
 }
 
@@ -456,6 +510,12 @@ export default function UserVerificationTab() {
   const anonymized = user.accountStatus === "ANONYMIZED";
   const canReview = isAdmin && !anonymized;
   const name = displayName(user);
+  const fields = visibleFields(user);
+  // Fields waiting for review first: they are what the reviewer came for.
+  const reviewOrder = [...fields].sort(
+    (a, b) =>
+      Number(user.settings.verification?.[b]?.status === "PENDING") - Number(user.settings.verification?.[a]?.status === "PENDING"),
+  );
 
   const openDialog = (next: DialogState) => {
     setIdempotencyKey(newIdempotencyKey());
@@ -490,45 +550,71 @@ export default function UserVerificationTab() {
           <p className="mt-1">{t("userDetail.expiryWarningBody")}</p>
         </Notice>
       ) : null}
-      <Card padding="md" tone={pending.length ? "warning" : "default"}>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {/* Review summary: overall status, how many fields sit in each state, and the page's one primary action. */}
+      <div
+        className={cn(
+          "card flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between md:p-5",
+          pending.length > 0 && "border-warning-border shadow-[inset_3px_0_0_var(--warning-solid),var(--shadow-card)]",
+        )}
+      >
+        <div className="flex min-w-0 items-start gap-3">
+          <IconTile icon={pending.length ? FileSearch : ShieldCheck} tone={pending.length ? "amber" : fieldStatusTone(user.verificationStatus)} size="md" />
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-fg">
-              {t("userDetail.verificationOverall")}: <AdminStatusChip domain="verification" status={user.verificationStatus} className="ml-1" />
+            <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.9375rem] leading-[1.45] font-semibold text-fg">
+              {t("userDetail.verificationOverall")}: <AdminStatusChip domain="verification" status={user.verificationStatus} size="md" />
             </p>
-            <p className="mt-1 text-[0.8125rem] text-fg-muted">
-              {isAdmin ? t("userDetail.verificationIntro") : t("userDetail.readOnlyChecker")}
+            <p className="mt-1 text-[0.8125rem] leading-[1.6] text-pretty text-fg-muted">
+              {thaiCopy(isAdmin ? t("userDetail.verificationIntro") : t("userDetail.readOnlyChecker"))}
             </p>
+            <ul className="mt-2.5 flex flex-wrap gap-1.5">
+              {(["PENDING", "REJECTED", "UNVERIFIED", "VERIFIED"] as const).map((state) => {
+                const count = fields.filter((field) => (user.settings.verification?.[field]?.status ?? "UNVERIFIED") === state).length;
+                if (!count) return null;
+                const meta = statusMeta("verification", state);
+                return (
+                  <li key={state}>
+                    <Chip tone={meta.tone}>
+                      {statusLabel("verification", state)} <span className="font-semibold tabular">{count}</span>
+                    </Chip>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-          {canReview && pending.length > 0 ? (
-            <Button className="w-full sm:w-auto" onClick={() => openDialog({ mode: "approveAll", fields: pending })}>
-              <CheckCircle2 aria-hidden="true" /> {t("userDetail.approveSubmitted", { count: pending.length })}
-            </Button>
-          ) : null}
         </div>
-      </Card>
+        {canReview && pending.length > 0 ? (
+          <Button className="w-full shrink-0 md:w-auto" onClick={() => openDialog({ mode: "approveAll", fields: pending })}>
+            <CheckCircle2 aria-hidden="true" /> {t("userDetail.approveSubmitted", { count: pending.length })}
+          </Button>
+        ) : null}
+      </div>
 
-      <Section>
-        <Grid cols={2}>
-          {visibleFields(user).map((field) => (
-            <FieldCard
-              key={field}
-              user={user}
-              field={field}
-              canReview={canReview}
-              onView={(url, title) => setViewer({ url, title })}
-              onApprove={() => openDialog({ mode: "approve", field })}
-              onReject={() => openDialog({ mode: "reject", field })}
-            />
-          ))}
-        </Grid>
-      </Section>
+      {/* Two columns from 1280: the documents, then the payout settings rail (patterns.md A3). */}
+      <div className={cn("grid grid-cols-1 items-start gap-5", !anonymized && "xl:grid-cols-[minmax(0,1fr)_22rem]")}>
+        <div className="@container min-w-0">
+          <div className="grid grid-cols-1 gap-4 @2xl:grid-cols-2">
+            {reviewOrder.map((field) => (
+              <FieldCard
+                key={field}
+                user={user}
+                field={field}
+                canReview={canReview}
+                onView={(url, title) => setViewer({ url, title })}
+                onApprove={() => openDialog({ mode: "approve", field })}
+                onReject={() => openDialog({ mode: "reject", field })}
+              />
+            ))}
+          </div>
+        </div>
 
-      {!anonymized ? <TaxResidencyCard user={user} adminId={me.userId} canEdit={isAdmin} /> : null}
-
-      {isAdmin && !anonymized ? <OmiseRecipientCard user={user} adminId={me.userId} /> : null}
-
-      {isAdmin && !anonymized ? <CardPaymentsTrustCard user={user} adminId={me.userId} /> : null}
+        {!anonymized ? (
+          <div className="flex min-w-0 flex-col gap-4">
+            <TaxResidencyCard user={user} adminId={me.userId} canEdit={isAdmin} />
+            {isAdmin ? <OmiseRecipientCard user={user} adminId={me.userId} /> : null}
+            {isAdmin ? <CardPaymentsTrustCard user={user} adminId={me.userId} /> : null}
+          </div>
+        ) : null}
+      </div>
 
       <DocumentViewer open={viewer !== null} onOpenChange={(open) => !open && setViewer(null)} title={viewer?.title ?? ""} url={viewer?.url ?? null} />
 

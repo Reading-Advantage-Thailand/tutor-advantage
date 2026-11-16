@@ -8,25 +8,33 @@ export function EnrollAppBar() {
 
 /**
  * Loading state for /enroll (Suspense fallback, route loading.tsx, LIFF
- * start-up and the details request): hero, details list, bottom bar.
+ * start-up and the details request), shaped like the confirm step: class
+ * hero, details list, seats card, student row, bottom bar.
  */
 export function EnrollSkeleton({ label }: { label?: string }) {
   return (
     <Screen>
       <EnrollAppBar />
       <LoadingAnnouncement label={label} />
-      <div className="flex flex-col gap-4 px-4 pt-2 pb-6" aria-hidden="true">
-        <div className="rounded-[var(--radius-card)] bg-fill-muted p-5">
-          <Skeleton className="h-[30px] w-28 rounded-full" />
-          <Skeleton className="mt-4 h-6 w-3/4 rounded-full" />
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-2 pb-6" aria-hidden="true">
+        <div className="rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface-muted p-5">
+          <Skeleton className="h-8 w-32 rounded-full" />
+          <Skeleton className="mt-4 h-7 w-3/4 rounded-full" />
           <div className="mt-3 flex gap-2">
-            <Skeleton className="h-[30px] w-20 rounded-full" />
-            <Skeleton className="h-[30px] w-16 rounded-full" />
+            <Skeleton className="h-8 w-24 rounded-full" />
+            <Skeleton className="h-8 w-16 rounded-full" />
           </div>
         </div>
         <ListGroup>
           <ListRowSkeleton count={4} />
         </ListGroup>
+        <div className="rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface p-[18px] shadow-[var(--shadow-card)]">
+          <div className="flex justify-between">
+            <Skeleton className="h-3.5 w-24 rounded-full" />
+            <Skeleton className="h-4 w-14 rounded-full" />
+          </div>
+          <Skeleton className="mt-3 h-3 w-full rounded-full" />
+        </div>
         <ListGroup>
           <ListRowSkeleton count={1} />
         </ListGroup>
@@ -34,9 +42,9 @@ export function EnrollSkeleton({ label }: { label?: string }) {
       <BottomActionBar>
         <div className="flex flex-col gap-1.5">
           <Skeleton className="h-3 w-12 rounded-full" />
-          <Skeleton className="h-6 w-20 rounded-full" />
+          <Skeleton className="h-7 w-20 rounded-full" />
         </div>
-        <Skeleton className="h-[52px] flex-1 rounded-2xl" />
+        <Skeleton className="h-14 flex-1 rounded-[20px]" />
       </BottomActionBar>
     </Screen>
   );

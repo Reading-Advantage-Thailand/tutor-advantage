@@ -6,6 +6,7 @@ import {
   Bell,
   BookOpen,
   Calendar,
+  Copy,
   CreditCard,
   ExternalLink,
   FileText,
@@ -14,8 +15,11 @@ import {
   Lock,
   LogOut,
   MessageCircle,
+  Monitor,
+  Moon,
   Palette,
   ShieldCheck,
+  Sun,
   Users,
   Volume2,
 } from "lucide-react";
@@ -29,24 +33,37 @@ import {
   PageHeader,
   Screen,
   SegmentedControl,
+  type SegmentedControlItem,
   Skeleton,
-  Surface,
   SwitchRow,
-  UserAvatar,
 } from "@/components/mobile";
 import { useLiff, type LiffProfile } from "@/components/providers/LiffProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { Button } from "@/components/ui/button";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatLevelLabel, getPrimaryClass, type DashboardSummary } from "@/lib/enrollmentStatus";
 import { t } from "@/lib/i18n";
+import { keepThaiWords } from "@/lib/thaiText";
 import { dashboardResourceKey, fetchDashboardSummary } from "@/lib/resourceKeys";
 import { copyTextToClipboard } from "../dashboard/_components/clipboard";
 import { businessContact } from "@/lib/businessContact";
 import { LiffErrorState } from "../dashboard/_components/LiffErrorState";
+import { ProfileHero } from "./_components/ProfileHero";
 import { ProfileSkeleton } from "./_components/ProfileSkeleton";
 import { useNotificationSound } from "./_components/useNotificationSound";
 
 type ThemeChoice = "light" | "dark" | "system";
+
+/** Thai text: keeps the phrase after the last space on one line ("ไว้ส่งให้ทีมงาน", never "ทีม / งาน"). */
+function NoBreakTail({ text }: { text: string }) {
+  const cut = text.lastIndexOf(" ");
+  if (cut <= 0) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, cut)} <span className="whitespace-nowrap">{text.slice(cut + 1)}</span>
+    </>
+  );
+}
 
 export default function ProfilePage() {
   const { isReady, profile: liffProfile, logout } = useLiff();
@@ -75,7 +92,9 @@ export default function ProfilePage() {
     return (
       <Screen>
         <PageHeader title={t("profile.title")} />
-        <LiffErrorState className="flex-1 justify-center" />
+        <div className="px-4 pt-2 pb-6">
+          <LiffErrorState card />
+        </div>
       </Screen>
     );
   }
@@ -102,118 +121,133 @@ export default function ProfilePage() {
     logout();
   };
 
-  const themeItems: { value: ThemeChoice; label: string }[] = [
-    { value: "light", label: t("profile.themeLight") },
-    { value: "dark", label: t("profile.themeDark") },
-    { value: "system", label: t("profile.themeSystem") },
+  // ThemeSegmented (components.md §8): icon + word; the icons show only when a
+  // segment has room, so "ตามระบบ" never truncates.
+  const themeItems: SegmentedControlItem<ThemeChoice>[] = [
+    { value: "light", label: t("profile.themeLight"), icon: Sun },
+    { value: "dark", label: t("profile.themeDark"), icon: Moon },
+    { value: "system", label: t("profile.themeSystem"), icon: Monitor },
   ];
+
+  // Chips on the hero: the CEFR level keeps its band colour (with a hero ring);
+  // a book without a level uses the paper chip.
+  const level = levelLoading ? (
+    <Skeleton className="h-8 w-40 rounded-full" />
+  ) : levelLabel ? (
+    primaryClass?.seriesCefr ? (
+      <LevelChip cefr={primaryClass.seriesCefr} size="md" className="ring-[1.5px] ring-hero-ring">
+        {levelLabel}
+      </LevelChip>
+    ) : (
+      <Chip tone="paper" size="md" icon={BookOpen}>
+        {levelLabel}
+      </Chip>
+    )
+  ) : null;
 
   return (
     <Screen>
-      <PageHeader title={t("profile.title")} />
+      <ProfileHero name={name} pictureUrl={profile.pictureUrl} level={level} />
 
-      <div className="flex flex-col gap-6 px-4 pb-6">
-        <Surface padding="lg" className="flex items-center gap-4">
-          <UserAvatar src={profile.pictureUrl} name={name} size="xl" decorative />
-          <div className="min-w-0 flex-1">
-            <h2 className="truncate text-xl leading-[1.4] font-extrabold text-fg">{name}</h2>
-            {levelLoading ? (
-              <Skeleton className="mt-2 h-[30px] w-40 rounded-full" />
-            ) : levelLabel ? (
-              primaryClass?.seriesCefr ? (
-                <LevelChip cefr={primaryClass.seriesCefr} size="md" className="mt-2">
-                  {levelLabel}
-                </LevelChip>
-              ) : (
-                <Chip tone="brand" size="md" icon={BookOpen} className="mt-2">
-                  {levelLabel}
-                </Chip>
-              )
-            ) : null}
+      <div className="flex flex-col gap-6 px-4 pt-5 pb-6">
+        {/* Phones and small tablets: one column. ≥ 768 (the full app column): two columns of groups. */}
+        <div className="grid gap-6 md:grid-cols-2 md:items-start">
+          <div className="flex min-w-0 flex-col gap-6">
+            <ListGroup header={t("profile.learning")}>
+              <ListRow href="/classes" leading={<IconTile icon={BookOpen} tone="brand" size="sm" />} title={t("profile.myClasses")} />
+              <ListRow
+                href="/payment/history"
+                leading={<IconTile icon={CreditCard} tone="amber" size="sm" />}
+                title={t("profile.paymentHistory")}
+              />
+              <ListRow href="/schedule" leading={<IconTile icon={Calendar} tone="purple" size="sm" />} title={t("profile.schedule")} />
+            </ListGroup>
+
+            <ListGroup header={t("profile.account")}>
+              <ListRow href="/guardian" leading={<IconTile icon={Users} tone="teal" size="sm" />} title={t("profile.guardian")} />
+              <ListRow href="/consent" leading={<IconTile icon={ShieldCheck} tone="teal" size="sm" />} title={t("profile.consent")} />
+              <ListRow
+                onClick={() => void copyUserId()}
+                leading={<IconTile icon={IdCard} tone="neutral" size="sm" />}
+                title={
+                  <span className="flex flex-wrap items-center gap-x-2">
+                    {t("profile.userId")}
+                    <span className="rounded-full bg-surface-muted px-2 font-mono text-xs leading-[1.6] font-normal text-fg-muted">
+                      {shortUserId}
+                    </span>
+                  </span>
+                }
+                subtitle={<NoBreakTail text={t("profile.userIdSub")} />}
+                trailing={<Copy aria-hidden="true" className="size-5 text-fg-subtle" />}
+              />
+            </ListGroup>
           </div>
-        </Surface>
 
-        <ListGroup header={t("profile.learning")}>
-          <ListRow href="/classes" leading={<IconTile icon={BookOpen} tone="brand" />} title={t("profile.myClasses")} />
-          <ListRow
-            href="/payment/history"
-            leading={<IconTile icon={CreditCard} tone="amber" />}
-            title={t("profile.paymentHistory")}
-          />
-          <ListRow href="/schedule" leading={<IconTile icon={Calendar} tone="purple" />} title={t("profile.schedule")} />
-        </ListGroup>
+          <div className="flex min-w-0 flex-col gap-6">
+            <ListGroup header={t("profile.appSettings")}>
+              <ListRow href="/notifications" leading={<IconTile icon={Bell} tone="pink" size="sm" />} title={t("profile.notifications")} />
+              <SwitchRow
+                leading={<IconTile icon={Volume2} tone="pink" size="sm" />}
+                title={t("profile.notificationSound")}
+                subtitle={<span className="block text-balance">{keepThaiWords(t("profile.notificationSoundSub"))}</span>}
+                checked={soundOn}
+                onCheckedChange={(checked) => setSoundOn(checked)}
+              />
+              <div className="list-row px-4 pt-3 pb-4" data-leading="">
+                <div className="flex min-h-10 items-center gap-3.5">
+                  <IconTile icon={Palette} tone="orange" size="sm" />
+                  <span className="text-base leading-[1.5] font-semibold text-fg">{t("profile.theme")}</span>
+                </div>
+                <SegmentedControl<ThemeChoice>
+                  items={themeItems}
+                  value={theme}
+                  onChange={setTheme}
+                  aria-label={t("profile.themeAria")}
+                  size="compact"
+                  // 8px wider than the row text, so "ตามระบบ" fits whole at 320.
+                  className="-mx-2 mt-3 w-[calc(100%+16px)]"
+                />
+              </div>
+            </ListGroup>
 
-        <ListGroup header={t("profile.appSettings")}>
-          <div className="list-row px-4 py-3" data-leading="">
-            <div className="flex items-center gap-3">
-              <IconTile icon={Palette} tone="orange" />
-              <span className="text-[15px] leading-[1.5] font-semibold text-fg">
-                {t("profile.theme")}
-              </span>
-            </div>
-            <SegmentedControl<ThemeChoice>
-              items={themeItems}
-              value={theme}
-              onChange={setTheme}
-              aria-label={t("profile.themeAria")}
-              className="mt-3"
-            />
+            <ListGroup header={t("profile.help")}>
+              <ListRow
+                href="/support"
+                leading={<IconTile icon={LifeBuoy} tone="blue" size="sm" />}
+                title={t("profile.myRequests")}
+                subtitle={<span className="block text-balance">{t("profile.myRequestsSub")}</span>}
+              />
+              <ListRow
+                href={businessContact.lineUrl}
+                chevron={false}
+                leading={<IconTile icon={MessageCircle} tone="blue" size="sm" />}
+                title={t("profile.contactTeam")}
+                subtitle={<span className="block text-balance">{t("profile.contactTeamSub")}</span>}
+                trailing={<ExternalLink aria-hidden="true" className="size-5 text-fg-subtle" />}
+              />
+              <ListRow href="/terms" leading={<IconTile icon={FileText} tone="neutral" size="sm" />} title={t("profile.terms")} />
+              <ListRow href="/privacy" leading={<IconTile icon={Lock} tone="neutral" size="sm" />} title={t("profile.privacy")} />
+            </ListGroup>
           </div>
-          <SwitchRow
-            leading={<IconTile icon={Volume2} tone="pink" />}
-            title={t("profile.notificationSound")}
-            subtitle={t("profile.notificationSoundSub")}
-            checked={soundOn}
-            onCheckedChange={(checked) => setSoundOn(checked)}
-          />
-        </ListGroup>
+        </div>
 
-        <ListGroup header={t("profile.account")}>
-          <ListRow href="/notifications" leading={<IconTile icon={Bell} tone="pink" />} title={t("profile.notifications")} />
-          <ListRow href="/consent" leading={<IconTile icon={ShieldCheck} tone="teal" />} title={t("profile.consent")} />
-          <ListRow href="/guardian" leading={<IconTile icon={Users} tone="teal" />} title={t("profile.guardian")} />
-        </ListGroup>
-
-        <ListGroup header={t("profile.help")}>
-          <ListRow
-            href="/support"
-            leading={<IconTile icon={LifeBuoy} tone="blue" />}
-            title={t("profile.myRequests")}
-            subtitle={t("profile.myRequestsSub")}
-          />
-          <ListRow
-            href={businessContact.lineUrl}
-            chevron={false}
-            leading={<IconTile icon={MessageCircle} tone="blue" />}
-            title={t("profile.contactTeam")}
-            subtitle={t("profile.contactTeamSub")}
-            trailing={<ExternalLink aria-hidden="true" className="size-4 text-fg-subtle" />}
-          />
-          <ListRow href="/terms" leading={<IconTile icon={FileText} tone="neutral" />} title={t("profile.terms")} />
-          <ListRow href="/privacy" leading={<IconTile icon={Lock} tone="neutral" />} title={t("profile.privacy")} />
-          <ListRow
-            onClick={() => void copyUserId()}
-            leading={<IconTile icon={IdCard} tone="neutral" />}
-            title={t("profile.userId")}
-            subtitle={t("profile.userIdSub")}
-            trailing={<span className="font-mono text-xs">{shortUserId}</span>}
-          />
-        </ListGroup>
-
-        <ListGroup>
-          <ListRow
+        {/* The destructive action stands apart: a danger ghost, not a row among the links. */}
+        <div className="flex flex-col items-center gap-3 pt-2">
+          <Button
+            variant="ghost"
+            size="touch"
+            className="w-full max-w-[360px] text-danger-fg hover:text-danger-fg"
             onClick={() => setConfirmLogout(true)}
-            leading={<IconTile icon={LogOut} tone="red" />}
-            title={t("profile.logout")}
-            destructive
-          />
-        </ListGroup>
-
-        <p className="px-4 text-center text-xs leading-[1.6] text-fg-muted">
-          {t("profile.footer")}
-          <br />
-          {t("profile.compliance")}
-        </p>
+          >
+            <LogOut aria-hidden="true" />
+            {t("profile.logout")}
+          </Button>
+          <p className="text-center text-xs leading-[1.6] text-fg-muted">
+            {t("profile.footer")}
+            <br />
+            {t("profile.compliance")}
+          </p>
+        </div>
       </div>
 
       <ConfirmSheet

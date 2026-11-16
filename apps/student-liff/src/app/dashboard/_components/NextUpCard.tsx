@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { CalendarClock, CreditCard, Play, Video } from "lucide-react";
+import { BookOpenText, CreditCard, Play, Video } from "lucide-react";
 import { Chip, IconTile, ProgressBar } from "@/components/mobile";
 import { buttonVariants } from "@/components/ui/button";
-import { noOrphan } from "@/lib/format";
+import { keepTimesTogether, noOrphan } from "@/lib/format";
 import { buildEnrollmentHref, hasNextSession, type Enrollment } from "@/lib/enrollmentStatus";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -11,8 +11,9 @@ import type { NextUpKind } from "./dashboardModel";
 /** Self-study continues on the Progress tab (current lesson + "เรียนต่อ"). */
 const CONTINUE_HREF = "/progress";
 
+/** A container card (rim + soft shadow, no ledge): only its button is tappable. */
 const cardClass =
-  "rounded-[var(--radius-card)] border bg-surface p-4 shadow-[var(--shadow-card)]";
+  "rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface px-[18px] pt-[18px] pb-5 shadow-[var(--shadow-card)]";
 
 export interface NextUpCardProps {
   enrollment: Enrollment;
@@ -21,26 +22,48 @@ export interface NextUpCardProps {
   needsPayment: boolean;
 }
 
+/** "เรียนไปแล้ว" + percentage (reading face, tabular) above the 12px bar. */
+function ProgressRow({ progress }: { progress: number }) {
+  return (
+    <>
+      <div className="mt-4 mb-2 flex items-baseline justify-between gap-3">
+        <span className="t-body-s text-fg-muted">{t("dashboard.progressLabel")}</span>
+        <span className="text-sm leading-[1.4] font-semibold text-brand-fg tabular-nums">{progress}%</span>
+      </div>
+      <ProgressBar value={progress} label={t("dashboard.progressLabel")} />
+    </>
+  );
+}
+
 /**
- * Home's one primary action. Live → big "เข้าห้องเรียนเลย" (the class lobby,
- * or checkout when unpaid). Otherwise → the next session and "ทำบทเรียนต่อ".
+ * Home's one primary action (patterns.md S1.2): book tile, "คาบถัดไป · …",
+ * the class name, the tutor, progress and the primary lg button. Live → the
+ * live chip and "เข้าห้องเรียนเลย" (the class lobby, or checkout when unpaid).
+ * Otherwise → "ทำบทเรียนต่อ".
  */
 export function NextUpCard({ enrollment, kind, needsPayment }: NextUpCardProps) {
   const tutorLine = `${t("dashboard.tutorPrefix")} ${enrollment.tutorName}`;
+  const progress = Math.round(enrollment.progress || 0);
 
   if (kind === "live") {
     return (
-      <section aria-labelledby="next-up-live" className={cn(cardClass, "border-danger-border")}>
-        <Chip tone="danger" size="md" dot>
-          {t("dashboard.liveNow")}
-        </Chip>
-        <h2 id="next-up-live" className="mt-3 line-clamp-2 text-lg leading-[1.45] font-bold text-balance text-fg">
-          {noOrphan(enrollment.name)}
-        </h2>
-        <p className="mt-0.5 truncate text-sm leading-[1.5] text-fg-muted">{tutorLine}</p>
+      <section aria-labelledby="next-up-live" className={cardClass}>
+        <div className="flex items-center gap-3.5">
+          <IconTile icon={BookOpenText} tone="brand" size="lg" />
+          <div className="min-w-0 flex-1">
+            <Chip tone="danger" size="sm" dot>
+              {t("dashboard.liveNow")}
+            </Chip>
+            <h2 id="next-up-live" className="t-title-l mt-1 line-clamp-2 text-balance text-fg">
+              {noOrphan(enrollment.name)}
+            </h2>
+            <p className="t-body-s truncate text-fg-muted">{tutorLine}</p>
+          </div>
+        </div>
+        <ProgressRow progress={progress} />
         <Link
           href={buildEnrollmentHref(enrollment)}
-          className={cn(buttonVariants({ variant: needsPayment ? "warning" : "brand", size: "cta" }), "mt-4 w-full")}
+          className={cn(buttonVariants({ variant: needsPayment ? "warning" : "brand", size: "cta-lg" }), "mt-[18px] w-full")}
         >
           {needsPayment ? <CreditCard aria-hidden="true" /> : <Video aria-hidden="true" />}
           {needsPayment ? t("dashboard.pendingPaymentCta") : t("dashboard.joinLiveCta")}
@@ -49,32 +72,24 @@ export function NextUpCard({ enrollment, kind, needsPayment }: NextUpCardProps) 
     );
   }
 
-  const progress = Math.round(enrollment.progress || 0);
-
   return (
-    <section aria-labelledby="next-up-session" className={cn(cardClass, "border-hairline")}>
-      <div className="flex items-center gap-3">
-        <IconTile icon={CalendarClock} tone="purple" />
+    <section aria-labelledby="next-up-session" className={cardClass}>
+      <div className="flex items-center gap-3.5">
+        <IconTile icon={BookOpenText} tone="brand" size="lg" />
         <div className="min-w-0 flex-1">
-          <p className="text-[13px] leading-[1.5] font-medium text-fg-muted">{t("dashboard.nextLesson")}</p>
-          <h2 id="next-up-session" className="line-clamp-2 text-base leading-[1.5] font-bold text-fg">
-            {hasNextSession(enrollment) ? enrollment.nextSession : t("dashboard.noNextSession")}
+          {/* Three lines: on a 320px phone a two-day schedule plus its time range needs a third
+              line, and the time is the part of this line that must never be cut. */}
+          <p className="t-body-s line-clamp-3 text-fg-muted">
+            {t("dashboard.nextLesson")} · {hasNextSession(enrollment) ? keepTimesTogether(enrollment.nextSession) : t("dashboard.noNextSession")}
+          </p>
+          <h2 id="next-up-session" className="t-title-l line-clamp-2 text-balance text-fg">
+            {noOrphan(enrollment.name)}
           </h2>
+          <p className="t-body-s truncate text-fg-muted">{tutorLine}</p>
         </div>
       </div>
-
-      <div className="mt-4 rounded-2xl bg-app p-3">
-        <p className="line-clamp-2 text-[15px] leading-[1.5] font-semibold text-balance text-fg">{noOrphan(enrollment.name)}</p>
-        <p className="truncate text-[13px] leading-[1.5] text-fg-muted">{tutorLine}</p>
-        <div className="mt-2.5 flex items-center gap-3">
-          <ProgressBar value={progress} size="sm" label={t("dashboard.progressLabel")} className="flex-1" />
-          <span className="shrink-0 text-[13px] leading-[1.5] font-semibold text-brand-fg tabular-nums">
-            {t("dashboard.progressLabel")} {progress}%
-          </span>
-        </div>
-      </div>
-
-      <Link href={CONTINUE_HREF} className={cn(buttonVariants({ variant: "brand", size: "cta" }), "mt-4 w-full")}>
+      <ProgressRow progress={progress} />
+      <Link href={CONTINUE_HREF} className={cn(buttonVariants({ variant: "brand", size: "cta-lg" }), "mt-[18px] w-full")}>
         <Play aria-hidden="true" />
         {t("dashboard.continueCta")}
       </Link>

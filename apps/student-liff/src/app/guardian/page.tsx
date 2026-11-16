@@ -19,6 +19,7 @@ import { LiffErrorState } from "@/app/dashboard/_components/LiffErrorState";
 import { studentApi } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { t } from "@/lib/i18n";
+import { keepThaiWords } from "@/lib/thaiText";
 import { AgreementCheck, GuardianFaq, RelationPicker, StepCard } from "./_components/GuardianFormParts";
 import { GuardianSkeleton } from "./_components/GuardianSkeleton";
 import { getGuardianErrorKey, hasErrors, validateGuardianForm, type GuardianFormErrors } from "./_lib/form";
@@ -27,6 +28,21 @@ const FORM_ID = "guardian-form";
 const guardianConsentKey = (userId: string) => `${userId}:guardianConsent`;
 /** After saving, go back to Profile on our own after this long (as before). */
 const SUCCESS_REDIRECT_MS = 2000;
+
+/**
+ * Thai text: the phrase after the first space ("มีแค่ 3 ขั้นตอนสั้น ๆ") stays on
+ * one line, so the number never breaks away from its words. The sentence
+ * before it keeps its compounds whole ("ผู้ปกครอง", "ด้วยกัน").
+ */
+function KeepNumberPhrase({ text }: { text: string }) {
+  const cut = text.indexOf(" ");
+  if (cut <= 0) return <>{text}</>;
+  return (
+    <>
+      {keepThaiWords(text.slice(0, cut))} <span className="whitespace-nowrap">{text.slice(cut + 1)}</span>
+    </>
+  );
+}
 
 export default function GuardianPage() {
   const { isReady, profile, error: liffError } = useLiff();
@@ -99,7 +115,9 @@ export default function GuardianPage() {
     return (
       <Screen>
         <AppBar title={t("guardian.title")} back fallbackHref="/profile" />
-        <LiffErrorState />
+        <div className="px-4 pt-2 pb-6">
+          <LiffErrorState card />
+        </div>
       </Screen>
     );
   }
@@ -114,7 +132,7 @@ export default function GuardianPage() {
           title={t("guardian.savedTitle")}
           description={t("guardian.savedDescription")}
           primaryAction={
-            <Button variant="brand" size="cta" className="w-full" onClick={leave}>
+            <Button variant="brand" size="cta-lg" className="w-full" onClick={leave}>
               {t("guardian.backToProfile")}
             </Button>
           }
@@ -130,10 +148,11 @@ export default function GuardianPage() {
         <AppBar title={t("guardian.title")} back fallbackHref="/profile" />
         <StatusScreen
           icon={ShieldCheck}
+          mascot="calm"
           title={t("guardian.alreadyGivenTitle")}
           description={t("guardian.alreadyGivenDescription")}
           primaryAction={
-            <Button variant="brand" size="cta" className="w-full" onClick={goBack}>
+            <Button variant="brand" size="cta-lg" className="w-full" onClick={goBack}>
               {t("guardian.backToProfile")}
             </Button>
           }
@@ -146,16 +165,18 @@ export default function GuardianPage() {
     <Screen>
       <AppBar title={t("guardian.title")} back fallbackHref="/profile" />
 
-      <form id={FORM_ID} noValidate onSubmit={handleSubmit} className="flex flex-col gap-4 px-4 pt-2 pb-6">
-        <Surface tone="brand" className="flex items-start gap-3">
+      <form id={FORM_ID} noValidate onSubmit={handleSubmit} className="flex flex-col gap-4 px-4 pt-3 pb-6">
+        <Surface tone="brand" padding="lg" className="flex items-start gap-4">
           <IconTile icon={Users} tone="pink" size="lg" />
           <div className="min-w-0">
-            <p className="text-[15px] leading-[1.5] font-bold text-fg">{t("guardian.subtitle")}</p>
-            <p className="mt-0.5 text-sm leading-[1.6] text-fg-muted">{t("guardian.intro")}</p>
+            <h2 className="t-title text-balance text-brand-soft-fg">{t("guardian.subtitle")}</h2>
+            <p className="mt-1 text-[15px] leading-[1.65] text-brand-soft-fg">
+              <KeepNumberPhrase text={t("guardian.intro")} />
+            </p>
           </div>
         </Surface>
 
-        <StepCard step={1}>
+        <StepCard step={1} done={Boolean(guardianName.trim())}>
           <TextField
             ref={nameRef}
             label={t("guardian.nameLabel")}
@@ -172,7 +193,7 @@ export default function GuardianPage() {
           />
         </StepCard>
 
-        <StepCard step={2}>
+        <StepCard step={2} done={Boolean(relation)}>
           <RelationPicker
             value={relation}
             onChange={(value) => {
@@ -184,8 +205,8 @@ export default function GuardianPage() {
           />
         </StepCard>
 
-        <StepCard step={3}>
-          <p className="text-sm leading-[1.5] font-semibold text-fg">{t("guardian.confirmLabel")}</p>
+        <StepCard step={3} done={agreed}>
+          <p className="font-heading text-[15px] leading-[1.4] font-semibold text-fg">{t("guardian.confirmLabel")}</p>
           <AgreementCheck
             checked={agreed}
             onChange={(checked) => {
@@ -205,7 +226,7 @@ export default function GuardianPage() {
           type="submit"
           form={FORM_ID}
           variant="brand"
-          size="cta"
+          size="cta-lg"
           className="flex-1"
           loading={saving}
           disabled={!agreed}

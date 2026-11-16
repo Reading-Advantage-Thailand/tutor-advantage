@@ -14,7 +14,7 @@ export const LazyCheckbox = dynamic(() => import("@/components/ui/checkbox").the
   loading: () => (
     <span
       aria-hidden="true"
-      className="relative flex size-[18px] shrink-0 rounded-[5px] border border-field-border bg-surface"
+      className="relative flex size-5 shrink-0 rounded-[6px] border-2 border-field-border bg-surface"
     />
   ),
   ssr: false,

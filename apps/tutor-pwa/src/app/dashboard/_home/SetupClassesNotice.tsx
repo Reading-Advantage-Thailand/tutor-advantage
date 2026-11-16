@@ -28,7 +28,7 @@ export function SetupClassesNotice({ classes }: { classes: ClassNeedingSetup[] }
           <li key={cls.classId}>
             <Link
               href={classSetupHref(cls.classId)}
-              className="inline-flex items-start gap-1 rounded-md underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/40"
+              className="inline-flex items-start gap-1 rounded-md underline-offset-4 outline-none hover:underline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring"
             >
               <span className="min-w-0">{setupNoticeLine(cls)}</span>
               <ChevronRight aria-hidden="true" className="mt-0.5 size-4 shrink-0 opacity-70" />

@@ -35,7 +35,7 @@ export function RoleUpgradeBanner() {
           type="button"
           onClick={() => setVisible(false)}
           aria-label={t("shell.close")}
-          className="inline-flex size-7 items-center justify-center rounded-md opacity-70 hover:opacity-100"
+          className="relative inline-flex size-8 items-center justify-center rounded-(--radius-ctl-sm) opacity-70 hover:bg-press hover:opacity-100 pointer-coarse:after:absolute pointer-coarse:after:-inset-1.5"
         >
           <X aria-hidden="true" className="size-4" />
         </button>

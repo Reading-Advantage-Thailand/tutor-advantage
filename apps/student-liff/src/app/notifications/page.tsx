@@ -8,7 +8,9 @@ import { useLiff } from "@/components/providers/LiffProvider";
 import { LiffErrorState } from "@/app/dashboard/_components/LiffErrorState";
 import { studentApi } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
+import { noOrphan } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { keepThaiWords, thaiCopy } from "@/lib/thaiText";
 import { isNotificationSoundMuted, playNotificationSound, setNotificationSoundMuted } from "@/lib/sounds";
 import { NotificationsSkeleton } from "./_components/NotificationsSkeleton";
 import {
@@ -54,6 +56,15 @@ const LEARNING_TOGGLES: Array<{
   },
 ];
 
+/**
+ * Thai row text on narrow phones: balanced lines, and a short last word stays
+ * with the one before it ("15 นาที" never splits) and listed phrases stay
+ * whole ("และรางวัล", "คอร์สเรียนใหม่"). The row sets 1.6 between wrapped lines.
+ */
+function RowText({ text }: { text: string }) {
+  return <span className="block text-balance">{keepThaiWords(noOrphan(text, 4))}</span>;
+}
+
 export default function NotificationsPage() {
   const { isReady, profile, error: liffError } = useLiff();
   const userId = profile?.userId;
@@ -98,7 +109,9 @@ export default function NotificationsPage() {
     return (
       <Screen>
         <AppBar title={t("notifications.title")} back fallbackHref="/profile" />
-        <LiffErrorState />
+        <div className="px-4 pt-2 pb-6">
+          <LiffErrorState card />
+        </div>
       </Screen>
     );
   }
@@ -112,33 +125,29 @@ export default function NotificationsPage() {
       <AppBar title={t("notifications.title")} back fallbackHref="/profile" />
 
       <div className="flex flex-col gap-6 px-4 pt-2 pb-[calc(24px+var(--safe-bottom))]">
-        <p className="px-1 text-sm leading-[1.6] text-fg-muted">{t("notifications.subtitle")}</p>
+        <p className="px-1 text-[15px] leading-[1.65] text-balance text-fg-muted">{t("notifications.subtitle")}</p>
 
+        {/* LINE status: tone + icon + words (never colour alone). */}
         {loadFailed ? null : (
           <Notice
             tone={lineConnected ? "success" : "warning"}
             title={lineConnected ? t("notifications.lineConnected") : t("notifications.lineNotConnected")}
-            description={lineConnected ? t("notifications.linePush") : t("notifications.lineNotConnectedDescription")}
+            description={
+              <span className="block text-balance">
+                {thaiCopy(lineConnected ? t("notifications.linePush") : t("notifications.lineNotConnectedDescription"))}
+              </span>
+            }
           />
         )}
 
-        <ListGroup header={t("notifications.soundSettings")} footer={t("notifications.soundHint")}>
-          <SwitchRow
-            leading={<IconTile icon={soundOn === false ? VolumeX : Volume2} tone="pink" />}
-            title={t("notifications.appSound")}
-            subtitle={t("notifications.appSoundDescription")}
-            checked={soundOn ?? true}
-            disabled={soundOn === null}
-            onCheckedChange={(checked) => toggleSound(checked)}
-          />
-        </ListGroup>
-
+        {/* What this screen is for comes first: the account toggles; the device-only sound last. */}
         {loadFailed ? (
           <ErrorState
+            card
             description={t("notifications.loadFailed")}
             onRetry={() => void refetch()}
             retrying={isValidating}
-            className="py-6"
+            className="py-8"
           />
         ) : (
           <>
@@ -146,9 +155,9 @@ export default function NotificationsPage() {
               {LEARNING_TOGGLES.map((toggle) => (
                 <SwitchRow
                   key={toggle.key}
-                  leading={<IconTile icon={toggle.icon} tone={toggle.tone} />}
-                  title={t(toggle.title)}
-                  subtitle={t(toggle.subtitle)}
+                  leading={<IconTile icon={toggle.icon} tone={toggle.tone} size="sm" />}
+                  title={<RowText text={t(toggle.title)} />}
+                  subtitle={<RowText text={t(toggle.subtitle)} />}
                   checked={Boolean(settings[toggle.key])}
                   onCheckedChange={(checked) => void saver.set(settings, toggle.key, checked)}
                 />
@@ -157,15 +166,26 @@ export default function NotificationsPage() {
 
             <ListGroup header={t("notifications.marketingNews")} footer={t("notifications.autoSaveHint")}>
               <SwitchRow
-                leading={<IconTile icon={Megaphone} tone="amber" />}
-                title={t("notifications.offers")}
-                subtitle={t("notifications.offersDescription")}
+                leading={<IconTile icon={Megaphone} tone="amber" size="sm" />}
+                title={<RowText text={t("notifications.offers")} />}
+                subtitle={<RowText text={t("notifications.offersDescription")} />}
                 checked={Boolean(settings.notifyMarketing)}
                 onCheckedChange={(checked) => void saver.set(settings, "notifyMarketing", checked)}
               />
             </ListGroup>
           </>
         )}
+
+        <ListGroup header={t("notifications.soundSettings")} footer={t("notifications.soundHint")}>
+          <SwitchRow
+            leading={<IconTile icon={soundOn === false ? VolumeX : Volume2} tone="pink" size="sm" />}
+            title={<RowText text={t("notifications.appSound")} />}
+            subtitle={<RowText text={t("notifications.appSoundDescription")} />}
+            checked={soundOn ?? true}
+            disabled={soundOn === null}
+            onCheckedChange={(checked) => toggleSound(checked)}
+          />
+        </ListGroup>
       </div>
     </Screen>
   );

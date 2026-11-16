@@ -66,6 +66,18 @@ export const th = {
     continueAfterLogin: "เข้าสู่ระบบเพื่อดำเนินการต่อได้เลย",
     secureOmiseLine:
       "ชำระเงินผ่าน PromptPay หรือบัตรเครดิต/เดบิต โดย Omise",
+    // ── Redesign 2026-11 (patterns.md S2): authored landing line breaks ──
+    // Headline: heroTitleLine1 / heroLine2Lead + heroLine2Mark (sunshine marker) / heroLine3Full.
+    heroLine2Lead: "กับ",
+    heroLine2Mark: "ติวเตอร์",
+    heroLine3Full: "ที่คุณไว้วางใจ",
+    heroLeadLine1: "หลักสูตรภาษาอังกฤษพร้อมบทอ่าน",
+    heroLeadLine2: "และแบบฝึกหัด สมัครง่าย จ่ายสะดวก",
+    heroLeadLine3: "ผ่าน LINE โดยตรง",
+    trustLine: "ชำระเงินผ่าน PromptPay หรือบัตร โดย Omise",
+    // trustLine as two nowrap phrases (lead + " " + tail), so 320px wraps between them, never before "Omise".
+    trustLineLead: "ชำระเงินผ่าน PromptPay",
+    trustLineTail: "หรือบัตร โดย Omise",
   },
   // Shared copy for the mobile design system (components/mobile/**).
   // Plain, friendly Thai that a 10-year-old understands.
@@ -242,6 +254,11 @@ export const th = {
     startupAuthTitle: "ต้องเข้าสู่ระบบอีกครั้ง",
     startupAuthError: "เข้าสู่ระบบด้วย LINE อีกครั้ง แล้วจะใช้งานต่อได้เลย",
     loginAgain: "เข้าสู่ระบบใหม่",
+    // ── Redesign 2026-11 (patterns.md S1): Reedy's bubble on the home hero ──
+    reedyNoNextLesson: "ยังไม่มีคาบถัดไป ลองฝึกพูดกับรีดี้ไหม",
+    // "ไปเรียน {class} ต่อกันนะ" (the summary has no lesson number, so the class name stands in)
+    reedyContinuePrefix: "ไปเรียน",
+    reedyContinueSuffix: "ต่อกันนะ",
   },
   profile: {
     title: "โปรไฟล์",
@@ -610,11 +627,17 @@ export const th = {
     listAria: "ประวัติการเรียน",
     scoreStat: "คะแนนที่ได้",
     aiFeedbackLabel: "คำแนะนำจาก AI",
+    languageQuestionTitle: "คำถามภาษาที่ถาม AI",
+    yourQuestion: "คำถามของคุณ",
+    noQuestionAsked: "ไม่ได้ถามคำถาม",
+    aiAnswerLabel: "คำตอบจาก AI",
+    reflectionTitle: "แบบสรุปการเรียนรู้",
     notFoundTitle: "ไม่พบผลการเรียนนี้",
     notFoundDescription: "ผลการเรียนนี้อาจถูกลบไปแล้ว ลองเปิดจากหน้าประวัติอีกครั้งนะ",
     backToHistory: "กลับไปหน้าประวัติ",
     correctLabel: "ถูก",
     incorrectLabel: "ยังไม่ถูก",
+    untitledLesson: "บทเรียน",
   },
   gameResult: {
     label: "เกม",
@@ -880,7 +903,7 @@ export const th = {
     missedTitle: "แย่จัง กดตอบไม่ทัน",
     missedDescription: "คุณครูจบคำถามนี้แล้ว รอคำถามหรือกิจกรรมถัดไปนะ",
     readArticleTitle: "อ่านบทความ · ออกเสียง",
-    readArticleHint: "แตะประโยคที่อยากให้คุณครูช่วยออกเสียง 🚩",
+    readArticleHint: "แตะประโยคที่อยากให้คุณครูช่วยออกเสียง",
     waitingArticleAudio: "รอคุณครูเล่นเสียงบทความ…",
     flagCountSuffix: "คนอยากฟัง",
     questionLabel: "คำถาม",
@@ -917,12 +940,15 @@ export const th = {
     pairNumberPrefix: "คู่ที่",
     pairPartnerGroup: "คู่สนทนาของคุณ (กลุ่ม 3 คน)",
     pairPartner: "คู่สนทนาของคุณ",
-    pairInstruction: "หันไปหาคู่ของคุณ แล้วผลัดกันพูดคนละ 2-3 นาที 🤝",
+    pairInstruction: "หันไปหาคู่ของคุณ แล้วผลัดกันพูดคนละ 2-3 นาที",
     pairWaiting: "รอคุณครูจัดคู่ให้คุณ",
     pairSeeTeacherScreen: "ดูคู่ของคุณบนจอคุณครู",
     pairStartersTitle: "ประโยคชวนคุย",
     leaderboardTitle: "อันดับตอนนี้",
     youRankPrefix: "คุณอันดับ",
+    rankUpPrefix: "ขึ้นมา",
+    rankDownPrefix: "ลดลง",
+    rankMoveUnit: "อันดับ",
     you: "คุณ",
     pointsUnit: "คะแนน",
     finalResultsTitle: "ผลการแข่งขัน",
@@ -957,6 +983,15 @@ export const th = {
     flashcardCards: "การ์ด",
     flashcardRemembered: "จำได้",
     flashcardBonus: "โบนัส",
+    // ── Redesign 2026-11 (patterns.md S6–S8) ──
+    mcqHint: "ดูตัวเลือกบนจอคุณครู แล้วแตะคำตอบที่ถูกต้อง",
+    waitTeacherNext: "รอคุณครูไปขั้นถัดไป",
+    aiScoreGreat: "ดีมาก",
+    aiScoreOkay: "พอใช้",
+    aiScoreTryAgain: "ลองอีกครั้ง",
+    writingTaskTitle: "โจทย์การเขียน",
+    languageAskTitle: "สงสัยอะไร ถาม AI ได้เลย",
+    readOnlyTitle: "ดูอย่างเดียว",
   },
   payment: {
     loadingClass: "กำลังโหลดข้อมูลคลาส…",
@@ -1150,6 +1185,11 @@ export const th = {
       copied: "คัดลอกเลขอ้างอิงแล้ว",
       copyFailed: "คัดลอกไม่สำเร็จ ลองกดค้างที่เลขแทนนะ",
     },
+    // Step caption under the checkout app bars: "ขั้นที่ 2 จาก 3".
+    steps: {
+      prefix: "ขั้นที่",
+      of: "จาก",
+    },
   },
   enroll: {
     errors: {
@@ -1188,7 +1228,7 @@ export const th = {
     fallbackBannerTitle: "คลาสนี้เต็มแล้ว",
     fallbackBannerDesc:
       "ตอนนี้สมัครคลาสนี้ไม่ได้ ลองดูคลาสอื่นในหน้าคลาสเรียน หรือขอลิงก์ใหม่จากครูนะ",
-    urgentSeatsPrefix: "⚠️ เหลือเพียง",
+    urgentSeatsPrefix: "เหลือเพียง",
     urgentSeatsSuffix: "ที่นั่ง!",
     browseClasses: "ดูคลาสอื่น",
     ctaFull: "คลาสเต็มแล้ว",
@@ -1216,10 +1256,10 @@ export const th = {
     allFilter: "ทั้งหมด",
     liffNotReady:
       "LINE LIFF ยังเริ่มไม่สำเร็จ กรุณาเปิดผ่านแอป LINE แล้วลองใหม่",
-    qrLineOnly: "💡 การสแกน QR Code รองรับเฉพาะการใช้งานผ่านแอป LINE เท่านั้น",
+    qrLineOnly: "การสแกน QR Code รองรับเฉพาะการใช้งานผ่านแอป LINE เท่านั้น",
     qrUnsupported:
-      "⚠️ อุปกรณ์หรือเวอร์ชันของ LINE ไม่รองรับการสแกนในหน้าแอปนี้",
-    qrInvalid: "❌ รูปแบบ QR Code ไม่ถูกต้อง (ไม่พบข้อมูลคลาสเรียน)",
+      "อุปกรณ์หรือเวอร์ชันของ LINE ไม่รองรับการสแกนในหน้าแอปนี้",
+    qrInvalid: "รูปแบบ QR Code ไม่ถูกต้อง (ไม่พบข้อมูลคลาสเรียน)",
     qrScanError: "เกิดข้อผิดพลาดในการสแกน QR Code กรุณาลองใหม่อีกครั้ง",
     statusOpen: "รับสมัคร",
     statusFull: "เต็มแล้ว",
@@ -1410,6 +1450,9 @@ export const th = {
       lobbyNote: "ครูเป็นผู้เริ่มแบบประเมินจาก Lobby กรุณาเข้าห้องเรียนเพื่อทำพร้อมกับคลาส",
       lobbyCta: "เข้าห้อง Lobby",
     },
+    // Redesign 2026-11 (patterns.md S4/S5): catalog list header, tutor line prefix.
+    listTitle: "คลาสที่เปิดรับสมัคร",
+    tutorPrefix: "ครู",
   },
 } as const;
 

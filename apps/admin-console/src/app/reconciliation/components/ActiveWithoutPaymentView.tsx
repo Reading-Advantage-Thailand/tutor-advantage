@@ -1,34 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { CheckCircle2, UserRound } from "lucide-react";
 import {
   AdminStatusChip,
   DataTable,
   EmptyState,
-  ErrorState,
   FilterBar,
   IdCell,
+  IdentityCell,
   Notice,
   Pagination,
   useAdminSession,
   useHasRole,
   type DataTableColumn,
 } from "@/components/app";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import type { UseTableStateResult } from "@/hooks/useTableState";
 import { api } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { focusToolbar, LoadError } from "../../settlements/financeUi";
 import type { ActiveWithoutPayment, Paged } from "../types";
-import { DaysSelect } from "./PaymentsView";
 import "@/locales/th/reconciliation";
 
 export function ActiveWithoutPaymentView({ table, days }: { table: UseTableStateResult; days: string }) {
   const me = useAdminSession();
   const isAdmin = useHasRole("ADMIN");
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const query = { days, page: table.page, pageSize: table.pageSize, q: table.q || undefined, order: table.sort?.dir };
   const { data, error, isLoading, isValidating, isPreviousData, refetch } = useCachedResource(
     me ? `${me.userId}:recon:gaps:${JSON.stringify(query)}` : null,
@@ -43,11 +44,13 @@ export function ActiveWithoutPaymentView({ table, days }: { table: UseTableState
         header: t("reconciliation.columns.student"),
         alwaysVisible: true,
         mobile: "primary",
+        sticky: true,
         cell: (row) => (
-          <div className="flex min-w-0 flex-col">
-            <span className="truncate font-medium text-fg">{row.studentName ?? t("reconciliation.unknownStudent")}</span>
-            <span className="truncate text-[0.8125rem] text-fg-muted">{row.classTitle ?? "–"}</span>
-          </div>
+          <IdentityCell
+            name={row.studentName ?? t("reconciliation.unknownStudent")}
+            seed={row.studentUserId}
+            secondary={row.classTitle ?? "–"}
+          />
         ),
       },
       {
@@ -55,7 +58,7 @@ export function ActiveWithoutPaymentView({ table, days }: { table: UseTableState
         header: t("reconciliation.columns.enrolledAt"),
         sortable: true,
         mobile: "secondary",
-        cell: (row) => <span className="whitespace-nowrap">{formatThaiDateTime(row.createdAt)}</span>,
+        cell: (row) => <span className="whitespace-nowrap tabular">{formatThaiDateTime(row.createdAt)}</span>,
       },
       {
         key: "status",
@@ -72,7 +75,7 @@ export function ActiveWithoutPaymentView({ table, days }: { table: UseTableState
           row.latestPaymentStatus ? (
             <AdminStatusChip domain="payment" status={row.latestPaymentStatus} />
           ) : (
-            <span className="text-[0.8125rem] text-fg-muted">{t("reconciliation.noPaymentAttempt")}</span>
+            <span className="text-[0.8125rem] whitespace-nowrap text-fg-muted">{t("reconciliation.noPaymentAttempt")}</span>
           ),
       },
       {
@@ -104,18 +107,27 @@ export function ActiveWithoutPaymentView({ table, days }: { table: UseTableState
     [isAdmin],
   );
 
+  const isFiltered = table.q !== "" || days !== "30";
+  // The empty state's "ล้างตัวกรอง" removes itself: focus goes back to the toolbar.
+  // (FilterBar's own button moves focus by itself.)
+  const resetFilters = () => {
+    table.reset();
+    focusToolbar(toolbarRef.current);
+  };
+
   return (
     <div className="flex flex-col gap-3">
       <Notice tone="warning">{t("reconciliation.gapsNotice")}</Notice>
-      <FilterBar
-        search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("reconciliation.filters.searchGaps") }}
-        isFiltered={table.q !== "" || days !== "30"}
-        onReset={table.reset}
-      >
-        <DaysSelect value={days} onChange={(value) => table.setFilter("days", value)} />
-      </FilterBar>
+      {/* The period ("days") selector lives in the page header: it also drives the KPI strip. */}
+      <div ref={toolbarRef}>
+        <FilterBar
+          search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("reconciliation.filters.searchGaps") }}
+          isFiltered={isFiltered}
+          onReset={table.reset}
+        />
+      </div>
       {error && !data ? (
-        <ErrorState onRetry={refetch} />
+        <LoadError error={error} onRetry={refetch} />
       ) : (
         <DataTable
           caption={t("reconciliation.views.gaps")}
@@ -127,11 +139,17 @@ export function ActiveWithoutPaymentView({ table, days }: { table: UseTableState
           onSortChange={table.toggleSort}
           empty={
             <EmptyState
-              compact
               icon={CheckCircle2}
               tone="teal"
               title={t("reconciliation.empty.gapsTitle")}
               description={t("reconciliation.empty.gapsDescription")}
+              action={
+                isFiltered ? (
+                  <Button variant="outline" onClick={resetFilters}>
+                    {t("shell.clearFilters")}
+                  </Button>
+                ) : undefined
+              }
             />
           }
           footer={

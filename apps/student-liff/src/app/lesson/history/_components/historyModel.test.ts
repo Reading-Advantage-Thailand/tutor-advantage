@@ -11,11 +11,21 @@ const item = (sessionId: string, date: string, score: number, rank: number): His
   tutorName: "Tutor",
 });
 
-// Local-time timestamps so grouping does not depend on the test machine's zone.
-const day = (y: number, m: number, d: number, h: number) => new Date(y, m - 1, d, h).toISOString();
+// Bangkok wall-clock timestamps (UTC+7): sessions are grouped by the Bangkok
+// day, so the fixtures read the same in any machine time zone.
+const day = (y: number, m: number, d: number, h: number) => new Date(Date.UTC(y, m - 1, d, h - 7)).toISOString();
 
 describe("groupHistoryByDay", () => {
-  it("groups sessions of the same local day and keeps the server order", () => {
+  it("starts a new group at Bangkok midnight", () => {
+    // 16:30 UTC is 23:30 in Bangkok; 17:30 UTC is 00:30 the next day there.
+    const groups = groupHistoryByDay([
+      item("a", "2026-09-29T16:30:00Z", 10, 1),
+      item("b", "2026-09-29T17:30:00Z", 20, 2),
+    ]);
+    expect(groups.map((g) => g.dayKey)).toEqual(["2026-09-29", "2026-09-30"]);
+  });
+
+  it("groups sessions of the same Bangkok day and keeps the server order", () => {
     const items = [
       item("a", day(2026, 9, 29, 16), 10, 1),
       item("b", day(2026, 9, 29, 9), 20, 2),

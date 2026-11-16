@@ -18,7 +18,7 @@ import {
 
 function DetailRow({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex min-h-11 items-center justify-between gap-4 py-2 text-[15px] leading-[1.5]">
+    <div className="flex min-h-12 items-center justify-between gap-4 py-2.5 text-[15px] leading-[1.6]">
       <dt className="shrink-0 text-fg-muted">{label}</dt>
       <dd className="min-w-0 text-right font-semibold break-words text-fg">{children}</dd>
     </div>
@@ -42,7 +42,11 @@ export interface PaymentDetailSheetProps {
   onClosed: () => void;
 }
 
-/** Full details of one payment, including the provider reference (tap to copy). */
+/**
+ * Full details of one payment: the amount and status first (a well with the
+ * reading face 600 tabular amount and the status chip: dot + word), then the
+ * facts, then the provider reference (tap to copy).
+ */
 export function PaymentDetailSheet({ payment, open, onOpenChange, onClosed }: PaymentDetailSheetProps) {
   const status = getPaymentStatusDisplay(payment?.status);
   const book = payment ? getPaymentBookLabel(payment) : null;
@@ -58,42 +62,49 @@ export function PaymentDetailSheet({ payment, open, onOpenChange, onClosed }: Pa
       onOpenChange={onOpenChange}
       onClosed={onClosed}
       title={t("payment.history.detailTitle")}
-      description={payment?.enrollment?.class?.title || t("payment.history.unnamedClass")}
+      // The class title is data: as a node the sheet shows it as it is (a string would go through thaiCopy).
+      description={payment?.enrollment?.class?.title ? <>{payment.enrollment.class.title}</> : t("payment.history.unnamedClass")}
     >
       {payment ? (
-        <dl className="divide-y divide-hairline">
-          <DetailRow label={t("payment.history.detailBook")}>{book ?? t("payment.history.otherExpense")}</DetailRow>
-          {date ? <DetailRow label={t("payment.history.detailDate")}>{date}</DetailRow> : null}
-          <DetailRow label={t("payment.history.detailMethod")}>{t(getPaymentMethodLabelKey(payment.method))}</DetailRow>
-          <DetailRow label={t("payment.history.detailAmount")}>
-            <span className="tabular-nums">{formatSatang(payment.amountMinor)}</span>
-          </DetailRow>
-          <DetailRow label={t("payment.history.detailStatus")}>
-            <Chip tone={status.tone}>{t(status.labelKey)}</Chip>
-          </DetailRow>
-          {payment.providerRef ? (
-            <div className="py-2">
-              <dt className="text-[15px] leading-[1.5] text-fg-muted">{t("payment.history.detailRef")}</dt>
-              <dd className="mt-1 flex items-center justify-between gap-3">
-                <span className="min-w-0 font-mono text-sm leading-[1.5] break-all text-fg select-text">
-                  {payment.providerRef}
-                </span>
-                <IconButton
-                  icon={Copy}
-                  variant="tonal"
-                  label={t("payment.history.copyRef")}
-                  onClick={() => void copyText(payment.providerRef ?? "")}
-                />
-              </dd>
-            </div>
-          ) : null}
-        </dl>
+        <>
+          <div className="well flex flex-col items-center gap-2 px-4 py-4 text-center">
+            <p className="text-sm leading-[1.6] text-fg-muted">{t("payment.history.detailAmount")}</p>
+            <p className="text-[32px] leading-[1.2] font-semibold text-fg tabular-nums">{formatSatang(payment.amountMinor)}</p>
+            <p>
+              <span className="sr-only">{t("payment.history.detailStatus")} </span>
+              <Chip tone={status.tone} dot>
+                {t(status.labelKey)}
+              </Chip>
+            </p>
+          </div>
+          <dl className="mt-2 divide-y-[1.5px] divide-hairline">
+            <DetailRow label={t("payment.history.detailBook")}>{book ?? t("payment.history.otherExpense")}</DetailRow>
+            {date ? <DetailRow label={t("payment.history.detailDate")}>{date}</DetailRow> : null}
+            <DetailRow label={t("payment.history.detailMethod")}>{t(getPaymentMethodLabelKey(payment.method))}</DetailRow>
+            {payment.providerRef ? (
+              <div className="py-3">
+                <dt className="text-[15px] leading-[1.6] text-fg-muted">{t("payment.history.detailRef")}</dt>
+                <dd className="mt-1.5 flex items-center justify-between gap-3 rounded-[var(--radius-tile)] bg-surface-muted py-1 pr-1 pl-3.5">
+                  <span className="min-w-0 font-mono text-sm leading-[1.6] break-all text-fg select-text">
+                    {payment.providerRef}
+                  </span>
+                  <IconButton
+                    icon={Copy}
+                    variant="tonal"
+                    label={t("payment.history.copyRef")}
+                    onClick={() => void copyText(payment.providerRef ?? "")}
+                  />
+                </dd>
+              </div>
+            ) : null}
+          </dl>
+        </>
       ) : null}
       {payment && reportHref ? (
         <Button
           variant="brandSoft"
           size="touch"
-          className="mt-3 w-full"
+          className="mt-4 w-full"
           nativeButton={false}
           render={<Link href={reportHref} />}
         >

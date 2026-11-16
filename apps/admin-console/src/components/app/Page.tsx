@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import type { ReactNode } from "react";
+import { Fragment, isValidElement, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { ShellTitle } from "./ShellContext";
 
 /* ─── Page ────────────────────────────────────────────────────────────── */
@@ -27,13 +28,13 @@ export interface PageProps {
 }
 
 /**
- * Page wrapper: centres the page at a max width and stacks its blocks with a
- * consistent 24px rhythm (32px on desktop). Server-compatible.
+ * Page wrapper: centres the page at a max width and stacks its blocks with
+ * the 20px section gap (--section-gap). Server-compatible.
  * Structure: <Page> → <PageHeader/> → <Section/>… (→ <StickyActions/> for forms).
  */
 export function Page({ width = "default", className, children }: PageProps) {
   return (
-    <div className={cn("mx-auto flex w-full min-w-0 flex-col gap-6 lg:gap-8", pageWidthClass[width], className)}>
+    <div className={cn("mx-auto flex w-full min-w-0 flex-col gap-5", pageWidthClass[width], className)}>
       {children}
     </div>
   );
@@ -41,11 +42,28 @@ export function Page({ width = "default", className, children }: PageProps) {
 
 /* ─── PageHeader ──────────────────────────────────────────────────────── */
 
+/**
+ * Does this node render anything? False for null/undefined/booleans/"" and
+ * for arrays and fragments whose children are all empty (e.g.
+ * `<>{canEdit ? <Button/> : null}</>` for a role that can do nothing).
+ * A component element counts as content: it cannot be inspected here.
+ */
+function hasContent(node: ReactNode): boolean {
+  if (node === null || node === undefined || typeof node === "boolean" || node === "") return false;
+  if (Array.isArray(node)) return node.some(hasContent);
+  if (isValidElement(node) && node.type === Fragment) return hasContent((node.props as { children?: ReactNode }).children);
+  return true;
+}
+
 export interface PageHeaderProps {
   title: ReactNode;
   /** One short sentence under the title. */
   description?: ReactNode;
-  /** Buttons on the right (desktop) / under the text (mobile). Put the primary action last. */
+  /**
+   * Buttons on the right (desktop) / under the text (mobile). Put the primary
+   * action last. Nothing is rendered (no empty row, no gap) when it is empty,
+   * including a fragment whose children are all null.
+   */
   actions?: ReactNode;
   /** Small row under the description: chips, meta text. */
   meta?: ReactNode;
@@ -88,7 +106,7 @@ export function PageHeader({
         {backHref ? (
           <Link
             href={backHref}
-            className="mb-2 hidden items-center gap-1 rounded-md text-sm font-medium text-fg-muted hover:text-fg md:inline-flex"
+            className="mb-2 hidden min-h-9 items-center gap-1 rounded-(--radius-ctl-sm) text-sm font-medium text-fg-muted hover:text-fg md:inline-flex pointer-coarse:min-h-11"
           >
             <ChevronLeft aria-hidden="true" className="size-4" />
             {backLabel ?? t("shell.back")}
@@ -96,16 +114,16 @@ export function PageHeader({
         ) : null}
         <h1
           className={cn(
-            "text-xl font-bold text-fg text-balance-th md:text-2xl",
+            "text-xl leading-[1.4] font-semibold text-fg text-balance-th md:text-2xl md:leading-[1.35]",
             mobileTitle === "appbar" && "max-md:sr-only",
           )}
         >
           {title}
         </h1>
-        {description ? <p className="mt-1 max-w-3xl text-sm text-fg-muted md:text-[0.9375rem]">{description}</p> : null}
+        {description ? <p className="mt-0.5 max-w-3xl text-base text-fg-muted lg:text-sm">{thaiCopy(description)}</p> : null}
         {meta ? <div className="mt-2.5 flex flex-wrap items-center gap-2">{meta}</div> : null}
       </div>
-      {actions ? <div className="flex flex-wrap items-center gap-2 lg:shrink-0 lg:justify-end">{actions}</div> : null}
+      {hasContent(actions) ? <div className="flex flex-wrap items-center gap-2 lg:shrink-0 lg:justify-end">{actions}</div> : null}
     </header>
   );
 }
@@ -128,10 +146,10 @@ export function SectionHeader({ title, description, action, as: Heading = "h2", 
   return (
     <div className={cn("flex items-end justify-between gap-3", className)}>
       <div className="min-w-0">
-        <Heading id={id} className="text-base font-semibold text-fg">
+        <Heading id={id} className="text-base leading-normal font-semibold text-fg">
           {title}
         </Heading>
-        {description ? <p className="mt-0.5 text-sm text-fg-muted">{description}</p> : null}
+        {description ? <p className="mt-0.5 text-sm text-fg-muted">{thaiCopy(description)}</p> : null}
       </div>
       {action ? <div className="flex shrink-0 items-center gap-2">{action}</div> : null}
     </div>
@@ -211,9 +229,10 @@ export function SplitLayout({
   className?: string;
 }) {
   return (
-    <div className={cn("grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-8", className)}>
-      <div className="flex min-w-0 flex-col gap-6">{main}</div>
-      <aside className="flex min-w-0 flex-col gap-6">{side}</aside>
+    <div className={cn("grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_320px]", className)}>
+      <div className="flex min-w-0 flex-col gap-5">{main}</div>
+      {/* A div, not <aside>: inside <main> it would be a nested complementary landmark. */}
+      <div className="flex min-w-0 flex-col gap-5">{side}</div>
     </div>
   );
 }

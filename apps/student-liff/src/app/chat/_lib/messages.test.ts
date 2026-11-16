@@ -15,7 +15,9 @@ import {
   type OutboxEntry,
 } from "./messages";
 
-const at = (h: number, m: number, day = 2) => new Date(2026, 9, day, h, m).toISOString();
+// October 2026 in Bangkok wall-clock time (UTC+7): day separators follow the
+// Bangkok day, so the fixtures read the same in any machine time zone.
+const at = (h: number, m: number, day = 2) => new Date(Date.UTC(2026, 9, day, h - 7, m)).toISOString();
 
 function msg(id: string, overrides: Partial<ChatMessage> = {}): ChatMessage {
   return {
@@ -151,7 +153,8 @@ describe("sameMetadata", () => {
 });
 
 describe("buildMessageItems", () => {
-  const now = new Date(2026, 9, 2, 12, 0);
+  // 12:00 on 2 Oct 2026 in Bangkok.
+  const now = new Date(Date.UTC(2026, 9, 2, 5, 0));
 
   it("adds a day separator when the day changes", () => {
     const items = buildMessageItems(
@@ -163,6 +166,26 @@ describe("buildMessageItems", () => {
       "1",
       "วันนี้",
       "2",
+    ]);
+  });
+
+  it("changes the day at Bangkok midnight, not at the device's or UTC midnight", () => {
+    // 16:59 and 17:01 UTC are 23:59 and 00:01 in Bangkok; `now` is 01:00 the next day there.
+    const items = buildMessageItems(
+      [msg("1", { time: "2026-10-01T16:59:00Z" }), msg("2", { time: "2026-10-01T17:01:00Z" })],
+      new Date("2026-10-01T18:00:00Z"),
+    );
+    expect(items.map((item) => (item.kind === "date" ? item.label : item.key))).toEqual([
+      "เมื่อวาน",
+      "1",
+      "วันนี้",
+      "2",
+    ]);
+    // Two minutes apart from the same sender, but on different days: two groups.
+    const bubbles = items.filter((item) => item.kind === "message");
+    expect(bubbles.map((item) => (item.kind === "message" ? [item.isFirstInGroup, item.isLastInGroup] : null))).toEqual([
+      [true, true],
+      [true, true],
     ]);
   });
 

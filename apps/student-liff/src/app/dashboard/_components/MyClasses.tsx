@@ -1,52 +1,47 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
-import { Chip, HScroll, IconTile, LevelChip, ProgressBar, SectionHeader } from "@/components/mobile";
+import { BookOpen, ChevronRight, Search } from "lucide-react";
+import { Chip, IconTile, SectionHeader } from "@/components/mobile";
+import { buttonVariants } from "@/components/ui/button";
 import { getLevelTone, levelToneClass, normalizeCefr } from "@/lib/cefr";
 import { noOrphan } from "@/lib/format";
 import { buildEnrollmentHref, getEnrollmentKey, type Enrollment } from "@/lib/enrollmentStatus";
 import { t } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
+/** Tappable card: rim + 4px clay ledge, presses down onto it. */
 const cardClass =
-  "pressable flex shrink-0 flex-col rounded-[var(--radius-card)] border border-hairline bg-surface p-4 text-left shadow-[var(--shadow-card)] active:bg-press";
+  "relative flex min-h-[76px] items-center gap-3.5 overflow-hidden rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface py-3.5 pr-3 pl-[18px] text-left shadow-[var(--shadow-tap)] transition-[translate,box-shadow] duration-[var(--duration-press)] ease-[var(--ease-out)] [-webkit-tap-highlight-color:transparent] active:translate-y-[2px] active:shadow-[0_1px_0_var(--clay-ledge)]";
 
 function ClassCard({ enrollment }: { enrollment: Enrollment }) {
   const progress = Math.round(enrollment.progress || 0);
   const cefr = normalizeCefr(enrollment.seriesCefr);
+  const tone = getLevelTone(cefr);
+  const meta = [`${t("dashboard.tutorPrefix")} ${enrollment.tutorName}`, cefr].filter(Boolean).join(" · ");
   return (
-    <Link
-      href={buildEnrollmentHref(enrollment)}
-      className={`${cardClass} relative w-[78%] max-w-[300px] gap-1 overflow-hidden pt-5`}
-    >
-      {/* Level colour band; brand green when the book has no CEFR level. */}
-      <span
-        aria-hidden="true"
-        className={`absolute inset-x-0 top-0 h-1.5 ${cefr ? levelToneClass[getLevelTone(cefr)].solid : "bg-brand-vivid"}`}
-      />
-      {enrollment.isLive || cefr ? (
-        <span className="mb-1 flex flex-wrap items-center gap-1.5">
-          {enrollment.isLive ? (
-            <Chip tone="danger" dot>
-              {t("dashboard.liveNow")}
-            </Chip>
-          ) : null}
-          {cefr ? <LevelChip cefr={cefr} /> : null}
-        </span>
-      ) : null}
-      <span className="line-clamp-2 text-[15px] leading-[1.5] font-bold text-balance text-fg">{noOrphan(enrollment.name)}</span>
-      <span className="truncate text-[13px] leading-[1.5] text-fg-muted">
-        {t("dashboard.tutorPrefix")} {enrollment.tutorName}
+    <Link href={buildEnrollmentHref(enrollment)} className={cardClass}>
+      {/* CEFR colour band on the leading edge (neutral when the book has no level). */}
+      <span aria-hidden="true" className={cn("absolute inset-y-0 left-0 w-1.5", levelToneClass[tone].solid)} />
+      <IconTile icon={BookOpen} tone={tone} size="sm" />
+      <span className="min-w-0 flex-1">
+        {enrollment.isLive ? (
+          <Chip tone="danger" dot className="mb-0.5">
+            {t("dashboard.liveNow")}
+          </Chip>
+        ) : null}
+        <span className="t-row block line-clamp-2 text-balance text-fg">{noOrphan(enrollment.name)}</span>
+        <span className="t-body-s block truncate text-fg-muted">{meta}</span>
       </span>
-      <span className="mt-auto flex items-center gap-2 pt-3">
-        <ProgressBar value={progress} size="sm" label={t("dashboard.progressLabel")} className="flex-1" />
-        <span className="shrink-0 text-xs leading-[1.5] font-semibold text-brand-fg tabular-nums">{progress}%</span>
-      </span>
+      <span className="shrink-0 text-sm leading-[1.4] font-semibold text-brand-fg tabular-nums">{progress}%</span>
+      <ChevronRight aria-hidden="true" className="-ml-1 size-5 shrink-0 text-fg-subtle" />
     </Link>
   );
 }
 
 /**
- * "คลาสของฉัน": paid classes as a snapping horizontal carousel (each card opens
- * the class lobby), ending with a "find a class" card. Server-compatible.
+ * "คลาสของฉัน" (patterns.md S1.4): header with count + "ดูทั้งหมด", then the
+ * paid classes as a vertical list of tappable cards (CEFR band, tile, title,
+ * "ครู … · A0", progress, chevron; each opens the class lobby), then a
+ * "find a class" link. Two columns on tablets. Server-compatible.
  */
 export function MyClasses({ classes, count }: { classes: Enrollment[]; count: number }) {
   return (
@@ -56,15 +51,15 @@ export function MyClasses({ classes, count }: { classes: Enrollment[]; count: nu
         count={count > 0 ? count : undefined}
         action={{ label: t("common.seeAll"), href: "/classes" }}
       />
-      <HScroll snap gap={12}>
+      <div className="mt-1.5 grid gap-3 sm:grid-cols-2">
         {classes.map((enrollment, index) => (
           <ClassCard key={getEnrollmentKey(enrollment, index)} enrollment={enrollment} />
         ))}
-        <Link href="/classes" className={`${cardClass} w-[140px] items-center justify-center gap-2 text-center`}>
-          <IconTile icon={Search} tone="brand" />
-          <span className="text-sm leading-[1.5] font-semibold text-brand-fg">{t("dashboard.findClass")}</span>
-        </Link>
-      </HScroll>
+      </div>
+      <Link href="/classes" className={cn(buttonVariants({ variant: "ghost", size: "touch" }), "mt-2 -ml-2")}>
+        <Search aria-hidden="true" />
+        {t("dashboard.findClass")}
+      </Link>
     </section>
   );
 }

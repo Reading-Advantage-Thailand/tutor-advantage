@@ -3,9 +3,10 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { CheckCircle2, Copy, QrCode, Share2 } from "lucide-react";
-import { Card, CardHeader, IconTile, Sheet, Skeleton } from "@/components/app";
+import { Sheet, Skeleton } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { PanelCard } from "./PanelCard";
 import { useCopy } from "./useCopy";
 
 const ReferralQr = dynamic(() => import("./ReferralQr"), {
@@ -29,23 +30,27 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
   const [qrOpen, setQrOpen] = useState(false);
 
   return (
-    <Card as="section" aria-labelledby="class-share-title">
-      <CardHeader
-        icon={<IconTile icon={Share2} size="sm" />}
-        title={<span id="class-share-title">{t("tutorClass.ui.shareTitle")}</span>}
-        description={t("tutorClass.detail.referralHelp")}
-      />
+    <PanelCard
+      id="class-share-title"
+      icon={Share2}
+      tone="brand"
+      title={t("tutorClass.ui.shareTitle")}
+      description={t("tutorClass.detail.referralHelp")}
+    >
       {referralLink ? (
         <>
-          <p className="truncate rounded-lg bg-surface-muted px-3 py-2 font-mono text-xs text-fg-muted" title={referralLink}>
+          <p
+            className="ds-well truncate px-3 py-2.5 font-mono text-[0.8125rem] leading-normal text-fg-muted"
+            title={referralLink}
+          >
             {displayLink(referralLink)}
           </p>
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <Button id="btn-copy-referral" variant="soft" onClick={() => copy(referralLink)}>
+            <Button id="btn-copy-referral" variant="soft" size="lg" onClick={() => copy(referralLink)}>
               {copied ? <CheckCircle2 aria-hidden="true" /> : <Copy aria-hidden="true" />}
               <span aria-live="polite">{copied ? t("tutorClass.detail.copied") : t("tutorClass.detail.copy")}</span>
             </Button>
-            <Button variant="outline" onClick={() => setQrOpen(true)}>
+            <Button variant="outline" size="lg" onClick={() => setQrOpen(true)}>
               <QrCode aria-hidden="true" />
               {t("tutorClass.ui.showQr")}
             </Button>
@@ -63,14 +68,14 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
               </Button>
             }
           >
-            <div className="flex justify-center rounded-xl border border-hairline bg-white p-4">
+            <div className="flex justify-center rounded-xl border border-hairline bg-surface-white p-4">
               {qrOpen ? <ReferralQr value={referralLink} /> : null}
             </div>
           </Sheet>
         </>
       ) : (
-        <p className="text-sm text-fg-muted">{t("tutorClass.classes.notSet")}</p>
+        <p className="text-sm leading-[1.6] text-fg-muted">{t("tutorClass.classes.notSet")}</p>
       )}
-    </Card>
+    </PanelCard>
   );
 }

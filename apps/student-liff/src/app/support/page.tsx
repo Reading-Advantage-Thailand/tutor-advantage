@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Inbox, Plus } from "lucide-react";
+import { CheckCircle2, Inbox, LifeBuoy, Plus } from "lucide-react";
 import {
   AppBar,
   BottomActionBar,
   EmptyState,
   ErrorState,
+  IconTile,
   ListGroup,
   Screen,
   SegmentedControl,
@@ -18,6 +19,7 @@ import { LiffErrorState } from "@/app/dashboard/_components/LiffErrorState";
 import { studentApi } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { supportTicketsResourceKey } from "@/lib/resourceKeys";
 import { SupportListSkeleton } from "./_components/SupportSkeletons";
 import { TicketRow } from "./_components/TicketParts";
@@ -46,7 +48,9 @@ export default function SupportListPage() {
     return (
       <Screen>
         <AppBar title={t("support.title")} back fallbackHref="/profile" />
-        <LiffErrorState />
+        <div className="px-4 pt-2 pb-6">
+          <LiffErrorState card />
+        </div>
       </Screen>
     );
   }
@@ -55,14 +59,16 @@ export default function SupportListPage() {
     return (
       <Screen>
         <AppBar title={t("support.title")} back fallbackHref="/profile" />
-        <ErrorState description={t("support.loadFailed")} onRetry={() => void refetch()} retrying={isValidating} />
+        <div className="px-4 pt-2 pb-6">
+          <ErrorState card description={t("support.loadFailed")} onRetry={() => void refetch()} retrying={isValidating} />
+        </div>
       </Screen>
     );
   }
 
   const visible = tab === "open" ? groups.open : groups.closed;
   const newRequestButton = (
-    <Button variant="brand" size="cta" className="flex-1" nativeButton={false} render={<Link href="/support/new" />}>
+    <Button variant="brand" size="cta-lg" className="flex-1" nativeButton={false} render={<Link href="/support/new" />}>
       <Plus aria-hidden="true" />
       {t("support.newRequest")}
     </Button>
@@ -72,8 +78,12 @@ export default function SupportListPage() {
     <Screen>
       <AppBar title={t("support.title")} back fallbackHref="/profile" />
 
-      <div className="flex flex-col gap-4 px-4 pt-2 pb-6">
-        <p className="text-sm leading-[1.6] text-fg-muted">{t("support.intro")}</p>
+      <div className="flex flex-col gap-5 px-4 pt-2 pb-6">
+        {/* What this screen is for: one help line beside the support tile. */}
+        <div className="flex items-start gap-3.5">
+          <IconTile icon={LifeBuoy} tone="blue" />
+          <p className="min-w-0 flex-1 pt-0.5 text-[15px] leading-[1.65] text-fg-muted">{thaiCopy(t("support.intro"))}</p>
+        </div>
 
         <SegmentedControl<TicketTab>
           aria-label={t("support.tabsAria")}
@@ -89,6 +99,7 @@ export default function SupportListPage() {
           {visible.length === 0 ? (
             tab === "open" ? (
               <EmptyState
+                card
                 icon={Inbox}
                 title={t("support.emptyOpenTitle")}
                 description={t("support.emptyOpenDescription")}
@@ -102,10 +113,12 @@ export default function SupportListPage() {
               />
             ) : (
               <EmptyState
+                card
                 icon={CheckCircle2}
+                tone="neutral"
                 title={t("support.emptyClosedTitle")}
                 description={t("support.emptyClosedDescription")}
-                mascot={false}
+                mascot="sleepy"
               />
             )
           ) : (

@@ -19,6 +19,7 @@ import {
 import { normalizeCefr } from "@/lib/cefr";
 import { classifyClassLoadError, getArticleRowHref, getLessonListFooter, type ClassAccess } from "@/lib/classAccess";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { getSequentialLessonPlan, isLessonOpenable, type LessonLockState } from "@/lib/lessonLock";
 import { cn } from "@/lib/utils";
 import type { ClassArticleDetail, ClassDetail } from "./types";
@@ -36,13 +37,34 @@ type LessonRowArticle = Pick<ClassArticleDetail, "id" | "articleNumber" | "title
   showCefr?: boolean;
 };
 
-function LessonNumber({ number, completed, locked }: { number: number; completed: boolean; locked: boolean }) {
+/**
+ * Numbered tile (patterns.md S5.4): done = success tile + check, current =
+ * jade tile with the number, locked = neutral tile with the number. Reading
+ * face, tabular (list rows never use Kodchasan).
+ */
+function LessonNumber({
+  number,
+  completed,
+  current,
+  locked,
+}: {
+  number: number;
+  completed: boolean;
+  current: boolean;
+  locked: boolean;
+}) {
   return (
     <span
       aria-hidden="true"
       className={cn(
-        "flex size-10 items-center justify-center rounded-xl text-sm font-bold tabular-nums",
-        completed ? "bg-success-bg text-success-fg" : locked ? "bg-fill-muted text-fg-muted" : "bg-tile-brand text-icon-brand",
+        "flex size-10 items-center justify-center rounded-[12px] text-[15px] leading-none font-semibold tabular-nums",
+        completed
+          ? "bg-success-bg text-success-fg"
+          : current
+            ? "bg-brand-solid text-on-brand"
+            : locked
+              ? "bg-tile-neutral text-icon-neutral"
+              : "bg-tile-brand text-icon-brand",
       )}
     >
       {completed ? <Check className="size-5" strokeWidth={2.6} /> : number}
@@ -72,20 +94,25 @@ function LessonRow({
   const locked = !canRead || !isLessonOpenable(state);
   const completed = canRead && state === "done";
   const lockedBySequence = canRead && locked;
+  // The lesson to do next: tinted row with a jade bar (aria-current), as on /progress.
+  const current = canRead && !locked && state === "current";
   return (
     <ListRow
       href={locked ? undefined : getArticleRowHref(article.id, canRead)}
       onClick={lockedBySequence ? onLockedTap : undefined}
-      leading={<LessonNumber number={article.articleNumber} completed={completed} locked={locked} />}
+      current={current}
+      leading={<LessonNumber number={article.articleNumber} completed={completed} current={current} locked={locked} />}
       title={locked ? <span className="text-fg-muted">{article.title}</span> : article.title}
       subtitle={
-        canRead
-          ? completed
-            ? t("classes.detail.lessonCompleted")
-            : locked
-              ? t("classes.detail.lessonLocked")
-              : t("classes.detail.lessonPending")
-          : undefined
+        canRead ? (
+          completed ? (
+            <span className="text-success-fg">{t("classes.detail.lessonCompleted")}</span>
+          ) : locked ? (
+            <span className="text-fg-subtle">{t("classes.detail.lessonLocked")}</span>
+          ) : (
+            t("classes.detail.lessonPending")
+          )
+        ) : undefined
       }
       trailing={
         cefr || locked ? (
@@ -114,23 +141,21 @@ function LessonsBody({ articles, canRead }: { articles: ArticlesState; canRead: 
   }
   if (articles.error && !articles.data) {
     return (
-      <Surface padding="none">
-        <ErrorState
-          title={t("classes.detail.lessonsLoadFailed")}
-          kind={classifyClassLoadError(articles.error) === "offline" ? "offline" : "error"}
-          onRetry={articles.refetch}
-          retrying={articles.isValidating}
-          className="py-6"
-        />
-      </Surface>
+      <ErrorState
+        card
+        headingLevel="h4"
+        title={t("classes.detail.lessonsLoadFailed")}
+        kind={classifyClassLoadError(articles.error) === "offline" ? "offline" : "error"}
+        onRetry={articles.refetch}
+        retrying={articles.isValidating}
+        className="py-6"
+      />
     );
   }
   const list = articles.data ?? [];
   if (list.length === 0) {
     return (
-      <Surface padding="none">
-        <EmptyState icon={BookOpen} tone="neutral" title={t("classes.detail.lessonsEmpty")} className="py-6" />
-      </Surface>
+      <EmptyState card icon={BookOpen} tone="neutral" headingLevel="h4" title={t("classes.detail.lessonsEmpty")} className="py-6" />
     );
   }
   const ordered = [...list].sort((a, b) => a.articleNumber - b.articleNumber);
@@ -140,7 +165,7 @@ function LessonsBody({ articles, canRead }: { articles: ArticlesState; canRead: 
   const current = currentIndex >= 0 ? ordered[currentIndex] : undefined;
   const explainLock = () => {
     if (!current) return;
-    toast.info(`${t("progress.lockedLessonPrefix")} ${current.articleNumber} ${t("progress.lockedLessonSuffix")}`);
+    toast.info(thaiCopy(`${t("progress.lockedLessonPrefix")} ${current.articleNumber} ${t("progress.lockedLessonSuffix")}`));
   };
   return (
     <ListGroup aria-label={t("classes.detail.lessonsTitle")}>
@@ -177,13 +202,15 @@ export function LessonsSection({
   const cycles = cls.bookCycles ?? [];
   const selected = access.selectedCycle;
   const progress = access.canReadSelectedCycle ? selected?.progress : null;
+  const showProgress = Boolean(progress && progress.totalArticles > 0);
 
   return (
-    <section>
+    <section className="flex flex-col gap-3">
       <SectionHeader
         as="h3"
         title={t("classes.detail.lessonsTitle")}
         count={access.canReadSelectedCycle && articles.data ? articles.data.length : undefined}
+        className="-mb-1"
       />
 
       {cycles.length > 1 ? (
@@ -203,33 +230,39 @@ export function LessonsSection({
         </div>
       ) : null}
 
-      {selected?.title ? <p className="mt-1 text-sm leading-[1.5] text-fg-muted">{selected.title}</p> : null}
-
-      {progress && progress.totalArticles > 0 ? (
-        <div className="mt-2">
-          <div className="flex items-baseline justify-between gap-3 text-[13px] leading-[1.5]">
-            <span className="text-fg-muted">
-              {t("classes.detail.progressPrefix")} {progress.completedArticles} {t("classes.detail.progressFrom")}{" "}
-              {progress.totalArticles} {t("classes.detail.lessonsUnit")}
+      {/* Progress card (patterns.md S5.3): the selected book, "เรียนแล้ว 5 จาก 14 บท", percent and bar. */}
+      {progress && showProgress ? (
+        <Surface>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              {selected?.title ? (
+                <p className="text-sm leading-[1.6] font-medium text-fg-muted">{selected.title}</p>
+              ) : null}
+              <p className="text-base leading-[1.6] font-semibold text-fg">
+                {t("classes.detail.progressPrefix")} {progress.completedArticles} {t("classes.detail.progressFrom")}{" "}
+                {progress.totalArticles} {t("classes.detail.lessonsUnit")}
+              </p>
+            </div>
+            <span className="shrink-0 text-xl leading-[1.3] font-semibold text-brand-fg tabular-nums">
+              {progress.percent}%
             </span>
-            <span className="font-bold text-brand-fg tabular-nums">{progress.percent}%</span>
           </div>
-          <ProgressBar value={progress.percent} size="sm" className="mt-1.5" />
-        </div>
+          <ProgressBar value={progress.percent} className="mt-3" />
+        </Surface>
+      ) : selected?.title ? (
+        <p className="text-sm leading-[1.6] text-fg-muted">{selected.title}</p>
       ) : null}
 
-      <div className="mt-3">
-        {access.selectedCycleLocked ? (
-          <Notice
-            tone="warning"
-            icon={Lock}
-            title={t("classes.detail.cycleLockedTitle")}
-            description={t("classes.detail.cycleLockedDescription")}
-          />
-        ) : (
-          <LessonsBody articles={articles} canRead={access.canReadSelectedCycle} />
-        )}
-      </div>
+      {access.selectedCycleLocked ? (
+        <Notice
+          tone="warning"
+          icon={Lock}
+          title={t("classes.detail.cycleLockedTitle")}
+          description={t("classes.detail.cycleLockedDescription")}
+        />
+      ) : (
+        <LessonsBody articles={articles} canRead={access.canReadSelectedCycle} />
+      )}
     </section>
   );
 }
@@ -273,12 +306,13 @@ export function CoursePreviewSection({
           </ListGroup>
         ) : (
           <ListGroup
+            footerIcon={Lock}
             footer={
-              footer?.kind === "more"
-                ? `${t("classes.detail.moreLessonsPrefix")} ${footer.remaining} ${t("classes.detail.moreLessonsSuffix")}`
-                : footer?.kind === "allAfterPayment"
-                  ? t("classes.detail.allLessonsAfterPayment")
-                  : undefined
+              footer
+                ? footer.kind === "more"
+                  ? `${t("classes.detail.moreLessonsPrefix")} ${footer.remaining} ${t("classes.detail.moreLessonsSuffix")}`
+                  : t("classes.detail.allLessonsAfterPayment")
+                : undefined
             }
           >
             {rows.map((article) => (

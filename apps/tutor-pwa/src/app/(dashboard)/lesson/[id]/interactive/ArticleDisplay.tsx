@@ -1,9 +1,11 @@
 import React, { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import { t } from "@/lib/i18n";
-import { AlertTriangle, BookOpen, ChevronLeft, ChevronRight, Lightbulb, ListChecks, MessageCircle, Pause, Play, Sparkles, Target, Volume2 } from "lucide-react";
+import { thaiCopy, thaiLabel } from "@/lib/thaiText";
+import { AlertTriangle, BookOpen, ChevronLeft, ChevronRight, Flag, Lightbulb, ListChecks, MessageCircle, Pause, Play, Sparkles, Target, Volume2 } from "lucide-react";
 import { Chip, IconTile } from "@/components/app";
 import { useThaiTranslations } from "@/hooks/useThaiTranslations";
 import { LESSON_PHASE } from "@/lib/lessonPhases";
+import { scrollBehavior } from "@/lib/motion";
 
 import { ArticleData } from "@/lib/lesson-types";
 
@@ -120,7 +122,7 @@ function GuideQuestionCard({
   const thaiQuestion = translations[0];
 
   return (
-    <div data-tour-target={dataTourTarget} className={`rounded-lg border border-hairline bg-surface p-3 ${className}`}>
+    <div data-tour-target={dataTourTarget} className={`rounded-(--radius-ctl) border border-clay-rim bg-surface p-3 ${className}`}>
       <div className="flex items-start gap-2">
         <p className={`flex-1 font-semibold text-fg ${large ? "text-[clamp(16px,1.12vw,21px)] leading-snug" : "text-base leading-snug"}`}>
           {label}. {question}
@@ -132,7 +134,7 @@ function GuideQuestionCard({
             data-tour-target={dataTourTarget ? `${dataTourTarget}-audio` : undefined}
             title={t("lesson.interactive.speakTitle")}
             aria-label={t("lesson.interactive.speakTitle")}
-            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-fg transition-colors hover:bg-brand-soft/70"
+            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-soft-fg transition-colors hover:bg-brand-soft-border pointer-coarse:size-11"
           >
             <Volume2 size={16} />
           </button>
@@ -872,11 +874,31 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     }
   };
 
+  /** Seek the passage audio to a 0–1 position and keep playing (progress bar click / arrow keys). */
+  const seekAudioToRatio = (ratio: number) => {
+    if (!audioRef.current) return;
+    const requestId = ++audioRequestRef.current;
+    primarySentencePlaybackTokenRef.current++;
+    clearSentenceStopMonitor();
+    stopAtRef.current = Infinity;
+    clipAudioRef.current?.pause();
+    audioRef.current.playbackRate = speechRate;
+    audioRef.current.currentTime = Math.min(1, Math.max(0, ratio)) * duration;
+    audioRef.current
+      .play()
+      .then(() => {
+        if (requestId === audioRequestRef.current) setIsPlaying(true);
+      })
+      .catch(() => {
+        if (requestId === audioRequestRef.current) setIsPlaying(false);
+      });
+  };
+
   // Auto-scroll active sentence into view in Phase 3 (Read the Article)
   useEffect(() => {
     if (phase !== LESSON_PHASE.READ_ARTICLE || activeIdx < 0) return;
     const el = document.getElementById(`read-sentence-${activeIdx}`);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (el) el.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
   }, [activeIdx, phase]);
 
   const lastReportedIdxRef = useRef(-2);
@@ -976,7 +998,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
     return (
       <div
-        className={`rounded-lg border border-hairline bg-surface-muted p-4 ${className}`}
+        className={`rounded-(--radius-ctl) bg-surface-muted p-4 ${className}`}
       >
         <p
           className={`mb-1.5 text-sm font-medium ${titleClassName}`}
@@ -988,7 +1010,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             {thaiPassage}
           </p>
         ) : (
-          <p className={`${textClassName} italic opacity-80`}>
+          <p className={`${textClassName} opacity-80`}>
             {t("lesson.live.translating")}
           </p>
         )}
@@ -1006,7 +1028,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     return (
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-stretch gap-6 py-2 lg:flex-row lg:items-center">
         {/* Left: article cover */}
-        <div className="relative w-full shrink-0 overflow-hidden rounded-xl border border-hairline bg-tile-brand lg:w-[44%]">
+        <div className="relative w-full shrink-0 overflow-hidden rounded-(--radius-card) border border-clay-rim bg-tile-brand shadow-card lg:w-[44%]">
           <div className="aspect-[4/3] w-full">
             {articleImageUrl && !launchImageFailed ? (
               <img
@@ -1023,12 +1045,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           </div>
           <div className="grid grid-cols-2 divide-x divide-hairline border-t border-hairline bg-surface">
             <div className="px-4 py-3 text-center">
-              <p className="text-sm text-fg-muted">{t("lesson.interactive.vocabulary")}</p>
-              <p className="text-2xl font-bold tabular-nums text-fg">{words.length}</p>
+              <p className="text-sm font-medium text-fg-muted">{t("lesson.interactive.vocabulary")}</p>
+              <p className="text-[1.75rem] leading-tight font-semibold text-fg tabular-nums">{words.length}</p>
             </div>
             <div className="px-4 py-3 text-center">
-              <p className="text-sm text-fg-muted">{t("lesson.interactive.keySentences")}</p>
-              <p className="text-2xl font-bold tabular-nums text-fg">{sentences.length}</p>
+              <p className="text-sm font-medium text-fg-muted">{t("lesson.interactive.keySentences")}</p>
+              <p className="text-[1.75rem] leading-tight font-semibold text-fg tabular-nums">{sentences.length}</p>
             </div>
           </div>
         </div>
@@ -1039,8 +1061,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             {articleData.genre ? <Chip>{String(articleData.genre)}</Chip> : null}
             {articleData?.content_provider !== "PRIMARY_ADVANTAGE" && displayCefr ? <Chip tone="brand">CEFR {displayCefr}</Chip> : null}
           </div>
-          <h1 className="text-3xl font-bold leading-tight text-fg xl:text-4xl">{articleData.title}</h1>
-          <p className="line-clamp-3 text-lg leading-relaxed text-fg-muted">
+          <h2 lang="en" className="font-heading text-[2rem] leading-[1.3] font-semibold text-balance-th text-fg xl:text-[2.75rem]">{articleData.title}</h2>
+          <p className="line-clamp-3 text-lg leading-[1.7] text-fg-muted">
             {articleData.translated_summary?.th?.[0] ||
               articleData.summary ||
               t("lesson.interactive.articleFallbackSummary")}
@@ -1048,11 +1070,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
           <ol data-tour-target="phase-1-checklist" className="mt-1 flex flex-col gap-2.5">
             {checklist.map((item) => (
-              <li key={item.title} className="flex items-center gap-4 rounded-xl border border-hairline bg-surface p-4">
+              <li key={item.title} className="flex items-center gap-4 rounded-(--radius-card) border border-clay-rim bg-surface p-4 shadow-card">
                 <IconTile icon={item.icon} tone={item.tone} size="lg" />
                 <div className="min-w-0">
-                  <p className="text-lg font-semibold text-fg">{item.title}</p>
-                  <p className="text-base text-fg-muted">{item.desc}</p>
+                  <p className="text-lg leading-[1.6] font-semibold text-fg xl:text-xl">{thaiLabel(item.title)}</p>
+                  <p className="text-base leading-[1.6] text-fg-muted xl:text-lg">{thaiCopy(item.desc)}</p>
                 </div>
               </li>
             ))}
@@ -1101,7 +1123,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <p className={`w-full text-base text-fg-muted ${isFullscreen ? "mb-2 hidden xl:block" : "mb-3"}`}>
           {t("lesson.interactive.wordPrefix")}{" "}
           <mark className="rounded bg-[var(--highlight-bg)] px-1 font-semibold text-[var(--highlight-text)]">highlight</mark>{" "}
-          {t("lesson.interactive.vocabInLessonSuffix")}
+          {thaiCopy(t("lesson.interactive.vocabInLessonSuffix"))}
         </p>
 
         <div
@@ -1115,7 +1137,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <div
             ref={phase5PassageRef}
             data-tour-target="phase-4-passage"
-            className={`flex min-h-0 flex-col rounded-xl border border-hairline bg-surface shadow-card ${
+            className={`flex min-h-0 flex-col rounded-(--radius-card) border border-clay-rim bg-surface shadow-card ${
               isFullscreen ? "h-full overflow-hidden p-4" : "overflow-y-auto p-5 sm:p-6"
             }`}
           >
@@ -1127,7 +1149,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               className={isFullscreen
                 ? "flex-1 text-[clamp(15px,1.15vw,21px)] font-medium leading-[1.82] text-fg"
                 : "text-lg font-medium leading-[1.9] text-fg xl:text-xl"}
-              style={{ fontFamily: "Georgia, serif" }}
+              lang="en"
             >
               {highlightPassage(articleData.passage)}
             </p>
@@ -1145,7 +1167,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <div
             ref={phase5VocabRef}
             data-tour-target="phase-4-vocabulary"
-            className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-hairline bg-surface p-4 shadow-card sm:p-5"
+            className="flex h-full min-h-0 flex-col overflow-hidden rounded-(--radius-card) border border-clay-rim bg-surface p-4 shadow-card sm:p-5"
           >
             <h3 className={`flex items-center gap-2 text-base font-semibold text-fg ${isFullscreen ? "mb-2" : "mb-3"}`}>
               <ListChecks aria-hidden="true" className="size-5 text-brand-fg" />
@@ -1176,7 +1198,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 return (
                   <div
                     key={i}
-                    className={`relative grid min-h-[88px] gap-x-3 rounded-lg border border-hairline bg-surface-muted px-3 py-3 ${
+                    className={`relative grid min-h-[88px] gap-x-3 rounded-(--radius-ctl) bg-surface-muted px-3 py-3 ${
                       isFullscreen
                         ? "h-full min-h-0 grid-cols-[auto_minmax(0,1fr)_auto] content-center"
                         : "shrink-0 grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_minmax(0,1fr)_minmax(180px,.9fr)_auto] sm:items-center sm:px-4"
@@ -1229,8 +1251,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       title={t("lesson.interactive.speakTitle")}
                       aria-label={`${t("lesson.interactive.speakTitle")} ${String(wordText)}`}
                       className={isFullscreen
-                        ? "absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-full bg-brand-soft text-brand-fg transition-colors hover:bg-brand-soft/70"
-                        : "col-start-3 row-start-1 inline-flex size-10 items-center justify-center self-center rounded-full bg-brand-soft text-brand-fg transition-colors hover:bg-brand-soft/70 sm:col-start-auto sm:row-start-auto"}
+                        ? "absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-full bg-brand-soft text-brand-soft-fg transition-colors hover:bg-brand-soft-border pointer-coarse:size-11"
+                        : "col-start-3 row-start-1 inline-flex size-10 items-center justify-center self-center rounded-full bg-brand-soft text-brand-soft-fg transition-colors hover:bg-brand-soft-border sm:col-start-auto sm:row-start-auto pointer-coarse:size-11"}
                     >
                       <Volume2 size={16} />
                     </button>
@@ -1268,7 +1290,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <div className="grid w-full min-h-0 flex-1 grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(340px,.85fr)]">
           {/* Passage */}
           <div className="min-h-0 min-w-0">
-            <div data-tour-target="phase-5-passage" className={`flex h-full min-h-0 flex-col rounded-xl border border-hairline bg-surface shadow-card ${isFullscreen ? "overflow-hidden p-5" : "p-5 sm:p-6"}`}>
+            <div data-tour-target="phase-5-passage" className={`flex h-full min-h-0 flex-col rounded-(--radius-card) border border-clay-rim bg-surface shadow-card ${isFullscreen ? "overflow-hidden p-5" : "p-5 sm:p-6"}`}>
               <h3 className={`flex items-center gap-2 text-base font-semibold text-fg ${isFullscreen ? "mb-2" : "mb-3"}`}>
                 <BookOpen aria-hidden="true" className="size-5 text-brand-fg" />
                 {articleData.title}
@@ -1277,7 +1299,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 className={isFullscreen
                   ? "flex-1 text-[clamp(15px,1.06vw,20px)] font-medium leading-[1.82] text-fg"
                   : "text-lg font-medium leading-[1.9] text-fg xl:text-xl"}
-                style={{ fontFamily: "Georgia, serif" }}
+                lang="en"
               >
                 {articleData.passage}
               </p>
@@ -1290,7 +1312,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
           {/* Comprehension Guide */}
           <div className={`flex min-h-0 min-w-0 flex-col ${isFullscreen ? "gap-3" : "space-y-4"}`}>
-            <div data-tour-target="phase-5-questions" className={`flex min-h-0 flex-1 flex-col rounded-xl border border-hairline bg-surface-muted ${isFullscreen ? "p-4" : "p-4"}`}>
+            <div data-tour-target="phase-5-questions" className={`flex min-h-0 flex-1 flex-col rounded-(--radius-card) bg-surface-muted ${isFullscreen ? "p-4" : "p-4"}`}>
               <h4 className="mb-1 flex items-center gap-2 text-base font-semibold text-fg">
                 <ListChecks aria-hidden="true" className="size-5 text-brand-fg" />
                 {t("lesson.live.comprehensionGuide")}
@@ -1313,13 +1335,13 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   ))}
                 </div>
               ) : (
-                <p className="text-sm italic text-fg-muted">
+                <p className="text-sm text-fg-muted">
                   {t("lesson.interactive.comprehensionFallback")}
                 </p>
               )}
             </div>
 
-            <div className={`rounded-xl border border-hairline bg-surface ${isFullscreen ? "p-4" : "p-4"}`}>
+            <div className={`rounded-(--radius-card) border border-clay-rim bg-surface ${isFullscreen ? "p-4" : "p-4"}`}>
               <h4 className="mb-2 flex items-center gap-2 text-base font-semibold text-fg">
                 <Lightbulb aria-hidden="true" className="size-5 text-icon-amber" />
                 {t("lesson.live.tutorActions")}
@@ -1450,11 +1472,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <div className="grid w-full min-h-0 flex-1 grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
           {/* Timeline */}
           <div data-tour-target="phase-6-sentences" className={`min-h-0 min-w-0 ${isFullscreen ? "flex h-full flex-col" : ""}`}>
-            <h3 className={`flex items-center gap-2 text-base font-semibold text-fg ${isFullscreen ? "mb-2" : "mb-3"}`}>
-              <ListChecks aria-hidden="true" className="size-5 text-brand-fg" />
-              {t("lesson.interactive.keySentences")}
-              <span className="font-normal text-fg-muted">
-                · {keySentences.length} {t("lesson.interactive.keySentenceCountSuffix")}
+            {/* On a narrow phone the count goes to its own line whole; the title and each listed word stay together. */}
+            <h3 className={`flex flex-wrap items-center gap-x-2 text-base font-semibold text-fg ${isFullscreen ? "mb-2" : "mb-3"}`}>
+              <ListChecks aria-hidden="true" className="size-5 shrink-0 text-brand-fg" />
+              <span className="shrink-0 whitespace-nowrap">{t("lesson.interactive.keySentences")}</span>
+              <span className="min-w-0 font-normal text-fg-muted">
+                {thaiLabel(`· ${keySentences.length} ${t("lesson.interactive.keySentenceCountSuffix")}`)}
               </span>
             </h3>
             <div className={`relative min-h-0 ${isFullscreen ? "flex-1 overflow-hidden" : "lg:max-h-[68vh] lg:overflow-y-auto lg:pr-2"}`}>
@@ -1484,7 +1507,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                           {index + 1}
                         </div>
                         <div
-                          className={`flex-1 rounded-lg border border-hairline border-l-4 p-4 shadow-xs ${c} ${isFullscreen ? "min-h-0" : ""}`}
+                          className={`flex-1 rounded-(--radius-ctl) border border-clay-rim border-l-4 p-4 shadow-card ${c} ${isFullscreen ? "min-h-0" : ""}`}
                         >
                           <div className="flex items-start gap-2">
                             <p className={`min-w-0 flex-1 font-semibold text-fg ${isFullscreen ? "text-[clamp(15px,1vw,19px)] leading-snug" : "text-lg leading-relaxed"}`}>
@@ -1499,7 +1522,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                               title={t("lesson.interactive.speakTitle")}
                               data-tour-target={index === 0 ? "phase-6-first-audio" : undefined}
                               aria-label={t("lesson.interactive.speakTitle")}
-                              className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-fg transition-colors hover:bg-brand-soft/70"
+                              className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-soft-fg transition-colors hover:bg-brand-soft-border pointer-coarse:size-11"
                             >
                               <Volume2 size={15} />
                             </button>
@@ -1529,7 +1552,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               <BookOpen aria-hidden="true" className="size-5 text-brand-fg" />
               {t("lesson.live.passageReference")}
             </h3>
-            <div className={`rounded-xl border border-hairline bg-surface shadow-card ${isFullscreen ? "flex min-h-0 flex-1 flex-col overflow-hidden p-5" : "p-5 sm:p-6 lg:max-h-[62vh] lg:overflow-y-auto"}`}>
+            <div className={`rounded-(--radius-card) border border-clay-rim bg-surface shadow-card ${isFullscreen ? "flex min-h-0 flex-1 flex-col overflow-hidden p-5" : "p-5 sm:p-6 lg:max-h-[62vh] lg:overflow-y-auto"}`}>
               <p className={isFullscreen ? "flex-1 text-[clamp(15px,1vw,19px)] leading-[1.8] text-fg" : "text-lg leading-[1.9] text-fg"}>
                 {articleData.passage}
               </p>
@@ -1540,10 +1563,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   : undefined,
               )}
             </div>
-            <div className={`mt-3 flex gap-2.5 rounded-lg border border-hairline bg-surface-muted ${isFullscreen ? "p-3" : "p-4"}`}>
+            <div className={`mt-3 flex gap-2.5 rounded-(--radius-ctl) bg-surface-muted ${isFullscreen ? "p-3" : "p-4"}`}>
               <Lightbulb aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-icon-amber" />
               <p className="text-sm text-fg-muted">
-                {t("lesson.interactive.keySentenceTip")}
+                {thaiCopy(t("lesson.interactive.keySentenceTip"))}
               </p>
             </div>
           </div>
@@ -1658,7 +1681,19 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           key={idx}
           data-tour-target={idx === 0 ? "phase-3-first-sentence" : undefined}
           onClick={canSelectSentence ? () => seekToSentence(idx) : undefined}
-          className={`${canSelectSentence ? "cursor-pointer" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
+          role={canSelectSentence ? "button" : undefined}
+          tabIndex={canSelectSentence ? 0 : undefined}
+          onKeyDown={
+            canSelectSentence
+              ? (event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    seekToSentence(idx);
+                  }
+                }
+              : undefined
+          }
+          className={`${canSelectSentence ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-ring" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
             isActive
               ? "bg-[var(--highlight-bg)] text-[var(--highlight-text)] font-semibold px-1.5 py-0.5 rounded-md ring-2 ring-brand-vivid"
               : isFlagged
@@ -1670,8 +1705,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         >
           {renderReadAlongText(idx, text)}
           {isFlagged && (
-            <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-danger-solid px-1.5 py-0.5 align-super text-xs font-semibold text-white not-italic">
-              🚩{flagCount}
+            <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-danger-solid px-1.5 py-0.5 align-super text-xs font-semibold text-on-danger not-italic">
+              <Flag aria-hidden="true" className="size-3 shrink-0 fill-current" />
+              {flagCount}
+              <span className="sr-only" lang="th"> {t("lesson.live.flaggedCountSuffix")}</span>
             </sup>
           )}{" "}
         </span>
@@ -1794,7 +1831,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <div data-tour-target="phase-3-reading-passage" className={isFullscreen ? "flex-1 overflow-y-auto pb-36" : "flex-1"}>
           {/* Header */}
           <div className="mx-auto mb-4 w-full max-w-[1500px]">
-            <h2 className="mb-1 text-3xl font-bold text-fg">
+            <h2 lang="en" className="mb-1 font-heading text-[1.75rem] leading-[1.3] font-semibold text-balance-th text-fg xl:text-[2.25rem]">
               {articleData.title}
             </h2>
             {articleData.genre && articleData?.content_provider !== "PRIMARY_ADVANTAGE" && (
@@ -1808,23 +1845,23 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             <div
               key={`primary-reading-page-${primaryReadingPageIndex}`}
               className="mx-auto flex w-full max-w-5xl flex-col items-center"
-              style={{ fontFamily: "Georgia, serif" }}
+              lang="en"
             >
               {primaryReadingImageUrl && (
                 <img
                   src={primaryReadingImageUrl}
                   alt={`${articleData.title} — part ${primaryReadingPageIndex + 1}`}
-                  className="h-[clamp(240px,44vh,520px)] w-full rounded-xl border border-hairline bg-surface object-cover"
+                  className="h-[clamp(240px,44vh,520px)] w-full rounded-(--radius-card) border border-clay-rim bg-surface object-cover"
                 />
               )}
-              <div className="mt-4 w-full rounded-xl border border-hairline bg-surface p-6 shadow-card sm:p-8">
-                <div className="mb-4 flex items-center gap-2 text-sm font-medium text-fg-muted" style={{ fontFamily: "var(--font-sans, inherit)" }}>
+              <div className="mt-4 w-full rounded-(--radius-card) border border-clay-rim bg-surface p-6 shadow-card sm:p-8">
+                <div className="mb-4 flex items-center gap-2 text-sm font-medium text-fg-muted" lang="th">
                   <button
                     type="button"
                     onClick={() => goToPrimaryPart(-1)}
                     disabled={primaryReadingPageIndex <= 0}
                     data-tour-target="phase-3-previous-part"
-                    className="inline-flex items-center gap-1 rounded-lg border border-hairline px-3 py-1.5 text-fg transition-colors hover:bg-press disabled:cursor-not-allowed disabled:opacity-40"
+                    className="inline-flex min-h-10 items-center gap-1 rounded-(--radius-ctl) border border-field-border bg-surface px-3 py-1.5 text-fg transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-45 pointer-coarse:min-h-11"
                   >
                     <ChevronLeft aria-hidden="true" className="size-4" />
                     {t("lesson.live.previousPart")}
@@ -1837,7 +1874,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     onClick={() => goToPrimaryPart(1)}
                     disabled={primaryReadingPageIndex >= primaryReadingGroups.length - 1}
                     data-tour-target="phase-3-next-part"
-                    className="inline-flex items-center gap-1 rounded-lg border border-hairline px-3 py-1.5 text-fg transition-colors hover:bg-press disabled:cursor-not-allowed disabled:opacity-40"
+                    className="inline-flex min-h-10 items-center gap-1 rounded-(--radius-ctl) border border-field-border bg-surface px-3 py-1.5 text-fg transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-45 pointer-coarse:min-h-11"
                   >
                     {t("lesson.live.nextPart")}
                     <ChevronRight aria-hidden="true" className="size-4" />
@@ -1852,8 +1889,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             </div>
           ) : (
             <div
-            className="mx-auto w-full max-w-[1500px] rounded-xl border border-hairline bg-surface p-6 shadow-card sm:p-8"
-            style={{ fontFamily: "Georgia, serif" }}
+            className="mx-auto w-full max-w-[1500px] rounded-(--radius-card) border border-clay-rim bg-surface p-6 shadow-card sm:p-8"
+            lang="en"
           >
             {readableParagraphGroups.map((group, pIdx) => (
               <p
@@ -1872,7 +1909,19 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                         key={idx}
                         data-tour-target={idx === 0 ? "phase-3-first-sentence" : undefined}
                         onClick={canSelectSentence ? () => seekToSentence(idx) : undefined}
-                        className={`${canSelectSentence ? "cursor-pointer" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
+                        role={canSelectSentence ? "button" : undefined}
+                        tabIndex={canSelectSentence ? 0 : undefined}
+                        onKeyDown={
+                          canSelectSentence
+                            ? (event) => {
+                                if (event.key === "Enter" || event.key === " ") {
+                                  event.preventDefault();
+                                  seekToSentence(idx);
+                                }
+                              }
+                            : undefined
+                        }
+                        className={`${canSelectSentence ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-ring" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
                           isActive
                             ? "bg-[var(--highlight-bg)] text-[var(--highlight-text)] font-semibold px-1.5 py-0.5 rounded-md ring-2 ring-brand-vivid"
                             : isFlagged
@@ -1884,8 +1933,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       >
                         {renderReadAlongText(idx, text)}
                         {isFlagged && (
-                          <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-danger-solid px-1.5 py-0.5 align-super text-xs font-semibold text-white not-italic">
-                            🚩{flagCount}
+                          <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-danger-solid px-1.5 py-0.5 align-super text-xs font-semibold text-on-danger not-italic">
+                            <Flag aria-hidden="true" className="size-3 shrink-0 fill-current" />
+                            {flagCount}
+                            <span className="sr-only" lang="th"> {t("lesson.live.flaggedCountSuffix")}</span>
                           </sup>
                         )}{" "}
                       </span>
@@ -1909,18 +1960,18 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             {/* Translation tooltip above player */}
             {activeEnText && (
               <div
-                className="max-w-md rounded-xl border border-hairline bg-surface-elevated px-4 py-3 shadow-popover"
-                style={{ fontFamily: "Georgia, serif" }}
+                className="max-w-md rounded-(--radius-card) border border-clay-rim bg-surface-elevated px-4 py-3 shadow-popover"
+                lang="en"
               >
                 <p className="text-base font-semibold leading-snug text-fg">
                   {activeEnText}
                 </p>
                 {activeThText ? (
-                  <p className="mt-1 text-sm leading-snug text-brand-fg">
+                  <p lang="th" className="mt-1 text-sm leading-[1.55] text-brand-fg">
                     {activeThText}
                   </p>
                 ) : (
-                  <p className="mt-1 text-sm italic text-fg-subtle">
+                  <p lang="th" className="mt-1 text-sm text-fg-subtle">
                     {t("lesson.interactive.translateSentencePrompt")}
                   </p>
                 )}
@@ -1928,7 +1979,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             )}
 
             {/* Player pill */}
-            <div data-tour-target="phase-3-audio-player" className="flex w-[min(560px,calc(100vw-48px))] items-center gap-3 rounded-xl border border-hairline bg-surface-elevated px-4 py-3 shadow-popover">
+            <div data-tour-target="phase-3-audio-player" className="flex w-[min(560px,calc(100vw-48px))] items-center gap-3 rounded-(--radius-card) border border-clay-rim bg-surface-elevated px-4 py-3 shadow-popover">
               {/* Skip prev */}
               <button
                 onClick={() => {
@@ -1981,34 +2032,47 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
               {/* Progress + time */}
               <div className="flex-1 min-w-0">
+                {/* py-2 widens the hit area around the 10px bar without changing its look. */}
                 <div
-                  className="mb-1.5 h-2.5 w-full cursor-pointer rounded-full bg-fill-muted"
+                  role="slider"
+                  tabIndex={0}
+                  aria-label={t("lesson.live.audioPosition")}
+                  aria-valuemin={0}
+                  aria-valuemax={Math.round(duration)}
+                  aria-valuenow={Math.round(currentTime)}
+                  aria-valuetext={`${fmtTime(currentTime)} / ${fmtTime(duration)}`}
+                  className="-mt-2 -mb-0.5 cursor-pointer rounded-full py-2 focus-visible:outline-2 focus-visible:outline-ring"
                   onClick={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
-                    const ratio = (e.clientX - rect.left) / rect.width;
-                    if (audioRef.current) {
-                      const requestId = ++audioRequestRef.current;
-                      primarySentencePlaybackTokenRef.current++;
-                      clearSentenceStopMonitor();
-                      stopAtRef.current = Infinity;
-                      clipAudioRef.current?.pause();
-                      audioRef.current.playbackRate = speechRate;
-                      audioRef.current.currentTime = ratio * duration;
-                      audioRef.current
-                        .play()
-                        .then(() => {
-                          if (requestId === audioRequestRef.current) setIsPlaying(true);
-                        })
-                        .catch(() => {
-                          if (requestId === audioRequestRef.current) setIsPlaying(false);
-                        });
-                    }
+                    seekAudioToRatio((e.clientX - rect.left) / rect.width);
+                  }}
+                  onKeyDown={(e) => {
+                    if (!duration) return;
+                    const step = 5 / duration;
+                    const now = currentTime / duration;
+                    const next =
+                      e.key === "ArrowLeft" || e.key === "ArrowDown"
+                        ? now - step
+                        : e.key === "ArrowRight" || e.key === "ArrowUp"
+                          ? now + step
+                          : e.key === "Home"
+                            ? 0
+                            : e.key === "End"
+                              ? 1
+                              : null;
+                    if (next === null) return;
+                    // Arrow keys here seek the audio; keep them from reaching the presenter's next-phase shortcut.
+                    e.preventDefault();
+                    e.stopPropagation();
+                    seekAudioToRatio(next);
                   }}
                 >
-                  <div
-                    className="h-2.5 rounded-full bg-brand-vivid transition-[width] duration-100"
-                    style={{ width: `${progressPct}%` }}
-                  />
+                  <div className="h-2.5 w-full rounded-full bg-fill-muted">
+                    <div
+                      className="h-2.5 rounded-full bg-brand-vivid transition-[width] duration-100"
+                      style={{ width: `${progressPct}%` }}
+                    />
+                  </div>
                 </div>
                 <div className="flex justify-between text-sm tabular-nums text-fg-muted">
                   <span>{fmtTime(currentTime)}</span>
@@ -2031,7 +2095,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   return (
     <div className="flex-1 flex flex-col items-center py-8 px-6 w-full">
       {articleData.passage && (
-        <div className="w-full max-w-4xl rounded-xl border border-hairline bg-surface p-8 shadow-card">
+        <div className="w-full max-w-4xl rounded-(--radius-card) border border-clay-rim bg-surface p-8 shadow-card">
           <p className="text-xl font-medium leading-[2] text-fg">
             {articleData.passage}
           </p>
@@ -2039,10 +2103,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         </div>
       )}
       {audioToastText && (
-        <div role="status" className="fixed bottom-24 right-6 z-[200] flex max-w-sm items-start gap-3 rounded-xl border border-warning-border bg-warning-bg px-4 py-3 text-warning-fg shadow-popover">
-          <AlertTriangle aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
-          <div className="text-sm">
-            <p className="font-semibold">{t("lesson.live.speechFallbackTitle")}</p>
+        <div role="status" className="fixed right-4 bottom-24 z-(--z-presenter-toast) flex max-w-sm items-start gap-3 rounded-(--radius-card) border border-clay-rim bg-surface-elevated px-3.5 py-3 shadow-popover sm:right-6">
+          <IconTile icon={AlertTriangle} tone="amber" size="sm" />
+          <div className="min-w-0 text-sm">
+            <p className="font-semibold text-fg">{t("lesson.live.speechFallbackTitle")}</p>
             <p className="mt-0.5 text-fg-muted">&ldquo;{audioToastText}&rdquo;</p>
           </div>
         </div>

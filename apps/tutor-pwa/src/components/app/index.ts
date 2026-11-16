@@ -2,28 +2,43 @@
  * Tutor design system + app shell. Import from "@/components/app".
  *
  * - Pages: <Page> → <PageHeader> → <Section>/<Grid>/<SplitLayout> blocks.
- * - Colours come from tokens in globals.css: bg-app, bg-surface, bg-surface-muted,
- *   border-hairline, text-fg / text-fg-muted / text-fg-subtle, text-brand-fg,
- *   bg-brand-solid, bg-brand-soft, {success|warning|danger|info}-{fg|bg|border},
- *   bg-tile-* / text-icon-*. Never hard-code emerald/indigo/violet… in app pages.
+ * - Colours come from tokens in globals.css (redesign 2026-11): bg-app, bg-surface,
+ *   bg-surface-muted, border-clay-rim (every card), border-hairline, text-fg /
+ *   text-fg-muted / text-fg-subtle, text-brand-fg, bg-brand-solid + text-on-brand
+ *   (never text-white), bg-brand-soft + text-brand-soft-fg, {success|warning|danger|
+ *   info}-{fg|bg|border}, bg-tile-* / text-icon-*, ink-* (wallet hero only),
+ *   answer-* (presenter only). Never hard-code palette classes or hex in pages.
+ * - Type roles: type-page / type-greet / type-hero-* (Kodchasan, titles and hero
+ *   numbers only), type-section / type-card / type-body / type-label / type-caption /
+ *   type-stat (Noto Sans Thai).
  * - Server-compatible: Page, PageHeader, Section, Surface/Card, ListGroup/ListRow,
- *   StatCard, DataTable, EmptyState, Notice, Chip/StatusChip, Skeletons, Atoms.
+ *   StatCard, StatStrip, WalletHero, NextClassCard, SessionList/SessionRow,
+ *   DataTable, EmptyState, Notice, Chip/StatusChip, Skeletons, Atoms, BrandMark.
  * - Client-only: ErrorState, Fields, SegmentedControl, TabNav, Sheet, ConfirmDialog,
  *   Toaster/toast, ThemeToggle, shells and hooks.
- * Full reference: scratchpad/tutor-foundation-api.md · live gallery: /dev/ui-kit.
+ * Spec: docs/design/redesign-2026-11 · live gallery (light + dark): /dev/ui-kit.
  */
 
 // Shells
 export { AppShell, type AppShellProps } from "./AppShell";
 export { SIDEBAR_COOKIE, HELP_URL, fieldControlClass } from "./constants";
 export { LessonShell, LessonBarActions, LessonDock, LessonContent, useLessonExitGuard, type LessonShellProps } from "./LessonShell";
-export { ShellProvider, ShellTitle, useShell, useShellTitle, useTutor, type ShellUser } from "./ShellContext";
+export {
+  ShellProvider,
+  ShellTitle,
+  useShell,
+  useShellTitle,
+  useAppBarAction,
+  useTutor,
+  type ShellUser,
+  type AppBarAction,
+} from "./ShellContext";
 export { NotificationsProvider, useNotifications, NOTIFICATIONS_POLL_MS, type NotificationsSummary } from "./Notifications";
 export { NotificationBell, CountBadge } from "./NotificationBell";
 export { Dropdown, type DropdownProps, type DropdownPlacement } from "./Dropdown";
 export { ThemeToggle } from "./ThemeToggle";
 export { ThemeSegmented } from "./ThemeSegmented";
-export { BrandMark } from "./SideNav";
+export { BrandMark, TA_MARK_LETTERS_PATH, type BrandMarkProps } from "./BrandMark";
 export { logout } from "./session";
 export {
   NAV_ITEMS,
@@ -64,6 +79,7 @@ export {
   ListGroup,
   ListRow,
   DescriptionList,
+  cardTapClass,
   type SurfaceProps,
   type SurfaceTone,
   type CardHeaderProps,
@@ -72,13 +88,31 @@ export {
   type DescriptionItem,
 } from "./Surface";
 export { StatCard, type StatCardProps } from "./StatCard";
-export { DataTable, type DataTableColumn, type DataTableProps } from "./DataTable";
+export {
+  WalletHero,
+  StatStrip,
+  NextClassCard,
+  SessionList,
+  SessionRow,
+  AvatarStack,
+  type WalletHeroProps,
+  type WalletHeroGoal,
+  type StatStripItem,
+  type NextClassCardProps,
+  type SessionRowProps,
+  type SessionTimeColumn,
+} from "./Compositions";
+export { DataTable, type DataTableColumn, type DataTableProps, type DataTableBreakpoint } from "./DataTable";
 
 // Atoms
 export {
   Chip,
   StatusChip,
   statusTone,
+  LevelChip,
+  Count,
+  levelTone,
+  levelIconClass,
   IconTile,
   UserAvatar,
   getInitials,
@@ -91,6 +125,7 @@ export {
   type TileTone,
   type ChipProps,
   type StatusChipProps,
+  type LevelChipProps,
   type IconTileProps,
   type UserAvatarProps,
   type ProgressBarProps,
@@ -119,6 +154,8 @@ export {
   type SegmentedControlProps,
   type SegmentedItem,
   type TabNavItem,
+  type TabNavOption,
+  type TabNavProps,
 } from "./Segmented";
 export {
   Field,

@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { FileText, Upload } from "lucide-react";
+import { FileText, ImageUp } from "lucide-react";
 import {
-  CardHeader,
   Field,
+  IconTile,
   Notice,
   SegmentedControl,
   SelectField,
@@ -15,9 +15,10 @@ import {
   TextField,
   toast,
 } from "@/components/app";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { t } from "@/lib/i18n";
+import { bilingualCopy, thaiLabel } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import {
   saveTaxInfoAction,
@@ -55,6 +56,7 @@ import {
 } from "../lib/verification";
 import { FieldStatusChip } from "./FieldStatusChip";
 import { PassportScanPanel, type PassportScanState } from "./PassportScanPanel";
+import { stepTile } from "./stepMeta";
 
 type DocField = "idCard" | "bankBook" | "address";
 
@@ -99,7 +101,7 @@ function ConsentCheckbox({
   children: ReactNode;
 }) {
   return (
-    <label htmlFor={id} className="flex cursor-pointer items-start gap-3 text-sm text-fg">
+    <label htmlFor={id} className="flex min-h-11 cursor-pointer items-start gap-3 py-1 text-sm leading-[1.6] text-fg">
       <Checkbox
         id={id}
         className="mt-0.5"
@@ -107,14 +109,21 @@ function ConsentCheckbox({
         disabled={disabled}
         onCheckedChange={(value) => onChange(value === true)}
       />
-      <span>{children}</span>
+      {/* "ไทย · English": each language wraps as its own block; the label's text is unchanged. */}
+      <span className="min-w-0">{bilingualCopy(children, { label: true })}</span>
     </label>
   );
 }
 
+/**
+ * One KYC document (patterns.md T8 upload row): tone tile + document name +
+ * status chip (ยังไม่ได้ส่ง / รอการตรวจสอบ / ตรวจสอบแล้ว / ปฏิเสธ + reason),
+ * the fields, then this step's own submit in a muted footer.
+ */
 function StepCard({
   user,
   field,
+  isPassport,
   title,
   description,
   children,
@@ -122,16 +131,29 @@ function StepCard({
 }: {
   user: SettingsUser;
   field: VerificationField;
+  isPassport: boolean;
   title: string;
   description?: string;
   children: ReactNode;
   footer: ReactNode;
 }) {
   const comment = getRejectionComment(user, field);
+  const tile = stepTile(field, isPassport);
   return (
-    <Surface padding="md" as="section" aria-label={title}>
-      <CardHeader title={title} description={description} action={<FieldStatusChip user={user} field={field} />} />
-      <div className="flex flex-col gap-4">
+    <Surface padding="none" as="section" aria-label={title} className="overflow-hidden">
+      <div className="flex flex-col gap-4 p-4 md:p-5">
+        <div className="flex items-start gap-3">
+          <IconTile icon={tile.icon} tone={tile.tone} />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col items-start gap-1.5 sm:flex-row sm:justify-between sm:gap-3">
+              <h3 className="type-card text-balance-th text-fg">{title}</h3>
+              <span className="shrink-0">
+                <FieldStatusChip user={user} field={field} showUnsubmitted />
+              </span>
+            </div>
+            {description ? <p className="mt-0.5 type-body-s text-fg-muted">{bilingualCopy(description)}</p> : null}
+          </div>
+        </div>
         {comment ? (
           <Notice tone="danger" title={t("dashboardSettings.rejectReason")}>
             {comment}
@@ -139,7 +161,7 @@ function StepCard({
         ) : null}
         {children}
       </div>
-      <div className="mt-4 flex justify-end border-t border-hairline pt-4">{footer}</div>
+      <div className="flex justify-end border-t border-hairline bg-surface-muted px-4 py-3 md:px-5">{footer}</div>
     </Surface>
   );
 }
@@ -174,35 +196,44 @@ function FilePicker({
         <label
           htmlFor={inputId}
           className={cn(
-            "group flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-4 text-center",
-            "focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-ring/40 hover:bg-surface-muted",
-            previewUrl ? "border-brand-soft-border bg-brand-soft/40" : invalid ? "border-danger-border" : "border-hairline-strong",
-            disabled && "pointer-events-none opacity-60",
+            "group flex min-h-16 cursor-pointer flex-wrap items-center gap-3 rounded-(--radius-ctl) border p-2.5 transition-colors duration-(--duration-fast) sm:flex-nowrap",
+            "hover:bg-row-hover has-[:focus-visible]:border-brand-fg has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus-ring has-[:focus-visible]:outline-solid",
+            previewUrl ? "border-brand-soft-border bg-brand-soft" : invalid ? "border-danger-solid bg-surface" : "border-field-border bg-surface",
+            disabled && "pointer-events-none opacity-45",
           )}
         >
-          {shownUrl && !showPdf ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={shownUrl}
-              alt={previewUrl ? t("dashboardSettings.previewAlt") : t("dashboardSettings.uploadedAlt")}
-              className="aspect-video w-full max-w-md rounded-md object-contain"
-            />
-          ) : shownUrl ? (
-            <span className="inline-flex items-center gap-2 text-sm font-medium text-fg">
-              <FileText aria-hidden="true" className="size-5" />
-              {file?.name ?? t("dashboardSettings.pdfSelected")}
+          <span className="flex min-w-0 flex-1 items-center gap-3">
+            <span className="flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-(--radius-ctl-sm) border border-hairline bg-surface-muted text-fg-subtle">
+              {shownUrl && !showPdf ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={shownUrl}
+                  alt={previewUrl ? t("dashboardSettings.previewAlt") : t("dashboardSettings.uploadedAlt")}
+                  className="size-full object-cover"
+                />
+              ) : shownUrl ? (
+                <FileText aria-hidden="true" className="size-6 text-fg" />
+              ) : (
+                <ImageUp aria-hidden="true" className="size-6" />
+              )}
             </span>
-          ) : (
-            <Upload aria-hidden="true" className="size-7 text-fg-subtle" />
-          )}
-          <span className="text-[0.8125rem] text-fg-muted">
-            {previewUrl
-              ? t("dashboardSettings.selectedFilePendingUpload")
-              : submittedUrl
-                ? t("dashboardSettings.uploadedImage")
-                : t("dashboardSettings.fileDropHint")}
+            <span className="flex min-w-0 flex-col">
+              {shownUrl && showPdf ? (
+                <span className="truncate text-sm font-semibold text-fg">{file?.name ?? t("dashboardSettings.pdfSelected")}</span>
+              ) : null}
+              <span className={cn("text-sm leading-[1.6]", previewUrl ? "font-medium text-brand-soft-fg" : "text-fg-muted")}>
+                {/* Inside the file input's label: spans only, the accessible name stays the same. */}
+                {thaiLabel(
+                  previewUrl
+                    ? t("dashboardSettings.selectedFilePendingUpload")
+                    : submittedUrl
+                      ? t("dashboardSettings.uploadedImage")
+                      : t("dashboardSettings.fileDropHint"),
+                )}
+              </span>
+            </span>
           </span>
-          <span className="inline-flex h-8 items-center rounded-lg border border-field-border bg-surface px-3 text-sm font-medium text-fg group-hover:bg-press">
+          <span className={cn(buttonVariants({ variant: "outline" }), "pointer-events-none min-h-11 w-full sm:w-auto")}>
             {shownUrl ? t("dashboardSettings.changeFile") : t("dashboardSettings.chooseFile")}
           </span>
           <input
@@ -578,9 +609,11 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
       <StepCard
         user={user}
         field="idCard"
+        isPassport={isPassport}
         title={isPassport ? t("dashboardSettings.passportStep") : t("dashboardSettings.idCardStep")}
         footer={
           <Button
+            variant="tonal"
             onClick={() => void submitOne("idCard")}
             disabled={!idCardFile || busy}
             loading={activeField === "idCard"}
@@ -611,9 +644,11 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
       <StepCard
         user={user}
         field="bankBook"
+        isPassport={isPassport}
         title={t("dashboardSettings.bankBookStep")}
         footer={
           <Button
+            variant="tonal"
             onClick={() => void submitOne("bankBook")}
             disabled={!ready.bankBook || busy}
             loading={activeField === "bankBook"}
@@ -623,7 +658,7 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
           </Button>
         }
       >
-        {isPassport ? <Notice tone="info">{t("dashboardSettings.bankNameMustMatchId")}</Notice> : null}
+        {isPassport ? <Notice tone="info">{bilingualCopy(t("dashboardSettings.bankNameMustMatchId"))}</Notice> : null}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <SelectField
             id="bank-brand"
@@ -668,9 +703,11 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
       <StepCard
         user={user}
         field="address"
+        isPassport={isPassport}
         title={t("dashboardSettings.addressStep")}
         footer={
           <Button
+            variant="tonal"
             onClick={() => void submitOne("address")}
             disabled={!ready.address || busy}
             loading={activeField === "address"}
@@ -699,11 +736,12 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
       <StepCard
         user={user}
         field="taxInfo"
+        isPassport={isPassport}
         title={isPassport ? t("dashboardSettings.passportTaxInfoStep") : t("dashboardSettings.taxInfoStep")}
         description={isPassport ? t("dashboardSettings.passportTaxInfoHint") : t("dashboardSettings.taxInfoHint")}
         footer={
           <Button
-            variant={taxInfoSaved ? "soft" : "default"}
+            variant={taxInfoSaved ? "outline" : "tonal"}
             onClick={() => void submitTaxInfo()}
             disabled={!taxInfoValid || busy}
             loading={taxInfoPending}
@@ -723,6 +761,8 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
             <SegmentedControl<IdType>
               aria-label={t("dashboardSettings.idTypeLabel")}
               fullWidth
+              // The long bilingual labels wrap on phones instead of truncating ("ในประเทศไทย (Thail…").
+              wrapLabels
               value={idType}
               onValueChange={(value) => {
                 setIdType(value);
@@ -752,7 +792,7 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField
             id="tax-name"
-            label={isPassport ? t("dashboardSettings.passportNameLabel") : t("dashboardSettings.taxNameLabel")}
+            label={isPassport ? bilingualCopy(t("dashboardSettings.passportNameLabel"), { label: true }) : t("dashboardSettings.taxNameLabel")}
             placeholder={isPassport ? "John Smith" : t("dashboardSettings.taxNamePlaceholder")}
             autoComplete="name"
             value={taxName}
@@ -845,11 +885,16 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
                 required
               />
             </div>
-            <Field id="teaching-location" label={t("dashboardSettings.teachingLocationLabel")} hint={t("dashboardSettings.teachingFromThailandHint")}>
+            <Field
+              id="teaching-location"
+              label={bilingualCopy(t("dashboardSettings.teachingLocationLabel"), { label: true })}
+              hint={bilingualCopy(t("dashboardSettings.teachingFromThailandHint"))}
+            >
               {() => (
                 <SegmentedControl<TeachingLocation>
                   aria-label={t("dashboardSettings.teachingLocationLabel")}
                   fullWidth
+                  wrapLabels
                   value={(teachingLocation || "") as TeachingLocation}
                   onValueChange={(value) => {
                     setTeachingLocation(value);
@@ -862,8 +907,8 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
                 />
               )}
             </Field>
-            <div className="flex flex-col gap-3 rounded-lg border border-hairline p-3">
-              <p className="text-[0.8125rem] text-fg-muted">{t("dashboardSettings.privacyNoticeBody")}</p>
+            <div className="ds-well flex flex-col gap-2 p-3.5">
+              <p className="type-body-s text-fg-muted">{bilingualCopy(t("dashboardSettings.privacyNoticeBody"))}</p>
               <ConsentCheckbox
                 id="privacy-notice-consent"
                 checked={privacyNoticeAccepted || savedPassport.privacyAccepted}
@@ -896,9 +941,11 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
         <StepCard
           user={user}
           field="workPermit"
+          isPassport={isPassport}
           title={t("dashboardSettings.workPermitStep")}
           footer={
             <Button
+              variant="tonal"
               onClick={() => void submitWorkPermit().then((ok) => ok && toast.success(t("dashboardSettings.submitSuccess")))}
               disabled={!workPermitReady || (!user.identity?.workPermitRequired && !taxInfoValid) || busy}
               loading={workPermitPending}
@@ -938,11 +985,14 @@ export function VerificationForms({ user, onCancelEdit }: { user: SettingsUser; 
       ) : null}
 
       {readyCount > 0 ? (
-        <StickyActions className="justify-between">
-          <span className="text-sm text-fg-muted">
-            {t("dashboardSettings.unsavedCount")} <span className="font-semibold text-fg tabular">{readyCount}</span>
+        <StickyActions className="justify-between gap-3">
+          <span className="min-w-0 text-sm text-fg-muted">
+            {t("dashboardSettings.unsavedCount")}{" "}
+            <span className="inline-flex h-[22px] min-w-[22px] items-center justify-center rounded-full bg-brand-soft px-1.5 text-xs font-semibold text-brand-soft-fg tabular">
+              {readyCount}
+            </span>
           </span>
-          <Button onClick={() => void saveAll()} disabled={busy} loading={savingAll}>
+          <Button size="lg" onClick={() => void saveAll()} disabled={busy} loading={savingAll}>
             {t("dashboardSettings.saveAll")}
           </Button>
         </StickyActions>

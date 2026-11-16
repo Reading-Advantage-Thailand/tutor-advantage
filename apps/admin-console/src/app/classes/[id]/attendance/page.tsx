@@ -2,21 +2,28 @@
 
 import { use } from "react";
 import Link from "next/link";
-import { CalendarDays, ClipboardCheck, FileQuestion, Users } from "lucide-react";
+import { CalendarDays, ClipboardCheck, ClipboardX, FileQuestion, UserCheck, Users } from "lucide-react";
 import {
   Chip,
   DataTable,
   EmptyState,
   ErrorState,
+  IdentityCell,
+  KpiStrip,
+  LoadingAnnouncement,
   Page,
   PageHeader,
   PageHeaderSkeleton,
   Section,
+  Skeleton,
+  StatCard,
+  StatGridSkeleton,
   TableSkeleton,
   useAdminSession,
   UserAvatar,
   type DataTableColumn,
 } from "@/components/app";
+import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatPercent } from "@/lib/format";
@@ -46,14 +53,50 @@ const PROGRESS: Record<MeetingProgress, { label: () => string; tone: StatusTone 
   complete: { label: () => t("classes.attendance.progressComplete"), tone: "success" },
 };
 
+type AttendanceKey = "PRESENT" | "LATE" | "ABSENT";
+
+/** The status dot in the count column headers: colour + dot + word, like the chips. */
+const DOT: Record<AttendanceKey, string> = {
+  PRESENT: "bg-success-solid",
+  LATE: "bg-warning-solid",
+  ABSENT: "bg-danger-solid",
+};
+
 function noteLabel(note: MeetingNote): string {
   if (note.kind === "adhoc") return t("classes.attendance.noteAdhoc");
   if (note.kind === "moved") return t("classes.attendance.noteMoved", { time: note.from });
   return t("classes.attendance.noteOffSchedule");
 }
 
-function countColumn<T>(key: string, header: string, value: (row: T) => number): DataTableColumn<T> {
-  return { key, header, align: "right", cell: (row) => <span className="tabular">{formatNumber(value(row))}</span> };
+function countColumn<T>(key: string, header: string, value: (row: T) => number, dot?: AttendanceKey): DataTableColumn<T> {
+  return {
+    key,
+    header: dot ? (
+      <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+        <span aria-hidden="true" className={`size-1.5 shrink-0 rounded-full ${DOT[dot]}`} />
+        {header}
+      </span>
+    ) : (
+      header
+    ),
+    label: header,
+    align: "right",
+    cell: (row) => <span className="tabular">{formatNumber(value(row))}</span>,
+  };
+}
+
+/** "86%" with a small decorative bar (the number is the value; the bar only helps scanning). */
+function RateCell({ rate }: { rate: number | null }) {
+  return (
+    <span className="inline-flex items-center justify-end gap-2">
+      {rate !== null ? (
+        <span aria-hidden="true" className="hidden h-1.5 w-12 overflow-hidden rounded-full bg-track md:block">
+          <span className="block h-full w-full origin-left rounded-full bg-brand-vivid" style={{ transform: `scaleX(${Math.min(1, Math.max(0, rate))})` }} />
+        </span>
+      ) : null}
+      <span className="tabular">{formatPercent(rate)}</span>
+    </span>
+  );
 }
 
 function StudentsTable({ rows }: { rows: AttendanceStudentStats[] }) {
@@ -66,24 +109,33 @@ function StudentsTable({ rows }: { rows: AttendanceStudentStats[] }) {
       cell: (row) => {
         const name = row.name || t("classes.attendance.noName");
         return (
-          <span className="flex min-w-0 items-center gap-2">
-            <UserAvatar name={row.name ?? ""} src={row.avatarUrl} size="sm" />
-            <Link href={studentProfileHref(row.studentUserId)} className="block max-w-64 truncate text-fg hover:underline" title={name}>
-              {name}
-            </Link>
-          </span>
+          <IdentityCell
+            leading={<UserAvatar name={row.name ?? ""} src={row.avatarUrl} seed={row.studentUserId} size="sm" decorative />}
+            title={name}
+            name={
+              // The name is cut inside the link (IdentityCell does not clip a link), so the touch ::after stays 44px tall.
+              <Link
+                href={studentProfileHref(row.studentUserId)}
+                className="relative block min-w-0 hover:underline pointer-coarse:after:absolute pointer-coarse:after:-inset-y-3 pointer-coarse:after:inset-x-0"
+                title={name}
+              >
+                <span className="block truncate">{name}</span>
+              </Link>
+            }
+            className="max-w-72"
+          />
         );
       },
     },
-    countColumn("present", statusLabel("attendance", "PRESENT"), (row) => row.present),
-    countColumn("late", statusLabel("attendance", "LATE"), (row) => row.late),
-    countColumn("absent", statusLabel("attendance", "ABSENT"), (row) => row.absent),
+    countColumn("present", statusLabel("attendance", "PRESENT"), (row) => row.present, "PRESENT"),
+    countColumn("late", statusLabel("attendance", "LATE"), (row) => row.late, "LATE"),
+    countColumn("absent", statusLabel("attendance", "ABSENT"), (row) => row.absent, "ABSENT"),
     {
       key: "rate",
       header: t("classes.attendance.colRate"),
       align: "right",
       mobile: "trailing",
-      cell: (row) => <span className="tabular">{formatPercent(row.rate)}</span>,
+      cell: (row) => <RateCell rate={row.rate} />,
     },
   ];
 
@@ -93,7 +145,7 @@ function StudentsTable({ rows }: { rows: AttendanceStudentStats[] }) {
       columns={columns}
       rows={rows}
       getRowKey={(row) => row.studentUserId}
-      empty={<EmptyState compact icon={Users} title={t("classes.attendance.studentsEmpty")} />}
+      empty={<EmptyState as="h3" icon={Users} title={t("classes.attendance.studentsEmpty")} />}
     />
   );
 }
@@ -109,7 +161,7 @@ function MeetingsTable({ rows }: { rows: AttendanceMeetingSummary[] }) {
         const note = meetingNote(row);
         return (
           <span className="flex min-w-0 flex-col items-start gap-1">
-            <span className="whitespace-nowrap font-medium text-fg">{meetingDateLabel(row.date)}</span>
+            <span className="font-medium whitespace-nowrap text-fg tabular">{meetingDateLabel(row.date)}</span>
             {note ? (
               <Chip tone="neutral" size="sm">
                 {noteLabel(note)}
@@ -138,9 +190,9 @@ function MeetingsTable({ rows }: { rows: AttendanceMeetingSummary[] }) {
         );
       },
     },
-    countColumn("present", statusLabel("attendance", "PRESENT"), (row) => row.counts.present),
-    countColumn("late", statusLabel("attendance", "LATE"), (row) => row.counts.late),
-    countColumn("absent", statusLabel("attendance", "ABSENT"), (row) => row.counts.absent),
+    countColumn("present", statusLabel("attendance", "PRESENT"), (row) => row.counts.present, "PRESENT"),
+    countColumn("late", statusLabel("attendance", "LATE"), (row) => row.counts.late, "LATE"),
+    countColumn("absent", statusLabel("attendance", "ABSENT"), (row) => row.counts.absent, "ABSENT"),
     countColumn("unmarked", t("classes.attendance.colUnmarked"), (row) => row.counts.unmarked),
   ];
 
@@ -150,8 +202,75 @@ function MeetingsTable({ rows }: { rows: AttendanceMeetingSummary[] }) {
       columns={columns}
       rows={rows}
       getRowKey={meetingRowKey}
-      empty={<EmptyState compact icon={CalendarDays} title={t("classes.attendance.meetingsEmpty")} />}
+      empty={<EmptyState as="h3" icon={CalendarDays} tone="purple" title={t("classes.attendance.meetingsEmpty")} />}
     />
+  );
+}
+
+/**
+ * Totals for the summary strip, from the meetings already on the page:
+ * how many meetings are marked (complete / partial / not yet) and the class
+ * attendance rate on the same rule as the per-student rate (present + late
+ * over marked marks; unmarked marks are left out).
+ */
+function summarize(meetings: AttendanceMeetingSummary[]) {
+  const progress = { none: 0, partial: 0, complete: 0 } satisfies Record<MeetingProgress, number>;
+  const marks = { present: 0, late: 0, absent: 0 };
+  for (const meeting of meetings) {
+    progress[meetingProgress(meeting)] += 1;
+    marks.present += meeting.counts.present;
+    marks.late += meeting.counts.late;
+    marks.absent += meeting.counts.absent;
+  }
+  const marked = marks.present + marks.late + marks.absent;
+  return { progress, marks, rate: marked > 0 ? (marks.present + marks.late) / marked : null };
+}
+
+function AttendanceSummary({ data }: { data: AdminClassAttendanceResponse }) {
+  const { progress, marks, rate } = summarize(data.meetings);
+  const total = data.meetings.length;
+  const share = (count: number) => (total > 0 ? (count / total) * 100 : 0);
+  const progressWords = (["complete", "partial", "none"] as const)
+    .map((key) => `${PROGRESS[key].label()} ${formatNumber(progress[key])}`)
+    .join(" · ");
+  // One no-wrap phrase per status ("ขาดเรียน 2" never breaks inside the word at 390).
+  const markWords = (["PRESENT", "LATE", "ABSENT"] as const).map((key, index) => (
+    <span key={key}>
+      {index > 0 ? " · " : null}
+      <span className="whitespace-nowrap">
+        {statusLabel("attendance", key)} {formatNumber(marks[key.toLowerCase() as "present" | "late" | "absent"])}
+      </span>
+    </span>
+  ));
+  return (
+    <KpiStrip aria-label={t("classes.attendance.statsLabel")}>
+      <StatCard label={t("classes.attendance.colStudent")} value={formatNumber(data.students.length)} icon={Users} tone="blue" />
+      <StatCard
+        label={t("classes.attendance.statMeetings")}
+        value={formatNumber(total)}
+        icon={CalendarDays}
+        tone="purple"
+        hint={t("classes.attendance.statMeetingsHint", { count: formatNumber(progress.complete) })}
+        // Partial in blue, like the info chips in the meetings table (amber means "not marked" here).
+        bar={
+          total > 0
+            ? [
+                { value: share(progress.complete), tone: "brand" },
+                { value: share(progress.partial), tone: "chart-2" },
+              ]
+            : undefined
+        }
+        barLabel={progressWords}
+      />
+      <StatCard
+        label={t("classes.attendance.progressNone")}
+        value={formatNumber(progress.none)}
+        icon={ClipboardX}
+        tone="amber"
+        hint={t("classes.attendance.statUnmarkedHint", { count: formatNumber(progress.partial) })}
+      />
+      <StatCard label={t("classes.attendance.colRate")} value={formatPercent(rate)} icon={UserCheck} tone="teal" hint={markWords} />
+    </KpiStrip>
   );
 }
 
@@ -162,6 +281,11 @@ export default function ClassAttendancePage({ params }: { params: Promise<{ id: 
   const { data, error, refetch } = useCachedResource(key, () => api.get<AdminClassAttendanceResponse>(classAttendancePath(id)));
 
   const backProps = { backHref: "/classes", backLabel: t("classes.attendance.backToList") };
+  const backAction = (
+    <Button asChild variant="outline">
+      <Link href={backProps.backHref}>{backProps.backLabel}</Link>
+    </Button>
+  );
 
   if (error && !data) {
     const failure = attendanceLoadFailure(error);
@@ -169,12 +293,19 @@ export default function ClassAttendancePage({ params }: { params: Promise<{ id: 
       <Page>
         <PageHeader title={t("classes.attendance.pageTitle")} {...backProps} />
         {failure === "notFound" ? (
-          <EmptyState icon={FileQuestion} title={t("classes.attendance.notFoundTitle")} description={t("classes.attendance.notFoundDescription")} />
+          <EmptyState
+            icon={FileQuestion}
+            title={t("classes.attendance.notFoundTitle")}
+            description={t("classes.attendance.notFoundDescription")}
+            action={backAction}
+          />
         ) : failure === "notAvailable" ? (
           <EmptyState
             icon={ClipboardCheck}
+            tone="amber"
             title={t("classes.attendance.notAvailableTitle")}
             description={t("classes.attendance.notAvailableDescription")}
+            action={backAction}
           />
         ) : (
           <ErrorState onRetry={refetch} />
@@ -186,8 +317,13 @@ export default function ClassAttendancePage({ params }: { params: Promise<{ id: 
   if (!data) {
     return (
       <Page>
+        <LoadingAnnouncement />
         <PageHeaderSkeleton actions={false} />
-        <TableSkeleton />
+        <StatGridSkeleton />
+        <div aria-hidden="true" className="flex flex-col gap-3">
+          <Skeleton className="h-5 w-40" />
+          <TableSkeleton rows={6} columns={5} />
+        </div>
       </Page>
     );
   }
@@ -202,6 +338,7 @@ export default function ClassAttendancePage({ params }: { params: Promise<{ id: 
         })}
         {...backProps}
       />
+      <AttendanceSummary data={data} />
       <Section title={t("classes.attendance.studentsTitle")} description={t("classes.attendance.studentsDescription")}>
         <StudentsTable rows={data.students} />
       </Section>

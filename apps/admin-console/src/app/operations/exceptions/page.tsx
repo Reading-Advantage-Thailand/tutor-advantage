@@ -1,15 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { CheckCircle2, CircleCheck, CircleSlash, ReceiptText, Zap } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import {
+  CheckCircle2,
+  CircleCheck,
+  CircleSlash,
+  ReceiptText,
+  RotateCcw,
+  TimerOff,
+  TriangleAlert,
+  Unlink,
+  UserX,
+  Webhook,
+  Zap,
+} from "lucide-react";
 import {
   AdminStatusChip,
+  ColumnToggle,
   DataTable,
   DescriptionList,
   EmptyState,
-  ErrorState,
   FilterBar,
+  IconTile,
   Money,
   Notice,
   Page,
@@ -17,7 +31,9 @@ import {
   Pagination,
   SegmentedControl,
   SelectField,
+  toneToTile,
   useAdminSession,
+  useColumnVisibility,
   type DataTableColumn,
 } from "@/components/app";
 import { useRefreshAdminSummary } from "@/components/app/adminSummaryContext";
@@ -29,7 +45,9 @@ import { api, newIdempotencyKey } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatThaiDateTime } from "@/lib/format";
 import { t, type I18nKey } from "@/lib/i18n";
-import { statusLabel, statusOptions } from "@/lib/status";
+import { statusLabel, statusOptions, statusToneFor } from "@/lib/status";
+import { keepThaiWords } from "@/lib/thaiText";
+import { DateTimeParts, focusToolbar, LoadError } from "../../settlements/financeUi";
 import "@/locales/th/operations";
 
 type Resolution = "ACTIVATE_ENROLLMENT" | "MARK_RESOLVED" | "DISMISS";
@@ -96,6 +114,17 @@ const RESOLUTION_COPY: Record<Resolution, { title: I18nKey; description: I18nKey
   },
 };
 
+/** Leading icon per case type (the tile carries the type's tone; the word is next to it). */
+const TYPE_ICON: Record<string, LucideIcon> = {
+  PAYMENT_WEBHOOK_MISMATCH: Webhook,
+  WEBHOOK_FAILED: Webhook,
+  ORPHAN_PAYMENT_EVENT: Unlink,
+  ENROLLMENT_ACTIVATION_FAILED: UserX,
+  ENROLLMENT_MISMATCH: UserX,
+  REFUND_REQUESTED: RotateCcw,
+  PAYMENT_TIMEOUT: TimerOff,
+};
+
 function resolutionLabel(row: ExceptionRow) {
   const r = row.lastAction?.resolution;
   if (r === "ACTIVATE_ENROLLMENT" || r === "MARK_RESOLVED" || r === "DISMISS") return t(`operations.resolutions.${r}`);
@@ -112,6 +141,7 @@ export default function ExceptionsPage() {
     defaultFilters: { status: "UNRESOLVED" },
   });
   const [pending, setPending] = useState<{ row: ExceptionRow; resolution: Resolution; key: string } | null>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const status = (["UNRESOLVED", "RESOLVED", "VOIDED", "ALL"].includes(table.filters.status) ? table.filters.status : "ALL") as StatusTab;
 
   const query = {
@@ -143,13 +173,22 @@ export default function ExceptionsPage() {
         label: t("operations.columns.type"),
         alwaysVisible: true,
         mobile: "primary",
+        sticky: true,
+        // Tile + type name (wraps, so phone cards show it whole) + the error detail on up to two lines.
         cell: (row) => (
-          <div className="flex min-w-0 flex-col items-start gap-1">
-            <AdminStatusChip domain="exceptionType" status={row.type} />
-            <span className="line-clamp-2 text-[0.8125rem] text-fg-muted" title={row.errorDetail}>
-              {row.errorDetail || "–"}
+          <span className="flex min-w-0 items-start gap-2.5 md:max-w-80">
+            <IconTile
+              icon={TYPE_ICON[row.type] ?? TriangleAlert}
+              tone={toneToTile[statusToneFor("exceptionType", row.type)]}
+              size="sm"
+            />
+            <span className="flex min-w-0 flex-col md:min-w-32">
+              <span className="text-sm leading-[1.6] font-medium text-balance text-fg">{statusLabel("exceptionType", row.type)}</span>
+              <span className="line-clamp-2 text-[0.8125rem] leading-[1.6] font-normal break-words text-fg-muted" title={row.errorDetail || undefined}>
+                {row.errorDetail || "–"}
+              </span>
             </span>
-          </div>
+          </span>
         ),
       },
       {
@@ -157,17 +196,26 @@ export default function ExceptionsPage() {
         header: t("operations.columns.createdAt"),
         sortable: true,
         mobile: "secondary",
-        cell: (row) => <span className="whitespace-nowrap">{formatThaiDateTime(row.createdAt)}</span>,
+        // Date over time in the table (the spare width goes to the case type); one wrapping line in phone cards.
+        cell: (row) => (
+          <span className="tabular md:flex md:flex-col">
+            <DateTimeParts at={row.createdAt} />
+          </span>
+        ),
       },
       {
         key: "student",
         header: t("operations.columns.student"),
         label: t("operations.columns.student"),
         cell: (row) => (
-          <div className="flex min-w-0 flex-col">
-            <span className="truncate text-fg">{row.studentName ?? t("operations.noStudent")}</span>
+          <div className="flex max-w-56 min-w-0 flex-col">
+            <span className="truncate text-fg" title={row.studentName ?? undefined}>
+              {row.studentName ?? t("operations.noStudent")}
+            </span>
             {row.context?.classTitle ? (
-              <span className="truncate text-[0.8125rem] text-fg-muted">{row.context.classTitle}</span>
+              <span className="truncate text-[0.8125rem] text-fg-muted" title={row.context.classTitle}>
+                {row.context.classTitle}
+              </span>
             ) : null}
           </div>
         ),
@@ -176,7 +224,7 @@ export default function ExceptionsPage() {
         key: "amount",
         header: t("operations.columns.amount"),
         align: "right",
-        cell: (row) => (row.amountMinor != null ? <Money satang={row.amountMinor} /> : <span className="text-fg-subtle">–</span>),
+        cell: (row) => (row.amountMinor != null ? <Money satang={row.amountMinor} fractionDigits={2} /> : <span className="text-fg-subtle">–</span>),
       },
       {
         key: "payment",
@@ -189,12 +237,12 @@ export default function ExceptionsPage() {
               {row.context.payment ? (
                 <AdminStatusChip domain="payment" status={row.context.payment.status} />
               ) : (
-                <span className="text-[0.8125rem] text-fg-muted">{t("operations.noPayment")}</span>
+                <span className="text-[0.8125rem] whitespace-nowrap text-fg-muted">{t("operations.noPayment")}</span>
               )}
               {row.context.enrollmentStatus ? (
                 <AdminStatusChip domain="enrollment" status={row.context.enrollmentStatus} />
               ) : (
-                <span className="text-[0.8125rem] text-fg-muted">{t("operations.noEnrollment")}</span>
+                <span className="text-[0.8125rem] whitespace-nowrap text-fg-muted">{t("operations.noEnrollment")}</span>
               )}
             </div>
           );
@@ -213,7 +261,7 @@ export default function ExceptionsPage() {
         label: t("operations.columns.outcome"),
         cell: (row) =>
           row.status !== "UNRESOLVED" ? (
-            <div className="flex min-w-0 flex-col">
+            <div className="flex max-w-60 min-w-36 flex-col">
               <span className="text-fg">{resolutionLabel(row)}</span>
               {row.lastAction?.note ? (
                 <span className="line-clamp-2 text-[0.8125rem] text-fg-muted">{row.lastAction.note}</span>
@@ -237,10 +285,13 @@ export default function ExceptionsPage() {
         label: t("operations.columns.actions"),
         alwaysVisible: true,
         align: "right",
+        // Phones: a full-width row at the bottom of the card, not a half-width field.
+        mobile: "actions",
         cell: (row) => (
-          <div className="flex flex-wrap justify-start gap-1.5 md:justify-end lg:flex-nowrap">
+          // From 1400px the case buttons sit on one line (the column is wide enough for two; a third wraps).
+          <div className="flex flex-wrap justify-start gap-1.5 md:justify-end min-[1400px]:min-w-[12.5rem]">
             {row.status === "UNRESOLVED" && row.canActivateEnrollment ? (
-              <Button size="sm" onClick={() => setPending({ row, resolution: "ACTIVATE_ENROLLMENT", key: newIdempotencyKey() })}>
+              <Button size="sm" variant="tonal" onClick={() => setPending({ row, resolution: "ACTIVATE_ENROLLMENT", key: newIdempotencyKey() })}>
                 <Zap aria-hidden="true" />
                 {t("operations.actions.activate")}
               </Button>
@@ -307,6 +358,26 @@ export default function ExceptionsPage() {
       .map((type) => ({ value: type, label: statusLabel("exceptionType", type) })),
   ];
   const isFiltered = table.q !== "" || Boolean(table.filters.type) || status !== "UNRESOLVED";
+  const visibility = useColumnVisibility("operations-exceptions", columns);
+  // The empty state's "ล้างตัวกรอง" removes itself: focus goes back to the toolbar.
+  // (FilterBar's own button moves focus by itself.)
+  const resetFilters = () => {
+    table.reset();
+    focusToolbar(toolbarRef.current);
+  };
+
+  // The type filter: inline from 768px, in the "ตัวกรอง" sheet on phones (patterns.md A2).
+  const typeSelect = (props: { id: string; label?: string; containerClassName: string }) => (
+    <SelectField
+      id={props.id}
+      aria-label={props.label ? undefined : t("operations.filters.type")}
+      label={props.label}
+      containerClassName={props.containerClassName}
+      value={table.filters.type ?? ""}
+      onChange={(event) => table.setFilter("type", event.target.value)}
+      options={typeOptions}
+    />
+  );
 
   return (
     <Page>
@@ -321,56 +392,64 @@ export default function ExceptionsPage() {
         }
       />
 
-      <SegmentedControl
-        aria-label={t("operations.statusTabs.label")}
-        className="hidden sm:inline-flex sm:w-auto"
-        value={status}
-        onValueChange={(next) => table.setFilter("status", next)}
-        items={statusItems}
-      />
-      <SelectField
-        aria-label={t("operations.statusTabs.label")}
-        containerClassName="w-full sm:hidden"
-        value={status}
-        onChange={(event) => table.setFilter("status", event.target.value)}
-        options={statusItems.map((item) => ({
-          value: item.value,
-          label: item.count === undefined ? item.label : `${item.label} (${item.count})`,
-        }))}
-      />
-
-      <FilterBar
-        search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("operations.filters.search") }}
-        isFiltered={isFiltered}
-        onReset={table.reset}
-      >
-        <SelectField
-          aria-label={t("operations.filters.type")}
-          containerClassName="w-full sm:w-56"
-          value={table.filters.type ?? ""}
-          onChange={(event) => table.setFilter("type", event.target.value)}
-          options={typeOptions}
-        />
-      </FilterBar>
+      {/* Count-tab toolbar (A2): status tabs with counts → search → type → columns. */}
+      <div ref={toolbarRef}>
+        <FilterBar
+          tabs={
+            <SegmentedControl
+              aria-label={t("operations.statusTabs.label")}
+              value={status}
+              onValueChange={(next) => table.setFilter("status", next)}
+              items={statusItems}
+            />
+          }
+          search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("operations.filters.search") }}
+          isFiltered={isFiltered}
+          onReset={table.reset}
+          actions={<ColumnToggle id="exceptions-columns" columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} />}
+          moreFilters={{
+            active: table.filters.type
+              ? [
+                  {
+                    key: "type",
+                    label: `${t("operations.filters.type")}: ${typeOptions.find((option) => option.value === table.filters.type)?.label ?? table.filters.type}`,
+                    onRemove: () => table.setFilter("type", ""),
+                  },
+                ]
+              : [],
+            onReset: () => table.setFilter("type", ""),
+            children: typeSelect({ id: "exceptions-type-sheet", label: t("operations.filters.type"), containerClassName: "w-full" }),
+          }}
+        >
+          {typeSelect({ id: "exceptions-type", containerClassName: "hidden md:flex md:w-48" })}
+        </FilterBar>
+      </div>
 
       {error && !data ? (
-        <ErrorState onRetry={refetch} />
+        <LoadError error={error} onRetry={refetch} />
       ) : (
         <DataTable
           caption={t("operations.page.title")}
           rows={data?.exceptions ?? []}
           columns={columns}
           getRowKey={(row) => row.id}
+          hiddenColumns={visibility.hidden}
           loading={isLoading || (isValidating && isPreviousData)}
           sort={table.sort}
           onSortChange={table.toggleSort}
           empty={
             <EmptyState
-              compact
               icon={CheckCircle2}
               tone="teal"
               title={isFiltered ? t("operations.empty.filteredTitle") : t("operations.empty.unresolvedTitle")}
               description={isFiltered ? t("operations.empty.filteredDescription") : t("operations.empty.unresolvedDescription")}
+              action={
+                isFiltered ? (
+                  <Button variant="outline" onClick={resetFilters}>
+                    {t("shell.clearFilters")}
+                  </Button>
+                ) : undefined
+              }
             />
           }
           footer={
@@ -398,11 +477,11 @@ export default function ExceptionsPage() {
             <DescriptionList
               columns={2}
               items={[
-                { label: t("operations.columns.type"), value: statusLabel("exceptionType", target.type) },
+                { label: t("operations.columns.type"), value: keepThaiWords(statusLabel("exceptionType", target.type)) },
                 { label: t("operations.columns.student"), value: target.studentName ?? t("operations.noStudent") },
                 {
                   label: t("operations.columns.amount"),
-                  value: target.amountMinor != null ? <Money satang={target.amountMinor} /> : "–",
+                  value: target.amountMinor != null ? <Money satang={target.amountMinor} fractionDigits={2} className="font-semibold" /> : "–",
                 },
                 {
                   label: t("operations.columns.payment"),

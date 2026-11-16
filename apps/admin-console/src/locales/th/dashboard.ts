@@ -71,6 +71,11 @@ export const dashboard = {
   linkAudit: "ประวัติกิจกรรม",
   linkDocs: "คู่มือระบบ",
   loadError: "โหลดข้อมูลภาพรวมไม่สำเร็จ",
+  // ── Redesign 2026-11 A1 (appended; existing keys unchanged) ──
+  refreshAria: "รีเฟรชข้อมูล",
+  queuesSummary: "{count} รายการใน {queues} คิว",
+  kpiFraudBar: "{high} จาก {total} เคส",
+  legendLabel: "ความหมายของสี",
 } as const;
 
 registerMessages("dashboard", dashboard);

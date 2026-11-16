@@ -167,7 +167,7 @@ export const ADMIN_STATUS = {
   /** learning.classes.status (G4 addition) */
   classStatus: {
     DRAFT: { label: "ฉบับร่าง", tone: "neutral" },
-    OPEN: { label: "เปิดรับสมัคร", tone: "info" },
+    OPEN: { label: "เปิดรับสมัคร", tone: "success" },
     PUBLISHED: { label: "เผยแพร่แล้ว", tone: "info" },
     FULL: { label: "เต็มแล้ว", tone: "warning" },
     ACTIVE: { label: "กำลังสอน", tone: "success" },

@@ -11,6 +11,7 @@ import {
 } from "react";
 import { AlertCircle, ChevronDown, Search, X } from "lucide-react";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import { fieldControlClass } from "./constants";
 
@@ -27,24 +28,30 @@ export interface FieldProps {
   required?: boolean;
   /** Shows "(ไม่บังคับ)" after the label. */
   optional?: boolean;
+  /**
+   * Hide the label visually; it stays the control's accessible name. For
+   * compact composers (a chat or ticket reply box) whose placeholder and
+   * context already say what to type.
+   */
+  hideLabel?: boolean;
   className?: string;
   /** The control. Render-prop form receives the ids to wire up aria. */
   children: ReactNode | ((ids: { id: string; describedBy: string | undefined; invalid: boolean }) => ReactNode);
 }
 
 /**
- * Label + control + hint/error, vertically stacked. Use the render-prop
- * form for custom controls:
+ * Label + control + hint/error, vertically stacked (hint and error 14/1.6).
+ * Use the render-prop form for custom controls:
  * <Field label="วันที่" error={err}>{({ id, describedBy, invalid }) => <DatePicker id={id} … />}</Field>
  */
-export function Field({ id: idProp, label, hint, error, required, optional, className, children }: FieldProps) {
+export function Field({ id: idProp, label, hint, error, required, optional, hideLabel, className, children }: FieldProps) {
   const autoId = useId();
   const id = idProp ?? autoId;
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
   return (
     <div className={cn("flex min-w-0 flex-col gap-1.5", className)}>
       {label ? (
-        <label htmlFor={id} className="text-sm font-medium text-fg">
+        <label htmlFor={id} className={cn("text-sm font-medium text-fg", hideLabel && "sr-only")}>
           {label}
           {required ? (
             <span className="ml-0.5 text-danger-fg" aria-hidden="true">
@@ -55,21 +62,26 @@ export function Field({ id: idProp, label, hint, error, required, optional, clas
         </label>
       ) : null}
       {typeof children === "function" ? children({ id, describedBy, invalid: Boolean(error) }) : children}
-      {error ? (
-        <p id={`${id}-error`} className="flex items-start gap-1 text-[0.8125rem] text-danger-fg">
-          <AlertCircle aria-hidden="true" className="mt-[3px] size-3.5 shrink-0" />
-          <span>{error}</span>
-        </p>
-      ) : hint ? (
-        <p id={`${id}-hint`} className="text-[0.8125rem] text-fg-muted">
-          {hint}
+      {hint && !error ? (
+        <p id={`${id}-hint`} className="text-sm leading-[1.6] text-fg-muted">
+          {thaiCopy(hint)}
         </p>
       ) : null}
+      {/* Always mounted so screen readers announce an error when it appears;
+          the negative margin cancels the flex gap while it is empty. */}
+      <div aria-live="polite" className="empty:-mt-1.5">
+        {error ? (
+          <p id={`${id}-error`} className="flex items-start gap-1.5 text-sm leading-[1.6] text-danger-fg">
+            <AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+            <span>{error}</span>
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }
 
-type FieldChromeProps = Pick<FieldProps, "label" | "hint" | "error" | "optional"> & {
+type FieldChromeProps = Pick<FieldProps, "label" | "hint" | "error" | "optional" | "hideLabel"> & {
   /** Classes for the outer wrapper (the control gets `className`). */
   containerClassName?: string;
 };
@@ -84,11 +96,11 @@ export interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement>, F
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
-  { id, label, hint, error, optional, required, containerClassName, className, startAddon, endAddon, ...props },
+  { id, label, hint, error, optional, hideLabel, required, containerClassName, className, startAddon, endAddon, ...props },
   ref,
 ) {
   return (
-    <Field id={id} label={label} hint={hint} error={error} required={required} optional={optional} className={containerClassName}>
+    <Field id={id} label={label} hint={hint} error={error} required={required} optional={optional} hideLabel={hideLabel} className={containerClassName}>
       {({ id: fieldId, describedBy, invalid }) => (
         <div className="relative">
           {startAddon ? (
@@ -100,7 +112,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
             required={required}
             aria-invalid={invalid || undefined}
             aria-describedby={describedBy}
-            className={cn(fieldControlClass, "h-10 pointer-coarse:h-11", startAddon && "pl-9", endAddon && "pr-12", className)}
+            className={cn(fieldControlClass, "h-11 pointer-coarse:h-12", startAddon && "pl-9", endAddon && "pr-12", className)}
             {...props}
           />
           {endAddon ? (
@@ -117,11 +129,11 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
 export interface TextAreaFieldProps extends TextareaHTMLAttributes<HTMLTextAreaElement>, FieldChromeProps {}
 
 export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(function TextAreaField(
-  { id, label, hint, error, optional, required, containerClassName, className, rows = 4, ...props },
+  { id, label, hint, error, optional, hideLabel, required, containerClassName, className, rows = 4, ...props },
   ref,
 ) {
   return (
-    <Field id={id} label={label} hint={hint} error={error} required={required} optional={optional} className={containerClassName}>
+    <Field id={id} label={label} hint={hint} error={error} required={required} optional={optional} hideLabel={hideLabel} className={containerClassName}>
       {({ id: fieldId, describedBy, invalid }) => (
         <textarea
           ref={ref}
@@ -157,11 +169,11 @@ export interface SelectFieldProps extends SelectHTMLAttributes<HTMLSelectElement
  * styling. Pass `options` or <option> children.
  */
 export const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(function SelectField(
-  { id, label, hint, error, optional, required, containerClassName, className, options, placeholder, children, ...props },
+  { id, label, hint, error, optional, hideLabel, required, containerClassName, className, options, placeholder, children, ...props },
   ref,
 ) {
   return (
-    <Field id={id} label={label} hint={hint} error={error} required={required} optional={optional} className={containerClassName}>
+    <Field id={id} label={label} hint={hint} error={error} required={required} optional={optional} hideLabel={hideLabel} className={containerClassName}>
       {({ id: fieldId, describedBy, invalid }) => (
         <div className="relative">
           <select
@@ -170,7 +182,7 @@ export const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(funct
             required={required}
             aria-invalid={invalid || undefined}
             aria-describedby={describedBy}
-            className={cn(fieldControlClass, "h-10 cursor-pointer appearance-none pr-9 pointer-coarse:h-11", className)}
+            className={cn(fieldControlClass, "h-11 cursor-pointer appearance-none pr-10 pointer-coarse:h-12", className)}
             {...props}
           >
             {placeholder !== undefined ? (
@@ -185,7 +197,7 @@ export const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(funct
             ))}
             {children}
           </select>
-          <ChevronDown aria-hidden="true" className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-fg-subtle" />
+          <ChevronDown aria-hidden="true" className="pointer-events-none absolute top-1/2 right-3 size-5 -translate-y-1/2 text-fg-subtle" />
         </div>
       )}
     </Field>
@@ -207,7 +219,7 @@ export function SearchField({ value, onValueChange, label = t("shell.search"), p
   const inputRef = useRef<HTMLInputElement>(null);
   return (
     <div className={cn("relative min-w-0 flex-1", containerClassName)}>
-      <Search aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle" />
+      <Search aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-fg-subtle" />
       <input
         ref={inputRef}
         type="search"
@@ -215,7 +227,7 @@ export function SearchField({ value, onValueChange, label = t("shell.search"), p
         placeholder={placeholder ?? label}
         value={value}
         onChange={(event) => onValueChange(event.target.value)}
-        className={cn(fieldControlClass, "h-10 pr-9 pl-9 pointer-coarse:h-11 [&::-webkit-search-cancel-button]:hidden", className)}
+        className={cn(fieldControlClass, "h-11 pr-10 pl-10 pointer-coarse:h-12 [&::-webkit-search-cancel-button]:hidden", className)}
         {...props}
       />
       {value ? (
@@ -226,7 +238,7 @@ export function SearchField({ value, onValueChange, label = t("shell.search"), p
             onValueChange("");
             inputRef.current?.focus();
           }}
-          className="absolute top-1/2 right-1.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-fg-subtle hover:bg-press hover:text-fg"
+          className="absolute top-1/2 right-2 flex size-7 -translate-y-1/2 items-center justify-center rounded-(--radius-ctl-sm) text-fg-subtle hover:bg-press hover:text-fg pointer-coarse:after:absolute pointer-coarse:after:-inset-2"
         >
           <X aria-hidden="true" className="size-4" />
         </button>

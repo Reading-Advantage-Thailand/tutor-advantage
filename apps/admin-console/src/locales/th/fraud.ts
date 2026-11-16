@@ -102,6 +102,9 @@ export const fraud = {
     title: "ไม่มีรายการที่ต้องติดตาม",
     description: "ลองเปลี่ยนสถานะเป็น “ทั้งหมด” เพื่อดูรายการที่ปิดแล้ว",
   },
+  // ── Redesign 2026-11 (KPI strip) ──
+  kpiTitle: "ตัวเลขสำคัญด้านความเสี่ยง",
+  highRiskBar: "ความเสี่ยงสูงหรือวิกฤต {high} จาก {total} รายการ",
 } as const;
 
 registerMessages("fraud", fraud);

@@ -1,6 +1,6 @@
 // Pure view-model helpers for the lesson history list.
 // Relative imports only: vitest maps "@" to another app.
-import { toLocalDateKey } from "../../../../lib/format";
+import { toDateKey } from "../../../../lib/format";
 
 export interface HistoryItem {
   sessionId: string;
@@ -13,7 +13,7 @@ export interface HistoryItem {
 }
 
 export interface HistoryDayGroup {
-  /** Local calendar day, "2026-10-02" (for keys only). */
+  /** Bangkok calendar day, "2026-10-02" (for keys only). */
   dayKey: string;
   /** Any timestamp of that day, for the header label. */
   date: string;
@@ -21,14 +21,14 @@ export interface HistoryDayGroup {
 }
 
 /**
- * Groups sessions by local calendar day, keeping the server order (newest
+ * Groups sessions by Bangkok calendar day, keeping the server order (newest
  * first) for both the groups and the rows inside each group.
  */
 export function groupHistoryByDay(items: HistoryItem[]): HistoryDayGroup[] {
   const groups: HistoryDayGroup[] = [];
   const byKey = new Map<string, HistoryDayGroup>();
   for (const item of items) {
-    const dayKey = toLocalDateKey(item.date) || "unknown";
+    const dayKey = toDateKey(item.date) || "unknown";
     let group = byKey.get(dayKey);
     if (!group) {
       group = { dayKey, date: item.date, items: [] };

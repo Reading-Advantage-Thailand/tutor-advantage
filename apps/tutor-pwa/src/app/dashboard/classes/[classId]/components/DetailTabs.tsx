@@ -14,20 +14,33 @@ const TabContext = createContext<DetailTab>("lessons");
  * time. Desktop (lg+): every block is visible in the two-column layout, so
  * the panels are only hidden below lg (CSS), never unmounted.
  */
-export function DetailTabs({ children, initial = "lessons" }: { children: ReactNode; initial?: DetailTab }) {
+export function DetailTabs({
+  children,
+  initial = "lessons",
+  counts,
+}: {
+  children: ReactNode;
+  initial?: DetailTab;
+  /** Small tabular counts after the labels (lessons in the book, students). */
+  counts?: Partial<Record<DetailTab, number | undefined>>;
+}) {
   const [tab, setTab] = useState<DetailTab>(initial);
   return (
     <TabContext.Provider value={tab}>
-      <div className="sticky top-[calc(var(--appbar-h)+var(--safe-top))] z-(--z-sticky) -mx-(--gutter) -my-3 bg-app px-(--gutter) py-2 md:top-0 lg:hidden">
+      {/* Full-bleed band that sticks under the app bar while the tab's blocks scroll. The app bar goes at 768px (px, globals.css), so the offset does too. */}
+      <div
+        data-detail-tabs=""
+        className="sticky top-[calc(var(--appbar-h)+var(--safe-top))] z-(--z-sticky) -mx-(--gutter) -my-2.5 bg-app px-(--gutter) py-2 min-[768px]:top-0 lg:hidden"
+      >
         <SegmentedControl<DetailTab>
           aria-label={t("tutorClass.view.sectionsLabel")}
           fullWidth
           value={tab}
           onValueChange={setTab}
           items={[
-            { value: "lessons", label: t("tutorClass.view.tabLessons") },
+            { value: "lessons", label: t("tutorClass.view.tabLessons"), count: counts?.lessons },
             { value: "overview", label: t("tutorClass.view.tabOverview") },
-            { value: "students", label: t("tutorClass.view.tabStudents") },
+            { value: "students", label: t("tutorClass.view.tabStudents"), count: counts?.students },
           ]}
         />
       </div>
@@ -39,5 +52,5 @@ export function DetailTabs({ children, initial = "lessons" }: { children: ReactN
 /** A block that belongs to one tab (hidden below lg when another tab is active). */
 export function TabPanel({ tab, children, className }: { tab: DetailTab; children: ReactNode; className?: string }) {
   const active = useContext(TabContext);
-  return <div className={cn("flex min-w-0 flex-col gap-6", active !== tab && "max-lg:hidden", className)}>{children}</div>;
+  return <div className={cn("flex min-w-0 flex-col gap-5 lg:gap-6", active !== tab && "max-lg:hidden", className)}>{children}</div>;
 }

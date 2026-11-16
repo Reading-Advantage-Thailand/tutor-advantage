@@ -4,6 +4,7 @@ import { Drawer } from "@base-ui/react/drawer";
 import { X } from "lucide-react";
 import type { CSSProperties } from "react";
 import { t } from "@/lib/i18n";
+import { thaiCopy, thaiLabel } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import type { SheetProps } from "./Sheet";
 
@@ -49,15 +50,15 @@ export function SheetImpl({
             <div className="sheet-handle" aria-hidden="true" />
             <div className="flex shrink-0 items-start gap-2 pt-2 pr-3 pb-3 pl-5 md:pt-4">
               <div className="min-w-0 flex-1 pt-1">
-                <Drawer.Title className="text-lg leading-snug font-semibold text-fg">{title}</Drawer.Title>
+                <Drawer.Title className="text-lg leading-[1.45] font-semibold text-balance-th text-fg">{thaiLabel(title)}</Drawer.Title>
                 {description ? (
-                  <Drawer.Description className="mt-1 text-sm text-fg-muted">{description}</Drawer.Description>
+                  <Drawer.Description className="mt-1 text-sm text-fg-muted">{thaiCopy(description)}</Drawer.Description>
                 ) : null}
               </div>
               {showClose && dismissible ? (
                 <Drawer.Close
                   aria-label={t("shell.close")}
-                  className="flex size-9 shrink-0 items-center justify-center rounded-lg text-fg-muted hover:bg-press hover:text-fg"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-(--radius-ctl) text-fg-muted hover:bg-press hover:text-fg pointer-coarse:size-11"
                 >
                   <X aria-hidden="true" className="size-5" />
                 </Drawer.Close>

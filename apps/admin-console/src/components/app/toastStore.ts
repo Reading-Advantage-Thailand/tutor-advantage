@@ -33,7 +33,7 @@ export function dismissToast(id: number) {
 
 function push(tone: ToastTone, message: string, options: { description?: string; duration?: number } = {}): number {
   const id = nextId++;
-  const duration = options.duration ?? (tone === "error" ? 6000 : 3500);
+  const duration = options.duration ?? (tone === "error" ? 6000 : 4000);
   items = [...items.slice(-2), { id, tone, message, description: options.description, duration }];
   emit();
   if (duration > 0 && typeof window !== "undefined") {

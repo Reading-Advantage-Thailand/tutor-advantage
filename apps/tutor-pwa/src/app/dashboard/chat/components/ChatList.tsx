@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { MessageSquare, SearchX, Users } from "lucide-react";
 import {
+  Count,
   CountBadge,
   EmptyState,
   ErrorState,
@@ -48,7 +49,7 @@ export function ChatList({ variant }: ChatListProps) {
 
   let body: React.ReactNode;
   if (isLoading && !data) {
-    body = <ListSkeleton rows={5} leading className={variant === "pane" ? "rounded-none border-0" : undefined} />;
+    body = <ListSkeleton rows={5} leading className={variant === "pane" ? "rounded-none border-0 shadow-none" : undefined} />;
   } else if (error && !data) {
     body = (
       <ErrorState
@@ -61,6 +62,7 @@ export function ChatList({ variant }: ChatListProps) {
   } else if (conversations.length === 0) {
     body = (
       <EmptyState
+        mascot
         icon={MessageSquare}
         title={t("dashboardChat.emptyTitle")}
         description={t("dashboardChat.emptyDescription")}
@@ -81,9 +83,7 @@ export function ChatList({ variant }: ChatListProps) {
     body = (
       <ul
         aria-label={variant === "page" ? t("dashboardChat.listLabel") : undefined}
-        className={cn(
-          variant === "page" && "overflow-hidden rounded-xl border border-hairline bg-surface shadow-card",
-        )}
+        className={cn(variant === "page" && "ds-card overflow-hidden")}
       >
         {filtered.map((conv) => (
           <li key={conv.id} className="list-row" data-leading="">
@@ -96,9 +96,12 @@ export function ChatList({ variant }: ChatListProps) {
 
   if (variant === "pane") {
     return (
-      <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-hairline bg-surface shadow-card">
+      <div className="ds-card flex h-full min-h-0 flex-col overflow-hidden">
         <div className="flex flex-col gap-3 border-b border-hairline px-4 pt-4 pb-3">
-          <p className="text-lg font-semibold text-fg">{t("dashboardChat.title")}</p>
+          <p className="flex min-h-8 items-center gap-2 type-section text-fg">
+            {t("dashboardChat.title")}
+            {conversations.length > 0 ? <Count value={conversations.length} /> : null}
+          </p>
           {showSearch ? (
             <SearchField
               value={query}
@@ -139,19 +142,20 @@ function ConversationRow({ conversation: conv, active }: { conversation: ChatCon
     <Link
       href={`/dashboard/chat/${conv.id}`}
       aria-current={active ? "page" : undefined}
+      title={conv.title}
       className={cn(
-        "pressable flex min-h-[4.5rem] w-full items-center gap-3 px-4 py-3 text-left hover:bg-surface-muted focus-visible:bg-surface-muted focus-visible:outline-none",
-        active && "bg-brand-soft hover:bg-brand-soft",
+        "flex min-h-[4.5rem] w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-(--duration-fast) hover:bg-row-hover active:bg-press focus-visible:bg-row-hover focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-focus-ring",
+        active && "bg-brand-soft shadow-[inset_3px_0_0_var(--brand-solid)] hover:bg-brand-soft",
       )}
     >
       {isGroup ? (
-        <IconTile icon={Users} tone="teal" className="size-11 rounded-full" />
+        <IconTile icon={Users} tone="teal" className="size-12 rounded-full" />
       ) : (
-        <UserAvatar name={conv.title} src={conv.image} className="size-11" />
+        <UserAvatar name={conv.title} src={conv.image} className="size-12 text-base" />
       )}
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="flex items-baseline gap-2">
-          <span className={cn("min-w-0 flex-1 truncate text-[0.9375rem] text-fg", unread ? "font-semibold" : "font-medium")}>
+          <span className={cn("min-w-0 flex-1 truncate text-base leading-normal text-fg", unread ? "font-semibold" : "font-medium")}>
             {conv.title}
           </span>
           {timestamp ? (
@@ -161,13 +165,13 @@ function ConversationRow({ conversation: conv, active }: { conversation: ChatCon
           ) : null}
         </span>
         <span className="flex items-center gap-2">
-          <span className={cn("min-w-0 flex-1 truncate text-[0.8125rem]", unread ? "font-medium text-fg" : "text-fg-muted")}>
+          <span className={cn("min-w-0 flex-1 truncate text-sm", unread ? "font-medium text-fg" : "text-fg-muted")}>
             {isGroup ? <span className="text-fg-subtle">{t("dashboardChat.group")} · </span> : null}
             {preview}
           </span>
           {unread ? (
             <>
-              <CountBadge count={conv.unreadCount} className="bg-brand-solid text-on-brand" />
+              <CountBadge count={conv.unreadCount} />
               <span className="sr-only">{t("dashboardChat.unreadCount").replace("{count}", String(conv.unreadCount))}</span>
             </>
           ) : null}

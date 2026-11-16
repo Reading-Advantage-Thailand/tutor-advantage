@@ -58,7 +58,7 @@ export function MobileNav({ children }: { children: ReactNode }) {
             <Link
               href={backHref}
               aria-label={t("shell.back")}
-              className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-fg hover:bg-press"
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-(--radius-ctl) text-fg hover:bg-press"
             >
               <ChevronLeft aria-hidden="true" className="size-6" />
             </Link>
@@ -66,24 +66,32 @@ export function MobileNav({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={drawer.openDrawer}
-              aria-label={t("shell.openMenu")}
+              // The pending count is part of the name: an aria-label replaces the
+              // button's content, so a hidden span inside it would never be read.
+              aria-label={
+                drawerCount > 0
+                  ? `${t("shell.openMenu")} ${t("shell.itemsCount", { count: drawerCount })}`
+                  : t("shell.openMenu")
+              }
               aria-haspopup="dialog"
               aria-expanded={drawer.open}
-              className="relative inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-fg hover:bg-press"
+              className="relative inline-flex size-11 shrink-0 items-center justify-center rounded-(--radius-ctl) text-fg hover:bg-press"
             >
               <Menu aria-hidden="true" className="size-[22px]" />
-              {drawerCount > 0 ? <span aria-hidden="true" className="absolute top-2 right-2 size-2 rounded-full bg-danger-solid ring-2 ring-surface" /> : null}
+              {drawerCount > 0 ? (
+                <span aria-hidden="true" className="absolute top-2.5 right-2.5 size-2 rounded-full bg-danger-solid ring-2 ring-surface-nav" />
+              ) : null}
             </button>
           )}
-          <p className="min-w-0 flex-1 truncate pl-1 text-[1.0625rem] font-semibold text-fg">{barTitle}</p>
+          <p className="min-w-0 flex-1 truncate pl-1 text-[1.0625rem] leading-[1.35] font-semibold text-fg">{barTitle}</p>
           <EnvBadge environment={environment} className="max-sm:hidden" />
-          <ThemeToggle className="size-10" />
+          <ThemeToggle className="size-11" />
           {backHref ? (
             <button
               type="button"
               onClick={drawer.openDrawer}
               aria-label={t("shell.openMenu")}
-              className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-fg-muted hover:bg-press hover:text-fg md:hidden"
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-(--radius-ctl) text-fg-muted hover:bg-press hover:text-fg md:hidden"
             >
               <Menu aria-hidden="true" className="size-5" />
             </button>
@@ -105,9 +113,10 @@ export function MobileNav({ children }: { children: ReactNode }) {
                 <Link key={item.id} href={item.href} aria-current={active ? "page" : undefined} className={tabClass(active)}>
                   <span className={pillClass(active)}>
                     <Icon aria-hidden="true" className="size-[22px]" strokeWidth={active ? 2.2 : 1.8} />
-                    <CountBadge count={count} className="absolute -top-1 right-1 h-4 min-w-4 text-[0.625rem] ring-2 ring-surface" />
+                    <CountBadge aria-hidden count={count} className="absolute -top-1.5 right-0 h-5 min-w-5 px-1.5 ring-2 ring-surface-nav" />
                   </span>
                   <span className="max-w-full truncate px-0.5">{item.label}</span>
+                  {count > 0 ? <span className="sr-only">{` ${t("shell.itemsCount", { count })}`}</span> : null}
                 </Link>
               );
             })}
@@ -128,11 +137,15 @@ export function MobileNav({ children }: { children: ReactNode }) {
 
 function tabClass(active: boolean) {
   return cn(
-    "flex min-w-0 flex-col items-center justify-center gap-1 pt-1.5 pb-1 text-[0.6875rem] leading-none font-medium transition-colors",
+    "group/tab flex min-h-14 min-w-0 flex-col items-center justify-center gap-0.5 text-xs leading-[1.4] font-semibold transition-colors",
     active ? "text-brand-fg" : "text-fg-muted",
   );
 }
 
+/** The pill behind a tab's icon: jade when the tab is current, the press tint while another tab is held down. */
 function pillClass(active: boolean) {
-  return cn("relative flex h-7 w-14 items-center justify-center rounded-full transition-colors", active && "bg-brand-soft");
+  return cn(
+    "relative flex h-[30px] w-14 items-center justify-center rounded-full transition-colors",
+    active ? "bg-brand-soft" : "group-active/tab:bg-press",
+  );
 }

@@ -1,6 +1,7 @@
 // Pure helpers for the article reader (/student/read/[articleId]).
 // Relative imports only: vitest maps "@" to another app.
 import { getGameRowView, isGameAnswer, isScoredAnswer, parseGameResultAnswer, type GameRowView } from "../../../../../lib/gameResultAnswer";
+import { getNeutralRowView, type NeutralRowView } from "../../../../../lib/lessonAnswerRows";
 
 export { parseGameResultAnswer };
 
@@ -77,16 +78,24 @@ export function getReviewAnswers(answers: SessionAnswer[] | null | undefined): S
 
 /**
  * "ตอบถูก x/y ข้อ" counts for the review banner. Game results and other
- * unscored rows (isCorrect null) are not questions, so they are left out.
+ * unscored rows (isCorrect null) are not questions, so they are left out; so are the step-15 question to AI and the step-16 reflection, which have no right or wrong answer.
  */
 export function countCorrect(answers: SessionAnswer[] | null | undefined): { correct: number; total: number } {
-  const scored = (answers ?? []).filter(isScoredAnswer);
+  const scored = (answers ?? []).filter((a) => isScoredAnswer(a) && getReviewNeutralRow(a) === null);
   return { correct: scored.filter((a) => a.isCorrect === true).length, total: scored.length };
 }
 
 /** Game name + "ได้ N คะแนน" when the row is a live-lesson game result, else null. */
 export function getReviewGameRow(answer: SessionAnswer): GameRowView | null {
   return isGameAnswer(answer) ? getGameRowView(answer) : null;
+}
+
+/**
+ * Step-15 language question / step-16 reflection: Thai heading and neutral
+ * labels instead of the stored sentinel and a "ถูก" verdict. Null otherwise.
+ */
+export function getReviewNeutralRow(answer: SessionAnswer): NeutralRowView | null {
+  return getNeutralRowView({ phase: answer.phase, question: answer.questionText, answer: answer.answerText });
 }
 
 /** Option letter: A, B, C… */

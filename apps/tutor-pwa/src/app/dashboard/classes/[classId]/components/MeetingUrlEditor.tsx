@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Copy, ExternalLink, Pencil, Video } from "lucide-react";
-import { Card, CardHeader, IconTile, Sheet, TextField, toast } from "@/components/app";
-import { Button } from "@/components/ui/button";
+import { CheckCircle2, Copy, ExternalLink, Pencil, Plus, Video } from "lucide-react";
+import { Sheet, TextField, toast } from "@/components/app";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { updateMeetingUrl } from "../../actions";
+import { PanelCard } from "./PanelCard";
 import { useCopy } from "./useCopy";
 
 function hostOf(url: string) {
@@ -40,40 +41,42 @@ export function MeetingUrlEditor({ classId, initialUrl }: { classId: string; ini
   };
 
   return (
-    <Card as="section" aria-labelledby="class-room-title">
-      <CardHeader
-        icon={<IconTile icon={Video} size="sm" tone="blue" />}
-        title={<span id="class-room-title">{t("tutorClass.detail.onlineRoom")}</span>}
-        description={initialUrl ? hostOf(initialUrl) : t("tutorClass.detail.missingMeetingUrl")}
-        action={
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            aria-label={t("tutorClass.detail.editLink")}
-            onClick={() => {
-              setUrl(initialUrl || "");
-              setOpen(true);
-            }}
-          >
-            <Pencil aria-hidden="true" />
-          </Button>
-        }
-      />
+    <PanelCard
+      id="class-room-title"
+      icon={Video}
+      tone="blue"
+      title={t("tutorClass.detail.onlineRoom")}
+      description={initialUrl ? hostOf(initialUrl) : t("tutorClass.detail.missingMeetingUrl")}
+      action={
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={t("tutorClass.detail.editLink")}
+          onClick={() => {
+            setUrl(initialUrl || "");
+            setOpen(true);
+          }}
+        >
+          <Pencil aria-hidden="true" />
+        </Button>
+      }
+    >
       {initialUrl ? (
         <div className="grid grid-cols-[1fr_auto] gap-2">
+          {/* Tonal: the page's one primary is the lesson picker's "สร้างห้องเรียน". */}
           <a
             id="btn-join-meeting"
             href={initialUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-brand-solid px-3.5 text-sm font-semibold text-on-brand shadow-xs outline-none hover:bg-brand-solid-pressed focus-visible:ring-3 focus-visible:ring-ring/40 pointer-coarse:h-10"
+            className={buttonVariants({ variant: "tonal", size: "lg" })}
           >
             {t("tutorClass.detail.enterRoom")}
             <ExternalLink aria-hidden="true" className="size-4" />
           </a>
           <Button
             variant="outline"
-            size="icon"
+            size="icon-lg"
             aria-label={copied ? t("tutorClass.detail.copied") : t("tutorClass.ui.copyMeetingLink")}
             title={copied ? t("tutorClass.detail.copied") : t("tutorClass.detail.copy")}
             onClick={() => copy(initialUrl)}
@@ -82,7 +85,8 @@ export function MeetingUrlEditor({ classId, initialUrl }: { classId: string; ini
           </Button>
         </div>
       ) : (
-        <Button variant="soft" className="w-full" onClick={() => setOpen(true)}>
+        <Button variant="soft" size="lg" className="w-full" onClick={() => setOpen(true)}>
+          <Plus aria-hidden="true" />
           {t("tutorClass.ui.addMeetingLink")}
         </Button>
       )}
@@ -95,10 +99,10 @@ export function MeetingUrlEditor({ classId, initialUrl }: { classId: string; ini
         dismissible={!loading}
         footer={
           <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
-            <Button variant="ghost" size="lg" className="md:h-9" onClick={() => setOpen(false)} disabled={loading}>
+            <Button variant="outline" size="lg" className="md:h-10 md:px-4" onClick={() => setOpen(false)} disabled={loading}>
               {t("tutorClass.detail.cancel")}
             </Button>
-            <Button size="lg" className="md:h-9" onClick={handleUpdate} loading={loading} disabled={!url}>
+            <Button size="lg" className="md:h-10 md:px-4" onClick={handleUpdate} loading={loading} disabled={!url}>
               {loading ? t("tutorClass.detail.saving") : t("tutorClass.detail.save")}
             </Button>
           </div>
@@ -114,6 +118,6 @@ export function MeetingUrlEditor({ classId, initialUrl }: { classId: string; ini
           onChange={(event) => setUrl(event.target.value)}
         />
       </Sheet>
-    </Card>
+    </PanelCard>
   );
 }

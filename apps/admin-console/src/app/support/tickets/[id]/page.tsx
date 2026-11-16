@@ -2,27 +2,26 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
-import { AlarmClock, FileQuestion, UserMinus, UserPlus } from "lucide-react";
+import { AlarmClock, ArrowLeft, CheckCircle2, FileQuestion, UserMinus, UserPlus } from "lucide-react";
 import {
   AdminStatusChip,
   Card,
   CardHeader,
-  CardSkeleton,
   Chip,
   ConfirmDialog,
   DescriptionList,
   EmptyState,
   ErrorState,
+  IdCell,
   Notice,
   Page,
   PageHeader,
-  PageHeaderSkeleton,
-  SplitLayout,
+  UserAvatar,
   useAdminSession,
 } from "@/components/app";
 import { useRefreshAdminSummary } from "@/components/app/adminSummaryContext";
 import { toast } from "@/components/app/toastStore";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { api, ApiError, newIdempotencyKey } from "@/lib/api";
 import { invalidateResource, mutateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatThaiDateTime } from "@/lib/format";
@@ -30,6 +29,7 @@ import { t } from "@/lib/i18n";
 import { statusLabel } from "@/lib/status";
 import { DueCell } from "../components/DueCell";
 import { TicketComposer } from "../components/TicketComposer";
+import { TicketDetailSkeleton } from "../components/TicketDetailSkeleton";
 import { TicketThread } from "../components/TicketThread";
 import {
   assignActions,
@@ -71,22 +71,25 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
       <Page width="medium">
         <PageHeader title={t("tickets.detail.loadError")} backHref="/support/tickets" backLabel={t("tickets.detail.backToList")} />
         {notFound ? (
-          <EmptyState icon={FileQuestion} title={t("tickets.detail.notFound")} description={t("tickets.detail.notFoundDescription")} />
+          <EmptyState
+            icon={FileQuestion}
+            title={t("tickets.detail.notFound")}
+            description={t("tickets.detail.notFoundDescription")}
+            action={
+              <Link href="/support/tickets" className={buttonVariants({ variant: "outline" })}>
+                <ArrowLeft aria-hidden="true" />
+                {t("tickets.detail.backToList")}
+              </Link>
+            }
+          />
         ) : (
-          <ErrorState onRetry={refetch} />
+          <ErrorState onRetry={refetch} digest={error instanceof ApiError ? (error.requestId ?? undefined) : undefined} />
         )}
       </Page>
     );
   }
 
-  if (!ticket) {
-    return (
-      <Page width="medium">
-        <PageHeaderSkeleton actions={false} />
-        <CardSkeleton lines={8} />
-      </Page>
-    );
-  }
+  if (!ticket) return <TicketDetailSkeleton />;
 
   const number = formatTicketNumber(ticket.ticketNumber);
   const requesterName = ticket.requester.displayName || t("tickets.noName");
@@ -130,9 +133,9 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     <Page>
       <PageHeader
         title={
-          <span className="flex min-w-0 flex-wrap items-baseline gap-x-2">
-            <span className="text-fg-muted tabular-nums">{number}</span>
-            <span className="min-w-0 break-words">{ticket.subject}</span>
+          <span className="break-words">
+            <span className="mr-2 text-fg-muted tabular">{number}</span>
+            {ticket.subject}
           </span>
         }
         appBarTitle={number}
@@ -153,6 +156,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
                 {t("tickets.awaitingSupport")}
               </Chip>
             ) : null}
+            <IdCell id={ticket.ticketId} />
           </>
         }
         actions={
@@ -175,81 +179,93 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
 
       {overdue ? <Notice tone="danger">{t("tickets.detail.overdueNotice")}</Notice> : null}
 
-      <SplitLayout
-        main={
-          <>
-            <TicketThread messages={ticket.messages} requesterName={requesterName} />
-            <TicketComposer ticket={ticket} onSent={applyTicket} />
-          </>
-        }
-        side={
-          <>
-            <Card>
-              <DescriptionList
-                columns={1}
-                items={[
-                  {
-                    label: t("tickets.detail.requester"),
-                    value: (
-                      <span className="flex min-w-0 flex-col">
-                        <Link
-                          href={`/users/${encodeURIComponent(ticket.requester.userId)}`}
-                          className="truncate font-medium text-brand-fg hover:underline"
-                        >
-                          {requesterName}
-                        </Link>
-                        <span className="truncate text-[0.8125rem] text-fg-muted">
-                          {statusLabel("userRole", ticket.requester.role)} · {ticket.requester.email ?? t("tickets.noEmail")}
-                        </span>
-                      </span>
-                    ),
-                  },
-                  { label: t("tickets.detail.class"), value: ticket.classTitle ?? t("tickets.detail.noClass") },
-                  {
-                    label: t("tickets.detail.paymentReference"),
-                    value: ticket.paymentReference ? (
-                      <span className="font-mono text-[0.8125rem] break-all">{ticket.paymentReference}</span>
-                    ) : (
-                      t("tickets.detail.noPaymentReference")
-                    ),
-                  },
-                  { label: t("tickets.detail.createdAt"), value: formatThaiDateTime(ticket.createdAt) },
-                  { label: t("tickets.detail.dueAt"), value: <DueCell ticket={ticket} /> },
-                  {
-                    label: t("tickets.detail.firstResponseAt"),
-                    value: ticket.firstResponseAt ? formatThaiDateTime(ticket.firstResponseAt) : t("tickets.detail.notAnswered"),
-                  },
-                  ...(ticket.resolvedAt
-                    ? [{ label: t("tickets.detail.resolvedAt"), value: formatThaiDateTime(ticket.resolvedAt) }]
-                    : []),
-                  {
-                    label: t("tickets.detail.assignee"),
-                    value: assign.assignedToMe
-                      ? t("tickets.assign.mine")
-                      : (ticket.assignee?.displayName ?? (ticket.assignee ? t("tickets.noName") : t("tickets.unassigned"))),
-                  },
-                ]}
-              />
-            </Card>
+      {/* Two columns from 1280 (thread + facts rail); one column below, thread first. */}
+      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="flex min-w-0 flex-col gap-5">
+          <section aria-labelledby="ticket-thread-heading" className="flex min-w-0 flex-col gap-3">
+            <h2 id="ticket-thread-heading" className="text-base leading-normal font-semibold text-fg">
+              {t("tickets.detail.thread")}
+            </h2>
+            <TicketThread messages={ticket.messages} requesterName={requesterName} requesterId={ticket.requester.userId} />
+          </section>
+          <TicketComposer ticket={ticket} onSent={applyTicket} />
+        </div>
 
-            <Card>
-              <CardHeader title={t("tickets.detail.statusSection")} className="mb-3" />
-              <div className="flex flex-col gap-2">
-                {statusTargets(ticket.status).map((status) => (
-                  <Button
-                    key={status}
-                    variant={status === "RESOLVED" ? "default" : "outline"}
-                    className="justify-start"
-                    onClick={() => setPendingStatus({ status, key: newIdempotencyKey() })}
-                  >
-                    {t(`tickets.status.to.${status}`)}
-                  </Button>
-                ))}
-              </div>
-            </Card>
-          </>
-        }
-      />
+        <div className="flex min-w-0 flex-col gap-5">
+          <Card>
+            <div className="mb-4 flex min-w-0 items-center gap-3 border-b border-hairline pb-4">
+              <UserAvatar name={requesterName} seed={ticket.requester.userId} decorative />
+              <span className="flex min-w-0 flex-col">
+                <span className="text-[0.8125rem] leading-normal text-fg-muted">{t("tickets.detail.requester")}</span>
+                <Link
+                  href={`/users/${encodeURIComponent(ticket.requester.userId)}`}
+                  className="flex min-w-0 self-start rounded-(--radius-ctl-sm) text-sm leading-normal font-semibold text-brand-fg hover:underline pointer-coarse:min-h-11 pointer-coarse:items-center"
+                  title={requesterName}
+                >
+                  <span className="truncate">{requesterName}</span>
+                </Link>
+                {/* The record screen shows the whole email (patterns.md "Thai text"): it wraps, never cut. */}
+                <span
+                  className="text-[0.8125rem] leading-normal text-fg-muted [overflow-wrap:anywhere]"
+                  title={ticket.requester.email ?? undefined}
+                >
+                  {statusLabel("userRole", ticket.requester.role)} · {ticket.requester.email ?? t("tickets.noEmail")}
+                </span>
+              </span>
+            </div>
+            <DescriptionList
+              className="xl:grid-cols-1"
+              items={[
+                { label: t("tickets.detail.class"), value: ticket.classTitle ?? t("tickets.detail.noClass") },
+                {
+                  label: t("tickets.detail.paymentReference"),
+                  value: ticket.paymentReference ? (
+                    <span className="font-mono text-[0.8125rem] [overflow-wrap:anywhere]">{ticket.paymentReference}</span>
+                  ) : (
+                    t("tickets.detail.noPaymentReference")
+                  ),
+                },
+                { label: t("tickets.detail.createdAt"), value: <span className="tabular">{formatThaiDateTime(ticket.createdAt)}</span> },
+                { label: t("tickets.detail.dueAt"), value: <DueCell ticket={ticket} /> },
+                {
+                  label: t("tickets.detail.firstResponseAt"),
+                  value: ticket.firstResponseAt ? (
+                    <span className="tabular">{formatThaiDateTime(ticket.firstResponseAt)}</span>
+                  ) : (
+                    t("tickets.detail.notAnswered")
+                  ),
+                },
+                ...(ticket.resolvedAt
+                  ? [{ label: t("tickets.detail.resolvedAt"), value: <span className="tabular">{formatThaiDateTime(ticket.resolvedAt)}</span> }]
+                  : []),
+                {
+                  label: t("tickets.detail.assignee"),
+                  value: assign.assignedToMe
+                    ? t("tickets.assign.mine")
+                    : (ticket.assignee?.displayName ?? (ticket.assignee ? t("tickets.noName") : t("tickets.unassigned"))),
+                },
+              ]}
+            />
+          </Card>
+
+          <Card>
+            <CardHeader title={t("tickets.detail.statusSection")} className="mb-3" />
+            <div className="flex flex-wrap gap-2 xl:flex-col">
+              {statusTargets(ticket.status).map((status) => (
+                <Button
+                  key={status}
+                  variant={status === "RESOLVED" ? "tonal" : "outline"}
+                  className="justify-start xl:w-full"
+                  onClick={() => setPendingStatus({ status, key: newIdempotencyKey() })}
+                >
+                  {status === "RESOLVED" ? <CheckCircle2 aria-hidden="true" /> : null}
+                  {t(`tickets.status.to.${status}`)}
+                </Button>
+              ))}
+            </div>
+          </Card>
+        </div>
+      </div>
 
       <ConfirmDialog
         open={pendingStatus !== null}

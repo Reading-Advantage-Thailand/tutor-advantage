@@ -7,10 +7,10 @@ import {
   Award,
   BookOpen,
   CalendarDays,
-  GitBranch,
-  LayoutDashboard,
+  LayoutGrid,
   LifeBuoy,
-  MessageSquare,
+  MessageCircle,
+  Network,
   Settings,
   Sparkles,
   Wallet,
@@ -37,6 +37,12 @@ export interface NavItem {
   id: NavItemId;
   href: string;
   label: string;
+  /**
+   * Short visible label for the 88px side-nav rail, where the full label does
+   * not fit on one line. Must be part of `label` (the link keeps `label` as its
+   * accessible name). Everywhere else shows `label`.
+   */
+  railLabel?: string;
   icon: LucideIcon;
   group: NavGroup;
   /** Shown in the mobile tab bar (max 4 + "more"). */
@@ -48,7 +54,7 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: readonly NavItem[] = [
-  { id: "home", href: "/dashboard", label: t("app.navOverview"), icon: LayoutDashboard, group: "teaching", tab: true },
+  { id: "home", href: "/dashboard", label: t("app.navOverview"), icon: LayoutGrid, group: "teaching", tab: true },
   {
     id: "classes",
     href: "/dashboard/classes",
@@ -60,15 +66,16 @@ export const NAV_ITEMS: readonly NavItem[] = [
     alsoActiveFor: ["/lesson"],
   },
   { id: "schedule", href: "/dashboard/schedule", label: t("app.navSchedule"), icon: CalendarDays, group: "teaching", tab: true },
-  { id: "chat", href: "/dashboard/chat", label: t("app.navChat"), icon: MessageSquare, group: "teaching", tab: true, badge: "unreadChat" },
-  { id: "demo", href: "/dashboard/demo", label: t("app.navDemo"), icon: Sparkles, group: "teaching" },
+  { id: "chat", href: "/dashboard/chat", label: t("app.navChat"), icon: MessageCircle, group: "teaching", tab: true, badge: "unreadChat" },
+  { id: "demo", href: "/dashboard/demo", label: t("app.navDemo"), railLabel: t("app.navDemoShort"), icon: Sparkles, group: "teaching" },
   { id: "earnings", href: "/dashboard/earnings", label: t("app.navEarnings"), icon: Wallet, group: "business" },
-  { id: "network", href: "/dashboard/network", label: t("app.navNetwork"), icon: GitBranch, group: "business" },
+  { id: "network", href: "/dashboard/network", label: t("app.navNetwork"), icon: Network, group: "business" },
   { id: "performance", href: "/dashboard/performance", label: t("app.navPerformance"), icon: Award, group: "business" },
   {
     id: "support",
     href: "/dashboard/support",
     label: t("app.navSupport"),
+    railLabel: t("app.navSupportShort"),
     icon: LifeBuoy,
     group: "account",
     badge: "supportUpdates",

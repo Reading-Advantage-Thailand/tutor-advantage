@@ -12,6 +12,7 @@ export default function TermsPage() {
   return (
     <LegalDocument
       title={t("app.termsTitle")}
+      titlePhrases={[t("app.termsTitleLead"), t("app.termsTitleTail")]}
       icon={ScrollText}
       intro={tutorLegalCopy.terms.intro}
       sections={tutorLegalCopy.terms.sections}

@@ -1,10 +1,12 @@
 "use client";
 
-import { RefreshCw, Send } from "lucide-react";
+import type { ReactNode } from "react";
+import { RefreshCw, Send, Users } from "lucide-react";
 import {
   AdminStatusChip,
   ColumnToggle,
   DataTable,
+  EmptyState,
   IdCell,
   useColumnVisibility,
   type DataTableColumn,
@@ -22,20 +24,27 @@ export interface PayoutLinesTableProps {
   /** Only finance checkers may send a transfer (backend rule). */
   canSendTransfer: boolean;
   loading?: boolean;
+  /** Line under the section title (e.g. "กำลังติดตามสถานะการโอนอัตโนมัติ"). */
+  description?: ReactNode;
+  /** Buttons at the right of the section title (reload, exports); the column menu is added after them. */
+  actions?: ReactNode;
   onSendTransfer: (line: PayoutLineRow) => void;
   onSyncTransfer: (line: PayoutLineRow) => void;
 }
 
 /**
- * Payout lines of one run: a dense table on desktop/tablet (column toggle,
- * sticky tutor column) and cards on phones (DataTable's mobile layout), so
- * net payout, WHT and transfer state are always reachable without sideways scrolling.
+ * Payout lines of one run (its own section): a compact table on desktop
+ * (column toggle, sticky tutor column, money right-aligned with two
+ * decimals) and list cards below 1024px (DataTable's mobile layout), so net
+ * payout, WHT and transfer state are always reachable without sideways scrolling.
  */
 export function PayoutLinesTable({
   lines,
   runStatus,
   canSendTransfer,
   loading,
+  description,
+  actions,
   onSendTransfer,
   onSyncTransfer,
 }: PayoutLinesTableProps) {
@@ -50,10 +59,19 @@ export function PayoutLinesTable({
       alwaysVisible: true,
       sticky: true,
       cell: (line) => (
+        // Compact table: no avatar; long emails are cut (full value in the title).
         <span className="flex min-w-0 flex-col">
-          <span className="truncate font-medium text-fg">{line.tutorName ?? t("settlements.noName")}</span>
-          {line.tutorEmail ? <span className="truncate text-[0.8125rem] text-fg-muted">{line.tutorEmail}</span> : null}
-          <IdCell id={line.tutorUserId} />
+          <span className="truncate text-sm leading-[1.45] font-medium text-fg" title={line.tutorName ?? undefined}>
+            {line.tutorName ?? t("settlements.noName")}
+          </span>
+          <span className="flex min-w-0 flex-wrap items-center gap-x-1.5">
+            {line.tutorEmail ? (
+              <span className="max-w-44 truncate text-[0.8125rem] leading-[1.45] text-fg-muted" title={line.tutorEmail}>
+                {line.tutorEmail}
+              </span>
+            ) : null}
+            <IdCell id={line.tutorUserId} />
+          </span>
         </span>
       ),
     },
@@ -70,7 +88,7 @@ export function PayoutLinesTable({
       label: t("settlements.colVolume"),
       align: "right",
       mobile: "field",
-      cell: (line) => <Money satang={line.grossVolumeSatang} muted />,
+      cell: (line) => <Money satang={line.grossVolumeSatang} fractionDigits={2} muted />,
     },
     {
       key: "rate",
@@ -87,7 +105,7 @@ export function PayoutLinesTable({
       label: t("settlements.colBase"),
       align: "right",
       mobile: "hidden",
-      cell: (line) => <Money satang={line.basePayoutSatang} />,
+      cell: (line) => <Money satang={line.basePayoutSatang} fractionDigits={2} />,
     },
     {
       key: "adjustment",
@@ -99,7 +117,7 @@ export function PayoutLinesTable({
         satangNumber(line.adjustmentSatang) === 0 ? (
           <span className="text-fg-subtle">–</span>
         ) : (
-          <Money satang={line.adjustmentSatang} signed />
+          <Money satang={line.adjustmentSatang} fractionDigits={2} signed />
         ),
     },
     {
@@ -108,7 +126,7 @@ export function PayoutLinesTable({
       label: t("settlements.colGrossPayout"),
       align: "right",
       mobile: "field",
-      cell: (line) => <Money satang={line.grossPayoutSatang} />,
+      cell: (line) => <Money satang={line.grossPayoutSatang} fractionDigits={2} />,
     },
     {
       key: "wht",
@@ -117,7 +135,7 @@ export function PayoutLinesTable({
       align: "right",
       mobile: "field",
       cell: (line) =>
-        satangNumber(line.whtSatang) === 0 ? <span className="text-fg-subtle">–</span> : <Money satang={line.whtSatang} muted />,
+        satangNumber(line.whtSatang) === 0 ? <span className="text-fg-subtle">–</span> : <Money satang={line.whtSatang} fractionDigits={2} muted />,
     },
     {
       key: "net",
@@ -126,7 +144,7 @@ export function PayoutLinesTable({
       align: "right",
       mobile: "trailing",
       alwaysVisible: true,
-      cell: (line) => <Money satang={line.netPayoutSatang} className="font-semibold text-fg" />,
+      cell: (line) => <Money satang={line.netPayoutSatang} fractionDigits={2} className="font-semibold text-fg" />,
     },
     {
       key: "bank",
@@ -138,7 +156,7 @@ export function PayoutLinesTable({
         <span className="text-[0.8125rem]">
           {bankLabel(line) ?? <span className="text-fg-subtle">–</span>}
           {!line.hasRecipientSnapshot && satangNumber(line.netPayoutSatang) > 0 ? (
-            <span className="block text-warning-fg">{t("settlements.noRecipient")}</span>
+            <span className="block whitespace-nowrap text-warning-fg">{t("settlements.noRecipient")}</span>
           ) : null}
         </span>
       ),
@@ -163,9 +181,19 @@ export function PayoutLinesTable({
   const visibility = useColumnVisibility("settlement-lines", columns);
 
   return (
-    <div className="flex min-w-0 flex-col gap-2">
-      <div className="hidden justify-end lg:flex">
-        <ColumnToggle columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} />
+    <section id="run-lines" aria-labelledby="run-lines-heading" className="flex min-w-0 flex-col gap-3">
+      {/* Title left, actions right; the actions wrap under the title on narrow screens. */}
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
+        <div className="min-w-0">
+          <h2 id="run-lines-heading" className="text-base leading-normal font-semibold text-fg">
+            {t("settlements.linesTitle")}
+          </h2>
+          {description ? <p className="mt-0.5 text-sm text-fg-muted">{description}</p> : null}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {actions}
+          <ColumnToggle id="payout-lines-columns" columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} className="max-lg:hidden" />
+        </div>
       </div>
       <DataTable
         caption={t("settlements.linesTitle")}
@@ -176,9 +204,9 @@ export function PayoutLinesTable({
         density="compact"
         breakpoint="lg"
         loading={loading}
-        empty={<p className="py-8 text-center text-sm text-fg-muted">{t("settlements.linesEmpty")}</p>}
+        empty={<EmptyState as="h3" icon={Users} title={t("settlements.linesEmpty")} />}
       />
-    </div>
+    </section>
   );
 }
 
@@ -196,7 +224,7 @@ function TransferCell({
   onSync: (line: PayoutLineRow) => void;
 }) {
   if (!approved) {
-    return <span className="text-[0.8125rem] text-fg-subtle">{t("settlements.transferAfterApproval")}</span>;
+    return <span className="text-[0.8125rem] whitespace-nowrap text-fg-subtle">{t("settlements.transferAfterApproval")}</span>;
   }
   const status = line.transferStatus ?? (satangNumber(line.netPayoutSatang) > 0 ? "NOT_SENT" : "NO_TRANSFER_REQUIRED");
   const moving = ACTIVE_TRANSFER_STATUSES.includes(status) && Boolean(line.transferId);
@@ -211,7 +239,7 @@ function TransferCell({
         <span className="max-w-56 text-xs text-danger-fg">{line.transferFailureMessage}</span>
       ) : null}
       {!sendable && !moving && line.transferBlockedReason && status !== "NO_TRANSFER_REQUIRED" && status !== "PAID" ? (
-        <span className="text-xs text-warning-fg">{t("settlements.noRecipient")}</span>
+        <span className="text-xs whitespace-nowrap text-warning-fg">{t("settlements.noRecipient")}</span>
       ) : null}
       {(moving || sendable) && (
         <span className="flex flex-wrap gap-1.5">

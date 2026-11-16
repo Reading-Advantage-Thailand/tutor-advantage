@@ -1,8 +1,7 @@
 "use client";
 
-import { CheckCircle2 } from "lucide-react";
 import { useState } from "react";
-import { CopyButton, DescriptionList, Sheet, TextAreaField, TextField } from "@/components/app";
+import { DescriptionList, Notice, Sheet, TextAreaField, TextField } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { api, errorMessage, newIdempotencyKey } from "@/lib/api";
 import { formatThaiDate } from "@/lib/format";
@@ -18,6 +17,7 @@ import {
   type CouponFormErrors,
   type CouponFormValues,
 } from "../couponForm";
+import { CodeTicket, ReviewWell, SheetFooter } from "../../classes/components/SheetParts";
 import { ThaiDateField } from "./ThaiDateField";
 import { TutorPicker } from "./TutorPicker";
 import "@/locales/th/coupons";
@@ -100,7 +100,11 @@ export function CouponFormSheet({ open, onOpenChange, coupon, onSaved }: CouponF
     event.preventDefault();
     const result = validateCouponForm(values, MESSAGES, { mode });
     setErrors(result.errors);
-    if (!result.body) return;
+    if (!result.body) {
+      // Move focus to the first invalid field so its error (aria-describedby) is read.
+      requestAnimationFrame(() => document.querySelector<HTMLElement>('#coupon-form [aria-invalid="true"]')?.focus());
+      return;
+    }
     setSubmitError(null);
     if (coupon) void save(result.body);
     else setReview(result.body);
@@ -113,11 +117,10 @@ export function CouponFormSheet({ open, onOpenChange, coupon, onSaved }: CouponF
     setIdempotencyKey(newIdempotencyKey());
   };
 
-  const footerRow = "flex flex-col-reverse gap-2 md:flex-row md:justify-end";
   const errorBox = submitError ? (
-    <p role="alert" className="rounded-lg border border-danger-border bg-danger-bg px-3 py-2 text-sm text-danger-fg">
+    <Notice tone="danger" role="alert">
       {submitError}
-    </p>
+    </Notice>
   ) : null;
 
   // One Sheet for all steps (form → review → created) so it never closes/reopens between them.
@@ -130,34 +133,32 @@ export function CouponFormSheet({ open, onOpenChange, coupon, onSaved }: CouponF
     title = t("coupons.createdTitle");
     description = t("coupons.createdDescription");
     footer = (
-      <div className={footerRow}>
+      <SheetFooter>
         <Button variant="outline" onClick={createAnother}>
           {t("coupons.createAnother")}
         </Button>
         <Button onClick={() => onOpenChange(false)}>{t("coupons.done")}</Button>
-      </div>
+      </SheetFooter>
     );
     body = (
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-3 rounded-xl border border-success-border bg-success-bg px-4 py-3 text-success-fg">
-          <CheckCircle2 aria-hidden="true" className="size-5 shrink-0" />
-          <code className="min-w-0 flex-1 truncate font-mono text-lg font-semibold tracking-wide text-fg">{created.code}</code>
-          <CopyButton value={created.code} label={t("coupons.copyCode")} />
-        </div>
-        <DescriptionList
-          columns={2}
-          items={[
-            { label: t("coupons.detailHours"), value: t("coupons.hoursValue", { hours: created.hours }) },
-            {
-              label: t("coupons.detailAssigned"),
-              value: values.tutor?.displayName || (created.assignedTutorId ? t("coupons.tutorUnnamed") : t("coupons.anyTutor")),
-            },
-            {
-              label: t("coupons.detailExpires"),
-              value: created.expiresAt ? formatThaiDate(created.expiresAt, "long") : t("coupons.noExpiry"),
-            },
-          ]}
-        />
+        <CodeTicket code={created.code} copyLabel={t("coupons.copyCode")} />
+        <ReviewWell>
+          <DescriptionList
+            columns={2}
+            items={[
+              { label: t("coupons.detailHours"), value: t("coupons.hoursValue", { hours: created.hours }) },
+              {
+                label: t("coupons.detailAssigned"),
+                value: values.tutor?.displayName || (created.assignedTutorId ? t("coupons.tutorUnnamed") : t("coupons.anyTutor")),
+              },
+              {
+                label: t("coupons.detailExpires"),
+                value: created.expiresAt ? formatThaiDate(created.expiresAt, "long") : t("coupons.noExpiry"),
+              },
+            ]}
+          />
+        </ReviewWell>
       </div>
     );
   } else if (review) {
@@ -165,18 +166,18 @@ export function CouponFormSheet({ open, onOpenChange, coupon, onSaved }: CouponF
     title = t("coupons.reviewTitle", { hours: Number(review.hours) });
     description = t("coupons.reviewDescription");
     footer = (
-      <div className={footerRow}>
-        <Button type="button" variant="ghost" disabled={saving} onClick={() => setReview(null)}>
+      <SheetFooter>
+        <Button type="button" variant="outline" disabled={saving} onClick={() => setReview(null)}>
           {t("coupons.reviewBack")}
         </Button>
         <Button type="button" loading={saving} onClick={() => void save(review)}>
           {t("coupons.reviewConfirm", { hours: Number(review.hours) })}
         </Button>
-      </div>
+      </SheetFooter>
     );
     body = (
       <div className="flex flex-col gap-4">
-        <div className="rounded-xl border border-hairline bg-surface-muted p-4">
+        <ReviewWell>
           <DescriptionList
             columns={2}
             items={[
@@ -192,7 +193,7 @@ export function CouponFormSheet({ open, onOpenChange, coupon, onSaved }: CouponF
               { label: t("coupons.noteLabel"), value: values.note.trim() || "–" },
             ]}
           />
-        </div>
+        </ReviewWell>
         {errorBox}
       </div>
     );
@@ -200,20 +201,22 @@ export function CouponFormSheet({ open, onOpenChange, coupon, onSaved }: CouponF
     title = coupon ? t("coupons.editTitle", { code: coupon.code }) : t("coupons.createTitle");
     description = coupon ? t("coupons.editDescription") : t("coupons.createDescription");
     footer = (
-      <div className={footerRow}>
-        <Button type="button" variant="ghost" disabled={saving} onClick={() => onOpenChange(false)}>
+      <SheetFooter>
+        <Button type="button" variant="outline" disabled={saving} onClick={() => onOpenChange(false)}>
           {t("coupons.close")}
         </Button>
         <Button type="submit" form="coupon-form" loading={saving}>
           {coupon ? t("coupons.editSubmit") : t("coupons.createSubmit")}
         </Button>
-      </div>
+      </SheetFooter>
     );
     body = (
       <form id="coupon-form" noValidate onSubmit={submit} className="flex flex-col gap-5">
         <TextField
           label={t("coupons.hoursLabel")}
           required={!coupon}
+          numeric
+          containerClassName="md:max-w-[calc(50%-0.5rem)]"
           inputMode="numeric"
           autoFocus={!coupon}
           disabled={Boolean(coupon) || saving}
@@ -257,6 +260,8 @@ export function CouponFormSheet({ open, onOpenChange, coupon, onSaved }: CouponF
         if (!saving) onOpenChange(next);
       }}
       dismissible={!saving}
+      side="right"
+      width={480}
       title={title}
       description={description}
       footer={footer}

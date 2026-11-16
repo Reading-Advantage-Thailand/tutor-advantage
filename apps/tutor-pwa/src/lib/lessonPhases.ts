@@ -70,7 +70,7 @@ export const PHASE_NAMES: Record<number, string> = {
   [LESSON_PHASE.GUIDED_WRITING]: "เขียน",
   [LESSON_PHASE.SENTENCE_GAME]: "เกมประโยค",
   [LESSON_PHASE.LANGUAGE_QUESTIONS]: "คำถามภาษา",
-  [LESSON_PHASE.REFLECTION]: "Reflection",
+  [LESSON_PHASE.REFLECTION]: "สรุปการเรียนรู้",
   [LESSON_PHASE.PAIR_CONVERSATION]: "สนทนา",
   [LESSON_PHASE.WRAP_UP]: "สรุป",
 };

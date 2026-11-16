@@ -1,14 +1,16 @@
 import Link from "next/link";
 import type { MouseEventHandler, ReactNode } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, type LucideIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 export interface ListGroupProps {
   /** Small label above the group (no uppercase — it does nothing for Thai). */
   header?: ReactNode;
-  /** Small helper text under the group. */
+  /** Helper text under the group (14/1.6). */
   footer?: ReactNode;
+  /** Leading icon for the footer line (e.g. Lock under a locked lesson list). */
+  footerIcon?: LucideIcon;
   /**
    * true (default): rounded white card inside the 16px page gutter.
    * false: full-bleed list (cancels the gutter with -mx-4, no radius).
@@ -22,26 +24,38 @@ export interface ListGroupProps {
 }
 
 /** Native-style grouped list container for <ListRow>s. Server-compatible. */
-export function ListGroup({ header, footer, inset = true, children, className, ...rest }: ListGroupProps) {
+export function ListGroup({ header, footer, footerIcon: FooterIcon, inset = true, children, className, ...rest }: ListGroupProps) {
   return (
     <section className={cn(!inset && "-mx-4", className)} aria-label={rest["aria-label"]}>
       {header ? (
-        <h2 className="px-4 pb-2 text-[13px] leading-[1.5] font-semibold text-fg-muted">
+        <h2 className="px-4 pb-2 text-sm leading-[1.5] font-semibold text-fg-muted">
           {header}
         </h2>
       ) : null}
       <div
         className={cn(
           "overflow-hidden bg-surface",
+          // Container: rim + soft shadow, no ledge (rows are flat). The first
+          // and last rows take the card's inner radius, so a row's inset focus
+          // ring follows the rounded corner instead of being cut by the clip.
           inset
-            ? "rounded-[var(--radius-card)] border border-hairline shadow-[var(--shadow-card)]"
-            : "border-y border-hairline",
+            ? "rounded-[var(--radius-card)] border-[1.5px] border-clay-rim shadow-[var(--shadow-card)] [&>:first-child]:rounded-t-[calc(var(--radius-card)-1.5px)] [&>:last-child]:rounded-b-[calc(var(--radius-card)-1.5px)]"
+            : "border-y-[1.5px] border-clay-rim",
         )}
       >
         {children}
       </div>
       {footer ? (
-        <p className="px-4 pt-2 text-xs leading-[1.5] text-fg-muted">{footer}</p>
+        <p className={cn("px-4 pt-2 text-sm leading-[1.6] text-fg-muted", FooterIcon && "flex items-start gap-2")}>
+          {FooterIcon ? (
+            <>
+              <FooterIcon aria-hidden="true" className="mt-[3px] size-4 shrink-0 text-fg-subtle" />
+              <span className="min-w-0">{footer}</span>
+            </>
+          ) : (
+            footer
+          )}
+        </p>
       ) : null}
     </section>
   );
@@ -66,11 +80,23 @@ export interface ListRowProps {
   className?: string;
   /** Max lines for the title and the subtitle before ellipsis (default 2). */
   lines?: 1 | 2;
+  /**
+   * Marks the row as "you" / the selected item: soft jade fill with a 3px jade
+   * bar on the leading edge and aria-current="true" (not colour alone: pair it
+   * with a word such as "คุณ").
+   */
+  current?: boolean;
 }
 
 /**
- * 56px+ list row with inset divider and press feedback. Renders a Link
- * (href), a button (onClick) or a static div. Server-compatible.
+ * Flat 64px+ list row (components.md §3.2): no ledge, 1.5px inset hairline
+ * between rows, press tint. Title `t-row` in the reading face (never
+ * Kodchasan): a wrapped title gets 1.6 between its lines, a one-line title
+ * keeps the 24px box. Keyboard focus: the solid 3px ring drawn inside the row
+ * (the group card clips anything outside, and a full-bleed list meets the
+ * screen edge; in a card the first and last rows follow its rounded corners).
+ * Renders a Link (href), a button
+ * (onClick) or a static div. Server-compatible.
  */
 export function ListRow({
   href,
@@ -84,16 +110,19 @@ export function ListRow({
   destructive,
   className,
   lines = 2,
+  current = false,
 }: ListRowProps) {
   const interactive = !disabled && (Boolean(href) || Boolean(onClick));
   const showChevron = chevron ?? Boolean(href);
   const clamp = lines === 1 ? "truncate" : "line-clamp-2";
 
   const classes = cn(
-    "list-row flex min-h-14 w-full items-center gap-3 px-4 py-2.5 text-left",
+    "list-row flex min-h-16 w-full items-center gap-3.5 px-4 py-2.5 text-left",
+    // Only the press tint animates: the focus ring (outline) appears at once, solid.
     interactive &&
-      "cursor-pointer transition-colors duration-150 active:bg-press focus-visible:outline-offset-[-2px]",
-    disabled && "opacity-50",
+      "cursor-pointer transition-[background-color] duration-[var(--duration-fast)] active:bg-press focus-visible:outline-offset-[-3px]",
+    current && "bg-brand-soft shadow-[inset_3px_0_0_var(--brand-solid)]",
+    disabled && "opacity-45",
     className,
   );
 
@@ -103,42 +132,43 @@ export function ListRow({
       <span className="min-w-0 flex-1">
         <span
           className={cn(
-            "block text-[15px] leading-[1.5] font-semibold",
-            destructive ? "text-danger-fg" : "text-fg",
+            "t-row block",
+            destructive ? "text-danger-fg" : current ? "text-brand-soft-fg" : "text-fg",
             clamp,
           )}
         >
           {title}
         </span>
         {subtitle ? (
-          <span className={cn("block text-[13px] leading-[1.5] text-fg-muted", clamp)}>{subtitle}</span>
+          <span className={cn("block text-sm leading-[1.6] text-fg-muted", clamp)}>{subtitle}</span>
         ) : null}
       </span>
       {trailing ? (
-        <span className="flex shrink-0 items-center gap-2 text-[13px] leading-[1.5] text-fg-muted">{trailing}</span>
+        <span className="flex shrink-0 items-center gap-2 text-sm leading-[1.5] text-fg-muted">{trailing}</span>
       ) : null}
       {showChevron ? <ChevronRight className="-mr-1 size-5 shrink-0 text-fg-subtle" aria-hidden="true" /> : null}
     </>
   );
 
   const dataLeading = leading ? "" : undefined;
+  const ariaCurrent = current ? ("true" as const) : undefined;
 
   if (href && !disabled) {
     return (
-      <Link href={href} onClick={onClick} className={classes} data-leading={dataLeading}>
+      <Link href={href} onClick={onClick} className={classes} data-leading={dataLeading} aria-current={ariaCurrent}>
         {content}
       </Link>
     );
   }
   if (onClick || (href && disabled)) {
     return (
-      <button type="button" onClick={onClick} disabled={disabled} className={classes} data-leading={dataLeading}>
+      <button type="button" onClick={onClick} disabled={disabled} className={classes} data-leading={dataLeading} aria-current={ariaCurrent}>
         {content}
       </button>
     );
   }
   return (
-    <div className={classes} data-leading={dataLeading}>
+    <div className={classes} data-leading={dataLeading} aria-current={ariaCurrent}>
       {content}
     </div>
   );
@@ -160,11 +190,11 @@ export function ListRowSkeleton({ count = 3, leading = true, subtitle = true }: 
       {Array.from({ length: count }, (_, index) => (
         <div
           key={index}
-          className="list-row flex min-h-14 items-center gap-3 px-4 py-3"
+          className="list-row flex min-h-16 items-center gap-3.5 px-4 py-3"
           data-leading={leading ? "" : undefined}
           aria-hidden="true"
         >
-          {leading ? <Skeleton className="size-10 shrink-0 rounded-xl" /> : null}
+          {leading ? <Skeleton className="size-10 shrink-0 rounded-[12px]" /> : null}
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             <Skeleton className={cn("h-3.5 rounded-full", index % 2 ? "w-1/2" : "w-2/3")} />
             {subtitle ? <Skeleton className="h-3 w-1/3 rounded-full" /> : null}

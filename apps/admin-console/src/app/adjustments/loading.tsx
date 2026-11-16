@@ -1,6 +1,6 @@
-import { PageSkeleton } from "@/components/app";
+import { TablePageSkeleton } from "../settlements/TablePageSkeleton";
 
-/** Adjustments: header + filters + table. */
+/** Adjustments: header + maker-checker notice + toolbar + table. */
 export default function Loading() {
-  return <PageSkeleton variant="table" />;
+  return <TablePageSkeleton notice columns={6} />;
 }

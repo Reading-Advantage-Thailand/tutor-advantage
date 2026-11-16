@@ -21,26 +21,27 @@ describe("normalizeCefr", () => {
 
 describe("getLevelTone", () => {
   it("gives every catalog level its own colour", () => {
+    // Redesign 2026-11 band colours (components.md §4): A0 teal, A1 plum, A2 sky, B1 orange, B2 berry.
     expect(getLevelTone("A0")).toBe("teal");
-    expect(getLevelTone("A1")).toBe("brand");
-    expect(getLevelTone("A2")).toBe("orange");
-    expect(getLevelTone("B1")).toBe("blue");
-    expect(getLevelTone("B2")).toBe("purple");
-    expect(getLevelTone("C1")).toBe("pink");
+    expect(getLevelTone("A1")).toBe("purple");
+    expect(getLevelTone("A2")).toBe("blue");
+    expect(getLevelTone("B1")).toBe("orange");
+    expect(getLevelTone("B2")).toBe("pink");
+    expect(getLevelTone("C1")).toBe("brand");
     const tones = CEFR_FILTER_LEVELS.map((level) => getLevelTone(level));
     expect(new Set(tones).size).toBe(CEFR_FILTER_LEVELS.length);
     expect(tones).not.toContain("neutral");
   });
 
   it("normalises case and whitespace", () => {
-    expect(getLevelTone(" b2 ")).toBe("purple");
+    expect(getLevelTone(" b2 ")).toBe("pink");
     expect(getLevelTone("a0")).toBe("teal");
   });
 
   it("falls back by family for unlisted levels", () => {
-    expect(getLevelTone("C2")).toBe("pink");
-    expect(getLevelTone("B3")).toBe("blue");
-    expect(getLevelTone("A3")).toBe("brand");
+    expect(getLevelTone("C2")).toBe("brand");
+    expect(getLevelTone("B3")).toBe("orange");
+    expect(getLevelTone("A3")).toBe("purple");
   });
 
   it("never throws on null / unknown (Primary books have no CEFR)", () => {

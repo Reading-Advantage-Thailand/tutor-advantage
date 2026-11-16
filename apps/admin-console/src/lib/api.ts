@@ -284,16 +284,26 @@ export interface ApiRequestOptions extends Omit<RequestInit, "body"> {
   idempotencyKey?: string;
 }
 
+/**
+ * Encodes one query key or value the way the services' OpenAPI validator
+ * accepts (RFC 3986): a space is %20 and !'()* are escaped too. Not
+ * URLSearchParams: it writes a space as "+", a reserved character the
+ * validator rejects ("q must be url encoded"), so a search for "Local Tutor"
+ * failed with 400.
+ */
+export function encodeQueryComponent(value: string): string {
+  return encodeURIComponent(value).replace(/[!'()*]/g, (char) => `%${char.charCodeAt(0).toString(16).toUpperCase()}`);
+}
+
 function withQuery(path: string, query?: ApiRequestOptions["query"]) {
   if (!query) return path;
-  const params = new URLSearchParams();
+  const pairs: string[] = [];
   for (const [key, value] of Object.entries(query)) {
     if (value === undefined || value === null || value === "") continue;
-    params.set(key, String(value));
+    pairs.push(`${encodeQueryComponent(key)}=${encodeQueryComponent(String(value))}`);
   }
-  const qs = params.toString();
-  if (!qs) return path;
-  return `${path}${path.includes("?") ? "&" : "?"}${qs}`;
+  if (pairs.length === 0) return path;
+  return `${path}${path.includes("?") ? "&" : "?"}${pairs.join("&")}`;
 }
 
 async function send(path: string, options: ApiRequestOptions = {}): Promise<Response> {

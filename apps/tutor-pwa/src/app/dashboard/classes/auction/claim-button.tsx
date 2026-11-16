@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { HandHelping } from "lucide-react";
 import { ConfirmDialog, Sheet } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
@@ -36,7 +37,9 @@ export function ClaimButton({ transferId }: { transferId: string }) {
 
   return (
     <>
-      <Button className="w-full md:w-auto" onClick={() => setConfirmOpen(true)} loading={loading}>
+      {/* A row action (tonal): the list may hold several, and a screen has one primary. */}
+      <Button variant="tonal" size="lg" className="w-full sm:w-auto" onClick={() => setConfirmOpen(true)} loading={loading}>
+        {loading ? null : <HandHelping aria-hidden="true" />}
         {loading ? t("tutorClass.auction.claiming") : t("tutorClass.auction.claim")}
       </Button>
 
@@ -61,7 +64,7 @@ export function ClaimButton({ transferId }: { transferId: string }) {
         bodyClassName="hidden"
         footer={
           <div className="flex md:justify-end">
-            <Button size="lg" className="w-full md:h-9 md:w-auto" onClick={handleSuccessClose}>
+            <Button size="xl" className="w-full md:h-10 md:w-auto" onClick={handleSuccessClose}>
               {t("tutorClass.ui.goToClasses")}
             </Button>
           </div>
@@ -77,7 +80,7 @@ export function ClaimButton({ transferId }: { transferId: string }) {
         bodyClassName="hidden"
         footer={
           <div className="flex md:justify-end">
-            <Button variant="outline" size="lg" className="w-full md:h-9 md:w-auto" onClick={() => setErrorOpen(false)}>
+            <Button variant="outline" size="xl" className="w-full md:h-10 md:w-auto" onClick={() => setErrorOpen(false)}>
               {t("shell.close")}
             </Button>
           </div>

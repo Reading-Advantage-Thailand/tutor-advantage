@@ -9,6 +9,7 @@ import { ChevronDown, ClipboardCheck, DoorOpen, RotateCw } from "lucide-react";
 import { fetchWithAuth } from "../lib/api";
 import { lessonLobbyHref } from "../lib/classAccess";
 import { t } from "../lib/i18n";
+import { keepThaiWords, thaiCopy } from "../lib/thaiText";
 
 type Stage = "PRE" | "POST";
 type Skill = "vocabulary" | "reading" | "listening";
@@ -69,14 +70,17 @@ function growthText(growth: Growth): string {
   return growth.kind === "same" ? t("classes.assessment.same") : t("classes.assessment.lower");
 }
 
-const card = "rounded-[var(--radius-card)] border border-hairline bg-surface shadow-[var(--shadow-card)]";
+const card = "rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface shadow-[var(--shadow-card)]";
+/** Tonal action (soft jade, small ledge), 44px. */
+const tonalAction =
+  "clay-press inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-[var(--radius-ctl-sm)] bg-brand-soft px-4 font-heading text-[15px] leading-[1.3] font-semibold text-brand-soft-fg shadow-[0_var(--ledge-sm)_0_var(--brand-soft-border)]";
 
 function ScoreTile({ label, attempt }: { label: string; attempt?: Attempt }) {
   return (
-    <div className="flex-1 rounded-2xl bg-fill-muted px-3 py-2.5">
-      <p className="text-[13px] leading-[1.5] text-fg-muted">{label}</p>
-      <strong className="block text-2xl leading-[1.4] font-extrabold text-fg tabular-nums">
-        {attempt ? `${attempt.total}/${MAX_TOTAL}` : <span className="text-base font-bold text-fg-muted">{t("classes.assessment.noResult")}</span>}
+    <div className="flex-1 rounded-lg bg-surface-muted px-3.5 py-2.5">
+      <p className="text-[13px] leading-[1.6] text-fg-muted">{label}</p>
+      <strong className="block text-[22px] leading-[1.4] font-semibold text-fg tabular-nums">
+        {attempt ? `${attempt.total}/${MAX_TOTAL}` : <span className="text-base font-semibold text-fg-muted">{t("classes.assessment.noResult")}</span>}
       </strong>
     </div>
   );
@@ -85,9 +89,9 @@ function ScoreTile({ label, attempt }: { label: string; attempt?: Attempt }) {
 function SkillMeter({ value, tone }: { value: number | undefined; tone: "pre" | "post" }) {
   const percent = typeof value === "number" ? Math.min(100, Math.max(0, (value / MAX_SKILL) * 100)) : 0;
   return (
-    <span className="relative block h-2 flex-1 overflow-hidden rounded-full bg-[var(--neutral-200)]" aria-hidden="true">
+    <span className="relative block h-2 flex-1 overflow-hidden rounded-full bg-track" aria-hidden="true">
       <span
-        className={`absolute inset-y-0 left-0 rounded-full ${tone === "post" ? "bg-brand-vivid" : "bg-[var(--neutral-400)]"}`}
+        className={`absolute inset-y-0 left-0 rounded-full ${tone === "post" ? "bg-brand-vivid" : "bg-icon-neutral"}`}
         style={{ width: `${percent}%` }}
       />
     </span>
@@ -146,7 +150,7 @@ export default function AssessmentPanel({ cycleId, classId }: { cycleId: string;
             setError("");
             void load();
           }}
-          className="pressable inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-brand-soft px-4 text-[15px] font-semibold text-brand-fg active:bg-press"
+          className={tonalAction}
         >
           <RotateCw aria-hidden="true" className="size-4" />
           {t("classes.assessment.retry")}
@@ -163,27 +167,27 @@ export default function AssessmentPanel({ cycleId, classId }: { cycleId: string;
   return (
     <section aria-label={t("classes.assessment.ariaLabel")} className={card}>
       <details className="group">
-        <summary className="flex min-h-[72px] cursor-pointer list-none items-center gap-3 rounded-[var(--radius-card)] p-4 select-none active:bg-press [&::-webkit-details-marker]:hidden">
-          <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-tile-purple text-icon-purple">
-            <ClipboardCheck className="size-5" strokeWidth={2.2} />
+        <summary className="flex min-h-[72px] cursor-pointer list-none items-center gap-3.5 rounded-[var(--radius-card)] px-[18px] py-3.5 select-none active:bg-press [&::-webkit-details-marker]:hidden">
+          <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-[var(--radius-tile)] bg-tile-purple text-icon-purple">
+            <ClipboardCheck className="size-6" strokeWidth={2.1} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[15px] leading-[1.5] font-bold text-fg">{t("classes.assessment.heading")}</span>
-            <span className="block truncate text-[13px] leading-[1.5] text-fg-muted">
+            <span className="block font-heading text-base leading-[1.45] font-semibold text-fg">{keepThaiWords(t("classes.assessment.heading"))}</span>
+            <span className="block truncate text-[13px] leading-[1.6] text-fg-muted">
               {t("classes.assessment.eyebrowPrefix")} {data.title || t("classes.assessment.defaultTitle")}
             </span>
           </span>
           <ChevronDown aria-hidden="true" className="size-5 shrink-0 text-fg-subtle transition-transform group-open:rotate-180" />
         </summary>
 
-        <div className="flex flex-col gap-4 border-t border-hairline p-4 text-sm leading-[1.6] text-fg">
+        <div className="flex flex-col gap-4 border-t-[1.5px] border-hairline px-[18px] pt-4 pb-[18px] text-sm leading-[1.6] text-fg">
           {hasArticlePicker ? (
-            <label className="flex flex-col gap-1.5 text-sm font-semibold text-fg">
+            <label className="flex flex-col gap-1.5 text-sm leading-[1.6] font-semibold text-fg">
               {t("classes.assessment.selectArticle")}
               <select
                 value={selectedArticleId}
                 onChange={(event) => setSelectedArticleId(event.target.value)}
-                className="h-12 w-full rounded-xl border border-field-border bg-surface px-3 text-base font-normal text-fg outline-none focus:border-brand-vivid"
+                className="h-[52px] w-full rounded-[var(--radius-field)] border-2 border-field-border bg-surface px-3.5 text-base font-normal text-fg focus:border-brand-fg focus:outline-3 focus:outline-offset-2 focus:outline-focus-ring"
               >
                 {data.articles?.map((article) => (
                   <option key={article.articleId} value={article.articleId}>
@@ -228,20 +232,20 @@ export default function AssessmentPanel({ cycleId, classId }: { cycleId: string;
               </div>
 
               {teacherComment ? (
-                <div className="rounded-2xl bg-fill-muted p-3">
+                <div className="rounded-lg bg-surface-muted px-3.5 py-3">
                   <strong className="block">{t("classes.assessment.teacherComment")}</strong>
                   <p className="whitespace-pre-wrap text-fg-muted">{teacherComment}</p>
                 </div>
               ) : null}
-              <p className="text-xs leading-[1.5] text-fg-muted">{t("classes.assessment.disclaimer")}</p>
+              <p className="text-xs leading-[1.6] text-fg-muted">{t("classes.assessment.disclaimer")}</p>
             </>
           ) : null}
 
-          <p className="text-fg-muted">{t("classes.assessment.lobbyNote")}</p>
+          <p className="text-fg-muted">{thaiCopy(t("classes.assessment.lobbyNote"))}</p>
           {classId ? (
             <Link
               href={lessonLobbyHref(classId)}
-              className="pressable inline-flex h-11 items-center justify-center gap-2 self-start rounded-xl bg-brand-soft px-4 text-[15px] font-semibold text-brand-fg active:bg-press"
+              className={`${tonalAction} self-start`}
             >
               <DoorOpen aria-hidden="true" className="size-[18px]" />
               {t("classes.assessment.lobbyCta")}

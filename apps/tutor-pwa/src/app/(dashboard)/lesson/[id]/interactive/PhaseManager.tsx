@@ -14,11 +14,12 @@
  * student app's protocol: do not change them here.
  */
 import React from "react";
-import { AlertTriangle, Users, WifiOff } from "lucide-react";
+import { AlertTriangle, History, Users, WifiOff } from "lucide-react";
 import { ArticleDisplay } from "./ArticleDisplay";
 import { playSound } from "@/lib/sounds";
 import { t } from "@/lib/i18n";
-import { Chip, Spinner } from "@/components/app";
+import { thaiCopy, thaiLabel } from "@/lib/thaiText";
+import { Chip, IconTile, Spinner } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import type { Participant, TutorSessionData, AnswerData, ArticleData, GamePhaseState, LessonPair } from "@/lib/lesson-types";
 import { getGamesByCategory } from "@/lib/liveLessonGames";
@@ -58,7 +59,7 @@ import { GamePhaseStage, rankGameVotes } from "./presenter/GamePhaseStage";
 import { PresenterDock, type DevTool } from "./presenter/PresenterDock";
 import { PresenterConfirm } from "./presenter/PresenterConfirm";
 import { getGamePrimaryAction } from "./presenter/gamePrimaryAction";
-import { StageEmpty } from "./presenter/primitives";
+import { StageEmpty, StageWaiting } from "./presenter/primitives";
 import { fireConfetti } from "./presenter/confetti";
 
 const TOTAL_PHASES = TOTAL_LESSON_PHASES;
@@ -100,6 +101,8 @@ interface PhaseManagerProps {
   onFinishSession?: () => void;
   flagCounts?: Record<number, number>;
   bypassEmptyStudentGuard?: boolean;
+  /** The lesson's exit confirm (outside the presenter) is open. */
+  exitConfirmOpen?: boolean;
   preparationMode?: boolean;
   guideOverlay?: React.ReactNode;
   onPreparationAnswersComplete?: (phase: number) => void;
@@ -132,6 +135,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   onFinishSession,
   flagCounts,
   bypassEmptyStudentGuard = false,
+  exitConfirmOpen = false,
   preparationMode = false,
   guideOverlay,
   onPreparationAnswersComplete,
@@ -177,6 +181,13 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   // Dev-only: mock pairs to preview the Phase 17 pair-conversation layout
   const [mockPairs, setMockPairs] = React.useState<LessonPair[] | null>(null);
   const fullscreenRef = React.useRef<HTMLDivElement>(null);
+  const studentsLeftNoticeRef = React.useRef<HTMLDivElement>(null);
+  // Where focus was before the students-left notice took it, and whether it has.
+  const focusBeforeStudentsLeft = React.useRef<HTMLElement | null>(null);
+  const studentsLeftFocused = React.useRef(false);
+  // The last presenter control that had focus outside a dialog, for when focus
+  // has already fallen to <body> (its control became inert under a confirm).
+  const lastPresenterFocus = React.useRef<HTMLElement | null>(null);
   const audio = useLessonAudio(articleData);
 
   const handleActiveIdxChange = React.useCallback(
@@ -739,13 +750,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   const renderPhaseContent = () => {
     if (currentPhase === 0 && participants.length === 0) {
-      return (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
-          <Users aria-hidden="true" className="size-10 text-fg-subtle" />
-          <p className="text-2xl font-semibold text-fg">{t("lesson.interactive.waitingStudents")}</p>
-          <p className="text-base text-fg-muted">{t("lesson.interactive.noJoinedYet")}</p>
-        </div>
-      );
+      return <StageWaiting as="h1" title={t("lesson.interactive.waitingStudents")} description={t("lesson.interactive.noJoinedYet")} />;
     }
     switch (currentPhase) {
       case LESSON_PHASE.FLASHCARDS:
@@ -1018,31 +1023,71 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       ]
     : undefined;
 
+  // Everyone left mid-lesson: a blocking notice whose only action returns to the lobby.
+  const studentsLeft = currentPhase > 0 && participants.length === 0 && !bypassEmptyStudentGuard;
+  const dialogOpen = pendingConfirm !== null || kickConfirmOpen || exitConfirmOpen;
+  // When the notice appears, move focus onto the notice card (screen readers read
+  // its title and text, and focusing it scrolls it into view). Not onto its danger
+  // action: the notice comes from students dropping out, not from the tutor, so a
+  // stray Enter must not send the class to the lobby. Wait while a confirm is
+  // open, and give focus back when the notice goes away.
+  React.useEffect(() => {
+    if (!studentsLeft) {
+      const previous = focusBeforeStudentsLeft.current;
+      focusBeforeStudentsLeft.current = null;
+      studentsLeftFocused.current = false;
+      if (previous?.isConnected && !previous.closest("[inert]") && document.activeElement === document.body) {
+        previous.focus();
+      }
+      return;
+    }
+    const notice = studentsLeftNoticeRef.current;
+    if (!notice) return;
+    const active = document.activeElement;
+    if (studentsLeftFocused.current) {
+      // Leaving fullscreen made the dock inert while it had focus: take it back.
+      if (active instanceof HTMLElement && active.closest("[inert]")) notice.focus();
+      return;
+    }
+    if (dialogOpen) return;
+    if (active instanceof HTMLElement && active !== document.body && !notice.contains(active)) {
+      focusBeforeStudentsLeft.current = active;
+    } else if (lastPresenterFocus.current?.isConnected) {
+      focusBeforeStudentsLeft.current = lastPresenterFocus.current;
+    }
+    studentsLeftFocused.current = true;
+    notice.focus();
+  }, [studentsLeft, dialogOpen, isFullscreen]);
+
   const dockStatus = isInteractivePhase ? (
-    <span>
+    <span className="inline-flex items-center gap-1.5">
+      <Users aria-hidden="true" className="size-4 shrink-0 text-fg-subtle" />
       {t("lesson.live.dockAnswered")}{" "}
-      <span className="text-base font-semibold tabular-nums text-fg">
+      <span className="text-lg font-semibold tabular-nums text-fg">
         {totalAnswered}/{totalParticipants}
       </span>
     </span>
   ) : isGamePhase && gameStatus && gameStatus !== "voting" ? (
-    <span>
+    <span className="inline-flex items-center gap-1.5">
+      <Users aria-hidden="true" className="size-4 shrink-0 text-fg-subtle" />
       {t("lesson.live.dockSubmitted")}{" "}
-      <span className="text-base font-semibold tabular-nums text-fg">
+      <span className="text-lg font-semibold tabular-nums text-fg">
         {gameResultsCount}/{totalParticipants}
       </span>
     </span>
   ) : isGamePhase && gameStatus === "voting" ? (
-    <span>
+    <span className="inline-flex items-center gap-1.5">
+      <Users aria-hidden="true" className="size-4 shrink-0 text-fg-subtle" />
       {t("lesson.live.dockVoted")}{" "}
-      <span className="text-base font-semibold tabular-nums text-fg">
+      <span className="text-lg font-semibold tabular-nums text-fg">
         {Object.keys(gameState?.votes || {}).length}/{totalParticipants}
       </span>
     </span>
   ) : (
-    <span>
+    <span className="inline-flex items-center gap-1.5">
+      <Users aria-hidden="true" className="size-4 shrink-0 text-fg-subtle" />
       {t("lesson.interactive.studentsLabel")}{" "}
-      <span className="text-base font-semibold tabular-nums text-fg">{totalParticipants}</span>{" "}
+      <span className="text-lg font-semibold tabular-nums text-fg">{totalParticipants}</span>{" "}
       {t("lesson.interactive.peopleUnit")}
     </span>
   );
@@ -1050,35 +1095,62 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   return (
     <div
       ref={fullscreenRef}
+      onFocusCapture={(event) => {
+        if (event.target instanceof HTMLElement && !event.target.closest('[role="alertdialog"]')) {
+          lastPresenterFocus.current = event.target;
+        }
+      }}
       data-current-phase={currentPhase}
       // Vocabulary / active-sentence marker used by ArticleDisplay.
       style={{ "--highlight-bg": "var(--warning-bg)", "--highlight-text": "var(--warning-fg)" } as React.CSSProperties}
       className={
         isFullscreen
           ? // The stage keeps clear of the dock, and takes its room back when the dock is hidden.
-            `fixed inset-0 z-[100] flex h-dvh w-screen flex-col overflow-hidden bg-app ${isToolbarHidden ? "" : "pb-28"}`
+            `fixed inset-0 z-(--z-presenter) flex h-dvh w-screen flex-col overflow-hidden bg-app ${isToolbarHidden ? "" : "pb-28"}`
           : "relative flex min-h-[var(--lesson-viewport-h,100dvh)] flex-1 flex-col bg-app"
       }
     >
       {connectionLost ? (
-        <div role="status" className="mx-4 mt-2 flex items-center justify-center gap-2.5 rounded-lg border border-warning-border bg-warning-bg px-4 py-2 text-sm text-warning-fg lg:mx-6">
-          <WifiOff aria-hidden="true" className="size-4 shrink-0" />
-          <span className="font-semibold">{t("lesson.live.reconnectingTitle")}</span>
-          <span className="hidden text-fg-muted sm:inline">{t("lesson.live.reconnectingHint")}</span>
+        <div
+          role="status"
+          className="mx-4 mt-3 flex items-center gap-3 rounded-(--radius-card) border border-warning-border bg-warning-bg px-3.5 py-2.5 text-sm text-warning-fg lg:mx-6"
+        >
+          <WifiOff aria-hidden="true" className="size-5 shrink-0" />
+          <p className="min-w-0 flex-1 leading-[1.6]">
+            <span className="font-semibold">{t("lesson.live.reconnectingTitle")}</span>
+            <span className="hidden sm:inline"> · {t("lesson.live.reconnectingHint")}</span>
+          </p>
           <Spinner className="text-warning-fg" />
         </div>
       ) : null}
 
       {/* Warning overlay when everyone left */}
-      {currentPhase > 0 && participants.length === 0 && !bypassEmptyStudentGuard ? (
-        <div role="alertdialog" aria-labelledby="students-left-title" className="absolute inset-0 z-50 flex items-center justify-center bg-app/85 p-4">
-          <div className="flex w-full max-w-md flex-col items-center rounded-xl border border-danger-border bg-surface p-8 text-center shadow-popover">
-            <AlertTriangle aria-hidden="true" className="size-10 text-danger-fg" />
-            <h3 id="students-left-title" className="mt-4 text-2xl font-semibold text-fg">
-              {t("lesson.interactive.studentsLeftTitle")}
+      {studentsLeft ? (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-app/85 p-4">
+          <div
+            ref={studentsLeftNoticeRef}
+            role="alertdialog"
+            tabIndex={-1}
+            // Not aria-modal: the stage behind it is inert, but the lesson bar (exit,
+            // theme) and in fullscreen the dock stay usable, so screen readers must
+            // still reach them.
+            aria-labelledby="students-left-title"
+            aria-describedby="students-left-description"
+            className="flex w-full max-w-md flex-col items-center rounded-(--radius-dialog) border border-clay-rim bg-surface-elevated px-6 py-8 text-center shadow-popover outline-none sm:px-8"
+          >
+            <IconTile icon={Users} tone="amber" size="xl" />
+            <h3 id="students-left-title" className="mt-4 text-2xl leading-[1.35] font-semibold text-balance-th text-fg">
+              {thaiLabel(t("lesson.interactive.studentsLeftTitle"))}
             </h3>
-            <p className="mt-2 text-base text-fg-muted">{t("lesson.interactive.studentsLeftDescription")}</p>
-            <Button variant="danger" size="lg" className="mt-6 w-full" onClick={() => requestPhaseChange(0)} disabled={isChangingPhase}>
+            <p id="students-left-description" className="mt-2 text-base text-fg-muted">
+              {thaiCopy(t("lesson.interactive.studentsLeftDescription"))}
+            </p>
+            <Button
+              size="xl"
+              className="mt-6 w-full"
+              onClick={() => requestPhaseChange(0)}
+              disabled={isChangingPhase}
+            >
               {t("lesson.interactive.returnLobbyNow")}
             </Button>
           </div>
@@ -1087,7 +1159,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
       <div
         data-tour-target={tour("phase-progress")}
-        className={isFullscreen && !preparationMode ? "hidden" : "shrink-0 px-4 pb-2 pt-3 lg:px-6"}
+        inert={studentsLeft || undefined}
+        className={
+          isFullscreen && !preparationMode ? "hidden" : "shrink-0 border-b border-hairline bg-surface-nav px-4 pt-3 pb-2 lg:px-6"
+        }
       >
         <PhaseProgress
           currentPhase={currentPhase}
@@ -1099,13 +1174,17 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         />
       </div>
       {isRewoundPhase ? (
-        <div className="mx-4 mb-2 rounded-lg border border-warning-border bg-warning-bg px-4 py-2.5 text-center text-sm font-semibold text-warning-fg lg:mx-6">
-          {t("lesson.live.rewoundNotice")} {sessionData?.resumePhase ?? currentPhase + 1}
+        <div className="mx-4 mt-3 flex items-center gap-2.5 rounded-(--radius-card) border border-warning-border bg-warning-bg px-3.5 py-2.5 text-sm font-semibold text-warning-fg lg:mx-6">
+          <History aria-hidden="true" className="size-5 shrink-0" />
+          <p className="min-w-0 flex-1 leading-[1.6]">
+            {thaiCopy(`${t("lesson.live.rewoundNotice")} ${sessionData?.resumePhase ?? currentPhase + 1}`)}
+          </p>
         </div>
       ) : null}
       <div
         data-tour-target={tour("phase-content")}
-        className={isFullscreen ? "flex h-full min-h-0 min-w-0 flex-1 flex-col px-6 pt-5" : "flex min-h-0 min-w-0 flex-1 flex-col px-4 pb-4 pt-2 lg:px-6"}
+        inert={studentsLeft || undefined}
+        className={isFullscreen ? "flex h-full min-h-0 min-w-0 flex-1 flex-col px-6 pt-5" : "flex min-h-0 min-w-0 flex-1 flex-col px-4 pt-4 pb-5 lg:px-6 lg:pt-5"}
       >
         <FitToViewport enabled={isFullscreen}>{renderPhaseContent()}</FitToViewport>
       </div>
@@ -1113,6 +1192,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       <PresenterDock
         isFullscreen={isFullscreen}
         hidden={isToolbarHidden}
+        inert={studentsLeft && !isFullscreen}
         onShow={() => setIsToolbarHidden(false)}
         onHide={() => setIsToolbarHidden(true)}
         onToggleFullscreen={() => void toggleFullscreen()}
@@ -1175,11 +1255,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       {audio.fallbackText ? (
         <div
           role="status"
-          className="fixed bottom-24 right-6 z-[200] flex max-w-sm items-start gap-3 rounded-xl border border-warning-border bg-warning-bg px-4 py-3 text-warning-fg shadow-popover"
+          className="fixed right-4 bottom-24 z-(--z-presenter-toast) flex max-w-sm items-start gap-3 rounded-(--radius-card) border border-clay-rim bg-surface-elevated px-3.5 py-3 shadow-popover sm:right-6"
         >
-          <AlertTriangle aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
-          <div className="text-sm">
-            <p className="font-semibold">{t("lesson.live.speechFallbackTitle")}</p>
+          <IconTile icon={AlertTriangle} tone="amber" size="sm" />
+          <div className="min-w-0 text-sm">
+            <p className="font-semibold text-fg">{t("lesson.live.speechFallbackTitle")}</p>
             <p className="mt-0.5 text-fg-muted">&ldquo;{audio.fallbackText}&rdquo;</p>
           </div>
         </div>
@@ -1187,7 +1267,19 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       <PresenterConfirm
         open={kickConfirmOpen}
         onCancel={() => setKickConfirmOpen(false)}
-        title={`${t("lesson.live.removeConfirmTitle")} ${kickTarget?.name ?? ""}`.trim()}
+        // The question and the student's name (user data) are one block each: the line breaks between them
+        // first, and the question only wraps (word by word) where the dialog is narrower than it.
+        title={
+          <>
+            <span className="inline-block max-w-full">{thaiLabel(t("lesson.live.removeConfirmTitle"))}</span>
+            {kickTarget?.name ? (
+              <>
+                {" "}
+                <span className="inline-block max-w-full">{kickTarget.name}</span>
+              </>
+            ) : null}
+          </>
+        }
         description={t("lesson.live.removeConfirmDescription")}
         confirmLabel={t("lesson.live.removeConfirm")}
         cancelLabel={t("lesson.live.removeCancel")}

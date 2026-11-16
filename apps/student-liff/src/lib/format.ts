@@ -4,7 +4,11 @@
  * - Locale is th-TH, so dates use the Buddhist-era year (2569 = 2026 CE), the
  *   same as the existing toLocaleDateString("th-TH") calls in the pages.
  * - Times are 24-hour ("14:30"), which Thai students read naturally.
- * - Everything uses the device time zone (like the code it replaces).
+ * - The time zone is fixed to Asia/Bangkok (UTC+7, no DST), like the tutor and
+ *   admin apps: a server timestamp reads the same on every device. A
+ *   device-local calendar day (a schedule grid cell, a "yyyy-MM-dd" day built
+ *   with new Date(y, m, d)) must go through localDayToBangkokNoon() before it
+ *   is formatted, or a device east of UTC+7 shows the day before.
  * - Invalid input never throws: dates return "" and money returns "–".
  *
  * Card-number/expiry input masks live in src/lib/paymentFlow.ts
@@ -12,6 +16,9 @@
  */
 
 const LOCALE = "th-TH";
+export const APP_TIME_ZONE = "Asia/Bangkok";
+const BANGKOK_OFFSET_MS = 7 * 60 * 60 * 1000;
+const DAY_MS = 86_400_000;
 
 export type DateInput = Date | string | number;
 
@@ -32,7 +39,7 @@ function dateFormat(options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
   const cacheKey = JSON.stringify(options);
   let formatter = dateFormatCache.get(cacheKey);
   if (!formatter) {
-    formatter = new Intl.DateTimeFormat(LOCALE, options);
+    formatter = new Intl.DateTimeFormat(LOCALE, { timeZone: APP_TIME_ZONE, ...options });
     dateFormatCache.set(cacheKey, formatter);
   }
   return formatter;
@@ -117,6 +124,9 @@ export function formatThaiDate(input: DateInput, style: ThaiDateStyle = "medium"
  */
 export const NBSP = "\u00A0";
 
+/** Word joiner (U+2060): invisible, zero width, forbids a line break on both sides. */
+export const WORD_JOINER = "\u2060";
+
 /**
  * Glues a short last word (≤ `maxTail` characters, e.g. the "1" in
  * "คลาส Reading Advantage 1") to the word before it with a non-breaking space,
@@ -136,11 +146,14 @@ export function noOrphan(text: string | null | undefined, maxTail = 3): string {
  * Keeps times in free text (e.g. a server schedule "จันทร์ 18:00 - 19:30 น.")
  * on one line: the spaces around a dash between two times and before "น."
  * become non-breaking. Other spaces are left alone so the text still wraps.
+ * A word joiner follows the dash: line breaking still allows a break between
+ * a hyphen or an en dash and a no-break space after it (UAX #14 LB12a), so
+ * without it "18:00 -" / "19:30 น." could split on a narrow phone.
  */
 export function keepTimesTogether(text: string | null | undefined): string {
   if (!text) return "";
   return text
-    .replace(/(\d{1,2}[:.]\d{2})\s*([-–])\s*(?=\d{1,2}[:.]\d{2})/g, `$1${NBSP}$2${NBSP}`)
+    .replace(/(\d{1,2}[:.]\d{2})\s*([-–])\s*(?=\d{1,2}[:.]\d{2})/g, `$1${NBSP}$2${WORD_JOINER}${NBSP}`)
     .replace(/(\d)\s+(น\.)/g, `$1${NBSP}$2`);
 }
 
@@ -158,9 +171,39 @@ export function formatThaiMonthYear(input: DateInput): string {
   return date ? dateFormat({ month: "long", year: "numeric" }).format(date) : "";
 }
 
+/** Calendar parts of a date in Bangkok time (month is 0-based like Date). */
+function bangkokParts(date: Date): { year: number; month: number; day: number } {
+  const shifted = new Date(date.getTime() + BANGKOK_OFFSET_MS);
+  return { year: shifted.getUTCFullYear(), month: shifted.getUTCMonth(), day: shifted.getUTCDate() };
+}
+
+/**
+ * Bangkok calendar-day key "YYYY-MM-DD" (Gregorian) of a server timestamp.
+ * Use for grouping and comparing days (chat and ticket separators, history
+ * groups), never for display. Returns "" for invalid input.
+ */
+export function toDateKey(input: DateInput | null | undefined): string {
+  const date = toDate(input);
+  if (!date) return "";
+  const { year, month, day } = bangkokParts(date);
+  return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+/**
+ * A device-local calendar day (new Date(y, m, d), a schedule grid cell) → noon
+ * of the same calendar day in Bangkok, ready for the formatters above. They
+ * read the Bangkok day, and a device-local midnight is still the day before in
+ * Bangkok on a device east of UTC+7.
+ */
+export function localDayToBangkokNoon(date: Date): Date {
+  return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 5));
+}
+
 /**
  * Local calendar-day key "YYYY-MM-DD" (Gregorian, device time zone).
- * Use for grouping and comparing days, never for display.
+ * Only for the schedule calendar grid, whose cells and "today" are device-local
+ * days; never for display. A server timestamp is grouped with toDateKey()
+ * (Bangkok day) instead: do not compare the two kinds of key with each other.
  */
 export function toLocalDateKey(input: DateInput): string {
   const date = toDate(input);
@@ -171,9 +214,14 @@ export function toLocalDateKey(input: DateInput): string {
   return `${year}-${month}-${day}`;
 }
 
+/** Days since the epoch of the Bangkok calendar day a moment falls on. */
+function dayNumber(date: Date): number {
+  return Math.floor((date.getTime() + BANGKOK_OFFSET_MS) / DAY_MS);
+}
+
+/** Whole Bangkok calendar days from `now` to `date` (0 = today, 1 = tomorrow). */
 function dayOffset(date: Date, now: Date): number {
-  const startOf = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-  return Math.round((startOf(date) - startOf(now)) / 86_400_000);
+  return dayNumber(date) - dayNumber(now);
 }
 
 /** Labels used by formatRelativeDay. */
@@ -194,7 +242,7 @@ export function formatRelativeDay(input: DateInput, now: Date = new Date()): str
   if (offset === 0) return RELATIVE_DAY_LABELS.today;
   if (offset === -1) return RELATIVE_DAY_LABELS.yesterday;
   if (offset === 1) return RELATIVE_DAY_LABELS.tomorrow;
-  return formatThaiDate(date, date.getFullYear() === now.getFullYear() ? "short" : "medium");
+  return formatThaiDate(date, bangkokParts(date).year === bangkokParts(now).year ? "short" : "medium");
 }
 
 /**
@@ -207,5 +255,5 @@ export function formatListTimestamp(input: DateInput, now: Date = new Date()): s
   const offset = dayOffset(date, now);
   if (offset === 0) return formatThaiTime(date);
   if (offset === -1) return RELATIVE_DAY_LABELS.yesterday;
-  return formatThaiDate(date, date.getFullYear() === now.getFullYear() ? "short" : "medium");
+  return formatThaiDate(date, bangkokParts(date).year === bangkokParts(now).year ? "short" : "medium");
 }

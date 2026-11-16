@@ -100,4 +100,17 @@ export const shell = {
   reasonPlaceholder: "ระบุเหตุผลเพื่อบันทึกในประวัติกิจกรรม",
   reasonTooShort: "กรุณาระบุเหตุผลอย่างน้อย {min} ตัวอักษร",
   irreversible: "การดำเนินการนี้ย้อนกลับไม่ได้",
+  // Redesign 2026-11: top bar, bell, pagination (appended; existing keys unchanged)
+  switchToDark: "สลับเป็นธีมมืด",
+  switchToLight: "สลับเป็นธีมสว่าง",
+  breadcrumb: "ตำแหน่งของหน้านี้",
+  notifications: "การแจ้งเตือน",
+  notificationsCount: "การแจ้งเตือน มี {count} รายการ",
+  notificationsEmpty: "ไม่มีงานค้าง",
+  pendingWork: "งานที่รอดำเนินการ",
+  pagination: "เลือกหน้า",
+  pageNumber: "หน้า {page}",
+  // Tables owner (shared filters, pager): appended
+  activeFilters: "ตัวกรองที่ใช้อยู่",
+  removeFilter: "ลบตัวกรอง {label}",
 } as const;

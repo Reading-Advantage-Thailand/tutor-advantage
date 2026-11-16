@@ -10,6 +10,7 @@ export interface BottomSheetProps {
   onOpenChange: (open: boolean) => void;
   /** Sheet title (also the dialog's accessible name). */
   title: ReactNode;
+  /** A string is Thai copy (compounds stay whole, see thaiCopy). Pass data such as a class name as a node. */
   description?: ReactNode;
   /** Scrollable body (overscroll contained). */
   children?: ReactNode;
@@ -88,7 +89,10 @@ export interface ConfirmSheetProps {
   children?: ReactNode;
 }
 
-/** Two-button confirmation sheet (confirm on top, cancel below). */
+/**
+ * Two-button confirmation sheet (confirm on top, outline cancel below). One
+ * sentence of consequence; destructive = `danger`.
+ */
 export function ConfirmSheet({
   open,
   onOpenChange,
@@ -122,9 +126,9 @@ export function ConfirmSheet({
             {confirmLabel}
           </Button>
           <Button
-            variant="ghost"
-            size="touch"
-            className="w-full text-fg-muted"
+            variant="outline"
+            size="cta"
+            className="w-full"
             disabled={loading}
             onClick={() => onOpenChange(false)}
           >

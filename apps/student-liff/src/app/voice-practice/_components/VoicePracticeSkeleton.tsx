@@ -1,22 +1,21 @@
-import { LoadingAnnouncement, Skeleton } from "@/components/mobile";
+import { AppBar, LoadingAnnouncement, Skeleton } from "@/components/mobile";
+import { t } from "@/lib/i18n";
 import styles from "../voice-practice.module.css";
 
-/** Voice-practice placeholder in its own layout (top bar, Reedy, cards, mic) instead of a full-screen spinner. */
+/** Voice-practice placeholder in its final layout (app bar, lesson title, Reedy's stage, status, mic, transcript card). */
 export function VoicePracticeSkeleton() {
   return (
     <main className={styles.page}>
+      <AppBar title={t("interactivePlay.voicePracticeTitle")} back fallbackHref="/progress" className="shrink-0 border-b-[1.5px] border-clay-rim" />
       <LoadingAnnouncement />
-      <div aria-hidden="true" className="mx-auto flex w-full max-w-[460px] flex-col items-center gap-4 px-5 pt-[calc(14px+var(--safe-top))]">
-        <div className="flex w-full items-center justify-between">
-          <Skeleton className="h-11 w-20 rounded-2xl" />
-          <Skeleton className="h-12 w-28 rounded-2xl" />
-        </div>
-        <Skeleton className="mt-2 h-8 w-36 rounded-full" />
-        <Skeleton className="h-8 w-4/5 rounded-full" />
-        <Skeleton className="mt-2 size-52 rounded-full" />
-        <Skeleton className="h-[58px] w-full rounded-[19px]" />
-        <Skeleton className="h-[60px] w-full rounded-[17px]" />
-        <Skeleton className="mt-2 size-24 rounded-full" />
+      <div aria-hidden="true" className="mx-auto flex w-full max-w-[480px] flex-col items-center gap-3.5 px-4 pt-3">
+        <Skeleton className="h-3.5 w-28 rounded-full" />
+        <Skeleton className="h-6 w-3/5 rounded-full" />
+        <Skeleton className="h-[200px] w-full rounded-[var(--radius-card)]" />
+        <Skeleton className="h-9 w-44 rounded-full" />
+        <Skeleton className="mt-1 size-[72px] rounded-full" />
+        <Skeleton className="h-4 w-32 rounded-full" />
+        <Skeleton className="h-16 w-full rounded-[var(--radius-card)]" />
       </div>
     </main>
   );

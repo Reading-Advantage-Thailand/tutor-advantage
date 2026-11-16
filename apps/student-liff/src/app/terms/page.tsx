@@ -4,6 +4,7 @@ import { BusinessContactCard } from "@/components/legal/BusinessContactCard";
 import { DocumentPage } from "@/components/legal/DocumentPage";
 import { studentLegalCopy } from "@/lib/content/legal";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 
 export const metadata: Metadata = { title: t("legal.termsMetaTitle") };
 
@@ -19,7 +20,7 @@ export default function TermsPage() {
       sections={copy.sections}
       footer={
         <div className="flex flex-col gap-4">
-          <p className="px-2 text-center text-xs leading-[1.6] text-fg-muted">{copy.footer}</p>
+          <p className="px-2 text-center text-xs leading-[1.6] text-fg-muted">{thaiCopy(copy.footer)}</p>
           <BusinessContactCard />
         </div>
       }

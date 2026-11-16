@@ -52,14 +52,14 @@ function LessonBar({ exitHref, exitLabel }: { exitHref: string; exitLabel: strin
         onClick={(event) => {
           if (lessonExitGuard?.()) event.preventDefault();
         }}
-        className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-2 text-sm font-medium text-fg-muted hover:bg-press hover:text-fg"
+        className="inline-flex h-10 min-w-10 shrink-0 items-center justify-center gap-1.5 rounded-(--radius-ctl) px-2 text-sm font-medium text-fg-muted hover:bg-press hover:text-fg pointer-coarse:h-11 pointer-coarse:min-w-11"
       >
         <X aria-hidden="true" className="size-5" />
         <span className="hidden sm:inline">{exitLabel}</span>
         <span className="sr-only sm:hidden">{exitLabel}</span>
       </Link>
       <span aria-hidden="true" className="h-5 w-px shrink-0 bg-hairline" />
-      <p className="min-w-0 flex-1 truncate px-1 text-sm font-semibold text-fg">{title ?? t("shell.lessonMode")}</p>
+      <p className="min-w-0 flex-1 truncate px-1 text-[0.9375rem] font-semibold text-fg">{title ?? t("shell.lessonMode")}</p>
       <div id={ACTIONS_SLOT_ID} className="flex shrink-0 items-center gap-1.5" />
       {supported ? (
         <button
@@ -67,7 +67,7 @@ function LessonBar({ exitHref, exitLabel }: { exitHref: string; exitLabel: strin
           onClick={toggle}
           aria-label={isFullscreen ? t("shell.exitFullscreen") : t("shell.enterFullscreen")}
           title={isFullscreen ? t("shell.exitFullscreen") : t("shell.enterFullscreen")}
-          className="hidden size-9 shrink-0 items-center justify-center rounded-lg text-fg-muted hover:bg-press hover:text-fg md:inline-flex"
+          className="hidden size-10 shrink-0 items-center justify-center rounded-(--radius-ctl) text-fg-muted hover:bg-press hover:text-fg md:inline-flex pointer-coarse:size-11"
         >
           {isFullscreen ? <Minimize aria-hidden="true" className="size-[18px]" /> : <Maximize aria-hidden="true" className="size-[18px]" />}
         </button>
@@ -119,8 +119,12 @@ export function LessonBarActions({ children }: { children: ReactNode }) {
  * Bottom control dock for lesson pages: sticks to the bottom edge of the
  * viewport so primary controls stay visible on 720px-tall projectors.
  */
-export function LessonDock({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn("lesson-dock flex items-center gap-2", className)}>{children}</div>;
+export function LessonDock({ children, className, inert }: { children: ReactNode; className?: string; inert?: boolean }) {
+  return (
+    <div inert={inert || undefined} className={cn("lesson-dock flex items-center gap-2", className)}>
+      {children}
+    </div>
+  );
 }
 
 /**

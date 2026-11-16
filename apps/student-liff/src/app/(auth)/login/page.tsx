@@ -7,9 +7,11 @@ import { Users } from "lucide-react";
 import { Notice, Screen } from "@/components/mobile";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { BrandMark } from "@/components/icons/BrandMark";
+import { ReedyMini } from "@/components/mascot/ReedyMini";
 import { LineIcon } from "@/components/icons/LineIcon";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import { waitForSession } from "@/lib/cookieUtils";
 import { BrandSplash, ENTRY_HERO_BG } from "../../_components/BrandSplash";
@@ -81,46 +83,54 @@ export default function LoginPage() {
   };
 
   return (
-    <Screen className={cn(ENTRY_HERO_BG, "text-hero-fg")}>
-      {/* Brand */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 pt-[calc(var(--safe-top)+40px)] pb-10 text-center">
-        <BrandMark size="xl" tone="onBrand" />
-        <p className="mt-5 text-[28px] leading-[1.3] font-extrabold tracking-tight">{t("entry.brandName")}</p>
-        <p className="mt-1 text-[15px] leading-[1.6] font-medium text-hero-fg-muted">{t("app.studentPortal")}</p>
-      </div>
+    <Screen>
+      {/* Brand hero: flat hero colour + blobs, Reedy tucked behind the login card (never over the LINE button). */}
+      <header className={cn(ENTRY_HERO_BG, "px-4 pt-[calc(var(--safe-top)+18px)] text-hero-fg")}>
+        <div className="mx-auto flex w-full max-w-md items-end justify-between gap-2">
+          <div className="min-w-0 flex-1 pb-12">
+            <BrandMark size="md" />
+            <p className="t-display mt-3 text-balance">{t("entry.brandName")}</p>
+            <p className="text-[15px] leading-[1.6] font-medium text-hero-fg-muted">{t("app.studentPortal")}</p>
+          </div>
+          <ReedyMini mood="happy" size="lg" narrowSize="md" decorative className="-mr-1" />
+        </div>
+      </header>
 
-      {/* Login sheet */}
-      <section
-        aria-labelledby="login-title"
-        className="rounded-t-[28px] bg-surface px-5 pt-7 pb-[calc(20px+var(--safe-bottom))] text-fg shadow-[0_-8px_30px_-12px_rgb(0_0_0/0.35)]"
-      >
-        <div className="mx-auto w-full max-w-md">
-          <h1 id="login-title" className="text-center text-xl leading-[1.4] font-extrabold">
+      {/* Login card */}
+      <div className="relative z-[3] -mt-[30px] px-4 pb-[calc(24px+var(--safe-bottom))]">
+        <section
+          aria-labelledby="login-title"
+          className="mx-auto w-full max-w-md rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface p-5 shadow-[var(--shadow-card)] max-[374px]:px-4"
+        >
+          <h1 id="login-title" className="t-title-l text-fg">
             {t("app.login")}
           </h1>
-          <p className="mt-1 text-center text-sm leading-[1.6] text-fg-muted">{t("app.loginSubtitle")}</p>
+          <p className="t-body-s mt-0.5 text-fg-muted">{t("app.loginSubtitle")}</p>
 
           <Button
             id="btn-line-login"
             variant="line"
             size="cta"
-            className="mt-6 w-full"
+            className="mt-5 w-full"
             onClick={handleLogin}
             disabled={!isReady}
           >
-            <LineIcon variant="mono" size={26} />
+            <LineIcon variant="mono" size={34} />
             {t("app.lineLogin")}
           </Button>
 
-          <p className="mt-4 text-center text-[13px] leading-[1.7] text-fg-muted">
+          <p className="mt-4 text-[13px] leading-[1.7] text-fg-muted">
             {t("app.loginConsentPrefix")}{" "}
             <Link href="/terms" className={legalLinkClass}>
               {t("app.terms")}
             </Link>{" "}
-            {t("app.and")}{" "}
-            <Link href="/privacy" className={legalLinkClass}>
-              {t("app.privacyPolicy")}
-            </Link>
+            {/* "และ" travels with the second link, so no line ends on the conjunction. */}
+            <span className="whitespace-nowrap">
+              {t("app.and")}{" "}
+              <Link href="/privacy" className={legalLinkClass}>
+                {t("app.privacyPolicy")}
+              </Link>
+            </span>
           </p>
 
           <Notice
@@ -130,14 +140,14 @@ export default function LoginPage() {
             description={t("app.underageNotice")}
             className="mt-5"
           />
+        </section>
 
-          <p className="mt-6 text-center text-xs leading-[1.6] text-fg-muted">
-            {t("entry.copyright")}
-            <br />
-            {t("app.securePaymentLine")}
-          </p>
-        </div>
-      </section>
+        <p className="mt-6 text-center text-xs leading-[1.6] text-fg-muted">
+          {t("entry.copyright")}
+          <br />
+          {thaiCopy(t("app.securePaymentLine"))}
+        </p>
+      </div>
     </Screen>
   );
 }

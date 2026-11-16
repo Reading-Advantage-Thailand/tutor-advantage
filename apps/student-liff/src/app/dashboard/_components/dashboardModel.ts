@@ -7,6 +7,7 @@ import {
   getShareableClasses,
   groupEnrollments,
   formatLevelLabel,
+  hasNextSession,
   isPendingPayment,
   type DashboardSummary,
   type Enrollment,
@@ -88,4 +89,24 @@ export function deriveHomeModel(summary: DashboardSummary | null | undefined): H
     levelLabel: formatLevelLabel(primary),
     isEmpty: all.length === 0,
   };
+}
+
+/**
+ * What Reedy says on the home hero (patterns.md S1). Always a fact from the
+ * summary, never fixed praise:
+ * - "live": the featured class is being taught right now ("ครูกำลังสอนอยู่").
+ * - "continue": the featured class has a next session ("ไปเรียน {class} ต่อกันนะ";
+ *   the summary carries no lesson number, so the class name stands in for "บทที่ n").
+ * - "noNext": no featured class or no next session ("ยังไม่มีคาบถัดไป ลองฝึกพูดกับรีดี้ไหม").
+ * null when the student has no enrollment at all: the empty card carries the one Reedy.
+ */
+export type ReedyLine = { kind: "live" } | { kind: "continue"; className: string } | { kind: "noNext" };
+
+export function getReedyLine(model: Pick<HomeModel, "isEmpty" | "primary" | "nextUpKind">): ReedyLine | null {
+  if (model.isEmpty) return null;
+  const primary = model.primary;
+  if (!primary) return { kind: "noNext" };
+  if (model.nextUpKind === "live") return { kind: "live" };
+  if (!hasNextSession(primary)) return { kind: "noNext" };
+  return { kind: "continue", className: primary.name };
 }

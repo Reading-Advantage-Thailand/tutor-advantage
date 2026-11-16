@@ -7,6 +7,7 @@ import { studentApi } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { keepThaiWords, thaiCopy } from "@/lib/thaiText";
 import { ConsentSkeleton } from "./_components/ConsentSkeleton";
 import {
   buildConsentSummary,
@@ -39,9 +40,17 @@ export default function ConsentPage() {
 
   let body: React.ReactNode;
   if (liffError || !profile) {
-    body = <ErrorState kind={errorCode === "network" ? "offline" : "error"} onRetry={retry} />;
+    body = (
+      <StateColumn>
+        <ErrorState card kind={errorCode === "network" ? "offline" : "error"} onRetry={retry} />
+      </StateColumn>
+    );
   } else if (error && !data) {
-    body = <ErrorState onRetry={() => void refetch()} retrying={isValidating} />;
+    body = (
+      <StateColumn>
+        <ErrorState card onRetry={() => void refetch()} retrying={isValidating} />
+      </StateColumn>
+    );
   } else if (data) {
     body = <ConsentDetails summary={data} />;
   }
@@ -52,6 +61,11 @@ export default function ConsentPage() {
       {body}
     </Screen>
   );
+}
+
+/** The page column for an error state (a normal card, patterns.md "Empty, error and loading"). */
+function StateColumn({ children }: { children: React.ReactNode }) {
+  return <div className="mx-auto w-full max-w-2xl px-4 pt-2">{children}</div>;
 }
 
 function ConsentDetails({ summary }: { summary: ConsentSummary }) {
@@ -75,12 +89,16 @@ function ConsentDetails({ summary }: { summary: ConsentSummary }) {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 pt-2 pb-[calc(24px+var(--safe-bottom))]">
-      <p className="text-sm leading-[1.6] text-fg-muted">{t("legal.consentSubtitle")}</p>
+      {/* What this screen is about: a soft brand card, not a tap target. */}
+      <div className="flex items-center gap-3.5 rounded-[var(--radius-card)] border-[1.5px] border-brand-soft-border bg-brand-soft p-4">
+        <IconTile icon={ShieldCheck} tone="brand" size="lg" className="bg-surface" />
+        <p className="t-body-s text-brand-soft-fg">{thaiCopy(t("legal.consentSubtitle"))}</p>
+      </div>
 
       <ListGroup header={t("legal.consentStatusHeader")}>
         <ListRow
           leading={<IconTile icon={ShieldCheck} tone={terms.accepted ? "brand" : "neutral"} />}
-          title={t("legal.consentTermsTitle")}
+          title={keepThaiWords(t("legal.consentTermsTitle"))}
           subtitle={<StatusLine {...termsStatus} />}
         />
         <ListRow
@@ -90,7 +108,7 @@ function ConsentDetails({ summary }: { summary: ConsentSummary }) {
               tone={guardian === "granted" ? "brand" : guardian === "required" ? "amber" : "neutral"}
             />
           }
-          title={t("legal.consentGuardianTitle")}
+          title={keepThaiWords(t("legal.consentGuardianTitle"))}
           subtitle={<StatusLine {...guardianStatus[guardian]} />}
           // Missing guardian consent → the guardian form.
           href={guardian === "required" ? "/guardian" : undefined}
@@ -113,11 +131,13 @@ interface StatusLineProps {
   detail: string | null;
 }
 
-/** Status chip + optional detail, used as a ListRow subtitle. */
+/** Status chip (colour + dot + word) + optional detail, used as a ListRow subtitle. */
 function StatusLine({ tone, chip, detail }: StatusLineProps) {
   return (
     <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-      <Chip tone={tone}>{chip}</Chip>
+      <Chip tone={tone} dot>
+        {chip}
+      </Chip>
       {detail ? <span>{detail}</span> : null}
     </span>
   );

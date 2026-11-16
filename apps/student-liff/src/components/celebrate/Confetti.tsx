@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
+  CONFETTI_COLORS,
   CONFETTI_PRESETS,
   HAPTIC_PATTERN,
   createParticles,
@@ -52,7 +53,13 @@ function drawStar(ctx: CanvasRenderingContext2D, r: number) {
   ctx.fill();
 }
 
-function drawParticles(ctx: CanvasRenderingContext2D, particles: Particle[], dpr: number, alpha: number) {
+/** Token name → the theme's current colour (read once per burst). */
+function resolvePalette(): Record<string, string> {
+  const styles = getComputedStyle(document.documentElement);
+  return Object.fromEntries(CONFETTI_COLORS.map((token) => [token, styles.getPropertyValue(token).trim() || "gray"]));
+}
+
+function drawParticles(ctx: CanvasRenderingContext2D, particles: Particle[], dpr: number, alpha: number, palette: Record<string, string>) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.globalAlpha = alpha;
@@ -60,7 +67,7 @@ function drawParticles(ctx: CanvasRenderingContext2D, particles: Particle[], dpr
     const cos = Math.cos(p.rotation) * dpr;
     const sin = Math.sin(p.rotation) * dpr;
     ctx.setTransform(cos, sin, -sin, cos, p.x * dpr, p.y * dpr);
-    ctx.fillStyle = p.color;
+    ctx.fillStyle = palette[p.color] ?? p.color;
     if (p.shape === "rect") {
       // Squash with the flutter so paper strips look like they flip.
       const h = p.size * 0.55 * Math.max(0.2, Math.abs(Math.cos(p.wobble)));
@@ -108,6 +115,7 @@ export function Confetti({ fire = true, intensity = "medium", origin, haptic = t
     document.body.appendChild(canvas);
 
     const particles = createParticles(level, viewport, Math.random, from);
+    const palette = resolvePalette();
     const { durationMs } = CONFETTI_PRESETS[level];
     let frame = 0;
     let start = 0;
@@ -124,7 +132,7 @@ export function Confetti({ fire = true, intensity = "medium", origin, haptic = t
         canvas.remove();
         return;
       }
-      drawParticles(ctx, particles, dpr, particleAlpha(elapsed, durationMs));
+      drawParticles(ctx, particles, dpr, particleAlpha(elapsed, durationMs), palette);
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);

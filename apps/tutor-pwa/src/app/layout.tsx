@@ -3,11 +3,13 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { t } from "@/lib/i18n";
 import { DevToolbar } from "@/components/dev/DevToolbar";
+import { kodchasan, notoThai } from "./fonts";
 
 export const viewport: Viewport = {
+  // Browser chrome matches the app bar (--surface-nav light / dark).
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#161b22" },
+    { media: "(prefers-color-scheme: dark)", color: "#172422" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -22,7 +24,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Tutor PWA",
+    title: "TA ครูผู้สอน",
   },
 };
 
@@ -32,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="th" className={`${kodchasan.variable} ${notoThai.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body>
         {process.env.NODE_ENV === "development" && (
           <script

@@ -94,10 +94,10 @@ export function TicketComposer({
   };
 
   return (
-    <Card as="section" aria-label={t("tickets.composer.title")}>
-      <form className="flex flex-col gap-4" onSubmit={onSubmit} noValidate>
+    <Card as="section" aria-label={t("tickets.composer.title")} padding="none" className="overflow-hidden">
+      <form className="flex flex-col gap-4 p-4" onSubmit={onSubmit} noValidate>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-[0.9375rem] font-semibold text-fg">{t("tickets.composer.title")}</h2>
+          <h2 className="text-base leading-normal font-semibold text-fg">{t("tickets.composer.title")}</h2>
           <SegmentedControl
             aria-label={t("tickets.composer.mode")}
             size="sm"
@@ -136,10 +136,10 @@ export function TicketComposer({
         ) : null}
         {!internal ? <Notice tone="warning">{t("tickets.composer.safetyNotice")}</Notice> : null}
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="-mx-4 -mb-4 flex flex-col gap-3 border-t border-hairline bg-surface-muted px-4 py-3 sm:flex-row sm:items-end sm:justify-between">
           <SelectField
             label={t("tickets.composer.statusLabel")}
-            containerClassName="w-full sm:w-80"
+            containerClassName="w-full sm:w-80 sm:max-w-[60%]"
             value={status}
             onChange={(event) => setStatus(event.target.value)}
             options={statusOptions}

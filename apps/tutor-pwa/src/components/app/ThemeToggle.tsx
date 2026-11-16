@@ -23,12 +23,13 @@ export function ThemeToggle({ className }: { className?: string }) {
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={t("app.toggleTheme")}
+      aria-pressed={mounted ? isDark : undefined}
       className={cn(
-        "inline-flex size-9 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-press hover:text-fg",
+        "inline-flex size-10 items-center justify-center rounded-(--radius-ctl) text-fg-muted transition-colors hover:bg-press hover:text-fg pointer-coarse:size-11",
         className,
       )}
     >
-      {mounted ? isDark ? <Sun className="size-[18px]" /> : <Moon className="size-[18px]" /> : <span className="size-[18px]" />}
+      {mounted ? isDark ? <Sun aria-hidden="true" className="size-[18px]" /> : <Moon aria-hidden="true" className="size-[18px]" /> : <span className="size-[18px]" />}
     </button>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { CloudOff } from "lucide-react";
+import { WifiOff } from "lucide-react";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -34,14 +34,14 @@ export function OfflineBanner({ className }: { className?: string }) {
     <div
       role="status"
       className={cn(
-        "flex items-center gap-2.5 rounded-2xl border border-warning-border bg-warning-bg px-4 py-3 text-warning-fg",
+        "flex items-center gap-3 rounded-[var(--radius-card)] border-[1.5px] border-warning-border bg-warning-bg px-3.5 py-3 text-warning-fg",
         className,
       )}
     >
-      <CloudOff aria-hidden="true" className="size-5 shrink-0" />
+      <WifiOff aria-hidden="true" className="size-5 shrink-0" strokeWidth={2.2} />
       <div className="min-w-0">
-        <p className="text-sm leading-[1.5] font-bold">{t("common.offlineTitle")}</p>
-        <p className="text-[13px] leading-[1.5] text-fg-muted">{t("common.offlineDescription")}</p>
+        <p className="text-[15px] leading-[1.5] font-semibold">{t("common.offlineTitle")}</p>
+        <p className="text-sm leading-[1.6]">{t("common.offlineDescription")}</p>
       </div>
     </div>
   );

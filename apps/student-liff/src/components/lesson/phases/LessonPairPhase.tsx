@@ -1,9 +1,10 @@
 import React from 'react';
+import { MessageCircle, MonitorUp } from 'lucide-react';
 import { t } from '@/lib/i18n';
+import { cn } from '@/lib/utils';
 import { LessonSessionData } from '@/hooks/useLessonSocket';
-import { LESSON_PHASE } from '@/lib/lessonPhases';
 import { Chip, UserAvatar } from '@/components/mobile';
-import { PhaseColumn, PhaseIntroCard, StatusCard } from '../PhaseBlocks';
+import { lessonCardClass, PhaseColumn, StatusCard } from '../PhaseBlocks';
 
 interface LessonPairPhaseProps {
   devPairPreview: 0 | 1 | 2;
@@ -41,42 +42,45 @@ export function LessonPairPhase({
 
   return (
     <PhaseColumn>
-      <PhaseIntroCard phase={LESSON_PHASE.PAIR_CONVERSATION} tip={t("interactivePlay.pairDescription")} />
-
       {myPair ? (
-        <section className="rounded-[var(--radius-card)] border border-hairline bg-surface p-5 text-center shadow-[var(--shadow-card)]">
-          <Chip tone="brand" size="md">
-            {t("interactivePlay.pairNumberPrefix")} {myPair.pairNumber}
-          </Chip>
+        <section className={cn(lessonCardClass, "px-[18px] pt-4 pb-[18px]")}>
+          {/* The phase row above already shows the pink Users tile. */}
+          <div>
+            <Chip tone="brand" size="md">
+              {t("interactivePlay.pairNumberPrefix")} {myPair.pairNumber}
+            </Chip>
+            <p className="mt-1.5 text-[15px] leading-[1.6] text-fg-muted">{t("interactivePlay.pairDescription")}</p>
+          </div>
           {partners.length > 0 ? (
-            <>
-              <p className="mt-4 text-[13px] leading-[1.5] font-semibold text-fg-muted">
+            <div className="mt-4 rounded-lg bg-surface-muted px-4 pt-3.5 pb-4 text-center">
+              <h3 className="font-heading text-base leading-[1.45] font-semibold text-fg">
                 {partners.length > 1 ? t("interactivePlay.pairPartnerGroup") : t("interactivePlay.pairPartner")}
-              </p>
+              </h3>
               <ul className="mt-3 flex flex-wrap items-start justify-center gap-5">
                 {partners.map((partner) => (
                   <li key={partner.studentId} className="flex w-24 flex-col items-center gap-2">
                     <UserAvatar src={partner.pictureUrl} name={partner.name} size="xl" ring="surface" decorative />
-                    <span className="w-full text-[15px] leading-[1.4] font-bold break-words text-fg">{partner.name}</span>
+                    <span className="w-full text-[15px] leading-[1.45] font-semibold break-words text-fg">{partner.name}</span>
                   </li>
                 ))}
               </ul>
-              <p className="mt-4 text-sm leading-[1.6] text-fg-muted">{t("interactivePlay.pairInstruction")}</p>
-            </>
+              <p className="mt-3 text-sm leading-[1.6] text-fg-muted">{t("interactivePlay.pairInstruction")}</p>
+            </div>
           ) : (
-            <p className="mt-3 text-[15px] leading-[1.6] text-fg-muted">{t("interactivePlay.pairWaiting")}</p>
+            <p className="mt-4 rounded-lg bg-surface-muted px-4 py-3 text-[15px] leading-[1.6] text-fg-muted">{t("interactivePlay.pairWaiting")}</p>
           )}
         </section>
       ) : (
-        <StatusCard emoji="👀" title={t("interactivePlay.pairSeeTeacherScreen")} />
+        <StatusCard icon={MonitorUp} title={t("interactivePlay.pairSeeTeacherScreen")} description={t("interactivePlay.pairDescription")} mascot="calm" />
       )}
 
-      <section className="rounded-[var(--radius-card)] border border-hairline bg-surface p-4 shadow-[var(--shadow-card)]">
-        <h3 className="mb-2.5 text-[15px] leading-[1.5] font-bold text-fg">{t("interactivePlay.pairStartersTitle")}</h3>
+      <section className={cn(lessonCardClass, "px-[18px] pt-4 pb-[18px]")}>
+        <h3 className="mb-3 font-heading text-base leading-[1.45] font-semibold text-fg">{t("interactivePlay.pairStartersTitle")}</h3>
         <ul className="flex flex-col gap-2">
           {starters.map((starter) => (
-            <li key={starter} lang="en" className="rounded-xl bg-fill-muted px-3 py-2.5 text-[15px] leading-[1.5] text-fg">
-              <span aria-hidden="true">💬 </span>{starter}
+            <li key={starter} lang="en" className="flex items-start gap-2.5 rounded-lg bg-surface-muted px-3.5 py-3 text-base leading-[1.6] text-fg">
+              <MessageCircle aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-fg" strokeWidth={2.4} />
+              <span>{starter}</span>
             </li>
           ))}
         </ul>

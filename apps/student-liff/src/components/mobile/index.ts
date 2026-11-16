@@ -5,11 +5,16 @@
  * - Screens: <Screen> → <AppBar back …> (pushed) or <PageHeader> (tab root)
  *   → content in a `px-4` container → optional <BottomActionBar> last.
  * - Primitives assume the 16px page gutter (HScroll / non-inset ListGroup
- *   bleed out of it with -mx-4).
- * - Colour utilities from globals.css tokens: bg-app, bg-surface,
- *   border-hairline, text-fg / text-fg-muted / text-fg-subtle, text-brand-fg,
- *   bg-brand-solid, bg-brand-soft, bg-gradient-brand, {success|warning|danger|info}-{fg|bg|border},
- *   bg-tile-*, text-icon-*, bg-press, bg-fill-muted; helper utility `pressable`.
+ *   bleed out of it with -mx-4). From 640px `.page-content` adds
+ *   --page-inset (24px) on top; globals.css widens the HScroll bleed to match.
+ * - Colour utilities from globals.css tokens (redesign 2026-11): bg-app (paper),
+ *   bg-surface, bg-surface-muted, border-clay-rim (every card), border-hairline,
+ *   text-fg / text-fg-muted / text-fg-subtle, text-brand-fg, bg-brand-solid +
+ *   text-on-brand (never a raw white text class), bg-brand-soft + text-brand-soft-fg,
+ *   bg-accent-solid + text-on-accent (rewards only), {success|warning|danger|info}-{fg|bg|border},
+ *   bg-tile-*, text-icon-*, bg-press, bg-fill-muted, bg-track; helpers `pressable`, `clay-press`.
+ * - Type: font-heading = Kodchasan (titles, buttons, chips; never under 14px,
+ *   never list rows or ticking numbers), font-sans = Noto Sans Thai Looped.
  * - The BottomSheet drawer code is lazy-loaded; everything else is light.
  */
 
@@ -37,7 +42,8 @@ export {
   type ListRowSkeletonProps,
 } from "./List";
 export { SectionHeader, type SectionHeaderProps, type SectionHeaderAction } from "./SectionHeader";
-export { Surface, type SurfaceProps } from "./Surface";
+export { Surface, type SurfaceProps, type SurfaceTone } from "./Surface";
+export { ToneHero, HeroOverlap, classLevelTone, type ToneHeroProps } from "./Hero";
 
 // Visual atoms
 export { IconTile, iconTileToneClass, type IconTileProps, type IconTileTone, type IconTileSize } from "./IconTile";
@@ -83,6 +89,7 @@ export {
   StatusScreen,
   Notice,
   StatTile,
+  StatStrip,
   BottomActionBar,
   type EmptyStateProps,
   type ErrorStateProps,
@@ -90,6 +97,8 @@ export {
   type NoticeProps,
   type NoticeTone,
   type StatTileProps,
+  type StatStripProps,
+  type StatStripItem,
   type BottomActionBarProps,
 } from "./Feedback";
 export { OfflineBanner, useOnlineStatus } from "./OfflineBanner";

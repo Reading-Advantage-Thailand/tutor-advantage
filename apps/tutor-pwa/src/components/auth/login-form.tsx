@@ -49,7 +49,7 @@ export function LoginForm() {
         loading={loading === "google"}
         disabled={loading !== null}
         onClick={() => handleOAuth("google")}
-        className="w-full gap-3 bg-surface font-semibold shadow-xs"
+        className="h-14 w-full gap-3 bg-surface text-base font-semibold"
       >
         {loading === "google" ? null : <GoogleMark />}
         {t("app.signInWithGoogle")}

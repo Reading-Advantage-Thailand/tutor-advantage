@@ -12,21 +12,23 @@ export interface LevelChipProps {
 }
 
 /**
- * Level-coloured pill: tinted background + solid dot in the level colour,
- * label in text-fg so it stays readable at 12px in both themes. Server-compatible.
+ * Level-coloured pill (components.md §4): the CEFR band's tile colour with its
+ * icon colour as text (every pair ≥ 4.6:1) and a 6px dot; text = the band.
+ * sm: reading face 600 12 · md: Kodchasan 600 14. Server-compatible.
  */
 export function LevelChip({ cefr, children, size = "sm", className }: LevelChipProps) {
   const tone = levelToneClass[getLevelTone(cefr)];
   return (
     <span
       className={cn(
-        "inline-flex max-w-full shrink-0 items-center gap-1.5 rounded-full font-bold whitespace-nowrap text-fg",
-        size === "sm" ? "h-6 px-2.5 text-xs leading-[1.5]" : "h-[30px] px-3 text-[13px] leading-[1.5]",
+        "inline-flex max-w-full shrink-0 items-center gap-1.5 rounded-full font-semibold whitespace-nowrap",
+        size === "sm" ? "h-6 px-2.5 text-xs leading-[1.5]" : "h-8 px-3 font-heading text-sm leading-[1.4]",
         tone.soft,
+        tone.text,
         className,
       )}
     >
-      <span aria-hidden="true" className={cn("size-2 shrink-0 rounded-full", tone.solid)} />
+      <span aria-hidden="true" className={cn("size-1.5 shrink-0 rounded-full", tone.solid)} />
       <span className="truncate">{children ?? (typeof cefr === "string" ? cefr.trim().toUpperCase() : "")}</span>
     </span>
   );

@@ -11,6 +11,13 @@ export interface ShellUser {
   verificationStatus?: string | null;
 }
 
+/** Optional "create" action shown as a "+" icon button in the phone app bar. */
+export interface AppBarAction {
+  href: string;
+  /** Thai accessible name, e.g. "สร้างคลาสใหม่". */
+  label: string;
+}
+
 interface ShellContextValue {
   user: ShellUser | null;
   /** Title registered by the current page's <PageHeader> (mobile app bar). */
@@ -19,6 +26,9 @@ interface ShellContextValue {
   /** Back target registered by the current page (overrides the path parent). */
   backHref: string | null;
   setBackHref: (href: string | null) => void;
+  /** "+" action registered by the current page (phone app bar). */
+  appBarAction: AppBarAction | null;
+  setAppBarAction: (action: AppBarAction | null) => void;
 }
 
 const ShellContext = createContext<ShellContextValue>({
@@ -27,14 +37,17 @@ const ShellContext = createContext<ShellContextValue>({
   setTitle: () => {},
   backHref: null,
   setBackHref: () => {},
+  appBarAction: null,
+  setAppBarAction: () => {},
 });
 
 export function ShellProvider({ user, children }: { user: ShellUser | null; children: ReactNode }) {
   const [title, setTitle] = useState<string | null>(null);
   const [backHref, setBackHref] = useState<string | null>(null);
+  const [appBarAction, setAppBarAction] = useState<AppBarAction | null>(null);
   const value = useMemo(
-    () => ({ user, title, setTitle, backHref, setBackHref }),
-    [user, title, backHref],
+    () => ({ user, title, setTitle, backHref, setBackHref, appBarAction, setAppBarAction }),
+    [user, title, backHref, appBarAction],
   );
   return <ShellContext.Provider value={value}>{children}</ShellContext.Provider>;
 }
@@ -70,8 +83,29 @@ export function useShellTitle(title: string | null | undefined, backHref?: strin
   }, [backHref, setBackHref]);
 }
 
-/** Renders nothing; registers the mobile app-bar title/back target (for server components). */
-export function ShellTitle({ title, backHref }: { title?: string | null; backHref?: string | null }) {
+/** Register a "+" create action for the phone app bar (cleared on unmount). */
+export function useAppBarAction(action: AppBarAction | null | undefined) {
+  const { setAppBarAction } = useContext(ShellContext);
+  const href = action?.href;
+  const label = action?.label;
+  useEffect(() => {
+    if (!href || !label) return;
+    setAppBarAction({ href, label });
+    return () => setAppBarAction(null);
+  }, [href, label, setAppBarAction]);
+}
+
+/** Renders nothing; registers the mobile app-bar title/back target/"+" action (for server components). */
+export function ShellTitle({
+  title,
+  backHref,
+  action,
+}: {
+  title?: string | null;
+  backHref?: string | null;
+  action?: AppBarAction | null;
+}) {
   useShellTitle(title, backHref);
+  useAppBarAction(action);
   return null;
 }

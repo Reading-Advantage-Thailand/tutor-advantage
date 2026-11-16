@@ -14,6 +14,10 @@ describe("admin status map", () => {
     for (const status of ["ACTIVE", "USED_UP", "EXPIRED", "VOID"]) {
       expect(statusLabel("discountCode", status), status).not.toMatch(/[A-Za-z]/);
     }
+    // Tone pins: an open class is green here as in the tutor app (its home-data test pins the same).
+    expect(statusMeta("classStatus", "OPEN")).toMatchObject({ label: "เปิดรับสมัคร", tone: "success" });
+    expect(statusMeta("classStatus", "FULL").tone).toBe("warning");
+    expect(statusMeta("classStatus", "CLOSED").tone).toBe("neutral");
   });
 
   it("labels a used single-use discount code ใช้แล้ว and keeps the other labels", () => {

@@ -1,7 +1,8 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useAdminSession } from "@/components/app";
+import { Briefcase, CreditCard, IdCard, MapPin, Receipt } from "lucide-react";
+import { useAdminSession, type TileTone } from "@/components/app";
 import { api } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { t } from "@/lib/i18n";
@@ -10,6 +11,14 @@ import type { DocumentExpiryWarning } from "../documentExpiry";
 
 export type VerificationField = "idCard" | "bankBook" | "address" | "taxInfo" | "workPermit";
 export const VERIFICATION_FIELDS: VerificationField[] = ["idCard", "bankBook", "address", "taxInfo", "workPermit"];
+
+/** Icon per verification field (verification cards, overview status list). */
+export const FIELD_ICONS = { idCard: IdCard, bankBook: CreditCard, address: MapPin, taxInfo: Receipt, workPermit: Briefcase } as const;
+
+/** Tile tone for a field's status: one tone per meaning (verified brand, rejected red, waiting amber). */
+export function fieldStatusTone(status: string): TileTone {
+  return status === "VERIFIED" ? "brand" : status === "REJECTED" ? "red" : status === "PENDING" ? "amber" : "neutral";
+}
 
 /** Identity document (GET /v1/users/:id). The passport number is always masked. */
 export interface UserIdentity {

@@ -3,19 +3,22 @@
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, BookPlus, CheckCircle2, ChevronRight, Clock3, GraduationCap, Rocket, Search } from "lucide-react";
+import { BookOpen, BookPlus, Check, CheckCircle2, ChevronDown, ChevronRight, Clock3, GraduationCap, Rocket, Search } from "lucide-react";
 import {
   CardSkeleton,
   Chip,
   EmptyState,
   ErrorState,
+  IconTile,
   SearchField,
   Skeleton,
   fieldControlClass,
   toast,
 } from "@/components/app";
 import { Button } from "@/components/ui/button";
+import { DEFAULT_BOOK_PRICE_BAHT, buildOpenBookRequest, parseBookPriceBaht } from "@/lib/bookPrice";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import { createClassBookCycle, getClassArticles } from "../../actions";
 import { isPrimaryBook, type BookOption } from "../../components/book-options";
@@ -51,7 +54,7 @@ function ArticleThumb({ src }: { src: string }) {
   }, [src]);
   if (failed) return null;
   return (
-    <span className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-surface-muted md:size-16">
+    <span className="relative size-12 shrink-0 overflow-hidden rounded-(--radius-ctl) bg-surface-muted ring-1 ring-hairline max-sm:hidden md:size-14">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img ref={ref} src={src} alt="" className="size-full object-cover" loading="lazy" onError={() => setFailed(true)} />
     </span>
@@ -84,8 +87,12 @@ export function ArticleSelector({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [newBookId, setNewBookId] = useState("");
-  const [newBookPrice, setNewBookPrice] = useState(300000);
+  // The tutor types baht; the parsed integer satang is what is shown back and sent.
+  const [newBookPriceBaht, setNewBookPriceBaht] = useState(DEFAULT_BOOK_PRICE_BAHT);
+  const newBookPriceSatang = parseBookPriceBaht(newBookPriceBaht);
   const [creatingCycle, setCreatingCycle] = useState(false);
+  // Blocks a second open-book request while one is in flight (before React re-renders the disabled button).
+  const creatingCycleRef = useRef(false);
   const [openBookDialogOpen, setOpenBookDialogOpen] = useState(false);
   const [articleSearch, setArticleSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
@@ -204,29 +211,30 @@ export function ArticleSelector({
   };
 
   const handleCreateCycle = async () => {
-    if (!newBookId) return;
+    const request = buildOpenBookRequest(newBookId, newBookPriceBaht);
+    if (!request || creatingCycleRef.current) return;
     const problem = validateNewBookSelection();
     if (problem) {
       const show = problem.tone === "error" ? toast.error : toast.warning;
-      show(problem.title, { description: problem.message, duration: 4500 });
+      show(problem.title, { description: problem.message });
       return;
     }
+    creatingCycleRef.current = true;
     setCreatingCycle(true);
     try {
-      const result = await createClassBookCycle(classId, { bookId: newBookId, packagePriceSatang: newBookPrice });
+      const result = await createClassBookCycle(classId, request);
       setSelectedCycleId(result.cycle.id);
       setOpenBookDialogOpen(false);
       toast.success(t("tutorClass.lessons.bookOpenedTitle"), {
         description: `${result.cycle.title || t("tutorClass.lessons.selectedBook")} ${t("tutorClass.lessons.bookOpenedBody")}`,
-        duration: 4500,
       });
       router.refresh();
     } catch (err) {
       toast.error(t("tutorClass.lessons.openBookFailed"), {
         description: err instanceof Error && err.message ? err.message : undefined,
-        duration: 4500,
       });
     } finally {
+      creatingCycleRef.current = false;
       setCreatingCycle(false);
     }
   };
@@ -235,16 +243,18 @@ export function ArticleSelector({
 
   return (
     <>
-      <section aria-labelledby="lesson-picker-title" className="rounded-xl border border-hairline bg-surface shadow-card">
+      <section aria-labelledby="lesson-picker-title" className="ds-card min-w-0">
         <div className="flex flex-col gap-4 p-4 md:p-5">
-          <div className="flex items-start gap-3">
-            <div className="min-w-0 flex-1">
-              <h2 id="lesson-picker-title" className="text-base font-semibold text-fg">
+          {/* The text keeps at least 10rem: on narrow phones (< ~370px) the button wraps under it. */}
+          <div className="flex flex-wrap items-start gap-3">
+            <IconTile icon={BookOpen} tone="brand" className="max-sm:hidden" />
+            <div className="min-w-0 grow basis-40 self-center">
+              <h2 id="lesson-picker-title" className="type-section text-fg">
                 {t("tutorClass.lessons.title")}
               </h2>
-              <p className="mt-0.5 text-sm text-fg-muted">{t("tutorClass.lessons.description")}</p>
+              <p className="mt-0.5 text-sm leading-[1.6] text-fg-muted">{thaiCopy(t("tutorClass.lessons.description"))}</p>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setOpenBookDialogOpen(true)}>
+            <Button variant="outline" onClick={() => setOpenBookDialogOpen(true)}>
               <BookPlus aria-hidden="true" />
               {t("tutorClass.lessons.openBook")}
             </Button>
@@ -260,7 +270,7 @@ export function ArticleSelector({
                   setArticleSearch("");
                   setShowAll(false);
                 }}
-                className={cn(fieldControlClass, "h-10 cursor-pointer appearance-none pr-3 pl-9 font-medium pointer-coarse:h-11")}
+                className={cn(fieldControlClass, "h-11 cursor-pointer appearance-none pr-3 pl-9 font-medium pointer-coarse:h-12")}
               >
                 {bookCycles.map((cycle) => (
                   <option key={cycle.id} value={cycle.id}>
@@ -278,12 +288,19 @@ export function ArticleSelector({
           </div>
         </div>
 
-        <div className="border-t border-hairline p-3 md:p-4">
+        <div className="border-t border-hairline">
           {fetching ? (
-            <div className="grid gap-2 md:grid-cols-2" aria-busy="true">
+            <div className="divide-y divide-hairline" aria-busy="true">
               <span className="sr-only">{t("tutorClass.detail.articleLoading")}</span>
               {Array.from({ length: 4 }, (_, index) => (
-                <Skeleton key={index} className="h-[84px] rounded-xl" />
+                <div key={index} aria-hidden="true" className="flex items-center gap-3 px-4 py-3 md:px-5">
+                  <Skeleton className="size-10 shrink-0 rounded-(--radius-tile)" />
+                  <div className="flex flex-1 flex-col gap-2">
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-3 w-1/3" />
+                  </div>
+                  <Skeleton className="size-12 shrink-0 rounded-(--radius-ctl)" />
+                </div>
               ))}
             </div>
           ) : error ? (
@@ -310,7 +327,7 @@ export function ArticleSelector({
             />
           ) : (
             <>
-              <ul className="grid gap-2 md:grid-cols-2" aria-label={t("tutorClass.lessons.listLabel")}>
+              <ul className="divide-y divide-hairline" aria-label={t("tutorClass.lessons.listLabel")}>
                 {visibleArticles.map((article) => {
                   const articleIndex = articles.findIndex((item) => item.id === article.id);
                   const isSelected = selectedArticle === article.id;
@@ -325,21 +342,42 @@ export function ArticleSelector({
                         onClick={() => setSelectedArticle(article.id)}
                         aria-pressed={isSelected}
                         className={cn(
-                          "pressable flex h-full w-full min-w-0 items-start gap-3 rounded-xl border p-3 text-left outline-none focus-visible:ring-3 focus-visible:ring-ring/40",
-                          isSelected
-                            ? "border-brand-vivid bg-brand-soft"
-                            : "border-hairline bg-surface hover:border-hairline-strong hover:bg-surface-muted",
+                          "flex w-full min-w-0 items-center gap-3 px-4 py-3 text-left transition-colors duration-(--duration-fast) outline-none focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-solid focus-visible:outline-focus-ring md:px-5",
+                          isSelected ? "bg-brand-soft shadow-[inset_3px_0_0_var(--brand-solid)]" : "hover:bg-row-hover active:bg-press",
                         )}
                       >
-                        {image ? <ArticleThumb src={image} /> : null}
-                        <span className="flex min-w-0 flex-1 flex-col gap-1">
-                          <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-muted">
+                        {/* Numbered tile (patterns.md S5.4 at T sizes): selected = jade, taught = success + check, else neutral. */}
+                        <span
+                          aria-hidden="true"
+                          className={cn(
+                            "inline-flex size-10 shrink-0 items-center justify-center rounded-(--radius-tile) text-[0.9375rem] font-semibold tabular",
+                            isSelected
+                              ? "bg-brand-solid text-on-brand"
+                              : article.isCompleted
+                                ? "bg-success-bg text-success-fg"
+                                : "bg-tile-neutral text-icon-neutral",
+                          )}
+                        >
+                          {article.isCompleted && !isSelected ? <Check className="size-5" strokeWidth={2.4} /> : articleIndex + 1}
+                        </span>
+                        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                          <span
+                            lang="en"
+                            className={cn("line-clamp-2 text-base leading-normal font-semibold", isSelected ? "text-brand-soft-fg" : "text-fg")}
+                          >
+                            {article.title}
+                          </span>
+                          <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm leading-normal text-fg-muted">
                             <span className="font-medium">
                               {t("tutorClass.detail.chapterPrefix")} {articleIndex + 1}
                             </span>
                             <span className="flex items-center gap-1">
-                              <Clock3 aria-hidden="true" className="size-3" />
+                              <Clock3 aria-hidden="true" className="size-3.5" />
                               {article.recommendedTime || t("tutorClass.lessons.defaultDuration")}
+                            </span>
+                            <span className="min-w-0">
+                              {typeLabel}
+                              {!isPrimaryCycle && article.showCefr !== false && article.cefrLevel ? ` · CEFR ${article.cefrLevel}` : ""}
                             </span>
                             {article.isCompleted ? (
                               <Chip tone="success" size="sm" icon={CheckCircle2}>
@@ -347,22 +385,16 @@ export function ArticleSelector({
                               </Chip>
                             ) : null}
                           </span>
-                          <span className={cn("line-clamp-2 text-sm font-semibold", isSelected ? "text-brand-fg" : "text-fg")}>
-                            {article.title}
-                          </span>
-                          <span className="truncate text-xs text-fg-muted">
-                            {typeLabel}
-                            {!isPrimaryCycle && article.showCefr !== false && article.cefrLevel ? ` · CEFR ${article.cefrLevel}` : ""}
-                          </span>
                         </span>
+                        {image ? <ArticleThumb src={image} /> : null}
                         <span
                           aria-hidden="true"
                           className={cn(
-                            "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border-2",
+                            "flex size-5 shrink-0 items-center justify-center rounded-full border-2",
                             isSelected ? "border-brand-solid bg-brand-solid text-on-brand" : "border-hairline-strong",
                           )}
                         >
-                          {isSelected ? <CheckCircle2 className="size-3.5" /> : null}
+                          {isSelected ? <Check className="size-3.5" strokeWidth={3} /> : null}
                         </span>
                       </button>
                     </li>
@@ -370,11 +402,12 @@ export function ArticleSelector({
                 })}
               </ul>
               {hiddenCount > 0 || (showAll && !searching && filteredArticles.length > COLLAPSED_COUNT + 1) ? (
-                <div className="mt-3 flex justify-center">
-                  <Button variant="ghost" size="sm" onClick={() => setShowAll((value) => !value)}>
+                <div className="flex justify-center border-t border-hairline p-2">
+                  <Button variant="ghost-brand" onClick={() => setShowAll((value) => !value)}>
                     {showAll
                       ? t("tutorClass.lessons.showLess")
                       : `${t("shell.viewAll")} (${filteredArticles.length} ${t("tutorClass.lessons.lessonsUnit")})`}
+                    <ChevronDown aria-hidden="true" className={cn("transition-transform", showAll && "rotate-180")} />
                   </Button>
                 </div>
               ) : null}
@@ -383,14 +416,17 @@ export function ArticleSelector({
         </div>
 
         {/* Selected lesson + actions; sticks above the tab bar on phones. */}
-        <div className="sticky bottom-(--tabbar-space) z-(--z-sticky) flex flex-col gap-2 rounded-b-xl border-t border-hairline bg-surface p-3 md:static md:gap-3 md:p-4 lg:flex-row lg:items-center">
+        <div className="sticky bottom-(--tabbar-space) z-(--z-sticky) flex flex-col gap-2 rounded-b-(--radius-card) border-t border-hairline bg-surface-nav p-3 md:static md:gap-3 md:bg-surface md:px-5 md:py-4 xl:flex-row xl:items-center">
           <div className="min-w-0 flex-1">
-            <p className="text-xs text-fg-muted max-md:sr-only">{t("tutorClass.lessons.selectedLabel")}</p>
-            <p className={cn("truncate text-sm font-semibold", selectedArticleData ? "text-fg" : "text-fg-muted")}>
+            <p className="text-[0.8125rem] leading-[1.45] text-fg-muted max-md:sr-only">{t("tutorClass.lessons.selectedLabel")}</p>
+            <p
+              lang={selectedArticleData ? "en" : undefined}
+              className={cn("truncate text-[0.9375rem] font-semibold", selectedArticleData ? "text-fg" : "text-fg-muted")}
+            >
               {selectedArticleData?.title || t("tutorClass.lessons.selectPrompt")}
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-2 lg:flex lg:shrink-0">
+          <div className="grid grid-cols-2 gap-2 xl:flex xl:shrink-0">
             <Button variant="outline" size="lg" disabled={actionsDisabled} onClick={handlePrepareLesson}>
               <GraduationCap aria-hidden="true" />
               {t("tutorClass.lessons.prepare")}
@@ -410,8 +446,9 @@ export function ArticleSelector({
         books={books}
         bookId={newBookId}
         onBookIdChange={setNewBookId}
-        priceSatang={newBookPrice}
-        onPriceChange={setNewBookPrice}
+        priceBaht={newBookPriceBaht}
+        priceSatang={newBookPriceSatang}
+        onPriceBahtChange={setNewBookPriceBaht}
         creating={creatingCycle}
         onSubmit={handleCreateCycle}
       />

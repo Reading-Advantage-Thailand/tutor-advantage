@@ -4,6 +4,7 @@ import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { IconTile, type TileTone } from "./Atoms";
+import { cardTapClass } from "./Surface";
 
 export interface StatCardProps {
   /** Short label, sentence case ("รายได้เดือนนี้"). */
@@ -24,8 +25,10 @@ export interface StatCardProps {
 }
 
 /**
- * KPI tile: neutral card, small icon tile, label, big tabular number.
- * Use in <Grid cols={4}> (2 per row on phones via className="grid-cols-2").
+ * KPI tile (components.md §3.5): card with the clay rim, label 500 13
+ * --text-secondary, value Noto 600 22 tabular (stat numbers are not hero
+ * numbers), optional icon tile. On phones prefer one <StatStrip> (joined
+ * cells) over a 2×2 grid of these. A linked card is tappable (2px ledge).
  * Server-compatible.
  */
 export function StatCard({ label, value, icon, tone = "brand", hint, delta, badge, href, className }: StatCardProps) {
@@ -33,10 +36,10 @@ export function StatCard({ label, value, icon, tone = "brand", hint, delta, badg
   const body = (
     <>
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[0.8125rem] font-medium text-fg-muted">{label}</p>
+        <p className="text-[0.8125rem] leading-[1.45] font-medium text-fg-muted">{label}</p>
         {badge ?? (icon ? <IconTile icon={icon} tone={tone} size="sm" /> : null)}
       </div>
-      <p className="mt-2 text-2xl leading-tight font-bold text-fg tabular md:text-[1.625rem]">{value}</p>
+      <p className="mt-1.5 type-stat text-fg">{value}</p>
       {delta || hint ? (
         <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-fg-muted">
           {delta ? (
@@ -57,8 +60,8 @@ export function StatCard({ label, value, icon, tone = "brand", hint, delta, badg
     </>
   );
   const classes = cn(
-    "block min-w-0 rounded-xl border border-hairline bg-surface p-4 shadow-card",
-    href && "pressable hover:border-hairline-strong",
+    "block min-w-0 rounded-(--radius-card) border p-4",
+    href ? cardTapClass : "border-clay-rim bg-surface shadow-card",
     className,
   );
   return href ? (

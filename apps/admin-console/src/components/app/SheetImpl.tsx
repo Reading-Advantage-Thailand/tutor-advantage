@@ -2,15 +2,21 @@
 
 import { Drawer } from "@base-ui/react/drawer";
 import { X } from "lucide-react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, RefObject } from "react";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
+import { canTakeFocus, resolveFinalFocus } from "./finalFocus";
 import type { SheetProps } from "./Sheet";
 
 /**
  * Base UI Drawer implementation of <Sheet>: bottom sheet on phones (swipe
  * down to close), centred dialog from 768px (CSS in globals.css). Loaded
  * lazily so the drawer code is not part of any route's initial JS.
+ *
+ * Focus returns to the opener on close. Sheet reads the opener when the
+ * sheet opens (Base UI does not know it for sheets that mount already open,
+ * nor in Safari, which does not focus clicked buttons) and passes it here.
  */
 export function SheetImpl({
   open,
@@ -23,9 +29,18 @@ export function SheetImpl({
   dismissible = true,
   onClosed,
   width,
+  side = "center",
+  finalFocus,
   className,
   bodyClassName,
-}: SheetProps) {
+  opener,
+  popupRef,
+}: SheetProps & {
+  /** The control that opened the sheet (read by Sheet when it opens). */
+  opener: RefObject<HTMLElement | null>;
+  popupRef: RefObject<HTMLDivElement | null>;
+}) {
+
   return (
     <Drawer.Root
       open={open}
@@ -40,8 +55,20 @@ export function SheetImpl({
     >
       <Drawer.Portal>
         <Drawer.Backdrop className="sheet-backdrop" />
-        <Drawer.Viewport className="sheet-viewport">
+        <Drawer.Viewport className="sheet-viewport" data-side={side}>
           <Drawer.Popup
+            ref={popupRef}
+            // With no known opener, leave focus alone: Base UI's default would
+            // pick the last element any popup on the page was opened from.
+            // With `finalFocus`, an opener that is gone or disabled hands over
+            // to that target instead (Sheet keeps watching after the close).
+            finalFocus={() => {
+              const element = opener.current;
+              if (!finalFocus) return element?.isConnected ? element : false;
+              if (canTakeFocus(element)) return element;
+              const target = resolveFinalFocus(finalFocus);
+              return canTakeFocus(target) ? target : false;
+            }}
             className={cn("sheet-popup", className)}
             data-has-footer={footer ? "" : undefined}
             style={width ? ({ "--sheet-width": `${width}px` } as CSSProperties) : undefined}
@@ -49,15 +76,15 @@ export function SheetImpl({
             <div className="sheet-handle" aria-hidden="true" />
             <div className="flex shrink-0 items-start gap-2 pt-2 pr-3 pb-3 pl-5 md:pt-4">
               <div className="min-w-0 flex-1 pt-1">
-                <Drawer.Title className="text-lg leading-snug font-semibold text-fg">{title}</Drawer.Title>
+                <Drawer.Title className="text-lg leading-[1.45] font-semibold text-fg">{title}</Drawer.Title>
                 {description ? (
-                  <Drawer.Description className="mt-1 text-sm text-fg-muted">{description}</Drawer.Description>
+                  <Drawer.Description className="mt-1 text-sm leading-[1.6] text-fg-muted">{thaiCopy(description)}</Drawer.Description>
                 ) : null}
               </div>
               {showClose && dismissible ? (
                 <Drawer.Close
                   aria-label={t("shell.close")}
-                  className="flex size-9 shrink-0 items-center justify-center rounded-lg text-fg-muted hover:bg-press hover:text-fg"
+                  className="flex size-9 shrink-0 items-center justify-center rounded-(--radius-ctl) text-fg-muted hover:bg-press hover:text-fg pointer-coarse:size-11"
                 >
                   <X aria-hidden="true" className="size-5" />
                 </Drawer.Close>

@@ -55,7 +55,7 @@ const sideClass = {
   left: "inset-y-0 left-0 h-full w-[min(100%,28rem)] border-r data-ending-style:-translate-x-full data-starting-style:-translate-x-full",
   top: "inset-x-0 top-0 h-auto max-h-[85dvh] border-b data-ending-style:-translate-y-full data-starting-style:-translate-y-full",
   bottom:
-    "inset-x-0 bottom-0 h-auto max-h-[90dvh] rounded-t-2xl border-t pb-(--safe-bottom) data-ending-style:translate-y-full data-starting-style:translate-y-full",
+    "inset-x-0 bottom-0 h-auto max-h-[90dvh] rounded-t-(--radius-sheet) border-t pb-(--safe-bottom) data-ending-style:translate-y-full data-starting-style:translate-y-full",
 } as const
 
 function SheetContent({
@@ -74,7 +74,7 @@ function SheetContent({
       <SheetPrimitive.Popup
         data-slot="sheet-content"
         className={cn(
-          "fixed z-(--z-sheet) flex flex-col gap-4 overflow-y-auto border-hairline bg-surface-elevated text-fg shadow-popover outline-none transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
+          "fixed z-(--z-sheet) flex flex-col gap-4 overflow-y-auto border-clay-rim bg-surface-elevated text-fg shadow-popover outline-none transition-transform duration-(--duration-sheet) ease-(--ease-sheet)",
           sideClass[side],
           className as string
         )}
@@ -82,7 +82,7 @@ function SheetContent({
       >
         {children}
         {showCloseButton ? (
-          <SheetPrimitive.Close className="absolute top-3 right-3 inline-flex size-9 items-center justify-center rounded-md text-fg-muted hover:bg-press hover:text-fg">
+          <SheetPrimitive.Close className="absolute top-3 right-3 inline-flex size-9 items-center justify-center rounded-(--radius-ctl) text-fg-muted hover:bg-press hover:text-fg pointer-coarse:size-11">
             <XIcon className="size-4" />
             <span className="sr-only">ปิด</span>
           </SheetPrimitive.Close>

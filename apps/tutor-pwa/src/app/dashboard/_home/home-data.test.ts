@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   classStatusTone,
   computeRateGoal,
+  computeWalletBreakdown,
   DEFAULT_RATE_TARGET_THB,
   setupNoticeLine,
   signInSetupRedirect,
@@ -80,5 +81,46 @@ describe("classes needing setup", () => {
     expect(setupNoticeLine(classes[0])).toBe(
       '"English" · นักเรียนชำระเงินแล้ว 3 คน — ตั้งชื่อคลาส ตารางเรียน และลิงก์ห้องเรียน',
     );
+  });
+});
+
+describe("computeWalletBreakdown", () => {
+  it("is unknown without finance data", () => {
+    expect(computeWalletBreakdown(null)).toEqual({ kind: "unknown" });
+  });
+
+  it("is unknown when the personal volume or the network bonus is missing", () => {
+    expect(computeWalletBreakdown({ currentRate: 0.5, grossVolumeTHB: 20_000 })).toEqual({ kind: "unknown" });
+  });
+
+  it("is unknown when only the network bonus is missing", () => {
+    expect(computeWalletBreakdown({ currentRate: 0.5, grossVolumeTHB: 20_000, personalVolumeTHB: 5_000 })).toEqual({ kind: "unknown" });
+    expect(
+      computeWalletBreakdown({ currentRate: 0.5, grossVolumeTHB: 20_000, personalVolumeTHB: 5_000, networkBonusTHB: null }),
+    ).toEqual({ kind: "unknown" });
+  });
+
+  it("is unknown when the personal volume is not a number", () => {
+    expect(
+      computeWalletBreakdown({ currentRate: 0.5, grossVolumeTHB: 20_000, personalVolumeTHB: Number.NaN, networkBonusTHB: 375 }),
+    ).toEqual({ kind: "unknown" });
+  });
+
+  it("is solo when the group volume equals the tutor's own volume", () => {
+    expect(
+      computeWalletBreakdown({ currentRate: 0.4423, grossVolumeTHB: 8_450, personalVolumeTHB: 8_450, networkBonusTHB: 0 }),
+    ).toEqual({ kind: "solo" });
+  });
+
+  it("shows the network bonus when the downline sold", () => {
+    expect(
+      computeWalletBreakdown({ currentRate: 0.5, grossVolumeTHB: 20_000, personalVolumeTHB: 5_000, networkBonusTHB: 375 }),
+    ).toEqual({ kind: "network", personalVolume: 5_000, networkBonus: 375 });
+  });
+
+  it("is network for a downline-only month, with bonus 0", () => {
+    expect(
+      computeWalletBreakdown({ currentRate: 0.5, grossVolumeTHB: 20_000, personalVolumeTHB: 0, networkBonusTHB: 0 }),
+    ).toEqual({ kind: "network", personalVolume: 0, networkBonus: 0 });
   });
 });

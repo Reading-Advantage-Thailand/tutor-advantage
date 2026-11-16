@@ -45,13 +45,13 @@ export function ConfirmDialog({
       bodyClassName={children ? undefined : "hidden"}
       footer={
         <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
-          <Button variant="ghost" size="lg" className="md:h-9 md:px-3.5" disabled={loading} onClick={() => onOpenChange(false)}>
+          <Button variant="outline" size="lg" className="md:h-10 md:px-4" disabled={loading} onClick={() => onOpenChange(false)}>
             {cancelLabel ?? t("shell.cancel")}
           </Button>
           <Button
             variant={tone === "danger" ? "danger" : "default"}
             size="lg"
-            className="md:h-9 md:px-3.5"
+            className="md:h-10 md:px-4"
             loading={loading}
             onClick={onConfirm}
           >

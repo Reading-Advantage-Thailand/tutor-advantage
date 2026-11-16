@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { ErrorState } from "@/components/app/ErrorState";
+import { LessonContent } from "@/components/app/LessonShell";
 import { buttonVariants } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 
+/** Lesson route error (patterns.md "Error (load)", tutor): 56 tone tile, cause, retry + back to the class. */
 export default function LessonError({
   error,
   reset,
@@ -15,7 +18,7 @@ export default function LessonError({
 }) {
   const params = useParams<{ id: string }>();
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-8">
+    <LessonContent width="narrow" className="flex-1 justify-center">
       <ErrorState
         page
         description={t("shell.errorPageBody")}
@@ -23,10 +26,11 @@ export default function LessonError({
         digest={error.digest}
         action={
           <Link href={`/dashboard/classes/${params?.id ?? ""}`} className={buttonVariants({ variant: "ghost" })}>
+            <ArrowLeft aria-hidden="true" />
             {t("shell.lessonBackToClass")}
           </Link>
         }
       />
-    </div>
+    </LessonContent>
   );
 }

@@ -1,10 +1,13 @@
-/* Tutor PWA design tokens + app shell styles.
-   Same token family as apps/student-liff (light-green brand, mint hero,
-   semantic tones, tile/icon tones) tuned for adults: denser type, 12px card
-   radius, calm surfaces, no glows. No web fonts are loaded: the platform's
-   system font stack (--font-system) renders Thai on every OS.
-   Reference for page authors: scratchpad/tutor-foundation-api.md and the
-   dev gallery at /dev/ui-kit. */
+/* Tutor PWA design tokens + app shell styles (redesign 2026-11).
+   The tutor volume of the Tutor Advantage family: jade brand (#007352, Reedy's
+   hoodie), warm paper (#f8f5ef), a 1px clay rim on every card, a 2px ledge on
+   the primary button and tappable cards only, one dark "ink" wallet hero per
+   screen, and a night-green dark theme. Web fonts: Kodchasan 600 (display:
+   page title, greeting, hero numbers, presenter) and Noto Sans Thai 400-600
+   (reading face, tabular), loaded by next/font in src/app/fonts.ts and wired
+   on <html>; --font-system is only the last fallback.
+   Spec: docs/design/redesign-2026-11 (tokens.md §9.2 values, components.md).
+   Live gallery (both themes, real fixtures): /dev/ui-kit. */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -12,26 +15,27 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ─── Design tokens (light) ────────────────────────────────────────────── */
-:root {
-  /* Vocabulary/sentence highlight in lesson text (warning tones keep contrast in both themes). */
-  --highlight-bg: var(--warning-bg);
-  --highlight-text: var(--warning-fg);
-
+/* `.theme-light` re-applies the light values to a subtree inside a dark page
+   (the /dev/ui-kit side-by-side panels). */
+:root,
+.theme-light {
   color-scheme: light;
 
   --font-system: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai",
     "Sukhumvit Set", Thonburi, "Leelawadee UI", Tahoma, sans-serif;
   --font-mono-system: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-body: var(--font-noto-thai), "Sukhumvit Set", Thonburi, "Leelawadee UI", Tahoma, var(--font-system);
+  --font-display: var(--font-kodchasan), var(--font-body);
+  --font-thai: var(--font-body);
+  --font-latin: var(--font-body);
 
-  /* ── Shell layout ── */
-  --appbar-h: 56px;
-  --tabbar-h: 60px;
+  /* ── Shell layout (unchanged names) ── */
+  --appbar-h: 60px;
+  --tabbar-h: 68px;
   --sidebar-w-full: 256px;
-  --sidebar-w-rail: 88px;
+  --sidebar-w-rail: 5.5rem; /* 88px at the default font; grows with a larger one so the rail labels stay whole */
   --lesson-bar-h: 52px;
-  --gutter: 16px;
   --content-max: 1280px;
-  --radius-card: 12px;
 
   /* z-index scale (use these instead of ad-hoc numbers) */
   --z-sticky: 20;
@@ -42,6 +46,12 @@
   --z-popover: 70;
   --z-consent: 80;
   --z-toast: 90;
+  /* Live-lesson presenter layers (above the app shell; modals on top). */
+  --z-presenter: 100;
+  --z-presenter-dock: 110;
+  --z-presenter-toast: 120;
+  --z-presenter-guide: 130;
+  --z-presenter-modal: 140;
 
   /* Safe areas (notch / home indicator) */
   --safe-top: env(safe-area-inset-top, 0px);
@@ -49,99 +59,195 @@
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
 
-  /* ── Brand palette (identical to student-liff) ── */
-  --brand-50: #f0fdf4;
-  --brand-100: #dcfce7;
-  --brand-200: #bbf7d0;
-  --brand-300: #86efac;
-  --brand-400: #4ade80;
-  --brand-500: #22c55e;
-  --brand-600: #16a34a;
-  --brand-700: #14883b;
-  --brand-800: #166534;
-  --brand-900: #14532d;
+  /* ── Shape · spacing · motion (tokens.md §6) ── */
+  --radius: 0.75rem;
+  --radius-card: 16px;
+  --radius-ctl: 12px;
+  --radius-ctl-sm: 10px;
+  --radius-field: 12px;
+  --radius-tile: 12px;
+  --radius-chip: 999px;
+  --radius-sheet: 20px;
+  --radius-dialog: 16px;
+  --radius-answer: 16px;
+  --radius-hero: 20px;
+  --ledge: 2px;
+  --ledge-sm: 2px;
+  --ring-card: 1px;
+  --gutter: 16px;
+  --card-pad: 20px;
+  --card-pad-sm: 16px;
+  --stack-gap: 12px;
+  --section-gap: 24px;
+  --touch-min: 44px;
+  --duration-press: 120ms;
+  --duration-fast: 160ms;
+  --duration-normal: 220ms;
+  --duration-slow: 320ms;
+  --duration-sheet: 320ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
 
-  /* ── Brand roles (contrast-safe) ── */
-  --brand-fg: #15803d;            /* brand text/icons on surfaces (5.0:1 on white) */
-  --brand-vivid: #22c55e;         /* progress fills, switches, indicators */
-  --brand-solid: #14883b;         /* filled buttons with white text (4.5:1) */
-  --brand-solid-pressed: #117333;
-  --brand-soft: #dcfce7;          /* tonal backgrounds, active nav pill */
-  --brand-soft-border: #bbf7d0;
-  --on-brand: #ffffff;
-  --gradient-brand: linear-gradient(135deg, var(--brand-600) 0%, var(--brand-700) 100%);
-
-  /* Calm mint hero (welcome block, lesson hub): flat, no glows. */
-  --hero-bg: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  --hero-fg: #14532d;
-  --hero-fg-muted: #166534;
-  --hero-chip: rgb(255 255 255 / 0.7);
-  --hero-ring: rgb(20 83 45 / 0.12);
-  --hero-progress-track: rgb(20 83 45 / 0.14);
-
-  /* ── Surfaces & text ── */
-  --surface-bg: #f4f7f5;          /* app background (very light green-grey) */
+  /* ── Colour (tokens.md §9.2) ── */
+  --surface-bg: #f8f5ef;
   --surface-card: #ffffff;
-  --surface-muted: #f1f4f3;       /* table headers, inset wells, hover rows */
-  --surface-elevated: #ffffff;    /* popovers, sheets */
-  --surface-sidebar: #ffffff;
+  --surface-muted: #f3eee5;
+  --surface-elevated: #ffffff;
   --surface-nav: #ffffff;
-  --surface-border: rgba(15, 23, 42, 0.08);
-  --hairline: rgba(15, 23, 42, 0.09);
-  --hairline-strong: rgba(15, 23, 42, 0.16);
-  --field-border: #cbd5e1;
-  --fill-muted: rgba(116, 124, 138, 0.12);
-  --press-tint: rgba(15, 23, 42, 0.05);
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-tertiary: #64748b;       /* ≥4.5:1 on white, unlike slate-400 */
-  --skeleton-base: #e8ecef;
-  --skeleton-shine: rgba(255, 255, 255, 0.6);
-  --scrim: rgb(15 23 42 / 0.45);
+  --surface-sidebar: #ffffff;
+  --surface-border: rgba(80, 60, 30, 0.10);
+  --clay-rim: #ece3d5;
+  --clay-ledge: #e6dac8;
+  /* Constant white in both themes: the QR quiet zone (scanners need white around the code). */
+  --surface-white: #ffffff;
+  /* DataTable edge shadow while a wide table scrolls inside its card. */
+  --table-edge-shadow: rgb(80 55 20 / 0.16);
+  --hairline: rgba(80, 60, 30, 0.12);
+  --hairline-strong: rgba(80, 60, 30, 0.22);
+  --field-border: #8a7f70;
+  --fill-muted: rgba(140, 110, 70, 0.12);
+  --press-tint: rgba(19, 33, 31, 0.06);
+  --skeleton-base: #f3e7d6;
+  --skeleton-shine: rgba(255, 255, 255, 0.65);
+  --scrim: rgba(19, 33, 31, 0.45);
+  --text-primary: #13211f;
+  --text-secondary: #45524f;
+  --text-tertiary: #5b6763;
 
-  /* ── Semantic tones (fg is ≥4.5:1 on its bg in both themes) ── */
-  --success-fg: #15803d;
-  --success-bg: #dcfce7;
-  --success-border: #bbf7d0;
-  --success-solid: #16a34a;
-  --warning-fg: #92400e;
-  --warning-bg: #fef3c7;
-  --warning-border: #fcd98a;
-  --warning-solid: #f59e0b;
-  --on-warning: #422006;
-  --danger-fg: #b91c1c;
-  --danger-bg: #fee2e2;
-  --danger-border: #fecaca;
-  --danger-solid: #dc2626;
-  --info-fg: #1d4ed8;
-  --info-bg: #dbeafe;
-  --info-border: #bfdbfe;
-  --info-solid: #2563eb;
-  --neutral-fg: #334155;
-  --neutral-bg: #eef1f4;
-  --neutral-border: #dde3e9;
+  --brand-fg: #007352;
+  --brand-vivid: #008c62;
+  --brand-solid: #007352;
+  --brand-solid-pressed: #005a41;
+  --brand-solid-edge: #0b4334;
+  --on-brand: #ffffff;
+  --brand-soft: #d4f5e6;
+  --brand-soft-border: #a9e9cf;
+  --brand-soft-fg: #005a41;
 
-  /* ── Decorative tile / icon tones (IconTile, avatars, stat icons) ── */
-  --tile-brand: var(--brand-soft);
-  --tile-amber: #fef3c7;
-  --tile-blue: #dbeafe;
-  --tile-purple: #ede9fe;
-  --tile-pink: #fce7f3;
-  --tile-red: #fee2e2;
-  --tile-teal: #ccfbf1;
-  --tile-orange: #ffedd5;
-  --tile-neutral: #eceff3;
-  --icon-brand: #16a34a;
-  --icon-amber: #d97706;
-  --icon-blue: #2563eb;
-  --icon-purple: #7c3aed;
-  --icon-pink: #db2777;
-  --icon-red: #dc2626;
-  --icon-teal: #0f766e;
-  --icon-orange: #c2410c;
-  --icon-neutral: #475569;
+  --accent-solid: #ffc72c;
+  --on-accent: #3d2900;
+  --accent-edge: #b07c00;
+  --accent-fg: #ad4a0b;
+  --accent-soft: #ffe8d3;
+  --accent-soft-fg: #86390c;
 
-  /* ── Neutral ramp (legacy, still used by games/skeleton) ── */
+  --hero-bg-base: #ecfbf4;
+  --hero-fg: #062a21;
+  --hero-fg-muted: #005a41;
+  --hero-chip: rgba(255, 255, 255, 0.78);
+  --hero-ring: rgba(6, 42, 33, 0.12);
+  --hero-progress-track: rgba(6, 42, 33, 0.12);
+
+  --success-fg: #17703a;
+  --success-bg: #e2f6e7;
+  --success-border: #b4e6c2;
+  --success-solid: #18803f;
+  --on-success: #ffffff;
+  --warning-fg: #6e4b00;
+  --warning-bg: #fff3c4;
+  --warning-border: #ffe58a;
+  --warning-solid: #ffc72c;
+  --on-warning: #3d2900;
+  --danger-fg: #a92b1e;
+  --danger-bg: #ffe4e0;
+  --danger-border: #ffc6bd;
+  --danger-solid: #cc3626;
+  --on-danger: #ffffff;
+  --info-fg: #1752a8;
+  --info-bg: #e2eeff;
+  --info-border: #c3dbff;
+  --info-solid: #1d66cf;
+  --neutral-fg: #33403f;
+  --neutral-bg: #efeae1;
+  --neutral-border: #ddd4c6;
+
+  /* Decorative tile / icon tones (IconTile, avatars, CEFR bands); every pair ≥ 4.6:1 */
+  --tile-brand: #d4f5e6;
+  --icon-brand: #007352;
+  --tile-amber: #fff3c4;
+  --icon-amber: #6e4b00;
+  --tile-blue: #e2eeff;
+  --icon-blue: #1752a8;
+  --tile-purple: #eee9ff;
+  --icon-purple: #5536b8;
+  --tile-pink: #ffe5f1;
+  --icon-pink: #bf2c77;
+  --tile-red: #ffe4e0;
+  --icon-red: #a92b1e;
+  --tile-teal: #d6f4f2;
+  --icon-teal: #0b716c;
+  --tile-orange: #ffe8d3;
+  --icon-orange: #ad4a0b;
+  --tile-neutral: #f3ece1;
+  --icon-neutral: #4f483d;
+
+  --focus-ring: #1d66cf;
+  --focus-ring-ink: #8cb8ff;
+  --chart-1: #008c62;
+  --chart-2: #1d66cf;
+  --chart-3: #d4600f;
+  --chart-4: #bf2c77;
+  --chart-5: #6e4fd8;
+  --track: #ece4d7;
+
+  --line-green: #06c755;          /* LINE brand mark only (login button) */
+  --on-line: #ffffff;
+  --line-green-hover: #05b34d;
+  --line-green-pressed: #048b3c;
+
+  /* Live-lesson answer tiles A–D (shared with student-liff, components.md §6.1).
+     Never read by the six games. */
+  --answer-a: #c81e5a;
+  --on-answer-a: #ffffff;
+  --answer-a-edge: #8c1540;
+  --answer-b: #0f6fc6;
+  --on-answer-b: #ffffff;
+  --answer-b-edge: #0a4b87;
+  --answer-c: #ffc72c;
+  --on-answer-c: #3d2900;
+  --answer-c-edge: #b98400;
+  --answer-d: #4b2ca0;
+  --on-answer-d: #ffffff;
+  --answer-d-edge: #2c1868;
+  --answer-rim: rgba(255, 255, 255, 0);
+  --medal-gold: #ffc72c;
+  --medal-silver: #dde3e6;
+  --medal-bronze: #f2b48a;
+  --on-medal: #13211f;
+
+  --logo-bg: #007352;             /* TA mark: constant in both themes */
+  --logo-fg: #ffffff;
+  --row-hover: #faf7f1;
+  --row-selected: #e9f7f0;
+  /* Vocabulary/sentence highlight in lesson text. */
+  --highlight-bg: #fff3c4;
+  --highlight-text: #6e4b00;
+
+  /* Ink wallet hero: the one dark surface per screen. */
+  --ink-bg: #062a21;
+  --ink-rim: rgba(255, 255, 255, 0);
+  --ink-fg: #ffffff;
+  --ink-fg-muted: #a9e9cf;
+  --ink-chip: rgba(255, 255, 255, 0.12);
+  --ink-track: rgba(255, 255, 255, 0.18);
+  --ink-accent-fg: #ffd65a;
+
+  /* ── Brand ramp (bg-brand-*) ── */
+  --brand-50: #ecfbf4;
+  --brand-100: #d4f5e6;
+  --brand-200: #a9e9cf;
+  --brand-300: #6fd8b0;
+  --brand-400: #2fc490;
+  --brand-500: #0caa75;
+  --brand-600: #008c62;
+  --brand-700: #007352;
+  --brand-800: #005a41;
+  --brand-900: #0b4334;
+
+  /* ── Frozen legacy (games and unmigrated pages; do not use in new code) ── */
   --neutral-50: #f8fafc;
   --neutral-100: #f1f5f9;
   --neutral-200: #e2e8f0;
@@ -152,8 +258,6 @@
   --neutral-700: #334155;
   --neutral-800: #1e293b;
   --neutral-900: #0f172a;
-
-  /* Legacy accent aliases (unmigrated pages / games) */
   --accent-amber: #f59e0b;
   --accent-amber-light: #fef3c7;
   --accent-red: #ef4444;
@@ -162,152 +266,164 @@
   --accent-blue-light: #dbeafe;
   --accent-purple: #8b5cf6;
   --accent-purple-light: #ede9fe;
-  --line-green: #06c755;          /* LINE brand mark only (login button) */
 
-  /* Typography (legacy aliases; prefer --font-system) */
-  --font-thai: var(--font-system);
-  --font-latin: var(--font-system);
-
-  /* Shadows: hairline-soft; no coloured glows */
+  /* ── Depth: --shadow-card (no ledge) on containers, --shadow-tap (ledge) on tappables ── */
   --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.05);
   --shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.06), 0 1px 3px 0 rgb(15 23 42 / 0.04);
   --shadow-md: 0 4px 12px -2px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.05);
   --shadow-lg: 0 12px 28px -6px rgb(15 23 42 / 0.14), 0 4px 8px -4px rgb(15 23 42 / 0.06);
   --shadow-xl: var(--shadow-lg);
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04);
-  --shadow-popover: 0 12px 32px -8px rgb(15 23 42 / 0.18), 0 2px 6px rgb(15 23 42 / 0.06);
-  --shadow-green: var(--shadow-sm);     /* legacy name: no glow any more */
-  --shadow-green-lg: var(--shadow-md);
-
-  /* Motion */
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-out: cubic-bezier(0.2, 0, 0, 1);
-  --duration-fast: 120ms;
-  --duration-normal: 200ms;
-  --duration-slow: 300ms;
-
-  /* Legacy nav glass names (aliases to opaque surfaces) */
-  --nav-glass-bg: var(--surface-nav);
-  --nav-glass-border: var(--hairline);
-  --nav-active-bg: var(--brand-soft);
-
-  --radius: 0.625rem; /* 10px → rounded-lg; rounded-xl = 14px */
-
-  /* ── shadcn semantic tokens, mapped onto the palette above ── */
-  --background: #f4f7f5;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #14883b;
-  --primary-foreground: #ffffff;
-  --secondary: #eef1f4;
-  --secondary-foreground: #0f172a;
-  --muted: #eef1f4;
-  --muted-foreground: #556070;
-  --accent: #eef1f4;
-  --accent-foreground: #0f172a;
-  --destructive: #dc2626;
-  --destructive-foreground: #ffffff;
-  --border: #e2e8e5;
-  --input: #cbd5e1;
-  --ring: #22c55e;
-  --chart-1: #16a34a;
-  --chart-2: #0d9488;
-  --chart-3: #f59e0b;
-  --chart-4: #2563eb;
-  --chart-5: #7c3aed;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #14883b;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f0fdf4;
-  --sidebar-accent-foreground: #14532d;
-  --sidebar-border: rgba(15, 23, 42, 0.08);
-  --sidebar-ring: #22c55e;
+  --shadow-card: 0 1px 2px rgb(80 55 20 / 0.05);
+  --shadow-tap: 0 var(--ledge) 0 var(--clay-ledge), 0 10px 24px -18px rgb(80 55 20 / 0.35);
+  --shadow-raised: 0 18px 36px -20px rgb(6 42 33 / 0.55), 0 2px 6px rgb(40 30 15 / 0.06);
+  --shadow-popover: 0 16px 40px -12px rgb(60 40 10 / 0.28), 0 2px 6px rgb(60 40 10 / 0.08);
 }
 
 /* ─── Design tokens (dark) ─────────────────────────────────────────────── */
 .dark {
   color-scheme: dark;
 
-  --brand-50: #0a1f0f;
-  --brand-100: #0d2e16;
-  --brand-200: #134d22;
-  --brand-fg: #4ade80;
-  --brand-vivid: #4ade80;
-  --brand-solid: #15803d;
-  --brand-solid-pressed: #16a34a;
-  --brand-soft: #12301d;
-  --brand-soft-border: #1d4d2c;
+  --surface-bg: #0f1918;
+  --surface-card: #172422;
+  --surface-muted: #13201e;
+  --surface-elevated: #1d2c2a;
+  --surface-nav: #172422;
+  --surface-sidebar: #122019;
+  --surface-border: rgba(220, 240, 230, 0.09);
+  --clay-rim: #283a37;
+  --clay-ledge: #0a1312;
+  --surface-white: #ffffff;
+  --table-edge-shadow: rgb(0 0 0 / 0.75);
+  --hairline: rgba(220, 240, 230, 0.11);
+  --hairline-strong: rgba(220, 240, 230, 0.2);
+  --field-border: #74857e;
+  --fill-muted: rgba(200, 220, 210, 0.10);
+  --press-tint: rgba(255, 255, 255, 0.07);
+  --skeleton-base: #22322f;
+  --skeleton-shine: rgba(255, 255, 255, 0.06);
+  --scrim: rgba(0, 0, 0, 0.6);
+  --text-primary: #f3efe7;
+  --text-secondary: #d6dcd7;
+  --text-tertiary: #a7b2ad;
 
-  --hero-bg: linear-gradient(135deg, #10291a 0%, #143a22 100%);
-  --hero-fg: #f0fdf4;
-  --hero-fg-muted: #bbf7d0;
-  --hero-chip: rgb(255 255 255 / 0.1);
-  --hero-ring: rgb(255 255 255 / 0.14);
-  --hero-progress-track: rgb(255 255 255 / 0.16);
+  --brand-fg: #54d8a5;
+  --brand-vivid: #2fc490;
+  --brand-solid: #3ccf98;
+  --brand-solid-pressed: #2fc490;
+  --brand-solid-edge: #008c62;
+  --on-brand: #062a21;            /* dark text on the light jade fill: never text-white */
+  --brand-soft: #153d31;
+  --brand-soft-border: #1f5544;
+  --brand-soft-fg: #9eeccb;
 
-  --surface-bg: #0d1117;
-  --surface-card: #161b22;
-  --surface-muted: #1c222a;
-  --surface-elevated: #1c232c;
-  --surface-sidebar: #11161d;
-  --surface-nav: #161b22;
-  --surface-border: rgba(255, 255, 255, 0.08);
-  --hairline: rgba(255, 255, 255, 0.09);
-  --hairline-strong: rgba(255, 255, 255, 0.16);
-  --field-border: #3a424c;
-  --fill-muted: rgba(148, 158, 172, 0.16);
-  --press-tint: rgba(255, 255, 255, 0.06);
-  --text-primary: #e6edf3;
-  --text-secondary: #b1bac4;
-  --text-tertiary: #8b949e;
-  --skeleton-base: #1f262e;
-  --skeleton-shine: rgba(255, 255, 255, 0.05);
-  --scrim: rgb(0 0 0 / 0.6);
+  --accent-solid: #ffc72c;
+  --on-accent: #3d2900;
+  --accent-edge: #a87700;
+  --accent-fg: #ffb072;
+  --accent-soft: #3a2414;
+  --accent-soft-fg: #ffd0a6;
 
-  --success-fg: #4ade80;
-  --success-bg: #0f2a19;
-  --success-border: #1d4d2c;
-  --success-solid: #16a34a;
-  --warning-fg: #fbbf24;
-  --warning-bg: #2a1d05;
-  --warning-border: #5c3d06;
-  --warning-solid: #f59e0b;
-  --on-warning: #1f1300;
-  --danger-fg: #f87171;
-  --danger-bg: #2d1111;
-  --danger-border: #5c1d1d;
-  --danger-solid: #dc2626;
-  --info-fg: #60a5fa;
-  --info-bg: #0c1a2e;
-  --info-border: #1e3a5f;
-  --info-solid: #2563eb;
-  --neutral-fg: #c9d1d9;
-  --neutral-bg: #21262d;
-  --neutral-border: #30363d;
+  --hero-bg-base: #13342a;
+  --hero-fg: #f0fbf5;
+  --hero-fg-muted: #a9e9cf;
+  --hero-chip: rgba(255, 255, 255, 0.10);
+  --hero-ring: rgba(255, 255, 255, 0.16);
+  --hero-progress-track: rgba(255, 255, 255, 0.18);
 
-  --tile-amber: #2a1d05;
-  --tile-blue: #0c1a2e;
-  --tile-purple: #1a1030;
-  --tile-pink: #2d0f1f;
-  --tile-red: #2d1111;
-  --tile-teal: #0b2a27;
-  --tile-orange: #2d1806;
-  --tile-neutral: #21262d;
-  --icon-brand: #4ade80;
-  --icon-amber: #fbbf24;
-  --icon-blue: #60a5fa;
-  --icon-purple: #a78bfa;
-  --icon-pink: #f472b6;
-  --icon-red: #f87171;
-  --icon-teal: #2dd4bf;
-  --icon-orange: #fb923c;
-  --icon-neutral: #b1bac4;
+  --success-fg: #6fdc8f;
+  --success-bg: #12301e;
+  --success-border: #1f4d31;
+  --success-solid: #18803f;
+  --on-success: #ffffff;
+  --warning-fg: #ffd65a;
+  --warning-bg: #33270a;
+  --warning-border: #5a4510;
+  --warning-solid: #ffc72c;
+  --on-warning: #3d2900;
+  --danger-fg: #ff9d8f;
+  --danger-bg: #3a1a16;
+  --danger-border: #5e2a22;
+  --danger-solid: #ec4f3c;
+  --on-danger: #2a0a05;
+  --info-fg: #8cb8ff;
+  --info-bg: #132a45;
+  --info-border: #1f416b;
+  --info-solid: #2f7fe8;
+  --neutral-fg: #d6dcd7;
+  --neutral-bg: #24322f;
+  --neutral-border: #33433f;
 
+  --tile-brand: #153d31;
+  --icon-brand: #6fe0b4;
+  --tile-amber: #33270a;
+  --icon-amber: #ffd65a;
+  --tile-blue: #132a45;
+  --icon-blue: #8cb8ff;
+  --tile-purple: #261d45;
+  --icon-purple: #b9a5ff;
+  --tile-pink: #3a1729;
+  --icon-pink: #ff9cc9;
+  --tile-red: #3a1a16;
+  --icon-red: #ff9a8a;
+  --tile-teal: #0f3532;
+  --icon-teal: #5fd6cc;
+  --tile-orange: #3a2414;
+  --icon-orange: #ffb072;
+  --tile-neutral: #25332f;
+  --icon-neutral: #b8c2bd;
+
+  --focus-ring: #8cb8ff;
+  --focus-ring-ink: #8cb8ff;
+  --chart-1: #6fd8b0;
+  --chart-2: #8cb8ff;
+  --chart-3: #ffb072;
+  --chart-4: #ff9cc9;
+  --chart-5: #b9a5ff;
+  --track: #2b3d3a;
+
+  --line-green: #06c755;
+  --on-line: #ffffff;
+  --line-green-hover: #05b34d;
+  --line-green-pressed: #048b3c;
+
+  --answer-a: #c81e5a;
+  --on-answer-a: #ffffff;
+  --answer-a-edge: #6b1031;
+  --answer-b: #0f6fc6;
+  --on-answer-b: #ffffff;
+  --answer-b-edge: #083c6c;
+  --answer-c: #ffc72c;
+  --on-answer-c: #3d2900;
+  --answer-c-edge: #946a00;
+  --answer-d: #4b2ca0;
+  --on-answer-d: #ffffff;
+  --answer-d-edge: #22134f;
+  --answer-rim: rgba(255, 255, 255, 0.38);
+  --medal-gold: #ffc72c;
+  --medal-silver: #dde3e6;
+  --medal-bronze: #f2b48a;
+  --on-medal: #13211f;
+
+  --logo-bg: #007352;
+  --logo-fg: #ffffff;
+  --row-hover: #1b2a28;
+  --row-selected: #15302a;
+  --highlight-bg: #33270a;
+  --highlight-text: #ffd65a;
+
+  --ink-bg: #13342a;
+  --ink-rim: rgba(255, 255, 255, 0.10);
+  --ink-fg: #f0fbf5;
+  --ink-fg-muted: #a9e9cf;
+  --ink-chip: rgba(255, 255, 255, 0.10);
+  --ink-track: rgba(255, 255, 255, 0.16);
+  --ink-accent-fg: #ffd65a;
+
+  --brand-50: #0c2a20;
+  --brand-100: #123a2e;
+  --brand-200: #1a5040;
+
+  /* Frozen legacy (games and unmigrated pages) */
   --neutral-50: #0d1117;
   --neutral-100: #161b22;
   --neutral-200: #21262d;
@@ -318,7 +434,6 @@
   --neutral-700: #c9d1d9;
   --neutral-800: #e6edf3;
   --neutral-900: #f0f6fc;
-
   --accent-amber-light: #2a1d05;
   --accent-blue-light: #0c1a2e;
   --accent-purple-light: #1a1030;
@@ -328,47 +443,69 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.35);
   --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.45);
   --shadow-lg: 0 12px 28px -6px rgb(0 0 0 / 0.55);
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
-  --shadow-popover: 0 12px 32px -8px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(255 255 255 / 0.06);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow-tap: 0 var(--ledge) 0 rgb(0 0 0 / 0.35), 0 10px 24px -18px rgb(0 0 0 / 0.8);
+  --shadow-raised: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 18px 36px -18px rgb(0 0 0 / 0.8);
+  --shadow-popover: 0 16px 40px -12px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(255 255 255 / 0.06);
+}
 
-  --background: #0d1117;
-  --foreground: #e6edf3;
-  --card: #161b22;
-  --card-foreground: #e6edf3;
-  --popover: #1c232c;
-  --popover-foreground: #e6edf3;
-  --primary: #15803d;           /* calm solid green with white text, not neon */
-  --primary-foreground: #ffffff;
-  --secondary: #21262d;
-  --secondary-foreground: #e6edf3;
-  --muted: #1c222a;
-  --muted-foreground: #9aa4af;
-  --accent: #21262d;
-  --accent-foreground: #e6edf3;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-  --border: #262d36;
-  --input: #3a424c;
-  --ring: #4ade80;
-  --chart-1: #4ade80;
-  --chart-2: #2dd4bf;
-  --chart-3: #fbbf24;
-  --chart-4: #60a5fa;
-  --chart-5: #a78bfa;
-  --sidebar: #11161d;
-  --sidebar-foreground: #e6edf3;
-  --sidebar-primary: #15803d;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #12301d;
-  --sidebar-accent-foreground: #bbf7d0;
-  --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: #4ade80;
+/* ─── Aliases (follow the semantic tokens in both themes) ──────────────── */
+/* Declared on every theme scope, so a nested .dark / .theme-light subtree
+   recomputes them instead of inheriting the other theme's resolved value. */
+:root,
+.theme-light,
+.dark {
+  /* Retired names, kept so unmigrated code renders flat (tokens.md §4). */
+  --gradient-brand: linear-gradient(var(--brand-solid), var(--brand-solid));
+  --hero-bg: linear-gradient(var(--hero-bg-base), var(--hero-bg-base));
+  --shadow-green: var(--shadow-sm);
+  --shadow-green-lg: var(--shadow-md);
+  --nav-glass-bg: var(--surface-nav);
+  --nav-glass-border: var(--hairline);
+  --nav-active-bg: var(--brand-soft);
+  --surface-card-trans: var(--surface-card);
+
+  /* shadcn (tokens.md §5): no hex here any more. */
+  --background: var(--surface-bg);
+  --foreground: var(--text-primary);
+  --card: var(--surface-card);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface-elevated);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--brand-solid);
+  --primary-foreground: var(--on-brand);
+  --secondary: var(--surface-muted);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--surface-muted);
+  --muted-foreground: var(--text-secondary);
+  --accent: var(--surface-muted);
+  --accent-foreground: var(--text-primary);
+  --destructive: var(--danger-solid);
+  --destructive-foreground: var(--on-danger);
+  --border: var(--hairline);
+  --input: var(--field-border);
+  --ring: var(--focus-ring);
+  --sidebar: var(--surface-sidebar, var(--surface-card));
+  --sidebar-foreground: var(--text-primary);
+  --sidebar-primary: var(--brand-solid);
+  --sidebar-primary-foreground: var(--on-brand);
+  --sidebar-accent: var(--brand-soft);
+  --sidebar-accent-foreground: var(--brand-soft-fg);
+  --sidebar-border: var(--hairline);
+  --sidebar-ring: var(--focus-ring);
+}
+
+/* A themed subtree paints its own page colour and text (ui-kit panels). */
+.theme-light,
+:not(html).dark {
+  background-color: var(--surface-bg);
+  color: var(--text-primary);
 }
 
 /* ─── Tailwind theme mapping ───────────────────────────────────────────── */
 @theme inline {
-  --font-sans: var(--font-system);
-  --font-heading: var(--font-system);
+  --font-sans: var(--font-body);         /* font-sans = reading face (the default) */
+  --font-heading: var(--font-display);   /* font-heading = Kodchasan (titles, greeting, hero numbers) */
   --font-mono: var(--font-mono-system);
 
   /* Brand ramp → bg-brand-500, text-brand-700 … */
@@ -387,35 +524,63 @@
   --color-brand-vivid: var(--brand-vivid);
   --color-brand-solid: var(--brand-solid);
   --color-brand-solid-pressed: var(--brand-solid-pressed);
+  --color-brand-solid-edge: var(--brand-solid-edge);
   --color-brand-soft: var(--brand-soft);
   --color-brand-soft-border: var(--brand-soft-border);
+  --color-brand-soft-fg: var(--brand-soft-fg);
   --color-on-brand: var(--on-brand);
-  --color-line-green: var(--line-green);
+  /* Accent: sunshine for rewards only, tangerine text */
+  --color-accent-solid: var(--accent-solid);
+  --color-on-accent: var(--on-accent);
+  --color-accent-edge: var(--accent-edge);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-fg: var(--accent-soft-fg);
   /* Hero */
+  --color-hero-bg-base: var(--hero-bg-base);
   --color-hero-fg: var(--hero-fg);
   --color-hero-fg-muted: var(--hero-fg-muted);
   --color-hero-chip: var(--hero-chip);
   --color-hero-ring: var(--hero-ring);
   --color-hero-track: var(--hero-progress-track);
+  /* Ink wallet hero */
+  --color-ink-bg: var(--ink-bg);
+  --color-ink-rim: var(--ink-rim);
+  --color-ink-fg: var(--ink-fg);
+  --color-ink-fg-muted: var(--ink-fg-muted);
+  --color-ink-chip: var(--ink-chip);
+  --color-ink-track: var(--ink-track);
+  --color-ink-accent-fg: var(--ink-accent-fg);
   /* Surfaces & text → bg-app, bg-surface, bg-surface-muted, text-fg … */
   --color-app: var(--surface-bg);
   --color-surface: var(--surface-card);
   --color-surface-muted: var(--surface-muted);
   --color-surface-elevated: var(--surface-elevated);
   --color-surface-sidebar: var(--surface-sidebar);
+  --color-surface-nav: var(--surface-nav);
+  --color-surface-white: var(--surface-white); /* bg-surface-white: always white (QR quiet zone) */
+  --color-clay-rim: var(--clay-rim);
+  --color-clay-ledge: var(--clay-ledge);
   --color-hairline: var(--hairline);
   --color-hairline-strong: var(--hairline-strong);
   --color-field-border: var(--field-border);
   --color-fill-muted: var(--fill-muted);
   --color-press: var(--press-tint);
+  --color-scrim: var(--scrim);
+  --color-track: var(--track);
+  --color-row-hover: var(--row-hover);
+  --color-row-selected: var(--row-selected);
   --color-fg: var(--text-primary);
   --color-fg-muted: var(--text-secondary);
   --color-fg-subtle: var(--text-tertiary);
+  --color-focus-ring: var(--focus-ring);
+  --color-focus-ring-ink: var(--focus-ring-ink);
   /* Semantic tones → text-success-fg bg-success-bg border-success-border … */
   --color-success-fg: var(--success-fg);
   --color-success-bg: var(--success-bg);
   --color-success-border: var(--success-border);
   --color-success-solid: var(--success-solid);
+  --color-on-success: var(--on-success);
   --color-warning-fg: var(--warning-fg);
   --color-warning-bg: var(--warning-bg);
   --color-warning-border: var(--warning-border);
@@ -425,6 +590,7 @@
   --color-danger-bg: var(--danger-bg);
   --color-danger-border: var(--danger-border);
   --color-danger-solid: var(--danger-solid);
+  --color-on-danger: var(--on-danger);
   --color-info-fg: var(--info-fg);
   --color-info-bg: var(--info-bg);
   --color-info-border: var(--info-border);
@@ -451,6 +617,32 @@
   --color-icon-teal: var(--icon-teal);
   --color-icon-orange: var(--icon-orange);
   --color-icon-neutral: var(--icon-neutral);
+  /* LINE (login only) */
+  --color-line-green: var(--line-green);
+  --color-on-line: var(--on-line);
+  --color-line-green-hover: var(--line-green-hover);
+  --color-line-green-pressed: var(--line-green-pressed);
+  /* Live lesson: answer tiles A–D, medals (presenter) */
+  --color-answer-a: var(--answer-a);
+  --color-on-answer-a: var(--on-answer-a);
+  --color-answer-a-edge: var(--answer-a-edge);
+  --color-answer-b: var(--answer-b);
+  --color-on-answer-b: var(--on-answer-b);
+  --color-answer-b-edge: var(--answer-b-edge);
+  --color-answer-c: var(--answer-c);
+  --color-on-answer-c: var(--on-answer-c);
+  --color-answer-c-edge: var(--answer-c-edge);
+  --color-answer-d: var(--answer-d);
+  --color-on-answer-d: var(--on-answer-d);
+  --color-answer-d-edge: var(--answer-d-edge);
+  --color-answer-rim: var(--answer-rim);
+  --color-medal-gold: var(--medal-gold);
+  --color-medal-silver: var(--medal-silver);
+  --color-medal-bronze: var(--medal-bronze);
+  --color-on-medal: var(--on-medal);
+  /* TA mark */
+  --color-logo-bg: var(--logo-bg);
+  --color-logo-fg: var(--logo-fg);
 
   /* shadcn semantic colours */
   --color-background: var(--background);
@@ -486,7 +678,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Radius scale: sm 6 · md 8 · lg 10 · xl 14 · 2xl 18 · 3xl 22 (legacy pages) */
+  /* Radius scale follows the dial (--radius 12px): sm 8 · md 10 · lg 12 · xl 16 · 2xl 20.
+     Component radii: rounded-(--radius-card) 16, rounded-(--radius-ctl) 12 … */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -495,8 +688,10 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
-  /* Shadows → shadow-card, shadow-popover */
+  /* Shadows → shadow-card (containers), shadow-tap (tappables), shadow-raised (ink hero), shadow-popover */
   --shadow-card: var(--shadow-card);
+  --shadow-tap: var(--shadow-tap);
+  --shadow-raised: var(--shadow-raised);
   --shadow-popover: var(--shadow-popover);
 }
 
@@ -510,30 +705,54 @@
   --text-xl--line-height: 1.45;
   --text-2xl--line-height: 1.35;
   --text-3xl--line-height: 1.3;
-  --text-4xl--line-height: 1.25;
+  --text-4xl--line-height: 1.3; /* was 1.25: clips stacked tone marks (e.g. "ปุณณ์") in Kodchasan */
 }
 
 /* ─── Base ─────────────────────────────────────────────────────────────── */
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring;
   }
   html {
     -webkit-text-size-adjust: 100%;
-    font-family: var(--font-system);
+    font-family: var(--font-body);
     /* Keep anchored/focused content clear of the sticky mobile app bar. */
     scroll-padding-top: calc(var(--appbar-h) + var(--safe-top) + 8px);
+  }
+  /* Keep a focused field clear of the bottom tab bar, the sticky form action
+     bar and the sticky class-detail tabs (WCAG 2.2 focus not obscured). */
+  @media (max-width: 767.98px) {
+    html {
+      scroll-padding-bottom: calc(var(--tabbar-h) + var(--safe-bottom) + 16px);
+    }
+    html:has(.sticky-actions) {
+      scroll-padding-bottom: calc(var(--tabbar-h) + var(--safe-bottom) + 88px);
+    }
   }
   @media (min-width: 768px) {
     html {
       scroll-padding-top: 16px;
     }
+    html:has(.sticky-actions) {
+      scroll-padding-bottom: 96px;
+    }
+  }
+  @media (max-width: 767.98px) {
+    html:has([data-detail-tabs]) {
+      scroll-padding-top: calc(var(--appbar-h) + var(--safe-top) + 64px);
+    }
+  }
+  @media (min-width: 768px) and (max-width: 1023.98px) {
+    html:has([data-detail-tabs]) {
+      scroll-padding-top: 72px;
+    }
   }
   body {
-    font-family: var(--font-system);
+    font-family: var(--font-body);
+    font-synthesis: none; /* never fake bold or italic Thai */
     background-color: var(--surface-bg);
     color: var(--text-primary);
-    font-size: 0.9375rem; /* 15px on phones */
+    font-size: 1rem; /* 16px on phones and tablets (readable body text) */
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -542,11 +761,11 @@
   }
   @media (min-width: 1024px) {
     body {
-      font-size: 0.875rem; /* 14px: denser desktop dashboard */
+      font-size: 0.9375rem; /* 15px desktop body (components.md §1, tutor) */
     }
   }
   h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.35;
     letter-spacing: normal;
   }
@@ -554,17 +773,14 @@
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
   }
+  /* One focus colour: 3px blue, 2px offset (≥ 4.67:1 on light surfaces, ≥ 5.97:1 dark). */
   :focus-visible {
-    outline: 2px solid var(--brand-500);
+    outline: 3px solid var(--focus-ring);
     outline-offset: 2px;
   }
   ::selection {
-    background: var(--brand-200);
-    color: var(--brand-900);
-  }
-  .dark ::selection {
-    background: rgb(34 197 94 / 0.3);
-    color: #f0f6fc;
+    background: var(--brand-soft);
+    color: var(--brand-soft-fg);
   }
 }
 
@@ -593,18 +809,21 @@
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ─── Utilities ────────────────────────────────────────────────────────── */
-/* `bg-hero`: calm mint block; pair with text-hero-fg. */
+/* `bg-hero`: flat mint hero block (the gradient name is kept); pair with text-hero-fg. */
 @utility bg-hero {
+  background-color: var(--hero-bg-base);
   background-image: var(--hero-bg);
 }
+/* Legacy name: renders the flat brand fill. */
 @utility bg-gradient-brand {
+  background-color: var(--brand-solid);
   background-image: var(--gradient-brand);
 }
 /* `pressable`: subtle press feedback for touch targets (no hover lift). */
 @utility pressable {
   -webkit-tap-highlight-color: transparent;
   transition-property: transform, background-color, box-shadow, opacity, color, border-color;
-  transition-duration: 120ms;
+  transition-duration: var(--duration-press);
   transition-timing-function: var(--ease-out);
   &:active:not(:disabled, [aria-disabled="true"]) {
     transform: scale(0.98);
@@ -620,8 +839,90 @@
   word-break: keep-all;
 }
 
-/* ─── App shell (src/components/app/AppShell.tsx) ─────────────────────── */
+/* Type roles (components.md §1, tutor). Kodchasan (--font-display) only for the
+   page title, the greeting, static hero numbers and the presenter; everything
+   else is Noto Sans Thai. Longhands on purpose: the `font` shorthand would
+   reset font-variant-numeric (tabular). */
+@utility type-page {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.75rem;
+  line-height: 1.3;
+}
+@utility type-appbar {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1875rem;
+  line-height: 1.35;
+}
+@utility type-greet {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3125rem;
+  line-height: 1.4;
+}
+@utility type-hero-amount {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 2.25rem;
+  line-height: 1.2;
+}
+@utility type-hero-time {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+@utility type-section {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.125rem;
+  line-height: 1.45;
+}
+@utility type-card {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+@utility type-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.6;
+  @media (min-width: 1024px) {
+    font-size: 0.9375rem;
+  }
+}
+@utility type-body-s {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 1.6; /* Thai body ≥ 1.6 (README §4.2) */
+}
+@utility type-label {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+@utility type-caption {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+@utility type-stat {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.375rem;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Component classes ────────────────────────────────────────────────── */
 @layer components {
+  /* ── App shell (src/components/app/AppShell.tsx) ── */
   .app-root {
     --sidebar-w: 0px;
     --tabbar-space: calc(var(--tabbar-h) + var(--safe-bottom));
@@ -683,7 +984,49 @@
     .app-content { padding: 28px 40px 48px; }
   }
 
-  /* Mobile app bar: sticky, opaque, hairline once scrolled. */
+  /* Side-nav item (SideNav.tsx): 42 tall, radius 12, label 500 15, active brand-soft. */
+  .nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 42px;
+    padding: 0 10px;
+    border-radius: var(--radius-ctl);
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+  }
+  .nav-link > svg,
+  .nav-link .nav-icon {
+    color: var(--text-tertiary);
+  }
+  @media (hover: hover) {
+    .nav-link:hover {
+      background-color: var(--press-tint);
+      color: var(--text-primary);
+    }
+  }
+  /* Pressed (touch tablets have no hover). Before the current-page rule, so the current item stays brand-soft. */
+  .nav-link:active {
+    background-color: var(--press-tint);
+  }
+  @media (pointer: coarse) {
+    .nav-link { min-height: 44px; }
+  }
+  .nav-link[aria-current="page"] {
+    background-color: var(--brand-soft);
+    color: var(--brand-soft-fg);
+    font-weight: 600;
+  }
+  .nav-link[aria-current="page"] > svg,
+  .nav-link[aria-current="page"] .nav-icon {
+    color: var(--brand-fg);
+  }
+
+  /* Mobile app bar: sticky, opaque, hairline (60 + safe-top). */
   .app-appbar {
     position: sticky;
     top: 0;
@@ -697,7 +1040,7 @@
     .app-appbar { display: none; }
   }
 
-  /* Mobile tab bar: fixed + in-flow spacer so content is never covered. */
+  /* Mobile tab bar: fixed + in-flow spacer so content is never covered. Flat + hairline. */
   .app-tabbar-spacer {
     height: var(--tabbar-space);
   }
@@ -710,7 +1053,7 @@
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     height: calc(var(--tabbar-h) + var(--safe-bottom));
-    padding: 0 var(--safe-right) var(--safe-bottom) var(--safe-left);
+    padding: 4px max(4px, var(--safe-right)) calc(8px + var(--safe-bottom)) max(4px, var(--safe-left));
     background-color: var(--surface-nav);
     border-top: 1px solid var(--hairline);
   }
@@ -722,6 +1065,41 @@
     .app-root:has(:is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"], [type="file"]), textarea, [contenteditable="true"]):focus) .app-tabbar {
       display: none;
     }
+  }
+  .tab-link {
+    display: flex;
+    min-width: 0;
+    min-height: 56px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  .tab-link[aria-current="page"],
+  .tab-link[data-active] {
+    color: var(--brand-fg);
+  }
+  .tab-pill {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 30px;
+    border-radius: 999px;
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+  /* Pressed tab: neutral pill. Before the current-tab rule (same specificity), so the current tab stays brand-soft. */
+  .tab-link:active .tab-pill {
+    background-color: var(--press-tint);
+  }
+  .tab-link[aria-current="page"] .tab-pill,
+  .tab-link[data-active] .tab-pill {
+    background-color: var(--brand-soft);
   }
 
   /* Sticky bottom action bar for forms (sits above the tab bar on mobile). */
@@ -738,14 +1116,29 @@
     .sticky-actions {
       margin-inline: 0;
       padding: 12px 16px;
-      border: 1px solid var(--hairline);
+      border: 1px solid var(--clay-rim);
       border-radius: var(--radius-card);
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--shadow-popover);
       bottom: 16px;
     }
   }
 
-  /* ListRow divider (rows must be siblings). */
+  /* ── Surfaces: a 1px clay rim on every card; a ledge only on tappables ── */
+  .ds-card {
+    background-color: var(--surface-card);
+    border: var(--ring-card) solid var(--clay-rim);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+  /* Tappable cards: `cardTapClass` in components/app/Surface.tsx (utilities, so
+     it is not overridden by bg-surface/shadow-card on the same element). */
+  /* Well: grouped info inside a card (no rim). */
+  .ds-well {
+    background-color: var(--surface-muted);
+    border-radius: var(--radius-ctl);
+  }
+
+  /* ListRow divider (rows must be siblings), inset to the text when there is a leading element. */
   .list-row {
     position: relative;
   }
@@ -761,6 +1154,263 @@
   }
   .list-row[data-leading] {
     --row-divider-inset: 64px;
+  }
+
+  /* ── Joined stat strip (components.md §3.5): one card, hairline dividers ── */
+  .ds-strip {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+  .ds-strip > * {
+    min-width: 0;
+    padding: 14px 16px;
+  }
+  .ds-strip > * + * {
+    border-left: 1px solid var(--hairline);
+  }
+  /* Four or more cells: 2 per row on phones (dividers on both axes). */
+  @media (max-width: 639.98px) {
+    .ds-strip[data-cells="4"] {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .ds-strip[data-cells="4"] > :nth-child(odd) {
+      border-left: 0;
+    }
+    .ds-strip[data-cells="4"] > :nth-child(n + 3) {
+      border-top: 1px solid var(--hairline);
+    }
+  }
+  @media (max-width: 419.98px) {
+    .ds-strip > * {
+      padding: 14px 12px;
+    }
+  }
+  @media (max-width: 359.98px) {
+    .ds-strip > * {
+      padding: 12px 10px;
+    }
+  }
+  /* Label and hint: Thai line-height 1.6, balanced so a narrow cell keeps no one-word last line. */
+  .ds-strip-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    text-wrap: balance;
+  }
+  .ds-strip-value {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1.375rem;
+    line-height: 1.3;
+    font-variant-numeric: tabular-nums;
+  }
+  .ds-strip-hint {
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    text-wrap: balance;
+  }
+
+  /* ── Wallet hero (components.md §3.4): the one ink surface per screen ── */
+  .ds-wallet {
+    container: wallet / inline-size;
+    background-color: var(--ink-bg);
+    color: var(--ink-fg);
+    border-radius: var(--radius-hero);
+    box-shadow: var(--shadow-raised), inset 0 0 0 1px var(--ink-rim);
+  }
+  .ds-wallet :focus-visible {
+    outline-color: var(--focus-ring-ink);
+  }
+  .ds-wallet-body {
+    display: grid;
+    gap: 14px;
+    padding: 18px 18px 16px;
+  }
+  .ds-wallet-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .ds-wallet-label {
+    color: var(--ink-fg-muted);
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+  .ds-wallet-amount {
+    margin-top: 2px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 2.25rem;
+    line-height: 1.2;
+  }
+  .ds-wallet-sub {
+    color: var(--ink-fg-muted);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+  .ds-wallet-goal {
+    display: grid;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+  }
+  .ds-wallet-goal-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .ds-wallet-goal-value {
+    font-weight: 600;
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    font-variant-numeric: tabular-nums;
+  }
+  .ds-wallet-short {
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .ds-wallet-short b,
+  .ds-wallet-short strong {
+    color: var(--ink-accent-fg);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Wide (desktop row 1): amount left, goal right, divided. */
+  @container wallet (min-width: 600px) {
+    .ds-wallet-body {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: center;
+      gap: 28px;
+      padding: 22px 24px;
+    }
+    .ds-wallet-goal {
+      align-content: center;
+      padding: 0 0 0 28px;
+      border-top: 0;
+      border-left: 1px solid rgb(255 255 255 / 0.14);
+    }
+  }
+
+  /* ── Avatar stack (next-class card) ── */
+  .ds-avatar-stack {
+    display: flex;
+  }
+  .ds-avatar-stack > * {
+    box-shadow: 0 0 0 2px var(--surface-card);
+  }
+  .ds-avatar-stack > * + * {
+    margin-left: -8px;
+  }
+
+  /* ── Today's sessions rows (patterns.md T1.6): time column + level dot ── */
+  .ds-session-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 68px;
+    padding: 10px 16px;
+    color: inherit;
+    text-align: left;
+  }
+  .ds-session-row + .ds-session-row {
+    border-top: 1px solid var(--hairline);
+  }
+  a.ds-session-row,
+  button.ds-session-row {
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+  a.ds-session-row:active,
+  button.ds-session-row:active {
+    background-color: var(--press-tint);
+  }
+  @media (hover: hover) {
+    a.ds-session-row:hover,
+    button.ds-session-row:hover {
+      background-color: var(--row-hover);
+    }
+  }
+  .ds-session-time {
+    width: var(--session-time-w, 52px);
+    flex: none;
+  }
+  /* Untimed labels ("ตามนัดหมาย", "ตลอดวัน (24 ชม.)"): SessionList/SessionRow timeColumn="wide". */
+  [data-time-column="wide"] {
+    --session-time-w: 4.5rem;
+  }
+  .ds-level-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 6px;
+    border-radius: 50%;
+    vertical-align: middle;
+    background-color: currentColor;
+  }
+
+  /* ── DataTable (components.md §11): a wide table scrolls inside its card;
+     edge shadows show there is more while it does. Scroll-driven, and gated
+     on data-overflow (TableScrollFrame.tsx), so they appear only while the
+     table overflows (none where scroll timelines are not supported: the
+     scrollbar still shows). ── */
+  .ds-table-frame {
+    position: relative;
+    timeline-scope: --ds-table-x;
+  }
+  .ds-table-scroll {
+    scroll-timeline: --ds-table-x inline;
+  }
+  .ds-table-edge {
+    position: absolute;
+    inset-block: 0;
+    width: 16px;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .ds-table-edge[data-edge="start"] {
+    left: 0;
+    box-shadow: inset 14px 0 12px -12px var(--table-edge-shadow);
+  }
+  .ds-table-edge[data-edge="end"] {
+    right: 0;
+    box-shadow: inset -14px 0 12px -12px var(--table-edge-shadow);
+  }
+  @supports (animation-timeline: scroll()) {
+    .ds-table-edge {
+      animation: ds-table-edge-start linear both;
+      animation-timeline: --ds-table-x;
+    }
+    .ds-table-edge[data-edge="end"] {
+      animation-name: ds-table-edge-end;
+    }
+  }
+  /* A table that fits again keeps no shadow from its last scroll position. */
+  .ds-table-frame:not([data-overflow]) .ds-table-edge {
+    animation: none;
+    opacity: 0;
+  }
+
+  /* ── TA mark (BrandMark.tsx): constant fill, 1px white ring in dark ── */
+  .ta-mark {
+    display: block;
+    border-radius: 30%;
+  }
+  .dark .ta-mark {
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.14);
+  }
+
+  /* ── Progress (Atoms ProgressBar): transform only, grows from 0 once ── */
+  .ds-progress-fill {
+    transform-origin: left center;
+    animation: ds-progress-in 600ms var(--ease-out) backwards;
   }
 
   /* Skeleton: token colours + compositor-only shimmer. */
@@ -786,7 +1436,7 @@
     z-index: var(--z-sheet);
     background: var(--scrim);
     opacity: calc(1 - var(--drawer-swipe-progress, 0));
-    transition: opacity 250ms var(--ease-out);
+    transition: opacity var(--duration-normal) var(--ease-out);
   }
   .sheet-backdrop[data-starting-style],
   .sheet-backdrop[data-ending-style] {
@@ -809,15 +1459,21 @@
     max-height: 90dvh;
     background-color: var(--surface-elevated);
     color: var(--text-primary);
-    border-radius: 16px 16px 0 0;
+    border: 1px solid var(--clay-rim);
+    border-bottom: 0;
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
     box-shadow: var(--shadow-popover);
     outline: none;
     transform: translateY(var(--drawer-swipe-movement-y, 0px));
-    transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1), opacity 200ms var(--ease-out);
+    transition: transform var(--duration-sheet) var(--ease-sheet), opacity var(--duration-normal) var(--ease-out);
   }
   .sheet-popup[data-starting-style],
   .sheet-popup[data-ending-style] {
     transform: translateY(100%);
+  }
+  .sheet-popup[data-ending-style] {
+    transition-duration: 220ms;
+    transition-timing-function: var(--ease-in);
   }
   .sheet-popup[data-swiping] {
     transition-duration: 0ms;
@@ -854,7 +1510,8 @@
     .sheet-popup {
       width: min(100%, var(--sheet-width, 520px));
       max-height: min(85dvh, 760px);
-      border-radius: 16px;
+      border-bottom: 1px solid var(--clay-rim);
+      border-radius: var(--radius-dialog);
       transform: none;
     }
     .sheet-popup[data-starting-style],
@@ -912,7 +1569,7 @@
     display: none;
   }
 
-  /* Toasts */
+  /* Toasts: bottom-centre above the tab bar on phones, bottom-right on desktop. */
   .toast-viewport {
     position: fixed;
     z-index: var(--z-toast);
@@ -946,23 +1603,35 @@
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+@keyframes ds-progress-in {
+  from { transform: scaleX(0); }
+}
+/* DataTable edge shadows, driven by the table's horizontal scroll (not by time). */
+@keyframes ds-table-edge-start {
+  0% { opacity: 0; }
+  4%, 100% { opacity: 1; }
+}
+@keyframes ds-table-edge-end {
+  0%, 96% { opacity: 1; }
+  100% { opacity: 0; }
+}
 
 /* ─── Legacy helpers (unmigrated pages) ────────────────────────────────── */
 /* These keep old class names working but calmer: no lifts, floats, glows or
-   shine sweeps. New code should not use them (see foundation API doc). */
-.bg-brand-gradient { background: var(--gradient-brand); }
-.bg-hero-gradient { background: var(--hero-bg); color: var(--hero-fg); }
+   shine sweeps. New code should not use them. */
+.bg-brand-gradient { background: var(--brand-solid); }
+.bg-hero-gradient { background: var(--hero-bg-base); color: var(--hero-fg); }
 .bg-card-gradient { background: var(--surface-card); }
 
 .glass,
 .glass-subtle {
   background: var(--surface-card);
-  border: 1px solid var(--hairline);
+  border: 1px solid var(--clay-rim);
 }
 .glass-card {
   background: var(--surface-card);
   border-radius: var(--radius-card);
-  border: 1px solid var(--hairline);
+  border: 1px solid var(--clay-rim);
   box-shadow: var(--shadow-card);
 }
 
@@ -1005,7 +1674,7 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  background: var(--brand-500);
+  background: var(--brand-vivid);
   border-radius: 50%;
 }
 .pulse-dot::after {
@@ -1013,7 +1682,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: var(--brand-500);
+  background: var(--brand-vivid);
   animation: pulse-ring 1.8s ease-out infinite;
 }
 

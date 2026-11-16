@@ -1,14 +1,15 @@
 import { FileText } from "lucide-react";
-import { ListGroup, ListRow } from "@/components/app";
+import { IconTile, ListGroup, ListRow } from "@/components/app";
 import { t } from "@/lib/i18n";
-import { bankBrandLabel, isPdfUrl, type SettingsUser } from "../lib/verification";
+import { bankBrandLabel, isPdfUrl, type SettingsUser, type VerificationField } from "../lib/verification";
 import { FieldStatusChip } from "./FieldStatusChip";
+import { stepTile } from "./stepMeta";
 
 function DocumentThumb({ url, alt }: { url?: string | null; alt: string }) {
-  if (!url) return <span className="text-fg-subtle">{t("dashboardSettings.notUploaded")}</span>;
+  if (!url) return <span className="text-sm text-fg-subtle">{t("dashboardSettings.notUploaded")}</span>;
   if (isPdfUrl(url)) {
     return (
-      <span className="inline-flex items-center gap-1.5 text-fg">
+      <span className="inline-flex h-7 items-center gap-1.5 rounded-(--radius-chip) bg-surface-muted px-2.5 text-[0.8125rem] font-medium text-fg">
         <FileText aria-hidden="true" className="size-4" />
         PDF
       </span>
@@ -20,23 +21,31 @@ function DocumentThumb({ url, alt }: { url?: string | null; alt: string }) {
       src={url}
       alt={alt}
       loading="lazy"
-      className="mt-1 aspect-video w-full max-w-sm rounded-lg border border-hairline bg-surface-muted object-contain"
+      className="mt-1 aspect-[16/10] w-40 rounded-(--radius-ctl-sm) border border-hairline bg-surface-muted object-contain"
     />
   );
 }
 
-/** Read-only view of the submitted verification data (verified tutors). */
+/** Leading tone tile of a document row (patterns.md T8). */
+function StepTile({ field, user }: { field: VerificationField; user: SettingsUser }) {
+  const { icon, tone } = stepTile(field, user.identity?.idType === "PASSPORT");
+  return <IconTile icon={icon} tone={tone} />;
+}
+
+/** Read-only view of the submitted verification data (verified tutors): one row per document. */
 export function VerificationSummary({ user }: { user: SettingsUser }) {
   const settings = user.settings ?? {};
   const identity = user.identity;
   return (
     <ListGroup header={t("dashboardSettings.viewTitle")}>
       <ListRow
+        leading={<StepTile field="idCard" user={user} />}
         title={user.identity?.idType === "PASSPORT" ? t("dashboardSettings.passportStep") : t("dashboardSettings.idCardStep")}
         trailing={<FieldStatusChip user={user} field="idCard" />}
         meta={<DocumentThumb url={user.idCardImageUrl} alt={t("dashboardSettings.uploadedAlt")} />}
       />
       <ListRow
+        leading={<StepTile field="bankBook" user={user} />}
         title={t("dashboardSettings.bankBookStep")}
         subtitle={
           [
@@ -50,12 +59,14 @@ export function VerificationSummary({ user }: { user: SettingsUser }) {
         meta={<DocumentThumb url={user.bankBookImageUrl} alt={t("dashboardSettings.uploadedAlt")} />}
       />
       <ListRow
+        leading={<StepTile field="address" user={user} />}
         title={t("dashboardSettings.addressStep")}
         subtitle={settings.address || t("dashboardSettings.notUploaded")}
         trailing={<FieldStatusChip user={user} field="address" />}
       />
       {identity?.idType === "PASSPORT" ? (
         <ListRow
+          leading={<StepTile field="taxInfo" user={user} />}
           title={t("dashboardSettings.passportTaxInfoStep")}
           subtitle={[
             settings.taxName || "–",
@@ -74,6 +85,7 @@ export function VerificationSummary({ user }: { user: SettingsUser }) {
         />
       ) : (
         <ListRow
+          leading={<StepTile field="taxInfo" user={user} />}
           title={t("dashboardSettings.taxInfoStep")}
           subtitle={
             settings.taxName || settings.nationalId
@@ -85,6 +97,7 @@ export function VerificationSummary({ user }: { user: SettingsUser }) {
       )}
       {identity?.workPermitRequired ? (
         <ListRow
+          leading={<StepTile field="workPermit" user={user} />}
           title={t("dashboardSettings.workPermitStep")}
           subtitle={identity.workPermitExpiresOn ? `${t("dashboardSettings.expiresOn")} ${identity.workPermitExpiresOn}` : undefined}
           trailing={<FieldStatusChip user={user} field="workPermit" />}

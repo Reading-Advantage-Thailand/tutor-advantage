@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { NBSP } from "../../../../lib/format";
+import { NBSP, WORD_JOINER } from "../../../../lib/format";
 import { t } from "../../../../lib/i18n";
 import {
   ATTENDANCE_PREVIEW_COUNT,
@@ -56,14 +56,23 @@ describe("selectAttendancePreview", () => {
 
 describe("formatMeetingDate", () => {
   it("shows the calendar day as sent, in the Buddhist-era year", () => {
-    const expected = new Intl.DateTimeFormat("th-TH", { day: "numeric", month: "short", year: "numeric" }).format(
-      new Date(2026, 10, 6),
-    );
-    expect(formatMeetingDate("2026-11-06")).toBe(expected);
-    expect(formatMeetingDate("2026-11-06")).toContain("2569");
+    expect(formatMeetingDate("2026-11-06")).toBe("6 พ.ย. 2569");
     // The first of a month stays in that month and year in every time zone.
-    expect(formatMeetingDate("2026-01-01")).toContain("2569");
-    expect(formatMeetingDate("2026-01-01")).toMatch(/^1 /);
+    expect(formatMeetingDate("2026-01-01")).toBe("1 ม.ค. 2569");
+  });
+
+  it("keeps the day on a device east of Bangkok", () => {
+    // CI runs in UTC, where a missing Bangkok-noon step still gives the right
+    // day. Switching the zone at run time makes the guard bite on any machine.
+    const saved = process.env.TZ;
+    process.env.TZ = "Asia/Tokyo";
+    try {
+      expect(formatMeetingDate("2026-11-06")).toBe("6 พ.ย. 2569");
+      expect(formatMeetingDate("2026-01-01")).toBe("1 ม.ค. 2569");
+    } finally {
+      if (saved === undefined) delete process.env.TZ;
+      else process.env.TZ = saved;
+    }
   });
 
   it("returns anything that is not a real date unchanged", () => {
@@ -75,7 +84,7 @@ describe("formatMeetingDate", () => {
 
 describe("formatMeetingTime", () => {
   it("shows a range, or the start alone when the meeting has no end", () => {
-    expect(formatMeetingTime("19:00", "20:30")).toBe(`19:00${NBSP}-${NBSP}20:30${NBSP}น.`);
+    expect(formatMeetingTime("19:00", "20:30")).toBe(`19:00${NBSP}-${WORD_JOINER}${NBSP}20:30${NBSP}น.`);
     expect(formatMeetingTime("19:00", null)).toBe(`19:00${NBSP}น.`);
   });
 });

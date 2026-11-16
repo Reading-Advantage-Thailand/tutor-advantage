@@ -13,7 +13,7 @@ export interface IconButtonProps {
   /** Renders a next/link when set; otherwise a <button type="button">. */
   href?: string;
   onClick?: MouseEventHandler<HTMLElement>;
-  /** ghost (default, transparent) · tonal (soft grey fill) · onBrand (on hero surfaces). */
+  /** ghost (default, transparent) · tonal (card + clay rim + ledge) · onBrand (paper chip on the hero). */
   variant?: IconButtonVariant;
   /** Red count (number) or dot (true) at the top-right corner. */
   badge?: number | boolean;
@@ -25,12 +25,15 @@ export interface IconButtonProps {
 
 const variantClass: Record<IconButtonVariant, string> = {
   ghost: "text-fg active:bg-press",
-  tonal: "bg-fill-muted text-fg active:bg-press",
-  onBrand: "text-hero-fg active:bg-hero-chip",
+  tonal:
+    "border-[1.5px] border-clay-rim bg-surface text-fg shadow-[0_3px_0_var(--clay-ledge)] transition-[translate,transform,box-shadow] duration-[var(--duration-press)] ease-[var(--ease-out)] active:translate-y-[2px] active:shadow-[0_1px_0_var(--clay-ledge)]",
+  onBrand: "border-[1.5px] border-hero-ring bg-hero-chip text-hero-fg active:bg-hero-ring",
 };
 
 /**
- * 44×44 icon-only button with press feedback (no hover-only affordance).
+ * 44×44 round icon-only button (components.md §2.4), glyph 22 / stroke 2.2,
+ * press feedback (no hover-only affordance). Badge: a number → 20px danger
+ * pill (reading 600 12, tabular); `true` → 10px danger dot.
  * Server-compatible; pass `onClick` only from client components.
  */
 export function IconButton({
@@ -46,7 +49,7 @@ export function IconButton({
 }: IconButtonProps) {
   const classes = cn(
     "pressable relative inline-flex size-11 shrink-0 items-center justify-center rounded-full",
-    "disabled:pointer-events-none disabled:opacity-40",
+    "disabled:pointer-events-none disabled:opacity-45 disabled:shadow-none",
     variantClass[variant],
     className,
   );
@@ -57,8 +60,8 @@ export function IconButton({
         <span
           aria-hidden="true"
           className={cn(
-            "absolute top-1 right-1 flex items-center justify-center rounded-full bg-danger-solid text-[11px] leading-none font-bold text-white ring-2 ring-surface",
-            typeof badge === "number" ? "h-[18px] min-w-[18px] px-1" : "size-2.5",
+            "absolute flex items-center justify-center rounded-full bg-danger-solid text-xs leading-none font-semibold text-on-danger tabular-nums ring-2 ring-surface",
+            typeof badge === "number" ? "-top-0.5 -right-1 h-5 min-w-5 px-1.5" : "top-1.5 right-1.5 size-2.5",
           )}
         >
           {typeof badge === "number" ? (badge > 99 ? "99+" : badge) : null}

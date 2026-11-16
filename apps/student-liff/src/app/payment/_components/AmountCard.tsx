@@ -5,29 +5,36 @@ export interface AmountCardProps {
   label: string;
   /** Satang; null when unknown (shows a dash, never a made-up price). */
   amountSatang: number | null;
-  /** "hero": centred big number (QR screen) · "row": label left, amount right (card form). */
+  /**
+   * "hero": centred label + big number with no card of its own (it sits at
+   * the top of the QR card) · "row": a card with the label left, amount right (card form).
+   */
   layout?: "hero" | "row";
   className?: string;
 }
 
-/** The amount the student is about to pay. */
+/** The amount the student is about to pay: reading face 600, tabular (it is money, not a static hero number). */
 export function AmountCard({ label, amountSatang, layout = "hero", className }: AmountCardProps) {
   const amount = amountSatang === null ? "–" : formatSatang(amountSatang);
-  const base = "rounded-[var(--radius-card)] border border-hairline bg-surface shadow-[var(--shadow-card)]";
 
   if (layout === "row") {
     return (
-      <div className={cn(base, "flex items-center justify-between gap-3 px-4 py-3.5", className)}>
-        <span className="text-[15px] leading-[1.5] text-fg-muted">{label}</span>
-        <span className="text-xl leading-[1.4] font-extrabold text-brand-fg tabular-nums">{amount}</span>
+      <div
+        className={cn(
+          "flex items-center justify-between gap-3 rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface px-5 py-4 shadow-[var(--shadow-card)]",
+          className,
+        )}
+      >
+        <span className="text-[15px] leading-[1.6] text-fg-muted">{label}</span>
+        <span className="text-2xl leading-[1.3] font-semibold text-brand-fg tabular-nums">{amount}</span>
       </div>
     );
   }
 
   return (
-    <div className={cn(base, "px-5 py-4 text-center", className)}>
-      <p className="text-[13px] leading-[1.5] text-fg-muted">{label}</p>
-      <p className="mt-0.5 text-[32px] leading-[1.25] font-extrabold text-brand-fg tabular-nums">{amount}</p>
+    <div className={cn("text-center", className)}>
+      <p className="text-sm leading-[1.6] font-medium text-fg-muted">{label}</p>
+      <p className="text-[34px] leading-[1.25] font-semibold text-fg tabular-nums">{amount}</p>
     </div>
   );
 }

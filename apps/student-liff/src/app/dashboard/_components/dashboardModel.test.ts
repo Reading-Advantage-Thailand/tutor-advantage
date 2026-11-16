@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { DashboardSummary, Enrollment } from "../../../lib/enrollmentStatus";
-import { deriveHomeModel, formatBadgeCount, getGreetingKey, shouldPlayUnreadChime } from "./dashboardModel";
+import { deriveHomeModel, formatBadgeCount, getGreetingKey, getReedyLine, shouldPlayUnreadChime } from "./dashboardModel";
 
 function enrollment(overrides: Partial<Enrollment> = {}): Enrollment {
   return {
@@ -119,5 +119,26 @@ describe("deriveHomeModel", () => {
     const share = enrollment({ id: "s" });
     const model = deriveHomeModel(summary({ recentClasses: [enrollment()], shareableClasses: [share] }));
     expect(model.shareable).toEqual([share]);
+  });
+});
+
+describe("getReedyLine", () => {
+  it("stays silent when the student has no enrollment (the empty card has the one Reedy)", () => {
+    expect(getReedyLine(deriveHomeModel(summary()))).toBeNull();
+  });
+
+  it("says the class is live when the featured class is being taught", () => {
+    const model = deriveHomeModel(summary({ recentClasses: [enrollment({ isLive: true })] }));
+    expect(getReedyLine(model)).toEqual({ kind: "live" });
+  });
+
+  it("names the featured class when it has a next session", () => {
+    const model = deriveHomeModel(summary({ recentClasses: [enrollment({ name: "English" })] }));
+    expect(getReedyLine(model)).toEqual({ kind: "continue", className: "English" });
+  });
+
+  it("falls back to the no-next-lesson line without a session or a featured class", () => {
+    expect(getReedyLine(deriveHomeModel(summary({ recentClasses: [enrollment({ nextSession: "-" })] })))).toEqual({ kind: "noNext" });
+    expect(getReedyLine(deriveHomeModel(summary({ recentClasses: [enrollment({ status: "pending" })] })))).toEqual({ kind: "noNext" });
   });
 });

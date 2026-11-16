@@ -12,12 +12,15 @@ import { postTermsConsent } from "@/components/legal/consent";
 import { Button } from "@/components/ui/button";
 import { studentLegalCopy } from "@/lib/content/legal";
 import { t } from "@/lib/i18n";
+import { keepThaiWords, thaiCopy } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 
 /**
  * Full-screen PDPA consent wall (lazy-loaded by ConsentProvider only for
  * students without TERMS_AND_PRIVACY consent). It replaces the whole app, so
  * the full documents expand inline instead of linking to /privacy and /terms.
+ * Every line that wraps goes through the Thai line-break helper (patterns.md
+ * "Thai text"), so no word is cut at 320 or 390.
  */
 export default function ConsentGate() {
   const router = useRouter();
@@ -52,21 +55,21 @@ export default function ConsentGate() {
       <div className="mx-auto w-full max-w-2xl flex-1 px-4 pt-4 pb-6">
         <div className="flex flex-col items-center text-center">
           <IconTile icon={ShieldCheck} tone="brand" size="lg" shape="circle" className="size-16 [&>svg]:size-8" />
-          <h2 id="consent-gate-title" className="mt-4 text-xl leading-[1.45] font-extrabold text-fg">
-            {t("consentGate.title")}
+          <h2 id="consent-gate-title" className="mt-4 text-xl leading-[1.45] font-extrabold text-balance text-fg">
+            {thaiCopy(t("consentGate.title"))}
           </h2>
-          <p className="mt-2 max-w-[340px] text-[15px] leading-[1.6] text-fg-muted">{t("consentGate.intro")}</p>
+          <p className="mt-2 max-w-[340px] text-[15px] leading-[1.6] text-fg-muted">{thaiCopy(t("consentGate.intro"))}</p>
         </div>
 
         {/* Summary */}
         <div className="mt-6 rounded-[var(--radius-card)] border border-hairline bg-surface p-5 shadow-[var(--shadow-card)]">
           <h3 className="text-[17px] leading-[1.5] font-bold text-fg">{t("consentGate.privacyHeading")}</h3>
-          <p className="mt-2 text-base leading-[1.7] text-fg">{t("consentGate.privacyBody")}</p>
+          <p className="mt-2 text-base leading-[1.7] text-fg">{thaiCopy(t("consentGate.privacyBody"))}</p>
           <h3 className="mt-6 text-[17px] leading-[1.5] font-bold text-fg">{t("consentGate.termsHeading")}</h3>
           <ol className="mt-2 flex list-decimal flex-col gap-2 pl-5 text-base leading-[1.7] text-fg marker:font-semibold marker:text-fg-muted">
-            <li>{t("consentGate.termsItem1")}</li>
-            <li>{t("consentGate.termsItem2")}</li>
-            <li>{t("consentGate.termsItem3")}</li>
+            <li>{thaiCopy(t("consentGate.termsItem1"))}</li>
+            <li>{thaiCopy(t("consentGate.termsItem2"))}</li>
+            <li>{thaiCopy(t("consentGate.termsItem3"))}</li>
           </ol>
         </div>
 
@@ -91,7 +94,7 @@ export default function ConsentGate() {
               sections={studentLegalCopy.terms.sections}
             />
           </div>
-          <p className="px-4 pt-2 text-xs leading-[1.5] text-fg-muted">{t("consentGate.laterNote")}</p>
+          <p className="px-4 pt-2 text-xs leading-[1.5] text-fg-muted">{thaiCopy(t("consentGate.laterNote"))}</p>
         </section>
       </div>
 
@@ -99,8 +102,8 @@ export default function ConsentGate() {
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-3">
           <label
             className={cn(
-              "flex min-h-14 cursor-pointer items-start gap-3 rounded-2xl border p-3 transition-colors select-none active:bg-press",
-              "has-[input:focus-visible]:ring-3 has-[input:focus-visible]:ring-brand-500/40",
+              "flex min-h-14 cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors select-none active:bg-press",
+              "has-[input:focus-visible]:outline-3 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-focus-ring",
               agreed ? "border-brand-soft-border bg-brand-soft" : "border-hairline bg-surface",
             )}
           >
@@ -118,14 +121,14 @@ export default function ConsentGate() {
               aria-hidden="true"
               className={cn(
                 "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md border-2 transition-colors",
-                agreed ? "border-brand-solid bg-brand-solid text-white" : "border-field-border bg-surface",
+                agreed ? "border-brand-solid bg-brand-solid text-on-brand" : "border-field-border bg-surface",
               )}
             >
               {agreed ? <Check className="size-4" strokeWidth={3} /> : null}
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-[15px] leading-[1.5] font-semibold text-fg">{t("consentGate.agreeLabel")}</span>
-              <span className="mt-0.5 block text-[13px] leading-[1.5] text-fg-muted">{t("consentGate.agreeHint")}</span>
+              <span className="block text-[15px] leading-[1.5] font-semibold text-fg">{thaiCopy(t("consentGate.agreeLabel"))}</span>
+              <span className="mt-0.5 block text-[13px] leading-[1.5] text-fg-muted">{thaiCopy(t("consentGate.agreeHint"))}</span>
             </span>
           </label>
 
@@ -165,7 +168,7 @@ function DocumentDisclosure({ icon, tone, label, intro, sections }: DocumentDisc
     <details className="list-row group" data-leading="">
       <summary className="flex min-h-14 cursor-pointer list-none items-center gap-3 px-4 py-2.5 transition-colors select-none active:bg-press focus-visible:outline-offset-[-2px] [&::-webkit-details-marker]:hidden">
         <IconTile icon={icon} tone={tone} />
-        <span className="min-w-0 flex-1 text-[15px] leading-[1.5] font-semibold text-fg">{label}</span>
+        <span className="min-w-0 flex-1 text-[15px] leading-[1.5] font-semibold text-fg">{keepThaiWords(label)}</span>
         <ChevronDown
           aria-hidden="true"
           className="size-5 shrink-0 text-fg-subtle transition-transform group-open:rotate-180"

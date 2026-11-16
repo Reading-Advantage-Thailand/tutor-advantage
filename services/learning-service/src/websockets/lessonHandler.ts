@@ -17,7 +17,7 @@ import {
   lessonSessionService,
   TUTOR_RECONNECT_GRACE_MS,
 } from "../services/LessonSessionService";
-import { evaluateShortAnswer, evaluateWriting, answerLanguageQuestion } from "../services/AIEvaluator";
+import { evaluateShortAnswer, evaluateWriting, answerLanguageQuestion, buildArticleContext, buildWritingArticleContext } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import { getDemoArticle } from "../services/demoLessons";
 import * as dbWriter from "../services/SessionDBWriter";
@@ -1620,7 +1620,7 @@ export const setupLessonSocket = (io: Server) => {
         try {
           if (session.currentPhase === GUIDED_RESPONSE_PHASE || session.currentPhase === GUIDED_WRITING_PHASE) {
             const aiResult = session.currentPhase === GUIDED_WRITING_PHASE
-              ? await evaluateWriting(questionText, answer)
+              ? await evaluateWriting(questionText, answer, buildWritingArticleContext(session.articleData))
               : await evaluateShortAnswer(questionText, expectedText, answer);
             evaluatedAnswer = {
               text: answer,
@@ -1634,10 +1634,7 @@ export const setupLessonSocket = (io: Server) => {
             if (!text) {
               evaluatedAnswer = { text: "", languageAnswer: "" };
             } else {
-              const articleContext = [session.articleData?.title, session.articleData?.passage]
-                .filter(Boolean)
-                .join("\n\n");
-              const ai = await answerLanguageQuestion(text, articleContext);
+              const ai = await answerLanguageQuestion(text, buildArticleContext(session.articleData));
               evaluatedAnswer = { text: answer, languageAnswer: ai.answer };
               socket.emit("language_answer_result", { question: answer, answer: ai.answer });
             }

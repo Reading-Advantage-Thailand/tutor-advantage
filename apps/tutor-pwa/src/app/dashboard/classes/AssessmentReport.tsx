@@ -66,7 +66,7 @@ function StudentResult({ student, cycleId, articleId }: { student: AssessmentStu
   const difference = pre && post ? (post.total || 0) - (pre.total || 0) : null;
 
   return (
-    <article className="min-w-0 rounded-xl border border-hairline bg-surface p-4 shadow-card">
+    <article className="min-w-0 rounded-(--radius-card) border border-clay-rim bg-surface p-4 shadow-card">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="truncate text-[0.9375rem] font-semibold text-fg">{student.displayName || t("tutorClass.students.unnamed")}</h3>
@@ -187,7 +187,7 @@ export default function AssessmentReport({ cycleId }: { cycleId: string }) {
 
   return (
     <>
-      <section aria-labelledby="assessment-title" className="rounded-xl border border-hairline bg-surface p-4 shadow-card md:p-5">
+      <section aria-labelledby="assessment-title" className="rounded-(--radius-card) border border-clay-rim bg-surface p-4 shadow-card md:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
           <div className="min-w-0 flex-1">
             <p className="flex items-center gap-1.5 text-[0.8125rem] font-medium text-brand-fg">

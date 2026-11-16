@@ -13,14 +13,19 @@ export type CefrFilterLevel = (typeof CEFR_FILTER_LEVELS)[number];
  */
 export type CefrTone = "teal" | "brand" | "orange" | "blue" | "purple" | "pink" | "neutral";
 
-/** One distinct, kid-friendly colour per CEFR level (beginner → advanced). */
+/**
+ * One distinct, kid-friendly colour per CEFR band (redesign 2026-11,
+ * components.md §4 LevelChip): A0 teal, A1 plum, A2 sky, B1 orange, B2 berry.
+ * The same mapping colours the class-card band and the tutor week grid.
+ * C1 is not in the spec's band list; it takes jade (the one tone left).
+ */
 export const CEFR_LEVEL_TONES: Readonly<Record<CefrFilterLevel, CefrTone>> = {
   A0: "teal",
-  A1: "brand",
-  A2: "orange",
-  B1: "blue",
-  B2: "purple",
-  C1: "pink",
+  A1: "purple",
+  A2: "blue",
+  B1: "orange",
+  B2: "pink",
+  C1: "brand",
 };
 
 /** Trimmed upper-case level, or null for empty / non-string values (Primary books send null). */
@@ -31,17 +36,18 @@ export function normalizeCefr(level: unknown): string | null {
 }
 
 /**
- * Level → colour (A0 teal, A1 green, A2 orange, B1 blue, B2 purple, C1 pink).
- * Unlisted levels fall back by family (C2 → pink, other A → green, B → blue);
- * null / unknown → neutral. Never throws.
+ * Level → colour (A0 teal, A1 plum, A2 sky, B1 orange, B2 berry, C1 jade).
+ * Unlisted levels fall back by family to the family's first level (other A →
+ * plum like A1, other B → orange like B1, C2 → jade like C1); null / unknown →
+ * neutral. Never throws.
  */
 export function getLevelTone(level: unknown): CefrTone {
   const normalized = normalizeCefr(level);
   if (!normalized) return "neutral";
   if (Object.hasOwn(CEFR_LEVEL_TONES, normalized)) return CEFR_LEVEL_TONES[normalized as CefrFilterLevel];
-  if (/^C\d/.test(normalized)) return "pink";
-  if (/^B\d/.test(normalized)) return "blue";
-  if (/^A\d/.test(normalized)) return "brand";
+  if (/^C\d/.test(normalized)) return "brand";
+  if (/^B\d/.test(normalized)) return "orange";
+  if (/^A\d/.test(normalized)) return "purple";
   return "neutral";
 }
 
@@ -60,7 +66,7 @@ export const levelToneClass: Readonly<Record<CefrTone, { soft: string; solid: st
   blue: { soft: "bg-tile-blue", solid: "bg-icon-blue", text: "text-icon-blue" },
   purple: { soft: "bg-tile-purple", solid: "bg-icon-purple", text: "text-icon-purple" },
   pink: { soft: "bg-tile-pink", solid: "bg-icon-pink", text: "text-icon-pink" },
-  neutral: { soft: "bg-fill-muted", solid: "bg-fg-subtle", text: "text-fg-muted" },
+  neutral: { soft: "bg-tile-neutral", solid: "bg-icon-neutral", text: "text-icon-neutral" },
 };
 
 /**

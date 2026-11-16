@@ -33,22 +33,22 @@ export function NavDrawerImpl({ open, onOpenChange, pathname }: NavDrawerProps) 
           <div className="flex items-center gap-2.5 border-b border-hairline px-4 py-3">
             <BrandMark />
             <div className="min-w-0 flex-1">
-              <Dialog.Title className="truncate text-sm leading-tight font-semibold text-fg">{t("shell.brandName")}</Dialog.Title>
-              <p className="truncate text-xs leading-tight text-fg-muted">{t("shell.brandRole")}</p>
+              <Dialog.Title className="truncate text-[0.9375rem] leading-snug font-semibold text-fg">{t("shell.brandName")}</Dialog.Title>
+              <p className="truncate text-xs leading-normal text-fg-muted">{t("shell.brandRole")}</p>
             </div>
             <Dialog.Close
               aria-label={t("shell.close")}
-              className="flex size-10 shrink-0 items-center justify-center rounded-lg text-fg-muted hover:bg-press hover:text-fg"
+              className="flex size-11 shrink-0 items-center justify-center rounded-(--radius-ctl) text-fg-muted hover:bg-press hover:text-fg"
             >
               <X aria-hidden="true" className="size-5" />
             </Dialog.Close>
           </div>
-          <nav className="flex-1 overflow-y-auto overscroll-contain px-3 py-3">
+          <nav className="flex-1 scroll-py-2 overflow-y-auto overscroll-contain px-3 py-3">
             <NavList pathname={pathname} variant="drawer" onNavigate={() => onOpenChange(false)} />
           </nav>
           <div className="flex flex-col gap-3 border-t border-hairline px-4 py-3">
             <div className="flex items-center gap-3">
-              <UserAvatar name={name} src={user?.picture || undefined} size="sm" />
+              <UserAvatar name={name} seed={user?.userId} src={user?.picture || undefined} size="sm" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-fg">{name}</p>
                 <p className="truncate text-xs text-fg-muted">{user ? roleLabel(user.role) : ""}</p>
@@ -59,7 +59,7 @@ export function NavDrawerImpl({ open, onOpenChange, pathname }: NavDrawerProps) 
             <button
               type="button"
               onClick={() => void logout()}
-              className="flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-danger-fg hover:bg-danger-bg"
+              className="flex h-11 items-center gap-3 rounded-(--radius-ctl) px-3 text-sm font-medium text-danger-fg hover:bg-danger-bg"
             >
               <LogOut aria-hidden="true" className="size-4" />
               {t("shell.logout")}

@@ -13,6 +13,10 @@ export interface FinanceSummary {
   grossVolumeTHB: number;
   nextTierTargetTHB?: number | null;
   estimatedCommissionTHB?: number | null;
+  /** The tutor's own sales this month, in baht. */
+  personalVolumeTHB?: number | null;
+  /** This month's network bonus (payout minus rate x own sales), in baht. */
+  networkBonusTHB?: number | null;
 }
 
 /** Subset of learning `/v1/dashboard/summary` (tutor branch). */
@@ -95,6 +99,31 @@ export function computeRateGoal(finance: FinanceSummary | null | undefined): Rat
   const state: RateGoalState = target <= 0 ? "max" : progress >= 100 ? "reached" : "progress";
   const remaining = Math.max(0, finance ? target - grossVolume : target);
   return { rate, grossVolume, target, progress, remaining, state };
+}
+
+/** Which sentence explains the wallet amount on Home. */
+export type WalletBreakdown =
+  | { kind: "solo" }
+  | { kind: "network"; personalVolume: number; networkBonus: number }
+  | { kind: "unknown" };
+
+const isFiniteNumber = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value);
+
+/**
+ * The wallet sub-line is chosen from data, display only:
+ * - no finance data, or personal volume / network bonus missing → unknown (no sub-line)
+ * - group volume above the tutor's own volume (the downline sold) → network
+ * - otherwise → solo (the rate and the accumulated volume).
+ * Decided on volumes, not on the bonus: a downline-only month has bonus 0.
+ */
+export function computeWalletBreakdown(finance: FinanceSummary | null | undefined): WalletBreakdown {
+  if (!finance) return { kind: "unknown" };
+  const { personalVolumeTHB, networkBonusTHB } = finance;
+  if (!isFiniteNumber(personalVolumeTHB) || !isFiniteNumber(networkBonusTHB)) return { kind: "unknown" };
+  if (finance.grossVolumeTHB > personalVolumeTHB) {
+    return { kind: "network", personalVolume: personalVolumeTHB, networkBonus: networkBonusTHB };
+  }
+  return { kind: "solo" };
 }
 
 /** Class status (lower-cased from the API) → Thai label key + chip tone. */

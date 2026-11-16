@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check, CheckCircle2, Copy, Download } from "lucide-react";
+import { ArrowRight, Check, Copy, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CopyButton, DescriptionList, Money, Notice, Sheet, TextAreaField, TextField } from "@/components/app";
 import { toast } from "@/components/app/toastStore";
@@ -9,6 +9,7 @@ import { api, downloadBlob, errorMessage, newIdempotencyKey } from "@/lib/api";
 import { formatNumber, formatSatang, formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { EMPTY_DATE } from "../../coupons/couponForm";
+import { CodeTicket, FieldRow, ReviewWell, SheetFooter } from "../../classes/components/SheetParts";
 import { ThaiDateField } from "../../coupons/components/ThaiDateField";
 import { buildCodesCsv, buildCodesText, codesCsvFilename, CSV_MIME } from "../discountCodeExport";
 import {
@@ -162,7 +163,11 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
     event.preventDefault();
     const result = validateDiscountCodeForm(values, MESSAGES);
     setErrors(result.errors);
-    if (!result.body) return;
+    if (!result.body) {
+      // Move focus to the first invalid field so its error (aria-describedby) is read.
+      requestAnimationFrame(() => document.querySelector<HTMLElement>('#discount-code-form [aria-invalid="true"]')?.focus());
+      return;
+    }
     setSubmitError(null);
     setReview(result.body);
   };
@@ -178,11 +183,10 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
   };
 
   const selected = values.classOption;
-  const footerRow = "flex flex-col-reverse gap-2 md:flex-row md:justify-end";
   const errorBox = submitError ? (
-    <p role="alert" className="rounded-lg border border-danger-border bg-danger-bg px-3 py-2 text-sm text-danger-fg">
+    <Notice tone="danger" role="alert">
       {submitError}
-    </p>
+    </Notice>
   ) : null;
 
   // One Sheet for all steps (form → review → created) so it never closes/reopens between them.
@@ -210,12 +214,12 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
       value: offlinePaidText(first ? offlinePaidOf(first) : 0),
     };
     footer = (
-      <div className={footerRow}>
+      <SheetFooter>
         <Button variant="outline" onClick={createAnother}>
           {t("discountCodes.createAnother")}
         </Button>
         <Button onClick={() => onOpenChange(false)}>{t("discountCodes.done")}</Button>
-      </div>
+      </SheetFooter>
     );
 
     if (created.length === 1 && first) {
@@ -224,27 +228,25 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
       description = t("discountCodes.createdDescription");
       body = (
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-3 rounded-xl border border-success-border bg-success-bg px-4 py-3 text-success-fg">
-            <CheckCircle2 aria-hidden="true" className="size-5 shrink-0" />
-            <code className="min-w-0 flex-1 truncate font-mono text-lg font-semibold tracking-wide text-fg">{first.code}</code>
-            <CopyButton value={first.code} label={t("discountCodes.copyCode")} />
-          </div>
-          <DescriptionList
-            columns={2}
-            items={[
-              classItem,
-              tutorItem,
-              {
-                label: t("discountCodes.detailUses"),
-                value: t("discountCodes.usesValue", { count: formatNumber(first.maxRedemptions) }),
-              },
-              expiryItem,
-              offlinePaidItem,
-            ]}
-          />
+          <CodeTicket code={first.code} copyLabel={t("discountCodes.copyCode")} />
+          <ReviewWell>
+            <DescriptionList
+              columns={2}
+              items={[
+                classItem,
+                tutorItem,
+                {
+                  label: t("discountCodes.detailUses"),
+                  value: t("discountCodes.usesValue", { count: formatNumber(first.maxRedemptions) }),
+                },
+                expiryItem,
+                offlinePaidItem,
+              ]}
+            />
+          </ReviewWell>
           <div className="flex flex-col gap-1.5">
-            <p className="text-sm font-medium text-fg">{t("discountCodes.instructionLabel")}</p>
-            <div className="flex items-start gap-2 rounded-lg border border-hairline bg-surface-muted px-3 py-2.5">
+            <p className="text-sm font-semibold text-fg">{t("discountCodes.instructionLabel")}</p>
+            <div className="flex items-start gap-2 rounded-(--radius-ctl) border border-clay-rim bg-surface py-2.5 pr-1.5 pl-3">
               <p className="min-w-0 flex-1 text-sm leading-relaxed break-words text-fg">{instruction}</p>
               <CopyButton value={instruction} label={t("discountCodes.copyInstruction")} />
             </div>
@@ -268,22 +270,24 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
       description = t("discountCodes.createdBatchDescription");
       body = (
         <div className="flex flex-col gap-4">
-          <DescriptionList
-            columns={2}
-            items={[
-              classItem,
-              tutorItem,
-              {
-                label: t("discountCodes.detailQuantity"),
-                value: t("discountCodes.quantityValue", { count: formatNumber(created.length) }),
-              },
-              expiryItem,
-              offlinePaidItem,
-            ]}
-          />
+          <ReviewWell>
+            <DescriptionList
+              columns={2}
+              items={[
+                classItem,
+                tutorItem,
+                {
+                  label: t("discountCodes.detailQuantity"),
+                  value: t("discountCodes.quantityValue", { count: formatNumber(created.length) }),
+                },
+                expiryItem,
+                offlinePaidItem,
+              ]}
+            />
+          </ReviewWell>
           <div className="flex flex-col gap-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-medium text-fg">{t("discountCodes.codesListLabel")}</p>
+              <p className="text-sm font-semibold text-fg">{t("discountCodes.codesListLabel")}</p>
               <div className="flex flex-wrap gap-2">
                 <CopyAllButton value={buildCodesText(created.map((code) => code.code))} />
                 <Button size="sm" variant="outline" onClick={downloadCsv}>
@@ -294,10 +298,10 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
             </div>
             <ol
               aria-label={t("discountCodes.codesListLabel")}
-              className="divide-y divide-hairline rounded-xl border border-hairline bg-surface"
+              className="divide-y divide-hairline overflow-hidden rounded-(--radius-card) border border-clay-rim bg-surface"
             >
               {created.map((code, index) => (
-                <li key={code.discountCodeId} className="flex items-center gap-3 px-3 py-2">
+                <li key={code.discountCodeId} className="flex min-h-11 items-center gap-3 py-1.5 pr-1.5 pl-3">
                   <span className="w-8 shrink-0 text-right text-sm text-fg-muted tabular">{index + 1}.</span>
                   <code className="min-w-0 flex-1 truncate font-mono text-sm font-semibold tracking-wide text-fg">{code.code}</code>
                   <CopyButton value={code.code} label={t("discountCodes.copyCodeNumbered", { n: index + 1 })} />
@@ -313,18 +317,18 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
     title = t("discountCodes.reviewTitle");
     description = t("discountCodes.reviewDescription");
     footer = (
-      <div className={footerRow}>
-        <Button type="button" variant="ghost" disabled={saving} onClick={() => setReview(null)}>
+      <SheetFooter>
+        <Button type="button" variant="outline" disabled={saving} onClick={() => setReview(null)}>
           {t("discountCodes.reviewBack")}
         </Button>
         <Button type="button" loading={saving} onClick={() => void save(review)}>
           {t("discountCodes.reviewConfirm")}
         </Button>
-      </div>
+      </SheetFooter>
     );
     body = (
       <div className="flex flex-col gap-4">
-        <div className="rounded-xl border border-hairline bg-surface-muted p-4">
+        <ReviewWell>
           <DescriptionList
             columns={2}
             items={[
@@ -358,7 +362,7 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
               { label: t("discountCodes.noteLabel"), value: review.note ?? "–", wide: true },
             ]}
           />
-        </div>
+        </ReviewWell>
         {warning ? (
           <Notice tone="warning">
             {warning === "free"
@@ -376,14 +380,14 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
     title = t("discountCodes.createTitle");
     description = t("discountCodes.createDescription");
     footer = (
-      <div className={footerRow}>
-        <Button type="button" variant="ghost" disabled={saving} onClick={() => onOpenChange(false)}>
+      <SheetFooter>
+        <Button type="button" variant="outline" disabled={saving} onClick={() => onOpenChange(false)}>
           {t("discountCodes.close")}
         </Button>
         <Button type="submit" form="discount-code-form" loading={saving}>
           {t("discountCodes.createSubmit")}
         </Button>
-      </div>
+      </SheetFooter>
     );
     body = (
       <form id="discount-code-form" noValidate onSubmit={submit} className="flex flex-col gap-5">
@@ -395,30 +399,34 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
           loading={preselecting}
           notice={preselectMissing ? t("discountCodes.classMissing") : (preselectError ?? undefined)}
         />
-        <TextField
-          label={t("discountCodes.offlinePaidLabel")}
-          required
-          inputMode="decimal"
-          autoComplete="off"
-          disabled={saving}
-          value={values.offlinePaid}
-          onChange={(event) => setOfflinePaid(event.target.value)}
-          endAddon={t("discountCodes.offlinePaidUnit")}
-          hint={t("discountCodes.offlinePaidHint")}
-          error={errors.offlinePaid}
-        />
-        <TextField
-          label={t("discountCodes.quantityLabel")}
-          required
-          inputMode="numeric"
-          disabled={saving}
-          value={values.quantity}
-          onChange={(event) => set("quantity", event.target.value.replace(/[^\d]/g, ""))}
-          endAddon={t("discountCodes.quantityUnit")}
-          hint={t("discountCodes.quantityHint")}
-          error={errors.quantity}
-          max={QUANTITY_LIMIT}
-        />
+        <FieldRow>
+          <TextField
+            label={t("discountCodes.offlinePaidLabel")}
+            required
+            numeric
+            inputMode="decimal"
+            autoComplete="off"
+            disabled={saving}
+            value={values.offlinePaid}
+            onChange={(event) => setOfflinePaid(event.target.value)}
+            endAddon={t("discountCodes.offlinePaidUnit")}
+            hint={t("discountCodes.offlinePaidHint")}
+            error={errors.offlinePaid}
+          />
+          <TextField
+            label={t("discountCodes.quantityLabel")}
+            required
+            numeric
+            inputMode="numeric"
+            disabled={saving}
+            value={values.quantity}
+            onChange={(event) => set("quantity", event.target.value.replace(/[^\d]/g, ""))}
+            endAddon={t("discountCodes.quantityUnit")}
+            hint={t("discountCodes.quantityHint")}
+            error={errors.quantity}
+            max={QUANTITY_LIMIT}
+          />
+        </FieldRow>
         <ThaiDateField
           label={t("discountCodes.expiryLabel")}
           value={values.expiry}
@@ -451,6 +459,8 @@ export function DiscountCodeFormSheet({ open, onOpenChange, initialClassId, onCr
         if (!saving) onOpenChange(next);
       }}
       dismissible={!saving}
+      side="right"
+      width={480}
       title={title}
       description={description}
       footer={footer}

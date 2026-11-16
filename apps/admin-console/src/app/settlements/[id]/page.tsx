@@ -2,7 +2,7 @@
 
 import { use, useMemo, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Download, Hourglass, ReceiptText, RefreshCw, Send, ShieldCheck, Undo2, Users, Wallet } from "lucide-react";
+import { CheckCircle2, Download, Hourglass, ReceiptText, RefreshCw, Send, ShieldCheck, TriangleAlert, Undo2, Users, Wallet } from "lucide-react";
 import {
   AdminStatusChip,
   Card,
@@ -10,14 +10,14 @@ import {
   ConfirmDialog,
   DescriptionList,
   EmptyState,
-  ErrorState,
-  Grid,
+  IconTile,
+  IdCell,
+  KpiStrip,
   ListGroup,
   ListRow,
   Notice,
   Page,
   PageHeader,
-  PageSkeleton,
   Section,
   StatCard,
   useAdminSession,
@@ -31,7 +31,10 @@ import { api, ApiError, newIdempotencyKey } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatPeriodMonth, formatSatang, formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { PayoutLinesTable } from "./PayoutLinesTable";
+import { RunSkeleton } from "./RunSkeleton";
+import { LoadError } from "../financeUi";
 import { bankLabel, satangNumber, type PayoutLineRow, type SettlementDetailResponse, type TimelineEntry } from "../types";
 import "@/locales/th/settlements";
 
@@ -111,7 +114,7 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
     if (error instanceof ApiError && error.status === 404) {
       return (
         <Page width="medium">
-          <PageHeader title={t("settlements.notFoundTitle")} backHref="/settlements" backLabel={t("settlements.backToList")} />
+          <PageHeader title={t("settlements.detailTitleFallback")} backHref="/settlements" backLabel={t("settlements.backToList")} />
           <EmptyState
             icon={ReceiptText}
             title={t("settlements.notFoundTitle")}
@@ -128,11 +131,11 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
     return (
       <Page>
         <PageHeader title={t("settlements.detailTitleFallback")} backHref="/settlements" backLabel={t("settlements.backToList")} />
-        <ErrorState onRetry={() => void refetch()} />
+        <LoadError error={error} onRetry={() => void refetch()} />
       </Page>
     );
   }
-  if (isLoading || !data || !run || !plan) return <PageSkeleton variant="table" />;
+  if (isLoading || !data || !run || !plan) return <RunSkeleton />;
 
   const status = run.status;
   const canRefresh =
@@ -143,6 +146,8 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
   const canReject = isChecker && status === "SUBMITTED";
   const canDevApprove = isAdmin && data.devMakerCheckerOverride && ["DRAFT", "SUBMITTED"].includes(status);
   const submitBlocked = isEmpty ? t("settlements.blockedEmpty") : isStale ? t("settlements.blockedStaleSubmit") : null;
+  // One primary per view: "คำนวณใหม่" is the primary unless the draft is fresh (then "ส่งให้ผู้ตรวจสอบ" is).
+  const refreshIsPrimary = !(status === "DRAFT" && !isStale && !isEmpty);
 
   const runFacts = (
     <DescriptionList
@@ -150,8 +155,8 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
       items={[
         { label: t("settlements.factPeriod"), value: periodLabel },
         { label: t("settlements.factLines"), value: t("settlements.peopleCount", { count: formatNumber(run.payoutLineCount) }) },
-        { label: t("settlements.factNet"), value: <Money satang={run.totalNetPayoutSatang} className="font-semibold text-fg" /> },
-        { label: t("settlements.factWht"), value: <Money satang={run.totalWithholdingSatang} /> },
+        { label: t("settlements.factNet"), value: <Money satang={run.totalNetPayoutSatang} fractionDigits={2} className="font-semibold text-fg" /> },
+        { label: t("settlements.factWht"), value: <Money satang={run.totalWithholdingSatang} fractionDigits={2} /> },
       ]}
     />
   );
@@ -192,6 +197,41 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
     await afterMutation();
   };
 
+  const summaryItems = [
+    { label: t("settlements.factPayments"), value: run.paymentCount === null ? "–" : formatNumber(run.paymentCount) },
+    { label: t("settlements.factApprovedAdjustments"), value: formatNumber(run.approvedAdjustmentCount) },
+    ...(["DRAFT", "SUBMITTED"].includes(status)
+      ? [
+          {
+            label: t("settlements.factTransferPlan"),
+            value: t("settlements.transferPlanValue", {
+              count: formatNumber(plan.count),
+              amount: formatMoney(plan.totalNetSatang),
+            }),
+          },
+        ]
+      : []),
+    ...(["DRAFT", "SUBMITTED"].includes(status) && plan.missingRecipientCount > 0
+      ? [
+          {
+            label: t("settlements.factMissingRecipient"),
+            value: (
+              <span className="text-warning-fg">
+                {t("settlements.transferPlanValue", {
+                  count: formatNumber(plan.missingRecipientCount),
+                  amount: formatMoney(plan.missingRecipientTotalSatang),
+                })}
+              </span>
+            ),
+          },
+        ]
+      : []),
+    {
+      label: t("settlements.factChecked"),
+      value: <span className="tabular">{freshness ? formatThaiDateTime(freshness.checkedAt, "short") : "–"}</span>,
+    },
+  ];
+
   return (
     <Page>
       <PageHeader
@@ -199,38 +239,32 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
         backHref="/settlements"
         backLabel={t("settlements.backToList")}
         meta={
-          <span className="inline-flex flex-wrap items-center gap-1.5">
+          <>
             <AdminStatusChip domain="settlementRun" status={status} size="md" />
             {isStale ? <Chip tone="danger">{t("settlements.chipStale")}</Chip> : null}
             {isEmpty && ["DRAFT", "ADJUSTMENT_PENDING"].includes(status) ? (
               <Chip tone="warning">{t("settlements.chipEmpty")}</Chip>
             ) : null}
-          </span>
+            <IdCell id={run.snapshotId} label={t("settlements.runIdLabel")} />
+          </>
         }
         actions={
+          // PageHeader skips the actions row when every button below is null.
           <>
             {canRefresh ? (
-              <Button variant={status === "DRAFT" && !isStale && !isEmpty ? "outline" : "default"} onClick={() => openAction("refresh")}>
+              <Button variant={refreshIsPrimary ? "default" : "outline"} onClick={() => openAction("refresh")}>
                 <RefreshCw aria-hidden="true" />
                 {t("settlements.recalculate")}
               </Button>
             ) : null}
-            {canCancelDraft ? (
-              <Button variant="destructive" onClick={() => openAction("reject")}>
-                <Undo2 aria-hidden="true" />
-                {t("settlements.cancelDraft")}
-              </Button>
-            ) : null}
             {canSubmit ? (
-              <Button disabled={Boolean(submitBlocked)} onClick={() => openAction("submit")}>
+              <Button
+                variant={canRefresh && refreshIsPrimary ? "outline" : "default"}
+                disabled={Boolean(submitBlocked)}
+                onClick={() => openAction("submit")}
+              >
                 <Send aria-hidden="true" />
                 {t("settlements.submitForReview")}
-              </Button>
-            ) : null}
-            {canReject ? (
-              <Button variant="destructive" onClick={() => openAction("reject")}>
-                <Undo2 aria-hidden="true" />
-                {t("settlements.rejectRun")}
               </Button>
             ) : null}
             {canApprove ? (
@@ -295,7 +329,7 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
         </Notice>
       ) : null}
 
-      <Grid cols={4} className="grid-cols-2">
+      <KpiStrip aria-label={t("settlements.kpiTitle")}>
         <StatCard label={t("settlements.statNet")} value={<Money satang={run.totalNetPayoutSatang} />} icon={Wallet} tone="brand" />
         <StatCard label={t("settlements.statGross")} value={<Money satang={run.totalPayoutSatang} />} icon={ReceiptText} tone="blue" />
         <StatCard label={t("settlements.statWht")} value={<Money satang={run.totalWithholdingSatang} />} icon={Hourglass} tone="neutral" />
@@ -310,22 +344,23 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
               : undefined
           }
         />
-      </Grid>
+      </KpiStrip>
 
-      <Section
-        title={t("settlements.linesTitle")}
+      <PayoutLinesTable
+        lines={data.lines}
+        runStatus={status}
+        canSendTransfer={isChecker}
+        loading={isValidating && data.lines.length === 0}
         description={run.pendingTransferCount > 0 ? t("settlements.linesPolling") : undefined}
-        className="min-w-0"
-        action={
-          <span className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" onClick={() => void refetch()} loading={isValidating}>
+        actions={
+          <>
+            <Button variant="outline" onClick={() => void refetch()} loading={isValidating}>
               <RefreshCw aria-hidden="true" />
               {t("settlements.reload")}
             </Button>
             {!isEmpty ? (
               <Button
                 variant="outline"
-                size="sm"
                 loading={exporting}
                 onClick={async () => {
                   setExporting(true);
@@ -346,7 +381,6 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
             {!isEmpty && isAdmin && status === "APPROVED" ? (
               <Button
                 variant="outline"
-                size="sm"
                 loading={exportingPnd54}
                 onClick={async () => {
                   setExportingPnd54(true);
@@ -364,60 +398,55 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
                 {t("settlements.exportPnd54")}
               </Button>
             ) : null}
-          </span>
+          </>
         }
-      >
-        <PayoutLinesTable
-          lines={data.lines}
-          runStatus={status}
-          canSendTransfer={isChecker}
-          loading={isValidating && data.lines.length === 0}
-          onSendTransfer={(line) => {
-            setActionKey(newIdempotencyKey());
-            setTransferLine(line);
-          }}
-          onSyncTransfer={(line) => setSyncLine(line)}
-        />
-      </Section>
+        onSendTransfer={(line) => {
+          setActionKey(newIdempotencyKey());
+          setTransferLine(line);
+        }}
+        onSyncTransfer={(line) => setSyncLine(line)}
+      />
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Section title={t("settlements.timelineTitle")} className="min-w-0">
-          <Timeline entries={run.timeline} />
-        </Section>
-        <Section title={t("settlements.summaryTitle")} className="min-w-0">
-          <Card>
-            <DescriptionList
-              columns={1}
-              items={[
-                { label: t("settlements.factPayments"), value: run.paymentCount === null ? "–" : formatNumber(run.paymentCount) },
-                { label: t("settlements.factApprovedAdjustments"), value: formatNumber(run.approvedAdjustmentCount) },
-                ...(["DRAFT", "SUBMITTED"].includes(status) ? [{
-                  label: t("settlements.factTransferPlan"),
-                  value: t("settlements.transferPlanValue", {
-                    count: formatNumber(plan.count),
-                    amount: formatMoney(plan.totalNetSatang),
-                  }),
-                }] : []),
-                ...(["DRAFT", "SUBMITTED"].includes(status) && plan.missingRecipientCount > 0
-                  ? [
-                      {
-                        label: t("settlements.factMissingRecipient"),
-                        value: t("settlements.transferPlanValue", {
-                          count: formatNumber(plan.missingRecipientCount),
-                          amount: formatMoney(plan.missingRecipientTotalSatang),
-                        }),
-                      },
-                    ]
-                  : []),
-                {
-                  label: t("settlements.factChecked"),
-                  value: freshness ? formatThaiDateTime(freshness.checkedAt, "short") : "–",
-                },
-              ]}
-            />
+      {/* Record facts (main) + the status timeline (right rail from 1280px). */}
+      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <Section title={t("settlements.summaryTitle")} id="run-summary">
+          <Card padding="lg">
+            <DescriptionList columns={2} items={summaryItems} />
           </Card>
         </Section>
+        <Section title={t("settlements.timelineTitle")} id="run-timeline">
+          <Timeline entries={run.timeline} />
+        </Section>
       </div>
+
+      {/* Danger zone: the actions that send the run backwards (both open a confirm with a reason). */}
+      {canCancelDraft || canReject ? (
+        <section aria-labelledby="run-danger-heading" className="card flex flex-col gap-4 border-danger-border p-4 md:flex-row md:items-center md:p-5">
+          <IconTile icon={TriangleAlert} tone="red" size="md" className="max-md:hidden" />
+          <div className="min-w-0 flex-1">
+            <h2 id="run-danger-heading" className="text-base leading-normal font-semibold text-fg">
+              {t("settlements.dangerZoneTitle")}
+            </h2>
+            <p className="mt-0.5 text-sm text-fg-muted">
+              {thaiCopy(canCancelDraft ? t("settlements.confirmCancelBody") : t("settlements.confirmRejectRunBody"))}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 md:shrink-0">
+            {canCancelDraft ? (
+              <Button variant="destructive" onClick={() => openAction("reject")}>
+                <Undo2 aria-hidden="true" />
+                {t("settlements.cancelDraft")}
+              </Button>
+            ) : null}
+            {canReject ? (
+              <Button variant="destructive" onClick={() => openAction("reject")}>
+                <Undo2 aria-hidden="true" />
+                {t("settlements.rejectRun")}
+              </Button>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       {/* ── Run-level confirmations ── */}
       <ConfirmDialog
@@ -490,7 +519,7 @@ export default function SettlementRunPage({ params }: { params: Promise<{ id: st
                 { label: t("settlements.factTutor"), value: transferLine.tutorName ?? transferLine.tutorUserId },
                 {
                   label: t("settlements.factAmount"),
-                  value: <Money satang={transferLine.netPayoutSatang} className="text-base font-semibold text-fg" />,
+                  value: <Money satang={transferLine.netPayoutSatang} fractionDigits={2} className="text-base font-semibold text-fg" />,
                 },
                 {
                   label: t("settlements.factBank"),
@@ -534,6 +563,7 @@ function formatMoney(satang: string | number) {
   return formatSatang(satangNumber(satang));
 }
 
+/** Status timeline (right rail from 1280px): a tone tile for approve/reject, a dot for the other steps, in the API order. */
 function Timeline({ entries }: { entries: TimelineEntry[] }) {
   return (
     <ListGroup aria-label={t("settlements.timelineTitle")}>
@@ -542,20 +572,26 @@ function Timeline({ entries }: { entries: TimelineEntry[] }) {
           key={`${entry.action}-${entry.at}-${index}`}
           leading={
             entry.action === "APPROVE" ? (
-              <CheckCircle2 aria-hidden="true" className="size-5 text-success-fg" />
+              <IconTile icon={CheckCircle2} tone="teal" size="sm" />
             ) : entry.action === "REJECT" ? (
-              <Undo2 aria-hidden="true" className="size-5 text-danger-fg" />
+              <IconTile icon={Undo2} tone="red" size="sm" />
             ) : (
-              <span aria-hidden="true" className="mx-1.5 size-2 rounded-full bg-fg-subtle" />
+              <span aria-hidden="true" className="flex size-8 items-center justify-center">
+                <span className="size-2 rounded-full bg-fg-subtle" />
+              </span>
             )
           }
           title={TIMELINE_LABEL[entry.action] ?? entry.action}
-          subtitle={`${entry.actorName ?? t("settlements.unknownActor")} · ${formatThaiDateTime(entry.at, "short")}`}
+          subtitle={
+            <>
+              {entry.actorName ?? t("settlements.unknownActor")} · <span className="tabular">{formatThaiDateTime(entry.at, "short")}</span>
+            </>
+          }
           meta={
             entry.devOverride || entry.note ? (
               <>
                 {entry.devOverride ? <Chip tone="warning" size="sm">{t("settlements.devOverrideChip")}</Chip> : null}
-                {entry.note ? <span className="text-[0.8125rem] text-fg-muted">“{entry.note}”</span> : null}
+                {entry.note ? <span className="text-[0.8125rem] break-words text-fg-muted">“{entry.note}”</span> : null}
               </>
             ) : undefined
           }

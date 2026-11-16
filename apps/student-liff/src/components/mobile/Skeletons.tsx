@@ -36,12 +36,12 @@ export function CardSkeleton({ media = true, lines = 2, className }: CardSkeleto
     <div
       aria-hidden="true"
       className={cn(
-        "rounded-[var(--radius-card)] border border-hairline bg-surface p-4 shadow-[var(--shadow-card)]",
+        "rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface p-4 shadow-[var(--shadow-card)]",
         className,
       )}
     >
       <div className="flex items-center gap-3">
-        {media ? <Skeleton className="size-10 shrink-0 rounded-xl" /> : null}
+        {media ? <Skeleton className="size-12 shrink-0 rounded-[var(--radius-tile)]" /> : null}
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <Skeleton className="h-4 w-2/3 rounded-full" />
           <Skeleton className="h-3 w-1/3 rounded-full" />

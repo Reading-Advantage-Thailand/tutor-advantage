@@ -1,5 +1,5 @@
 import { t, type I18nKey } from "./i18n";
-import { formatThaiMonthYear, toDate } from "./format";
+import { formatThaiMonthYear, toDate, toDateKey } from "./format";
 
 export type PaymentMethod = "promptpay" | "card";
 /**
@@ -690,7 +690,7 @@ export function getPaymentMethodLabelKey(method: string | null | undefined): I18
 export type MonthGroup<T> = { key: string; label: string; items: T[] };
 
 /**
- * Groups items by local calendar month, keeping their order (the API returns
+ * Groups items by Bangkok calendar month, keeping their order (the API returns
  * newest first). Items with an unreadable date go to a group with an empty label.
  */
 export function groupByMonth<T extends { createdAt: string }>(items: T[]): MonthGroup<T>[] {
@@ -698,9 +698,7 @@ export function groupByMonth<T extends { createdAt: string }>(items: T[]): Month
   const byKey = new Map<string, MonthGroup<T>>();
   for (const item of items) {
     const date = toDate(item.createdAt);
-    const key = date
-      ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
-      : "unknown";
+    const key = date ? toDateKey(date).slice(0, 7) : "unknown";
     let group = byKey.get(key);
     if (!group) {
       group = { key, label: date ? formatThaiMonthYear(date) : "", items: [] };

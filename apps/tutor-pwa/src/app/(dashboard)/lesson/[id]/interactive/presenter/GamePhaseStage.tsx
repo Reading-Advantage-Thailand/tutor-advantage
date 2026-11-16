@@ -3,18 +3,21 @@
 /**
  * Game phases (10 vocabulary game, 14 sentence game): vote board → ready
  * (teacher demo / tutorial options) → teacher demo → tutorial → countdown →
- * live monitor → ranking. Teaching games are code-split (teachingGameRegistry).
+ * live monitor → ranking. Teaching games are code-split (teachingGameRegistry)
+ * and keep their own art; this file only styles the presenter panels around
+ * them (stage header, vote board, options, live monitor, podium + ranking).
  */
 import React from "react";
-import { Check, Gamepad2, GraduationCap, Lock, Scale, Timer, Trophy, Vote, WifiOff } from "lucide-react";
-import { Chip, UserAvatar } from "@/components/app";
+import { Check, Gamepad2, GraduationCap, Lock, Scale, Timer, Trophy, Vote, WifiOff, X } from "lucide-react";
+import { Chip, IconTile, UserAvatar } from "@/components/app";
 import { TeachingGameStage, isTeachingGameId } from "@/components/lesson/teachingGameRegistry";
 import { buildLessonSentences, buildLessonVocabulary } from "@/lib/games/lessonContent";
 import type { GamePhaseState, Participant } from "@/lib/lesson-types";
 import { getGameById, getGamesByCategory, getGameTutorial } from "@/lib/liveLessonGames";
 import { t } from "@/lib/i18n";
+import { thaiCopy, thaiLabel } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
-import { StageEyebrow, StagePanel } from "./primitives";
+import { PodiumStage, StageEyebrow, StageHeading, StagePanel, type PodiumEntry } from "./primitives";
 
 type Category = "vocabulary" | "sentence";
 
@@ -164,6 +167,11 @@ const STATUS_KEYS: Record<string, Parameters<typeof t>[0]> = {
   results: "lesson.live.gameStatusResults",
 };
 
+/** Ready-screen option row: the whole row toggles its checkbox (≥ 64 tall). */
+const readyOptionClass =
+  "flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-(--radius-ctl) border border-clay-rim bg-surface px-4 py-3 transition-colors duration-(--duration-fast) hover:bg-row-hover has-[:checked]:border-brand-soft-border has-[:checked]:bg-brand-soft has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus-ring has-[:focus-visible]:outline-solid";
+const readyCheckboxClass = "size-6 shrink-0 accent-(--brand-solid) focus-visible:outline-none";
+
 export function GamePhaseStage({
   category,
   currentPhase,
@@ -215,20 +223,28 @@ export function GamePhaseStage({
         : t(STATUS_KEYS[status] ?? "lesson.live.gameStatusVoting")
     : t("lesson.live.gameStatusIdle");
 
+  // "เกมที่เลือก: <name>": beside the heading from 640px up, on its own line
+  // under it on a phone (the heading row cannot hold both there). The demo and
+  // tutorial status lines do not name the game, so it must show at every width.
+  const selectedGameChip = (className: string) =>
+    selectedGame ? (
+      <Chip tone="brand" icon={Check} className={className}>
+        {t("lesson.interactive.gameSelectedFallback")}: {selectedGame.title}
+      </Chip>
+    ) : null;
+
   const header = (
-    <div className={cn("flex flex-wrap items-center justify-between gap-3", isFullscreen && "hidden")}>
-      <div className="min-w-0">
-        <StageEyebrow icon={Gamepad2}>
-          {category === "vocabulary" ? t("lesson.live.vocabularyGame") : t("lesson.live.sentenceGame")}
-        </StageEyebrow>
-        <p className="mt-0.5 text-xl font-semibold text-fg xl:text-2xl">{statusLine}</p>
-      </div>
-      {selectedGame ? (
-        <Chip tone="brand" icon={Check}>
-          {t("lesson.interactive.gameSelectedFallback")}: {selectedGame.title}
-        </Chip>
-      ) : null}
-    </div>
+    <>
+      <StageHeading
+        icon={Gamepad2}
+        tone="purple"
+        eyebrow={category === "vocabulary" ? t("lesson.live.vocabularyGame") : t("lesson.live.sentenceGame")}
+        title={statusLine}
+        aside={selectedGameChip("max-sm:hidden")}
+        className={cn(isFullscreen && "hidden")}
+      />
+      {isFullscreen ? null : selectedGameChip("-mt-2 self-start sm:hidden")}
+    </>
   );
 
   const teachingStage = (mode: "teacher" | "tutorial") =>
@@ -265,22 +281,22 @@ export function GamePhaseStage({
   } else if (status === "ready") {
     body = (
       <div className={isFullscreen ? "flex flex-1 items-center justify-center px-6 pb-32" : ""}>
-        <StagePanel as="div" data-tour-target={tour("game-ready-panel")} className={cn("p-5", isFullscreen && "w-full max-w-5xl")}>
-          <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+        <StagePanel as="div" data-tour-target={tour("game-ready-panel")} className={cn("p-5 xl:p-6", isFullscreen && "w-full max-w-5xl")}>
+          <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between xl:gap-8">
             <div className="max-w-xl">
               <StageEyebrow icon={Vote}>{t("lesson.live.voteClosed")}</StageEyebrow>
-              <h3 className="mt-1 text-2xl font-semibold text-fg">
+              <h3 className="mt-1 text-2xl leading-[1.35] font-semibold text-balance-th text-fg xl:text-[1.75rem]">
                 {t("lesson.live.prepareBeforeGame")} {selectedGame?.title}
               </h3>
-              <p className="mt-2 text-base text-fg-muted">{t("lesson.live.prepareBeforeGameHelp")}</p>
+              <p className="mt-2 text-base leading-[1.6] text-fg-muted xl:text-lg xl:leading-[1.6]">{t("lesson.live.prepareBeforeGameHelp")}</p>
             </div>
-            <div className="grid gap-3 xl:min-w-[360px]">
-              <label className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-hairline bg-surface-muted p-4">
-                <span className="flex items-center gap-3">
-                  <GraduationCap aria-hidden="true" className="size-6 text-icon-amber" />
-                  <span>
+            <div className="grid gap-3 xl:min-w-[380px]">
+              <label className={readyOptionClass}>
+                <span className="flex min-w-0 items-center gap-3">
+                  <IconTile icon={GraduationCap} tone="amber" />
+                  <span className="min-w-0">
                     <span className="block text-base font-semibold text-fg">{t("lesson.live.teacherDemoOption")}</span>
-                    <span className="block text-sm text-fg-muted">{t("lesson.live.teacherDemoOptionHelp")}</span>
+                    <span className="block text-sm leading-[1.6] text-fg-muted">{t("lesson.live.teacherDemoOptionHelp")}</span>
                   </span>
                 </span>
                 <input
@@ -288,15 +304,15 @@ export function GamePhaseStage({
                   type="checkbox"
                   checked={teacherDemoEnabled}
                   onChange={(event) => onTeacherDemoEnabledChange(event.target.checked)}
-                  className="size-5 shrink-0 accent-brand-600"
+                  className={readyCheckboxClass}
                 />
               </label>
-              <label className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-hairline bg-surface-muted p-4">
-                <span className="flex items-center gap-3">
-                  <Gamepad2 aria-hidden="true" className="size-6 text-icon-blue" />
-                  <span>
+              <label className={readyOptionClass}>
+                <span className="flex min-w-0 items-center gap-3">
+                  <IconTile icon={Gamepad2} tone="blue" />
+                  <span className="min-w-0">
                     <span className="block text-base font-semibold text-fg">{t("lesson.live.tutorialOption")}</span>
-                    <span className="block text-sm text-fg-muted">{t("lesson.live.tutorialOptionHelp")}</span>
+                    <span className="block text-sm leading-[1.6] text-fg-muted">{t("lesson.live.tutorialOptionHelp")}</span>
                   </span>
                 </span>
                 <input
@@ -304,7 +320,7 @@ export function GamePhaseStage({
                   type="checkbox"
                   checked={tutorialEnabled}
                   onChange={(event) => onTutorialEnabledChange(event.target.checked)}
-                  className="size-5 shrink-0 accent-brand-600"
+                  className={readyCheckboxClass}
                 />
               </label>
             </div>
@@ -321,12 +337,12 @@ export function GamePhaseStage({
               <Chip tone="warning" icon={GraduationCap}>
                 {t("lesson.live.teacherDemoBadge")}
               </Chip>
-              <h3 className="mt-3 text-2xl font-semibold text-fg">{t("lesson.live.teacherDemoTitle")}</h3>
-              <p className="mt-2 text-base text-fg-muted">{t("lesson.live.teacherDemoHelp")}</p>
+              <h3 className="mt-3 text-2xl leading-[1.35] font-semibold text-fg xl:text-[1.75rem]">{t("lesson.live.teacherDemoTitle")}</h3>
+              <p className="mt-2 text-base leading-[1.6] text-fg-muted xl:text-lg xl:leading-[1.6]">{t("lesson.live.teacherDemoHelp")}</p>
             </div>
-            <div className="rounded-xl border border-hairline bg-surface-muted p-5">
+            <div className="rounded-(--radius-card) bg-surface-muted p-5">
               <p className="text-sm text-fg-muted">{t("lesson.live.example")}</p>
-              <p className="mt-1 text-2xl font-semibold text-fg">{content.demoPrompt}</p>
+              <p className="mt-1 font-heading text-[1.75rem] leading-[1.3] font-semibold text-fg xl:text-[2.25rem]">{content.demoPrompt}</p>
               <div className="mt-4 grid gap-2 sm:grid-cols-3">
                 {content.demoAnswers.map((answer) => {
                   const selected = teacherDemoAnswer === answer;
@@ -337,21 +353,28 @@ export function GamePhaseStage({
                       type="button"
                       onClick={() => onTeacherDemoAnswer(answer)}
                       className={cn(
-                        "rounded-lg border px-4 py-3 text-left text-base font-semibold transition-colors",
+                        "flex min-h-14 items-center gap-2 rounded-(--radius-ctl) border px-4 py-3 text-left text-base font-semibold shadow-tap transition-colors xl:text-lg",
                         selected
                           ? correct
                             ? "border-success-border bg-success-bg text-success-fg"
-                            : "border-danger-border bg-danger-bg text-danger-fg"
-                          : "border-hairline bg-surface text-fg hover:bg-press",
+                            : "border-hairline-strong bg-surface-muted text-fg"
+                          : "border-clay-rim bg-surface text-fg hover:bg-row-hover",
                       )}
                     >
-                      {answer}
+                      {selected ? (
+                        correct ? (
+                          <Check aria-hidden="true" className="size-5 shrink-0" strokeWidth={2.6} />
+                        ) : (
+                          <X aria-hidden="true" className="size-5 shrink-0" />
+                        )
+                      ) : null}
+                      <span className="min-w-0 flex-1">{answer}</span>
                     </button>
                   );
                 })}
               </div>
               {teacherDemoAnswer ? (
-                <p className={cn("mt-4 text-base font-semibold", teacherDemoAnswer === content.demoCorrectAnswer ? "text-success-fg" : "text-danger-fg")}>
+                <p className={cn("mt-4 text-base font-semibold xl:text-lg", teacherDemoAnswer === content.demoCorrectAnswer ? "text-success-fg" : "text-fg-muted")}>
                   {teacherDemoAnswer === content.demoCorrectAnswer ? t("lesson.live.demoCorrect") : t("lesson.live.demoTryAgain")}
                 </p>
               ) : null}
@@ -367,14 +390,14 @@ export function GamePhaseStage({
         {teachingStage("tutorial") ?? (
           <StagePanel as="div" className="p-6">
             <StageEyebrow icon={Gamepad2}>{t("lesson.live.tutorialBadge")}</StageEyebrow>
-            <h3 className="mt-1 text-2xl font-semibold text-fg">
+            <h3 className="mt-1 text-2xl leading-[1.35] font-semibold text-fg xl:text-[1.75rem]">
               {t("lesson.live.howToPlay")} {selectedGame?.title}
             </h3>
             <ol className="mt-5 grid gap-3 lg:grid-cols-3">
               {tutorialSteps.map((step, index) => (
-                <li key={step} className="rounded-xl border border-hairline bg-surface-muted p-4">
-                  <span className="flex size-9 items-center justify-center rounded-lg bg-brand-solid text-lg font-bold text-on-brand">{index + 1}</span>
-                  <p className="mt-3 text-base font-medium leading-relaxed text-fg">{step}</p>
+                <li key={step} className="rounded-(--radius-card) bg-surface-muted p-4">
+                  <span className="flex size-11 items-center justify-center rounded-(--radius-ctl) bg-brand-soft font-heading text-xl font-semibold text-brand-soft-fg">{index + 1}</span>
+                  <p className="mt-3 text-base leading-[1.6] font-medium text-fg xl:text-lg">{step}</p>
                 </li>
               ))}
             </ol>
@@ -399,9 +422,9 @@ export function GamePhaseStage({
   } else if (!status) {
     body = (
       <StagePanel as="div" className="flex flex-col items-center gap-3 px-6 py-12 text-center">
-        <Vote aria-hidden="true" className="size-10 text-brand-fg" />
-        <p className="text-xl font-semibold text-fg">{t("lesson.live.gameIdleTitle")}</p>
-        <p className="max-w-lg text-base text-fg-muted">{t("lesson.live.gameIdleHelp")}</p>
+        <IconTile icon={Vote} tone="purple" size="xl" />
+        <p className="text-2xl leading-[1.35] font-semibold text-fg">{thaiLabel(t("lesson.live.gameIdleTitle"))}</p>
+        <p className="max-w-lg text-base leading-[1.6] text-fg-muted xl:text-lg xl:leading-[1.6]">{thaiCopy(t("lesson.live.gameIdleHelp"))}</p>
       </StagePanel>
     );
   }
@@ -453,16 +476,16 @@ function GameVoteBoard({
   return (
     <div data-tour-target={tourTarget} className={cn("grid min-h-0 gap-4 md:grid-cols-[minmax(260px,340px)_minmax(0,1fr)]", isFullscreen && "flex-1")}>
       <StagePanel as="div" className="relative flex min-h-[340px] flex-col overflow-hidden">
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-fill-muted md:aspect-auto md:min-h-0 md:flex-1">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-muted md:aspect-auto md:min-h-0 md:flex-1">
           {leadingGame ? <GameCover src={leadingGame.cover} alt={leadingGame.title} className="absolute inset-0 size-full" /> : null}
           {leaderLocked ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/55 text-white">
-              <Lock aria-hidden="true" className="size-8" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-surface/90 text-fg">
+              <Lock aria-hidden="true" className="size-8 text-fg-muted" />
               <p className="text-lg font-semibold">{t("lesson.interactive.comingSoon")}</p>
             </div>
           ) : null}
-          <span className="absolute left-3 top-3">
-            <Chip tone="brand" icon={isTie ? Scale : noVotes ? Vote : Trophy} className="bg-surface">
+          <span className="absolute top-3 left-3">
+            <Chip tone="brand" icon={isTie ? Scale : noVotes ? Vote : Trophy} className="bg-surface shadow-card">
               {leaderLocked
                 ? t("lesson.interactive.locked")
                 : noVotes
@@ -473,14 +496,14 @@ function GameVoteBoard({
             </Chip>
           </span>
         </div>
-        <div className="flex flex-col gap-2 p-4">
-          <h3 className="text-2xl font-semibold leading-tight text-fg">{leadingGame?.title || t("lesson.interactive.waitingVotes")}</h3>
-          <p className="line-clamp-2 text-sm text-fg-muted">
+        <div className="flex flex-col gap-2 border-t border-hairline p-4 xl:p-5">
+          <h3 className="text-2xl leading-[1.35] font-semibold text-fg xl:text-[1.75rem]">{leadingGame?.title || t("lesson.interactive.waitingVotes")}</h3>
+          <p className="line-clamp-2 text-sm leading-[1.6] text-fg-muted">
             {leaderLocked ? t("lesson.interactive.gamesComingSoon") : leadingGame?.description || t("lesson.interactive.gameVoteStageHelp")}
           </p>
           {leaderHint ? <p className="text-sm font-medium text-fg">{leaderHint}</p> : null}
           <div className="flex items-end justify-between gap-3 pt-1">
-            <p className="text-5xl font-bold tabular-nums leading-none text-fg">
+            <p className="text-5xl leading-none font-semibold text-fg tabular-nums">
               {leadingGame?.count || 0}
               <span className="ml-1.5 text-base font-medium text-fg-muted">{t("lesson.interactive.votes")}</span>
             </p>
@@ -491,16 +514,16 @@ function GameVoteBoard({
         </div>
       </StagePanel>
 
-      <StagePanel as="div" className="flex min-h-0 flex-col p-4">
-        <div className="mb-3 flex items-center justify-between gap-3">
+      <StagePanel as="div" className="flex min-h-0 flex-col p-4 xl:p-5">
+        <div className="mb-4 flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-lg font-semibold text-fg">{t("lesson.interactive.gameVoteStageTitle")}</p>
-            <p className="text-sm text-fg-muted">
+            <p className="text-lg font-semibold text-fg xl:text-xl">{t("lesson.interactive.gameVoteStageTitle")}</p>
+            <p className="text-sm leading-[1.6] text-fg-muted xl:text-base xl:leading-[1.6]">
               {enabledCount ? t("lesson.live.voteBoardHelp") : t("lesson.interactive.gamesComingSoon")}
             </p>
           </div>
-          <p className="shrink-0 text-right text-sm text-fg-muted">
-            <span className="block text-3xl font-bold tabular-nums text-fg">
+          <p className="shrink-0 rounded-(--radius-ctl) bg-surface-muted px-4 py-2 text-right text-sm text-fg-muted">
+            <span className="block text-3xl leading-tight font-semibold text-fg tabular-nums">
               {totalVotes}
               <span className="text-lg font-medium text-fg-muted">/{participantsCount}</span>
             </span>
@@ -511,24 +534,27 @@ function GameVoteBoard({
           {others.map((game) => {
             const pct = participantsCount ? Math.round((game.count / participantsCount) * 100) : 0;
             return (
-              <li key={game.id} className="flex items-center gap-3 rounded-lg border border-hairline bg-surface p-2">
-                <span className="relative h-14 w-11 shrink-0 overflow-hidden rounded-md">
+              <li key={game.id} className="flex items-center gap-3 rounded-(--radius-ctl) border border-clay-rim bg-surface p-2.5">
+                <span className="relative h-14 w-11 shrink-0 overflow-hidden rounded-(--radius-ctl-sm)">
                   <GameCover src={game.cover} alt="" className="size-full" />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-baseline justify-between gap-2">
-                    <span className="truncate text-base font-medium text-fg">{game.title}</span>
-                    <span className="shrink-0 text-base font-semibold tabular-nums text-fg">{game.count}</span>
+                    <span className="truncate text-base font-semibold text-fg xl:text-lg">{game.title}</span>
+                    <span className="shrink-0 text-lg font-semibold text-fg tabular-nums">{game.count}</span>
                   </span>
-                  <span className="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-fill-muted">
-                    <span className="block h-full rounded-full bg-brand-vivid transition-[width] duration-500" style={{ width: `${pct}%` }} />
+                  <span className="mt-1.5 block h-2 overflow-hidden rounded-full bg-track">
+                    <span
+                      className="block h-full w-full origin-left rounded-full bg-brand-vivid transition-transform duration-500 ease-(--ease-out)"
+                      style={{ transform: `scaleX(${pct / 100})` }}
+                    />
                   </span>
                 </span>
               </li>
             );
           })}
           {lockedCount > 0 ? (
-            <li className="flex items-center gap-2 rounded-lg border border-dashed border-hairline-strong px-3 py-2 text-sm text-fg-muted">
+            <li className="flex min-h-11 items-center gap-2 rounded-(--radius-ctl) bg-surface-muted px-3 py-2 text-sm text-fg-muted">
               <Lock aria-hidden="true" className="size-4 shrink-0" />
               +{lockedCount} {t("lesson.live.moreGamesSuffix")}
             </li>
@@ -600,17 +626,23 @@ function GameRanking({
   const isResults = status === "results";
   // Nobody scored: nothing to celebrate, and no order to put on a podium.
   const podium = topScore > 0 ? [rows[1], rows[0], rows[2]].filter((row) => row?.isSubmitted && row.score > 0) : [];
+  const podiumEntries: PodiumEntry[] = ([1, 2, 3] as const).flatMap((place) => {
+    const row = rows[place - 1];
+    return row?.isSubmitted && row.score > 0
+      ? [{ key: row.studentId, name: row.name, pictureUrl: row.pictureUrl, score: row.score, place, rank: row.rank }]
+      : [];
+  });
   const useGrid = rows.length >= ROSTER_GRID_FROM;
   const roundIsOn = elapsedMs !== null && elapsedMs < roundMs;
 
   return (
-    <StagePanel as="div" data-tour-target={tourTarget} className={cn("flex min-h-0 flex-col p-5", isFullscreen && "flex-1")}>
+    <StagePanel as="div" data-tour-target={tourTarget} className={cn("flex min-h-0 flex-col p-5 xl:p-6", isFullscreen && "flex-1")}>
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <StageEyebrow icon={isResults ? Trophy : Gamepad2}>
             {isResults ? t("lesson.interactive.gameRankingTitle") : t("lesson.live.liveMonitor")}
           </StageEyebrow>
-          <h3 className="mt-0.5 text-2xl font-semibold text-fg">
+          <h3 className="mt-0.5 text-2xl leading-[1.35] font-semibold text-fg xl:text-[1.75rem]">
             {isResults ? t("lesson.interactive.gameRankingHeading") : `${t("lesson.live.studentsPlaying")} ${selectedGameTitle || ""}`}
           </h3>
           <p className="mt-0.5 text-base text-fg-muted">
@@ -619,9 +651,9 @@ function GameRanking({
           </p>
         </div>
         {status === "countdown" ? (
-          <div role="timer" aria-live="polite" className="flex items-center gap-3 rounded-xl border border-warning-border bg-warning-bg px-5 py-3">
-            <Timer aria-hidden="true" className="size-7 text-warning-fg" />
-            <p className="text-4xl font-bold tabular-nums text-warning-fg">{countdownLeft}</p>
+          <div role="timer" aria-live="polite" className="flex items-center gap-3 rounded-(--radius-ctl) border border-info-border bg-info-bg px-5 py-3">
+            <Timer aria-hidden="true" className="size-7 text-info-fg" />
+            <p className="text-[2.5rem] leading-none font-semibold text-info-fg tabular-nums">{countdownLeft}</p>
           </div>
         ) : (
           <div className="flex flex-wrap items-stretch gap-3">
@@ -629,11 +661,11 @@ function GameRanking({
               <div
                 role="timer"
                 className={cn(
-                  "rounded-xl border px-5 py-3 text-center",
-                  elapsedMs > GAME_OVERTIME_MS ? "border-warning-border bg-warning-bg" : "border-hairline bg-surface-muted",
+                  "rounded-(--radius-ctl) border px-5 py-3 text-center",
+                  elapsedMs > GAME_OVERTIME_MS ? "border-warning-border bg-warning-bg" : "border-transparent bg-surface-muted",
                 )}
               >
-                <p className={cn("text-3xl font-bold tabular-nums", elapsedMs > GAME_OVERTIME_MS ? "text-warning-fg" : "text-fg")}>
+                <p className={cn("text-3xl leading-tight font-semibold tabular-nums", elapsedMs > GAME_OVERTIME_MS ? "text-warning-fg" : "text-fg")}>
                   {formatElapsed(roundIsOn ? roundMs - elapsedMs + 999 : elapsedMs)}
                 </p>
                 <p className={cn("text-sm", elapsedMs > GAME_OVERTIME_MS ? "font-medium text-warning-fg" : "text-fg-muted")}>
@@ -645,8 +677,8 @@ function GameRanking({
                 </p>
               </div>
             ) : null}
-            <div className="rounded-xl border border-hairline bg-surface-muted px-5 py-3 text-center">
-              <p className="text-3xl font-bold tabular-nums text-fg">{results.length > 0 ? topScore : "-"}</p>
+            <div className="rounded-(--radius-ctl) bg-surface-muted px-5 py-3 text-center">
+              <p className="text-3xl leading-tight font-semibold text-fg tabular-nums">{results.length > 0 ? topScore : "-"}</p>
               <p className="text-sm text-fg-muted">{t("lesson.interactive.topScore")}</p>
             </div>
           </div>
@@ -655,26 +687,8 @@ function GameRanking({
 
       <div className={cn("grid min-h-0 flex-1 gap-4", podium.length > 0 ? "xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]" : "")}>
         {podium.length > 0 ? (
-          <div className="grid grid-cols-3 items-end gap-3 rounded-xl bg-surface-muted p-4">
-            {[2, 1, 3].map((place) => {
-              const row = rows[place - 1];
-              if (!row?.isSubmitted || row.score <= 0) return <div key={place} />;
-              return (
-                <div key={row.studentId} className="game-rank-card flex min-w-0 flex-col items-center gap-1.5">
-                  <UserAvatar name={row.name} src={row.pictureUrl} size="lg" className={place === 1 ? "ring-4 ring-brand-soft-border" : undefined} />
-                  <p className="max-w-full truncate text-base font-semibold text-fg">{row.name}</p>
-                  <p className={cn("font-bold tabular-nums", place === 1 ? "text-4xl text-brand-fg" : "text-2xl text-fg")}>{row.score}</p>
-                  <div
-                    className={cn(
-                      "flex w-full items-start justify-center rounded-t-lg pt-1.5 text-2xl font-bold",
-                      place === 1 ? "h-24 bg-brand-solid text-on-brand" : place === 2 ? "h-16 bg-surface text-fg-muted" : "h-12 bg-surface text-fg-muted",
-                    )}
-                  >
-                    {row.rank ?? place}
-                  </div>
-                </div>
-              );
-            })}
+          <div className="self-start rounded-(--radius-card) bg-surface-muted px-4 pt-5">
+            <PodiumStage entries={podiumEntries} scoreUnit={t("lesson.interactive.scoreUnit")} animated compact />
           </div>
         ) : null}
 
@@ -692,26 +706,32 @@ function GameRanking({
               <li
                 key={row.studentId}
                 className={cn(
-                  "game-rank-card flex items-center gap-3 rounded-lg border px-3",
+                  "game-rank-card flex items-center gap-3 rounded-(--radius-ctl) border px-3",
                   useGrid ? "py-1.5" : "py-2.5",
-                  row.rank === 1 ? "border-brand-soft-border bg-brand-soft" : "border-hairline bg-surface",
+                  row.rank === 1 ? "border-brand-soft-border bg-brand-soft" : "border-clay-rim bg-surface",
                 )}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                <span className="w-6 shrink-0 text-center text-base font-semibold tabular-nums text-fg-subtle">{row.rank ?? "–"}</span>
-                <UserAvatar name={row.name} src={row.pictureUrl} size="md" />
+                <span className="w-6 shrink-0 text-center text-base font-semibold text-fg-muted tabular-nums">{row.rank ?? "–"}</span>
+                <UserAvatar name={row.name} src={row.pictureUrl} toneKey={row.studentId} size="md" />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-3">
-                    <p className="truncate text-lg font-semibold text-fg">{row.name}</p>
-                    <p className="text-2xl font-bold tabular-nums text-fg">{row.isSubmitted ? row.score : ""}</p>
+                    <p className="truncate text-lg font-semibold text-fg" title={row.name}>{row.name}</p>
+                    <p className="text-2xl font-semibold text-fg tabular-nums">{row.isSubmitted ? row.score : ""}</p>
                   </div>
                   {row.isSubmitted ? (
                     <>
-                      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-fill-muted">
-                        <div className="h-full rounded-full bg-brand-vivid transition-[width] duration-500" style={{ width: `${pct}%` }} />
+                      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-track">
+                        <div
+                          className="h-full w-full origin-left rounded-full bg-brand-vivid transition-transform duration-500 ease-(--ease-out)"
+                          style={{ transform: `scaleX(${pct / 100})` }}
+                        />
                       </div>
                       <p className="mt-1 text-[0.8125rem] text-fg-muted">
-                        <span className="font-medium text-success-fg">{t("lesson.live.submittedCheck")}</span>
+                        <span className="inline-flex items-center gap-1 font-medium text-success-fg">
+                          <Check aria-hidden="true" className="size-3.5" strokeWidth={2.6} />
+                          {t("lesson.live.submittedCheck")}
+                        </span>
                         {typeof row.correct === "number" && (row.correct > 0 || (row.total ?? 0) > 1)
                           ? ` · ${row.correct}/${row.total} ${t("lesson.interactive.correctUnit")}`
                           : ""}
@@ -727,7 +747,7 @@ function GameRanking({
                     </p>
                   ) : (
                     <p className="mt-0.5 inline-flex items-center gap-1.5 text-[0.8125rem] text-fg-muted">
-                      <span aria-hidden="true" className="size-2 rounded-full bg-info-solid motion-safe:animate-pulse" />
+                      <span aria-hidden="true" className="size-2 rounded-full bg-info-solid" />
                       {status === "countdown" ? t("lesson.live.getReady") : t("lesson.live.playingOnPhone")}
                     </p>
                   )}

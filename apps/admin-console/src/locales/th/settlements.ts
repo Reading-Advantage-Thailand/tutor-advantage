@@ -211,6 +211,10 @@ export const settlements = {
   colDocument: "เลขที่เอกสาร",
   colTransfer: "การโอน",
   noName: "ไม่มีชื่อ",
+  // ── Redesign 2026-11 (KPI strip, record header, danger zone) ──
+  kpiTitle: "ตัวเลขสำคัญของรอบจ่ายเงิน",
+  runIdLabel: "รหัสรอบ",
+  dangerZoneTitle: "ตีกลับหรือยกเลิกรอบนี้",
 } as const;
 
 registerMessages("settlements", settlements);

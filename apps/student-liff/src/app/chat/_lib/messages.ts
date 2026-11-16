@@ -5,7 +5,7 @@
  *
  * Relative imports on purpose: the root vitest config maps "@" to tutor-pwa.
  */
-import { formatRelativeDay, toLocalDateKey } from "../../../lib/format";
+import { formatRelativeDay, toDateKey } from "../../../lib/format";
 
 /** A message as GET /chat/conversations/:id/messages returns it. */
 export interface ChatMessage {
@@ -214,13 +214,13 @@ function senderKey(message: ChatMessage): string {
   return message.isOwn ? "__me__" : String(message.senderId);
 }
 
-/** Insert day separators ("วันนี้", "เมื่อวาน", "2 ต.ค.") and mark sender groups. */
+/** Insert day separators ("วันนี้", "เมื่อวาน", "2 ต.ค.") where the Bangkok day changes, and mark sender groups. */
 export function buildMessageItems(messages: readonly DisplayMessage[], now: Date = new Date()): MessageListItem[] {
   const items: MessageListItem[] = [];
   let previousDay = "";
   for (let i = 0; i < messages.length; i++) {
     const message = messages[i];
-    const day = toLocalDateKey(message.time);
+    const day = toDateKey(message.time);
     if (day && day !== previousDay) {
       items.push({ kind: "date", key: `date-${day}`, label: formatRelativeDay(message.time, now) });
       previousDay = day;
@@ -231,7 +231,7 @@ export function buildMessageItems(messages: readonly DisplayMessage[], now: Date
       Boolean(
         a &&
           senderKey(a) === senderKey(b) &&
-          toLocalDateKey(a.time) === toLocalDateKey(b.time) &&
+          toDateKey(a.time) === toDateKey(b.time) &&
           Math.abs(timeOf(b) - timeOf(a)) <= GROUP_GAP_MS,
       );
     items.push({

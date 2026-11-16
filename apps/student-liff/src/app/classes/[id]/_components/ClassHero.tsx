@@ -1,13 +1,18 @@
 import { CheckCircle2, GraduationCap, Users } from "lucide-react";
-import { Chip } from "@/components/mobile";
-import { formatLevelLabel } from "@/lib/cefr";
+import { Chip, UserAvatar } from "@/components/mobile";
+import { formatLevelLabel, type CefrTone } from "@/lib/cefr";
 import { getSeatInfo } from "@/lib/classAccess";
 import { noOrphan } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { ToneHero } from "@/components/mobile/Hero";
 import type { ClassDetail } from "./types";
 
-/** Friendly light-green header card: level + seats (or "studying") chips, class name, book. */
-export function ClassHero({ cls }: { cls: ClassDetail }) {
+/**
+ * Full-bleed hero in the class's CEFR band colour (patterns.md S5.1): status
+ * and level chips, the class name, the tutor line and the book. It continues
+ * the tinted app bar above it; the first card below overlaps its bottom.
+ */
+export function ClassHero({ cls, tone }: { cls: ClassDetail; tone: CefrTone }) {
   const { seatsLeft, urgent } = getSeatInfo(cls.students, cls.maxStudents);
   const hours =
     cls.totalHours && cls.totalHours > 0
@@ -15,19 +20,18 @@ export function ClassHero({ cls }: { cls: ClassDetail }) {
       : null;
 
   return (
-    <section className="relative overflow-hidden rounded-[var(--radius-card)] bg-hero p-5 text-hero-fg shadow-[var(--shadow-card)]">
-      <span aria-hidden="true" className="pointer-events-none absolute -top-12 -right-10 size-36 rounded-full bg-hero-chip" />
-      <div className="relative flex flex-wrap gap-2">
+    <ToneHero tone={tone} aria-labelledby="class-hero-title">
+      <div className="flex flex-wrap gap-2">
         {cls.isEnrolled ? (
-          <Chip tone="onBrand" size="md" icon={CheckCircle2}>
+          <Chip tone="success" size="md" icon={CheckCircle2}>
             {t("classes.detail.studying")}
           </Chip>
         ) : null}
-        <Chip tone="onBrand" size="md" icon={GraduationCap}>
+        <Chip tone="paper" size="md" icon={GraduationCap}>
           {formatLevelLabel(cls.cefr, cls.level, t("classes.levelShort"))}
         </Chip>
         {cls.isEnrolled ? null : (
-          <Chip tone={urgent ? "warning" : "onBrand"} size="md" icon={Users}>
+          <Chip tone={urgent ? "warning" : "paper"} size="md" icon={Users}>
             {seatsLeft <= 0
               ? t("classes.statusFull")
               : urgent
@@ -36,11 +40,17 @@ export function ClassHero({ cls }: { cls: ClassDetail }) {
           </Chip>
         )}
       </div>
-      <h2 className="relative mt-3 text-[22px] leading-[1.45] font-extrabold text-balance">{noOrphan(cls.name)}</h2>
-      <p className="relative mt-1 text-sm leading-[1.6] text-pretty text-hero-fg-muted">
+      <h2 id="class-hero-title" className="t-title-l mt-3 text-balance">
+        {noOrphan(cls.name)}
+      </h2>
+      <p className="mt-2.5 flex min-w-0 items-center gap-2 text-[15px] leading-[1.6] font-semibold">
+        <UserAvatar src={cls.tutor.pictureUrl} name={cls.tutor.name} size="sm" ring="surface" decorative />
+        <span className="truncate">{`${t("classes.tutorPrefix")} ${cls.tutor.name}`}</span>
+      </p>
+      <p className="mt-1.5 text-sm leading-[1.6] text-pretty text-fg-muted">
         {cls.book}
         {hours ? ` · ${hours}` : ""}
       </p>
-    </section>
+    </ToneHero>
   );
 }

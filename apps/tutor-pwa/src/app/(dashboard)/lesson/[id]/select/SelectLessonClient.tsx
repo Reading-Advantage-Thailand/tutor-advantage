@@ -11,6 +11,7 @@ import { SearchField } from "@/components/app/Fields";
 import { SegmentedControl } from "@/components/app/Segmented";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { thaiLabel } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import { LessonCover } from "../_components/LessonCover";
 import {
@@ -22,6 +23,15 @@ import {
   type PreparationMode,
 } from "../_lib/articles";
 
+/**
+ * Lesson picker (patterns.md T2 list + S12 selectable cards): a sticky
+ * toolbar (search + status filter with counts), then the book's chapters as
+ * selectable cards: a row card on phones (cover 72 + text), a cover-first
+ * card from 640px. Cards are tappable (rim + 2px ledge); the selected one
+ * gets a 2px --brand-fg border, a check badge and a --brand-soft tint, and
+ * the native radios keep keyboard and screen-reader behaviour. The bottom
+ * dock repeats the choice and holds the page's one primary action.
+ */
 export function SelectLessonClient({
   classId,
   articles,
@@ -73,18 +83,19 @@ export function SelectLessonClient({
 
         {articles.length === 0 ? (
           <EmptyState
+            mascot
             icon={BookOpen}
             title={t("lesson.preflow.hub.noArticlesTitle")}
             description={t("lesson.preflow.hub.noArticlesBody")}
             action={
-              <Link href={`/dashboard/classes/${classId}`} className={buttonVariants({ variant: "outline" })}>
+              <Link href={`/dashboard/classes/${classId}`} className={buttonVariants({ variant: "tonal", size: "lg" })}>
                 {t("lesson.preflow.hub.openClass")}
               </Link>
             }
           />
         ) : (
           <>
-            <div className="sticky top-0 z-(--z-sticky) -mx-4 flex flex-col gap-2 bg-app px-4 py-2 md:-mx-6 md:flex-row md:items-center md:px-6">
+            <div className="sticky top-0 z-(--z-sticky) -mx-4 flex flex-col gap-2 border-b border-hairline bg-app px-4 py-2.5 md:-mx-6 md:flex-row md:items-center md:px-6">
               <SearchField
                 value={query}
                 onValueChange={setQuery}
@@ -101,8 +112,9 @@ export function SelectLessonClient({
                 aria-label={t("lesson.preflow.select.filterLabel")}
                 value={status}
                 onValueChange={setStatus}
-                className="md:ml-auto md:w-auto md:shrink-0 md:[&>button]:flex-none"
-                fullWidth
+                className="md:ml-auto"
+                fullWidth="mobile"
+                size="lg"
                 items={[
                   { value: "all", label: t("lesson.preflow.select.filterAll"), count: articles.length },
                   { value: "todo", label: t("lesson.preflow.select.filterTodo"), count: articles.length - doneCount },
@@ -121,7 +133,7 @@ export function SelectLessonClient({
                 title={t("lesson.preflow.select.noMatchTitle")}
                 description={t("lesson.preflow.select.noMatchBody")}
                 action={
-                  <Button type="button" variant="outline" onClick={clearFilters}>
+                  <Button type="button" variant="outline" size="lg" onClick={clearFilters}>
                     {t("lesson.preflow.select.clearFilters")}
                   </Button>
                 }
@@ -129,7 +141,7 @@ export function SelectLessonClient({
             ) : (
               <fieldset className="min-w-0">
                 <legend className="sr-only">{t("lesson.preflow.select.listLabel")}</legend>
-                <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
                   {visible.map((article) => (
                     <li key={article.id} className="min-w-0">
                       <ArticleOption
@@ -157,24 +169,26 @@ export function SelectLessonClient({
                   src={selected.imageUrl}
                   alt=""
                   seed={selected.articleNumber}
-                  className="hidden size-10 shrink-0 rounded-lg sm:block"
-                  iconClassName="size-4"
+                  className="hidden size-11 shrink-0 rounded-(--radius-ctl-sm) sm:block"
+                  iconClassName="size-5"
                 />
                 <div className="min-w-0">
-                  <p className="text-xs text-fg-muted">
+                  <p className="text-xs font-medium text-brand-fg">
                     {t("lesson.preflow.select.selectedLabel")} · {fill(t("lesson.preflow.chapter"), { n: selected.articleNumber })}
                   </p>
-                  <p className="truncate text-sm font-semibold text-fg">{selected.title}</p>
+                  <p lang="en" className="truncate text-[0.9375rem] font-semibold text-fg">
+                    {selected.title}
+                  </p>
                 </div>
               </>
             ) : (
-              <p className="text-sm text-fg-muted">{t("lesson.preflow.select.nothingSelected")}</p>
+              <p className="text-sm text-fg-muted">{thaiLabel(t("lesson.preflow.select.nothingSelected"))}</p>
             )}
           </div>
-          <Link href={cancelHref} className={cn(buttonVariants({ variant: "ghost" }), "hidden shrink-0 sm:inline-flex")}>
+          <Link href={cancelHref} className={cn(buttonVariants({ variant: "ghost", size: "lg" }), "hidden shrink-0 sm:inline-flex")}>
             {t("lesson.select.cancel")}
           </Link>
-          <Button type="submit" size="lg" disabled={!selectedId || starting} loading={starting} className="shrink-0">
+          <Button type="submit" size="xl" disabled={!selectedId || starting} loading={starting} className="shrink-0 sm:min-w-44">
             {starting ? null : <Play aria-hidden="true" />}
             {startLabel}
           </Button>
@@ -202,49 +216,52 @@ function ArticleOption({
     <label
       onDoubleClick={onStart}
       className={cn(
-        "pressable flex h-full cursor-pointer items-start gap-3 rounded-xl border bg-surface p-3 shadow-card transition-colors",
-        "hover:border-hairline-strong has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/40",
-        checked ? "border-brand-solid bg-brand-soft/40 ring-1 ring-brand-solid" : "border-hairline",
+        "group relative flex h-full cursor-pointer items-start gap-3 overflow-hidden rounded-(--radius-card) border p-3 sm:flex-col sm:items-stretch sm:gap-0 sm:p-0",
+        "transition-[background-color,border-color,box-shadow,translate] duration-(--duration-press) ease-(--ease-out) [-webkit-tap-highlight-color:transparent] active:translate-y-px",
+        "has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus-ring has-[:focus-visible]:outline-solid",
+        checked
+          ? "border-brand-fg bg-brand-soft shadow-[inset_0_0_0_1px_var(--brand-fg),0_var(--ledge)_0_var(--brand-soft-border)]"
+          : "border-clay-rim bg-surface shadow-tap hover:bg-row-hover active:shadow-[0_1px_0_var(--clay-ledge)]",
       )}
     >
-      <input
-        type="radio"
-        name="articleId"
-        value={article.id}
-        checked={checked}
-        onChange={onSelect}
-        className="sr-only"
-      />
+      <input type="radio" name="articleId" value={article.id} checked={checked} onChange={onSelect} className="sr-only" />
       <LessonCover
         src={article.imageUrl}
         alt={fill(t("lesson.preflow.coverAlt"), { title: article.title })}
         seed={article.articleNumber}
-        className="size-16 shrink-0 rounded-lg md:size-[72px]"
+        className="size-[72px] shrink-0 rounded-(--radius-ctl) sm:aspect-[16/9] sm:size-auto sm:w-full sm:rounded-none"
+        iconClassName="sm:size-9"
       />
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 pr-8 sm:flex sm:flex-col sm:p-4 sm:pt-3 sm:pr-4">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-xs font-medium text-fg-muted tabular">{chapter}</span>
-          {isNext ? <Chip tone="brand">{t("lesson.preflow.next")}</Chip> : null}
+          <span className="text-[0.8125rem] font-medium text-fg-muted tabular">{chapter}</span>
+          {isNext ? (
+            <Chip tone="brand" size="sm" dot>
+              {t("lesson.preflow.next")}
+            </Chip>
+          ) : null}
           {article.isCompleted ? (
-            <Chip tone="success" icon={Check}>
+            <Chip tone="success" size="sm" icon={Check}>
               {t("lesson.preflow.completed")}
             </Chip>
           ) : null}
-          {article.cefrLevel ? <Chip>{fill(t("lesson.preflow.cefr"), { level: article.cefrLevel })}</Chip> : null}
+          {article.cefrLevel ? <Chip size="sm">{fill(t("lesson.preflow.cefr"), { level: article.cefrLevel })}</Chip> : null}
         </div>
-        <h3 className="mt-1 line-clamp-2 text-[0.9375rem] font-semibold text-fg">{article.title}</h3>
-        {article.summary ? (
-          <p className="mt-0.5 line-clamp-2 text-[0.8125rem] text-fg-muted">{article.summary}</p>
-        ) : null}
+        <h3 lang="en" className="mt-1 line-clamp-2 type-card text-fg">
+          {article.title}
+        </h3>
+        {article.summary ? <p className="mt-0.5 line-clamp-2 text-[0.8125rem] leading-[1.6] text-fg-muted">{article.summary}</p> : null}
       </div>
       <span
         aria-hidden="true"
         className={cn(
-          "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-          checked ? "border-brand-solid bg-brand-solid text-on-brand" : "border-hairline-strong",
+          "absolute top-3 right-3 flex size-7 items-center justify-center rounded-full transition-colors duration-(--duration-fast)",
+          checked
+            ? "bg-brand-solid text-on-brand shadow-[0_0_0_2px_var(--surface-card)]"
+            : "border-2 border-field-border bg-surface sm:shadow-card",
         )}
       >
-        {checked ? <Check className="size-3" strokeWidth={3} /> : null}
+        {checked ? <Check className="size-4" strokeWidth={3} /> : null}
       </span>
     </label>
   );

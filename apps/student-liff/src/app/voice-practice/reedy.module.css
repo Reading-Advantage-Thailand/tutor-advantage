@@ -1,15 +1,15 @@
 .scene{position:relative;width:280px;height:257px;flex:none;isolation:isolate;--level:0}
-.character{position:absolute;width:252px;height:260px;left:14px;bottom:0;overflow:visible;filter:drop-shadow(0 9px 12px #003c2320)}
-.halo{position:absolute;inset:27px 19px 10px;border:2px solid #18bb8230;border-radius:50%;box-shadow:0 0 0 16px #18bb8208,0 0 0 33px #18bb8205;background:radial-gradient(circle,#39d68a14,transparent 70%);transform:scale(calc(1 + var(--level)*.08));transition:transform .15s}
+.character{position:absolute;width:252px;height:260px;left:14px;bottom:0;overflow:visible}
+.halo{position:absolute;inset:27px 19px 10px;border:2px solid var(--brand-soft-border);border-radius:50%;background:var(--surface-card);opacity:.55;transform:scale(calc(1 + var(--level)*.08));transition:transform .15s}
 .body{transform-origin:160px 310px;animation:breathe 3.6s ease-in-out infinite}
 .head{transform-origin:160px 225px;animation:sway 5s ease-in-out infinite}
 .eyes{transform-box:fill-box;transform-origin:center;animation:blink 5.2s infinite}
 .waveArm{transform-box:view-box;transform-origin:100px 233px;animation:wave 5s ease-in-out infinite}
-.previewLabel{position:absolute;bottom:0;left:50%;transform:translateX(-50%);padding:3px 8px;border-radius:8px;background:#173d32;color:#baffdf;font-size:10px;white-space:nowrap;z-index:3}
+.previewLabel{position:absolute;bottom:0;left:50%;transform:translateX(-50%);padding:2px 8px;border-radius:8px;background:var(--surface-card);border:1.5px dashed var(--field-border);color:var(--text-primary);font-size:12px;line-height:1.5;white-space:nowrap;z-index:3}
 .rightArm{transform-origin:222px 243px}
 .mouth{transform-box:fill-box;transform-origin:center}
-.encouragement{position:absolute;z-index:2;right:-8px;top:0;border:1.5px solid #36d9aa;border-radius:17px 17px 17px 4px;background:#e0fff1;color:#117451;padding:6px 10px;font-size:11px;font-weight:850;transform:rotate(-7deg);animation:float 4s ease-in-out infinite;white-space:nowrap}
-.star,.starTwo{position:absolute;z-index:2;color:#fbd87c;font-size:23px;top:103px;left:2px;animation:twinkle 2.7s infinite}.starTwo{left:auto;right:1px;top:175px;font-size:15px;animation-delay:1s}
+.encouragement{position:absolute;z-index:2;right:-8px;top:0;border:1.5px solid var(--clay-rim);border-radius:18px 18px 18px 6px;background:var(--surface-card);color:var(--text-primary);padding:6px 12px;font-family:var(--font-display);font-size:15px;font-weight:600;line-height:1.45;box-shadow:var(--shadow-card);transform:rotate(-4deg);animation:float 4s ease-in-out infinite;white-space:nowrap}
+.star,.starTwo{position:absolute;z-index:2;color:var(--surface-card);font-size:23px;top:103px;left:2px;animation:twinkle 2.7s infinite}.starTwo{left:auto;right:1px;top:175px;font-size:15px;animation-delay:1s}
 .scene[data-state=listening] .head{animation:listen 2.8s ease-in-out infinite}.scene[data-state=listening] .waveArm{animation:none;transform:rotate(-12deg)}
 .scene[data-state=speaking] .mouth{animation:speak .23s ease-in-out infinite alternate}.scene[data-state=speaking] .head{animation:nod .8s ease-in-out infinite}.scene[data-state=speaking] .waveArm{animation:gesture 1.8s ease-in-out infinite}
 .scene[data-state=thinking] .head,.scene[data-state=connecting] .head{animation:ponder 3s ease-in-out infinite}.scene[data-state=thinking] .waveArm,.scene[data-state=connecting] .waveArm{animation:none;transform:rotate(-18deg)}
@@ -32,7 +32,6 @@
 /* Shrinks on shorter phones (same 900px breakpoint as the compact voice-practice layout). */
 @media(max-height:900px){.scene{transform:scale(.72);margin:-36px 0}}
 @media(prefers-reduced-motion:reduce){.scene *{animation:none!important;transition:none!important}}
-:global(.dark) .encouragement{background:#123c30;color:#81f2c9}
 .scene[data-state=listening] .head{animation:attentive 3s ease-in-out infinite}
 .scene[data-state=connecting] .head{animation:none;transform:rotate(0)}
 .scene[data-state=thinking] .head{animation:none;transform:rotate(-5deg)}

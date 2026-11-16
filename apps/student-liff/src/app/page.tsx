@@ -83,14 +83,9 @@ export default function LandingPage() {
       return (
         <BrandSplash
           action={
-            <Link
-              href="/login"
-              className={cn(
-                buttonVariants({ size: "cta" }),
-                "w-full bg-white font-bold text-brand-700 shadow-[0_6px_20px_-8px_rgb(0_0_0/0.45)] active:scale-[0.97] active:bg-white/90",
-              )}
-            >
-              <LineIcon size={22} />
+            // LINE's own button (components.md §2.2): LINE green, white logo and label, no ledge.
+            <Link href="/login" className={cn(buttonVariants({ variant: "line", size: "cta" }), "w-full")}>
+              <LineIcon variant="mono" size={34} />
               {t("app.lineLogin")}
             </Link>
           }

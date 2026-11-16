@@ -28,7 +28,7 @@ export function AppearanceSection() {
           title={t("dashboardSettings.themeLabel")}
           description={t("dashboardSettings.themeHint")}
         />
-        <ThemeSegmented fullWidth className="md:w-auto" />
+        <ThemeSegmented fullWidth className="md:w-auto xl:w-full" />
       </Surface>
     </Section>
   );

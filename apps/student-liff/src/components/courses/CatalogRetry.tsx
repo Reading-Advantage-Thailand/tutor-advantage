@@ -1,7 +1,15 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { RotateCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export function CatalogRetry() {
+/** "ลองใหม่" for the public catalogue's load errors: re-runs the server fetch (router.refresh). */
+export function CatalogRetry({ className }: { className?: string }) {
   const router = useRouter();
-  return <button type="button" onClick={() => router.refresh()} className="mt-3 min-h-11 rounded-xl bg-brand-solid px-5 font-semibold text-white">ลองใหม่</button>;
+  return (
+    <Button type="button" variant="brand" size="touch" onClick={() => router.refresh()} className={className}>
+      <RotateCw aria-hidden="true" />
+      ลองใหม่
+    </Button>
+  );
 }

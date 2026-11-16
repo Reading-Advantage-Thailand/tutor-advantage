@@ -86,3 +86,33 @@ export function rankParticipants<T extends { studentId: string; score?: number }
     allTied: entries.length > 1 && counts.size === 1,
   };
 }
+
+// ── Rank moves (presentation only) ───────────────────────────────────────────
+// The phone has no "previous rank" from the server, so the leaderboard derives
+// "↑ 2" from the previous ranking snapshot it showed.
+
+/** Shared rank of every player by id. */
+export function rankMap<T extends { studentId: string; score?: number }>(participants: T[]): Map<string, number> {
+  return new Map(rankParticipants(participants, "").entries.map((entry) => [entry.participant.studentId, entry.rank]));
+}
+
+/** Order-independent fingerprint of the scores: the ranking can only change when it changes. */
+export function scoreSignature<T extends { studentId: string; score?: number }>(participants: T[]): string {
+  return participants
+    .map((participant) => `${participant.studentId}:${normaliseScore(participant.score)}`)
+    .sort()
+    .join("|");
+}
+
+/**
+ * Places each player moved between two rankings: positive = up, negative =
+ * down. Players missing from either ranking, or on the same rank, get none.
+ */
+export function diffRankMoves(previous: Map<string, number>, next: Map<string, number>): Map<string, number> {
+  const moves = new Map<string, number>();
+  for (const [studentId, rank] of next) {
+    const before = previous.get(studentId);
+    if (before !== undefined && before !== rank) moves.set(studentId, before - rank);
+  }
+  return moves;
+}

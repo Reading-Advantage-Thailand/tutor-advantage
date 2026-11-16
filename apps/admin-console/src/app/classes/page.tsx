@@ -2,21 +2,26 @@
 
 import Link from "next/link";
 import { ClipboardCheck, Plus, School, TicketPercent } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   AdminStatusChip,
   Chip,
   DataTable,
   EmptyState,
+  ColumnToggle,
   ErrorState,
   FilterBar,
+  IconTile,
+  IdentityCell,
   Money,
   Page,
   PageHeader,
   Pagination,
   SegmentedControl,
   useAdminSession,
+  useColumnVisibility,
   type DataTableColumn,
+  type TileTone,
 } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { useTableState } from "@/hooks/useTableState";
@@ -28,17 +33,32 @@ import { adminClassesKey } from "../discount-codes/useClassLookup";
 import { classAttendanceHref } from "./attendanceModel";
 import { discountCodeCreateHref, type AdminClass, type AdminClassPage } from "./classForm";
 import { CreateClassSheet } from "./components/CreateClassSheet";
+import { focusSearchIn } from "./components/focusRescue";
+import { RowAction, RowActions } from "./components/RowAction";
 import "@/locales/th/classes";
 
 type SetupFilter = "" | "pending";
+
+/** Class tiles take the tone of the book's CEFR band (components.md §5); books without one stay jade. */
+const CEFR_TILE: Record<string, TileTone> = { A0: "teal", A1: "purple", A2: "blue", B1: "orange", B2: "pink" };
+
+function classTileTone(bookTitle: string | null): TileTone {
+  const band = /\(([A-C]\d)\)\s*$/i.exec(bookTitle ?? "")?.[1]?.toUpperCase();
+  return (band ? CEFR_TILE[band] : undefined) ?? "brand";
+}
 
 function TutorCell({ tutor }: { tutor: AdminClass["tutor"] }) {
   if (!tutor) return <span className="text-fg-muted">{t("classes.noTutor")}</span>;
   return (
     <span className="flex min-w-0 flex-col">
       <span className="flex min-w-0 items-center gap-1.5">
-        <Link href={`/users/${encodeURIComponent(tutor.userId)}`} className="block max-w-48 truncate text-fg hover:underline">
-          {tutor.displayName || t("classes.tutorUnnamed")}
+        {/* Touch: the ::after grows the hit area to 44px tall without moving the text. */}
+        <Link
+          href={`/users/${encodeURIComponent(tutor.userId)}`}
+          title={tutor.displayName ?? undefined}
+          className="relative block max-w-48 min-w-0 font-medium text-fg hover:underline pointer-coarse:after:absolute pointer-coarse:after:-inset-x-1 pointer-coarse:after:-inset-y-3"
+        >
+          <span className="block truncate">{tutor.displayName || t("classes.tutorUnnamed")}</span>
         </Link>
         {tutor.pendingRegistration ? (
           <Chip tone="warning" size="sm" title={t("classes.pendingRegistrationHint")}>
@@ -46,7 +66,11 @@ function TutorCell({ tutor }: { tutor: AdminClass["tutor"] }) {
           </Chip>
         ) : null}
       </span>
-      {tutor.email ? <span className="block max-w-56 truncate text-[0.8125rem] text-fg-muted">{tutor.email}</span> : null}
+      {tutor.email ? (
+        <span className="block max-w-56 truncate text-[0.8125rem] text-fg-muted" title={tutor.email}>
+          {tutor.email}
+        </span>
+      ) : null}
     </span>
   );
 }
@@ -64,6 +88,13 @@ export default function ClassesPage() {
 
   const [form, setForm] = useState({ open: false, key: 0 });
   const openCreate = () => setForm((current) => ({ open: true, key: current.key + 1 }));
+  // The empty state's "ล้างตัวกรอง" removes itself: focus goes to the search box, not <body>.
+  // (FilterBar's own button moves focus by itself.)
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const resetFilters = () => {
+    table.reset();
+    focusSearchIn(toolbarRef.current);
+  };
 
   const columns = useMemo<DataTableColumn<AdminClass>[]>(
     () => [
@@ -73,48 +104,46 @@ export default function ClassesPage() {
         sticky: true,
         alwaysVisible: true,
         mobile: "primary",
+        // Identity: CEFR tile + class name + the book (was its own column).
         cell: (row) => (
-          <span className="flex min-w-0 flex-col gap-1">
-            <span className="block max-w-64 truncate font-medium text-fg" title={row.title}>
-              {row.title}
-            </span>
-            {row.setupRequired || row.isDemo ? (
-              <span className="flex flex-wrap gap-1">
-                {row.setupRequired ? (
-                  <Chip tone="warning" size="sm" dot title={t("classes.setupChipHint")}>
-                    {t("classes.setupChip")}
-                  </Chip>
-                ) : null}
-                {row.isDemo ? (
-                  <Chip tone="neutral" size="sm">
-                    {t("classes.demoChip")}
-                  </Chip>
-                ) : null}
+          <IdentityCell
+            leading={<IconTile icon={School} tone={classTileTone(row.bookTitle)} size="sm" />}
+            name={row.title}
+            secondary={
+              <span title={row.bookTitle ?? undefined}>
+                <span className="sr-only">{t("classes.colBook")}: </span>
+                {row.bookCode ?? row.bookTitle ?? "–"}
               </span>
-            ) : null}
-          </span>
+            }
+            className="max-w-72"
+          />
         ),
       },
       {
         key: "status",
         header: t("classes.colStatus"),
         mobile: "trailing",
-        cell: (row) => <AdminStatusChip domain="classStatus" status={row.status} />,
+        cell: (row) => (
+          <span className="flex flex-col items-end gap-1 md:flex-row md:flex-wrap md:items-center">
+            <AdminStatusChip domain="classStatus" status={row.status} />
+            {row.setupRequired ? (
+              <Chip tone="warning" size="sm" dot title={t("classes.setupChipHint")}>
+                {t("classes.setupChip")}
+              </Chip>
+            ) : null}
+            {row.isDemo ? (
+              <Chip tone="neutral" size="sm">
+                {t("classes.demoChip")}
+              </Chip>
+            ) : null}
+          </span>
+        ),
       },
       {
         key: "tutor",
         header: t("classes.colTutor"),
         mobile: "secondary",
         cell: (row) => <TutorCell tutor={row.tutor} />,
-      },
-      {
-        key: "book",
-        header: t("classes.colBook"),
-        cell: (row) => (
-          <span className="block max-w-48 truncate" title={row.bookTitle ?? undefined}>
-            {row.bookCode ?? row.bookTitle ?? "–"}
-          </span>
-        ),
       },
       {
         key: "price",
@@ -136,7 +165,7 @@ export default function ClassesPage() {
         key: "createdAt",
         header: t("classes.colCreated"),
         cell: (row) => (
-          <span className="whitespace-nowrap" title={formatThaiDateTime(row.createdAt)}>
+          <span className="whitespace-nowrap tabular" title={formatThaiDateTime(row.createdAt)}>
             {formatThaiDate(row.createdAt)}
           </span>
         ),
@@ -147,27 +176,20 @@ export default function ClassesPage() {
         label: t("classes.colActions"),
         align: "right",
         alwaysVisible: true,
+        // Phones: a full-width row of labelled buttons at the bottom of the card (none for demo classes).
+        mobile: "actions",
         cell: (row) =>
           row.isDemo ? null : (
-            <span role="group" aria-label={t("classes.rowActions", { title: row.title })} className="flex flex-wrap justify-end gap-1">
-              <Button asChild size="sm" variant="ghost">
-                <Link href={classAttendanceHref(row.classId)}>
-                  <ClipboardCheck aria-hidden="true" />
-                  {t("classes.attendanceAction")}
-                </Link>
-              </Button>
-              <Button asChild size="sm" variant="ghost">
-                <Link href={discountCodeCreateHref(row.classId)}>
-                  <TicketPercent aria-hidden="true" />
-                  {t("classes.issueCodeAction")}
-                </Link>
-              </Button>
-            </span>
+            <RowActions label={t("classes.rowActions", { title: row.title })}>
+              <RowAction icon={ClipboardCheck} label={t("classes.attendanceAction")} href={classAttendanceHref(row.classId)} />
+              <RowAction icon={TicketPercent} label={t("classes.issueCodeAction")} href={discountCodeCreateHref(row.classId)} />
+            </RowActions>
           ),
       },
     ],
     [],
   );
+  const visibility = useColumnVisibility("classes", columns);
 
   const rows = data?.items ?? [];
 
@@ -185,21 +207,25 @@ export default function ClassesPage() {
       />
 
       <div className="flex flex-col gap-3">
-        <FilterBar
-          search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("classes.searchPlaceholder") }}
-          isFiltered={table.isFiltered}
-          onReset={table.reset}
-        >
-          <SegmentedControl<SetupFilter>
-            aria-label={t("classes.setupFilterLabel")}
-            value={setup}
-            onValueChange={(value) => table.setFilter("setup", value)}
-            items={[
-              { value: "", label: t("classes.setupAll") },
-              { value: "pending", label: t("classes.setupPending") },
-            ]}
+        <div ref={toolbarRef}>
+          <FilterBar
+            tabs={
+              <SegmentedControl<SetupFilter>
+                aria-label={t("classes.setupFilterLabel")}
+                value={setup}
+                onValueChange={(value) => table.setFilter("setup", value)}
+                items={[
+                  { value: "", label: t("classes.setupAll") },
+                  { value: "pending", label: t("classes.setupPending") },
+                ]}
+              />
+            }
+            search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("classes.searchPlaceholder") }}
+            isFiltered={table.isFiltered}
+            onReset={table.reset}
+            actions={<ColumnToggle id="classes-columns" columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} />}
           />
-        </FilterBar>
+        </div>
 
         {error && !data ? (
           <ErrorState onRetry={refetch} />
@@ -210,15 +236,15 @@ export default function ClassesPage() {
             columns={columns}
             getRowKey={(row) => row.classId}
             loading={isLoading || isValidating}
+            hiddenColumns={visibility.hidden}
             empty={
               table.isFiltered ? (
                 <EmptyState
-                  compact
                   icon={School}
                   title={t("classes.emptyFilteredTitle")}
                   description={t("classes.emptyFilteredDescription")}
                   action={
-                    <Button variant="outline" onClick={table.reset}>
+                    <Button variant="outline" onClick={resetFilters}>
                       {t("shell.clearFilters")}
                     </Button>
                   }
@@ -226,10 +252,12 @@ export default function ClassesPage() {
               ) : (
                 <EmptyState
                   icon={School}
+                  tone="brand"
                   title={t("classes.emptyTitle")}
                   description={t("classes.emptyFirstDescription")}
                   action={
-                    <Button onClick={openCreate}>
+                    // The header keeps the page's one primary; this is its tonal echo.
+                    <Button variant="tonal" onClick={openCreate}>
                       <Plus aria-hidden="true" />
                       {t("classes.createAction")}
                     </Button>

@@ -1,7 +1,7 @@
 "use client";
 
-import { Database, Lock, Rows3, Table2, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Database, Lock, RotateCw, Rows3, Table2, Trash2 } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 import {
   Chip,
   ConfirmDialog,
@@ -9,7 +9,10 @@ import {
   DescriptionList,
   EmptyState,
   ErrorState,
-  Grid,
+  IconTile,
+  KpiStrip,
+  ListSkeleton,
+  LoadingAnnouncement,
   Notice,
   Page,
   PageHeader,
@@ -27,6 +30,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatNumber } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import "@/locales/th/dev";
 
@@ -107,6 +111,7 @@ export function DevDatabaseClient() {
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [confirm, setConfirm] = useState<"truncate_selected" | "reset_except_books" | null>(null);
+  const selectAllRef = useRef<HTMLButtonElement>(null);
 
   const tables = useMemo(() => data?.tables ?? [], [data]);
   const dbName = data?.database?.name ?? "";
@@ -156,6 +161,7 @@ export function DevDatabaseClient() {
         meta={<Chip tone="warning">{t("dev.devOnlyBadge")}</Chip>}
         actions={
           <Button variant="outline" onClick={() => key && invalidateResource(key)} loading={isValidating}>
+            {isValidating ? null : <RotateCw aria-hidden="true" />}
             {t("shell.refresh")}
           </Button>
         }
@@ -165,144 +171,202 @@ export function DevDatabaseClient() {
         <ErrorState onRetry={refetch} description={error instanceof Error ? error.message : undefined} />
       ) : (
         <>
-          <Grid cols={4} className="grid-cols-2">
-            <StatCard label={t("dev.dbName")} value={<span className="text-lg break-all">{dbName || "–"}</span>} icon={Database} tone="neutral" hint={data?.database ? `${data.database.host}:${data.database.port}` : undefined} />
+          <KpiStrip>
+            <StatCard
+              label={t("dev.dbName")}
+              value={
+                <span className="block truncate font-mono text-lg leading-[1.6]" title={dbName || undefined}>
+                  {dbName || "–"}
+                </span>
+              }
+              icon={Database}
+              tone="neutral"
+              hint={data?.database ? <span className="font-mono">{`${data.database.host}:${data.database.port}`}</span> : undefined}
+            />
             <StatCard label={t("dev.dbTables")} value={formatNumber(tables.length)} icon={Table2} tone="blue" />
             <StatCard label={t("dev.dbRows")} value={formatNumber(totalRows)} icon={Rows3} tone="purple" />
             <StatCard label={t("dev.dbPreservedRows")} value={formatNumber(preservedRows)} icon={Lock} tone="teal" />
-          </Grid>
+          </KpiStrip>
 
           <Notice tone="warning" title={t("dev.dbSharedWarning")}>
             {t("dev.dbPreservedNotice")}
           </Notice>
 
-          <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
-            <Surface className="flex min-w-0 flex-col gap-3 p-0">
-              <div className="flex flex-col gap-2 border-b border-hairline p-4">
-                <SearchField value={search} onValueChange={setSearch} label={t("dev.dbSearch")} containerClassName="min-w-0 flex-1" />
-                <SelectField
-                  aria-label={t("dev.dbSchema")}
-                  containerClassName="w-full"
-                  value={schema}
-                  onChange={(event) => setSchema(event.target.value)}
-                  options={[{ value: "", label: t("dev.dbAllSchemas") }, ...schemas.map((name) => ({ value: name, label: name }))]}
-                />
-              </div>
-              {isLoading && !data ? (
-                <p className="px-4 pb-4 text-sm text-fg-muted">{t("shell.loading")}</p>
-              ) : (
-                <ul className="max-h-[560px] divide-y divide-hairline overflow-y-auto" aria-label={t("dev.dbTables")}>
-                  {filtered.map((table) => {
-                    const id = tableKey(table);
-                    const isActive = id === activeKey;
-                    return (
-                      <li key={id} className={cn("flex items-center gap-3 px-4 py-2.5", isActive && "bg-brand-soft")}>
-                        <Checkbox
-                          checked={selected.has(id)}
-                          disabled={table.isPreserved}
-                          onCheckedChange={(value) => toggle(id, Boolean(value))}
-                          aria-label={t("dev.dbSelectTable", { table: id })}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setActiveKey(id)}
-                          aria-current={isActive || undefined}
-                          className="flex min-w-0 flex-1 flex-col items-start text-left"
-                        >
-                          <span className="flex max-w-full items-center gap-1.5">
-                            <code className="truncate font-mono text-[0.8125rem] font-semibold text-fg">{id}</code>
-                            {BOOK_TABLES.has(id) ? <Chip size="sm" tone="success">{t("dev.dbBook")}</Chip> : table.isPreserved ? <Chip size="sm">{t("dev.dbLocked")}</Chip> : null}
-                          </span>
-                          <span className="text-xs text-fg-muted">{t("dev.dbRowsCount", { count: formatNumber(table.rowCount) })}</span>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </Surface>
-
-            <div className="flex min-w-0 flex-col gap-6">
-              <Section title={t("dev.dbActionsTitle")}>
-                <Surface className="flex min-w-0 flex-col gap-4">
-                  <p className="text-sm text-fg-muted">
-                    {t("dev.dbSelectedCount", { count: formatNumber(selectedTables.length), rows: formatNumber(selectedRows) })}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelected(new Set(tables.filter((table) => !table.isPreserved && table.schemaName !== "public").map(tableKey)))}
-                    >
-                      {t("dev.dbSelectAll")}
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())} disabled={selected.size === 0}>
-                      {t("dev.dbClear")}
-                    </Button>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <p className="text-[0.8125rem] font-medium text-fg-muted">{t("dev.dbSqlPreview")}</p>
-                    <pre className="max-h-32 overflow-auto rounded-lg border border-hairline bg-surface-muted p-3 font-mono text-xs break-all whitespace-pre-wrap text-fg">
-                      {sqlPreview}
-                    </pre>
-                  </div>
-                  <div className="flex flex-col gap-2 sm:flex-row">
-                    <Button variant="danger" disabled={selectedTables.length === 0 || !dbName} onClick={() => setConfirm("truncate_selected")}>
-                      <Trash2 aria-hidden="true" />
-                      {t("dev.dbTruncate")}
-                    </Button>
-                    <Button variant="destructive" disabled={!dbName} onClick={() => setConfirm("reset_except_books")}>
-                      {t("dev.dbReset")}
-                    </Button>
-                  </div>
-                </Surface>
-              </Section>
-
-              <Section
-                title={t("dev.dbDetails")}
-                action={active ? <code className="truncate font-mono text-[0.8125rem] text-fg-muted">{tableKey(active)}</code> : undefined}
-              >
-                {!active || !details ? (
-                  <EmptyState compact icon={Table2} title={t("dev.dbPickTable")} />
+          {/* From 1280px — left: the table list, then the danger zone that acts on its checkboxes; right: the picked table.
+              Below that they stack, so the details (and their columns table) get the full width. */}
+          <div className="grid min-w-0 grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
+            <div className="flex min-w-0 flex-col gap-5">
+              <Surface padding="none" className="flex min-w-0 flex-col overflow-hidden">
+                <div className="flex flex-col gap-2 border-b border-hairline bg-surface-muted p-3">
+                  <SearchField value={search} onValueChange={setSearch} label={t("dev.dbSearch")} containerClassName="min-w-0 flex-1" />
+                  <SelectField
+                    id="dev-db-schema"
+                    aria-label={t("dev.dbSchema")}
+                    containerClassName="w-full"
+                    value={schema}
+                    onChange={(event) => setSchema(event.target.value)}
+                    options={[{ value: "", label: t("dev.dbAllSchemas") }, ...schemas.map((name) => ({ value: name, label: name }))]}
+                  />
+                </div>
+                {isLoading && !data ? (
+                  <>
+                    <LoadingAnnouncement />
+                    <ListSkeleton rows={6} leading={false} className="rounded-none border-0 shadow-none" />
+                  </>
                 ) : (
-                  <div className="flex min-w-0 flex-col gap-5">
-                    <div className="flex min-w-0 flex-col gap-2">
-                      <h3 className="text-sm font-semibold text-fg">{t("dev.dbColumns")}</h3>
-                      <DataTable
-                        caption={t("dev.dbColumns")}
-                        rows={details.columns}
-                        columns={columnColumns}
-                        getRowKey={(column) => column.columnName}
-                        breakpoint="lg"
-                      />
-                    </div>
-                    <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-2">
-                      <DetailList
-                        title={t("dev.dbConstraints")}
-                        items={details.constraints.map((item) => ({
-                          key: item.constraintName,
-                          title: item.constraintName,
-                          badge: item.constraintType,
-                          body: item.columns || "–",
-                        }))}
-                      />
-                      <DetailList
-                        title={t("dev.dbForeignKeys")}
-                        items={details.foreignKeys.map((item) => ({
-                          key: `${item.constraintName}-${item.columnName}`,
-                          title: item.columnName,
-                          body: `→ ${item.foreignSchemaName}.${item.foreignTableName}.${item.foreignColumnName}`,
-                        }))}
-                      />
-                    </div>
-                    <DetailList
-                      title={t("dev.dbIndexes")}
-                      items={details.indexes.map((item) => ({ key: item.indexName, title: item.indexName, body: item.indexDef, code: true }))}
+                  <ul className="max-h-[520px] overflow-y-auto" aria-label={t("dev.dbTables")}>
+                    {filtered.map((table) => {
+                      const id = tableKey(table);
+                      const isActive = id === activeKey;
+                      return (
+                        <li
+                          key={id}
+                          className={cn(
+                            "flex min-h-14 items-center gap-3 border-b border-hairline px-4 py-2 last:border-b-0",
+                            isActive && "bg-brand-soft shadow-[inset_3px_0_0_var(--brand-solid)]",
+                          )}
+                        >
+                          <Checkbox
+                            checked={selected.has(id)}
+                            disabled={table.isPreserved}
+                            onCheckedChange={(value) => toggle(id, Boolean(value))}
+                            aria-label={t("dev.dbSelectTable", { table: id })}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setActiveKey(id)}
+                            aria-current={isActive || undefined}
+                            className="flex min-h-10 min-w-0 flex-1 flex-col items-start justify-center rounded-(--radius-ctl-sm) text-left pointer-coarse:min-h-11"
+                          >
+                            <span className="flex max-w-full items-center gap-1.5">
+                              <code className="truncate font-mono text-[0.8125rem] font-semibold text-fg" title={id}>
+                                {id}
+                              </code>
+                              {BOOK_TABLES.has(id) ? (
+                                <Chip size="sm" tone="success" icon={Lock}>
+                                  {t("dev.dbBook")}
+                                </Chip>
+                              ) : table.isPreserved ? (
+                                <Chip size="sm" icon={Lock}>
+                                  {t("dev.dbLocked")}
+                                </Chip>
+                              ) : null}
+                            </span>
+                            <span className="text-xs text-fg-muted tabular">{t("dev.dbRowsCount", { count: formatNumber(table.rowCount) })}</span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </Surface>
+
+              {/* Danger zone (A3): a separate card; both buttons open a type-to-confirm dialog. */}
+              <section aria-labelledby="db-danger-heading" className="card flex min-w-0 flex-col gap-4 border-danger-border p-4">
+                <div className="flex items-start gap-3">
+                  <IconTile icon={Trash2} tone="red" size="sm" />
+                  <div className="min-w-0">
+                    <h2 id="db-danger-heading" className="text-base leading-normal font-semibold text-fg">
+                      {t("dev.dbActionsTitle")}
+                    </h2>
+                    <p className="text-sm text-fg-muted tabular" aria-live="polite">
+                      {t("dev.dbSelectedCount", { count: formatNumber(selectedTables.length), rows: formatNumber(selectedRows) })}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    ref={selectAllRef}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelected(new Set(tables.filter((table) => !table.isPreserved && table.schemaName !== "public").map(tableKey)))}
+                  >
+                    {t("dev.dbSelectAll")}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSelected(new Set());
+                      // This button disables itself: keep focus on the row of buttons.
+                      selectAllRef.current?.focus();
+                    }}
+                    disabled={selected.size === 0}
+                  >
+                    {t("dev.dbClear")}
+                  </Button>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <p className="text-[0.8125rem] font-medium text-fg-muted">{t("dev.dbSqlPreview")}</p>
+                  {/* break-all is for the SQL (long quoted identifiers); the placeholder is a sentence and wraps at words. */}
+                  <pre
+                    className={cn(
+                      "max-h-32 overflow-auto rounded-lg border border-hairline bg-surface-muted p-3 font-mono text-xs whitespace-pre-wrap text-fg",
+                      selectedTables.length ? "break-all" : "break-words",
+                    )}
+                  >
+                    {selectedTables.length ? sqlPreview : thaiCopy(sqlPreview)}
+                  </pre>
+                </div>
+                <div className="flex flex-col gap-2 border-t border-hairline pt-4 sm:flex-row sm:flex-wrap">
+                  <Button variant="destructive" disabled={selectedTables.length === 0 || !dbName} onClick={() => setConfirm("truncate_selected")}>
+                    <Trash2 aria-hidden="true" />
+                    {t("dev.dbTruncate")}
+                  </Button>
+                  <Button variant="destructive" disabled={!dbName} onClick={() => setConfirm("reset_except_books")}>
+                    {t("dev.dbReset")}
+                  </Button>
+                </div>
+              </section>
+            </div>
+
+            <Section
+              title={t("dev.dbDetails")}
+              action={active ? <code className="block max-w-56 truncate font-mono text-[0.8125rem] text-fg-muted" title={tableKey(active)}>{tableKey(active)}</code> : undefined}
+            >
+              {!active || !details ? (
+                <EmptyState as="h3" icon={Table2} title={t("dev.dbPickTable")} />
+              ) : (
+                <div className="flex min-w-0 flex-col gap-5">
+                  {/* If the columns table scrolls sideways, Edge makes its scroller a Tab stop; DataTable then
+                      draws that focus ring around the whole table card. */}
+                  <div className="flex min-w-0 flex-col gap-2">
+                    <h3 className="text-sm font-semibold text-fg">{t("dev.dbColumns")}</h3>
+                    <DataTable
+                      caption={t("dev.dbColumns")}
+                      rows={details.columns}
+                      columns={columnColumns}
+                      getRowKey={(column) => column.columnName}
+                      breakpoint="lg"
+                      density="compact"
                     />
                   </div>
-                )}
-              </Section>
-            </div>
+                  <div className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-2">
+                    <DetailList
+                      title={t("dev.dbConstraints")}
+                      items={details.constraints.map((item) => ({
+                        key: item.constraintName,
+                        title: item.constraintName,
+                        badge: item.constraintType,
+                        body: item.columns || "–",
+                      }))}
+                    />
+                    <DetailList
+                      title={t("dev.dbForeignKeys")}
+                      items={details.foreignKeys.map((item) => ({
+                        key: `${item.constraintName}-${item.columnName}`,
+                        title: item.columnName,
+                        body: `→ ${item.foreignSchemaName}.${item.foreignTableName}.${item.foreignColumnName}`,
+                      }))}
+                    />
+                  </div>
+                  <DetailList
+                    title={t("dev.dbIndexes")}
+                    items={details.indexes.map((item) => ({ key: item.indexName, title: item.indexName, body: item.indexDef, code: true }))}
+                  />
+                </div>
+              )}
+            </Section>
           </div>
         </>
       )}
@@ -310,6 +374,8 @@ export function DevDatabaseClient() {
       <ConfirmDialog
         open={confirm !== null}
         onOpenChange={(open) => !open && setConfirm(null)}
+        // "ล้างข้อมูล" is disabled once nothing is selected: focus goes to "เลือกทุกตาราง…".
+        finalFocus={selectAllRef}
         tone="danger"
         irreversible
         title={
@@ -358,14 +424,16 @@ function DetailList({
     <div className="flex min-w-0 flex-col gap-2">
       <h3 className="text-sm font-semibold text-fg">{title}</h3>
       {items.length === 0 ? (
-        <p className="text-sm text-fg-muted">{t("dev.dbNone")}</p>
+        <p className="card px-3 py-2.5 text-sm text-fg-subtle">{t("dev.dbNone")}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {items.map((item) => (
-            <li key={item.key} className="min-w-0 rounded-lg border border-hairline bg-surface p-3">
+            <li key={item.key} className="card min-w-0 p-3">
               <div className="flex min-w-0 items-center justify-between gap-2">
-                <code className="truncate font-mono text-[0.8125rem] font-semibold text-fg">{item.title}</code>
-                {item.badge ? <Chip size="sm">{item.badge}</Chip> : null}
+                <code className="truncate font-mono text-[0.8125rem] font-semibold text-fg" title={item.title}>
+                  {item.title}
+                </code>
+                {item.badge ? <span className="shrink-0 rounded-(--radius-chip) bg-surface-muted px-1.5 font-mono text-xs leading-6 text-fg-muted">{item.badge}</span> : null}
               </div>
               {item.code ? (
                 <pre className="mt-2 max-h-28 overflow-auto rounded bg-surface-muted p-2 font-mono text-xs break-all whitespace-pre-wrap text-fg-muted">{item.body}</pre>

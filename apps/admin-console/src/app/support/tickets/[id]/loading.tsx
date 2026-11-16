@@ -1,6 +1,6 @@
-import { PageSkeleton } from "@/components/app";
+import { TicketDetailSkeleton } from "../components/TicketDetailSkeleton";
 
-/** Ticket detail: header + thread. */
+/** Ticket detail: header + thread + facts rail. */
 export default function Loading() {
-  return <PageSkeleton variant="list" stats={false} />;
+  return <TicketDetailSkeleton />;
 }

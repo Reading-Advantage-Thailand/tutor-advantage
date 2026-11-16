@@ -27,8 +27,8 @@ import { classDetailResourceKey, classifyClassLoadError } from "@/lib/classAcces
 import { t } from "@/lib/i18n";
 import { buildEnrollPathFromInviteText } from "@/lib/paymentFlow";
 import { cn } from "@/lib/utils";
-import { ClassCard } from "./_components/ClassCard";
 import { ClassListSkeleton } from "./_components/ClassesSkeletons";
+import { ClassRow } from "./_components/ClassRow";
 import { InviteSheet } from "./_components/InviteSheet";
 import { LiffStartupError } from "./_components/LiffStartupError";
 import {
@@ -121,14 +121,18 @@ export default function ClassesPage() {
   const classes = data?.classes ?? [];
   const filtered = isClassFilterActive(searchQuery, activeFilter);
 
+  // Every non-list state is a normal card (patterns.md "Empty, error and loading").
   let content: ReactNode;
   if (!isReady || isLoading || (isPreviousData && classes.length === 0)) {
     content = <ClassListSkeleton />;
   } else if (liffError || !profile) {
-    content = <LiffStartupError />;
+    content = (
+      <LiffStartupError card />
+    );
   } else if (error && (!data || isPreviousData)) {
     content = (
       <ErrorState
+        card
         title={t("classes.loadErrorTitle")}
         kind={classifyClassLoadError(error) === "offline" ? "offline" : "error"}
         onRetry={() => void refetch()}
@@ -138,6 +142,7 @@ export default function ClassesPage() {
   } else if (classes.length === 0) {
     content = filtered ? (
       <EmptyState
+        card
         icon={SearchX}
         tone="neutral"
         title={t("classes.emptySearchTitle")}
@@ -150,6 +155,7 @@ export default function ClassesPage() {
       />
     ) : (
       <EmptyState
+        card
         icon={School}
         title={t("classes.emptyOpenTitle")}
         description={t("classes.emptyOpenDescription")}
@@ -165,12 +171,14 @@ export default function ClassesPage() {
     content = (
       <div
         aria-busy={isPreviousData || undefined}
-        className={cn("grid gap-3 transition-opacity duration-200 sm:grid-cols-2", isPreviousData && "opacity-50")}
+        className={cn("transition-opacity duration-200", isPreviousData && "opacity-50")}
       >
         {isPreviousData ? <LoadingAnnouncement label={t("classes.updating")} /> : null}
-        {classes.map((cls) => (
-          <ClassCard key={cls.id} cls={cls} onPressStart={prefetchClass} />
-        ))}
+        <ListGroup aria-label={t("classes.title")}>
+          {classes.map((cls) => (
+            <ClassRow key={cls.id} cls={cls} onPressStart={prefetchClass} />
+          ))}
+        </ListGroup>
       </div>
     );
   }
@@ -197,9 +205,11 @@ export default function ClassesPage() {
                 {level ? (
                   <span
                     aria-hidden="true"
-                    className={`size-2.5 shrink-0 rounded-full ${levelToneClass[getLevelTone(level)].solid} ${
-                      activeFilter === level ? "ring-2 ring-white" : ""
-                    }`}
+                    className={cn(
+                      "size-2.5 shrink-0 rounded-full",
+                      levelToneClass[getLevelTone(level)].solid,
+                      activeFilter === level && "ring-2 ring-surface",
+                    )}
                   />
                 ) : null}
                 {level ?? t("classes.allFilter")}
@@ -209,7 +219,8 @@ export default function ClassesPage() {
         </HScroll>
       </PageHeader>
 
-      <div className="flex flex-col gap-4 px-4 pb-6">
+      <div className="flex flex-col gap-5 px-4 pb-6">
+        {/* Invite entry first: a student with a link or QR from the teacher skips the browsing. */}
         <ListGroup>
           <ListRow
             onClick={() => setInviteOpen(true)}
@@ -219,6 +230,8 @@ export default function ClassesPage() {
             chevron
           />
         </ListGroup>
+
+        {/* S4: the catalog list follows directly (no section title: the h1 names the list). */}
         {content}
       </div>
 

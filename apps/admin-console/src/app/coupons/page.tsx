@@ -1,23 +1,24 @@
 "use client";
 
 import { Ban, CheckCircle2, Pencil, Percent, Plus, Ticket, TicketX } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   AdminStatusChip,
+  ColumnToggle,
   ConfirmDialog,
-  CopyButton,
   DataTable,
   DescriptionList,
   EmptyState,
   ErrorState,
   FilterBar,
-  Grid,
+  KpiStrip,
   Page,
   PageHeader,
   Pagination,
-  SelectField,
+  SegmentedControl,
   StatCard,
   useAdminSession,
+  useColumnVisibility,
   type DataTableColumn,
 } from "@/components/app";
 import { toast } from "@/components/app/toastStore";
@@ -28,12 +29,20 @@ import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatPercent, formatThaiDate, formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { statusOptions } from "@/lib/status";
-import { couponStatus, type Coupon, type CouponPage } from "./couponForm";
+import { CELL_CLAMP } from "../classes/components/cellText";
+import { focusSearchIn, rescueFocusTo } from "../classes/components/focusRescue";
+import { RowAction, RowActions } from "../classes/components/RowAction";
+import { couponStatus, type Coupon, type CouponPage, type CouponStatus } from "./couponForm";
+import { CodeCell } from "./components/CodeCell";
 import { CouponFormSheet } from "./components/CouponFormSheet";
 import "@/locales/th/coupons";
 
 function TutorCell({ name, fallback }: { name: string | null; fallback: string }) {
-  return <span className="block max-w-56 truncate">{name || fallback}</span>;
+  return (
+    <span className={`max-w-44 ${CELL_CLAMP}`} title={name || fallback}>
+      {name || fallback}
+    </span>
+  );
 }
 
 export default function CouponsPage() {
@@ -58,6 +67,13 @@ export default function CouponsPage() {
   };
   const openCreate = () => setForm((current) => ({ open: true, coupon: null, key: current.key + 1 }));
   const openEdit = (coupon: Coupon) => setForm((current) => ({ open: true, coupon, key: current.key + 1 }));
+  // The empty state's "ล้างตัวกรอง" removes itself: focus goes to the search box, not <body>.
+  // (FilterBar's own button moves focus by itself.)
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const resetFilters = () => {
+    table.reset();
+    focusSearchIn(toolbarRef.current);
+  };
 
   const columns = useMemo<DataTableColumn<Coupon>[]>(
     () => [
@@ -68,19 +84,7 @@ export default function CouponsPage() {
         sticky: true,
         alwaysVisible: true,
         mobile: "primary",
-        cell: (row) => (
-          <span className="flex min-w-0 flex-col">
-            <span className="inline-flex items-center gap-1 whitespace-nowrap">
-              <code className="font-mono text-sm font-semibold tracking-wide text-fg">{row.code}</code>
-              <CopyButton value={row.code} label={t("coupons.copyCode")} />
-            </span>
-            {row.note ? (
-              <span className="block max-w-56 truncate text-[0.8125rem] text-fg-muted" title={row.note}>
-                {row.note}
-              </span>
-            ) : null}
-          </span>
-        ),
+        cell: (row) => <CodeCell id={row.couponId} code={row.code} note={row.note} copyLabel={t("coupons.copyCode")} />,
       },
       {
         key: "status",
@@ -94,7 +98,7 @@ export default function CouponsPage() {
         align: "right",
         sortable: true,
         mobile: "secondary",
-        cell: (row) => <span className="whitespace-nowrap">{t("coupons.hoursValue", { hours: formatNumber(row.hours) })}</span>,
+        cell: (row) => <span className="whitespace-nowrap tabular">{t("coupons.hoursValue", { hours: formatNumber(row.hours) })}</span>,
       },
       {
         key: "assigned",
@@ -113,13 +117,22 @@ export default function CouponsPage() {
           row.redeemedAt ? (
             <span className="flex min-w-0 flex-col">
               <TutorCell name={row.redeemedByTutorName} fallback={t("coupons.tutorUnnamed")} />
+              {/* Wraps between the two phrases, never inside one. */}
               <span className="text-[0.8125rem] text-fg-muted">
-                {t("coupons.redeemedOn", { date: formatThaiDate(row.redeemedAt) })}
-                {row.redemptionMode === "NEW_CLASS"
-                  ? ` · ${t("coupons.modeNewClass")}`
-                  : row.redemptionMode === "EXTEND_CLASS"
-                    ? ` · ${t("coupons.modeExtendClass")}`
-                    : ""}
+                <span className="whitespace-nowrap">{t("coupons.redeemedOn", { date: formatThaiDate(row.redeemedAt) })}</span>
+                {row.redemptionMode === "NEW_CLASS" ? (
+                  <>
+                    {" · "}
+                    <span className="whitespace-nowrap">{t("coupons.modeNewClass")}</span>
+                  </>
+                ) : row.redemptionMode === "EXTEND_CLASS" ? (
+                  <>
+                    {" · "}
+                    <span className="whitespace-nowrap">{t("coupons.modeExtendClass")}</span>
+                  </>
+                ) : (
+                  ""
+                )}
               </span>
             </span>
           ) : (
@@ -131,7 +144,7 @@ export default function CouponsPage() {
         header: t("coupons.colExpires"),
         sortable: true,
         cell: (row) => (
-          <span className={row.expiresAt ? "whitespace-nowrap" : "whitespace-nowrap text-fg-muted"}>
+          <span className={row.expiresAt ? "whitespace-nowrap tabular" : "whitespace-nowrap text-fg-muted"}>
             {row.expiresAt ? formatThaiDate(row.expiresAt) : t("coupons.noExpiry")}
           </span>
         ),
@@ -141,7 +154,7 @@ export default function CouponsPage() {
         header: t("coupons.colCreated"),
         sortable: true,
         cell: (row) => (
-          <span className="whitespace-nowrap" title={formatThaiDateTime(row.createdAt)}>
+          <span className="whitespace-nowrap tabular" title={formatThaiDateTime(row.createdAt)}>
             {formatThaiDate(row.createdAt)}
           </span>
         ),
@@ -152,29 +165,28 @@ export default function CouponsPage() {
         label: t("coupons.colActions"),
         align: "right",
         alwaysVisible: true,
+        // Phones: a full-width row of labelled buttons at the bottom of the card (none once used up/void).
+        mobile: "actions",
         cell: (row) =>
           couponStatus(row) === "ACTIVE" ? (
-            <span role="group" aria-label={t("coupons.rowActions", { code: row.code })} className="flex flex-wrap justify-end gap-1 md:flex-nowrap">
-              <Button size="sm" variant="ghost" onClick={() => openEdit(row)}>
-                <Pencil aria-hidden="true" />
-                {t("coupons.editAction")}
-              </Button>
-              <Button
-                size="sm"
-                variant="destructive"
+            <RowActions label={t("coupons.rowActions", { code: row.code })}>
+              <RowAction icon={Pencil} label={t("coupons.editAction")} onClick={() => openEdit(row)} />
+              <RowAction
+                icon={Ban}
+                danger
+                label={t("coupons.voidAction")}
                 onClick={() => setVoidTarget({ coupon: row, idempotencyKey: newIdempotencyKey() })}
-              >
-                <Ban aria-hidden="true" />
-                {t("coupons.voidAction")}
-              </Button>
-            </span>
+              />
+            </RowActions>
           ) : null,
       },
     ],
     [],
   );
+  const visibility = useColumnVisibility("coupons", columns);
 
   const summary = data?.summary;
+  const tabCounts = table.q.trim() ? undefined : summary;
   const pagination = data?.pagination;
   const rows = data?.coupons ?? [];
   const voidCoupon = voidTarget?.coupon;
@@ -192,7 +204,7 @@ export default function CouponsPage() {
         }
       />
 
-      <Grid cols={4} className="grid-cols-2">
+      <KpiStrip aria-label={t("coupons.statsLabel")}>
         <StatCard
           label={t("coupons.statActive")}
           value={summary ? formatNumber(summary.byStatus.ACTIVE.count) : "–"}
@@ -217,6 +229,8 @@ export default function CouponsPage() {
               ? t("coupons.statRateHint", { count: formatNumber(summary.total - summary.byStatus.VOID.count) })
               : undefined
           }
+          bar={summary ? [{ value: summary.redemptionRate * 100, tone: "brand" }] : undefined}
+          barLabel={summary ? t("coupons.statRateBar", { rate: formatPercent(summary.redemptionRate) }) : undefined}
         />
         <StatCard
           label={t("coupons.statVoidExpired")}
@@ -232,22 +246,35 @@ export default function CouponsPage() {
               : undefined
           }
         />
-      </Grid>
+      </KpiStrip>
 
       <div className="flex flex-col gap-3">
-        <FilterBar
-          search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("coupons.searchPlaceholder") }}
-          isFiltered={table.isFiltered}
-          onReset={table.reset}
-        >
-          <SelectField
-            aria-label={t("coupons.statusFilterLabel")}
-            containerClassName="w-full sm:w-44"
-            value={table.filters.status ?? ""}
-            onChange={(event) => table.setFilter("status", event.target.value)}
-            options={statusOptions("coupon", { all: t("coupons.allStatus") })}
+        <div ref={toolbarRef}>
+          <FilterBar
+            tabs={
+              // Count tabs drive the same `status` filter the select did. Their counts are over
+              // all coupons (the summary ignores the filters), so they hide while a search
+              // narrows the list: the tabs still filter, without numbers the list doesn't match.
+              <SegmentedControl<string>
+                aria-label={t("coupons.statusFilterLabel")}
+                value={table.filters.status ?? ""}
+                onValueChange={(value) => table.setFilter("status", value)}
+                items={[
+                  { value: "", label: t("coupons.tabAll"), count: tabCounts?.total },
+                  ...statusOptions("coupon").map((option) => ({
+                    value: option.value,
+                    label: option.label,
+                    count: tabCounts?.byStatus[option.value as CouponStatus]?.count,
+                  })),
+                ]}
+              />
+            }
+            search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("coupons.searchPlaceholder") }}
+            isFiltered={table.isFiltered}
+            onReset={table.reset}
+            actions={<ColumnToggle id="coupons-columns" columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} />}
           />
-        </FilterBar>
+        </div>
 
         {error && !data ? (
           <ErrorState onRetry={refetch} />
@@ -260,15 +287,15 @@ export default function CouponsPage() {
             loading={isLoading || isValidating}
             sort={table.sort}
             onSortChange={table.toggleSort}
+            hiddenColumns={visibility.hidden}
             empty={
               table.isFiltered ? (
                 <EmptyState
-                  compact
                   icon={Ticket}
                   title={t("coupons.emptyFilteredTitle")}
                   description={t("coupons.emptyFilteredDescription")}
                   action={
-                    <Button variant="outline" onClick={table.reset}>
+                    <Button variant="outline" onClick={resetFilters}>
                       {t("shell.clearFilters")}
                     </Button>
                   }
@@ -276,10 +303,12 @@ export default function CouponsPage() {
               ) : (
                 <EmptyState
                   icon={Ticket}
+                  tone="brand"
                   title={t("coupons.emptyTitle")}
                   description={t("coupons.emptyFirstDescription")}
                   action={
-                    <Button onClick={openCreate}>
+                    // The header keeps the page's one primary; this is its tonal echo.
+                    <Button variant="tonal" onClick={openCreate}>
                       <Plus aria-hidden="true" />
                       {t("coupons.createAction")}
                     </Button>
@@ -353,6 +382,8 @@ export default function CouponsPage() {
             { idempotencyKey: voidTarget.idempotencyKey },
           );
           toast.success(t("coupons.voidSuccess", { code: voidTarget.coupon.code }));
+          // The row loses its actions once the list refreshes: keep focus in that row.
+          rescueFocusTo(voidTarget.coupon.couponId);
           refreshAll();
         }}
       />

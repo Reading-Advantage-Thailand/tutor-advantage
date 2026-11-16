@@ -1,8 +1,10 @@
 "use client";
 
 import { Camera, ScanLine } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { IconTile } from "@/components/app";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { bilingualCopy } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import { ACCEPTED_DOCUMENT_TYPES } from "../lib/verification";
 
@@ -13,6 +15,8 @@ export type PassportScanState = "idle" | "scanning" | "done" | "error";
  * chosen in step 1 when there is one; otherwise the photo picked here also
  * becomes the step 1 document. A photo is only read when the tutor presses
  * a button here, next to the note that it goes to Google Gemini.
+ * Presentation: a brand-soft well (danger tone on error) with a tone tile,
+ * the live status line and one secondary action.
  */
 export function PassportScanPanel({
   state,
@@ -44,31 +48,27 @@ export function PassportScanPanel({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center",
-        state === "error" ? "border-danger-border bg-danger-bg" : "border-brand-soft-border bg-brand-soft/40",
+        "flex flex-col gap-3 rounded-(--radius-ctl) border p-3.5",
+        state === "error" ? "border-danger-border bg-danger-bg" : "border-brand-soft-border bg-brand-soft",
       )}
     >
       <div className="flex min-w-0 flex-1 items-start gap-3">
-        <ScanLine
-          aria-hidden="true"
-          className={cn("mt-0.5 size-5 shrink-0", state === "error" ? "text-danger-fg" : "text-brand-fg")}
-        />
+        <IconTile icon={ScanLine} tone={state === "error" ? "red" : "brand"} className="bg-surface" />
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-fg">{t("dashboardSettings.scanTitle")}</p>
+          <p className="text-sm font-semibold text-fg">{bilingualCopy(t("dashboardSettings.scanTitle"), { label: true })}</p>
           <p
-            className={cn("text-[0.8125rem]", state === "error" ? "text-danger-fg" : "text-fg-muted")}
+            className={cn("text-sm leading-[1.6]", state === "error" ? "text-danger-fg" : "text-fg-muted")}
             role={state === "error" ? "alert" : "status"}
           >
-            {message}
+            {bilingualCopy(message)}
           </p>
-          <p className="mt-1 text-xs text-fg-subtle">{t("dashboardSettings.scanDisclosure")}</p>
+          <p className="mt-1 text-xs leading-[1.6] text-fg-muted">{bilingualCopy(t("dashboardSettings.scanDisclosure"))}</p>
         </div>
       </div>
       {hasPhoto ? (
         <Button
           variant="outline"
-          size="sm"
-          className="w-full shrink-0 sm:w-auto"
+          className="w-full shrink-0 sm:ml-[52px] sm:w-auto sm:self-start"
           onClick={onScanPhoto}
           loading={scanning}
           disabled={disabled}
@@ -78,13 +78,19 @@ export function PassportScanPanel({
       ) : (
         <label
           className={cn(
-            "inline-flex h-8 w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg border border-field-border bg-surface px-3 text-sm font-medium text-fg hover:bg-press sm:w-auto",
-            "focus-within:ring-2 focus-within:ring-ring/40",
-            disabled && "pointer-events-none opacity-60",
+            buttonVariants({ variant: "outline" }),
+            // Two languages in one label: it wraps to two centred lines where one does not fit (phones under
+            // about 380px) instead of running over the outline. Heights are minimums (40, 44 on touch).
+            "h-auto min-h-10 w-full shrink-0 cursor-pointer py-1.5 text-center leading-[1.6] whitespace-normal sm:ml-[52px] sm:w-auto sm:self-start",
+            "has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-solid has-[:focus-visible]:outline-focus-ring",
+            disabled && "pointer-events-none opacity-45",
           )}
         >
-          <Camera aria-hidden="true" className="size-4" />
-          {t("dashboardSettings.scanPickPhoto")}
+          {/* One inline run: the icon stays beside the first line when the text wraps. */}
+          <span className="text-balance-th">
+            <Camera aria-hidden="true" className="mr-2 inline-block size-4 align-middle" />
+            {t("dashboardSettings.scanPickPhoto")}
+          </span>
           <input
             type="file"
             className="sr-only"

@@ -5,7 +5,7 @@
  * Relative imports on purpose: the root vitest config maps "@" to tutor-pwa.
  */
 import type { ChipTone } from "../../../../components/mobile/Chip";
-import { formatThaiDate, keepTimesTogether } from "../../../../lib/format";
+import { formatThaiDate, keepTimesTogether, localDayToBangkokNoon } from "../../../../lib/format";
 import type { I18nKey } from "../../../../lib/i18n";
 import type { AttendanceRecord, AttendanceStatus } from "./types";
 
@@ -41,9 +41,10 @@ export function selectAttendancePreview(records: AttendanceRecord[]): { preview:
 }
 
 /**
- * "yyyy-MM-dd" (Bangkok calendar day) → "6 พ.ย. 2569". Built as a local date:
- * new Date("yyyy-MM-dd") is UTC midnight, which shows the previous day on a
- * device west of Greenwich. Anything else is shown as sent.
+ * "yyyy-MM-dd" (Bangkok calendar day) → "6 พ.ย. 2569", the same day on every
+ * device. The parts are checked as a local date (so "2026-02-30" is refused),
+ * then moved to Bangkok noon of that day, because the formatter reads the
+ * Bangkok day. Anything else is shown as sent.
  */
 export function formatMeetingDate(date: string): string {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
@@ -51,7 +52,7 @@ export function formatMeetingDate(date: string): string {
   const [year, month, day] = [Number(match[1]), Number(match[2]), Number(match[3])];
   const local = new Date(year, month - 1, day);
   if (local.getFullYear() !== year || local.getMonth() !== month - 1 || local.getDate() !== day) return date;
-  return formatThaiDate(local);
+  return formatThaiDate(localDayToBangkokNoon(local));
 }
 
 /** "19:00 - 20:30 น." or "19:00 น." (times stay on one line). */

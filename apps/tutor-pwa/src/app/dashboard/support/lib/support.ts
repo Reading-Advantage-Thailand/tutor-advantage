@@ -130,7 +130,7 @@ export function statusLabel(status: string | null | undefined): string {
   }
 }
 
-/** Chip tone: waiting on the tutor stands out, closed is neutral. */
+/** Chip tone: waiting on the tutor stands out, closed is success (same as the student app). */
 export function statusToneFor(status: string | null | undefined): Tone {
   switch (status) {
     case "OPEN":
@@ -139,6 +139,8 @@ export function statusToneFor(status: string | null | undefined): Tone {
       return "brand";
     case "WAITING_ON_REQUESTER":
       return "warning";
+    case "RESOLVED":
+      return "success";
     default:
       return "neutral";
   }

@@ -1,5 +1,6 @@
-import { PageSkeleton } from "@/components/app";
+import { TablePageSkeleton } from "../settlements/TablePageSkeleton";
 
+/** Reconciliation: header + KPI strip + view tabs + toolbar + table. */
 export default function Loading() {
-  return <PageSkeleton variant="table" stats={true} />;
+  return <TablePageSkeleton kpi columns={6} />;
 }

@@ -1,9 +1,10 @@
 "use client";
 
-import { Pencil, Plus, Trash2, UserRound } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Calculator, GraduationCap, Pencil, Plus, Presentation, ShieldCheck, Trash2, UserRound, type LucideIcon } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 import {
   AdminStatusChip,
+  ColumnToggle,
   ConfirmDialog,
   DataTable,
   DescriptionList,
@@ -11,31 +12,52 @@ import {
   ErrorState,
   FilterBar,
   IdCell,
+  IdentityCell,
   Notice,
   Page,
   PageHeader,
   Pagination,
+  SegmentedControl,
   SelectField,
   Sheet,
   TextField,
   useAdminSession,
+  useColumnVisibility,
   type DataTableColumn,
 } from "@/components/app";
 import { Chip } from "@/components/app";
 import { toast } from "@/components/app/toastStore";
 import { Button } from "@/components/ui/button";
 import { useTableState } from "@/hooks/useTableState";
-import { api, errorMessage } from "@/lib/api";
+import { api, ApiError, errorMessage } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
-import { statusOptions } from "@/lib/status";
+import { statusLabel, statusOptions } from "@/lib/status";
 import "@/locales/th/dev";
 
 const ROLES = ["ADMIN", "FINANCE_CHECKER", "TUTOR", "STUDENT"] as const;
 const VERIFICATION = ["UNVERIFIED", "PENDING", "VERIFIED", "REJECTED"] as const;
 type Role = (typeof ROLES)[number];
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const ROLE_ICON: Record<Role, LucideIcon> = {
+  ADMIN: ShieldCheck,
+  FINANCE_CHECKER: Calculator,
+  TUTOR: Presentation,
+  STUDENT: GraduationCap,
+};
+
+/** Role as icon + word (patterns.md A2), not a coloured chip. */
+function RoleCell({ role }: { role: Role }) {
+  const Icon = ROLE_ICON[role] ?? UserRound;
+  return (
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-fg-muted">
+      <Icon aria-hidden="true" className="size-4 shrink-0" />
+      {statusLabel("userRole", role)}
+    </span>
+  );
+}
 
 interface DevUser {
   userId: string;
@@ -143,8 +165,8 @@ function UserFormSheet({
       title={user ? t("dev.editTitle") : t("dev.createTitle")}
       description={user ? <IdCell id={user.userId} /> : undefined}
       footer={
-        <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
-          <Button type="button" variant="ghost" disabled={saving} onClick={() => onOpenChange(false)}>
+        <div className="flex flex-col gap-2 md:flex-row md:justify-end">
+          <Button type="button" variant="outline" disabled={saving} onClick={() => onOpenChange(false)}>
             {t("dev.close")}
           </Button>
           <Button type="submit" form="dev-user-form" loading={saving}>
@@ -222,6 +244,13 @@ export function DevUsersClient() {
   );
   const [form, setForm] = useState<{ open: boolean; user: DevUser | null; key: number }>({ open: false, user: null, key: 0 });
   const [deleting, setDeleting] = useState<DevUser | null>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  // The empty state's "ล้างตัวกรอง" disappears once it has worked: focus goes back to the search box.
+  // (FilterBar's own button moves focus by itself.)
+  const resetFilters = () => {
+    table.reset();
+    window.requestAnimationFrame(() => toolbarRef.current?.querySelector<HTMLElement>('input[type="search"]')?.focus());
+  };
   const refresh = () => {
     if (me) invalidateResource(`${me.userId}:dev-users`);
   };
@@ -237,6 +266,24 @@ export function DevUsersClient() {
   }, [data, table.q, table.filters.role]);
   const rows = filtered.slice((table.page - 1) * table.pageSize, table.page * table.pageSize);
 
+  // Count tabs replace the role select (same `role` filter); counts follow the search.
+  const roleCounts = useMemo(() => {
+    const q = table.q.trim().toLowerCase();
+    const counts: Record<string, number> = { "": 0 };
+    for (const user of data?.users ?? []) {
+      if (q && ![user.userId, user.displayName ?? "", user.email ?? ""].some((value) => value.toLowerCase().includes(q))) continue;
+      counts[""] += 1;
+      counts[user.role] = (counts[user.role] ?? 0) + 1;
+    }
+    return counts;
+  }, [data, table.q]);
+  const roleTabs = [
+    { value: "", label: t("dev.allRoles"), count: data ? roleCounts[""] : undefined },
+    ...statusOptions("userRole")
+      .filter((option) => (ROLES as readonly string[]).includes(option.value))
+      .map((option) => ({ value: option.value, label: option.label, count: data ? (roleCounts[option.value] ?? 0) : undefined })),
+  ];
+
   const columns = useMemo<DataTableColumn<DevUser>[]>(
     () => [
       {
@@ -244,14 +291,12 @@ export function DevUsersClient() {
         header: t("dev.colUser"),
         mobile: "primary",
         alwaysVisible: true,
+        sticky: true,
         cell: (user) => (
-          <span className="flex min-w-0 flex-col">
-            <span className="truncate font-medium text-fg">{user.displayName || t("dev.noName")}</span>
-            <span className="truncate text-[0.8125rem] text-fg-muted">{user.email || "–"}</span>
-          </span>
+          <IdentityCell name={user.displayName || t("dev.noName")} secondary={user.email || "–"} seed={user.userId} className="max-w-52" />
         ),
       },
-      { key: "role", header: t("dev.colRole"), mobile: "trailing", cell: (user) => <AdminStatusChip domain="userRole" status={user.role} /> },
+      { key: "role", header: t("dev.colRole"), mobile: "trailing", cell: (user) => <RoleCell role={user.role} /> },
       {
         key: "account",
         header: t("dev.colAccount"),
@@ -267,27 +312,28 @@ export function DevUsersClient() {
         header: t("dev.colLogin"),
         cell: (user) =>
           user.oauthIdentities.length ? (
-            <span className="flex flex-wrap gap-1">
-              {user.oauthIdentities.map((identity) => (
-                <Chip key={identity.provider} size="sm">
-                  {identity.provider}
-                </Chip>
-              ))}
-            </span>
+            <span className="whitespace-nowrap text-fg-muted">{user.oauthIdentities.map((identity) => identity.provider).join(" · ")}</span>
           ) : (
-            "–"
+            <span className="text-fg-subtle">–</span>
           ),
       },
       { key: "id", header: t("dev.colId"), cell: (user) => <IdCell id={user.userId} /> },
-      { key: "createdAt", header: t("dev.colCreated"), mobile: "secondary", cell: (user) => formatThaiDate(user.createdAt) },
+      {
+        key: "createdAt",
+        header: t("dev.colCreated"),
+        mobile: "secondary",
+        cell: (user) => <span className="whitespace-nowrap tabular">{formatThaiDate(user.createdAt)}</span>,
+      },
       {
         key: "actions",
         header: <span className="sr-only">{t("dev.colActions")}</span>,
         label: t("dev.colActions"),
         align: "right",
         alwaysVisible: true,
+        // Phones: a full-width row at the bottom of the card, not a half-width "จัดการ" field.
+        mobile: "actions",
         cell: (user) => (
-          <span className="inline-flex gap-1">
+          <span className="inline-flex flex-wrap gap-1.5">
             <Button size="sm" variant="ghost" onClick={() => setForm((current) => ({ open: true, user, key: current.key + 1 }))}>
               <Pencil aria-hidden="true" />
               {t("dev.edit")}
@@ -302,6 +348,7 @@ export function DevUsersClient() {
     ],
     [me?.userId],
   );
+  const visibility = useColumnVisibility("dev-users", columns);
 
   const deleteConfirmText = deleting ? deleting.email || deleting.userId.slice(0, 8) : "";
 
@@ -319,48 +366,61 @@ export function DevUsersClient() {
         }
       />
       <Notice tone="warning">{t("dev.usersWarning")}</Notice>
-      <div className="flex flex-col gap-3">
+      <div ref={toolbarRef} className="flex flex-col gap-3">
         <FilterBar
+          tabs={
+            <SegmentedControl
+              aria-label={t("dev.roleFilter")}
+              value={table.filters.role ?? ""}
+              onValueChange={(next) => table.setFilter("role", next)}
+              items={roleTabs}
+            />
+          }
           search={{ value: table.searchValue, onValueChange: table.setSearchValue, placeholder: t("dev.searchPlaceholder") }}
           isFiltered={table.isFiltered}
           onReset={table.reset}
-        >
-          <SelectField
-            aria-label={t("dev.roleFilter")}
-            containerClassName="w-full sm:w-48"
-            value={table.filters.role ?? ""}
-            onChange={(event) => table.setFilter("role", event.target.value)}
-            options={[
-              { value: "", label: t("dev.allRoles") },
-              ...statusOptions("userRole").filter((option) => (ROLES as readonly string[]).includes(option.value)),
-            ]}
-          />
-        </FilterBar>
-        {error && !data ? (
-          <ErrorState onRetry={refetch} />
-        ) : (
-          <DataTable
-            caption={t("dev.usersTitle")}
-            rows={rows}
-            columns={columns}
-            getRowKey={(user) => user.userId}
-            breakpoint="lg"
-            loading={isLoading || isValidating}
-            empty={<EmptyState compact icon={UserRound} title={t("dev.usersEmptyTitle")} description={t("dev.usersEmptyDescription")} />}
-            footer={
-              filtered.length > 0 ? (
-                <Pagination
-                  page={table.page}
-                  pageSize={table.pageSize}
-                  total={filtered.length}
-                  onPageChange={table.setPage}
-                  onPageSizeChange={table.setPageSize}
-                />
-              ) : null
-            }
-          />
-        )}
+          actions={<ColumnToggle id="dev-users-columns" columns={columns} hidden={visibility.hidden} onToggle={visibility.toggle} />}
+        />
       </div>
+      {error && !data ? (
+        <ErrorState onRetry={refetch} digest={error instanceof ApiError ? (error.requestId ?? undefined) : undefined} />
+      ) : (
+        <DataTable
+          caption={t("dev.usersTitle")}
+          rows={rows}
+          columns={columns}
+          hiddenColumns={visibility.hidden}
+          getRowKey={(user) => user.userId}
+          breakpoint="lg"
+          loading={isLoading || isValidating}
+          activeRowKey={form.open ? (form.user?.userId ?? null) : null}
+          empty={
+            <EmptyState
+              icon={UserRound}
+              title={t("dev.usersEmptyTitle")}
+              description={t("dev.usersEmptyDescription")}
+              action={
+                table.isFiltered ? (
+                  <Button variant="outline" onClick={resetFilters}>
+                    {t("shell.clearFilters")}
+                  </Button>
+                ) : undefined
+              }
+            />
+          }
+          footer={
+            filtered.length > 0 ? (
+              <Pagination
+                page={table.page}
+                pageSize={table.pageSize}
+                total={filtered.length}
+                onPageChange={table.setPage}
+                onPageSizeChange={table.setPageSize}
+              />
+            ) : null
+          }
+        />
+      )}
 
       <UserFormSheet
         key={form.key}
@@ -372,6 +432,8 @@ export function DevUsersClient() {
       <ConfirmDialog
         open={Boolean(deleting)}
         onOpenChange={(open) => !open && setDeleting(null)}
+        // The row (and its "ลบ" button) is gone after the refresh: focus goes to the search box, not <body>.
+        finalFocus={() => toolbarRef.current?.querySelector<HTMLElement>('input[type="search"]')}
         tone="danger"
         title={deleting ? t("dev.deleteTitle", { name: deleting.displayName || deleting.email || t("dev.noName") }) : ""}
         description={t("dev.deleteDescription")}

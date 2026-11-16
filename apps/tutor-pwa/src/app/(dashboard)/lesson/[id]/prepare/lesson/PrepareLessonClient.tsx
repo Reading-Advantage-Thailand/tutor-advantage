@@ -35,19 +35,29 @@ const PhaseManager = dynamic(
   { ssr: false, loading: () => <StageSkeleton /> },
 );
 
+/** Mirrors the presenter: the phase bar (tile, name, 18 segments) above the stage. */
 function StageSkeleton() {
   return (
-    <div className="flex flex-1 flex-col gap-4">
+    <div className="flex flex-1 flex-col">
       <LoadingAnnouncement />
-      <Skeleton className="h-20 rounded-xl" />
-      <div aria-hidden="true" className="mx-auto grid w-full max-w-6xl flex-1 gap-6 py-4 lg:grid-cols-[45%_1fr]">
-        <Skeleton className="h-64 rounded-xl lg:h-full" />
+      <div aria-hidden="true" className="flex flex-col gap-3 border-b border-hairline bg-surface-nav px-4 pt-3 pb-3 lg:px-6">
+        <div className="flex items-center gap-3">
+          <Skeleton className="size-12 shrink-0 rounded-(--radius-tile)" />
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-3.5 w-28" />
+            <Skeleton className="h-6 w-44" />
+          </div>
+        </div>
+        <Skeleton className="h-2.5 w-full rounded-full" />
+      </div>
+      <div aria-hidden="true" className="mx-auto grid w-full max-w-6xl flex-1 gap-6 px-4 py-6 lg:grid-cols-[44%_1fr] lg:px-6">
+        <Skeleton className="h-64 rounded-(--radius-card) lg:h-full" />
         <div className="flex flex-col gap-3">
-          <Skeleton className="h-6 w-32" />
-          <Skeleton className="h-9 w-4/5" />
+          <Skeleton className="h-6 w-32 rounded-full" />
+          <Skeleton className="h-10 w-4/5" />
           <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-16 rounded-xl" />
-          <Skeleton className="h-16 rounded-xl" />
+          <Skeleton className="h-20 rounded-(--radius-card)" />
+          <Skeleton className="h-20 rounded-(--radius-card)" />
         </div>
       </div>
     </div>
@@ -394,7 +404,7 @@ export default function PrepareLessonClient({
   ]);
 
   return (
-    <div className="flex min-h-[var(--lesson-viewport-h)] w-full flex-1 flex-col px-2 pt-2 sm:px-4 sm:pt-3 lg:px-6">
+    <div className="flex min-h-[var(--lesson-viewport-h)] w-full flex-1 flex-col">
       <LessonBarActions>
         <Chip tone="brand" className="max-sm:hidden">
           {mode === "guided" ? t("lesson.preflow.rehearsal.modeGuided") : t("lesson.preflow.rehearsal.modeExplore")}
@@ -447,6 +457,7 @@ export default function PrepareLessonClient({
             onPrevious={() => moveGuide(-1)}
             canAdvance={!waitingForPreparationMock}
             onNext={handleGuideNext}
+            onClose={() => setGuideOpen(false)}
           />
         ) : null}
       />

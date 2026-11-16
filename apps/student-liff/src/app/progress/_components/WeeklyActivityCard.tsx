@@ -1,4 +1,4 @@
-import { Chip } from "@/components/mobile";
+import { Chip, Surface } from "@/components/mobile";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { getWeekChart, type WeeklyActivity } from "./progressModel";
@@ -13,29 +13,26 @@ export function WeeklyActivityCard({ weeklyActivity }: { weeklyActivity: WeeklyA
   const unit = t("progress.minuteUnit");
 
   return (
-    <section
-      aria-labelledby="progress-week-title"
-      className="rounded-[var(--radius-card)] border border-hairline bg-surface p-4 shadow-[var(--shadow-card)]"
-    >
+    <Surface as="section" padding="lg" aria-labelledby="progress-week-title">
       <div className="flex items-center justify-between gap-3">
-        <h2 id="progress-week-title" className="text-[17px] leading-[1.5] font-bold text-fg">
+        <h2 id="progress-week-title" className="t-title text-fg">
           {t("progress.thisWeek")}
         </h2>
-        <Chip size="md" className="tabular-nums">
+        <Chip size="md" className="font-sans tabular-nums">
           {totalMinutes} {unit}
         </Chip>
       </div>
-      <ul className="mt-3 grid grid-cols-7 gap-2">
+      <ul className="mt-4 grid grid-cols-7 gap-2">
         {bars.map((bar, index) => (
           <li key={`${bar.day}-${index}`} aria-label={`${bar.day} ${bar.minutes} ${unit}`} className="flex flex-col items-center gap-1">
             <span aria-hidden="true" className="h-[18px] text-xs leading-[1.5] font-semibold text-brand-fg tabular-nums">
               {bar.minutes > 0 ? bar.minutes : ""}
             </span>
-            <span aria-hidden="true" className="relative block h-16 w-full overflow-hidden rounded-lg bg-fill-muted">
+            <span aria-hidden="true" className="relative block h-16 w-full overflow-hidden rounded-[10px] bg-fill-muted">
               <span
                 className={cn(
-                  "absolute inset-x-0 bottom-0 rounded-lg",
-                  bar.active ? "bg-brand-vivid" : "bg-[var(--neutral-300)]",
+                  "absolute inset-x-0 bottom-0 rounded-[10px]",
+                  bar.active ? "bg-brand-vivid" : "bg-fg-subtle/25",
                 )}
                 style={{ height: `${bar.heightPct}%` }}
               />
@@ -47,8 +44,8 @@ export function WeeklyActivityCard({ weeklyActivity }: { weeklyActivity: WeeklyA
         ))}
       </ul>
       {totalMinutes === 0 ? (
-        <p className="mt-3 text-center text-[13px] leading-[1.5] text-fg-muted">{t("progress.noActivityYet")}</p>
+        <p className="mt-3 text-center text-sm leading-[1.6] text-fg-muted">{t("progress.noActivityYet")}</p>
       ) : null}
-    </section>
+    </Surface>
   );
 }

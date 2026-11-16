@@ -29,7 +29,9 @@ export default function SchedulePage() {
     return (
       <Screen>
         <AppBar title={t("schedule.title")} back fallbackHref="/dashboard" />
-        <LiffErrorState />
+        <div className="px-4 pt-2">
+          <LiffErrorState card />
+        </div>
       </Screen>
     );
   }
@@ -38,7 +40,9 @@ export default function SchedulePage() {
     return (
       <Screen>
         <AppBar title={t("schedule.title")} back fallbackHref="/dashboard" />
-        <ErrorState description={t("schedule.loadFailed")} onRetry={() => void refetch()} retrying={isValidating} />
+        <div className="px-4 pt-2">
+          <ErrorState card description={t("schedule.loadFailed")} onRetry={() => void refetch()} retrying={isValidating} />
+        </div>
       </Screen>
     );
   }

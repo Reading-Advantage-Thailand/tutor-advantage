@@ -8,12 +8,16 @@ import { Dropdown, type DropdownPlacement } from "./Dropdown";
 import { useNotifications } from "./Notifications";
 import { ListRow } from "./Surface";
 
+/**
+ * Alert count pill (components.md §4): 22px, --danger-solid / --on-danger,
+ * 600 12 tabular. Renders nothing at 0.
+ */
 export function CountBadge({ count, className }: { count: number; className?: string }) {
   if (count <= 0) return null;
   return (
     <span
       className={cn(
-        "inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-danger-solid px-1 text-[0.6875rem] leading-none font-semibold text-white tabular",
+        "inline-flex h-[22px] min-w-[22px] shrink-0 items-center justify-center rounded-full bg-danger-solid px-1.5 text-xs leading-none font-semibold text-on-danger tabular",
         className,
       )}
     >
@@ -23,8 +27,10 @@ export function CountBadge({ count, className }: { count: number; className?: st
 }
 
 /**
- * Bell with total unread count; opens a small panel linking to chats, open
- * class auctions and answered support tickets. Reads the shared NotificationsProvider (no polling here).
+ * Bell (44 on touch) with an 8px --danger-solid dot when there is anything
+ * unread; the count is in the accessible name and the panel. Opens a small
+ * panel linking to chats, open class auctions and answered support tickets.
+ * Reads the shared NotificationsProvider (no polling here).
  */
 export function NotificationBell({
   placement = "bottom-end",
@@ -45,27 +51,32 @@ export function NotificationBell({
           aria-label={label}
           {...triggerProps}
           className={cn(
-            "relative inline-flex size-9 shrink-0 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-press hover:text-fg",
+            "relative inline-flex size-10 shrink-0 items-center justify-center rounded-(--radius-ctl) text-fg-muted transition-colors duration-(--duration-fast) hover:bg-press hover:text-fg pointer-coarse:size-11",
             open && "bg-press text-fg",
             className,
           )}
         >
           <Bell aria-hidden="true" className="size-5" />
-          <CountBadge count={total} className="absolute -top-0.5 -right-0.5 ring-2 ring-surface" />
+          {total > 0 ? (
+            <span
+              aria-hidden="true"
+              className="absolute top-2.5 right-2.5 size-2 rounded-full bg-danger-solid ring-2 ring-surface-nav"
+            />
+          ) : null}
         </button>
       )}
     >
       {(close) => (
         <>
           <div className="flex items-center justify-between gap-2 border-b border-hairline px-4 py-3">
-            <p className="text-sm font-semibold text-fg">{t("shell.notifications")}</p>
+            <p className="text-[0.9375rem] font-semibold text-fg">{t("shell.notifications")}</p>
             <button
               type="button"
               onClick={() => setMuted(!muted)}
               aria-pressed={muted}
               title={muted ? t("shell.notificationsUnmute") : t("shell.notificationsMute")}
               aria-label={muted ? t("shell.notificationsUnmute") : t("shell.notificationsMute")}
-              className="inline-flex size-8 items-center justify-center rounded-md text-fg-muted hover:bg-press hover:text-fg"
+              className="relative inline-flex size-8 items-center justify-center rounded-(--radius-ctl-sm) text-fg-muted hover:bg-press hover:text-fg pointer-coarse:after:absolute pointer-coarse:after:-inset-1.5"
             >
               {muted ? <BellOff aria-hidden="true" className="size-4" /> : <Bell aria-hidden="true" className="size-4" />}
             </button>
@@ -90,7 +101,7 @@ export function NotificationBell({
                   onClick={close}
                   leading={<IconTile icon={Gavel} tone="amber" size="sm" />}
                   title={t("shell.notificationsAuctions")}
-                  trailing={<CountBadge count={availableAuctions} className="bg-warning-solid text-on-warning" />}
+                  trailing={<CountBadge count={availableAuctions} className="bg-neutral-bg text-neutral-fg" />}
                   chevron={false}
                 />
               ) : null}

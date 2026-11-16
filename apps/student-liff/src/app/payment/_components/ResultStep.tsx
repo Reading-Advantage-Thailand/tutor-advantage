@@ -19,6 +19,8 @@ import { formatSatang } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { getChargeFailureKey, getPaymentMethodLabelKey } from "@/lib/paymentFlow";
 import { cn } from "@/lib/utils";
+import { PaymentStepCaption } from "./PaymentStepCaption";
+import { ThaiText } from "./ThaiText";
 
 /* ─── Card result (3DS return: pending / failed) ─────────────────────────── */
 
@@ -32,7 +34,10 @@ export interface CardResultStepProps {
   onChangeMethod: () => void;
 }
 
-/** After the bank's 3DS page: still pending (check again) or failed (pay again). */
+/**
+ * After the bank's 3DS page: still pending (check again) or failed (pay
+ * again). Reedy calm while waiting, oops on a failure: the cause, then the recovery.
+ */
 export function CardResultStep({
   status,
   failureMessage,
@@ -45,30 +50,34 @@ export function CardResultStep({
   return (
     <Screen>
       <AppBar title={t("payment.result.title")} onBack={onChangeMethod} />
+      <PaymentStepCaption step={3} />
       <div role="status" aria-live="polite" className="flex flex-1 flex-col">
         <StatusScreen
           icon={failed ? XCircle : Clock}
           tone={failed ? "red" : "amber"}
+          mascot={failed ? "oops" : "calm"}
           title={failed ? t("payment.result.failedTitle") : t("payment.result.pendingTitle")}
           description={
-            failed ? t(getChargeFailureKey(failureMessage, "card")) : t("payment.result.pendingDescription")
+            <ThaiText
+              text={failed ? t(getChargeFailureKey(failureMessage, "card")) : t("payment.result.pendingDescription")}
+            />
           }
         />
       </div>
       <BottomActionBar>
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <div className="flex min-w-0 flex-1 flex-col gap-2.5">
           {failed ? (
-            <Button variant="brand" size="cta" className="w-full" onClick={onRetryCard}>
+            <Button variant="brand" size="cta-lg" className="w-full" onClick={onRetryCard}>
               <CreditCard aria-hidden="true" />
               {t("payment.result.tryAgain")}
             </Button>
           ) : (
-            <Button variant="brand" size="cta" className="w-full" loading={loading} onClick={onCheckAgain}>
+            <Button variant="brand" size="cta-lg" className="w-full" loading={loading} onClick={onCheckAgain}>
               {loading ? null : <RotateCw aria-hidden="true" />}
               {loading ? t("payment.result.checking") : t("payment.result.checkAgain")}
             </Button>
           )}
-          <Button variant="brandSoft" size="touch" className="w-full" disabled={loading} onClick={onChangeMethod}>
+          <Button variant="outline" size="touch" className="w-full" disabled={loading} onClick={onChangeMethod}>
             {t("payment.result.changeMethod")}
           </Button>
         </div>
@@ -91,7 +100,7 @@ export interface SuccessStepProps {
 
 function ReceiptRow({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-4 py-2.5 text-[15px] leading-[1.5]">
+    <div className="flex min-h-12 items-center justify-between gap-4 py-2.5 text-[15px] leading-[1.6]">
       <dt className="shrink-0 text-fg-muted">{label}</dt>
       <dd className="min-w-0 text-right font-semibold break-words text-fg">{children}</dd>
     </div>
@@ -104,6 +113,7 @@ export function SuccessStep({ classTitle, tutor, amountSatang, method, classId }
     <Screen>
       <Confetti intensity="big" origin={{ x: 0.5, y: 0.25 }} />
       <AppBar title={t("payment.select.title")} />
+      <PaymentStepCaption step={3} />
       <StatusScreen
         icon={CheckCircle2}
         mascot="cheer"
@@ -112,30 +122,33 @@ export function SuccessStep({ classTitle, tutor, amountSatang, method, classId }
         description={t("payment.success.description")}
         className="justify-start pt-6 pb-6"
       >
-        <dl className="divide-y divide-hairline rounded-[var(--radius-card)] border border-hairline bg-surface px-4 py-1.5 text-left shadow-[var(--shadow-card)]">
-          <ReceiptRow label={t("payment.success.classLabel")}>{classTitle}</ReceiptRow>
-          <ReceiptRow label={t("payment.success.tutorLabel")}>{tutor}</ReceiptRow>
+        <div className="rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface text-left shadow-[var(--shadow-card)]">
           {amountSatang !== null ? (
-            <ReceiptRow label={t("payment.success.amountLabel")}>
-              <span className="tabular-nums">{formatSatang(amountSatang)}</span>
-            </ReceiptRow>
+            <div className="flex flex-col items-center gap-0.5 border-b-[1.5px] border-hairline px-5 pt-4 pb-3.5 text-center">
+              <span className="text-sm leading-[1.6] text-fg-muted">{t("payment.success.amountLabel")}</span>
+              <span className="text-[28px] leading-[1.25] font-semibold text-fg tabular-nums">{formatSatang(amountSatang)}</span>
+            </div>
           ) : null}
-          <ReceiptRow label={t("payment.success.methodLabel")}>{t(getPaymentMethodLabelKey(method))}</ReceiptRow>
-          <ReceiptRow label={t("payment.success.statusLabel")}>
-            <Chip tone="success" icon={CheckCircle2}>
-              {t("payment.success.confirmedStatus")}
-            </Chip>
-          </ReceiptRow>
-        </dl>
-        <p className="mt-4 text-[13px] leading-[1.6] text-fg-muted">{t("payment.success.lineNotice")}</p>
+          <dl className="divide-y-[1.5px] divide-hairline px-5 py-1">
+            <ReceiptRow label={t("payment.success.classLabel")}>{classTitle}</ReceiptRow>
+            <ReceiptRow label={t("payment.success.tutorLabel")}>{tutor}</ReceiptRow>
+            <ReceiptRow label={t("payment.success.methodLabel")}>{t(getPaymentMethodLabelKey(method))}</ReceiptRow>
+            <ReceiptRow label={t("payment.success.statusLabel")}>
+              <Chip tone="success" icon={CheckCircle2}>
+                {t("payment.success.confirmedStatus")}
+              </Chip>
+            </ReceiptRow>
+          </dl>
+        </div>
+        <p className="mt-4 text-sm leading-[1.6] text-fg-muted">{t("payment.success.lineNotice")}</p>
       </StatusScreen>
       <BottomActionBar>
         {classId ? (
-          <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <div className="flex min-w-0 flex-1 flex-col gap-2.5">
             <Link
               href={lessonLobbyHref(classId)}
               id="btn-enter-lesson"
-              className={cn(buttonVariants({ variant: "brand", size: "cta" }), "w-full")}
+              className={cn(buttonVariants({ variant: "brand", size: "cta-lg" }), "w-full")}
             >
               <DoorOpen aria-hidden="true" />
               {t("payment.success.lessonCta")}
@@ -143,7 +156,7 @@ export function SuccessStep({ classTitle, tutor, amountSatang, method, classId }
             <Link
               href="/dashboard"
               id="btn-go-dashboard"
-              className={cn(buttonVariants({ variant: "brandSoft", size: "touch" }), "w-full")}
+              className={cn(buttonVariants({ variant: "outline", size: "touch" }), "w-full")}
             >
               <Home aria-hidden="true" />
               {t("payment.success.dashboardCta")}
@@ -153,7 +166,7 @@ export function SuccessStep({ classTitle, tutor, amountSatang, method, classId }
           <Link
             href="/dashboard"
             id="btn-go-dashboard"
-            className={cn(buttonVariants({ variant: "brand", size: "cta" }), "flex-1")}
+            className={cn(buttonVariants({ variant: "brand", size: "cta-lg" }), "flex-1")}
           >
             <Home aria-hidden="true" />
             {t("payment.success.dashboardCta")}
@@ -173,15 +186,15 @@ export function RedirectingScreen({ authorizeUri }: { authorizeUri: string }) {
       <StatusScreen
         icon={ShieldCheck}
         tone="brand"
+        mascot="calm"
+        // No app bar on this screen: the title is its h1.
+        as="h1"
         title={t("payment.redirect.title")}
         description={t("payment.redirect.description")}
         primaryAction={
           <div className="flex flex-col items-center gap-4">
             <Spinner size="lg" className="text-icon-brand" label={t("payment.redirect.title")} />
-            <a
-              href={authorizeUri}
-              className={cn(buttonVariants({ variant: "ghost", size: "touch" }), "text-brand-fg")}
-            >
+            <a href={authorizeUri} className={buttonVariants({ variant: "ghost", size: "touch" })}>
               {t("payment.redirect.fallback")}
             </a>
           </div>
@@ -200,6 +213,7 @@ export function ResumingScreen() {
       <StatusScreen
         icon={ShieldCheck}
         tone="brand"
+        mascot="calm"
         title={t("payment.resume.title")}
         description={t("payment.resume.description")}
       >

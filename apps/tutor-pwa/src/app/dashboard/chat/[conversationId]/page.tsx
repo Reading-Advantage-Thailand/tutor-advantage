@@ -14,7 +14,7 @@ export default async function ChatRoomPage({ params }: { params: Promise<{ conve
   // Not a participant / unknown room / signed out: same "not found" screen as before.
   if (!result || (!result.ok && result.status < 500) || (result.ok && !result.data.metadata)) {
     return (
-      <div className="flex min-h-[60dvh] items-center justify-center rounded-xl md:h-[calc(100dvh-64px)] md:border md:border-hairline md:bg-surface md:shadow-card xl:h-[calc(100dvh-76px)]">
+      <div className="flex min-h-[60dvh] items-center justify-center rounded-(--radius-card) md:h-[calc(100dvh-64px)] md:border md:border-clay-rim md:bg-surface md:shadow-card xl:h-[calc(100dvh-76px)]">
         <ShellTitle title={t("dashboardChat.title")} backHref="/dashboard/chat" />
         <h1 className="sr-only">{t("dashboardChat.roomNotFound")}</h1>
         <EmptyState

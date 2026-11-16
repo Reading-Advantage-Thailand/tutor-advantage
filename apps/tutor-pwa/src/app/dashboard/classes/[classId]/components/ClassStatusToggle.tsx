@@ -6,7 +6,8 @@ import { Chip, toast } from "@/components/app";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { t } from "@/lib/i18n";
@@ -35,6 +36,7 @@ export function ClassStatusToggle({
     setLoading(true);
     try {
       await updateClassStatus(classId, status);
+      toast.success(t("tutorClass.classes.statusUpdated"), { description: CLASS_STATUS[status].label });
     } catch (error) {
       console.error(error);
       toast.error(error instanceof Error && error.message ? error.message : t("tutorClass.errors.updateClassStatus"));
@@ -50,22 +52,30 @@ export function ClassStatusToggle({
       <DropdownMenuTrigger
         disabled={loading}
         aria-label={`${t("tutorClass.ui.changeStatus")}: ${current.label}`}
-        className={cn("rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/40", loading && "opacity-60")}
+        className={cn(
+          // The 24px chip keeps its look; on touch a taller ::after reaches a 44px hit area.
+          "relative rounded-full outline-none focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring pointer-coarse:after:absolute pointer-coarse:after:-inset-2.5",
+          loading && "opacity-60",
+        )}
       >
-        <Chip tone={current.tone} className="cursor-pointer gap-1 pr-1.5 whitespace-nowrap">
+        {/* Status = colour + dot + word; the chevron says it opens a menu. */}
+        <Chip tone={current.tone} dot className="cursor-pointer gap-1.5 pr-1.5 whitespace-nowrap">
           {current.label}
           <ChevronDown aria-hidden="true" className="ml-0.5 inline size-3.5 align-[-2px]" />
         </Chip>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-40">
-        {(Object.keys(CLASS_STATUS) as ClassStatus[]).map((status) => (
-          <DropdownMenuItem key={status} onClick={() => handleStatusChange(status)}>
-            <span aria-hidden="true" className={cn("size-2 rounded-full", DOT[status])} />
-            <span className={cn("font-medium", status === initialStatus ? "text-fg" : "text-fg-muted")}>
-              {CLASS_STATUS[status].label}
-            </span>
-          </DropdownMenuItem>
-        ))}
+        {/* A radio group: the current status is checked (check mark + aria-checked), not only darker text. */}
+        <DropdownMenuRadioGroup value={initialStatus} onValueChange={(status) => void handleStatusChange(status as ClassStatus)}>
+          {(Object.keys(CLASS_STATUS) as ClassStatus[]).map((status) => (
+            <DropdownMenuRadioItem key={status} value={status} closeOnClick className="py-1.5 pointer-coarse:min-h-11">
+              <span aria-hidden="true" className={cn("size-2 rounded-full", DOT[status])} />
+              <span className={cn("font-medium", status === initialStatus ? "text-fg" : "text-fg-muted")}>
+                {CLASS_STATUS[status].label}
+              </span>
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

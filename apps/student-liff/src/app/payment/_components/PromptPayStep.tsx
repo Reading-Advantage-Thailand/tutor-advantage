@@ -8,7 +8,9 @@ import { t, type I18nKey } from "@/lib/i18n";
 import type { QrCtaMode } from "@/lib/paymentFlow";
 import { cn } from "@/lib/utils";
 import { AmountCard } from "./AmountCard";
+import { PaymentStepCaption } from "./PaymentStepCaption";
 import { QrCountdown } from "./QrCountdown";
+import { keepThaiWords } from "./ThaiText";
 
 export interface PromptPayStepProps {
   amountSatang: number | null;
@@ -37,6 +39,9 @@ const CTA_LABEL: Record<QrCtaMode, I18nKey> = {
 /** File name for "บันทึกรูป QR" (same image the bank app scans). */
 const QR_FILE_NAME = "promptpay-qr.png";
 
+/** 232px code + the 16px quiet zone on each side. */
+const QR_BOX = "size-[264px]";
+
 function QrBox({
   dataUri,
   loading,
@@ -52,47 +57,53 @@ function QrBox({
   hasIntent: boolean;
   onRetry: () => void;
 }) {
-  // Always white (also in dark mode) so banking apps can read the code.
-  return (
-    <div className="relative mx-auto flex size-[260px] items-center justify-center rounded-3xl border border-hairline bg-white p-3.5 shadow-[var(--shadow-card)]">
-      {dataUri && !loading ? (
+  // A code to scan sits on the always-white `.qr-container` with a 16px quiet
+  // zone, also in dark mode, so banking apps can read it.
+  if (dataUri && !loading) {
+    return (
+      <div className={cn("qr-container relative mx-auto p-4", QR_BOX)}>
         <Image
           src={dataUri}
           alt={t("payment.promptpay.qrAlt")}
           width={232}
           height={232}
           unoptimized
-          className={cn("size-[232px] rounded-lg object-contain", dimmed && "opacity-25")}
+          className={cn("size-[232px] object-contain", dimmed && "opacity-25")}
         />
-      ) : loading ? (
+        {dimmed && dimLabel ? (
+          // An opaque token pill: readable over the white box in both themes.
+          <span className="absolute inset-x-6 top-1/2 -translate-y-1/2 rounded-full border-[1.5px] border-clay-rim bg-surface-elevated px-4 py-2 text-center text-[15px] leading-[1.5] font-semibold text-fg shadow-[var(--shadow-popover)]">
+            {dimLabel}
+          </span>
+        ) : null}
+      </div>
+    );
+  }
+
+  // No code yet (loading) or none to show: a muted well in theme colours, same size.
+  return (
+    <div className={cn("well relative mx-auto flex items-center justify-center border-[1.5px] border-clay-rim", QR_BOX)}>
+      {loading ? (
         <div className="flex size-[232px] flex-col items-center justify-center gap-3">
-          <Skeleton className="size-[232px] rounded-lg" />
+          <Skeleton className="size-[232px] rounded-xl" />
           <span className="sr-only">{t("payment.promptpay.qrCreating")}</span>
         </div>
       ) : !hasIntent ? (
         // Creating the QR failed (the notice below explains it): a still
         // placeholder, not a skeleton that would look like it is still loading.
-        <div
-          aria-hidden="true"
-          className="flex size-[232px] items-center justify-center rounded-lg border-2 border-dashed border-slate-200 bg-slate-50"
-        >
-          <QrCode className="size-16 text-slate-300" strokeWidth={1.5} />
-        </div>
+        <QrCode aria-hidden="true" className="size-16 text-fg-subtle" strokeWidth={1.5} />
       ) : (
         <div className="flex flex-col items-center gap-3 px-4 text-center">
-          <p className="text-sm leading-[1.5] font-semibold text-slate-700">{t("payment.promptpay.qrLoadFailed")}</p>
-          <button
-            type="button"
-            onClick={onRetry}
-            className="pressable inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-slate-100 px-4 text-sm font-semibold text-slate-800 active:bg-slate-200"
-          >
-            <RotateCw aria-hidden="true" className="size-4" />
+          <QrCode aria-hidden="true" className="size-10 text-fg-subtle" strokeWidth={1.6} />
+          <p className="text-[15px] leading-[1.6] font-semibold text-fg">{t("payment.promptpay.qrLoadFailed")}</p>
+          <Button variant="outline" size="touch" onClick={onRetry}>
+            <RotateCw aria-hidden="true" />
             {t("payment.promptpay.qrLoadRetry")}
-          </button>
+          </Button>
         </div>
       )}
       {dimmed && dimLabel ? (
-        <span className="absolute inset-x-6 top-1/2 -translate-y-1/2 rounded-full bg-slate-900/85 px-4 py-2 text-center text-sm leading-[1.5] font-bold text-white">
+        <span className="absolute inset-x-6 bottom-5 rounded-full border-[1.5px] border-clay-rim bg-surface-elevated px-4 py-2 text-center text-[15px] leading-[1.5] font-semibold text-fg">
           {dimLabel}
         </span>
       ) : null}
@@ -129,10 +140,16 @@ export function PromptPayStep({
   return (
     <Screen>
       <AppBar title={t("payment.promptpay.title")} onBack={onBack} />
-      <div className="flex flex-col gap-5 px-4 pt-3 pb-6">
-        <AmountCard label={t("payment.promptpay.amountDue")} amountSatang={amountSatang} />
+      <PaymentStepCaption step={2} />
+      {/* Phone: one column. ≥ 768 (the full app column): the QR card left, status and the how-to right. */}
+      <div className="grid gap-5 px-4 pt-4 pb-6 md:grid-cols-2 md:items-start">
+        {/* The QR card: amount, the white scan box, the countdown and the save action. */}
+        <section
+          className="flex flex-col items-center gap-4 rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface px-4 pt-5 pb-5 shadow-[var(--shadow-card)] max-[359px]:px-2.5"
+          aria-label={t("payment.promptpay.qrAlt")}
+        >
+          <AmountCard label={t("payment.promptpay.amountDue")} amountSatang={amountSatang} />
 
-        <section className="flex flex-col items-center gap-3" aria-label={t("payment.promptpay.qrAlt")}>
           <QrBox
             dataUri={qrDataUri}
             loading={qrLoading || (!hasIntent && busy)}
@@ -142,13 +159,13 @@ export function PromptPayStep({
             onRetry={onRetryQrImage}
           />
 
-          <div className="flex flex-col items-center gap-1 text-center empty:hidden">
+          <div className="flex flex-col items-center gap-2 text-center empty:hidden">
             {/* role=timer, outside the live region: a screen reader must not read it every second. */}
             {live && expiresAt !== null ? <QrCountdown expiresAt={expiresAt} /> : null}
             <div aria-live="polite" className="flex justify-center empty:hidden">
               {live && polling ? (
-                <p className="inline-flex items-center gap-1.5 text-[13px] leading-[1.5] text-fg-muted">
-                  <Spinner size="sm" />
+                <p className="inline-flex items-center gap-2 text-sm leading-[1.6] text-fg-muted">
+                  <Spinner size="sm" className="text-icon-brand" />
                   {t("payment.promptpay.waiting")}
                 </p>
               ) : null}
@@ -156,74 +173,79 @@ export function PromptPayStep({
           </div>
 
           {live && qrDataUri ? (
-            <div className="flex w-full flex-col items-center gap-1.5">
+            <div className="flex w-full flex-col items-center gap-2">
               <a
                 href={qrDataUri}
                 download={QR_FILE_NAME}
-                className={cn(buttonVariants({ variant: "brandSoft", size: "touch" }), "w-full max-w-[260px]")}
+                className={cn(buttonVariants({ variant: "outline", size: "touch" }), "w-full max-w-[264px]")}
               >
                 <Download aria-hidden="true" />
                 {t("payment.promptpay.saveQr")}
               </a>
-              <p className="max-w-[300px] text-center text-xs leading-[1.5] text-fg-muted">
-                {t("payment.promptpay.saveQrHint")}
+              <p className="max-w-[300px] text-center text-[13px] leading-[1.6] text-balance text-fg-muted">
+                {keepThaiWords(t("payment.promptpay.saveQrHint"))}
               </p>
             </div>
           ) : null}
         </section>
 
-        {!hasIntent && ctaMode === "create" ? (
-          <Notice
-            tone="danger"
-            role="alert"
-            title={t("payment.promptpay.createFailedTitle")}
-            description={t("payment.promptpay.createFailedDescription")}
-          />
-        ) : failed ? (
-          <Notice
-            tone="danger"
-            role="alert"
-            title={t("payment.promptpay.failedTitle")}
-            description={t("payment.promptpay.failedDescription")}
-          />
-        ) : expired ? (
-          <Notice
-            tone="warning"
-            role="alert"
-            title={t("payment.promptpay.expiredTitle")}
-            description={t("payment.promptpay.expiredDescription")}
-          />
-        ) : null}
+        <div className="flex min-w-0 flex-col gap-5">
+          {!hasIntent && ctaMode === "create" ? (
+            <Notice
+              tone="danger"
+              role="alert"
+              title={t("payment.promptpay.createFailedTitle")}
+              description={t("payment.promptpay.createFailedDescription")}
+            />
+          ) : failed ? (
+            <Notice
+              tone="danger"
+              role="alert"
+              title={t("payment.promptpay.failedTitle")}
+              description={t("payment.promptpay.failedDescription")}
+            />
+          ) : expired ? (
+            <Notice
+              tone="warning"
+              role="alert"
+              title={t("payment.promptpay.expiredTitle")}
+              description={t("payment.promptpay.expiredDescription")}
+            />
+          ) : null}
 
-        <section className="rounded-[var(--radius-card)] border border-hairline bg-surface p-4 shadow-[var(--shadow-card)]">
-          <h2 className="flex items-center gap-2 text-[15px] leading-[1.5] font-bold text-fg">
-            <Smartphone aria-hidden="true" className="size-[18px] text-icon-brand" />
-            {t("payment.promptpay.stepsTitle")}
-          </h2>
-          <ol className="mt-3 flex flex-col gap-3">
-            {steps.map((text, index) => (
-              <li key={text} className="flex items-start gap-3">
-                <span
-                  aria-hidden="true"
-                  className="flex size-6 shrink-0 items-center justify-center rounded-full bg-brand-solid text-xs font-bold text-white"
-                >
-                  {index + 1}
-                </span>
-                <span className="text-sm leading-[1.6] text-fg">{text}</span>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-3 border-t border-hairline pt-3 text-[13px] leading-[1.6] text-fg-muted">
-            {t("payment.promptpay.otherDeviceHint")}
-          </p>
-        </section>
+          <section
+            aria-labelledby="promptpay-steps-title"
+            className="rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface p-5 shadow-[var(--shadow-card)]"
+          >
+            <h2 id="promptpay-steps-title" className="t-title-s flex items-center gap-2.5 text-fg">
+              <Smartphone aria-hidden="true" className="size-5 shrink-0 text-icon-brand" strokeWidth={2.2} />
+              {t("payment.promptpay.stepsTitle")}
+            </h2>
+            <ol className="mt-3.5 flex flex-col gap-3">
+              {steps.map((text, index) => (
+                <li key={text} className="flex items-start gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-soft text-sm leading-none font-semibold text-brand-soft-fg tabular-nums shadow-[inset_0_0_0_1.5px_var(--brand-soft-border)]"
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="pt-0.5 text-[15px] leading-[1.6] text-fg">{keepThaiWords(text)}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="well mt-4 px-4 py-3 text-sm leading-[1.6] text-balance text-fg-muted">
+              {keepThaiWords(t("payment.promptpay.otherDeviceHint"))}
+            </p>
+          </section>
+        </div>
       </div>
 
       <BottomActionBar>
         <Button
           id="btn-confirm-promptpay"
           variant="brand"
-          size="cta"
+          size="cta-lg"
           className="flex-1"
           loading={busy}
           onClick={onPrimary}

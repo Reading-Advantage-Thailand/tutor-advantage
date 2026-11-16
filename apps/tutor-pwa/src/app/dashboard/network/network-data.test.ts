@@ -5,6 +5,7 @@ import {
   hasDownline,
   periodMonthToDate,
   shortInviteLabel,
+  treeRows,
   type NetworkTreeNode,
 } from "./network-data";
 import { layoutTree, NODE_HEIGHT } from "./network-layout";
@@ -87,5 +88,22 @@ describe("flattenTree + layoutTree", () => {
     expect(y.a).toBeGreaterThanOrEqual(y.me + NODE_HEIGHT);
     expect(y.a1).toBeGreaterThan(y.a);
     expect(y.a).toBe(y.b);
+  });
+});
+
+describe("treeRows", () => {
+  it("lists the tree depth-first with each tutor's depth", () => {
+    const rows = treeRows(node("me", [node("a", [node("a1")]), node("b")]));
+    expect(rows.map((r) => [r.tutor.userId, r.depth, r.hasChildren])).toEqual([
+      ["me", 0, true],
+      ["a", 1, true],
+      ["a1", 2, false],
+      ["b", 1, false],
+    ]);
+    expect("children" in rows[0].tutor).toBe(false);
+  });
+
+  it("ignores repeated ids", () => {
+    expect(treeRows(node("me", [node("a"), node("a")]))).toHaveLength(2);
   });
 });

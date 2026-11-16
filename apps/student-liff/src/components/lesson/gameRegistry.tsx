@@ -19,6 +19,8 @@ import {
   type ReactNode,
 } from "react"
 import dynamic from "next/dynamic"
+import { Gamepad2, RotateCw, TriangleAlert } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import type { AdvantageArcadeRuntime as ArcadeRuntimeComponent } from "@/components/lesson/AdvantageArcadeRuntime"
 import { t } from "@/lib/i18n"
 import type { LiveLessonGameCategory } from "@/lib/liveLessonGames"
@@ -38,7 +40,7 @@ export function GameLoading() {
           aria-hidden="true"
           className="absolute inset-0 rounded-full border-4 border-white/15 border-t-emerald-400 motion-safe:animate-spin"
         />
-        <span aria-hidden="true" className="text-4xl motion-safe:animate-bounce">🎮</span>
+        <Gamepad2 aria-hidden="true" className="size-9 motion-safe:animate-bounce" strokeWidth={2.2} />
       </div>
       <p className="text-lg font-black">{t("interactivePlay.gamePreparing")}</p>
       <p className="text-sm font-semibold text-white/60">{t("interactivePlay.gameLoadingHint")}</p>
@@ -52,16 +54,15 @@ function GameLoadError() {
       role="alert"
       className="flex h-dvh min-h-0 w-full flex-col items-center justify-center gap-3 bg-slate-950 px-6 text-center text-white"
     >
-      <div aria-hidden="true" className="flex size-16 items-center justify-center rounded-3xl bg-amber-400/15 text-3xl">😵</div>
+      <div aria-hidden="true" className="flex size-16 items-center justify-center rounded-3xl bg-amber-400/15 text-amber-300">
+        <TriangleAlert className="size-8" strokeWidth={2.2} />
+      </div>
       <p className="mt-1 text-lg font-black">{t("interactivePlay.gameLoadFailedTitle")}</p>
       <p className="max-w-xs text-sm font-semibold text-white/70">{t("interactivePlay.gameLoadFailedDescription")}</p>
-      <button
-        type="button"
-        onClick={() => window.location.reload()}
-        className="mt-3 min-h-11 rounded-2xl bg-emerald-500 px-6 text-base font-black text-white active:scale-95"
-      >
+      <Button variant="brand" size="touch" className="mt-3 px-6" onClick={() => window.location.reload()}>
+        <RotateCw aria-hidden="true" />
         {t("interactivePlay.gameLoadRetry")}
-      </button>
+      </Button>
     </div>
   )
 }

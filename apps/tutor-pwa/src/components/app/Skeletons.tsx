@@ -44,7 +44,7 @@ export function StatGridSkeleton({ count = 4, className }: { count?: number; cla
   return (
     <div aria-hidden="true" className={cn("grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4", className)}>
       {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="rounded-xl border border-hairline bg-surface p-4">
+        <div key={i} className="rounded-(--radius-card) border border-clay-rim bg-surface p-4">
           <div className="flex items-start justify-between">
             <Skeleton className="h-3.5 w-20" />
             <Skeleton className="size-8 rounded-lg" />
@@ -60,7 +60,7 @@ export function StatGridSkeleton({ count = 4, className }: { count?: number; cla
 /** Mirrors a <ListGroup> of <ListRow>s. */
 export function ListSkeleton({ rows = 4, leading = true, className }: { rows?: number; leading?: boolean; className?: string }) {
   return (
-    <div aria-hidden="true" className={cn("overflow-hidden rounded-xl border border-hairline bg-surface", className)}>
+    <div aria-hidden="true" className={cn("overflow-hidden rounded-(--radius-card) border border-clay-rim bg-surface", className)}>
       {Array.from({ length: rows }, (_, i) => (
         <div key={i} className={cn("flex items-center gap-3 px-4 py-3.5", i > 0 && "border-t border-hairline")}>
           {leading ? <Skeleton className="size-10 shrink-0 rounded-lg" /> : null}
@@ -79,7 +79,7 @@ export function ListSkeleton({ rows = 4, leading = true, className }: { rows?: n
 export function TableSkeleton({ rows = 5, columns = 4, className }: { rows?: number; columns?: number; className?: string }) {
   return (
     <div aria-hidden="true" className={className}>
-      <div className="hidden overflow-hidden rounded-xl border border-hairline bg-surface md:block">
+      <div className="hidden overflow-hidden rounded-(--radius-card) border border-clay-rim bg-surface md:block">
         <div className="flex gap-4 bg-surface-muted px-4 py-3">
           {Array.from({ length: columns }, (_, i) => (
             <Skeleton key={i} className="h-3 flex-1" />
@@ -95,7 +95,7 @@ export function TableSkeleton({ rows = 5, columns = 4, className }: { rows?: num
       </div>
       <div className="flex flex-col gap-2 md:hidden">
         {Array.from({ length: Math.min(rows, 4) }, (_, r) => (
-          <div key={r} className="rounded-xl border border-hairline bg-surface p-4">
+          <div key={r} className="rounded-(--radius-card) border border-clay-rim bg-surface p-4">
             <div className="flex justify-between gap-3">
               <Skeleton className="h-4 w-1/2" />
               <Skeleton className="h-4 w-16" />
@@ -111,7 +111,7 @@ export function TableSkeleton({ rows = 5, columns = 4, className }: { rows?: num
 /** A card with a title and text lines. */
 export function CardSkeleton({ lines = 3, className }: { lines?: number; className?: string }) {
   return (
-    <div aria-hidden="true" className={cn("rounded-xl border border-hairline bg-surface p-5", className)}>
+    <div aria-hidden="true" className={cn("rounded-(--radius-card) border border-clay-rim bg-surface p-5", className)}>
       <Skeleton className="h-4 w-40" />
       <SkeletonText lines={lines} className="mt-4" />
     </div>

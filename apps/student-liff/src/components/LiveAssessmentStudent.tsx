@@ -3,11 +3,13 @@
 import React, { useState } from "react";
 import {
   AlertCircle,
+  BookA,
   BookOpen,
   CheckCircle2,
   Headphones,
   Loader2,
   LockKeyhole,
+  type LucideIcon,
 } from "lucide-react";
 import type { LiveAssessmentState } from "@tutor-advantage/shared-config";
 
@@ -17,10 +19,10 @@ const skills = {
   listening: "ฟังเข้าใจ",
 };
 
-const skillIcons = {
-  vocabulary: "Aa",
-  reading: "⌁",
-  listening: "♪",
+const skillIcons: Record<keyof typeof skills, LucideIcon> = {
+  vocabulary: BookA,
+  reading: BookOpen,
+  listening: Headphones,
 };
 
 type LiveAssessmentStudentProps = {
@@ -75,6 +77,7 @@ export default function LiveAssessmentStudent({
   const phaseLabel = state.mode === "PRE" ? "แบบทดสอบก่อนเรียน" : "แบบทดสอบหลังเรียน";
   const phaseHint = state.mode === "PRE" ? "เริ่มต้นเส้นทางการเรียนรู้" : "ทบทวนสิ่งที่ได้เรียนรู้";
   const progress = Math.min(count, total);
+  const SkillIcon = item ? skillIcons[item.skill] : null;
 
   const moveTo = (nextIndex: number) => {
     setIndex(nextIndex);
@@ -169,7 +172,7 @@ export default function LiveAssessmentStudent({
               <div className="assessment-question-topline">
                 <span>ข้อ {index + 1}/{total}</span>
                 <span className={`assessment-skill assessment-skill-${item.skill}`}>
-                  <b aria-hidden="true">{skillIcons[item.skill]}</b>{skills[item.skill]}
+                  <b aria-hidden="true">{SkillIcon ? <SkillIcon size={13} strokeWidth={2.6} /> : null}</b>{skills[item.skill]}
                 </span>
               </div>
 

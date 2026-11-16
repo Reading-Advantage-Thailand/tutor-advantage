@@ -1,13 +1,13 @@
 // Thai UI strings: "app" namespace. Append-only; keep keys sorted by feature.
 export const app = {
   rootDescription: "แอปสำหรับครูผู้สอน Tutor Advantage",
-  loginTitle: "เข้าสู่ระบบ - Tutor PWA",
+  loginTitle: "เข้าสู่ระบบ - Tutor Advantage ครูผู้สอน",
   loginDescription: "เข้าสู่ระบบสำหรับครูผู้สอน Tutor Advantage",
   instructorPortal: "พอร์ทัลครูผู้สอน",
   loginHeroTitlePrefix: "เริ่มสอน",
   loginHeroTitleAccent: "อย่างมืออาชีพ",
   loginHeroDescription: "จัดการคลาส ติดตามรายได้ และขยายเครือข่ายของคุณได้อย่างโปร่งใสในที่เดียว",
-  loginBenefitLessons: "เข้าถึงแผนการสอน 15 ขั้นตอนที่พร้อมใช้",
+  loginBenefitLessons: "เข้าถึงแผนการสอน 18 ขั้นตอนที่พร้อมใช้",
   loginBenefitEarnings: "ดูคอมมิชชันและโบนัสได้อย่างโปร่งใส",
   loginBenefitReferral: "สร้าง QR และลิงก์แนะนำคลาสได้ทันที",
   loginTrustLine: "ปลอดภัย / โปร่งใส / มืออาชีพ",
@@ -19,10 +19,10 @@ export const app = {
   privacyPolicy: "นโยบายความเป็นส่วนตัว",
   backToLogin: "กลับไปหน้าเข้าสู่ระบบ",
   privacyTitle: "นโยบายความเป็นส่วนตัว",
-  privacyMetaTitle: "นโยบายความเป็นส่วนตัว (Privacy Policy) - Tutor PWA",
+  privacyMetaTitle: "นโยบายความเป็นส่วนตัว (Privacy Policy) - Tutor Advantage ครูผู้สอน",
   privacyDescription: "นโยบายการจัดเก็บและปกป้องข้อมูลส่วนบุคคลระบบครูผู้สอน Tutor Advantage",
   termsTitle: "ข้อตกลงการให้บริการ",
-  termsMetaTitle: "ข้อตกลงการให้บริการ (Terms of Service) - Tutor PWA",
+  termsMetaTitle: "ข้อตกลงการให้บริการ (Terms of Service) - Tutor Advantage ครูผู้สอน",
   termsDescription: "ข้อตกลงและเงื่อนไขการใช้บริการระบบจัดการครูผู้สอน Tutor Advantage",
   lastUpdated: "ปรับปรุงล่าสุด: 11 มีนาคม 2569",
   signInWithGoogle: "เข้าสู่ระบบด้วย Google",
@@ -38,6 +38,9 @@ export const app = {
   navPerformance: "ผลงาน",
   navSupport: "คำร้อง/ติดต่อทีมงาน",
   navSettings: "ตั้งค่า",
+  // Short labels for the 88px side-nav rail (one line of 12px in 67px); the full label stays the link's name.
+  navDemoShort: "ลองสอน",
+  navSupportShort: "คำร้อง",
   helpLine: "ช่วยเหลือ / LINE OA",
   contactTeam: "ติดต่อทีมงาน",
   logout: "ออกจากระบบ",
@@ -67,4 +70,9 @@ export const app = {
   loginErrorEmailNotVerified: "อีเมลของบัญชี Google นี้ยังไม่ได้ยืนยัน กรุณายืนยันอีเมลกับ Google ก่อน หรือติดต่อแอดมิน",
   loginErrorFacebook: "ปิดการเข้าสู่ระบบด้วย Facebook ชั่วคราว กรุณาใช้ Google",
   loginErrorServer: "ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง",
+  // Legal page titles as authored phrases (one no-wrap span each; together they spell privacyTitle / termsTitle).
+  privacyTitleLead: "นโยบาย",
+  privacyTitleTail: "ความเป็นส่วนตัว",
+  termsTitleLead: "ข้อตกลง",
+  termsTitleTail: "การให้บริการ",
 } as const;

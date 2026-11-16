@@ -1,10 +1,15 @@
 import { memo } from "react";
+import { Headset, RefreshCw } from "lucide-react";
 import { formatThaiTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { ThreadItem } from "../_lib/tickets";
 
-/** One thread bubble: the student on the right, the team on the left (with "ทีมงาน" above a run). */
+/**
+ * One thread bubble (patterns.md S13): the student on the right in soft jade,
+ * the team on the left on a card with a rim ("ทีมงาน" above a run). Max 80%
+ * wide, radius 18 with a 6px tail corner, time 12 tabular under the bubble.
+ */
 export const TicketBubble = memo(function TicketBubble({
   own,
   body,
@@ -19,21 +24,28 @@ export const TicketBubble = memo(function TicketBubble({
   pending?: boolean;
 }) {
   return (
-    <div className={cn("flex", own ? "justify-end pl-12" : "justify-start pr-12", isFirstInGroup ? "mt-3" : "mt-1")}>
-      <div className={cn("flex max-w-[34rem] min-w-0 flex-col", own ? "items-end" : "items-start")}>
+    <div className={cn("flex", own ? "justify-end" : "justify-start", isFirstInGroup ? "mt-4" : "mt-1.5")}>
+      <div className={cn("flex max-w-[80%] min-w-0 flex-col sm:max-w-[34rem]", own ? "items-end" : "items-start")}>
         {!own && isFirstInGroup ? (
-          <span className="mb-1 px-3 text-xs leading-[1.5] font-semibold text-fg-muted">{t("support.supportTeam")}</span>
+          <span className="mb-1.5 flex items-center gap-1.5 px-1 text-xs leading-[1.5] font-semibold text-fg-muted">
+            <span aria-hidden="true" className="flex size-6 items-center justify-center rounded-full bg-tile-blue text-icon-blue">
+              <Headset className="size-3.5" strokeWidth={2.4} />
+            </span>
+            {t("support.supportTeam")}
+          </span>
         ) : null}
         <div
           className={cn(
-            "max-w-full rounded-[20px] px-3.5 py-2 text-[15px] leading-[1.55] whitespace-pre-wrap [overflow-wrap:anywhere]",
-            own ? "rounded-br-md bg-brand-solid text-white" : "rounded-bl-md border border-hairline bg-surface text-fg",
+            "max-w-full rounded-[18px] px-4 py-2.5 text-base leading-[1.6] whitespace-pre-wrap [overflow-wrap:anywhere]",
+            own
+              ? "rounded-br-[6px] bg-brand-soft text-brand-soft-fg"
+              : "rounded-bl-[6px] border-[1.5px] border-clay-rim bg-surface text-fg",
             pending && "opacity-70",
           )}
         >
           {body}
         </div>
-        <span className="mt-1 px-1 text-xs leading-[1.5] text-fg-muted tabular-nums">
+        <span className="mt-1 px-1 text-xs leading-[1.5] text-fg-subtle tabular-nums">
           {pending ? t("support.sending") : formatThaiTime(createdAt)}
         </span>
       </div>
@@ -41,15 +53,15 @@ export const TicketBubble = memo(function TicketBubble({
   );
 });
 
-/** Day separators, bubbles and the small centered status lines. */
+/** Day separators (centred chips), bubbles and the small centred status lines. */
 export function TicketThread({ items }: { items: ThreadItem[] }) {
   return (
     <>
       {items.map((item) => {
         if (item.kind === "date") {
           return (
-            <div key={item.key} className="flex justify-center pt-4 pb-1">
-              <span className="rounded-full bg-fill-muted px-3 py-1 text-xs leading-[1.5] font-semibold text-fg-muted">
+            <div key={item.key} className="flex justify-center pt-5 pb-1">
+              <span className="rounded-full border-[1.5px] border-clay-rim bg-surface-muted px-3 py-0.5 text-xs leading-[1.5] font-semibold text-fg-muted">
                 {item.label}
               </span>
             </div>
@@ -58,10 +70,16 @@ export function TicketThread({ items }: { items: ThreadItem[] }) {
         if (item.kind === "status") {
           const status = item.copy.statusLabelKey ? ` “${t(item.copy.statusLabelKey)}”` : "";
           return (
-            <p key={item.key} className="mt-3 px-6 text-center text-xs leading-[1.6] text-fg-muted">
-              {t(item.copy.labelKey)}
-              {status}
-              <span className="tabular-nums"> · {formatThaiTime(item.message.createdAt)}</span>
+            <p
+              key={item.key}
+              className="mx-auto mt-4 flex w-fit max-w-full items-start gap-1.5 rounded-[14px] bg-surface-muted px-3 py-1.5 text-center text-xs leading-[1.6] text-fg-muted"
+            >
+              <RefreshCw aria-hidden="true" className="mt-[3px] size-3.5 shrink-0" strokeWidth={2.4} />
+              <span>
+                {t(item.copy.labelKey)}
+                {status}
+                <span className="tabular-nums"> · {formatThaiTime(item.message.createdAt)}</span>
+              </span>
             </p>
           );
         }

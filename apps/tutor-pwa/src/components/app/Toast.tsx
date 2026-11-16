@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Info, X, XCircle, AlertTriangle } from "lucide-react";
+import { CircleAlert, CircleCheck, Info, TriangleAlert, X } from "lucide-react";
 import { useSyncExternalStore } from "react";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -36,7 +36,8 @@ export function dismissToast(id: number) {
 
 function push(tone: ToastTone, message: string, options: { description?: string; duration?: number } = {}): number {
   const id = nextId++;
-  const duration = options.duration ?? (tone === "error" ? 6000 : 3500);
+  // 4 s, errors 6 s; nothing stays by default. A call may pass its own duration (0 = until dismissed).
+  const duration = options.duration ?? (tone === "error" ? 6000 : 4000);
   items = [...items.slice(-2), { id, tone, message, description: options.description, duration }];
   emit();
   if (duration > 0 && typeof window !== "undefined") {
@@ -69,15 +70,19 @@ const getSnapshot = () => items;
 const EMPTY_TOASTS: ToastItem[] = [];
 const getServerSnapshot = () => EMPTY_TOASTS;
 
-const toneIcon = { success: CheckCircle2, error: XCircle, info: Info, warning: AlertTriangle } as const;
-const toneIconClass = {
-  success: "text-success-fg",
-  error: "text-danger-fg",
-  info: "text-info-fg",
-  warning: "text-warning-fg",
+const toneIcon = { success: CircleCheck, error: CircleAlert, info: Info, warning: TriangleAlert } as const;
+const toneTileClass = {
+  success: "bg-success-bg text-success-fg",
+  error: "bg-danger-bg text-danger-fg",
+  info: "bg-info-bg text-info-fg",
+  warning: "bg-warning-bg text-warning-fg",
 } as const;
 
-/** Toast viewport. Bottom-centre above the tab bar on phones, bottom-right on desktop. */
+/**
+ * Toast viewport (components.md §10): elevated card with the rim, radius 14,
+ * a 32px tone tile, 15px text. Bottom-centre above the tab bar on phones,
+ * bottom-right on desktop; polite live region, never steals focus.
+ */
 export function Toaster() {
   const list = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   return (
@@ -89,19 +94,21 @@ export function Toaster() {
             key={item.id}
             role={item.tone === "error" ? "alert" : "status"}
             className={cn(
-              "toast-item flex items-start gap-3 rounded-xl border border-hairline bg-surface-elevated px-4 py-3 text-fg shadow-popover",
+              "toast-item flex items-start gap-3 rounded-[14px] border border-clay-rim bg-surface-elevated py-3 pr-3 pl-3 text-fg shadow-popover",
             )}
           >
-            <Icon aria-hidden="true" className={cn("mt-0.5 size-[18px] shrink-0", toneIconClass[item.tone])} />
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium">{item.message}</p>
-              {item.description ? <p className="mt-0.5 text-[0.8125rem] text-fg-muted">{item.description}</p> : null}
+            <span aria-hidden="true" className={cn("flex size-8 shrink-0 items-center justify-center rounded-(--radius-ctl-sm)", toneTileClass[item.tone])}>
+              <Icon className="size-[18px]" />
+            </span>
+            <div className="min-w-0 flex-1 self-center">
+              <p className="text-[0.9375rem] leading-[1.6] font-semibold">{item.message}</p>
+              {item.description ? <p className="mt-0.5 text-sm text-fg-muted">{item.description}</p> : null}
             </div>
             <button
               type="button"
               aria-label={t("shell.close")}
               onClick={() => dismissToast(item.id)}
-              className="-mr-1 flex size-7 shrink-0 items-center justify-center rounded-md text-fg-subtle hover:bg-press hover:text-fg"
+              className="relative flex size-8 shrink-0 items-center justify-center rounded-(--radius-ctl-sm) text-fg-subtle hover:bg-press hover:text-fg pointer-coarse:after:absolute pointer-coarse:after:-inset-1.5"
             >
               <X aria-hidden="true" className="size-4" />
             </button>

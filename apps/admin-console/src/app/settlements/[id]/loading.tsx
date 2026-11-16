@@ -1,6 +1,6 @@
-import { PageSkeleton } from "@/components/app";
+import { RunSkeleton } from "./RunSkeleton";
 
-/** Run detail: header + stat cards + lines table. */
+/** Run detail: header + KPI strip + lines table + facts/timeline. */
 export default function Loading() {
-  return <PageSkeleton variant="table" />;
+  return <RunSkeleton />;
 }

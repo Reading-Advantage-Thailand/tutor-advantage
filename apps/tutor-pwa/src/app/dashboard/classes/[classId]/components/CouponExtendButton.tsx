@@ -50,10 +50,10 @@ export function CouponExtendButton({ classId }: { classId: string }) {
         dismissible={!loading}
         footer={
           <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
-            <Button variant="ghost" size="lg" className="md:h-9" onClick={() => setOpen(false)} disabled={loading}>
+            <Button variant="outline" size="lg" className="md:h-10 md:px-4" onClick={() => setOpen(false)} disabled={loading}>
               {t("tutorClass.detail.cancel")}
             </Button>
-            <Button size="lg" className="md:h-9" onClick={handleApply} loading={loading} disabled={!code.trim()}>
+            <Button size="lg" className="md:h-10 md:px-4" onClick={handleApply} loading={loading} disabled={!code.trim()}>
               {loading ? t("tutorClass.detail.couponApplying") : t("tutorClass.detail.couponApply")}
             </Button>
           </div>

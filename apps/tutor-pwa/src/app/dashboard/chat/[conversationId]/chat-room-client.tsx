@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { mutateResource, peekResource } from "@/lib/cachedResource";
 import { formatThaiTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { scrollBehavior } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 import { sendMessage } from "../actions";
 import type { ChatConversation, ChatMessage, ChatRoomData } from "../lib/chat-types";
@@ -132,7 +133,7 @@ export default function ChatRoomClient({
 
   const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
     const scroller = getScroller(paneRef.current);
-    scroller.scrollTo({ top: scroller.scrollHeight, behavior });
+    scroller.scrollTo({ top: scroller.scrollHeight, behavior: behavior === "smooth" ? scrollBehavior() : behavior });
     atBottomRef.current = true;
     setShowJump(false);
     setUnseen(0);
@@ -282,10 +283,13 @@ export default function ChatRoomClient({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;
+    if (event.key !== "Enter" || event.shiftKey) return;
     // Hardware keyboards send with Enter; on touch keyboards Enter adds a new line.
     if (!window.matchMedia("(pointer: fine)").matches) return;
+    // Cancel the handled Enter first, then let an IME confirm its text (isComposing / 229)
+    // without sending, and ignore auto-repeat from a held key.
     event.preventDefault();
+    if (event.nativeEvent.isComposing || event.keyCode === 229 || event.repeat) return;
     void handleSend();
   };
 
@@ -301,14 +305,15 @@ export default function ChatRoomClient({
         // Phones: edge to edge under the app bar, document scrolls, composer sticks to the bottom.
         "max-md:-mx-[max(var(--gutter),var(--safe-left))] max-md:-mt-4 max-md:-mb-6 max-md:min-h-[calc(100dvh-var(--appbar-h)-var(--safe-top))]",
         // Tablet/desktop: a fixed-height card; the message pane scrolls inside it.
-        "md:h-[calc(100dvh-64px)] md:overflow-hidden md:rounded-xl md:border md:border-hairline md:bg-surface md:shadow-card xl:h-[calc(100dvh-76px)]",
+        "md:h-[calc(100dvh-64px)] md:overflow-hidden md:rounded-(--radius-card) md:border md:border-clay-rim md:bg-surface md:shadow-card xl:h-[calc(100dvh-76px)]",
       )}
     >
-      <header className="max-md:sr-only flex shrink-0 items-center gap-3 border-b border-hairline bg-surface px-4 py-3">
+      {/* Phones: the app bar carries the name and the way back; it goes away at 768px in px, so this header shows from there. */}
+      <header className="max-[768px]:sr-only flex shrink-0 items-center gap-3 border-b border-hairline bg-surface px-4 py-3">
         <Link
           href="/dashboard/chat"
           aria-label={t("dashboardChat.backToList")}
-          className="-ml-2 inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-fg hover:bg-press lg:hidden"
+          className="-ml-2 inline-flex size-11 shrink-0 items-center justify-center rounded-(--radius-ctl) text-fg hover:bg-press focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring lg:hidden"
         >
           <ChevronLeft aria-hidden="true" className="size-6" />
         </Link>
@@ -318,7 +323,9 @@ export default function ChatRoomClient({
           <UserAvatar name={title} src={meta?.image ?? conversation?.image} />
         )}
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-base font-semibold text-fg">{title}</h1>
+          <h1 className="truncate type-card text-fg" title={title}>
+            {title}
+          </h1>
           <p className="truncate text-[0.8125rem] text-fg-muted">
             {isGroup ? t("dashboardChat.group") : t("dashboardChat.direct")}
           </p>
@@ -332,8 +339,8 @@ export default function ChatRoomClient({
         aria-label={t("dashboardChat.messagesLabel").replace("{name}", title)}
         className="flex flex-1 flex-col px-3 pt-4 pb-3 md:min-h-0 md:overflow-y-auto md:overscroll-contain md:bg-app md:px-5"
       >
-        <p className="mx-auto mb-4 inline-flex items-center gap-1.5 rounded-full bg-surface-muted px-3 py-1 text-xs text-fg-muted">
-          <Lock aria-hidden="true" className="size-3" />
+        <p className="mx-auto mb-4 inline-flex items-center gap-1.5 rounded-full border border-clay-rim bg-surface px-3 py-1 text-xs text-fg-muted">
+          <Lock aria-hidden="true" className="size-3.5" />
           {t("dashboardChat.encrypted")}
         </p>
 
@@ -362,7 +369,7 @@ export default function ChatRoomClient({
             {timeline.map((item) =>
               item.kind === "day" ? (
                 <li key={item.key} className="my-3 flex justify-center first:mt-0">
-                  <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-medium text-fg-muted">
+                  <span className="rounded-full border border-clay-rim bg-surface px-3 py-1 text-xs font-medium text-fg-muted tabular">
                     {item.label}
                   </span>
                 </li>
@@ -415,7 +422,7 @@ export default function ChatRoomClient({
           placeholder={t("dashboardChat.messagePlaceholder")}
           enterKeyHint="send"
           autoComplete="off"
-          className="max-h-32 min-h-11 flex-1 resize-none rounded-[22px] border border-field-border bg-surface px-4 py-2.5 text-base leading-6 text-fg placeholder:text-fg-subtle focus:border-brand-500 focus:ring-2 focus:ring-ring/30 focus:outline-none md:min-h-10 md:py-2 md:text-sm md:leading-6"
+          className="max-h-32 min-h-[52px] flex-1 resize-none rounded-[26px] border border-field-border bg-surface px-4 py-[13px] text-base leading-6 text-fg placeholder:text-fg-subtle focus:border-brand-fg focus:outline-3 focus:outline-offset-2 focus:outline-solid focus:outline-focus-ring md:min-h-11 md:py-2.5 md:text-[0.9375rem] md:leading-6"
         />
         <Button
           type="submit"
@@ -423,7 +430,7 @@ export default function ChatRoomClient({
           disabled={!canSend}
           loading={sending}
           aria-label={t("dashboardChat.send")}
-          className="size-11 shrink-0 rounded-full md:size-10"
+          className="mb-1 size-11 shrink-0 rounded-full md:mb-0"
         >
           {sending ? null : <SendHorizontal aria-hidden="true" />}
         </Button>
@@ -453,16 +460,16 @@ function MessageBubble({
           {endsGroup ? <UserAvatar name={message.senderName} src={message.senderImage} size="sm" /> : null}
         </span>
       ) : null}
-      <div className={cn("flex max-w-[78%] min-w-0 flex-col md:max-w-[65%]", own ? "items-end" : "items-start")}>
+      <div className={cn("flex max-w-[80%] min-w-0 flex-col md:max-w-[65%]", own ? "items-end" : "items-start")}>
         {!own && showName && startsGroup ? (
           <span className="mb-1 px-1 text-xs font-medium text-fg-muted">{message.senderName}</span>
         ) : null}
         <div
           className={cn(
-            "rounded-[20px] px-3.5 py-2 text-[0.9375rem] leading-relaxed break-words whitespace-pre-wrap",
-            own ? "bg-brand-solid text-on-brand" : "border border-hairline bg-surface text-fg",
-            own && endsGroup && "rounded-br-md",
-            !own && endsGroup && "rounded-bl-md",
+            "rounded-[18px] border px-3.5 py-2 text-[0.9375rem] leading-[1.6] break-words whitespace-pre-wrap",
+            own ? "border-brand-soft-border bg-brand-soft text-brand-soft-fg" : "border-clay-rim bg-surface text-fg shadow-card",
+            own && endsGroup && "rounded-br-[6px]",
+            !own && endsGroup && "rounded-bl-[6px]",
             message.pending && "opacity-70",
           )}
         >
@@ -488,10 +495,10 @@ function MessageBubble({
 function RoomSkeleton() {
   return (
     <div aria-hidden="true" className="mt-auto flex flex-col gap-3">
-      <Skeleton className="h-10 w-2/3 rounded-[20px]" />
-      <Skeleton className="ml-auto h-10 w-1/2 rounded-[20px]" />
-      <Skeleton className="h-14 w-3/5 rounded-[20px]" />
-      <Skeleton className="ml-auto h-10 w-2/5 rounded-[20px]" />
+      <Skeleton className="h-10 w-2/3 rounded-[18px]" />
+      <Skeleton className="ml-auto h-10 w-1/2 rounded-[18px]" />
+      <Skeleton className="h-14 w-3/5 rounded-[18px]" />
+      <Skeleton className="ml-auto h-10 w-2/5 rounded-[18px]" />
     </div>
   );
 }

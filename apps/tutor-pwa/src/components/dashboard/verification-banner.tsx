@@ -1,5 +1,6 @@
 import { getCurrentUserAction } from "@/app/dashboard/actions";
 import { AlertCircle, Clock, ShieldAlert } from "lucide-react";
+import { Fragment } from "react";
 import { Notice } from "@/components/app/Feedback";
 import { t } from "@/lib/i18n";
 
@@ -26,6 +27,24 @@ const verificationFieldLabels: Record<VerificationField, string> = {
 };
 
 const verificationFieldOrder: VerificationField[] = ["idCard", "bankBook", "address"];
+
+/**
+ * "บัตรประชาชน, สมุดบัญชีธนาคาร, ที่อยู่สำหรับส่งเอกสาร": each document name stays on
+ * one line, so the list breaks after a comma and never inside a name. Same
+ * text content as `labels.join(", ")`.
+ */
+function FieldNames({ labels }: { labels: string[] }) {
+  return (
+    <>
+      {labels.map((label, index) => (
+        <Fragment key={label}>
+          {index > 0 ? ", " : null}
+          <span className="whitespace-nowrap">{label}</span>
+        </Fragment>
+      ))}
+    </>
+  );
+}
 
 export default async function VerificationBanner({
   user: explicitUser,
@@ -85,14 +104,18 @@ export default async function VerificationBanner({
         </span>
       ) : isPending ? (
         pendingFields.length > 0 ? (
-          `${t("verification.submittedPrefix")} ${pendingFields.join(", ")} ${t("verification.reviewingSuffix")}`
+          <>
+            {t("verification.submittedPrefix")} <FieldNames labels={pendingFields} /> {t("verification.reviewingSuffix")}
+          </>
         ) : (
           t("verification.reviewingDocuments")
         )
       ) : isRejected ? (
         t("verification.openSettingsToResubmit")
       ) : missingFields.length > 0 ? (
-        `${t("verification.missingPrefix")} ${missingFields.join(", ")}`
+        <>
+          {t("verification.missingPrefix")} <FieldNames labels={missingFields} />
+        </>
       ) : (
         t("verification.notVerifiedWarning")
       )}

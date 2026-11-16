@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronLeft, ChevronRight, MousePointer2 } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, MousePointer2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { scrollBehavior } from "@/lib/motion";
 import { fill } from "../../_lib/articles";
 
 export type TutorGuideStep = {
@@ -28,6 +29,7 @@ export default function TutorGuideOverlay({
   totalSteps,
   onPrevious,
   onNext,
+  onClose,
   canAdvance = true,
 }: {
   step: TutorGuideStep;
@@ -35,6 +37,8 @@ export default function TutorGuideOverlay({
   totalSteps: number;
   onPrevious: () => void;
   onNext: () => void;
+  /** Leave the guide (same as the lesson bar's "close guide" toggle). */
+  onClose: () => void;
   canAdvance?: boolean;
 }) {
   const [targetRect, setTargetRect] = useState<Rect | null>(null);
@@ -44,9 +48,26 @@ export default function TutorGuideOverlay({
   const onNextRef = useRef(onNext);
   const [coachmarkHeight, setCoachmarkHeight] = useState(0);
 
+  const onCloseRef = useRef(onClose);
+
   useEffect(() => {
     onNextRef.current = onNext;
   }, [onNext]);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  // Escape leaves the guide, unless a confirmation dialog is open on top of it.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (document.querySelector('[role="alertdialog"][aria-modal="true"]')) return;
+      onCloseRef.current();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   const findTarget = useCallback(() => {
     const target = document.querySelector<HTMLElement>(
@@ -58,7 +79,7 @@ export default function TutorGuideOverlay({
       return null;
     }
 
-    target.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+    target.scrollIntoView({ block: "center", inline: "nearest", behavior: scrollBehavior() });
     const rect = target.getBoundingClientRect();
     setTargetRect({
       top: rect.top,
@@ -170,7 +191,7 @@ export default function TutorGuideOverlay({
   const canNext = (step.action !== "click" || actionComplete || targetUnavailable) && canAdvance;
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[200]">
+    <div className="pointer-events-none fixed inset-0 z-(--z-presenter-guide)">
       {!targetRect && <div className="pointer-events-auto absolute inset-0 bg-(--scrim)" aria-hidden="true" />}
 
       {targetRect && (
@@ -205,7 +226,7 @@ export default function TutorGuideOverlay({
             aria-hidden="true"
           />
           <div
-            className="pointer-events-none absolute rounded-xl border-2 border-brand-solid ring-4 ring-brand-solid/30 transition-all duration-300"
+            className="pointer-events-none absolute rounded-(--radius-card) border-2 border-brand-solid ring-4 ring-brand-solid/30 transition-[top,left,width,height] duration-300"
             style={{
               top: targetRect.top - 8,
               left: targetRect.left - 8,
@@ -219,31 +240,43 @@ export default function TutorGuideOverlay({
 
       <section
         ref={coachmarkRef}
-        className="pointer-events-auto fixed w-[min(380px,calc(100vw-32px))] max-h-[calc(100dvh-32px)] overflow-y-auto rounded-xl border border-hairline bg-surface-elevated shadow-popover"
+        className="pointer-events-auto fixed max-h-[calc(100dvh-32px)] w-[min(380px,calc(100vw-32px))] overflow-y-auto rounded-(--radius-card) border border-clay-rim bg-surface-elevated shadow-popover"
         style={coachmarkStyle}
         aria-label={t("lesson.preflow.guide.label")}
       >
         <div className="flex items-start gap-3 border-b border-hairline px-4 py-3">
-          <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand-fg">
-            <MousePointer2 aria-hidden="true" className="size-4" />
+          <div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-(--radius-tile) bg-tile-purple text-icon-purple">
+            <MousePointer2 aria-hidden="true" className="size-5" />
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs text-fg-muted tabular">
               {fill(t("lesson.preflow.guide.stepCount"), { n: stepIndex + 1, total: totalSteps })}
             </p>
-            <h2 className="mt-0.5 text-base font-semibold text-fg">{step.title}</h2>
+            <h2 className="mt-0.5 type-card text-balance-th text-fg">{step.title}</h2>
           </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="-mt-0.5 -mr-1.5"
+            onClick={onClose}
+            aria-label={t("lesson.preflow.rehearsal.closeGuide")}
+            title={t("lesson.preflow.rehearsal.closeGuide")}
+          >
+            <X aria-hidden="true" />
+          </Button>
         </div>
-        <div
-          aria-hidden="true"
-          className="h-1 bg-brand-vivid transition-[width] duration-300"
-          style={{ width: `${Math.round(((stepIndex + 1) / Math.max(1, totalSteps)) * 100)}%` }}
-        />
+        <div aria-hidden="true" className="h-1 bg-track">
+          <div
+            className="h-full w-full origin-left bg-brand-vivid transition-transform duration-300 ease-(--ease-out)"
+            style={{ transform: `scaleX(${(stepIndex + 1) / Math.max(1, totalSteps)})` }}
+          />
+        </div>
 
         <div className="p-4">
-          <p className="text-sm text-fg">{step.description}</p>
+          <p className="text-[0.9375rem] leading-[1.6] text-fg">{step.description}</p>
           {step.tip && (
-            <div className="mt-3 rounded-lg border border-warning-border bg-warning-bg px-3 py-2.5 text-[0.8125rem] text-warning-fg">
+            <div className="mt-3 rounded-(--radius-ctl) border border-warning-border bg-warning-bg px-3 py-2.5 text-[0.8125rem] leading-[1.6] text-warning-fg">
               <span className="font-semibold">{t("lesson.preflow.guide.tipPrefix")} </span>
               {step.tip}
             </div>
@@ -251,7 +284,7 @@ export default function TutorGuideOverlay({
 
           {step.action === "click" && (
             <div role="status" className={`mt-3 flex items-center gap-2 text-[0.8125rem] font-medium ${actionComplete ? "text-success-fg" : "text-brand-fg"}`}>
-              {actionComplete ? <Check aria-hidden="true" className="size-4" /> : <MousePointer2 aria-hidden="true" className="size-4 animate-pulse" />}
+              {actionComplete ? <Check aria-hidden="true" className="size-4" /> : <MousePointer2 aria-hidden="true" className="size-4" />}
               {targetUnavailable
                 ? t("lesson.preflow.guide.targetMissingClick")
                 : actionComplete
@@ -261,14 +294,14 @@ export default function TutorGuideOverlay({
           )}
 
           {targetUnavailable && step.action !== "click" && (
-            <div className="mt-3 rounded-lg border border-neutral-border bg-neutral-bg px-3 py-2.5 text-[0.8125rem] text-neutral-fg">
+            <div className="mt-3 rounded-(--radius-ctl) bg-neutral-bg px-3 py-2.5 text-[0.8125rem] leading-[1.6] text-neutral-fg">
               {t("lesson.preflow.guide.targetMissing")}
             </div>
           )}
 
           {(step.waitForMockAnswers || step.waitForMockVotes || step.waitForGameResults) && !canAdvance && (
             <div role="status" className="mt-3 flex items-center gap-2 text-[0.8125rem] font-medium text-warning-fg">
-              <span aria-hidden="true" className="size-2 animate-pulse rounded-full bg-warning-solid" />
+              <span aria-hidden="true" className="size-2 rounded-full bg-warning-fg" />
               {step.waitForMockVotes
                 ? t("lesson.preflow.guide.waitVotes")
                 : step.waitForGameResults
@@ -277,7 +310,7 @@ export default function TutorGuideOverlay({
             </div>
           )}
 
-          <div className="mt-4 flex items-center justify-between gap-2">
+          <div className="mt-4 flex items-center justify-between gap-2 border-t border-hairline pt-3">
             <Button
               type="button"
               variant="ghost"

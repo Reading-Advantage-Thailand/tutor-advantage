@@ -4,7 +4,7 @@
  *
  * Relative imports on purpose: the root vitest config maps "@" to tutor-pwa.
  */
-import { formatRelativeDay, toDate, toLocalDateKey } from "../../../lib/format";
+import { formatRelativeDay, toDate, toDateKey } from "../../../lib/format";
 import type { I18nKey } from "../../../lib/i18n";
 
 export const TICKET_CATEGORIES = [
@@ -230,7 +230,7 @@ export type ThreadItem =
   | { kind: "status"; key: string; message: TicketMessage; copy: StatusEventCopy };
 
 /**
- * Thread rows oldest first: a date line whenever the local day changes, bubbles
+ * Thread rows oldest first: a date line whenever the Bangkok day changes, bubbles
  * for messages (empty bodies skipped), centered lines for status changes.
  */
 export function buildThreadItems(messages: readonly TicketMessage[] | null | undefined, now: Date = new Date()): ThreadItem[] {
@@ -243,7 +243,7 @@ export function buildThreadItems(messages: readonly TicketMessage[] | null | und
     if (message.kind === "MESSAGE" && !message.body?.trim()) continue;
     if (message.kind !== "MESSAGE" && message.kind !== "STATUS_CHANGE") continue;
 
-    const day = toDate(message.createdAt) ? toLocalDateKey(message.createdAt) : "";
+    const day = toDate(message.createdAt) ? toDateKey(message.createdAt) : "";
     if (day && day !== lastDay) {
       items.push({ kind: "date", key: `date:${day}`, label: formatRelativeDay(message.createdAt, now) });
       lastDay = day;

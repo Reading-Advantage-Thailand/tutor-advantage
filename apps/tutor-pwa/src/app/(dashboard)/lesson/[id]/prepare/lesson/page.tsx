@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { AlertCircle, ArrowLeft, BookOpen } from "lucide-react";
+import { ArrowLeft, BookOpen } from "lucide-react";
+import { ErrorState } from "@/components/app/ErrorState";
 import { EmptyState } from "@/components/app/Feedback";
 import { LessonContent } from "@/components/app/LessonShell";
 import { ShellTitle } from "@/components/app/ShellContext";
@@ -24,13 +25,14 @@ export default async function PreparationLessonPage({
     return (
       <LessonContent width="narrow" className="flex-1 justify-center">
         <ShellTitle title={t("lesson.preflow.prepare.title")} />
+        <h1 className="sr-only">{t("lesson.preflow.prepare.title")}</h1>
         <EmptyState
+          mascot
           icon={BookOpen}
-          tone="amber"
           title={t("lesson.preflow.rehearsal.noArticleTitle")}
           description={t("lesson.preflow.rehearsal.noArticleBody")}
           action={
-            <Button render={<Link href={`/lesson/${classId}/prepare`} />} nativeButton={false}>
+            <Button size="lg" render={<Link href={`/lesson/${classId}/prepare`} />} nativeButton={false}>
               <ArrowLeft aria-hidden="true" />
               {t("lesson.preflow.rehearsal.backToModes")}
             </Button>
@@ -50,14 +52,14 @@ export default async function PreparationLessonPage({
     return (
       <LessonContent width="narrow" className="flex-1 justify-center">
         <ShellTitle title={t("lesson.preflow.prepare.title")} />
-        <EmptyState
-          icon={AlertCircle}
-          tone="red"
+        <h1 className="sr-only">{t("lesson.preflow.prepare.title")}</h1>
+        <ErrorState
           title={t("lesson.preflow.rehearsal.loadFailedTitle")}
           description={message}
           action={
             <Button
               variant="outline"
+              size="lg"
               render={<Link href={`/lesson/${classId}/select?prepare=1&mode=${preparationMode}`} />}
               nativeButton={false}
             >

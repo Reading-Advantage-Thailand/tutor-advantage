@@ -241,7 +241,11 @@ export function DevToolbar() {
       {/* ── Floating toggle button ───────────────────────────────────────── */}
       <button
         onClick={handleOpen}
-        className="dev-toolbar-toggle fixed right-0 top-1/2 z-[9999] flex -translate-y-1/2 items-center gap-1 rounded-l-lg bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 px-1.5 py-2 text-[10px] font-bold [writing-mode:vertical-rl] opacity-60 hover:opacity-100 hover:bg-emerald-700 active:scale-95 transition-all"
+        // 12px label (the type floor) and a 44px target on touch (pointer: coarse); a slim tab on desktop.
+        // Just under the app bar layer, so sheets, dialogs, the app bar, the tab bar and the bottom action
+        // bar all cover it (it never sits on their buttons). On touch it leaves the content band and sits
+        // low on the right edge, just above the tab bar / bottom action bar and the bottom safe area.
+        className="dev-toolbar-toggle fixed right-0 top-1/2 z-[calc(var(--z-appbar)_-_1)] flex -translate-y-1/2 items-center justify-center gap-1 rounded-l-lg bg-brand-solid text-on-brand shadow-[var(--shadow-popover)] px-1.5 py-2 text-xs leading-none font-bold [writing-mode:vertical-rl] opacity-60 hover:opacity-100 hover:bg-brand-solid-pressed active:scale-95 transition-all pointer-coarse:top-auto pointer-coarse:bottom-[calc(var(--tabbar-h)+var(--safe-bottom)+12px)] pointer-coarse:min-h-11 pointer-coarse:min-w-11 pointer-coarse:translate-y-0"
         title="Dev Toolbar"
       >
         <Terminal className="h-3 w-3 rotate-90" />
@@ -257,7 +261,7 @@ export function DevToolbar() {
             <div className="flex items-center gap-2">
               <Terminal className="h-4 w-4 text-emerald-600" />
               <span className="text-sm font-bold text-foreground">Dev Panel</span>
-              <Badge className="bg-emerald-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+              <Badge className="bg-brand-solid text-on-brand text-[9px] font-bold px-1.5 py-0.5 rounded-full">
                 STUDENT
               </Badge>
               {state?.tokenExpiresInSec !== undefined && (
@@ -306,7 +310,7 @@ export function DevToolbar() {
                     }}>{label}</button>
                   ))}
                 </div>
-                <button type="button" className="mt-2 w-full rounded-lg bg-emerald-600 p-2 text-xs font-bold text-white" onClick={() => {
+                <button type="button" className="mt-2 w-full rounded-lg bg-brand-solid p-2 text-xs font-bold text-on-brand" onClick={() => {
                   window.dispatchEvent(new CustomEvent(REEDY_PREVIEW_EVENT, { detail: null }));
                   setOpen(false);
                 }}>กลับไปตามสถานะสนทนาจริง</button>
@@ -318,7 +322,7 @@ export function DevToolbar() {
               </p>
               <Link
                 href="/api/auth/dev-login?redirect=/classes"
-                className="block rounded-lg bg-emerald-600 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-700"
+                className="block rounded-lg bg-brand-solid px-3 py-2 text-center text-xs font-bold text-on-brand hover:bg-brand-solid-pressed"
               >
                 Login as DEV student
               </Link>
@@ -603,7 +607,7 @@ export function DevToolbar() {
                   )}
                   Confirm all pending
                   {pendingPayments.length > 0 && (
-                    <span className="bg-amber-500 text-white text-[8px] font-black px-1 py-0.5 rounded-full">
+                    <span className="bg-accent-solid text-on-accent text-[8px] font-black px-1 py-0.5 rounded-full">
                       {pendingPayments.length}
                     </span>
                   )}

@@ -97,6 +97,8 @@ export const audit = {
   catSystem: "อื่น ๆ",
   catPayment: "ตรวจสอบการชำระเงิน",
   catClass: "คลาสและโค้ดส่วนลด",
+  // Redesign 2026-11 (A6 audit log): category column (dot + word)
+  colCategory: "หมวด",
   actions: {
     PREVIEW: "สร้างพรีวิวรอบจ่าย",
     PREVIEW_SETTLEMENT: "สร้างพรีวิวรอบจ่าย",
@@ -146,6 +148,10 @@ export const audit = {
     DISCOUNT_CODE_UPDATE: "แก้ยอดที่รับของโค้ดส่วนลด",
     ADMIN_CLASS_CREATE: "สร้างคลาสให้ครู",
     ADMIN_TUTOR_PROVISION: "สร้างบัญชีครูรอลงทะเบียน",
+    // The other two actions the services write on a user (same wording as the
+    // confirm dialogs on the user page).
+    USER_TAX_RESIDENCY_UPDATE: "เปลี่ยนสถานะภาษี",
+    CARD_PAYMENTS_TRUST: "เปลี่ยนสิทธิ์รับบัตร",
   },
   entities: {
     SettlementRun: "รอบจ่ายเงิน",

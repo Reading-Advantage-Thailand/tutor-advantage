@@ -86,7 +86,7 @@ export function Dropdown({ trigger, children, placement = "bottom-end", label, c
           role="dialog"
           aria-label={label}
           className={cn(
-            "absolute z-(--z-popover) w-80 max-w-[calc(100vw-1.5rem)] overflow-hidden rounded-xl border border-hairline bg-surface-elevated text-fg shadow-popover animate-fade-in",
+            "absolute z-(--z-popover) w-80 max-w-[calc(100vw-1.5rem)] overflow-hidden rounded-(--radius-ctl) border border-clay-rim bg-surface-elevated text-fg shadow-popover animate-fade-in",
             placementClass[placement],
             panelClassName,
           )}

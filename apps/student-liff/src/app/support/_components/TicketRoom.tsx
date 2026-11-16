@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Plus } from "lucide-react";
+import { CheckCircle2, Lock, Plus } from "lucide-react";
 import { toast } from "sonner";
-import { AppBar, ConfirmSheet, ErrorState, Notice, Surface, useBackNavigation } from "@/components/mobile";
+import { AppBar, ConfirmSheet, ErrorState, IconTile, Notice, Surface, useBackNavigation } from "@/components/mobile";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { Button } from "@/components/ui/button";
 import { LiffErrorState } from "@/app/dashboard/_components/LiffErrorState";
@@ -38,6 +38,7 @@ import {
   type TicketResponse,
   type TicketsResponse,
 } from "../_lib/tickets";
+import { getCategoryVisual } from "./categoryVisuals";
 import { TicketDetailSkeleton } from "./SupportSkeletons";
 import { StatusChip } from "./TicketParts";
 import { TicketBubble, TicketThread } from "./TicketThread";
@@ -91,8 +92,10 @@ export function TicketRoom({ ticketId }: { ticketId: string }) {
   if (liffError || !profile) {
     return (
       <RoomFrame>
-        <AppBar title={t("support.title")} back fallbackHref="/support" className="shrink-0 border-b border-hairline" />
-        <LiffErrorState className="my-auto" />
+        <AppBar title={t("support.title")} back fallbackHref="/support" className="shrink-0 border-b-[1.5px] border-clay-rim" />
+        <div className="my-auto px-4 py-6">
+          <LiffErrorState card />
+        </div>
       </RoomFrame>
     );
   }
@@ -101,19 +104,21 @@ export function TicketRoom({ ticketId }: { ticketId: string }) {
   if (notFound || (resource.error && !ticket)) {
     return (
       <RoomFrame>
-        <AppBar title={t("support.title")} back fallbackHref="/support" className="shrink-0 border-b border-hairline" />
-        <ErrorState
-          className="my-auto"
-          title={notFound ? t("support.notFoundTitle") : undefined}
-          description={notFound ? t("support.notFoundDescription") : t("support.detailFailed")}
-          onRetry={notFound ? undefined : () => void resource.refetch()}
-          retrying={resource.isValidating}
-          secondaryAction={
-            <Button variant={notFound ? "brand" : "ghost"} size="touch" onClick={goBackToList}>
-              {t("support.backToList")}
-            </Button>
-          }
-        />
+        <AppBar title={t("support.title")} back fallbackHref="/support" className="shrink-0 border-b-[1.5px] border-clay-rim" />
+        <div className="my-auto overflow-y-auto px-4 py-6">
+          <ErrorState
+            card
+            title={notFound ? t("support.notFoundTitle") : undefined}
+            description={notFound ? t("support.notFoundDescription") : t("support.detailFailed")}
+            onRetry={notFound ? undefined : () => void resource.refetch()}
+            retrying={resource.isValidating}
+            secondaryAction={
+              <Button variant={notFound ? "brand" : "ghost"} size="touch" onClick={goBackToList}>
+                {t("support.backToList")}
+              </Button>
+            }
+          />
+        </div>
       </RoomFrame>
     );
   }
@@ -260,6 +265,8 @@ function TicketRoomView({ ticket, onTicket, refetch }: TicketRoomViewProps) {
     ticket.classTitle ? `${t("support.detailClass")}: ${ticket.classTitle}` : null,
   ].filter(Boolean) as string[];
 
+  const visual = getCategoryVisual(ticket.category);
+
   return (
     <RoomFrame ref={roomRef}>
       <AppBar
@@ -267,7 +274,7 @@ function TicketRoomView({ ticket, onTicket, refetch }: TicketRoomViewProps) {
         subtitle={t(getCategoryLabelKey(ticket.category))}
         back
         fallbackHref="/support"
-        className="shrink-0 border-b border-hairline"
+        className="shrink-0 border-b-[1.5px] border-clay-rim"
       />
 
       <div
@@ -275,30 +282,35 @@ function TicketRoomView({ ticket, onTicket, refetch }: TicketRoomViewProps) {
         onScroll={onScroll}
         role="log"
         aria-label={t("support.messagesAria")}
-        className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-3"
+        // Overflowing, it is a Tab stop of its own: draw the ring inside its box (the frame clips anything
+        // outside). scroll-py keeps a focused child's ring clear of the scroller's edges.
+        className="min-h-0 flex-1 scroll-py-3 overflow-y-auto overscroll-contain px-4 pb-4 focus-visible:outline-offset-[-3px]"
       >
-        <Surface as="section" className="mt-3 flex flex-col gap-2">
-          <div className="flex items-start justify-between gap-3">
-            <h1 className="min-w-0 text-[17px] leading-[1.5] font-bold break-words text-fg">{ticket.subject}</h1>
-            <StatusChip status={ticket.status} size="md" />
+        {/* Header card: status, subject, when/where it was sent, and the close action. */}
+        <Surface as="section" className="mt-3 flex flex-col gap-3">
+          <div className="flex items-start gap-3">
+            <IconTile icon={visual.icon} tone={visual.tone} />
+            <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
+              <StatusChip status={ticket.status} size="md" />
+              <h2 className="font-heading text-lg leading-[1.4] font-semibold text-balance break-words text-fg">
+                {ticket.subject}
+              </h2>
+            </div>
           </div>
-          {meta.map((line) => (
-            <p key={line} className="text-[13px] leading-[1.5] text-fg-muted">
-              {line}
-            </p>
-          ))}
-          {ticket.paymentReference ? (
-            <p className="text-[13px] leading-[1.5] text-fg-muted">
-              {t("support.detailRef")}: <span className="font-mono break-all text-fg">{ticket.paymentReference}</span>
-            </p>
-          ) : null}
+          <div className="flex flex-col gap-1 rounded-[16px] bg-surface-muted px-3.5 py-3">
+            {meta.map((line) => (
+              <p key={line} className="text-sm leading-[1.6] text-fg-muted">
+                {line}
+              </p>
+            ))}
+            {ticket.paymentReference ? (
+              <p className="text-sm leading-[1.6] text-fg-muted">
+                {t("support.detailRef")}: <span className="font-mono break-all text-fg">{ticket.paymentReference}</span>
+              </p>
+            ) : null}
+          </div>
           {resolved ? null : (
-            <Button
-              variant="brandSoft"
-              size="touch"
-              className="mt-1 self-start"
-              onClick={() => setConfirmClose(true)}
-            >
+            <Button variant="brandSoft" size="touch" className="self-start" onClick={() => setConfirmClose(true)}>
               <CheckCircle2 aria-hidden="true" />
               {t("support.close")}
             </Button>
@@ -314,7 +326,7 @@ function TicketRoomView({ ticket, onTicket, refetch }: TicketRoomViewProps) {
       {ticket.canReply ? (
         <>
           {ticket.status === "WAITING_ON_REQUESTER" || resolved ? (
-            <div className="shrink-0 px-3 pb-2">
+            <div className="shrink-0 px-4 pb-2.5">
               <Notice
                 tone={resolved ? "info" : "warning"}
                 title={resolved ? t("support.reopenNoticeTitle") : t("support.waitingNoticeTitle")}
@@ -331,18 +343,21 @@ function TicketRoomView({ ticket, onTicket, refetch }: TicketRoomViewProps) {
           />
         </>
       ) : (
-        <div className="shrink-0 border-t border-hairline bg-surface px-3 pt-3 pb-[max(12px,var(--safe-bottom))]">
-          <Notice
-            tone="info"
-            title={t("support.closedNoticeTitle")}
-            description={t("support.closedNoticeDescription")}
-            action={
-              <Button variant="brandSoft" size="touch" nativeButton={false} render={<Link href="/support/new" />}>
-                <Plus aria-hidden="true" />
-                {t("support.newRequest")}
-              </Button>
-            }
-          />
+        // Closed for good: a neutral notice replaces the composer (patterns.md S13).
+        <div className="shrink-0 border-t-[1.5px] border-clay-rim bg-[var(--surface-nav)] px-4 pt-3 pb-[max(12px,var(--safe-bottom))]">
+          <div className="flex gap-3 rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface-muted px-3.5 py-3">
+            <Lock aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-fg-muted" strokeWidth={2.2} />
+            <div className="min-w-0 flex-1">
+              <p className="text-[15px] leading-[1.5] font-semibold text-fg">{t("support.closedNoticeTitle")}</p>
+              <p className="mt-0.5 text-sm leading-[1.6] text-fg-muted">{t("support.closedNoticeDescription")}</p>
+              <div className="mt-3">
+                <Button variant="brandSoft" size="touch" nativeButton={false} render={<Link href="/support/new" />}>
+                  <Plus aria-hidden="true" />
+                  {t("support.newRequest")}
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

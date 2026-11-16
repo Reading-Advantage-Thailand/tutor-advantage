@@ -140,6 +140,10 @@ export const coupons = {
   reviewDescription: "เมื่อสร้างแล้วจะแก้จำนวนชั่วโมงไม่ได้ ถ้าผิดต้องยกเลิกคูปองแล้วสร้างใหม่",
   reviewBack: "กลับไปแก้ไข",
   reviewConfirm: "ยืนยันสร้างคูปอง {hours} ชม.",
+  // Redesign 2026-11 (appended): KPI strip + status count tabs
+  statsLabel: "สรุปการใช้คูปอง",
+  tabAll: "ทั้งหมด",
+  statRateBar: "ใช้แล้ว {rate} ของคูปองที่ไม่ถูกยกเลิก",
 } as const;
 
 registerMessages("coupons", coupons);

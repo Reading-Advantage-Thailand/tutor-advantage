@@ -1,45 +1,50 @@
-import { iconTileToneClass } from "@/components/mobile";
 import { cn } from "@/lib/utils";
 import { getRankMeta } from "./rankMeta";
 
 const sizeClass = {
-  sm: { box: "size-8 rounded-[10px]", emoji: "text-lg", number: "text-[13px]" },
-  md: { box: "size-10 rounded-xl", emoji: "text-[22px]", number: "text-[15px]" },
-  lg: { box: "size-12 rounded-[14px]", emoji: "text-[28px]", number: "text-lg" },
+  sm: "size-9 text-base",
+  md: "size-10 text-base",
+  lg: "size-12 text-lg",
 } as const;
 
 /**
- * Medal (top three) or "#n" tile for a rank; "–" when there is no rank.
- * Pass `medal={false}` to show the plain number even on the podium (e.g. a
- * 0-point row). The accessible name is "อันดับ n". Server-compatible.
+ * Rank cell (components.md §6.4). Ranks 1–3 (with `medal`) are round medal
+ * discs in --medal-gold / silver / bronze with an --on-medal numeral and a soft
+ * inner bottom shade; other ranks are a plain numeral (`plain`, leaderboard
+ * rows) or a neutral disc (`tile`, list leading slots). "–" before a first
+ * score. Numerals use the reading face with tabular figures. The accessible
+ * name is "อันดับ n". Server-compatible.
  */
-export function RankBadge({ rank, medal = true, size = "md", className }: {
+export function RankBadge({ rank, medal = true, size = "md", variant = "tile", className }: {
   rank: number | null | undefined;
   /** Allow a podium medal for ranks 1–3 (default true). */
   medal?: boolean;
+  /** sm 36 · md 40 · lg 48 */
   size?: keyof typeof sizeClass;
+  /** tile (default): neutral disc for ranks without a medal · plain: just the numeral. */
+  variant?: "tile" | "plain";
   className?: string;
 }) {
-  const ranked = getRankMeta(rank);
-  const meta = medal ? ranked : { ...ranked, emoji: null, tone: "neutral" as const };
-  const s = sizeClass[size];
+  const meta = getRankMeta(rank);
+  const podium = medal && meta.hasRank && meta.rank <= 3;
   return (
     <span
       role={meta.hasRank ? "img" : undefined}
       aria-label={meta.hasRank ? meta.label : undefined}
       aria-hidden={meta.hasRank ? undefined : true}
+      data-medal={podium ? meta.rank : undefined}
       className={cn(
-        "inline-flex shrink-0 items-center justify-center leading-none font-extrabold tabular-nums",
-        s.box,
-        iconTileToneClass[meta.tone],
+        "inline-flex shrink-0 items-center justify-center rounded-full leading-none font-semibold tabular-nums",
+        sizeClass[size],
+        podium
+          ? "medal-disc"
+          : variant === "plain"
+            ? "text-fg-muted"
+            : "bg-tile-neutral text-icon-neutral",
         className,
       )}
     >
-      {meta.emoji ? (
-        <span aria-hidden="true" className={s.emoji}>{meta.emoji}</span>
-      ) : (
-        <span aria-hidden="true" className={s.number}>{meta.hasRank ? `#${meta.rank}` : "–"}</span>
-      )}
+      <span aria-hidden="true">{meta.hasRank ? meta.rank : "–"}</span>
     </span>
   );
 }

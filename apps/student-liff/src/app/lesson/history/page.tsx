@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, History, Star, Trophy } from "lucide-react";
+import { History } from "lucide-react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { RankBadge } from "@/components/lesson/RankBadge";
-import { AppBar, EmptyState, ErrorState, ListGroup, ListRow, Screen, StatTile } from "@/components/mobile";
+import { AppBar, EmptyState, ErrorState, ListRow, Screen, StatStrip } from "@/components/mobile";
 import { buttonVariants } from "@/components/ui/button";
 import { studentApi } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatRelativeDay, formatThaiTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 import { HistorySkeleton } from "./_components/HistorySkeleton";
 import { groupHistoryByDay, summarizeHistory, type HistoryItem } from "./_components/historyModel";
 
@@ -33,7 +34,9 @@ export default function AllHistoryPage() {
     return (
       <Screen>
         {appBar}
-        <ErrorState kind={errorCode === "network" ? "offline" : "error"} onRetry={retry} className="flex-1 justify-center" />
+        <div className="px-4 pt-3">
+          <ErrorState card kind={errorCode === "network" ? "offline" : "error"} onRetry={retry} />
+        </div>
       </Screen>
     );
   }
@@ -42,12 +45,9 @@ export default function AllHistoryPage() {
     return (
       <Screen>
         {appBar}
-        <ErrorState
-          description={t("lessonHistory.loadFailed")}
-          onRetry={() => void refetch()}
-          retrying={isValidating}
-          className="flex-1 justify-center"
-        />
+        <div className="px-4 pt-3">
+          <ErrorState card description={t("lessonHistory.loadFailed")} onRetry={() => void refetch()} retrying={isValidating} />
+        </div>
       </Screen>
     );
   }
@@ -62,6 +62,7 @@ export default function AllHistoryPage() {
       <div className="flex flex-col gap-5 px-4 pt-3 pb-8">
         {historyData.length === 0 ? (
           <EmptyState
+            card
             icon={History}
             title={t("lessonHistory.emptyTitle")}
             description={t("lessonHistory.emptyDescription")}
@@ -70,24 +71,36 @@ export default function AllHistoryPage() {
                 {t("lessonHistory.emptyCta")}
               </Link>
             }
-            className="py-16"
+            className="py-12"
           />
         ) : (
           <>
-            <div className="grid grid-cols-3 gap-2">
-              <StatTile icon={BookOpen} tone="brand" value={summary.lessons} label={t("lessonHistory.lessonsStat")} />
-              <StatTile icon={Star} tone="amber" value={summary.totalScore} label={t("lessonHistory.totalScoreStat")} />
-              <StatTile
-                icon={Trophy}
-                tone="purple"
-                value={summary.bestRank ?? "–"}
-                label={t("lessonHistory.bestRankStat")}
-              />
-            </div>
+            {/* One stat strip (components.md §3.5): numbers that change, so the reading face with tabular figures. */}
+            <StatStrip
+              numbers="tabular"
+              items={[
+                { value: summary.lessons, label: t("lessonHistory.lessonsStat") },
+                { value: summary.totalScore, label: t("lessonHistory.totalScoreStat") },
+                { value: summary.bestRank ?? "–", label: t("lessonHistory.bestRankStat") },
+              ]}
+            />
 
-            <div className="flex flex-col gap-5" aria-label={t("lessonHistory.listAria")}>
-              {groups.map((group) => (
-                <ListGroup key={group.dayKey} header={formatRelativeDay(group.date)}>
+            {/* One list card (patterns.md S4); each day is a captioned run of flat rows inside it. */}
+            <div
+              className="overflow-hidden rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface shadow-[var(--shadow-card)]"
+              aria-label={t("lessonHistory.listAria")}
+            >
+              {groups.map((group, index) => (
+                <section key={group.dayKey} aria-labelledby={`history-day-${index}`}>
+                  <h2
+                    id={`history-day-${index}`}
+                    className={cn(
+                      "bg-surface-muted px-4 py-2 text-sm leading-[1.6] font-semibold text-fg-muted",
+                      index > 0 && "border-t-[1.5px] border-hairline",
+                    )}
+                  >
+                    {formatRelativeDay(group.date)}
+                  </h2>
                   {group.items.map((hist) => (
                     <ListRow
                       key={hist.sessionId}
@@ -97,13 +110,13 @@ export default function AllHistoryPage() {
                       subtitle={`${t("lessonHistory.tutorPrefix")} ${hist.tutorName} · ${formatThaiTime(hist.date, { suffix: true })}`}
                       trailing={
                         <span className="flex flex-col items-end">
-                          <span className="text-[17px] leading-[1.4] font-bold text-brand-fg tabular-nums">{hist.score}</span>
+                          <span className="text-[17px] leading-[1.4] font-semibold text-fg tabular-nums">{hist.score}</span>
                           <span className="text-xs leading-[1.4] text-fg-muted">{t("lessonHistory.pointsUnit")}</span>
                         </span>
                       }
                     />
                   ))}
-                </ListGroup>
+                </section>
               ))}
             </div>
           </>

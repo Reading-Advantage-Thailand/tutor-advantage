@@ -5,6 +5,7 @@ import {
   getParagraphs,
   getReviewAnswers,
   getReviewGameRow,
+  getReviewNeutralRow,
   getWordAudio,
   getWordText,
   getWordThai,
@@ -110,5 +111,42 @@ describe("game result rows", () => {
     expect(countCorrect(answers)).toEqual({ correct: 1, total: 2 });
     // Still listed in the review (with a question), just not counted.
     expect(getReviewAnswers(answers)).toHaveLength(5);
+  });
+
+  it("leaves the step-15 question to AI and the step-16 reflection out of the correct count", () => {
+    const answers = [
+      { phase: 7, questionText: "Q1", answerText: "A: dog", isCorrect: true, score: 1 },
+      { phase: 8, questionText: "Q2", answerText: "B: cat", isCorrect: false, score: 0 },
+      { phase: 15, questionText: "Language question", answerText: "a กับ an ต่างกันยังไง", isCorrect: true, score: 1, aiFeedback: "..." },
+      { phase: 16, questionText: "Lesson reflection", answerText: "ความเข้าใจ: 4", isCorrect: true, score: 0 },
+    ];
+    expect(countCorrect(answers)).toEqual({ correct: 1, total: 2 });
+    expect(getReviewAnswers(answers)).toHaveLength(4);
+  });
+});
+
+describe("getReviewNeutralRow", () => {
+  it("shows the step-15 question to AI with Thai labels and no verdict", () => {
+    const row = { phase: 15, questionText: "Language question", answerText: "a กับ an ต่างกันยังไง", isCorrect: true, score: 1, aiFeedback: "**a** ..." };
+    expect(getReviewNeutralRow(row)).toMatchObject({
+      kind: "languageQuestion",
+      title: "คำถามภาษาที่ถาม AI",
+      answerLabel: "คำถามของคุณ",
+      answerText: "a กับ an ต่างกันยังไง",
+      aiLabel: "คำตอบจาก AI",
+    });
+    expect(getReviewNeutralRow({ ...row, answerText: "" })).toMatchObject({ answerText: "ไม่ได้ถามคำถาม", answered: false });
+  });
+
+  it("shows the step-16 reflection with a Thai heading", () => {
+    const row = { phase: 16, questionText: "Lesson reflection", answerText: "ความเข้าใจ: 4", isCorrect: true, score: 1 };
+    expect(getReviewNeutralRow(row)).toMatchObject({ kind: "reflection", title: "แบบสรุปการเรียนรู้", answerLabel: "คำตอบของคุณ" });
+  });
+
+  it("is null for ordinary rows and old phase-15 game rows", () => {
+    expect(getReviewNeutralRow({ phase: 7, questionText: "Q1", answerText: "A: dog", isCorrect: true, score: 10 })).toBeNull();
+    expect(
+      getReviewNeutralRow({ phase: 15, questionText: "potion-rush", answerText: '{"gameId":"potion-rush","score":6}', isCorrect: true, score: 6 }),
+    ).toBeNull();
   });
 });

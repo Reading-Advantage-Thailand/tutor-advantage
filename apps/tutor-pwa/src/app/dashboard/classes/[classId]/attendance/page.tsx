@@ -1,9 +1,11 @@
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { CalendarCheck, Users } from "lucide-react";
-import { Chip, EmptyState, ListGroup, ListRow, Notice, Page, PageHeader, UserAvatar } from "@/components/app";
+import { Chip, EmptyState, ListRow, Notice, Page, PageHeader, UserAvatar } from "@/components/app";
 import { formatPercent } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
+import { PanelCard } from "../components/PanelCard";
 import { AdhocMeetingButton } from "./AdhocMeetingButton";
 import { loadAttendanceOverview } from "./attendance-server";
 import {
@@ -18,6 +20,7 @@ import {
   type MeetingSummary,
   type StudentStats,
 } from "./attendanceModel";
+import { DateTile } from "./DateTile";
 import { HistoryPanels } from "./HistoryPanels";
 import { MeetingChips } from "./MeetingChips";
 
@@ -32,11 +35,12 @@ function MeetingRow({ classId, meeting }: { classId: string; meeting: MeetingSum
   return (
     <ListRow
       href={attendanceMeetingHref(classId, meeting)}
+      leading={<DateTile date={meeting.date} />}
       title={`${meetingDateLabel(meeting.date)} · ${meetingTimeLabel(meeting.start, meeting.end)}`}
-      subtitle={countsLabel(meeting.counts)}
+      subtitle={<span className="tabular">{countsLabel(meeting.counts)}</span>}
       meta={hasMeetingChips(meeting) ? <MeetingChips meeting={meeting} /> : undefined}
       trailing={
-        <Chip tone={chip.tone} size="sm">
+        <Chip tone={chip.tone} size="sm" dot>
           {chip.label()}
         </Chip>
       }
@@ -47,11 +51,13 @@ function MeetingRow({ classId, meeting }: { classId: string; meeting: MeetingSum
 function StudentRow({ student }: { student: StudentStats }) {
   return (
     <ListRow
-      leading={<UserAvatar name={student.name} src={student.avatarUrl} size="sm" />}
+      leading={<UserAvatar name={student.name} src={student.avatarUrl} />}
       title={student.name || t("tutorClass.students.unnamed")}
-      subtitle={countsLabel({ present: student.present, late: student.late, absent: student.absent, unmarked: 0 })}
+      subtitle={
+        <span className="tabular">{countsLabel({ present: student.present, late: student.late, absent: student.absent, unmarked: 0 })}</span>
+      }
       lines={1}
-      trailing={<span className="font-semibold text-fg tabular">{formatPercent(student.rate)}</span>}
+      trailing={<span className="text-base font-semibold text-fg tabular">{formatPercent(student.rate)}</span>}
     />
   );
 }
@@ -93,27 +99,33 @@ export default async function AttendanceHistoryPage({ params }: { params: Promis
         meetings={
           meetings.length === 0 ? (
             <EmptyState
+              mascot
               icon={CalendarCheck}
               title={t("tutorClass.attendance.emptyMeetingsTitle")}
               description={t("tutorClass.attendance.emptyMeetingsDescription")}
             />
           ) : (
-            <ListGroup header={t("tutorClass.attendance.viewMeetings")}>
+            <PanelCard id="attendance-meetings-title" icon={CalendarCheck} tone="purple" title={t("tutorClass.attendance.viewMeetings")} flush>
               {meetings.map((meeting) => (
                 <MeetingRow key={`${meeting.date}-${meeting.start}`} classId={classId} meeting={meeting} />
               ))}
-            </ListGroup>
+            </PanelCard>
           )
         }
         students={
           students.length === 0 ? (
-            <EmptyState compact icon={Users} title={t("tutorClass.attendance.emptyStudents")} />
+            <PanelCard id="attendance-students-title" icon={Users} tone="teal" title={t("tutorClass.attendance.viewStudents")} flush>
+              <EmptyState compact icon={Users} title={t("tutorClass.attendance.emptyStudents")} />
+            </PanelCard>
           ) : (
-            <ListGroup header={t("tutorClass.attendance.viewStudents")} footer={t("tutorClass.attendance.rateNote")}>
+            <PanelCard id="attendance-students-title" icon={Users} tone="teal" title={t("tutorClass.attendance.viewStudents")} flush>
               {students.map((student) => (
                 <StudentRow key={student.studentUserId} student={student} />
               ))}
-            </ListGroup>
+              <p className="border-t border-hairline px-4 py-3 text-[0.8125rem] leading-[1.6] text-fg-muted md:px-5">
+                {thaiCopy(t("tutorClass.attendance.rateNote"))}
+              </p>
+            </PanelCard>
           )
         }
       />

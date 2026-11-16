@@ -15,10 +15,11 @@ export default function ChatPage() {
         <PageHeader title={t("dashboardChat.title")} description={t("dashboardChat.subtitle")} />
         <ChatList variant="page" />
       </Page>
-      <div className="hidden h-[calc(100dvh-64px)] items-center justify-center rounded-xl border border-hairline bg-surface shadow-card lg:flex xl:h-[calc(100dvh-76px)]">
+      <div className="ds-card hidden h-[calc(100dvh-64px)] items-center justify-center lg:flex xl:h-[calc(100dvh-76px)]">
         <h1 className="sr-only">{t("dashboardChat.title")}</h1>
         <EmptyState
           icon={MessagesSquare}
+          tone="blue"
           title={t("dashboardChat.selectTitle")}
           description={t("dashboardChat.selectDescription")}
           compact

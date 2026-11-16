@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { rankParticipants } from "./leaderboardModel";
+import { diffRankMoves, rankMap, rankParticipants, scoreSignature } from "./leaderboardModel";
 
 const people = [
   { studentId: "a", score: 10 },
@@ -82,5 +82,28 @@ describe("rankParticipants", () => {
   it("does not mutate the input", () => {
     rankParticipants(people, "me");
     expect(people.map((p) => p.studentId)).toEqual(["a", "me", "b", "c"]);
+  });
+});
+
+describe("rank moves", () => {
+  it("maps every player to their shared rank", () => {
+    expect([...rankMap(people).entries()]).toEqual([["me", 1], ["c", 1], ["a", 3], ["b", 4]]);
+  });
+
+  it("only changes the signature when a score changes", () => {
+    const shuffled = [people[3], people[1], people[0], people[2]];
+    expect(scoreSignature(shuffled)).toBe(scoreSignature(people));
+    expect(scoreSignature([{ studentId: "a", score: 11 }, ...people.slice(1)])).not.toBe(scoreSignature(people));
+  });
+
+  it("reports places moved up (+) and down (−), and nothing for new or unchanged players", () => {
+    const before = rankMap([{ studentId: "a", score: 30 }, { studentId: "b", score: 20 }, { studentId: "me", score: 10 }]);
+    const after = rankMap([{ studentId: "a", score: 30 }, { studentId: "b", score: 20 }, { studentId: "me", score: 40 }, { studentId: "new", score: 50 }]);
+    const moves = diffRankMoves(before, after);
+    expect(moves.get("me")).toBe(1);
+    expect(moves.get("a")).toBe(-2);
+    expect(moves.get("b")).toBe(-2);
+    expect(moves.has("new")).toBe(false);
+    expect(diffRankMoves(after, after).size).toBe(0);
   });
 });

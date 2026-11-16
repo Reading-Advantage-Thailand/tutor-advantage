@@ -1,0 +1,514 @@
+{
+  "generatedAt": "2026-11-09T08:37:18.141Z",
+  "scope": "apps/tutor-pwa/src (*.ts, *.tsx, *.js), excluding src/components/games, src/lib/games and *.test.*",
+  "art": [
+    "components/mascot/ReedyMini.tsx"
+  ],
+  "totals": {
+    "files": 345,
+    "palette": 194,
+    "hex": 52,
+    "textWhite": 32
+  },
+  "textWhiteOnBrand": [
+    {
+      "file": "components/ui/button.tsx",
+      "remaining": 0
+    },
+    {
+      "file": "components/ui/checkbox.tsx",
+      "remaining": 0
+    },
+    {
+      "file": "components/app/SideNav.tsx",
+      "remaining": 0
+    },
+    {
+      "file": "components/app/NotificationBell.tsx",
+      "remaining": 0
+    },
+    {
+      "file": "app/(dashboard)/lesson/[id]/interactive/presenter/primitives.tsx",
+      "remaining": 0
+    },
+    {
+      "file": "app/(dashboard)/lesson/[id]/interactive/presenter/GamePhaseStage.tsx",
+      "remaining": 0
+    },
+    {
+      "file": "app/(dashboard)/lesson/[id]/interactive/ArticleDisplay.tsx",
+      "remaining": 0
+    }
+  ],
+  "routes": [
+    {
+      "route": "shared: components/lesson",
+      "files": 11,
+      "palette": 130,
+      "hex": 0,
+      "textWhite": 29,
+      "worst": [
+        {
+          "file": "components/lesson/WizardZombieTeachingGame.tsx",
+          "palette": 41,
+          "hex": 0,
+          "textWhite": 8
+        },
+        {
+          "file": "components/lesson/DragonFlightTeachingGame.tsx",
+          "palette": 33,
+          "hex": 0,
+          "textWhite": 8
+        },
+        {
+          "file": "components/lesson/PotionRushTeachingGame.tsx",
+          "palette": 17,
+          "hex": 0,
+          "textWhite": 4
+        }
+      ]
+    },
+    {
+      "route": "shared: components/dev",
+      "files": 1,
+      "palette": 54,
+      "hex": 0,
+      "textWhite": 3,
+      "worst": [
+        {
+          "file": "components/dev/DevToolbar.tsx",
+          "palette": 54,
+          "hex": 0,
+          "textWhite": 3
+        }
+      ]
+    },
+    {
+      "route": "shared: components/documents",
+      "files": 1,
+      "palette": 0,
+      "hex": 41,
+      "textWhite": 0,
+      "worst": [
+        {
+          "file": "components/documents/Tawi50Document.tsx",
+          "palette": 0,
+          "hex": 41,
+          "textWhite": 0
+        }
+      ]
+    },
+    {
+      "route": "shared: lib/games-runtime",
+      "files": 4,
+      "palette": 10,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": [
+        {
+          "file": "lib/games-runtime/VirtualDPad.tsx",
+          "palette": 10,
+          "hex": 0,
+          "textWhite": 0
+        }
+      ]
+    },
+    {
+      "route": "/lesson/[id]/interactive",
+      "files": 24,
+      "palette": 0,
+      "hex": 5,
+      "textWhite": 0,
+      "worst": [
+        {
+          "file": "app/(dashboard)/lesson/[id]/interactive/presenter/confetti.ts",
+          "palette": 0,
+          "hex": 5,
+          "textWhite": 0
+        }
+      ]
+    },
+    {
+      "route": "shared: components/auth",
+      "files": 3,
+      "palette": 0,
+      "hex": 4,
+      "textWhite": 0,
+      "worst": [
+        {
+          "file": "components/auth/login-form.tsx",
+          "palette": 0,
+          "hex": 4,
+          "textWhite": 0
+        }
+      ]
+    },
+    {
+      "route": "/",
+      "files": 6,
+      "palette": 0,
+      "hex": 2,
+      "textWhite": 0,
+      "worst": [
+        {
+          "file": "app/layout.tsx",
+          "palette": 0,
+          "hex": 2,
+          "textWhite": 0
+        }
+      ]
+    },
+    {
+      "route": "/dashboard",
+      "files": 9,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/chat",
+      "files": 11,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/chat/[conversationId]",
+      "files": 3,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/classes",
+      "files": 14,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/classes/[classId]",
+      "files": 19,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/classes/[classId]/attendance",
+      "files": 9,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/classes/[classId]/attendance/meeting",
+      "files": 5,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/classes/[classId]/setup",
+      "files": 4,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/classes/auction",
+      "files": 5,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/classes/new",
+      "files": 4,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/demo",
+      "files": 6,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/earnings",
+      "files": 7,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/network",
+      "files": 8,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/performance",
+      "files": 4,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/schedule",
+      "files": 8,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/settings",
+      "files": 15,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/support",
+      "files": 6,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/support/[ticketId]",
+      "files": 2,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dashboard/support/new",
+      "files": 2,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dev/teaching-game-preview",
+      "files": 2,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/dev/ui-kit",
+      "files": 2,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/invite/[sponsorTutorId]",
+      "files": 1,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/lesson/[id]",
+      "files": 8,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/lesson/[id]/prepare",
+      "files": 2,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/lesson/[id]/prepare/lesson",
+      "files": 5,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/lesson/[id]/select",
+      "files": 3,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/privacy",
+      "files": 1,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "/terms",
+      "files": 1,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: components",
+      "files": 1,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: components/app",
+      "files": 30,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: components/dashboard",
+      "files": 2,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: components/layout",
+      "files": 2,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: components/legal",
+      "files": 1,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: components/mascot",
+      "files": 1,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: components/providers",
+      "files": 2,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: components/ui",
+      "files": 19,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: hooks",
+      "files": 22,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: lib",
+      "files": 19,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: lib/adaptive-difficulty",
+      "files": 4,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: locales",
+      "files": 1,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: locales/th",
+      "files": 16,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: middleware.ts",
+      "files": 1,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: store",
+      "files": 3,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    },
+    {
+      "route": "shared: types",
+      "files": 5,
+      "palette": 0,
+      "hex": 0,
+      "textWhite": 0,
+      "worst": []
+    }
+  ]
+}

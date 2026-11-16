@@ -112,4 +112,38 @@ describe("ThemeProvider", () => {
     expect(api?.theme).toBe("system");
     expect(api?.resolvedTheme).toBe("light");
   });
+
+  it("puts the dark class back when <html> was rebuilt without it (hydration-error recovery)", async () => {
+    localStorage.setItem("ta-theme", "dark");
+    document.documentElement.classList.add("dark");
+    const mod = await loadModule();
+    root = createRoot(container);
+    await act(async () => root!.render(tree(mod)));
+    expect(api?.resolvedTheme).toBe("dark");
+
+    // React re-creates the document: the class is gone, the module cache still says dark.
+    await act(async () => root!.unmount());
+    document.documentElement.classList.remove("dark");
+    root = createRoot(container);
+    await act(async () => root!.render(tree(mod)));
+
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    expect(api?.resolvedTheme).toBe("dark");
+  });
+
+  it("removes a stale dark class when the stored choice is light", async () => {
+    localStorage.setItem("ta-theme", "light");
+    const mod = await loadModule();
+    root = createRoot(container);
+    await act(async () => root!.render(tree(mod)));
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+
+    await act(async () => root!.unmount());
+    document.documentElement.classList.add("dark");
+    root = createRoot(container);
+    await act(async () => root!.render(tree(mod)));
+
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    expect(api?.resolvedTheme).toBe("light");
+  });
 });

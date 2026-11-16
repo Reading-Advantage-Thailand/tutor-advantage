@@ -55,4 +55,9 @@ export const dashboardNetwork = {
   payoutShort: "ผลตอบแทน",
   inviteTitle: "ลิงก์ชวนครูเข้าทีม",
   activeThisMonthLabel: "มียอดขายเดือนนี้",
+  // Redesign 2026-11 (T7: tree as indented rows, graph on demand)
+  joinedOn: "เข้าร่วมเมื่อ {date}",
+  treeLevel: "ชั้นที่ {level}",
+  showGraph: "ดูเป็นผัง",
+  hideGraph: "ซ่อนผัง",
 } as const;

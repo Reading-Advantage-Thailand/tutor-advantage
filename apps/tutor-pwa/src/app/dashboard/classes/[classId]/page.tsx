@@ -1,20 +1,8 @@
 import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { CalendarDays, Play, Settings2, Users } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  CardSkeleton,
-  Chip,
-  DescriptionList,
-  IconTile,
-  ListSkeleton,
-  Notice,
-  Page,
-  PageHeader,
-} from "@/components/app";
+import { CalendarDays, Settings2 } from "lucide-react";
+import { ListSkeleton, Notice, Page, Skeleton } from "@/components/app";
 import { formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { LEARNING_URL } from "@/lib/service-urls";
@@ -22,12 +10,15 @@ import { classSetupHref, sumScheduledHours } from "@/lib/tutorClassFlow";
 import type { BookOption } from "../components/book-options";
 import { ArticleSelector } from "./components/ArticleSelector";
 import { AttendanceEntryCard } from "./components/AttendanceEntryCard";
-import { initialCycleId, type BookCycle } from "./components/book-cycles";
+import { initialCycleId, openingCycleProgress, type BookCycle } from "./components/book-cycles";
+import { ClassHeader } from "./components/ClassHeader";
+import { ClassProgressCard } from "./components/ClassProgressCard";
 import { ClassStatusToggle } from "./components/ClassStatusToggle";
 import { CouponExtendButton } from "./components/CouponExtendButton";
 import { DetailTabs, TabPanel } from "./components/DetailTabs";
 import { DevClassSimulator } from "./components/DevClassSimulator";
 import { MeetingUrlEditor } from "./components/MeetingUrlEditor";
+import { PanelCard } from "./components/PanelCard";
 import { ReferralLink } from "./components/ReferralLink";
 import { RescheduleClassButton } from "./components/RescheduleClassButton";
 import { StudentsPanel } from "./components/StudentsPanel";
@@ -74,39 +65,66 @@ async function LessonsBlock({ classId, bookCycles, token }: { classId: string; b
   return <ArticleSelector classId={classId} bookCycles={bookCycles} initialArticles={articles} books={books} />;
 }
 
+/** Lesson picker placeholder: the card header, the two controls and lesson rows. */
+function LessonsSkeleton() {
+  return (
+    <div aria-hidden="true" className="ds-card overflow-hidden">
+      <div className="flex flex-col gap-4 p-4 md:p-5">
+        <div className="flex items-center gap-3">
+          <Skeleton className="size-10 shrink-0 rounded-(--radius-tile)" />
+          <div className="flex flex-1 flex-col gap-2">
+            <Skeleton className="h-4 w-40" />
+            <Skeleton className="h-3 w-64 max-w-full" />
+          </div>
+        </div>
+        <div className="grid gap-2 md:grid-cols-2">
+          <Skeleton className="h-11 rounded-(--radius-ctl)" />
+          <Skeleton className="h-11 rounded-(--radius-ctl)" />
+        </div>
+      </div>
+      <ListSkeleton rows={6} className="rounded-none border-x-0 border-b-0" />
+    </div>
+  );
+}
+
 function ScheduleCard({ cls, classId }: { cls: any; classId: string }) {
   const freeHours: number = cls.freeHours ?? 0;
   const remaining = Math.round((freeHours - sumScheduledHours(cls.scheduleData)) * 100) / 100;
   const startsAt = formatThaiDate(cls.startsAt);
   const endsAt = formatThaiDate(cls.endsAt);
   return (
-    <Card as="section" aria-labelledby="class-schedule-title">
-      <CardHeader
-        icon={<IconTile icon={CalendarDays} size="sm" tone="blue" />}
-        title={<span id="class-schedule-title">{t("tutorClass.classes.scheduleLabel")}</span>}
-        description={cls.schedule || t("tutorClass.classes.notSet")}
-      />
+    <PanelCard
+      id="class-schedule-title"
+      icon={CalendarDays}
+      tone="purple"
+      title={t("tutorClass.classes.scheduleLabel")}
+      description={cls.schedule || t("tutorClass.classes.notSet")}
+      bodyClassName="flex flex-col gap-3"
+    >
       {startsAt || endsAt ? (
-        <DescriptionList
-          className="mb-4 grid-cols-2 md:grid-cols-2"
-          items={[
-            { label: t("tutorClass.classes.startsAt"), value: startsAt || t("tutorClass.classes.notSet") },
-            { label: t("tutorClass.classes.endsAt"), value: endsAt || t("tutorClass.classes.notSet") },
-          ]}
-        />
+        <dl className="ds-well grid grid-cols-2 divide-x divide-hairline">
+          <div className="min-w-0 px-3 py-2.5">
+            <dt className="text-[0.8125rem] leading-[1.45] text-fg-muted">{t("tutorClass.classes.startsAt")}</dt>
+            <dd className="mt-0.5 text-[0.9375rem] font-semibold text-fg tabular">{startsAt || t("tutorClass.classes.notSet")}</dd>
+          </div>
+          <div className="min-w-0 px-3 py-2.5">
+            <dt className="text-[0.8125rem] leading-[1.45] text-fg-muted">{t("tutorClass.classes.endsAt")}</dt>
+            <dd className="mt-0.5 text-[0.9375rem] font-semibold text-fg tabular">{endsAt || t("tutorClass.classes.notSet")}</dd>
+          </div>
+        </dl>
       ) : null}
       {freeHours > 0 ? (
         remaining > 0 ? (
-          <Notice tone="warning" title={t("tutorClass.detail.couponUnscheduledWarning")} className="mb-4">
+          <Notice tone="warning" title={t("tutorClass.detail.couponUnscheduledWarning")}>
             {t("tutorClass.detail.remainingHoursLabel")}: {remaining} {t("tutorClass.detail.freeHoursUnit")}
           </Notice>
         ) : (
-          <Notice tone="brand" className="mb-4">
+          <Notice tone="brand">
             {t("tutorClass.detail.freeHoursLabel")}: {freeHours} {t("tutorClass.detail.freeHoursUnit")}
           </Notice>
         )
       ) : null}
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         <RescheduleClassButton
           classId={classId}
           className={cls.name}
@@ -117,7 +135,7 @@ function ScheduleCard({ cls, classId }: { cls: any; classId: string }) {
         />
         <CouponExtendButton classId={classId} />
       </div>
-    </Card>
+    </PanelCard>
   );
 }
 
@@ -141,51 +159,50 @@ export default async function ClassDetailPage({
 
   const cls = response.class;
   const bookCycles: BookCycle[] = cls.bookCycles || [];
-  const description = [cls.book, cls.schedule].filter(Boolean).join(" · ");
+  const enrolledCount: number | undefined = cls.students ?? cls.enrolledStudents?.length;
+  // Same cycle and total as ClassProgressCard, so the tab badge and the card agree.
+  const lessonsCount = openingCycleProgress(bookCycles, cls.articleCount)?.progress.totalArticles;
 
   return (
     <Page>
-      <PageHeader
-        title={cls.name}
-        mobileTitle="inline"
-        appBarTitle={t("tutorClass.view.appBarTitle")}
-        backHref="/dashboard/classes"
-        backLabel={t("tutorClass.classes.title")}
-        description={description}
-        meta={
-          <>
-            <ClassStatusToggle classId={classId} initialStatus={cls.status} />
-            <Chip icon={Users} tone="neutral">
-              {cls.students ?? 0}/{cls.maxStudents ?? 0} {t("tutorClass.classes.peopleUnit")}
-            </Chip>
-          </>
-        }
-        actions={
-          <Link
-            href={`/lesson/${classId}`}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-solid px-4 text-sm font-semibold text-on-brand shadow-xs outline-none hover:bg-brand-solid-pressed focus-visible:ring-3 focus-visible:ring-ring/40 max-lg:hidden"
-          >
-            <Play aria-hidden="true" className="size-4" />
-            {t("tutorClass.view.startTeaching")}
-          </Link>
-        }
+      <ClassHeader
+        classId={classId}
+        name={cls.name}
+        book={cls.book}
+        level={cls.cefr}
+        schedule={cls.schedule}
+        status={<ClassStatusToggle classId={classId} initialStatus={cls.status} />}
+        seats={{ students: cls.students ?? 0, max: cls.maxStudents ?? 0 }}
       />
 
       {cls.setupRequired ? (
-        <Notice tone="warning" icon={Settings2} href={classSetupHref(classId)} title={t("tutorClass.setup.detailNoticeTitle")}>
+        <Notice
+          tone="warning"
+          icon={Settings2}
+          href={classSetupHref(classId)}
+          title={t("tutorClass.setup.detailNoticeTitle")}
+        >
           {t("tutorClass.setup.detailNoticeBody")}
         </Notice>
       ) : null}
 
-      <DetailTabs initial={tab === "students" ? "students" : undefined}>
-        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-8">
-          <div className="flex min-w-0 flex-col gap-6">
+      <DetailTabs
+        initial={tab === "students" ? "students" : undefined}
+        counts={{ lessons: lessonsCount, students: enrolledCount }}
+      >
+        <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-6 xl:grid-cols-[minmax(0,1fr)_384px]">
+          <div className="flex min-w-0 flex-col gap-5 lg:gap-6">
             <TabPanel tab="lessons">
-              <Suspense fallback={<CardSkeleton lines={8} />}>
+              <Suspense fallback={<LessonsSkeleton />}>
                 <LessonsBlock classId={classId} bookCycles={bookCycles} token={token} />
               </Suspense>
             </TabPanel>
             <TabPanel tab="students">
+              <StudentsPanel
+                enrolledStudents={cls.enrolledStudents}
+                students={cls.students}
+                maxStudents={cls.maxStudents}
+              />
               <Suspense fallback={<ListSkeleton rows={2} />}>
                 <AttendanceEntryCard classId={classId} token={token} />
               </Suspense>
@@ -197,20 +214,15 @@ export default async function ClassDetailPage({
               </TabPanel>
             ) : null}
           </div>
-          <aside className="flex min-w-0 flex-col gap-6 max-lg:order-first">
-            <TabPanel tab="overview">
+          {/* The panel is the grid item, so a hidden overview tab leaves no gap on phones. */}
+          <TabPanel tab="overview" className="max-lg:order-first">
+            <aside className="flex min-w-0 flex-col gap-5 lg:gap-6">
+              <ClassProgressCard bookCycles={bookCycles} articleCount={cls.articleCount} />
               <ScheduleCard cls={cls} classId={classId} />
               <MeetingUrlEditor classId={classId} initialUrl={cls.meetingUrl} />
               <ReferralLink referralLink={cls.referralLink} />
-            </TabPanel>
-            <TabPanel tab="students">
-              <StudentsPanel
-                enrolledStudents={cls.enrolledStudents}
-                students={cls.students}
-                maxStudents={cls.maxStudents}
-              />
-            </TabPanel>
-          </aside>
+            </aside>
+          </TabPanel>
         </div>
       </DetailTabs>
     </Page>

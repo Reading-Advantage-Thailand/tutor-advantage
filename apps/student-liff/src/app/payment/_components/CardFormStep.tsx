@@ -1,12 +1,13 @@
 "use client";
 
-import { Lock } from "lucide-react";
-import { AppBar, BottomActionBar, Notice, Screen, TextField } from "@/components/mobile";
+import { CreditCard, Lock } from "lucide-react";
+import { AppBar, BottomActionBar, IconTile, Notice, Screen, TextField } from "@/components/mobile";
 import { Button } from "@/components/ui/button";
 import { formatSatang } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { hasAllCardFields, type CardFields } from "@/lib/paymentFlow";
 import { AmountCard } from "./AmountCard";
+import { PaymentStepCaption } from "./PaymentStepCaption";
 import { PaymentPolicyNotice } from "@/components/legal/PaymentPolicyNotice";
 
 export interface CardFormStepProps {
@@ -44,9 +45,10 @@ export function CardFormStep({
   return (
     <Screen>
       <AppBar title={t("payment.card.title")} onBack={onBack} />
+      <PaymentStepCaption step={2} />
       <form
         id={FORM_ID}
-        className="flex flex-col gap-5 px-4 pt-3 pb-6"
+        className="flex flex-col gap-5 px-4 pt-4 pb-6"
         autoComplete="on"
         onSubmit={(event) => {
           event.preventDefault();
@@ -55,7 +57,20 @@ export function CardFormStep({
       >
         <AmountCard label={t("payment.card.amount")} amountSatang={amountSatang} layout="row" />
 
-        <div className="flex flex-col gap-4 rounded-[var(--radius-card)] border border-hairline bg-surface p-4 shadow-[var(--shadow-card)]">
+        {/* One grouped card: labels above every field, autocomplete attributes for the wallet. */}
+        <section
+          aria-labelledby="payment-card-fields-title"
+          className="flex flex-col gap-4 rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface p-5 shadow-[var(--shadow-card)]"
+        >
+          <div className="flex items-center gap-3.5">
+            <IconTile icon={CreditCard} tone="amber" size="sm" />
+            <div className="min-w-0">
+              <h2 id="payment-card-fields-title" className="t-title-s text-fg">
+                {t("payment.methods.card")}
+              </h2>
+              <p className="text-[13px] leading-[1.6] text-fg-muted">{t("payment.select.cardSub")}</p>
+            </div>
+          </div>
           <TextField
             id="input-card-number"
             label={t("payment.card.numberLabel")}
@@ -66,6 +81,7 @@ export function CardFormStep({
             onChange={(event) => onNumberChange(event.target.value)}
             autoComplete="cc-number"
             enterKeyHint="next"
+            inputClassName="tabular-nums"
           />
           <TextField
             id="input-card-name"
@@ -92,6 +108,7 @@ export function CardFormStep({
               autoComplete="cc-exp"
               maxLength={5}
               enterKeyHint="next"
+              inputClassName="tabular-nums"
             />
             <TextField
               id="input-card-cvv"
@@ -105,9 +122,10 @@ export function CardFormStep({
               autoComplete="cc-csc"
               maxLength={4}
               enterKeyHint="done"
+              inputClassName="tabular-nums"
             />
           </div>
-        </div>
+        </section>
 
         <Notice
           tone="info"
@@ -124,7 +142,7 @@ export function CardFormStep({
           type="submit"
           form={FORM_ID}
           variant="brand"
-          size="cta"
+          size="cta-lg"
           className="flex-1"
           disabled={!complete}
           loading={loading}

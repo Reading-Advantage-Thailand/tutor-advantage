@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Plus, ShieldCheck, ShieldOff, UserCog, Users } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { Calculator, Info, Lock, Plus, SearchX, ShieldCheck, ShieldOff, UserCog, Users } from "lucide-react";
 import {
-  AdminStatusChip,
   Card,
   CardHeader,
   Chip,
@@ -13,7 +12,8 @@ import {
   EmptyState,
   ErrorState,
   FilterBar,
-  Grid,
+  IconTile,
+  KpiStrip,
   Notice,
   Page,
   PageHeader,
@@ -21,16 +21,18 @@ import {
   Sheet,
   StatCard,
   TextField,
+  UserAvatar,
   useAdminSession,
   type DataTableColumn,
 } from "@/components/app";
 import { toast } from "@/components/app/toastStore";
 import { Button } from "@/components/ui/button";
-import { api, newIdempotencyKey } from "@/lib/api";
+import { api, ApiError, newIdempotencyKey } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatThaiDate, PLACEHOLDER } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { statusLabel } from "@/lib/status";
+import { thaiCopy } from "@/lib/thaiText";
 import "@/locales/th/roles";
 import "@/locales/th/users";
 
@@ -63,6 +65,17 @@ function changeKind(change: RoleChange): "provision" | "revoke" | "restore" | "c
   return "change";
 }
 
+/** Role as icon + word (patterns.md A2), not a coloured chip. */
+function RoleCell({ role }: { role: StaffRole }) {
+  const Icon = role === "ADMIN" ? ShieldCheck : Calculator;
+  return (
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-fg-muted">
+      <Icon aria-hidden="true" className="size-4 shrink-0" />
+      {statusLabel("userRole", role)}
+    </span>
+  );
+}
+
 function grantsAdmin(change: RoleChange) {
   return change.active && change.role === "ADMIN" && !(change.current?.role === "ADMIN" && change.current.isActive);
 }
@@ -76,6 +89,13 @@ export default function RolesPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [pending, setPending] = useState<RoleChange | null>(null);
   const [idempotencyKey, setIdempotencyKey] = useState("");
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  // The empty state's "ล้างตัวกรอง" disappears once it has worked: focus goes back to the search box.
+  // (FilterBar's own button moves focus by itself.)
+  const clearSearch = () => {
+    setSearch("");
+    window.requestAnimationFrame(() => toolbarRef.current?.querySelector<HTMLElement>('input[type="search"]')?.focus());
+  };
 
   const key = me ? `${me.userId}:roles:staff` : null;
   const { data, error, isLoading, refetch, mutate } = useCachedResource(key, () => api.get<StaffUser[]>("/v1/admin/roles"));
@@ -105,24 +125,41 @@ export default function RolesPage() {
       header: t("roles.colStaff"),
       mobile: "primary",
       alwaysVisible: true,
-      cell: (u) => (
-        <span className="flex min-w-0 flex-col">
-          <span className="flex items-center gap-2 truncate font-medium text-fg">
-            {u.displayName && u.displayName !== u.email ? u.displayName : u.email ?? PLACEHOLDER}
-            {u.isSelf ? (
-              <Chip tone="brand" size="sm">
-                {t("roles.you")}
-              </Chip>
-            ) : null}
+      cell: (u) => {
+        const name = u.displayName && u.displayName !== u.email ? u.displayName : (u.email ?? PLACEHOLDER);
+        const secondary = `${u.email ?? PLACEHOLDER}${u.pendingRegistration ? ` · ${t("roles.pendingLogin")}` : ""}`;
+        return (
+          // Identity cell (A2): avatar 32 (a jade ring for "you") + name + email. data-identity-cell: in the
+          // phone card the role line starts under the name, as under an IdentityCell (same avatar + gap).
+          <span data-identity-cell="" className="flex min-w-0 items-center gap-2.5">
+            <UserAvatar name={name} seed={u.userId} size="sm" self={u.isSelf} decorative />
+            {/* The table caps name + email (full value in the title) so all five columns fit the card:
+                176px up to 1280, 208px up to 1536, then 288px. Phones use the card's width. */}
+            <span className="min-w-0 md:max-w-44 xl:max-w-52 2xl:max-w-72">
+              <span className="flex min-w-0 items-center gap-2">
+                <span className="truncate leading-[1.45] font-medium text-fg" title={name}>
+                  {name}
+                </span>
+                {u.isSelf ? (
+                  <Chip tone="brand" size="sm">
+                    {t("roles.you")}
+                  </Chip>
+                ) : null}
+              </span>
+              {/* data-card-empty: a lone "–" (no email) stays in the table but not in the phone card. */}
+              <span
+                data-card-empty={!u.email && !u.pendingRegistration ? "" : undefined}
+                className="block truncate text-[0.8125rem] leading-[1.45] text-fg-muted"
+                title={secondary}
+              >
+                {secondary}
+              </span>
+            </span>
           </span>
-          <span className="truncate text-[0.8125rem] text-fg-muted">
-            {u.email ?? PLACEHOLDER}
-            {u.pendingRegistration ? ` · ${t("roles.pendingLogin")}` : ""}
-          </span>
-        </span>
-      ),
+        );
+      },
     },
-    { key: "role", header: t("roles.colRole"), mobile: "secondary", width: "170px", cell: (u) => <AdminStatusChip domain="userRole" status={u.role} /> },
+    { key: "role", header: t("roles.colRole"), mobile: "secondary", cell: (u) => <RoleCell role={u.role} /> },
     {
       key: "access",
       header: t("roles.colAccess"),
@@ -134,34 +171,75 @@ export default function RolesPage() {
         </Chip>
       ),
     },
-    { key: "createdAt", header: t("roles.colAddedAt"), width: "130px", cell: (u) => formatThaiDate(u.createdAt) },
+    {
+      key: "createdAt",
+      header: t("roles.colAddedAt"),
+      cell: (u) => <span className="whitespace-nowrap tabular">{formatThaiDate(u.createdAt)}</span>,
+    },
     {
       key: "actions",
       header: t("roles.colActions"),
       align: "right",
+      // Phones: a full-width row at the bottom of the card, so every label stays on one line.
+      mobile: "actions",
       cell: (u) => {
-        if (u.isSelf || !u.email) return <span className="text-[0.8125rem] text-fg-subtle">{u.isSelf ? t("roles.ruleNoSelf") : PLACEHOLDER}</span>;
+        if (u.isSelf || !u.email) {
+          if (!u.isSelf) return <span className="text-[0.8125rem] text-fg-subtle">{PLACEHOLDER}</span>;
+          return (
+            // 768–1279 the actions column is one icon wide and this Thai note would break mid-word there:
+            // a lock with the note as its accessible name and tooltip (the rules card below spells it out).
+            <span className="inline-flex items-center gap-1.5 text-[0.8125rem] text-fg-subtle" title={t("roles.ruleNoSelf")}>
+              <Lock aria-hidden="true" className="hidden size-4 shrink-0 md:max-xl:block" />
+              <span className="md:max-xl:sr-only">{t("roles.ruleNoSelf")}</span>
+            </span>
+          );
+        }
         const email = u.email;
         const locked = isLastActiveAdmin(u);
+        const changeLabel = u.role === "ADMIN" ? t("roles.makeChecker") : t("roles.makeAdmin");
+        // Same buttons at every width; only their shape changes so the five columns fit the card:
+        // phones: labelled, wrapping onto a second line as whole buttons;
+        // 768–1279: icon buttons (the label stays as the accessible name and the tooltip);
+        // 1280–1439: labelled, stacked; from 1440: labelled, side by side.
+        const shape = "md:max-xl:w-8 md:max-xl:px-0";
+        const label = "md:max-xl:sr-only";
         return (
-          <span className="flex flex-wrap justify-end gap-2">
+          <span className="flex flex-wrap items-center gap-2 md:flex-nowrap md:justify-end md:gap-1.5 xl:flex-col xl:items-end min-[90rem]:flex-row min-[90rem]:items-center">
             {u.isActive ? (
               <>
                 <Button
                   size="sm"
                   variant="outline"
                   disabled={locked}
+                  title={changeLabel}
+                  className={shape}
                   onClick={() => ask({ email, role: u.role === "ADMIN" ? "FINANCE_CHECKER" : "ADMIN", active: true, current: u })}
                 >
-                  <UserCog aria-hidden="true" /> {u.role === "ADMIN" ? t("roles.makeChecker") : t("roles.makeAdmin")}
+                  <UserCog aria-hidden="true" />
+                  <span className={label}>{changeLabel}</span>
                 </Button>
-                <Button size="sm" variant="destructive" disabled={locked} onClick={() => ask({ email, role: u.role, active: false, current: u })}>
-                  <ShieldOff aria-hidden="true" /> {t("roles.revoke")}
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={locked}
+                  title={t("roles.revoke")}
+                  className={shape}
+                  onClick={() => ask({ email, role: u.role, active: false, current: u })}
+                >
+                  <ShieldOff aria-hidden="true" />
+                  <span className={label}>{t("roles.revoke")}</span>
                 </Button>
               </>
             ) : (
-              <Button size="sm" variant="soft" onClick={() => ask({ email, role: u.role, active: true, current: u })}>
-                <ShieldCheck aria-hidden="true" /> {t("roles.restore")}
+              <Button
+                size="sm"
+                variant="soft"
+                title={t("roles.restore")}
+                className={shape}
+                onClick={() => ask({ email, role: u.role, active: true, current: u })}
+              >
+                <ShieldCheck aria-hidden="true" />
+                <span className={label}>{t("roles.restore")}</span>
               </Button>
             )}
           </span>
@@ -238,18 +316,24 @@ export default function RolesPage() {
         }
       />
 
-      <Grid cols={3}>
+      <KpiStrip columns={3}>
         <StatCard label={t("roles.statAdmins")} value={data ? formatNumber(activeAdmins) : "–"} icon={ShieldCheck} tone="brand" />
-        <StatCard label={t("roles.statCheckers")} value={data ? formatNumber(activeCheckers) : "–"} icon={Users} tone="blue" />
+        <StatCard label={t("roles.statCheckers")} value={data ? formatNumber(activeCheckers) : "–"} icon={Calculator} tone="blue" />
         <StatCard label={t("roles.statRevoked")} value={data ? formatNumber(revoked) : "–"} icon={ShieldOff} tone="neutral" />
-      </Grid>
+      </KpiStrip>
 
       {data && activeAdmins <= 1 ? <Notice tone="warning">{t("roles.lastAdminNotice")}</Notice> : null}
 
-      <FilterBar search={{ value: search, onValueChange: setSearch, placeholder: t("roles.searchPlaceholder") }} isFiltered={search !== ""} onReset={() => setSearch("")} />
+      <div ref={toolbarRef}>
+        <FilterBar
+          search={{ value: search, onValueChange: setSearch, placeholder: t("roles.searchPlaceholder") }}
+          isFiltered={search !== ""}
+          onReset={() => setSearch("")}
+        />
+      </div>
 
       {error && !data ? (
-        <ErrorState onRetry={refetch} />
+        <ErrorState onRetry={refetch} digest={error instanceof ApiError ? (error.requestId ?? undefined) : undefined} />
       ) : (
         <DataTable
           caption={t("roles.tableCaption")}
@@ -257,16 +341,32 @@ export default function RolesPage() {
           rows={rows}
           loading={isLoading}
           getRowKey={(u) => u.userId}
-          empty={<EmptyState icon={Users} title={search ? t("users.emptyTitle") : t("roles.emptyStaff")} compact />}
+          empty={
+            <EmptyState
+              icon={search ? SearchX : Users}
+              title={search ? t("users.emptyTitle") : t("roles.emptyStaff")}
+              action={
+                search ? (
+                  <Button variant="outline" onClick={clearSearch}>
+                    {t("shell.clearFilters")}
+                  </Button>
+                ) : undefined
+              }
+            />
+          }
         />
       )}
 
-      <Card padding="md" tone="muted">
-        <CardHeader title={t("roles.rulesTitle")} className="mb-2" />
-        <ul className="flex list-disc flex-col gap-1 pl-5 text-sm text-fg-muted">
-          <li>{t("roles.ruleStaffOnly")}</li>
-          <li>{t("roles.ruleNoSelf")}</li>
-          <li>{t("roles.ruleLastAdmin")}</li>
+      <Card>
+        <CardHeader
+          title={t("roles.rulesTitle")}
+          icon={<IconTile icon={Info} tone="neutral" size="sm" />}
+          className="mb-3 items-center"
+        />
+        <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm text-fg-muted marker:text-fg-subtle">
+          <li>{thaiCopy(t("roles.ruleStaffOnly"))}</li>
+          <li>{thaiCopy(t("roles.ruleNoSelf"))}</li>
+          <li>{thaiCopy(t("roles.ruleLastAdmin"))}</li>
         </ul>
       </Card>
 
@@ -275,9 +375,10 @@ export default function RolesPage() {
         onOpenChange={setSheetOpen}
         title={t("roles.addSheetTitle")}
         description={t("roles.addSheetDescription")}
+        width={480}
         footer={
-          <div className="flex w-full justify-end gap-2">
-            <Button variant="ghost" onClick={() => setSheetOpen(false)}>
+          <div className="flex w-full flex-col gap-2 md:flex-row md:justify-end">
+            <Button variant="outline" onClick={() => setSheetOpen(false)}>
               {t("shell.cancel")}
             </Button>
             <Button onClick={reviewAdd}>{t("roles.continue")}</Button>

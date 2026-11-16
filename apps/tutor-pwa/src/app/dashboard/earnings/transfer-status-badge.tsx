@@ -142,7 +142,7 @@ export function TransferStatusBadge({ payoutLineId }: { payoutLineId: string }) 
           disabled={busy}
           aria-label={t("dashboardEarnings.refreshTransfer")}
           title={t("dashboardEarnings.refreshTransfer")}
-          className="inline-flex size-7 items-center justify-center rounded-md text-fg-muted hover:bg-press hover:text-fg disabled:opacity-50"
+          className="relative inline-flex size-7 items-center justify-center rounded-md text-fg-muted hover:bg-press hover:text-fg disabled:opacity-50 pointer-coarse:after:absolute pointer-coarse:after:-inset-2"
         >
           <RefreshCw aria-hidden="true" className={cn("size-3.5", busy && "animate-spin")} />
         </button>

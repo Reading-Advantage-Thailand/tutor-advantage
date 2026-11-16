@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { DescriptionList, Money, Sheet, TextField } from "@/components/app";
+import { DescriptionList, Money, Notice, Sheet, TextField } from "@/components/app";
 import { toast } from "@/components/app/toastStore";
 import { Button } from "@/components/ui/button";
 import { api, ApiError, errorMessage, newIdempotencyKey } from "@/lib/api";
@@ -14,6 +14,7 @@ import {
   parseOfflinePaidBaht,
   type DiscountCode,
 } from "../discountCodeForm";
+import { ReviewWell, SheetFooter } from "../../classes/components/SheetParts";
 import "@/locales/th/discountCodes";
 
 export interface OfflinePaidSheetProps {
@@ -77,23 +78,24 @@ export function OfflinePaidSheet({ open, onOpenChange, code, onChanged }: Offlin
         if (!saving) onOpenChange(next);
       }}
       dismissible={!saving}
+      side="right"
       width={480}
       title={t("discountCodes.editOfflinePaidTitle", { code: code.code })}
       description={t("discountCodes.editOfflinePaidDescription")}
       footer={
-        <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
-          <Button type="button" variant="ghost" disabled={saving} onClick={() => onOpenChange(false)}>
+        <SheetFooter>
+          <Button type="button" variant="outline" disabled={saving} onClick={() => onOpenChange(false)}>
             {/* "ปิด", not "ยกเลิก": on this page ยกเลิก means voiding the code. */}
             {t("discountCodes.close")}
           </Button>
           <Button type="submit" form="offline-paid-form" loading={saving}>
             {t("discountCodes.editOfflinePaidSave")}
           </Button>
-        </div>
+        </SheetFooter>
       }
     >
       <form id="offline-paid-form" noValidate onSubmit={save} className="flex flex-col gap-4">
-        <div className="rounded-xl border border-hairline bg-surface-muted p-4">
+        <ReviewWell>
           <DescriptionList
             columns={2}
             items={[
@@ -108,10 +110,11 @@ export function OfflinePaidSheet({ open, onOpenChange, code, onChanged }: Offlin
               },
             ]}
           />
-        </div>
+        </ReviewWell>
         <TextField
           label={t("discountCodes.offlinePaidLabel")}
           required
+          numeric
           inputMode="decimal"
           autoComplete="off"
           disabled={saving}
@@ -125,9 +128,9 @@ export function OfflinePaidSheet({ open, onOpenChange, code, onChanged }: Offlin
           error={error ?? undefined}
         />
         {submitError ? (
-          <p role="alert" className="rounded-lg border border-danger-border bg-danger-bg px-3 py-2 text-sm text-danger-fg">
+          <Notice tone="danger" role="alert">
             {submitError}
-          </p>
+          </Notice>
         ) : null}
       </form>
     </Sheet>

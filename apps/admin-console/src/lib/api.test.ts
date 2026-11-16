@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ApiError, api, downloadBlob, fetchBlobWithAuth, fetchWithAuth, messageFor } from "./api";
+import { ApiError, api, downloadBlob, encodeQueryComponent, fetchBlobWithAuth, fetchWithAuth, messageFor } from "./api";
 
 describe("admin API helpers", () => {
   beforeEach(() => {
@@ -121,6 +121,17 @@ describe("admin API helpers", () => {
     expect(postInit?.body).toBe(JSON.stringify({ hours: 3 }));
     const [, voidInit] = vi.mocked(fetch).mock.calls[2];
     expect((voidInit?.headers as Headers).get("Idempotency-Key")).toBe("fixed-key-123");
+  });
+
+  it("encodes query values for the services' validator: a space is %20, never +", async () => {
+    vi.mocked(fetch).mockImplementation(async () =>
+      new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "content-type": "application/json" } })
+    );
+    await api.get("/v1/users", { query: { role: "TUTOR", q: "Local Tutor", pageSize: 8 } });
+    await api.get("/v1/coupons/tutors", { query: { q: "O'Neil (A+B) & co*!" } });
+    expect(vi.mocked(fetch).mock.calls[0][0]).toBe("/api/proxy/v1/users?role=TUTOR&q=Local%20Tutor&pageSize=8");
+    expect(vi.mocked(fetch).mock.calls[1][0]).toBe("/api/proxy/v1/coupons/tutors?q=O%27Neil%20%28A%2BB%29%20%26%20co%2A%21");
+    expect(encodeQueryComponent("ครู ทดสอบ")).toBe(encodeURIComponent("ครู ทดสอบ"));
   });
 
   it("turns network failures into a Thai ApiError with status 0", async () => {

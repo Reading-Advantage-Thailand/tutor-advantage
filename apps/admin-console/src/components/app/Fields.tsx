@@ -11,6 +11,7 @@ import {
 } from "react";
 import { AlertCircle, ChevronDown, Search, X } from "lucide-react";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import { fieldControlClass } from "./constants";
 
@@ -25,7 +26,7 @@ export interface FieldProps {
   hint?: ReactNode;
   error?: ReactNode;
   required?: boolean;
-  /** Shows "(ไม่บังคับ)" after the label. */
+  /** Shows "(ไม่บังคับ)" after the label (not when the label text already says it). */
   optional?: boolean;
   className?: string;
   /** The control. Render-prop form receives the ids to wire up aria. */
@@ -41,28 +42,30 @@ export function Field({ id: idProp, label, hint, error, required, optional, clas
   const autoId = useId();
   const id = idProp ?? autoId;
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
+  // Some callers' labels already end in "(ไม่บังคับ)"; never say it twice.
+  const showOptional = optional && !(typeof label === "string" && label.includes(t("shell.optional")));
   return (
     <div className={cn("flex min-w-0 flex-col gap-1.5", className)}>
       {label ? (
-        <label htmlFor={id} className="text-sm font-medium text-fg">
+        <label htmlFor={id} className="text-[0.8125rem] leading-normal font-medium text-fg">
           {label}
           {required ? (
             <span className="ml-0.5 text-danger-fg" aria-hidden="true">
               *
             </span>
           ) : null}
-          {optional ? <span className="ml-1 font-normal text-fg-subtle">({t("shell.optional")})</span> : null}
+          {showOptional ? <span className="ml-1 font-normal text-fg-subtle">({t("shell.optional")})</span> : null}
         </label>
       ) : null}
       {typeof children === "function" ? children({ id, describedBy, invalid: Boolean(error) }) : children}
       {error ? (
-        <p id={`${id}-error`} className="flex items-start gap-1 text-[0.8125rem] text-danger-fg">
-          <AlertCircle aria-hidden="true" className="mt-[3px] size-3.5 shrink-0" />
-          <span>{error}</span>
+        <p id={`${id}-error`} aria-live="polite" className="flex items-start gap-1.5 text-[0.8125rem] leading-[1.6] text-danger-fg">
+          <AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+          <span>{thaiCopy(error)}</span>
         </p>
       ) : hint ? (
-        <p id={`${id}-hint`} className="text-[0.8125rem] text-fg-muted">
-          {hint}
+        <p id={`${id}-hint`} className="text-[0.8125rem] leading-[1.6] text-fg-muted">
+          {thaiCopy(hint)}
         </p>
       ) : null}
     </div>
@@ -81,10 +84,12 @@ export interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement>, F
   startAddon?: ReactNode;
   /** Icon/text inside the right edge (e.g. "บาท"). */
   endAddon?: ReactNode;
+  /** Money/number input: right-aligned tabular digits (pair with startAddon="฿"). */
+  numeric?: boolean;
 }
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
-  { id, label, hint, error, optional, required, containerClassName, className, startAddon, endAddon, ...props },
+  { id, label, hint, error, optional, required, containerClassName, className, startAddon, endAddon, numeric, ...props },
   ref,
 ) {
   return (
@@ -100,7 +105,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
             required={required}
             aria-invalid={invalid || undefined}
             aria-describedby={describedBy}
-            className={cn(fieldControlClass, "h-9 pointer-coarse:h-11", startAddon && "pl-9", endAddon && "pr-12", className)}
+            className={cn(fieldControlClass, "h-9 pointer-coarse:h-11", startAddon && "pl-9", endAddon && "pr-12", numeric && "text-right tabular", className)}
             {...props}
           />
           {endAddon ? (
@@ -226,7 +231,7 @@ export function SearchField({ value, onValueChange, label = t("shell.search"), p
             onValueChange("");
             inputRef.current?.focus();
           }}
-          className="absolute top-1/2 right-1.5 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-fg-subtle hover:bg-press hover:text-fg"
+          className="absolute top-1/2 right-1 flex size-7 -translate-y-1/2 items-center justify-center rounded-(--radius-ctl-sm) text-fg-subtle hover:bg-press hover:text-fg pointer-coarse:right-0 pointer-coarse:size-11"
         >
           <X aria-hidden="true" className="size-4" />
         </button>

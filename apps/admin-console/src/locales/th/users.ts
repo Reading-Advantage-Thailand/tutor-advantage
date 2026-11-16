@@ -72,6 +72,10 @@ export const users = {
   expiryInDays: "{document}หมดอายุในอีก {days} วัน",
   expiryToday: "{document}หมดอายุวันนี้",
   expiryExpired: "{document}หมดอายุแล้ว",
+  // ── Redesign 2026-11 (A2 count tabs, filter chips) ──
+  tabPendingDocs: "รอตรวจเอกสาร",
+  activeFilters: "ตัวกรองที่ใช้อยู่",
+  removeFilter: "ลบตัวกรอง {label}",
 } as const;
 
 registerMessages("users", users);

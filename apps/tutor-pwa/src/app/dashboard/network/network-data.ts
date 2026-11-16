@@ -103,6 +103,32 @@ export interface GraphEdgeSpec {
   target: string;
 }
 
+/** One row of the indented tree list: the tutor, their depth (0 = you) and whether they have a downline. */
+export interface TreeRow {
+  tutor: TutorSummary;
+  depth: number;
+  hasChildren: boolean;
+}
+
+/**
+ * Depth-first rows for the indented tree (patterns.md T7): the root first,
+ * then each downline under its sponsor. Same cycle guard as flattenTree.
+ */
+export function treeRows(tree: NetworkTreeNode): TreeRow[] {
+  const rows: TreeRow[] = [];
+  const seen = new Set<string>();
+  const visit = (current: NetworkTreeNode, depth: number) => {
+    if (seen.has(current.userId)) return;
+    seen.add(current.userId);
+    const children = current.children ?? [];
+    const { children: _omit, ...tutor } = current; // eslint-disable-line @typescript-eslint/no-unused-vars
+    rows.push({ tutor, depth, hasChildren: children.length > 0 });
+    for (const child of children) visit(child, depth + 1);
+  };
+  visit(tree, 0);
+  return rows;
+}
+
 export function flattenTree(tree: NetworkTreeNode): { nodes: GraphNodeSpec[]; edges: GraphEdgeSpec[] } {
   const nodes: GraphNodeSpec[] = [];
   const edges: GraphEdgeSpec[] = [];

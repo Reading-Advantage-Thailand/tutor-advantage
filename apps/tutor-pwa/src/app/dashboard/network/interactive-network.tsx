@@ -46,17 +46,19 @@ function TutorNode({ data }: NodeProps<TutorFlowNode>) {
     <div
       style={{ width: NODE_WIDTH, height: NODE_HEIGHT }}
       className={cn(
-        "flex flex-col rounded-xl border bg-surface p-3 text-left shadow-card",
-        isRoot ? "border-brand-soft-border ring-2 ring-brand-soft" : "border-hairline",
+        "flex flex-col rounded-(--radius-card) border bg-surface p-3 text-left shadow-card",
+        isRoot ? "border-brand-soft-border ring-2 ring-brand-soft" : "border-clay-rim",
       )}
     >
       {!isRoot ? <Handle type="target" position={Position.Top} isConnectable={false} style={handleStyle} /> : null}
       {hasChildren ? <Handle type="source" position={Position.Bottom} isConnectable={false} style={handleStyle} /> : null}
 
       <div className="flex min-w-0 items-center gap-2">
-        <UserAvatar name={tutor.displayName} size="sm" />
+        <UserAvatar name={tutor.displayName} toneKey={tutor.userId} size="sm" self={isRoot} />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-fg">{tutor.displayName}</p>
+          <p className="truncate text-sm font-semibold text-fg" title={tutor.displayName}>
+            {tutor.displayName}
+          </p>
           <p className="truncate text-xs text-fg-muted">
             <Users aria-hidden="true" className="mr-1 inline size-3 align-[-2px]" />
             {fillTemplate(t("dashboardNetwork.downlineCount"), { count: tutor.totalDownlines ?? 0 })}
@@ -151,7 +153,7 @@ export function InteractiveNetwork({ tree }: { tree: NetworkTreeNode }) {
         <Controls
           showInteractive={false}
           style={controlsStyle}
-          className="overflow-hidden rounded-lg border border-hairline shadow-xs"
+          className="overflow-hidden rounded-(--radius-ctl-sm) border border-clay-rim shadow-card [&_button]:size-8! pointer-coarse:[&_button]:size-11! [&_svg]:max-h-4! [&_svg]:max-w-4!"
         />
       </ReactFlow>
     </div>

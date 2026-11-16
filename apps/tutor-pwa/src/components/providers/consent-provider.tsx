@@ -46,13 +46,18 @@ export function ConsentProvider({ children, hasConsent }: ConsentProviderProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-(--z-consent) flex flex-col items-center overflow-y-auto bg-app px-4 pt-[max(1rem,var(--safe-top))] pb-[max(1rem,var(--safe-bottom))] sm:justify-center sm:p-6">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="consent-title"
+      className="fixed inset-0 z-(--z-consent) flex flex-col items-center overflow-y-auto bg-app px-4 pt-[max(1rem,var(--safe-top))] pb-[max(1rem,var(--safe-bottom))] sm:justify-center sm:p-6"
+    >
       <div className="relative my-4 w-full max-w-2xl rounded-2xl border border-hairline bg-surface p-5 shadow-card sm:my-10 sm:p-8">
         <div className="flex flex-col items-center mb-6 text-center">
           <div className="mb-4 flex size-14 items-center justify-center rounded-xl bg-brand-soft text-brand-fg">
-            <ShieldCheck className="size-7" />
+            <ShieldCheck aria-hidden="true" className="size-7" />
           </div>
-          <h2 className="text-xl font-bold text-fg sm:text-2xl">
+          <h2 id="consent-title" className="text-xl font-bold text-fg sm:text-2xl">
             นโยบายความเป็นส่วนตัวและข้อตกลงการใช้งาน
           </h2>
           <p className="mt-1 text-sm text-fg-muted">
@@ -83,8 +88,8 @@ export function ConsentProvider({ children, hasConsent }: ConsentProviderProps) 
         </div>
 
         {error && (
-          <div className="mb-4 flex items-center gap-2 rounded-xl border border-danger-border bg-danger-bg p-3 text-sm font-medium text-danger-fg">
-            <AlertCircle className="w-4 h-4" />
+          <div role="alert" className="mb-4 flex items-center gap-2 rounded-xl border border-danger-border bg-danger-bg p-3 text-sm font-medium text-danger-fg">
+            <AlertCircle aria-hidden="true" className="size-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
@@ -96,7 +101,7 @@ export function ConsentProvider({ children, hasConsent }: ConsentProviderProps) 
             onCheckedChange={(checked) => setAgreed(checked as boolean)}
             className="mt-1"
           />
-          <div className="grid gap-1.5 leading-none">
+          <div className="grid gap-1.5">
             <label
               htmlFor="terms"
               className="cursor-pointer text-sm font-semibold text-fg"
@@ -111,7 +116,8 @@ export function ConsentProvider({ children, hasConsent }: ConsentProviderProps) 
 
         <Button
           onClick={handleAgree}
-          disabled={!agreed || loading}
+          disabled={!agreed}
+          loading={loading}
           size="xl" className="w-full"
         >
           {loading ? "กำลังดำเนินการ..." : "ยืนยันการยอมรับ"}

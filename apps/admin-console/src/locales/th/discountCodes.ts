@@ -149,6 +149,10 @@ export const discountCodes = {
   editOfflinePaidSuccess: "บันทึกยอดที่รับของโค้ด {code} แล้ว",
   redemptionPaid: "รับนอกระบบ {amount}",
   redemptionFree: "โค้ดฟรี (ส่วนลด {amount})",
+  // Redesign 2026-11 (appended): KPI strip, status count tabs, active filter chips
+  statsLabel: "สรุปโค้ดส่วนลด",
+  tabAll: "ทั้งหมด",
+  activeFilters: "ตัวกรองที่ใช้อยู่",
 } as const;
 
 registerMessages("discountCodes", discountCodes);

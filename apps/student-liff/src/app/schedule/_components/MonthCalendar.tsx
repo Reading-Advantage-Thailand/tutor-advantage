@@ -3,7 +3,7 @@
 import { useMemo, useRef, type TouchEvent } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { IconButton, Surface } from "@/components/mobile";
-import { formatThaiDate, formatThaiMonthYear } from "@/lib/format";
+import { formatThaiDate, formatThaiMonthYear, localDayToBangkokNoon } from "@/lib/format";
 import { studentScheduleCopy, t } from "@/lib/i18n";
 import { getMonthGrid, getSwipeMonthDelta, isSameDay, type ScheduledEvent } from "@/lib/schedule";
 import { cn } from "@/lib/utils";
@@ -54,18 +54,24 @@ export function MonthCalendar({
   };
 
   return (
-    <Surface as="section" padding="none" aria-label={t("schedule.calendarAria")} className="p-2">
-      <div className="flex h-12 items-center justify-between pl-2">
-        <h2 className="text-[17px] leading-[1.5] font-bold text-fg" aria-live="polite">
-          {formatThaiMonthYear(month)}
+    <Surface
+      as="section"
+      padding="none"
+      aria-label={t("schedule.calendarAria")}
+      // Below 360px seven 44px day cells do not fit inside the gutter: the card runs edge to edge there.
+      className="p-3 max-[359px]:-mx-4 max-[359px]:rounded-none max-[359px]:border-x-0 max-[359px]:px-0.5"
+    >
+      <div className="flex min-h-12 items-center justify-between pl-2">
+        <h2 className="t-title text-fg" aria-live="polite">
+          {formatThaiMonthYear(localDayToBangkokNoon(month))}
         </h2>
-        <div className="flex">
+        <div className="flex gap-1">
           <IconButton icon={ChevronLeft} label={t("schedule.prevMonth")} onClick={onPrev} disabled={!canPrev} />
           <IconButton icon={ChevronRight} label={t("schedule.nextMonth")} onClick={onNext} disabled={!canNext} />
         </div>
       </div>
 
-      <div className="grid grid-cols-7" aria-hidden="true">
+      <div className="mt-1 grid grid-cols-7" aria-hidden="true">
         {studentScheduleCopy.daysOfWeek.map((day) => (
           <div key={day} className="flex h-8 items-center justify-center text-xs leading-[1.5] font-semibold text-fg-muted">
             {day}
@@ -79,9 +85,11 @@ export function MonthCalendar({
           const isSelected = isSameDay(cell.date, selected);
           const isToday = isSameDay(cell.date, today);
           const inMonth = cell.month === "curr";
+          // The cell is a device-local day; the formatter reads the Bangkok day.
+          const dayName = formatThaiDate(localDayToBangkokNoon(cell.date), "long");
           const label = count
-            ? `${formatThaiDate(cell.date, "long")} ${t("schedule.hasClassAria")} ${count} ${t("schedule.classCountUnit")}`
-            : formatThaiDate(cell.date, "long");
+            ? `${dayName} ${t("schedule.hasClassAria")} ${count} ${t("schedule.classCountUnit")}`
+            : dayName;
           return (
             <button
               key={cell.key}
@@ -94,13 +102,14 @@ export function MonthCalendar({
             >
               <span
                 className={cn(
-                  "relative flex size-10 items-center justify-center rounded-full text-[15px] leading-none tabular-nums transition-colors duration-150",
+                  "relative flex size-10 items-center justify-center rounded-full text-[15px] leading-none tabular-nums transition-colors duration-[var(--duration-fast)]",
                   isSelected
-                    ? "bg-brand-solid font-bold text-white"
+                    ? "bg-brand-solid font-semibold text-on-brand shadow-[0_2px_0_var(--brand-solid-edge)]"
                     : cn(
                         "group-active/day:bg-press",
-                        isToday && "font-bold text-brand-fg ring-2 ring-brand-vivid ring-inset",
-                        !isToday && (inMonth ? "font-semibold text-fg" : "font-normal text-fg-muted"),
+                        // Today: a ring in --brand-fg (patterns.md S11), plus the bolder weight.
+                        isToday && "font-semibold text-brand-fg ring-2 ring-brand-fg ring-inset",
+                        !isToday && (inMonth ? "font-medium text-fg" : "font-normal text-fg-muted"),
                       ),
                 )}
               >
@@ -110,7 +119,7 @@ export function MonthCalendar({
                     aria-hidden="true"
                     className={cn(
                       "absolute bottom-1 size-1.5 rounded-full",
-                      isSelected ? "bg-white" : "bg-brand-vivid",
+                      isSelected ? "bg-on-brand" : "bg-brand-vivid",
                     )}
                   />
                 ) : null}

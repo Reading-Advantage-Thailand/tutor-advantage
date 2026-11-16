@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { BrandMark } from "@/components/app/BrandMark";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -14,8 +14,10 @@ export interface BrandLockupProps {
 }
 
 /**
- * App icon + "Tutor Advantage" + role line. Logged-out screens only (the
- * signed-in shell has its own BrandMark). Server-compatible.
+ * TA mark + "Tutor Advantage" (Noto 600) + role line (components.md §12:
+ * the mark is aria-hidden next to the visible name). Logged-out screens only
+ * (the signed-in shell shows the same BrandMark in its bars). As a link it
+ * keeps a 44px hit area. Server-compatible.
  */
 export function BrandLockup({
   size = "md",
@@ -26,26 +28,12 @@ export function BrandLockup({
   const icon = size === "md" ? 44 : 32;
   const content = (
     <>
-      <span
-        className={cn(
-          "inline-flex shrink-0 items-center justify-center overflow-hidden bg-surface shadow-xs ring-1",
-          tone === "hero" ? "ring-hero-ring" : "ring-hairline",
-          size === "md" ? "size-11 rounded-xl" : "size-8 rounded-lg",
-        )}
-      >
-        <Image
-          src="/icons/icon-192.png"
-          alt=""
-          width={icon}
-          height={icon}
-          priority={size === "md"}
-        />
-      </span>
+      <BrandMark size={icon} />
       <span className="flex min-w-0 flex-col">
         <span
           className={cn(
-            "truncate font-bold tracking-tight",
-            size === "md" ? "text-lg leading-6" : "text-sm leading-5",
+            "truncate font-semibold whitespace-nowrap",
+            size === "md" ? "text-lg leading-6" : "text-[0.9375rem] leading-5",
           )}
         >
           {t("shell.brandName")}
@@ -70,7 +58,7 @@ export function BrandLockup({
   );
   if (href) {
     return (
-      <Link href={href} className={cn(classes, "rounded-lg outline-offset-4")}>
+      <Link href={href} className={cn(classes, "min-h-11 rounded-(--radius-ctl) pr-2 outline-offset-4")}>
         {content}
       </Link>
     );

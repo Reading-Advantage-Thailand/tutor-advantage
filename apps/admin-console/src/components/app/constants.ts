@@ -10,9 +10,14 @@ export const SIDEBAR_COOKIE = "admin_sidebar";
 /** Poll interval of the shared admin summary (sidebar badges + overview). */
 export const ADMIN_SUMMARY_POLL_MS = 60_000;
 
-/** Shared form-control styling (36px desktop, 44px on touch). Use for custom controls. */
+/**
+ * Shared form-control styling (components.md §8): --ctl-h 36 desktop / 44 on
+ * touch (callers add h-9 pointer-coarse:h-11), radius 8, 1px --field-border,
+ * 14px text (16px on touch, globals.css). Focus = the global 3px --focus-ring
+ * outline plus the border turning --brand-fg; invalid = --danger-solid border.
+ */
 export const fieldControlClass =
-  "w-full min-w-0 rounded-lg border border-field-border bg-surface px-3 text-sm text-fg outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-fg-subtle " +
-  "focus-visible:border-brand-vivid focus-visible:ring-3 focus-visible:ring-brand-vivid/20 " +
-  "disabled:cursor-not-allowed disabled:bg-surface-muted disabled:opacity-60 " +
-  "aria-[invalid=true]:border-danger-fg aria-[invalid=true]:focus-visible:ring-danger-fg/20";
+  "w-full min-w-0 rounded-(--radius-field) border border-field-border bg-surface px-3 text-sm text-fg transition-[border-color] duration-(--duration-fast) placeholder:text-fg-subtle " +
+  "focus-visible:border-brand-fg " +
+  "disabled:cursor-not-allowed disabled:opacity-45 " +
+  "aria-[invalid=true]:border-danger-solid";

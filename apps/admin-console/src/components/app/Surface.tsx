@@ -8,10 +8,10 @@ import { cn } from "@/lib/utils";
 export type SurfaceTone = "default" | "muted" | "brand" | "hero" | "success" | "warning" | "danger" | "info";
 
 const surfaceToneClass: Record<SurfaceTone, string> = {
-  default: "border-hairline bg-surface shadow-card",
+  default: "border-clay-rim bg-surface shadow-card",
   muted: "border-transparent bg-surface-muted",
   brand: "border-brand-soft-border bg-brand-soft",
-  hero: "border-hero-ring bg-hero text-hero-fg",
+  hero: "border-hero-ring bg-hero-bg-base text-hero-fg",
   success: "border-success-border bg-success-bg",
   warning: "border-warning-border bg-warning-bg",
   danger: "border-danger-border bg-danger-bg",
@@ -21,8 +21,8 @@ const surfaceToneClass: Record<SurfaceTone, string> = {
 const surfacePaddingClass = {
   none: "",
   sm: "p-3",
-  md: "p-4 md:p-5",
-  lg: "p-5 md:p-6",
+  md: "p-4",
+  lg: "p-5",
 } as const;
 
 export interface SurfaceProps {
@@ -42,8 +42,8 @@ export interface SurfaceProps {
 }
 
 /**
- * Card: white surface, 12px radius, hairline border, near-flat shadow.
- * Interactive cards (href/onClick) get a hover border + press feedback;
+ * Card: --surface-card, 12px radius, the mandatory 1px --clay-rim, near-flat shadow.
+ * Interactive cards (href/onClick) are flat: hover --row-hover, press --press-tint;
  * static cards never move. Server-compatible.
  */
 export function Surface({
@@ -62,7 +62,8 @@ export function Surface({
     surfaceToneClass[tone],
     surfacePaddingClass[padding],
     interactive &&
-      "pressable w-full cursor-pointer hover:border-hairline-strong focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none",
+      "pressable w-full cursor-pointer active:bg-press",
+    interactive && tone === "default" && "hover:bg-row-hover",
     className,
   );
   if (href) {
@@ -96,16 +97,18 @@ export interface CardHeaderProps {
   icon?: ReactNode;
   /** Right side: link, button, chip. */
   action?: ReactNode;
+  /** Title heading level (default h2, right under the page h1). Use h3 inside a Section. */
+  as?: "h1" | "h2" | "h3";
   className?: string;
 }
 
 /** Title row inside a Surface (use with padding="md"/"lg"). Server-compatible. */
-export function CardHeader({ title, description, icon, action, className }: CardHeaderProps) {
+export function CardHeader({ title, description, icon, action, as: Heading = "h2", className }: CardHeaderProps) {
   return (
     <div className={cn("mb-4 flex items-start gap-3", className)}>
       {icon}
       <div className="min-w-0 flex-1">
-        <h3 className="text-[0.9375rem] font-semibold text-fg">{title}</h3>
+        <Heading className="text-base leading-normal font-semibold text-fg">{title}</Heading>
         {description ? <p className="mt-0.5 text-sm text-fg-muted">{description}</p> : null}
       </div>
       {action ? <div className="flex shrink-0 items-center gap-2">{action}</div> : null}
@@ -114,6 +117,11 @@ export function CardHeader({ title, description, icon, action, className }: Card
 }
 
 /* ─── ListGroup / ListRow ─────────────────────────────────────────────── */
+
+/** Plain text (string/number) doubles as the tooltip of a clamped line. */
+function tooltipFor(node: ReactNode): string | undefined {
+  return typeof node === "string" || typeof node === "number" ? String(node) : undefined;
+}
 
 export interface ListGroupProps {
   /** Small label above the group (sentence case; never uppercase Thai). */
@@ -133,13 +141,13 @@ export function ListGroup({ header, headerAction, footer, children, className, .
   return (
     <section className={cn("min-w-0", className)} aria-label={rest["aria-label"]}>
       {header || headerAction ? (
-        <div className="flex min-h-8 items-center justify-between gap-3 px-1 pb-1.5">
-          {header ? <h2 className="text-sm font-semibold text-fg-muted">{header}</h2> : <span />}
+        <div className="flex min-h-9 items-center justify-between gap-3 px-0.5 pb-2">
+          {header ? <h2 className="text-base leading-normal font-semibold text-fg">{header}</h2> : <span />}
           {headerAction}
         </div>
       ) : null}
-      <div className="overflow-hidden rounded-xl border border-hairline bg-surface shadow-card">{children}</div>
-      {footer ? <p className="px-1 pt-2 text-xs text-fg-muted">{footer}</p> : null}
+      <div className="card overflow-hidden">{children}</div>
+      {footer ? <p className="px-1 pt-2 text-xs leading-[1.6] text-fg-muted">{footer}</p> : null}
     </section>
   );
 }
@@ -151,8 +159,12 @@ export interface ListRowProps {
   onClick?: MouseEventHandler<HTMLElement>;
   /** Left slot (~40px): IconTile, UserAvatar, date badge. */
   leading?: ReactNode;
+  /** Row title. A string or number is also the tooltip (`title`), so a clamped value can still be read in full. */
   title: ReactNode;
+  /** Secondary line. A string or number is also the tooltip, like `title`. */
   subtitle?: ReactNode;
+  /** Classes for the subtitle line, e.g. "text-balance" for a sentence that wraps to two lines. */
+  subtitleClassName?: string;
   /** Extra line under the subtitle: chips/meta (wraps). */
   meta?: ReactNode;
   /** Right slot: value, Chip, Switch, Button. */
@@ -160,6 +172,8 @@ export interface ListRowProps {
   /** Chevron at the end (default: true with href). */
   chevron?: boolean;
   disabled?: boolean;
+  /** The record open in a side sheet: --brand-soft with a 3px jade bar on the leading edge. */
+  selected?: boolean;
   /** Red title for destructive actions. */
   destructive?: boolean;
   /** Max title/subtitle lines before ellipsis (default 2). */
@@ -177,10 +191,12 @@ export function ListRow({
   leading,
   title,
   subtitle,
+  subtitleClassName,
   meta,
   trailing,
   chevron,
   disabled,
+  selected,
   destructive,
   lines = 2,
   className,
@@ -188,14 +204,20 @@ export function ListRow({
   const interactive = Boolean(href || onClick) && !disabled;
   const showChevron = chevron ?? Boolean(href);
   const clamp = lines === 1 ? "truncate" : "line-clamp-2";
+  // A title that may wrap gets the Thai body leading (1.6); a one-line title keeps the tight 1.45.
+  const titleClamp = lines === 1 ? "truncate leading-[1.45]" : "line-clamp-2 leading-[1.6]";
   const content = (
     <>
       {leading ? <span className="flex shrink-0 items-center">{leading}</span> : null}
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className={cn("text-sm font-medium text-fg md:text-[0.9375rem]", clamp, destructive && "text-danger-fg")}>
+        <span className={cn("text-sm font-semibold text-fg", titleClamp, destructive && "text-danger-fg")} title={tooltipFor(title)}>
           {title}
         </span>
-        {subtitle ? <span className={cn("text-[0.8125rem] text-fg-muted", clamp)}>{subtitle}</span> : null}
+        {subtitle ? (
+          <span className={cn("text-[0.8125rem] leading-[1.6] text-fg-muted", clamp, subtitleClassName)} title={tooltipFor(subtitle)}>
+            {subtitle}
+          </span>
+        ) : null}
         {meta ? <span className="mt-1.5 flex flex-wrap items-center gap-1.5">{meta}</span> : null}
       </span>
       {trailing ? <span className="flex shrink-0 items-center gap-2 text-sm text-fg-muted">{trailing}</span> : null}
@@ -203,28 +225,28 @@ export function ListRow({
     </>
   );
   const classes = cn(
-    "list-row flex min-h-14 w-full items-center gap-3 px-4 py-3 text-left",
-    interactive && "pressable cursor-pointer hover:bg-surface-muted active:bg-press focus-visible:bg-surface-muted focus-visible:outline-none",
-    disabled && "opacity-50",
+    "list-row flex min-h-14 w-full items-center gap-3 px-4 py-2.5 text-left",
+    interactive && "pressable cursor-pointer hover:bg-row-hover active:bg-press focus-ring-inset",
+    disabled && "opacity-45",
     className,
   );
   const dataLeading = leading ? "" : undefined;
   if (href && !disabled) {
     return (
-      <Link href={href} onClick={onClick} className={classes} data-leading={dataLeading}>
+      <Link href={href} onClick={onClick} className={classes} data-leading={dataLeading} data-selected={selected ? "" : undefined}>
         {content}
       </Link>
     );
   }
   if (onClick) {
     return (
-      <button type="button" onClick={onClick} disabled={disabled} className={classes} data-leading={dataLeading}>
+      <button type="button" onClick={onClick} disabled={disabled} className={classes} data-leading={dataLeading} data-selected={selected ? "" : undefined}>
         {content}
       </button>
     );
   }
   return (
-    <div className={classes} data-leading={dataLeading}>
+    <div className={classes} data-leading={dataLeading} data-selected={selected ? "" : undefined}>
       {content}
     </div>
   );

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { matchProxyRequest, sanitizeIdempotencyKey, type ProxyService } from "@/lib/proxyAllowlist";
 import { ADMIN_TOKEN_COOKIE, devRoutesEnabled, verifyAdminToken } from "@/lib/security";
+import { forwardedSearch } from "../forwardedSearch";
 
 /**
  * Same-origin proxy from the browser to the backend services. Reads the
@@ -50,7 +51,7 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
   if (!match.ok) return errorResponse(match.status, match.code, "This endpoint is not available through the admin console");
 
   const base = SERVICE_URLS[match.rule.service].replace("localhost", "127.0.0.1");
-  const targetUrl = `${base}${match.path}${request.nextUrl.search}`;
+  const targetUrl = `${base}${match.path}${forwardedSearch(request.nextUrl.search)}`;
 
   const headers = new Headers();
   headers.set("Authorization", `Bearer ${request.cookies.get(ADMIN_TOKEN_COOKIE)?.value}`);

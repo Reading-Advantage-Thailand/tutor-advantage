@@ -205,4 +205,9 @@ export const dashboardSettings = {
   expiryWarningPassportToday: "หนังสือเดินทางจะหมดอายุวันนี้ (วันที่ {date}) กรุณาส่งฉบับใหม่เพื่อไม่ให้การจ่ายเงินถูกระงับ · Your passport expires today ({isoDate}). Submit a new one so payouts are not paused",
   expiryWarningWorkPermit: "ใบอนุญาตทำงานจะหมดอายุในอีก {days} วัน (วันที่ {date}) กรุณาส่งฉบับใหม่ก่อนหมดอายุเพื่อไม่ให้การจ่ายเงินถูกระงับ · Your work permit expires in {days} {dayUnit} ({isoDate}). Submit a new one before then so payouts are not paused",
   expiryWarningWorkPermitToday: "ใบอนุญาตทำงานจะหมดอายุวันนี้ (วันที่ {date}) กรุณาส่งฉบับใหม่เพื่อไม่ให้การจ่ายเงินถูกระงับ · Your work permit expires today ({isoDate}). Submit a new one so payouts are not paused",
+  // Redesign 2026-11 (patterns.md T8)
+  kycPrivacyTitle: "เอกสารของคุณเก็บเป็นความลับ",
+  kycPrivacyBody: "ไฟล์ที่อัปโหลดเก็บในพื้นที่จัดเก็บส่วนตัว ไม่เปิดเป็นสาธารณะ เฉพาะเจ้าหน้าที่ตรวจสอบเอกสารเท่านั้นที่เปิดดูได้",
+  helpSection: "ช่วยเหลือ",
+  supportRowDescription: "แจ้งปัญหาและติดตามคำตอบจากทีมงาน",
 } as const;

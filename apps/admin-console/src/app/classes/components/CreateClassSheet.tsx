@@ -4,6 +4,7 @@ import Link from "next/link";
 import { TicketPercent } from "lucide-react";
 import { useMemo, useState } from "react";
 import { DescriptionList, Money, Notice, SelectField, Sheet, TextField, useAdminSession } from "@/components/app";
+import { FieldRow, FormDivider, FormSection, ReviewWell, SheetFooter } from "./SheetParts";
 import { Button } from "@/components/ui/button";
 import { api, errorMessage, newIdempotencyKey } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
@@ -93,16 +94,19 @@ export function CreateClassSheet({ open, onOpenChange, onCreated }: CreateClassS
     event.preventDefault();
     const result = validateCreateClassForm(values, MESSAGES);
     setErrors(result.errors);
-    if (!result.body) return;
+    if (!result.body) {
+      // Move focus to the first invalid field so its error (aria-describedby) is read.
+      requestAnimationFrame(() => document.querySelector<HTMLElement>('#create-class-form [aria-invalid="true"]')?.focus());
+      return;
+    }
     setSubmitError(null);
     setReview(result.body);
   };
 
-  const footerRow = "flex flex-col-reverse gap-2 md:flex-row md:justify-end";
   const errorBox = submitError ? (
-    <p role="alert" className="rounded-lg border border-danger-border bg-danger-bg px-3 py-2 text-sm text-danger-fg">
+    <Notice tone="danger" role="alert">
       {submitError}
-    </p>
+    </Notice>
   ) : null;
 
   // One Sheet for all steps (form → review → created) so it never closes/reopens between them.
@@ -117,7 +121,7 @@ export function CreateClassSheet({ open, onOpenChange, onCreated }: CreateClassS
     title = t("classes.createdTitle");
     description = t("classes.createdDescription");
     footer = (
-      <div className={footerRow}>
+      <SheetFooter>
         <Button variant="outline" onClick={() => onOpenChange(false)}>
           {t("classes.done")}
         </Button>
@@ -127,7 +131,7 @@ export function CreateClassSheet({ open, onOpenChange, onCreated }: CreateClassS
             {t("classes.issueCodeForClass")}
           </Link>
         </Button>
-      </div>
+      </SheetFooter>
     );
     body = (
       <div className="flex flex-col gap-4">
@@ -142,34 +146,36 @@ export function CreateClassSheet({ open, onOpenChange, onCreated }: CreateClassS
             .filter(Boolean)
             .join(" ")}
         </Notice>
-        <DescriptionList
-          columns={2}
-          items={[
-            { label: t("classes.detailTitle"), value: item.title, wide: true },
-            { label: t("classes.colTutor"), value: tutorName },
-            { label: t("classes.detailBook"), value: item.bookCode ?? item.bookTitle ?? "–" },
-            { label: t("classes.detailPrice"), value: <Money satang={item.packagePriceSatang} /> },
-            { label: t("classes.detailCapacity"), value: t("classes.capacityValue", { count: formatNumber(item.capacity) }) },
-          ]}
-        />
+        <ReviewWell>
+          <DescriptionList
+            columns={2}
+            items={[
+              { label: t("classes.detailTitle"), value: item.title, wide: true },
+              { label: t("classes.colTutor"), value: tutorName },
+              { label: t("classes.detailBook"), value: item.bookCode ?? item.bookTitle ?? "–" },
+              { label: t("classes.detailPrice"), value: <Money satang={item.packagePriceSatang} /> },
+              { label: t("classes.detailCapacity"), value: t("classes.capacityValue", { count: formatNumber(item.capacity) }) },
+            ]}
+          />
+        </ReviewWell>
       </div>
     );
   } else if (review) {
     title = t("classes.reviewTitle");
     description = t("classes.reviewDescription");
     footer = (
-      <div className={footerRow}>
-        <Button type="button" variant="ghost" disabled={saving} onClick={() => setReview(null)}>
+      <SheetFooter>
+        <Button type="button" variant="outline" disabled={saving} onClick={() => setReview(null)}>
           {t("classes.reviewBack")}
         </Button>
         <Button type="button" loading={saving} onClick={() => void save(review)}>
           {t("classes.reviewConfirm")}
         </Button>
-      </div>
+      </SheetFooter>
     );
     body = (
       <div className="flex flex-col gap-4">
-        <div className="rounded-xl border border-hairline bg-surface-muted p-4">
+        <ReviewWell>
           <DescriptionList
             columns={2}
             items={[
@@ -181,7 +187,7 @@ export function CreateClassSheet({ open, onOpenChange, onCreated }: CreateClassS
               { label: t("classes.detailCapacity"), value: t("classes.capacityValue", { count: formatNumber(review.capacity) }) },
             ]}
           />
-        </div>
+        </ReviewWell>
         <Notice tone="info" title={t("classes.reviewNoticeTitle")}>
           {t("classes.reviewNotice")}
         </Notice>
@@ -192,120 +198,129 @@ export function CreateClassSheet({ open, onOpenChange, onCreated }: CreateClassS
     title = t("classes.createTitle");
     description = t("classes.createDescription");
     footer = (
-      <div className={footerRow}>
-        <Button type="button" variant="ghost" disabled={saving} onClick={() => onOpenChange(false)}>
+      <SheetFooter>
+        <Button type="button" variant="outline" disabled={saving} onClick={() => onOpenChange(false)}>
           {t("classes.close")}
         </Button>
         <Button type="submit" form="create-class-form" loading={saving}>
           {t("classes.createSubmit")}
         </Button>
-      </div>
+      </SheetFooter>
     );
     const booksFailed = Boolean(books.error) && !books.data;
     body = (
       <form id="create-class-form" noValidate onSubmit={submit} className="flex flex-col gap-5">
-        <TextField
-          label={t("classes.tutorEmailLabel")}
-          required
-          type="email"
-          inputMode="email"
-          autoComplete="off"
-          autoCapitalize="off"
-          spellCheck={false}
-          autoFocus
-          maxLength={EMAIL_MAX}
-          disabled={saving}
-          value={values.tutorEmail}
-          onChange={(event) => set("tutorEmail", event.target.value)}
-          placeholder={t("classes.tutorEmailPlaceholder")}
-          hint={t("classes.tutorEmailHint")}
-          error={errors.tutorEmail}
-        />
-        <TextField
-          label={t("classes.tutorNameLabel")}
-          required
-          autoComplete="off"
-          maxLength={DISPLAY_NAME_MAX}
-          disabled={saving}
-          value={values.tutorDisplayName}
-          onChange={(event) => set("tutorDisplayName", event.target.value)}
-          placeholder={t("classes.tutorNamePlaceholder")}
-          hint={t("classes.tutorNameHint")}
-          error={errors.tutorDisplayName}
-        />
-        <TextField
-          label={t("classes.titleLabel")}
-          required
-          autoComplete="off"
-          maxLength={TITLE_MAX}
-          disabled={saving}
-          value={values.title}
-          onChange={(event) => set("title", event.target.value)}
-          placeholder={t("classes.titlePlaceholder")}
-          hint={t("classes.titleHint")}
-          error={errors.title}
-        />
-        <div className="flex flex-col gap-1.5">
-          <SelectField
-            label={t("classes.bookLabel")}
-            required
-            disabled={saving || !books.data}
-            value={values.bookId}
-            onChange={(event) => set("bookId", event.target.value)}
-            placeholder={books.data ? t("classes.bookPlaceholder") : t("classes.booksLoading")}
-            error={errors.bookId ?? (booksFailed ? t("classes.booksError") : undefined)}
-          >
-            {grouped.reading.length > 0 ? (
-              <optgroup label="Reading Advantage">
-                {grouped.reading.map((book) => (
-                  <option key={book.bookId} value={book.bookId}>
-                    {bookLabel(book)}
-                  </option>
-                ))}
-              </optgroup>
-            ) : null}
-            {grouped.primary.length > 0 ? (
-              <optgroup label="Primary Advantage">
-                {grouped.primary.map((book) => (
-                  <option key={book.bookId} value={book.bookId}>
-                    {bookLabel(book)}
-                  </option>
-                ))}
-              </optgroup>
-            ) : null}
-          </SelectField>
-          {booksFailed ? (
-            <Button type="button" variant="link" size="sm" className="self-start" onClick={() => void books.refetch()}>
-              {t("classes.booksRetry")}
-            </Button>
-          ) : null}
-        </div>
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <FormSection legend={t("classes.colTutor")}>
+          <FieldRow>
+            <TextField
+              label={t("classes.tutorEmailLabel")}
+              required
+              type="email"
+              inputMode="email"
+              autoComplete="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              autoFocus
+              maxLength={EMAIL_MAX}
+              disabled={saving}
+              value={values.tutorEmail}
+              onChange={(event) => set("tutorEmail", event.target.value)}
+              placeholder={t("classes.tutorEmailPlaceholder")}
+              hint={t("classes.tutorEmailHint")}
+              error={errors.tutorEmail}
+            />
+            <TextField
+              label={t("classes.tutorNameLabel")}
+              required
+              autoComplete="off"
+              maxLength={DISPLAY_NAME_MAX}
+              disabled={saving}
+              value={values.tutorDisplayName}
+              onChange={(event) => set("tutorDisplayName", event.target.value)}
+              placeholder={t("classes.tutorNamePlaceholder")}
+              hint={t("classes.tutorNameHint")}
+              error={errors.tutorDisplayName}
+            />
+          </FieldRow>
+        </FormSection>
+        <FormDivider />
+        <FormSection legend={t("classes.colClass")}>
           <TextField
-            label={t("classes.priceLabel")}
+            label={t("classes.titleLabel")}
             required
-            inputMode="decimal"
             autoComplete="off"
+            maxLength={TITLE_MAX}
             disabled={saving}
-            value={values.price}
-            onChange={(event) => set("price", event.target.value)}
-            endAddon={t("classes.priceUnit")}
-            hint={t("classes.priceHint")}
-            error={errors.price}
+            value={values.title}
+            onChange={(event) => set("title", event.target.value)}
+            placeholder={t("classes.titlePlaceholder")}
+            hint={t("classes.titleHint")}
+            error={errors.title}
           />
-          <TextField
-            label={t("classes.capacityLabel")}
-            required
-            inputMode="numeric"
-            autoComplete="off"
-            disabled={saving}
-            value={values.capacity}
-            onChange={(event) => set("capacity", event.target.value.replace(/[^\d]/g, ""))}
-            endAddon={t("classes.capacityUnit")}
-            error={errors.capacity}
-            max={CAPACITY_MAX}
-          />
-        </div>
+          <div className="flex flex-col gap-1.5">
+            <SelectField
+              label={t("classes.bookLabel")}
+              required
+              disabled={saving || !books.data}
+              value={values.bookId}
+              onChange={(event) => set("bookId", event.target.value)}
+              placeholder={books.data ? t("classes.bookPlaceholder") : t("classes.booksLoading")}
+              error={errors.bookId ?? (booksFailed ? t("classes.booksError") : undefined)}
+            >
+              {grouped.reading.length > 0 ? (
+                <optgroup label="Reading Advantage">
+                  {grouped.reading.map((book) => (
+                    <option key={book.bookId} value={book.bookId}>
+                      {bookLabel(book)}
+                    </option>
+                  ))}
+                </optgroup>
+              ) : null}
+              {grouped.primary.length > 0 ? (
+                <optgroup label="Primary Advantage">
+                  {grouped.primary.map((book) => (
+                    <option key={book.bookId} value={book.bookId}>
+                      {bookLabel(book)}
+                    </option>
+                  ))}
+                </optgroup>
+              ) : null}
+            </SelectField>
+            {booksFailed ? (
+              <Button type="button" variant="link" size="sm" className="self-start" onClick={() => void books.refetch()}>
+                {t("classes.booksRetry")}
+              </Button>
+            ) : null}
+          </div>
+          <FieldRow>
+            <TextField
+              label={t("classes.priceLabel")}
+              required
+              numeric
+              inputMode="decimal"
+              autoComplete="off"
+              disabled={saving}
+              value={values.price}
+              onChange={(event) => set("price", event.target.value)}
+              endAddon={t("classes.priceUnit")}
+              hint={t("classes.priceHint")}
+              error={errors.price}
+            />
+            <TextField
+              label={t("classes.capacityLabel")}
+              required
+              numeric
+              inputMode="numeric"
+              autoComplete="off"
+              disabled={saving}
+              value={values.capacity}
+              onChange={(event) => set("capacity", event.target.value.replace(/[^\d]/g, ""))}
+              endAddon={t("classes.capacityUnit")}
+              error={errors.capacity}
+              max={CAPACITY_MAX}
+            />
+          </FieldRow>
+        </FormSection>
         {errorBox}
       </form>
     );
@@ -318,6 +333,8 @@ export function CreateClassSheet({ open, onOpenChange, onCreated }: CreateClassS
         if (!saving) onOpenChange(next);
       }}
       dismissible={!saving}
+      side="right"
+      width={480}
       title={title}
       description={description}
       footer={footer}

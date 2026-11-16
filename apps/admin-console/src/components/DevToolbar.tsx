@@ -3,12 +3,13 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Terminal, X, ChevronDown, RefreshCw,
+  Terminal, X, RefreshCw,
   Zap, Trash2, Users, ReceiptText,
   ShieldAlert, FilePenLine, Loader2,
 } from "lucide-react";
 import { ConfirmDialog } from "@/components/app/ConfirmDialog";
 import { fetchWithAuth } from "@/lib/api";
+import { t } from "@/lib/i18n";
 
 interface DevState {
   currentMonth: string;
@@ -163,20 +164,29 @@ export function DevToolbar() {
 
   return (
     <>
-      {/* ปุ่มลอย */}
+      {/* แท็บ DEV: flush with the right edge, outside the content column.
+          Mouse: mid-height. Touch: a 24px tab (it mostly sits in the page
+          gutter) with a 44×44 hit area (::after; it is placed from the padding
+          box, so it reaches 1px further each way to cover the border), above
+          the tab bar and the bottom safe area, and above a page's sticky
+          action bar. Its z-index
+          is under sticky bars, the top bar, sheets and dialogs. Sizes and
+          offsets are physical (top/bottom/left/right, width/height): in the
+          vertical writing mode, py/inset-y would act sideways. */}
       <button
+        type="button"
         onClick={() => setOpen((v) => !v)}
-        className="fixed right-3 bottom-[calc(var(--tabbar-space,0px)+12px)] z-[55] flex size-9 items-center justify-center rounded-full border border-warning-border bg-warning-bg text-warning-fg shadow-popover transition-colors hover:brightness-95 md:right-4 md:bottom-4"
+        className="fixed top-1/2 right-0 z-[calc(var(--z-sticky)_-_1)] flex min-h-12 w-7 -translate-y-1/2 items-center justify-center rounded-l-(--radius-ctl) border border-r-0 border-warning-border bg-warning-bg text-xs leading-none font-semibold text-warning-fg shadow-popover transition-colors [writing-mode:vertical-rl] hover:brightness-95 aria-expanded:bg-warning-solid aria-expanded:text-on-warning pointer-coarse:top-auto pointer-coarse:bottom-[calc(max(var(--tabbar-space,0px),var(--safe-bottom))+12px)] pointer-coarse:min-h-11 pointer-coarse:w-6 pointer-coarse:translate-y-0 pointer-coarse:after:absolute pointer-coarse:after:-top-px pointer-coarse:after:-bottom-px pointer-coarse:after:right-0 pointer-coarse:after:-left-[21px] pointer-coarse:[html:has(.sticky-actions)_&]:bottom-[calc(max(var(--tabbar-space,0px),var(--safe-bottom))+88px)]"
         title="Dev Toolbar"
         aria-label="Dev Toolbar"
         aria-expanded={open}
       >
-        {open ? <ChevronDown className="size-4" /> : <Terminal className="size-4" />}
+        DEV
       </button>
 
       {/* แผง */}
       {open && (
-        <div className="fixed right-3 bottom-[calc(var(--tabbar-space,0px)+56px)] z-[55] flex max-h-[min(80vh,calc(100dvh-var(--tabbar-space,0px)-80px))] w-[min(360px,calc(100vw-24px))] flex-col overflow-hidden rounded-xl border border-hairline bg-surface-elevated text-fg shadow-popover md:right-5 md:bottom-16 md:right-4">
+        <div className="fixed top-1/2 right-9 z-[55] flex max-h-[min(80vh,calc(100dvh-160px))] w-[min(360px,calc(100vw-24px))] -translate-y-1/2 flex-col overflow-hidden rounded-xl border border-hairline bg-surface-elevated text-fg shadow-popover pointer-coarse:top-auto pointer-coarse:right-3 pointer-coarse:bottom-[calc(max(var(--tabbar-space,0px),var(--safe-bottom))+64px)] pointer-coarse:max-h-[min(80vh,calc(100dvh-var(--tabbar-space,0px)-var(--appbar-h)-var(--safe-top)-88px))] pointer-coarse:translate-y-0">
           {/* หัว */}
           <div className="flex items-center justify-between px-4 py-3 bg-warning-bg border-b border-warning-border shrink-0">
             <div className="flex items-center gap-2">
@@ -186,17 +196,21 @@ export function DevToolbar() {
             </div>
             <div className="flex items-center gap-1">
               <button
+                type="button"
                 onClick={loadState}
-                className="p-1 rounded-lg hover:bg-press text-fg-muted hover:text-warning-fg transition-colors"
+                className="inline-flex size-8 items-center justify-center rounded-lg hover:bg-press text-fg-muted hover:text-warning-fg transition-colors pointer-coarse:size-11"
                 title="รีเฟรช"
+                aria-label="รีเฟรช"
               >
-                <RefreshCw className="h-3.5 w-3.5" />
+                <RefreshCw aria-hidden="true" className="h-3.5 w-3.5" />
               </button>
               <button
+                type="button"
                 onClick={() => setOpen(false)}
-                className="p-1 rounded-lg hover:bg-press text-fg-muted transition-colors"
+                className="inline-flex size-8 items-center justify-center rounded-lg hover:bg-press text-fg-muted transition-colors pointer-coarse:size-11"
+                aria-label={t("shell.close")}
               >
-                <X className="h-3.5 w-3.5" />
+                <X aria-hidden="true" className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>

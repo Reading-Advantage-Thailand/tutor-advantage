@@ -1,14 +1,19 @@
 /**
  * Admin design system + app shell. Import from "@/components/app".
  *
- * - Pages: <Page> → <PageHeader> → <Section>/<Grid>/<SplitLayout>; tables with
- *   <FilterBar> + <DataTable> + <Pagination> driven by useTableState().
- * - Colours come from tokens in globals.css: bg-app, bg-surface, bg-surface-muted,
+ * - Pages: <Page> → <PageHeader> → <Section>/<Grid>/<SplitLayout>; KPIs in a
+ *   <KpiStrip> of <StatCard>s; tables with <FilterBar tabs search …> +
+ *   <DataTable> (IdentityCell first) + <Pagination> driven by useTableState().
+ * - Colours come from tokens in globals.css (redesign 2026-11, tokens.md §9.3):
+ *   bg-app, bg-surface, bg-surface-muted, border-clay-rim (card rim),
  *   border-hairline, text-fg / text-fg-muted / text-fg-subtle, text-brand-fg,
- *   bg-brand-solid, bg-brand-soft, {success|warning|danger|info}-{fg|bg|border},
- *   bg-tile-* / text-icon-*. Never hard-code emerald/indigo/blue/amber… in pages.
+ *   bg-brand-solid + text-on-brand (never text-white), bg-brand-soft +
+ *   text-brand-soft-fg, {success|warning|danger|info}-{fg|bg|border},
+ *   bg-tile-* / text-icon-*, bg-row-hover / bg-row-selected, ring/outline
+ *   focus-ring. Never hard-code emerald/indigo/blue/amber… or hex in pages.
  * - Server-compatible: Page, PageHeader, Section, Surface/Card, ListGroup/ListRow,
- *   StatCard, EmptyState, Notice, Chip/StatusChip/AdminStatusChip, Money, Skeletons, Atoms.
+ *   StatCard/KpiStrip, BrandMark, EmptyState, Notice, Chip/StatusChip/AdminStatusChip,
+ *   Money, Skeletons, Atoms, StatusScreen, PublicFrame.
  * - Client-only: DataTable, Pagination, ColumnToggle, FilterBar, IdCell/CopyButton,
  *   ErrorState, Fields, SegmentedControl, TabNav, Sheet, ConfirmDialog, toast, shell hooks.
  * Full reference: scratchpad/admin-foundation-api.md · live gallery: /dev/ui-kit.
@@ -38,7 +43,8 @@ export {
 export { Dropdown, type DropdownProps, type DropdownPlacement } from "./Dropdown";
 export { ThemeToggle } from "./ThemeToggle";
 export { ThemeSegmented } from "./ThemeSegmented";
-export { BrandMark } from "./SideNav";
+export { BrandMark } from "./BrandMark";
+export { TopBar, Breadcrumb, NotificationBell, breadcrumbFor } from "./TopBar";
 export { EnvBadge } from "./EnvBadge";
 export { CountBadge } from "./CountBadge";
 export { logout } from "./session";
@@ -87,13 +93,15 @@ export {
   type ListRowProps,
   type DescriptionItem,
 } from "./Surface";
-export { StatCard, type StatCardProps } from "./StatCard";
+export { StatCard, KpiStrip, nowrapPhrases, type StatCardProps, type StatBarSegment } from "./StatCard";
 
 // Tables
-export { DataTable, type DataTableColumn, type DataTableProps, type DataTableSelection } from "./DataTable";
-export { Pagination, type PaginationProps } from "./Pagination";
+export { DataTable, IdentityCell, type DataTableColumn, type DataTableProps, type DataTableSelection } from "./DataTable";
+export { TableScrollFrame } from "./TableScrollFrame";
+export { Pagination, pageSlots, type PaginationProps } from "./Pagination";
 export { ColumnToggle, useColumnVisibility } from "./ColumnToggle";
 export { FilterBar, type FilterBarProps } from "./FilterBar";
+export { FilterSheetButton, ActiveFilterChips, type ActiveFilter, type MoreFilters } from "./PhoneFilters";
 export { IdCell, CopyButton } from "./IdCell";
 export { Money } from "./Money";
 
@@ -123,6 +131,8 @@ export { AdminStatusChip, type AdminStatusChipProps } from "./AdminStatusChip";
 // Feedback & loading
 export { EmptyState, Notice, type EmptyStateProps, type NoticeProps, type NoticeTone } from "./Feedback";
 export { ErrorState, type ErrorStateProps } from "./ErrorState";
+export { StatusScreen, type StatusScreenProps } from "./StatusScreen";
+export { PublicFrame, type PublicFrameProps } from "./PublicFrame";
 export {
   Skeleton,
   SkeletonText,
@@ -134,7 +144,7 @@ export {
   PageSkeleton,
   LoadingAnnouncement,
 } from "./Skeletons";
-export { Toaster } from "./Toast";
+export { Toaster, ToastCard } from "./Toast";
 export { toast, dismissToast, type ToastTone } from "./toastStore";
 
 // Controls
@@ -160,5 +170,5 @@ export {
 } from "./Fields";
 
 // Overlays
-export { Sheet, BottomSheet, type SheetProps } from "./Sheet";
+export { Sheet, BottomSheet, type SheetProps, type FinalFocusTarget } from "./Sheet";
 export { ConfirmDialog, type ConfirmDialogProps, type ConfirmReasonOptions } from "./ConfirmDialog";

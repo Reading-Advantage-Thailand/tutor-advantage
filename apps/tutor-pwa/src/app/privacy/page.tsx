@@ -12,6 +12,7 @@ export default function PrivacyPage() {
   return (
     <LegalDocument
       title={t("app.privacyTitle")}
+      titlePhrases={[t("app.privacyTitleLead"), t("app.privacyTitleTail")]}
       icon={Shield}
       intro={tutorLegalCopy.privacy.intro}
       sections={tutorLegalCopy.privacy.sections}

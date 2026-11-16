@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { FlaskConical, Users2 } from "lucide-react";
-import { Card, CardHeader, IconTile, Notice } from "@/components/app";
+import { Notice } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { devSeedClassAllProgress } from "../../actions";
+import { PanelCard } from "./PanelCard";
 
 type SeedResult = {
   className: string;
@@ -38,12 +39,14 @@ export function DevClassSimulator({ classId }: { classId: string }) {
   };
 
   return (
-    <Card as="section" className="border-dashed border-warning-border">
-      <CardHeader
-        icon={<IconTile icon={FlaskConical} size="sm" tone="amber" />}
-        title={t("tutorClass.dev.simulatorTitle")}
-        description={t("tutorClass.dev.simulatorDescription")}
-      />
+    <PanelCard
+      id="class-dev-simulator-title"
+      icon={FlaskConical}
+      tone="amber"
+      title={t("tutorClass.dev.simulatorTitle")}
+      description={t("tutorClass.dev.simulatorDescription")}
+      className="border-dashed border-warning-border"
+    >
       <Button variant="outline" onClick={handleSeed} loading={loading}>
         {loading ? null : <Users2 aria-hidden="true" />}
         {loading ? t("tutorClass.dev.seeding") : t("tutorClass.dev.seed")}
@@ -59,6 +62,6 @@ export function DevClassSimulator({ classId }: { classId: string }) {
           {error}
         </Notice>
       ) : null}
-    </Card>
+    </PanelCard>
   );
 }

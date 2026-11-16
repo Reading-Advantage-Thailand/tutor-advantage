@@ -47,9 +47,9 @@ export function PaymentRequiredScreen({ data, classId, title }: PaymentRequiredS
         }
       >
         {amount ? (
-          <div className="w-full rounded-2xl border border-hairline bg-surface px-4 py-3">
-            <p className="text-[13px] leading-[1.5] font-semibold text-fg-muted">{t("lessonLobby.paymentAmountLabel")}</p>
-            <p className="mt-0.5 text-[26px] leading-[1.3] font-extrabold text-fg tabular-nums">{amount}</p>
+          <div className="w-full rounded-[var(--radius-card)] border-[1.5px] border-clay-rim bg-surface px-4 py-3 shadow-[var(--shadow-card)]">
+            <p className="text-[13px] leading-[1.5] font-medium text-fg-muted">{t("lessonLobby.paymentAmountLabel")}</p>
+            <p className="mt-0.5 text-[26px] leading-[1.3] font-semibold text-fg tabular-nums">{amount}</p>
           </div>
         ) : null}
       </StatusScreen>

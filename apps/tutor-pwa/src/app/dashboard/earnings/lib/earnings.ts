@@ -108,6 +108,11 @@ export function rateProgressPercent(info: RateInfo): number {
   return Math.min(100, info.nextTarget > 0 ? Math.round((info.volume / info.nextTarget) * 100) : 100);
 }
 
+/** Volume still needed to reach the next rate tier (0 at the top tier or once reached). */
+export function rateRemaining(info: RateInfo): number {
+  return info.nextTarget > 0 ? Math.max(0, info.nextTarget - info.volume) : 0;
+}
+
 /**
  * Row total shown for a payout: netPayout (post-WHT, includes all
  * adjustments) when available; the gross sum only for legacy records.

@@ -15,7 +15,8 @@ export interface QrCountdownProps {
 /**
  * "QR หมดอายุใน 14:32". Remaining time is derived from the stored deadline and
  * Date.now(), so it is right again the moment LINE comes back from the banking
- * app (background timers are throttled).
+ * app (background timers are throttled). A pill in the reading face with
+ * tabular digits; the warning tone (+ the clock icon and words) in the last minute.
  */
 export function QrCountdown({ expiresAt, className }: QrCountdownProps) {
   const [now, setNow] = useState(() => Date.now());
@@ -40,14 +41,14 @@ export function QrCountdown({ expiresAt, className }: QrCountdownProps) {
   return (
     <p
       className={cn(
-        "inline-flex items-center gap-1.5 text-sm leading-[1.5] font-medium",
-        urgent ? "text-danger-fg" : "text-fg-muted",
+        "inline-flex h-9 items-center gap-1.5 rounded-full border-[1.5px] px-3.5 text-sm leading-[1.5] font-medium",
+        urgent ? "border-warning-border bg-warning-bg text-warning-fg" : "border-transparent bg-surface-muted text-fg-muted",
         className,
       )}
     >
-      <Clock aria-hidden="true" className="size-4 shrink-0" />
+      <Clock aria-hidden="true" className="size-4 shrink-0" strokeWidth={2.4} />
       <span>{t("payment.promptpay.expiresIn")}</span>
-      <span role="timer" className="font-bold tabular-nums">
+      <span role="timer" className={cn("font-semibold tabular-nums", urgent ? "text-warning-fg" : "text-fg")}>
         {formatCountdown(secondsLeft)}
       </span>
     </p>

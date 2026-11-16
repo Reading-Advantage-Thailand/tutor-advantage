@@ -5,15 +5,18 @@ import { formatThaiTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 
 /**
- * Lessons played today (rank, score, time); hidden on days without any — the
- * quick menu already links to the full history. Server-compatible.
+ * Lessons played today (rank, score, time) as flat rows in one card; hidden on
+ * days without any — the quick menu already links to the full history. Scores
+ * sit in a small chip in the reading face (tabular), never Kodchasan in a row.
+ * Server-compatible.
  */
 export function TodayHistory({ items }: { items: LessonHistoryItem[] }) {
   if (items.length === 0) return null;
   return (
     <section aria-labelledby="today-history-title">
       <SectionHeader
-        title={<span id="today-history-title">{t("dashboard.todayHistory")}</span>}
+        id="today-history-title"
+        title={t("dashboard.todayHistory")}
         action={{ label: t("common.seeAll"), href: "/lesson/history" }}
       />
       <ListGroup>
@@ -25,7 +28,7 @@ export function TodayHistory({ items }: { items: LessonHistoryItem[] }) {
             title={item.articleTitle}
             subtitle={`${t("dashboard.tutorPrefix")} ${item.tutorName} · ${formatThaiTime(item.date, { suffix: true })}`}
             trailing={
-              <Chip tone="brand" size="md" className="tabular-nums">
+              <Chip tone="brand" className="tabular-nums">
                 {item.score} {t("dashboard.pointsUnit")}
               </Chip>
             }

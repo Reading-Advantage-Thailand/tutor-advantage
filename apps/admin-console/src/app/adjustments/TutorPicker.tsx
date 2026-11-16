@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { AdminStatusChip, Field, IdCell, ListGroup, ListRow, SearchField, Spinner, UserAvatar } from "@/components/app";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,18 @@ export function TutorPicker({
   const [results, setResults] = useState<UserListItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
+  const searchId = useId();
+  const selectedRef = useRef<HTMLDivElement>(null);
+  // Where focus goes after this picker swaps its own content (pick → the picked
+  // card; "เปลี่ยนครู" → the search box), so it never falls back to <body>.
+  // Only set by our own handlers: an outside reset (sheet closed) moves nothing.
+  const focusNext = useRef<"selected" | "search" | null>(null);
+  useEffect(() => {
+    const next = focusNext.current;
+    focusNext.current = null;
+    if (next === "selected") selectedRef.current?.focus();
+    else if (next === "search") document.getElementById(searchId)?.focus();
+  }, [value, searchId]);
 
   useEffect(() => {
     if (value) return;
@@ -87,12 +99,24 @@ export function TutorPicker({
   if (value) {
     return (
       <Field label={t("adjustments.fieldTutor")} required>
-        <div className="flex items-center gap-3 rounded-xl border border-hairline bg-surface-muted px-3 py-2.5">
-          <UserAvatar name={value.name ?? value.email ?? "?"} size="sm" />
+        <div
+          ref={selectedRef}
+          tabIndex={-1}
+          role="group"
+          aria-label={t("adjustments.fieldTutor")}
+          className="flex items-center gap-3 rounded-(--radius-ctl) border border-clay-rim bg-surface-muted px-3 py-2.5"
+        >
+          <UserAvatar name={value.name ?? value.email ?? "?"} seed={value.id} size="sm" />
           <span className="flex min-w-0 flex-1 flex-col">
-            <span className="truncate font-medium text-fg">{value.name ?? t("adjustments.noName")}</span>
-            <span className="flex flex-wrap items-center gap-1.5 text-[0.8125rem] text-fg-muted">
-              {value.email ? <span className="truncate">{value.email}</span> : null}
+            <span className="truncate text-sm font-medium text-fg" title={value.name ?? undefined}>
+              {value.name ?? t("adjustments.noName")}
+            </span>
+            <span className="flex min-w-0 flex-wrap items-center gap-x-1.5 text-[0.8125rem] text-fg-muted">
+              {value.email ? (
+                <span className="max-w-full truncate" title={value.email}>
+                  {value.email}
+                </span>
+              ) : null}
               <IdCell id={value.id} />
             </span>
             {value.verificationStatus ? (
@@ -107,7 +131,10 @@ export function TutorPicker({
             size="icon-sm"
             disabled={disabled}
             aria-label={t("adjustments.changeTutor")}
-            onClick={() => onChange(null)}
+            onClick={() => {
+              focusNext.current = "search";
+              onChange(null);
+            }}
           >
             <X aria-hidden="true" />
           </Button>
@@ -117,10 +144,13 @@ export function TutorPicker({
   }
 
   return (
-    <Field label={t("adjustments.fieldTutor")} required error={error} hint={t("adjustments.tutorSearchHint")}>
-      {() => (
+    <Field id={searchId} label={t("adjustments.fieldTutor")} required error={error} hint={t("adjustments.tutorSearchHint")}>
+      {({ id, describedBy, invalid }) => (
         <div className="flex flex-col gap-2">
           <SearchField
+            id={id}
+            aria-describedby={describedBy}
+            aria-invalid={invalid || undefined}
             value={query}
             onValueChange={setQuery}
             placeholder={t("adjustments.tutorSearchPlaceholder")}
@@ -128,7 +158,7 @@ export function TutorPicker({
             disabled={disabled}
           />
           {loading ? (
-            <span className="flex items-center gap-2 px-1 text-[0.8125rem] text-fg-muted">
+            <span role="status" className="flex items-center gap-2 px-1 text-[0.8125rem] text-fg-muted">
               <Spinner /> {t("adjustments.tutorSearching")}
             </span>
           ) : failed ? (
@@ -141,15 +171,16 @@ export function TutorPicker({
               {results.map((user) => (
                 <ListRow
                   key={user.id}
-                  onClick={() =>
+                  onClick={() => {
+                    focusNext.current = "selected";
                     onChange({
                       id: user.id,
                       name: user.name,
                       email: user.email,
                       verificationStatus: user.verificationStatus ?? null,
-                    })
-                  }
-                  leading={<UserAvatar name={user.name ?? user.email ?? "?"} size="sm" />}
+                    });
+                  }}
+                  leading={<UserAvatar name={user.name ?? user.email ?? "?"} seed={user.id} size="sm" />}
                   title={user.name ?? t("adjustments.noName")}
                   subtitle={user.email ?? undefined}
                   trailing={

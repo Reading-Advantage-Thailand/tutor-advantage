@@ -3,10 +3,10 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { AlertCircle, BookOpenCheck, ChevronDown, ChevronLeft, Clock3, Headphones, Lightbulb, Mic, MicOff, PhoneOff, X } from "lucide-react";
+import { AlertCircle, BookOpenCheck, ChevronDown, ChevronRight, Clock3, Headphones, Lightbulb, Mic, MicOff, PartyPopper, PhoneOff, X } from "lucide-react";
 import { toast } from "sonner";
 import { studentApi } from "@/lib/api";
-import { AppBar, Screen, StatusScreen } from "@/components/mobile";
+import { AppBar, BottomSheet, Screen, StatusScreen, useBackNavigation } from "@/components/mobile";
 import { buttonVariants } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -141,6 +141,8 @@ async function waitForIceGathering(pc: RTCPeerConnection) {
 
 function VoicePracticeContent() {
   const params = useSearchParams();
+  // Back returns to where the learner came from (or /progress on a deep link) instead of pushing /progress.
+  const goBack = useBackNavigation("/progress");
   const cycleId = params.get("cycleId") || "";
   const articleId = params.get("articleId") || "";
   const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
@@ -643,120 +645,41 @@ function VoicePracticeContent() {
   return (
     <main className={styles.page}>
       <audio ref={audioRef} autoPlay playsInline className="hidden" />
-      <header className={styles.header}>
-        <Link href="/progress" className={styles.backButton}><ChevronLeft size={20} /> <span>กลับ</span></Link>
-        <div className={styles.timer}><Clock3 size={16} /><div><small>เวลาฝึก</small><strong>{formatTime(connected ? remaining : entitlement?.remainingSeconds || 0)}</strong></div></div>
-      </header>
+      <AppBar
+        title={t("interactivePlay.voicePracticeTitle")}
+        onBack={goBack}
+        className="shrink-0 border-b-[1.5px] border-clay-rim"
+        actions={<div className={styles.timer}><Clock3 size={18} aria-hidden="true" /><div><small>เวลาฝึก</small><strong>{formatTime(connected ? remaining : entitlement?.remainingSeconds || 0)}</strong></div></div>}
+      />
 
       <section className={`${styles.content} ${readingOpen ? styles.readingMode : ""}`}>
         <div className={styles.intro}>
-          <div className={styles.coachBadge}><span>R</span> ฝึกกับ “รีดี้”</div>
           <p className={styles.lessonLabel}>บทสนทนาจากเรื่อง</p>
-          <h1>{displayTitle}</h1>
+          <h2>{displayTitle}</h2>
           <p>คุยสบายๆ เหมือนซ้อมกับเพื่อน รีดี้จะช่วยชวนคุยและแก้ประโยคให้</p>
         </div>
 
+        {/* Hero: the full Reedy is this screen's one Reedy; the status line under him is announced politely. */}
         <div className={styles.coachArea}>
-          <span className="sr-only">{coachStatus}</span>
           <Reedy state={readingPreview || coachState} level={volume} />
-          {connected && <div className={styles.liveWave} aria-hidden="true">{Array.from({ length: 9 }).map((_, index) => <span key={index} style={{ height: `${7 + volume * (16 + (index % 4) * 16)}px` }} />)}</div>}
+          {connected && <div className={styles.liveWave} aria-hidden="true">{Array.from({ length: 9 }).map((_, index) => <span key={index} style={{ transform: `scaleY(${(7 + volume * (16 + (index % 4) * 16)) / 40})` }} />)}</div>}
         </div>
+        <p className={styles.statusLine} role="status" data-live={connected || undefined}>
+          <span className={styles.statusDot} aria-hidden="true" />
+          {coachStatus}
+        </p>
 
-        {readingPreview && <button className={styles.previewBadge} onClick={() => window.dispatchEvent(new CustomEvent(REEDY_READING_PREVIEW_EVENT, { detail: "reset" }))}>DEV · จำลองหน้าอ่าน ไม่มีเสียง <X size={12} /></button>}
+        {readingPreview && <button className={styles.previewBadge} onClick={() => window.dispatchEvent(new CustomEvent(REEDY_READING_PREVIEW_EVENT, { detail: "reset" }))}>DEV · จำลองหน้าอ่าน ไม่มีเสียง <X size={14} aria-hidden="true" /></button>}
         {readingOpen && articleReview?.passage && <>
           <GuidedReading title={displayTitle} passage={articleReview.passage} quote={readingQuote} words={getReviewWords(articleReview, Infinity)} speaking={readingPreview ? readingPreview === "speaking" : coachSpeaking} connected={connected || Boolean(readingPreview)} />
           {connected && <button type="button" className={styles.readingFallback} disabled={sendingReadingIntent} onClick={() => void sendReadingIntent("close")}>กลับไปคุยกับรีดี้</button>}
         </>}
         {readingOffered && !readingOpen && <div className={styles.readingOffer} role="status"><strong>จำไม่ได้ก็ไม่เป็นไร ♡</strong><p>เปิดบทความอ่านไปกับรีดี้ไหม?</p><small>ตอบด้วยเสียงหรือแตะเลือกได้</small>{connected && <div><button type="button" disabled={sendingReadingIntent} onClick={() => void sendReadingIntent("accept")}>เปิดอ่านด้วยกัน</button><button type="button" disabled={sendingReadingIntent} onClick={() => void sendReadingIntent("decline")}>คุยต่อ</button></div>}</div>}
 
-        {!connected && !readingOpen && (
-          <section className={styles.memoryCard}>
-            <button type="button" className={styles.memoryHeader} onClick={() => setReviewExpanded((value) => !value)} aria-expanded={reviewExpanded}>
-              <span className={styles.memoryIcon}><BookOpenCheck size={18} /></span>
-              <span><small>MEMORY REFRESH</small><strong>ทบทวนสั้น ๆ ก่อนคุย</strong></span>
-              <ChevronDown className={styles.memoryChevron} size={18} aria-hidden="true" />
-            </button>
-          </section>
-        )}
-
-        {!connected && reviewExpanded && (
-          <div className={styles.memoryOverlay} role="presentation" onClick={() => setReviewExpanded(false)}>
-            <section className={styles.memorySheet} role="dialog" aria-modal="true" aria-labelledby="memory-review-title" onClick={(event) => event.stopPropagation()}>
-              <span className={styles.sheetHandle} aria-hidden="true" />
-              <header className={styles.sheetHeader}>
-                <span className={styles.memoryIcon}><BookOpenCheck size={19} /></span>
-                <span><small>MEMORY REFRESH</small><strong id="memory-review-title">ทบทวนสั้น ๆ ก่อนคุย</strong></span>
-                <button type="button" onClick={() => setReviewExpanded(false)} aria-label="ปิดเนื้อหาทบทวน"><X size={20} /></button>
-              </header>
-              <div className={styles.memoryBody}>
-                <section className={styles.memoryOverview}>
-                  <small>เรื่องนี้พูดถึงอะไร</small>
-                  <p>{reviewSummary}</p>
-                </section>
-                {reviewKeyPoints.length > 0 && <section className={styles.keyPoints}><small>ภาพรวมตั้งแต่ต้นถึงท้ายบท</small><ol>{reviewKeyPoints.map((sentence) => <li key={sentence}>{sentence}</li>)}</ol></section>}
-                {reviewWords.length > 0 && <section className={styles.vocabularySection}><small>คำศัพท์ช่วยจำ</small><div className={styles.memoryWords}>{reviewWords.map((word) => <span key={word.text}><strong>{word.text}</strong>{word.meaning && <small>{word.meaning}</small>}</span>)}</div></section>}
-                {reviewQuestions.length > 0 && <section className={styles.recallQuestions}><small>ลองนึกคำตอบก่อนคุย</small>{reviewQuestions.map((question) => <p key={question}>{question}</p>)}</section>}
-                <div className={styles.sentenceStarter}><small>ถ้ายังนึกไม่ออก เริ่มด้วย</small><strong>“I remember that…”</strong></div>
-                {articleReview?.passage?.trim() && <>
-                  <button type="button" className={styles.fullPassageButton} onClick={() => setFullPassageExpanded((value) => !value)} aria-expanded={fullPassageExpanded}>
-                    <span>{fullPassageExpanded ? "ซ่อนบทความเต็ม" : "เปิดดูบทความเต็ม"}</span><ChevronDown size={16} aria-hidden="true" />
-                  </button>
-                  {fullPassageExpanded && <section className={styles.fullPassage}><small>บทความเต็ม</small><p>{articleReview.passage}</p></section>}
-                </>}
-                <p className={styles.memoryReassurance}>จำไม่ได้ไม่เป็นไร รีดี้จะช่วยใบ้ทีละขั้น</p>
-              </div>
-            </section>
-          </div>
-        )}
-
-        <div className={styles.captionCard} data-active={connected || undefined}>
-          <Headphones size={18} />
-          <p>{caption}</p>
-        </div>
-
-        {!connected && !error && <div className={styles.tips}><div><Lightbulb size={15} /> ไม่ต้องกลัวผิด</div><span />พูดแทรกได้ตลอด<span />คุยสั้นๆ ทีละประโยค</div>}
-
-        {error && <div role="alert" className={styles.error}><AlertCircle size={18} /><span>{error}</span></div>}
-        {!connected && !starting && !entitlement?.activeSession && <div className={styles.micCheck}>
-          {micCheck && <p role="status">{micCheck}</p>}
-          <button type="button" disabled={checkingMic} onClick={() => void checkMicrophone()}>{checkingMic ? "กำลังตรวจไมค์…" : micCheck ? "ตรวจไมค์อีกครั้ง" : "ตรวจไมค์ก่อนเริ่ม"}</button>
-          {error && <button type="button" disabled={!canStart} onClick={() => void startSession()}>ลองเริ่มใหม่</button>}
-        </div>}
-
-        {entitlement?.activeSession && !connected && (
-          <section className={styles.interruptedSession} aria-label="รอบฝึกที่ค้างอยู่">
-            <strong>มีรอบฝึกก่อนหน้าที่ยังเปิดอยู่</strong>
-            <p>หากปิดหน้าหรือเสียงหลุด ระบบจะคิดเวลาเท่าที่ใช้ไป แล้วเริ่มการเชื่อมต่อใหม่เมื่อกลับไปฝึกต่อ</p>
-            <div>
-              <button type="button" disabled={recovering} onClick={() => void resolveInterruptedSession(true)}>กลับไปฝึกต่อ</button>
-              <button type="button" disabled={recovering} onClick={() => void resolveInterruptedSession(false)}>จบรอบนี้</button>
-            </div>
-          </section>
-        )}
-
-        {!connected ? (
-          <div className={styles.startArea}>
-            <button disabled={!canStart || starting} onClick={startSession} className={styles.startButton} aria-label="เริ่มคุยกับรีดี้">
-              <span className={styles.startRipple} /><span className={styles.startRippleTwo} />
-              <Mic size={36} />
-            </button>
-            <strong>{starting ? "กำลังเข้าห้องฝึก…" : !entitlement?.enabled ? "ระบบกำลังเตรียมเปิดให้บริการ" : entitlement?.activeSession ? "มีการสนทนาเปิดอยู่ในอุปกรณ์อื่น" : "แตะเพื่อเริ่มคุย"}</strong>
-            {canStart && !starting && <small>รีดี้พร้อมฟังแล้ว</small>}
-          </div>
-        ) : (
-          <div className={styles.controls}>
-            <button onClick={toggleMute} aria-label={muted ? "เปิดไมโครโฟน" : "ปิดไมโครโฟน"} className={`${styles.controlButton} ${muted ? styles.muted : ""}`}>
-              {muted ? <MicOff /> : <Mic />}<small>{muted ? "เปิดไมค์" : "ปิดไมค์"}</small>
-            </button>
-            <button disabled={ending} onClick={() => void endSession()} aria-label="จบการสนทนา" className={`${styles.controlButton} ${styles.endButton}`}>
-              <PhoneOff /><small>{ending ? "กำลังจบ…" : "จบการฝึก"}</small>
-            </button>
-          </div>
-        )}
-
+        {/* Result banner (S7 pattern): success card right under the hero once a round ends. */}
         {summary?.summaryTh && (
           <div className={styles.summary}>
-            <div className={styles.summaryHeading}><span>🎉</span><div><small>GOOD JOB!</small><h2>สรุปการฝึกกับรีดี้</h2></div></div>
+            <div className={styles.summaryHeading}><span aria-hidden="true"><PartyPopper size={24} strokeWidth={2.2} /></span><div><small>GOOD JOB!</small><h2>สรุปการฝึกกับรีดี้</h2></div></div>
             <p>{summary.summaryTh}</p>
             <div className={styles.nextPractice}>
               {summary.strengths?.[0] && <div><small>ทำได้ดี</small><strong>{summary.strengths[0]}</strong></div>}
@@ -766,6 +689,91 @@ function VoicePracticeContent() {
             {scores && <div className={styles.scoreGrid}>{Object.entries(scores).map(([key, value]) => <div key={key}><span className="capitalize">{key}</span><strong>{value ?? "–"}<small>/5</small></strong></div>)}</div>}
           </div>
         )}
+
+        {entitlement?.activeSession && !connected && (
+          <section className={styles.interruptedSession} aria-label="รอบฝึกที่ค้างอยู่">
+            <strong>มีรอบฝึกก่อนหน้าที่ยังเปิดอยู่</strong>
+            <p>หากปิดหน้าหรือเสียงหลุด ระบบจะคิดเวลาเท่าที่ใช้ไป แล้วเริ่มการเชื่อมต่อใหม่เมื่อกลับไปฝึกต่อ</p>
+            <div>
+              <button type="button" className={buttonVariants({ variant: "brand", size: "touch" })} disabled={recovering} onClick={() => void resolveInterruptedSession(true)}>กลับไปฝึกต่อ</button>
+              <button type="button" className={buttonVariants({ variant: "outline", size: "touch" })} disabled={recovering} onClick={() => void resolveInterruptedSession(false)}>จบรอบนี้</button>
+            </div>
+          </section>
+        )}
+
+        {error && <div role="alert" className={styles.error}><AlertCircle size={20} aria-hidden="true" /><span>{error}</span></div>}
+
+        {/* The one primary: the 72px mic (start), then the mic toggle + "จบการฝึก" ghost while live. */}
+        {!connected ? (
+          <div className={styles.startArea}>
+            <button disabled={!canStart || starting} onClick={startSession} className={styles.startButton} aria-label="เริ่มคุยกับรีดี้">
+              <span className={styles.startRipple} aria-hidden="true" /><span className={styles.startRippleTwo} aria-hidden="true" />
+              <Mic aria-hidden="true" />
+            </button>
+            <strong>{starting ? "กำลังเข้าห้องฝึก…" : !entitlement?.enabled ? "ระบบกำลังเตรียมเปิดให้บริการ" : entitlement?.activeSession ? "มีการสนทนาเปิดอยู่ในอุปกรณ์อื่น" : "แตะเพื่อเริ่มคุย"}</strong>
+            {canStart && !starting && <small>รีดี้พร้อมฟังแล้ว</small>}
+          </div>
+        ) : (
+          <div className={styles.controls}>
+            <button onClick={toggleMute} aria-label={muted ? "เปิดไมโครโฟน" : "ปิดไมโครโฟน"} className={`${styles.controlButton} ${muted ? styles.muted : ""}`}>
+              <span aria-hidden="true">{muted ? <MicOff /> : <Mic />}</span><small>{muted ? "เปิดไมค์" : "ปิดไมค์"}</small>
+            </button>
+            <button disabled={ending} onClick={() => void endSession()} aria-label="จบการสนทนา" className={`${styles.controlButton} ${styles.endButton}`}>
+              <PhoneOff aria-hidden="true" /><small>{ending ? "กำลังจบ…" : "จบการฝึก"}</small>
+            </button>
+          </div>
+        )}
+
+        {/* Transcript card: the latest line of the conversation. */}
+        <div className={styles.captionCard} data-active={connected || undefined}>
+          <Headphones aria-hidden="true" />
+          <p>{caption}</p>
+        </div>
+
+        {!connected && !error && <div className={styles.tips}><div><Lightbulb size={16} aria-hidden="true" /> ไม่ต้องกลัวผิด</div><span />พูดแทรกได้ตลอด<span />คุยสั้นๆ ทีละประโยค</div>}
+
+        {!connected && !starting && !entitlement?.activeSession && <div className={styles.micCheck}>
+          {micCheck && <p role="status">{micCheck}</p>}
+          <button type="button" className={buttonVariants({ variant: "outline", size: "touch" })} disabled={checkingMic} onClick={() => void checkMicrophone()}>{checkingMic ? "กำลังตรวจไมค์…" : micCheck ? "ตรวจไมค์อีกครั้ง" : "ตรวจไมค์ก่อนเริ่ม"}</button>
+          {error && <button type="button" className={buttonVariants({ variant: "brandSoft", size: "touch" })} disabled={!canStart} onClick={() => void startSession()}>ลองเริ่มใหม่</button>}
+        </div>}
+
+        {!connected && !readingOpen && (
+          <section className={styles.memoryCard}>
+            <button type="button" className={styles.memoryHeader} onClick={() => setReviewExpanded((value) => !value)} aria-haspopup="dialog" aria-expanded={reviewExpanded}>
+              <span className={styles.memoryIcon} aria-hidden="true"><BookOpenCheck size={22} /></span>
+              <span><small>MEMORY REFRESH</small><strong><span className="whitespace-nowrap">ทบทวนสั้น ๆ</span> <span className="whitespace-nowrap">ก่อนคุย</span></strong></span>
+              <ChevronRight className={styles.memoryChevron} size={20} aria-hidden="true" />
+            </button>
+          </section>
+        )}
+
+        <BottomSheet
+          open={!connected && reviewExpanded}
+          onOpenChange={setReviewExpanded}
+          title={
+            <span className={styles.sheetHeader}>
+              <span className={styles.memoryIcon} aria-hidden="true"><BookOpenCheck size={22} /></span>
+              <span><small aria-hidden="true">MEMORY REFRESH</small><strong><span className="whitespace-nowrap">ทบทวนสั้น ๆ</span> <span className="whitespace-nowrap">ก่อนคุย</span></strong></span>
+            </span>
+          }
+        >
+          <section className={styles.memoryOverview}>
+            <small>เรื่องนี้พูดถึงอะไร</small>
+            <p>{reviewSummary}</p>
+          </section>
+          {reviewKeyPoints.length > 0 && <section className={styles.keyPoints}><small>ภาพรวมตั้งแต่ต้นถึงท้ายบท</small><ol>{reviewKeyPoints.map((sentence) => <li key={sentence} lang="en">{sentence}</li>)}</ol></section>}
+          {reviewWords.length > 0 && <section className={styles.vocabularySection}><small>คำศัพท์ช่วยจำ</small><div className={styles.memoryWords}>{reviewWords.map((word) => <span key={word.text}><strong lang="en">{word.text}</strong>{word.meaning && <small>{word.meaning}</small>}</span>)}</div></section>}
+          {reviewQuestions.length > 0 && <section className={styles.recallQuestions}><small>ลองนึกคำตอบก่อนคุย</small>{reviewQuestions.map((question) => <p key={question} lang="en">{question}</p>)}</section>}
+          <div className={styles.sentenceStarter}><small>ถ้ายังนึกไม่ออก เริ่มด้วย</small><strong lang="en">“I remember that…”</strong></div>
+          {articleReview?.passage?.trim() && <>
+            <button type="button" className={styles.fullPassageButton} onClick={() => setFullPassageExpanded((value) => !value)} aria-expanded={fullPassageExpanded}>
+              <span>{fullPassageExpanded ? "ซ่อนบทความเต็ม" : "เปิดดูบทความเต็ม"}</span><ChevronDown size={20} aria-hidden="true" />
+            </button>
+            {fullPassageExpanded && <section className={styles.fullPassage}><small>บทความเต็ม</small><p lang="en">{articleReview.passage}</p></section>}
+          </>}
+          <p className={styles.memoryReassurance}>จำไม่ได้ไม่เป็นไร รีดี้จะช่วยใบ้ทีละขั้น</p>
+        </BottomSheet>
       </section>
     </main>
   );

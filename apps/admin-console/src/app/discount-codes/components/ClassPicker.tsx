@@ -1,8 +1,8 @@
 "use client";
 
-import { School, Search, X } from "lucide-react";
-import { useEffect, useId, useState } from "react";
-import { Chip, Field, Spinner } from "@/components/app";
+import { AlertCircle, School, Search, X } from "lucide-react";
+import { useEffect, useId, useRef, useState } from "react";
+import { Chip, Field, IconTile, Spinner } from "@/components/app";
 import { fieldControlClass } from "@/components/app/constants";
 import { Button } from "@/components/ui/button";
 import { api, errorMessage } from "@/lib/api";
@@ -40,7 +40,21 @@ export function ClassPicker({ value, onChange, disabled, error: fieldError, load
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [active, setActive] = useState(0);
-  const open = !value && query.trim().length > 0;
+  // Escape closes the list without clearing the query; typing opens it again.
+  const [dismissed, setDismissed] = useState(false);
+  const open = !value && query.trim().length > 0 && !dismissed;
+
+  // Picking replaces the search box with the chosen card, and clearing does the
+  // reverse: move focus to the control that took the focused one's place.
+  const inputRef = useRef<HTMLInputElement>(null);
+  const clearRef = useRef<HTMLButtonElement>(null);
+  const focusNext = useRef<"input" | "clear" | null>(null);
+  useEffect(() => {
+    if (focusNext.current === "input" && !value) inputRef.current?.focus();
+    else if (focusNext.current === "clear" && value) clearRef.current?.focus();
+    else return;
+    focusNext.current = null;
+  }, [value]);
 
   useEffect(() => {
     if (value) return;
@@ -73,6 +87,7 @@ export function ClassPicker({ value, onChange, disabled, error: fieldError, load
   }, [query, value]);
 
   const pick = (item: AdminClass) => {
+    focusNext.current = "clear";
     onChange(item);
     setQuery("");
     setResults([]);
@@ -81,22 +96,34 @@ export function ClassPicker({ value, onChange, disabled, error: fieldError, load
   if (value) {
     return (
       <Field label={t("discountCodes.classLabel")} required error={fieldError}>
-        <div className="flex min-h-11 items-center gap-3 rounded-lg border border-hairline bg-surface-muted px-3 py-2">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-fg">
-            <School aria-hidden="true" className="size-4" />
-          </span>
+        <div className="flex min-h-11 items-center gap-3 rounded-(--radius-ctl) border border-clay-rim bg-surface-muted py-2 pr-1.5 pl-3">
+          <IconTile icon={School} tone="brand" size="sm" />
           <div className="min-w-0 flex-1">
             <p className="flex min-w-0 items-center gap-1.5 text-sm font-medium text-fg">
-              <span className="truncate">{value.title}</span>
+              <span className="truncate" title={value.title}>
+                {value.title}
+              </span>
               {value.setupRequired ? (
                 <Chip tone="warning" size="sm">
                   {t("discountCodes.classSetupPending")}
                 </Chip>
               ) : null}
             </p>
-            <p className="truncate text-[0.8125rem] text-fg-muted">{classMeta(value)}</p>
+            <p className="truncate text-[0.8125rem] text-fg-muted" title={classMeta(value)}>
+              {classMeta(value)}
+            </p>
           </div>
-          <Button type="button" variant="ghost" size="sm" disabled={disabled} onClick={() => onChange(null)}>
+          <Button
+            ref={clearRef}
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={disabled}
+            onClick={() => {
+              focusNext.current = "input";
+              onChange(null);
+            }}
+          >
             <X aria-hidden="true" />
             {t("discountCodes.classChange")}
           </Button>
@@ -104,6 +131,14 @@ export function ClassPicker({ value, onChange, disabled, error: fieldError, load
       </Field>
     );
   }
+
+  // A failed search is an error, not helper text: danger colour, icon, announced.
+  const searchError = error ? (
+    <p role="alert" className="flex items-start gap-1 px-3 py-2.5 text-[0.8125rem] text-danger-fg">
+      <AlertCircle aria-hidden="true" className="mt-[3px] size-3.5 shrink-0" />
+      <span>{error}</span>
+    </p>
+  ) : null;
 
   if (preselecting) {
     return (
@@ -116,11 +151,12 @@ export function ClassPicker({ value, onChange, disabled, error: fieldError, load
   }
 
   return (
-    <Field label={t("discountCodes.classLabel")} required error={fieldError} hint={error ?? notice ?? t("discountCodes.classHint")}>
+    <Field label={t("discountCodes.classLabel")} required error={fieldError} hint={notice ?? t("discountCodes.classHint")}>
       {({ id, describedBy, invalid }) => (
         <div className="relative">
-          <Search aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fg-subtle" />
+          <Search aria-hidden="true" className="pointer-events-none absolute top-2.5 left-3 size-4 text-fg-subtle pointer-coarse:top-3.5" />
           <input
+            ref={inputRef}
             id={id}
             type="search"
             role="combobox"
@@ -134,8 +170,25 @@ export function ClassPicker({ value, onChange, disabled, error: fieldError, load
             disabled={disabled}
             value={query}
             placeholder={t("discountCodes.classSearchPlaceholder")}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setDismissed(false);
+            }}
             onKeyDown={(event) => {
+              if (event.key === "Escape" && open) {
+                // Close the list only: keep the typed text, and keep the sheet open
+                // (Base UI closes the sheet from a document keydown listener).
+                event.preventDefault();
+                event.stopPropagation();
+                event.nativeEvent.stopImmediatePropagation();
+                setDismissed(true);
+                return;
+              }
+              if (event.key === "ArrowDown" && dismissed) {
+                event.preventDefault();
+                setDismissed(false);
+                return;
+              }
               if (!open || results.length === 0) return;
               if (event.key === "ArrowDown") {
                 event.preventDefault();
@@ -148,7 +201,7 @@ export function ClassPicker({ value, onChange, disabled, error: fieldError, load
                 pick(results[active]);
               }
             }}
-            className={cn(fieldControlClass, "h-9 pl-9 pointer-coarse:h-11")}
+            className={cn(fieldControlClass, "h-9 pl-9 pointer-coarse:h-11 [&::-webkit-search-cancel-button]:hidden")}
           />
           {open ? (
             <div className="mt-1.5 overflow-hidden rounded-lg border border-hairline bg-surface shadow-popover">
@@ -157,28 +210,31 @@ export function ClassPicker({ value, onChange, disabled, error: fieldError, load
                   <Spinner /> {t("discountCodes.classSearching")}
                 </p>
               ) : results.length === 0 ? (
-                <p className="px-3 py-2.5 text-[0.8125rem] text-fg-muted">{error ?? t("discountCodes.classNoResults")}</p>
+                searchError ?? <p className="px-3 py-2.5 text-[0.8125rem] text-fg-muted">{t("discountCodes.classNoResults")}</p>
               ) : (
-                <ul id={listId} role="listbox" aria-label={t("discountCodes.classLabel")} className="max-h-60 overflow-y-auto py-1">
-                  {results.map((item, index) => (
-                    <li
-                      key={item.classId}
-                      id={`${listId}-${index}`}
-                      role="option"
-                      aria-selected={index === active}
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => pick(item)}
-                      onMouseEnter={() => setActive(index)}
-                      className={cn(
-                        "flex cursor-pointer flex-col px-3 py-2 pointer-coarse:py-3",
-                        index === active ? "bg-surface-muted" : "",
-                      )}
-                    >
-                      <span className="truncate text-sm font-medium text-fg">{item.title}</span>
-                      <span className="truncate text-[0.8125rem] text-fg-muted">{classMeta(item)}</span>
-                    </li>
-                  ))}
-                </ul>
+                <>
+                  {searchError}
+                  <ul id={listId} role="listbox" aria-label={t("discountCodes.classLabel")} className="max-h-60 overflow-y-auto py-1">
+                    {results.map((item, index) => (
+                      <li
+                        key={item.classId}
+                        id={`${listId}-${index}`}
+                        role="option"
+                        aria-selected={index === active}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => pick(item)}
+                        onMouseEnter={() => setActive(index)}
+                        className={cn(
+                          "flex cursor-pointer flex-col px-3 py-2 pointer-coarse:py-3",
+                          index === active ? "bg-brand-soft text-brand-fg shadow-[inset_3px_0_0_var(--brand-fg)]" : "",
+                        )}
+                      >
+                        <span className="truncate text-sm font-medium text-fg">{item.title}</span>
+                        <span className="truncate text-[0.8125rem] text-fg-muted">{classMeta(item)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
               )}
             </div>
           ) : null}

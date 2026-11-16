@@ -25,17 +25,12 @@ export const CONFETTI_PRESETS: Record<ConfettiIntensity, ConfettiPreset> = {
 
 export const MAX_PARTICLES = 90;
 
-/** Bright, kid-friendly colors that sit well on the light-green theme. */
-export const CONFETTI_COLORS = [
-  "#22c55e", // brand green
-  "#4ade80",
-  "#facc15", // sunny yellow
-  "#f59e0b", // amber
-  "#fb7185", // pink
-  "#38bdf8", // sky
-  "#a78bfa", // lilac
-  "#f97316", // orange
-] as const;
+/**
+ * The four answer-tile colours (components.md §6.5), as design-token names:
+ * <Confetti> resolves them from the page's CSS when it fires, so the burst
+ * follows the theme and no colour value is hard-coded here.
+ */
+export const CONFETTI_COLORS = ["--answer-a", "--answer-b", "--answer-c", "--answer-d"] as const;
 
 export interface Particle {
   x: number;
@@ -47,6 +42,7 @@ export interface Particle {
   spin: number;
   /** Phase for the side-to-side flutter. */
   wobble: number;
+  /** A CONFETTI_COLORS token name (resolved to a colour when drawn). */
   color: string;
   shape: ConfettiShape;
 }

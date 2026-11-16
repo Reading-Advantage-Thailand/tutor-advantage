@@ -119,6 +119,11 @@ export const classes = {
     notFoundDescription: "คลาสอาจถูกลบไปแล้วหรือลิงก์ไม่ถูกต้อง",
     notAvailableTitle: "คลาสนี้ยังไม่มีบันทึกการเข้าเรียน",
     notAvailableDescription: "คลาสทดลองและคลาสที่ครูยังไม่ได้ตั้งค่าห้องเรียนไม่มีการเช็กชื่อ",
+    // Redesign 2026-11 (appended): summary strip above the two tables
+    statsLabel: "สรุปการเข้าเรียน",
+    statMeetings: "คาบที่ถึงเวลาเรียน",
+    statMeetingsHint: "เช็กชื่อครบแล้ว {count} คาบ",
+    statUnmarkedHint: "เช็กชื่อยังไม่ครบอีก {count} คาบ",
   },
 } as const;
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { LogIn } from "lucide-react";
-import { ErrorState } from "@/components/mobile";
+import { ErrorState, type ErrorStateProps } from "@/components/mobile";
 import { useLiff, type LiffErrorCode } from "@/components/providers/LiffProvider";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
@@ -14,12 +14,12 @@ import { t } from "@/lib/i18n";
  * - auth (or no profile without an error) → "log in again" + retry
  * - config / unknown → generic copy + retry
  */
-export function LiffErrorState({ className }: { className?: string }) {
+export function LiffErrorState({ className, card }: Pick<ErrorStateProps, "className" | "card">) {
   const { errorCode, retry, logout } = useLiff();
   const code: LiffErrorCode = errorCode ?? "auth";
 
   if (code === "network") {
-    return <ErrorState kind="offline" onRetry={retry} className={className} />;
+    return <ErrorState kind="offline" onRetry={retry} card={card} className={className} />;
   }
 
   if (code === "auth") {
@@ -28,6 +28,7 @@ export function LiffErrorState({ className }: { className?: string }) {
         title={t("dashboard.startupAuthTitle")}
         description={t("dashboard.startupAuthError")}
         onRetry={retry}
+        card={card}
         className={className}
         secondaryAction={
           <Button variant="brandSoft" size="touch" onClick={logout}>
@@ -43,6 +44,7 @@ export function LiffErrorState({ className }: { className?: string }) {
     <ErrorState
       description={code === "config" ? t("dashboard.startupConfigError") : undefined}
       onRetry={retry}
+      card={card}
       className={className}
     />
   );

@@ -3,7 +3,8 @@ import { ChevronLeft } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { t } from "@/lib/i18n";
-import { ShellTitle } from "./ShellContext";
+import { thaiCopy, thaiLabel } from "@/lib/thaiText";
+import { ShellTitle, type AppBarAction } from "./ShellContext";
 
 /* ─── Page ────────────────────────────────────────────────────────────── */
 
@@ -28,12 +29,12 @@ export interface PageProps {
 
 /**
  * Page wrapper: centres the page at a max width and stacks its blocks with a
- * consistent 24px rhythm (32px on desktop). Server-compatible.
+ * 20px rhythm (24px on desktop; patterns.md section gap 20–24). Server-compatible.
  * Structure: <Page> → <PageHeader/> → <Section/>… (→ <StickyActions/> for forms).
  */
 export function Page({ width = "default", className, children }: PageProps) {
   return (
-    <div className={cn("mx-auto flex w-full min-w-0 flex-col gap-6 lg:gap-8", pageWidthClass[width], className)}>
+    <div className={cn("mx-auto flex w-full min-w-0 flex-col gap-5 lg:gap-6", pageWidthClass[width], className)}>
       {children}
     </div>
   );
@@ -43,6 +44,8 @@ export function Page({ width = "default", className, children }: PageProps) {
 
 export interface PageHeaderProps {
   title: ReactNode;
+  /** Small caption above the title (e.g. today's date on the dashboard), 14px. */
+  eyebrow?: ReactNode;
   /** One short sentence under the title. */
   description?: ReactNode;
   /** Buttons on the right (desktop) / under the text (mobile). Put the primary action last. */
@@ -60,16 +63,27 @@ export interface PageHeaderProps {
    * (e.g. a class name that is longer than the bar).
    */
   mobileTitle?: "appbar" | "inline";
+  /**
+   * Phone app-bar "+" action (href + Thai label). Use it for the page's create
+   * action on phones instead of a full-width button in the page.
+   */
+  appBarAction?: AppBarAction;
   className?: string;
 }
 
 /**
- * Page title block. Desktop: 24px bold title + description, actions on the
- * right. Phone: the title moves to the sticky app bar; description and
- * actions stay. Registers the app-bar title/back target. Server-compatible.
+ * Page title block (components.md §9): optional caption, the h1 in Kodchasan
+ * 600 (28 from 768px, 21 inline on phones), a 14px subtitle, actions on the
+ * right (the subtitle at the Thai body line-height 1.6). Phone: the title moves to the sticky app bar; description and
+ * actions stay. Registers the app-bar title/back target/"+" action.
+ * The back link and the title hand over to the app bar at 768px in px
+ * (min-[768px] / max-[768px]), the app bar's own media query, so one of the
+ * two always shows whatever the browser's default font size is.
+ * Server-compatible.
  */
 export function PageHeader({
   title,
+  eyebrow,
   description,
   actions,
   meta,
@@ -77,32 +91,34 @@ export function PageHeader({
   backLabel,
   appBarTitle,
   mobileTitle = "appbar",
+  appBarAction,
   className,
 }: PageHeaderProps) {
   const barTitle = appBarTitle ?? (typeof title === "string" ? title : undefined);
-  const hasBody = Boolean(description || meta || mobileTitle === "inline");
+  const hasBody = Boolean(description || meta || eyebrow || mobileTitle === "inline");
   return (
     <header className={cn("flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-6", className)}>
-      <ShellTitle title={barTitle} backHref={backHref} />
-      <div className={cn("min-w-0 flex-1", !hasBody && "max-md:contents")}>
+      <ShellTitle title={barTitle} backHref={backHref} action={appBarAction} />
+      <div className={cn("min-w-0 flex-1", !hasBody && "max-[768px]:contents")}>
         {backHref ? (
           <Link
             href={backHref}
-            className="mb-2 hidden items-center gap-1 rounded-md text-sm font-medium text-fg-muted hover:text-fg md:inline-flex"
+            className="mb-2 hidden min-h-8 items-center gap-1 rounded-(--radius-ctl-sm) text-sm font-medium text-fg-muted hover:text-fg min-[768px]:inline-flex pointer-coarse:min-h-11"
           >
             <ChevronLeft aria-hidden="true" className="size-4" />
             {backLabel ?? t("shell.back")}
           </Link>
         ) : null}
+        {eyebrow ? <p className="mb-0.5 type-label text-fg-muted">{eyebrow}</p> : null}
         <h1
           className={cn(
-            "text-xl font-bold text-fg text-balance-th md:text-2xl",
-            mobileTitle === "appbar" && "max-md:sr-only",
+            "font-heading text-[1.3125rem] leading-[1.4] font-semibold text-fg text-balance-th md:text-[1.75rem] md:leading-[1.3]",
+            mobileTitle === "appbar" && "max-[768px]:sr-only",
           )}
         >
           {title}
         </h1>
-        {description ? <p className="mt-1 max-w-3xl text-sm text-fg-muted md:text-[0.9375rem]">{description}</p> : null}
+        {description ? <p className="mt-0.5 max-w-3xl text-sm leading-[1.6] text-fg-muted">{thaiCopy(description)}</p> : null}
         {meta ? <div className="mt-2.5 flex flex-wrap items-center gap-2">{meta}</div> : null}
       </div>
       {actions ? <div className="flex flex-wrap items-center gap-2 lg:shrink-0 lg:justify-end">{actions}</div> : null}
@@ -123,15 +139,15 @@ export interface SectionHeaderProps {
   className?: string;
 }
 
-/** Section title row. Server-compatible. */
+/** Section title row: Noto 600 18 + optional link (44px row). Server-compatible. */
 export function SectionHeader({ title, description, action, as: Heading = "h2", id, className }: SectionHeaderProps) {
   return (
-    <div className={cn("flex items-end justify-between gap-3", className)}>
+    <div className={cn("flex min-h-11 items-center justify-between gap-3", className)}>
       <div className="min-w-0">
-        <Heading id={id} className="text-base font-semibold text-fg">
-          {title}
+        <Heading id={id} className="type-section text-fg">
+          {thaiLabel(title)}
         </Heading>
-        {description ? <p className="mt-0.5 text-sm text-fg-muted">{description}</p> : null}
+        {description ? <p className="mt-0.5 text-sm leading-[1.6] text-fg-muted">{thaiCopy(description)}</p> : null}
       </div>
       {action ? <div className="flex shrink-0 items-center gap-2">{action}</div> : null}
     </div>
@@ -145,11 +161,11 @@ export interface SectionProps extends Omit<SectionHeaderProps, "title" | "id"> {
   children: ReactNode;
 }
 
-/** Titled block of a page: header + content with a 12px gap. Server-compatible. */
+/** Titled block of a page: header + content with an 8px gap. Server-compatible. */
 export function Section({ title, description, action, as, id, className, children }: SectionProps) {
   const headingId = id ? `${id}-heading` : undefined;
   return (
-    <section id={id} aria-labelledby={headingId} className={cn("flex min-w-0 flex-col gap-3", className)}>
+    <section id={id} aria-labelledby={headingId} className={cn("flex min-w-0 flex-col gap-2", className)}>
       {title ? <SectionHeader title={title} description={description} action={action} as={as} id={headingId} /> : null}
       {children}
     </section>

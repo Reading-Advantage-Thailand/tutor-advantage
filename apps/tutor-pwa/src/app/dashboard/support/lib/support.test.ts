@@ -39,7 +39,9 @@ describe("categories and statuses", () => {
   it("highlights tickets waiting on the tutor", () => {
     expect(statusToneFor("WAITING_ON_REQUESTER")).toBe("warning");
     expect(statusToneFor("OPEN")).toBe("info");
-    expect(statusToneFor("RESOLVED")).toBe("neutral");
+    expect(statusToneFor("RESOLVED")).toBe("success");
+    expect(statusToneFor("IN_PROGRESS")).toBe("brand");
+    expect(statusToneFor("SOMETHING_NEW")).toBe("neutral");
   });
 
   it("formats status changes and ticket numbers", () => {

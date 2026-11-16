@@ -2,11 +2,42 @@
 
 import { ArrowLeft, Home, LogOut, ShieldX } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { BrandMark, IconTile, ThemeToggle, logout } from "@/components/app";
+import { Fragment, useState } from "react";
+import { logout, PublicFrame, StatusScreen } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { keepRoleTerms } from "../login/keepRoleTerms";
 import "@/locales/th/unauthorized";
+
+/**
+ * "คุณเข้าสู่ระบบเป็น {name} ({role}) …" with the role kept on one line
+ * ("(ผู้ดูแลระบบ)" never splits into "(ผู้ดูแล" / "ระบบ)"), the same role terms
+ * in the rest of the sentence too (keepRoleTerms), and a long name or email
+ * broken anywhere so it wraps inside the card.
+ */
+const NAME_SLOT = "\u0001";
+const ROLE_SLOT = "\u0002";
+
+function SignedInDescription({ name, role }: { name: string; role: string }) {
+  const text = t("unauthorized.signedInDescription", { name: NAME_SLOT, role: ROLE_SLOT });
+  return (
+    <>
+      {text.split(new RegExp(`(${NAME_SLOT}|${ROLE_SLOT})`)).map((part, index) =>
+        part === NAME_SLOT ? (
+          <span key={index} className="[overflow-wrap:anywhere]">
+            {name}
+          </span>
+        ) : part === ROLE_SLOT ? (
+          <span key={index} className="whitespace-nowrap">
+            {role}
+          </span>
+        ) : (
+          <Fragment key={index}>{keepRoleTerms(part)}</Fragment>
+        ),
+      )}
+    </>
+  );
+}
 
 export function UnauthorizedView({ session }: { session: { name: string; role: string } | null }) {
   const [leaving, setLeaving] = useState(false);
@@ -16,57 +47,51 @@ export function UnauthorizedView({ session }: { session: { name: string; role: s
   };
 
   return (
-    <main className="relative flex min-h-dvh flex-col items-center justify-center bg-app px-4 py-10">
-      <ThemeToggle className="absolute top-3 right-3" />
-      <div className="flex w-full max-w-[440px] flex-col gap-6">
-        <div className="flex items-center justify-center gap-2 text-sm font-medium text-fg-muted">
-          <BrandMark className="size-7 text-xs" />
-          {t("shell.brandName")} · {t("shell.brandRole")}
-        </div>
-        <section className="flex flex-col items-center gap-5 rounded-2xl border border-hairline bg-surface p-6 text-center shadow-card sm:p-8">
-          <IconTile icon={ShieldX} tone="red" size="lg" />
-          <div className="flex flex-col gap-2">
-            <h1 className="text-xl font-bold text-fg">
-              {session ? t("unauthorized.signedInTitle") : t("unauthorized.signedOutTitle")}
-            </h1>
-            <p className="text-sm leading-relaxed text-fg-muted">
-              {session
-                ? t("unauthorized.signedInDescription", { name: session.name, role: session.role })
-                : t("unauthorized.signedOutDescription")}
-            </p>
-          </div>
-          <div className="flex w-full flex-col gap-2">
+    <PublicFrame>
+      <StatusScreen
+        icon={ShieldX}
+        tone="red"
+        title={session ? t("unauthorized.signedInTitle") : t("unauthorized.signedOutTitle")}
+        description={
+          <span className="break-words">
             {session ? (
-              <>
-                <Button asChild size="lg" className="w-full">
-                  <Link href="/">
-                    <Home aria-hidden="true" />
-                    {t("unauthorized.goHome")}
-                  </Link>
-                </Button>
-                <Button variant="outline" size="lg" className="w-full" onClick={signOut} loading={leaving}>
-                  {leaving ? null : <LogOut aria-hidden="true" />}
-                  {leaving ? t("unauthorized.loggingOut") : t("unauthorized.switchAccount")}
-                </Button>
-              </>
+              <SignedInDescription name={session.name} role={session.role} />
             ) : (
-              <>
-                <Button asChild size="lg" className="w-full">
-                  <Link href="/login">
-                    <ArrowLeft aria-hidden="true" />
-                    {t("unauthorized.backLogin")}
-                  </Link>
-                </Button>
-                <Button asChild variant="ghost" size="lg" className="w-full">
-                  <a href="https://lin.ee/R7Dccj9" target="_blank" rel="noopener noreferrer">
-                    {t("unauthorized.contactSupport")}
-                  </a>
-                </Button>
-              </>
+              keepRoleTerms(t("unauthorized.signedOutDescription"))
             )}
-          </div>
-        </section>
-      </div>
-    </main>
+          </span>
+        }
+        actions={
+          session ? (
+            <>
+              <Button asChild size="lg" className="w-full">
+                <Link href="/">
+                  <Home aria-hidden="true" />
+                  {t("unauthorized.goHome")}
+                </Link>
+              </Button>
+              <Button variant="outline" size="lg" className="w-full" onClick={signOut} loading={leaving}>
+                {leaving ? null : <LogOut aria-hidden="true" />}
+                {leaving ? t("unauthorized.loggingOut") : t("unauthorized.switchAccount")}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button asChild size="lg" className="w-full">
+                <Link href="/login">
+                  <ArrowLeft aria-hidden="true" />
+                  {t("unauthorized.backLogin")}
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" size="lg" className="w-full">
+                <a href="https://lin.ee/R7Dccj9" target="_blank" rel="noopener noreferrer">
+                  {t("unauthorized.contactSupport")}
+                </a>
+              </Button>
+            </>
+          )
+        }
+      />
+    </PublicFrame>
   );
 }

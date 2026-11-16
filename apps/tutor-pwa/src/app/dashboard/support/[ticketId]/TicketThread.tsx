@@ -2,14 +2,17 @@
 
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, History, SendHorizontal } from "lucide-react";
 import {
+  BrandMark,
   Card,
   ConfirmDialog,
+  IconTile,
   Notice,
   Page,
   PageHeader,
   StatusChip,
+  StickyActions,
   TextAreaField,
   toast,
   useNotifications,
@@ -20,6 +23,7 @@ import { formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { replyToTicket, resolveTicket } from "../actions";
+import { categoryTile } from "../components/categoryTile";
 import {
   REPLY_MAX,
   TICKET_POLL_MS,
@@ -36,33 +40,47 @@ import {
   type TicketMessage,
 } from "../lib/support";
 
+/**
+ * One thread item (patterns.md S13 thread at tutor sizes): staff on the left
+ * (TA mark, card fill + rim), the tutor on the right (brand-soft fill, never
+ * text-white on a brand fill), bubbles radius 18 with a 6px tail corner;
+ * status changes as a centred chip.
+ */
 function MessageItem({ message }: { message: TicketMessage }) {
   if (message.kind === "STATUS_CHANGE") {
     return (
-      <li className="flex justify-center">
-        <p className="rounded-full bg-surface-muted px-3 py-1 text-center text-xs text-fg-muted">
-          {statusChangeText(message)} · {formatThaiDateTime(message.createdAt)}
+      <li className="flex justify-center py-1">
+        <p className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-surface-muted px-3 py-1 text-center text-xs leading-[1.5] text-fg-muted">
+          <History aria-hidden="true" className="size-3.5 shrink-0" />
+          <span>
+            {statusChangeText(message)} · {formatThaiDateTime(message.createdAt)}
+          </span>
         </p>
       </li>
     );
   }
   const own = message.author === "REQUESTER";
   return (
-    <li className={cn("flex flex-col gap-1", own ? "items-end" : "items-start")}>
-      <span className="px-1 text-xs font-medium text-fg-muted">
-        {own ? t("dashboardSupport.authorYou") : t("dashboardSupport.authorSupport")}
-      </span>
-      <div
-        className={cn(
-          "max-w-[min(85%,36rem)] rounded-xl border px-3.5 py-2.5 text-sm leading-relaxed break-words whitespace-pre-wrap text-fg",
-          own ? "border-brand-soft-border bg-brand-soft" : "border-hairline bg-surface",
-        )}
-      >
-        {message.body}
+    <li className={cn("flex items-start gap-2.5", own ? "justify-end" : "justify-start")}>
+      {!own ? <BrandMark size={32} className="mt-6" /> : null}
+      <div className={cn("flex max-w-[min(80%,36rem)] min-w-0 flex-col gap-1", own ? "items-end" : "items-start")}>
+        <span className="px-1 text-xs font-medium text-fg-muted">
+          {own ? t("dashboardSupport.authorYou") : t("dashboardSupport.authorSupport")}
+        </span>
+        <div
+          className={cn(
+            "max-w-full rounded-[18px] border px-3.5 py-2.5 text-[0.9375rem] leading-[1.6] break-words whitespace-pre-wrap",
+            own
+              ? "rounded-tr-[6px] border-brand-soft-border bg-brand-soft text-brand-soft-fg"
+              : "rounded-tl-[6px] border-clay-rim bg-surface text-fg shadow-card",
+          )}
+        >
+          {message.body}
+        </div>
+        <time dateTime={message.createdAt} className="px-1 text-xs text-fg-subtle tabular">
+          {formatThaiDateTime(message.createdAt)}
+        </time>
       </div>
-      <time dateTime={message.createdAt} className="px-1 text-[0.6875rem] text-fg-subtle">
-        {formatThaiDateTime(message.createdAt)}
-      </time>
     </li>
   );
 }
@@ -157,6 +175,7 @@ export function TicketThread({ initial }: { initial: TicketDetail }) {
     ticket.classTitle ? t("dashboardSupport.relatedClass").replaceAll("{name}", ticket.classTitle) : null,
     t("dashboardSupport.createdAt").replaceAll("{time}", formatThaiDateTime(ticket.createdAt)),
   ].filter(Boolean);
+  const tile = categoryTile(ticket.category);
 
   return (
     <Page width="narrow">
@@ -164,8 +183,6 @@ export function TicketThread({ initial }: { initial: TicketDetail }) {
         title={ticket.subject}
         appBarTitle={t("dashboardSupport.title")}
         mobileTitle="inline"
-        description={meta.join(" · ")}
-        meta={<StatusChip status={ticket.status} label={statusLabel(ticket.status)} tone={statusToneFor(ticket.status)} />}
         backHref="/dashboard/support"
         backLabel={t("dashboardSupport.backToList")}
         actions={
@@ -177,6 +194,21 @@ export function TicketThread({ initial }: { initial: TicketDetail }) {
           ) : null
         }
       />
+
+      {/* Header card: category tile, status chip (dot + word), number · category · class · sent date. */}
+      <Card padding="none" className="flex items-start gap-3 p-4">
+        <IconTile icon={tile.icon} tone={tile.tone} />
+        <div className="min-w-0 flex-1">
+          <StatusChip status={ticket.status} label={statusLabel(ticket.status)} tone={statusToneFor(ticket.status)} />
+          <p className="mt-1.5 type-body-s text-fg-muted tabular">{meta.join(" · ")}</p>
+        </div>
+      </Card>
+
+      <ol aria-label={t("dashboardSupport.threadLabel")} aria-live="polite" className="flex flex-col gap-4">
+        {ticket.messages.map((message) => (
+          <MessageItem key={message.messageId} message={message} />
+        ))}
+      </ol>
 
       {notice ? (
         <Notice tone={notice.tone} role="status">
@@ -192,36 +224,40 @@ export function TicketThread({ initial }: { initial: TicketDetail }) {
         </Notice>
       ) : null}
 
-      <ol aria-label={t("dashboardSupport.threadLabel")} aria-live="polite" className="flex flex-col gap-4">
-        {ticket.messages.map((message) => (
-          <MessageItem key={message.messageId} message={message} />
-        ))}
-      </ol>
-
       {ticket.canReply ? (
-        <Card as="section" aria-label={t("dashboardSupport.replyLabel")}>
-          <form onSubmit={handleReply} noValidate className="flex flex-col gap-3">
-            <TextAreaField
-              id="ticket-reply"
-              label={t("dashboardSupport.replyLabel")}
-              placeholder={t("dashboardSupport.replyPlaceholder")}
-              rows={4}
-              maxLength={REPLY_MAX}
-              value={reply}
-              error={replyError || undefined}
-              hint={t("dashboardSupport.privacyBody")}
-              onChange={(event) => {
-                setReply(event.target.value);
-                if (replyError) setReplyError("");
-              }}
-            />
-            <div className="flex justify-end">
-              <Button id="btn-send-reply" type="submit" loading={sending}>
-                {sending ? t("dashboardSupport.replySending") : t("dashboardSupport.replySend")}
+        <StickyActions className="block">
+          <section aria-label={t("dashboardSupport.replyLabel")}>
+            <form onSubmit={handleReply} noValidate className="flex items-start gap-2">
+              <TextAreaField
+                id="ticket-reply"
+                label={t("dashboardSupport.replyLabel")}
+                placeholder={t("dashboardSupport.replyPlaceholder")}
+                rows={1}
+                maxLength={REPLY_MAX}
+                value={reply}
+                error={replyError || undefined}
+                hint={t("dashboardSupport.privacyBody")}
+                hideLabel
+                containerClassName="min-w-0 flex-1 [&_#ticket-reply-hint]:text-xs"
+                className="max-h-40 min-h-[52px] resize-none rounded-[26px] px-4 py-[13px] leading-6 [field-sizing:content]"
+                onChange={(event) => {
+                  setReply(event.target.value);
+                  if (replyError) setReplyError("");
+                }}
+              />
+              <Button
+                id="btn-send-reply"
+                type="submit"
+                size="icon-lg"
+                loading={sending}
+                aria-label={sending ? t("dashboardSupport.replySending") : t("dashboardSupport.replySend")}
+                className="mt-1 shrink-0 rounded-full"
+              >
+                {sending ? null : <SendHorizontal aria-hidden="true" />}
               </Button>
-            </div>
-          </form>
-        </Card>
+            </form>
+          </section>
+        </StickyActions>
       ) : null}
 
       <ConfirmDialog

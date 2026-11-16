@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 
 /** Legacy alert (restyled). New code: <Notice tone=…> from "@/components/app". */
 const alertVariants = cva(
-  "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-xl border px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-(--radius-card) border px-3.5 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*5)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-5 [&>svg]:translate-y-px [&>svg]:text-current",
   {
     variants: {
       variant: {
@@ -26,14 +26,14 @@ function Alert({ className, variant, ...props }: React.ComponentProps<"div"> & V
 }
 
 function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="alert-title" className={cn("col-start-2 min-h-4 font-semibold", className)} {...props} />
+  return <div data-slot="alert-title" className={cn("col-start-2 min-h-4 text-[0.9375rem] leading-[1.6] font-semibold text-balance-th", className)} {...props} />
 }
 
 function AlertDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="alert-description"
-      className={cn("col-start-2 grid justify-items-start gap-1 text-[0.8125rem] opacity-90 [&_p]:leading-relaxed", className)}
+      className={cn("col-start-2 grid justify-items-start gap-1 text-sm leading-[1.6] [&_p]:leading-[1.6]", className)}
       {...props}
     />
   )

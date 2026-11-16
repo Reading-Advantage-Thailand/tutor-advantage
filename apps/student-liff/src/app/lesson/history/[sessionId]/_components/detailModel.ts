@@ -40,6 +40,16 @@ export function parseAnswerChoice(answer: string | null | undefined): AnswerChoi
   return match ? { label: match[1].toUpperCase(), text: match[2] } : { label: null, text: rawAnswer };
 }
 
+// Step-15 / step-16 rows (no right answer): shared with the article reader.
+export {
+  LANGUAGE_QUESTION_SENTINEL,
+  REFLECTION_SENTINEL,
+  getLessonRowKind as getDetailRowKind,
+  getNeutralRowView,
+  type LessonRowKind as DetailRowKind,
+  type NeutralRowView,
+} from "../../../../../lib/lessonAnswerRows";
+
 /** 404/403 from the API means the result is gone or not ours (show "not found", not "retry"). */
 export function isNotFoundError(error: unknown): boolean {
   const status = (error as { status?: unknown } | null)?.status;

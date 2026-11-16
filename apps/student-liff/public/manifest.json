@@ -4,7 +4,7 @@
   "description": "Student Portal for Tutor Advantage",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#06c755",
-  "theme_color": "#06c755",
+  "background_color": "#fffaf3",
+  "theme_color": "#007352",
   "icons": []
 }

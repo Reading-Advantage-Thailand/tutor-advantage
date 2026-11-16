@@ -18,11 +18,12 @@ export default async function SelectLessonPage({
   const preparationMode = query.prepare === "1" ? parsePreparationMode(query.mode) : null;
 
   const title = preparationMode ? t("lesson.preflow.select.prepareTitle") : t("lesson.select.title");
-  const description = preparationMode
+  const descriptionText = preparationMode
     ? preparationMode === "guided"
       ? t("lesson.preflow.select.prepareGuidedSubtitle")
       : t("lesson.preflow.select.prepareExploreSubtitle")
     : t("lesson.select.subtitle");
+  const description = descriptionText;
 
   let articles: LessonArticle[];
   try {

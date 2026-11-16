@@ -65,7 +65,7 @@ function ReviewForm({
               aria-hidden="true"
               className={cn(
                 "size-6",
-                value <= review.rating ? "fill-warning-solid text-warning-solid" : "text-fg-subtle",
+                value <= review.rating ? "fill-warning-solid text-warning-fg" : "text-fg-muted",
               )}
             />
           ))}
@@ -91,11 +91,11 @@ function ReviewForm({
               aria-label={`${t("classes.detail.reviewStarPrefix")} ${value} ${t("classes.detail.reviewStarSuffix")}`}
               aria-pressed={value === rating}
               className={cn(
-                "pressable flex size-12 items-center justify-center rounded-2xl border",
-                active ? "border-warning-border bg-warning-bg text-warning-solid" : "border-hairline bg-surface text-fg-subtle",
+                "pressable flex size-12 items-center justify-center rounded-[var(--radius-field)] border",
+                active ? "border-warning-border bg-warning-bg text-warning-fg" : "border-hairline bg-surface text-fg-muted",
               )}
             >
-              <Star aria-hidden="true" className={cn("size-6", active && "fill-current")} />
+              <Star aria-hidden="true" className={cn("size-6", active && "fill-warning-solid")} />
             </button>
           );
         })}
@@ -166,18 +166,18 @@ export function ReviewCard({
   return (
     <Surface tone="warning" padding="lg">
       <Confetti fire={celebration} intensity="small" origin={{ x: 0.5, y: 0.55 }} />
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-3.5">
         <IconTile icon={Star} tone="amber" />
         <div className="min-w-0 flex-1">
-          <h3 className="text-base leading-[1.5] font-bold text-fg">{t("classes.detail.reviewTitle")}</h3>
-          <p className="mt-0.5 text-[13px] leading-[1.6] text-fg-muted">{t("classes.detail.reviewDescription")}</p>
+          <h3 className="t-title-s text-fg">{t("classes.detail.reviewTitle")}</h3>
+          <p className="mt-0.5 text-sm leading-[1.6] text-fg-muted">{t("classes.detail.reviewDescription")}</p>
         </div>
       </div>
       <div className="mt-4">
         {loading ? (
           <div className="flex gap-1.5" aria-hidden="true">
             {STARS.map((value) => (
-              <Skeleton key={value} className="size-12 rounded-2xl" />
+              <Skeleton key={value} className="size-12 rounded-[var(--radius-field)]" />
             ))}
           </div>
         ) : (

@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { CalendarClock, CalendarDays, CalendarRange, ChevronLeft, ChevronRight, Clock, Plus } from "lucide-react";
-import { EmptyState, Grid, SegmentedControl, SplitLayout, StatCard, Surface } from "@/components/app";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { CalendarDays, CalendarRange, ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Count, EmptyState, SegmentedControl, SplitLayout, StatStrip, Surface, levelIconClass, levelTone, tileToneClass } from "@/components/app";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { RELATIVE_DAY_LABELS, formatNumber, formatThaiDate, formatThaiMonthYear } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { scrollBehavior } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 import { CalendarSync } from "./components/CalendarSync";
-import { DayAgenda } from "./components/EventList";
+import { DayAgenda, eventLevel } from "./components/EventList";
 import type { CalendarExportInput } from "./lib/calendar-export";
 import {
   addDays,
@@ -47,15 +48,18 @@ function dayHeading(key: DateKey, today: DateKey): string {
   return date;
 }
 
-function rangeTitle(view: View, anchor: DateKey): string {
+/** `compact`: short month for the week title on phones ("8–14 พ.ย. 2569"); the long month does not fit beside the nav buttons. */
+function rangeTitle(view: View, anchor: DateKey, compact = false): string {
   if (view === "month") return formatThaiMonthYear(keyToDate(anchor));
   const days = weekKeys(anchor);
   const first = keyToDate(days[0]);
   const last = keyToDate(days[6]);
   const sameMonth = days[0].slice(0, 7) === days[6].slice(0, 7);
-  return sameMonth
-    ? `${days[0].slice(8).replace(/^0/, "")}–${formatThaiDate(last, "long")}`
-    : `${formatThaiDate(first, "short")} – ${formatThaiDate(last, "medium")}`;
+  if (sameMonth) return `${days[0].slice(8).replace(/^0/, "")}–${formatThaiDate(last, compact ? "medium" : "long")}`;
+  const from = formatThaiDate(first, "short");
+  const to = formatThaiDate(last, "medium");
+  // A two-month range can wrap on a narrow phone: non-breaking spaces keep each date whole, so the only break is after the dash.
+  return compact ? `${from.replace(/ /g, " ")} – ${to.replace(/ /g, " ")}` : `${from} – ${to}`;
 }
 
 export default function ScheduleClient({ initialClasses }: { initialClasses: ScheduleClass[] }) {
@@ -114,8 +118,9 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: Sch
   if (initialClasses.length === 0) {
     return (
       <EmptyState
+        mascot
         icon={CalendarDays}
-        tone="blue"
+        tone="purple"
         title={t("dashboardSchedule.noClassesTitle")}
         description={t("dashboardSchedule.noClassesDescription")}
         action={
@@ -133,8 +138,11 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: Sch
   const hours = totalMinutes(rangeEvents) / 60;
 
   const toolbar = (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex min-w-0 items-center gap-1">
+    // sm+: one row while it fits; where the main column is narrow (two-column
+    // layout from 1024) the view switch wraps under the date nav instead of
+    // sliding beneath it.
+    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+      <div className="flex min-w-0 items-center gap-1 sm:gap-1.5">
         <Button
           variant="ghost"
           size="icon"
@@ -143,8 +151,13 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: Sch
         >
           <ChevronLeft aria-hidden="true" />
         </Button>
-        <h2 className="min-w-0 flex-1 truncate text-center text-base font-semibold text-fg tabular sm:flex-none sm:px-1 md:text-lg" aria-live="polite">
-          {rangeTitle(view, anchor)}
+        {/* Phones: short month, and a title that still does not fit wraps (1.6 line height) instead of cutting off. */}
+        <h2
+          className="min-w-0 flex-1 text-center type-section text-fg tabular max-sm:leading-[1.6] max-sm:text-balance-th sm:flex-none sm:px-1 sm:whitespace-nowrap"
+          aria-live="polite"
+        >
+          <span className="sm:hidden">{rangeTitle(view, anchor, true)}</span>
+          <span className="max-sm:hidden">{rangeTitle(view, anchor)}</span>
         </h2>
         <Button
           variant="ghost"
@@ -154,11 +167,17 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: Sch
         >
           <ChevronRight aria-hidden="true" />
         </Button>
-        <Button variant="outline" size="sm" className="ml-1" disabled={isCurrentRange && anchor === today} onClick={() => setAnchor(today)}>
+        {/* Below 360px the button gives 16px back to the title, so a one-month range stays on one line. */}
+        <Button
+          variant="outline"
+          className="ml-1 max-[360px]:ml-0 max-[360px]:px-2.5"
+          disabled={isCurrentRange && anchor === today}
+          onClick={() => setAnchor(today)}
+        >
           {t("dashboardSchedule.goToday")}
         </Button>
       </div>
-      <div className="shrink-0 max-sm:order-first sm:w-56">
+      <div className="shrink-0 max-sm:order-first sm:ml-auto sm:w-56">
         <SegmentedControl<View>
           aria-label={t("dashboardSchedule.viewLabel")}
           items={[
@@ -174,28 +193,42 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: Sch
   );
 
   const stats = (
-    <Grid cols={2} className="grid-cols-2 sm:grid-cols-2 lg:grid-cols-1">
-      <StatCard
-        label={t("dashboardSchedule.statSessions")}
-        value={`${formatNumber(rangeEvents.length)} ${t("dashboardSchedule.sessionsUnit")}`}
-        icon={CalendarClock}
-        tone="blue"
-      />
-      <StatCard
-        label={t("dashboardSchedule.statHours")}
-        value={`${formatNumber(Math.round(hours * 10) / 10)} ${t("dashboardSchedule.hoursUnit")}`}
-        icon={Clock}
-        tone="blue"
-      />
-    </Grid>
+    <StatStrip
+      aria-label={rangeTitle(view, anchor)}
+      items={[
+        {
+          label: t("dashboardSchedule.statSessions"),
+          value: `${formatNumber(rangeEvents.length)} ${t("dashboardSchedule.sessionsUnit")}`,
+        },
+        {
+          label: t("dashboardSchedule.statHours"),
+          value: `${formatNumber(Math.round(hours * 10) / 10)} ${t("dashboardSchedule.hoursUnit")}`,
+        },
+      ]}
+    />
   );
 
   const nextCard = upcoming ? (
-    <Surface padding="md" href={`/dashboard/classes/${upcoming.classId}`}>
-      <p className="text-[0.8125rem] text-fg-muted">{t("dashboardSchedule.statNext")}</p>
-      <p className="mt-1 text-base font-semibold text-fg">{dayHeading(upcoming.dateKey, today)}</p>
-      <p className="text-sm text-fg">{upcoming.timeLabel}</p>
-      <p className="mt-1 truncate text-[0.8125rem] text-fg-muted">{upcoming.title}</p>
+    <Surface padding="md" href={`/dashboard/classes/${upcoming.classId}`} className="flex flex-col gap-1">
+      <span className="flex items-center justify-between gap-2">
+        <span className="type-label text-fg-muted">{t("dashboardSchedule.statNext")}</span>
+        <ChevronRight aria-hidden="true" className="size-[18px] shrink-0 text-fg-subtle" />
+      </span>
+      <span className="type-card text-fg">{dayHeading(upcoming.dateKey, today)}</span>
+      {upcoming.start ? (
+        <span className="flex flex-wrap items-baseline gap-x-1.5">
+          <span className="type-hero-time text-fg">{upcoming.start}</span>
+          {upcoming.end ? <span className="type-body-s text-fg-muted tabular">– {upcoming.end}</span> : null}
+        </span>
+      ) : (
+        <span className="type-body-s text-fg-muted">{upcoming.timeLabel}</span>
+      )}
+      <span className="mt-1 flex min-w-0 items-center gap-2 border-t border-hairline pt-2.5 type-body-s text-fg">
+        <span aria-hidden="true" className={cn("ds-level-dot shrink-0", levelIconClass[levelTone(eventLevel(upcoming.book))])} />
+        <span className="truncate font-medium" title={upcoming.title}>
+          {upcoming.title}
+        </span>
+      </span>
     </Surface>
   ) : null;
 
@@ -215,8 +248,9 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: Sch
         <>
           {view === "month" ? (
             <section aria-labelledby="selected-day-heading" className="flex flex-col gap-2">
-              <h3 id="selected-day-heading" className="px-1 text-sm font-semibold text-fg-muted">
+              <h3 id="selected-day-heading" className="flex min-h-8 items-center gap-2 px-1 type-card text-fg">
                 {dayHeading(anchor, today)}
+                {(byDay.get(anchor)?.length ?? 0) > 0 ? <Count value={byDay.get(anchor)?.length ?? 0} /> : null}
               </h3>
               <DayAgenda events={byDay.get(anchor) ?? []} label={dayHeading(anchor, today)} />
             </section>
@@ -232,6 +266,18 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: Sch
 
 /* ─── Week: day strip + agenda for all 7 days ───────────────────────────── */
 
+/**
+ * Scrolls the day strip (never the page) so a day cut off at its edge comes
+ * fully into view. Always to an end: the ends are the strip's snap points, and
+ * a shorter move would be snapped back.
+ */
+function revealDay(strip: HTMLElement, day: Element, behavior: ScrollBehavior) {
+  const view = strip.getBoundingClientRect();
+  const box = day.getBoundingClientRect();
+  if (box.left < view.left) strip.scrollTo({ left: 0, behavior });
+  else if (box.right > view.right) strip.scrollTo({ left: strip.scrollWidth, behavior });
+}
+
 function WeekView({
   days,
   byDay,
@@ -246,54 +292,122 @@ function WeekView({
   onSelect: (key: DateKey) => void;
 }) {
   const total = days.reduce((sum, key) => sum + (byDay.get(key)?.length ?? 0), 0);
+  const selectedIndex = days.indexOf(anchor);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const revealed = useRef(false);
+  const [more, setMore] = useState({ start: false, end: false });
+
+  /*
+   * Day buttons are never narrower than a 44px touch target. Seven of them fit
+   * the card from 360px up (the gap gives way first). Below 360px the card
+   * runs edge to edge (no side rim, no corners) and the gap closes, so all
+   * seven days still show on a 320px phone: 7 × 44 + 2 × 6 = 320, and the 6px
+   * padding keeps room for the focus ring. Only where even that is too narrow
+   * does the strip scroll sideways, with an edge shadow on the side that has a
+   * day out of view.
+   */
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip) return;
+    const update = () => {
+      const start = strip.scrollLeft > 1;
+      const end = strip.scrollLeft < strip.scrollWidth - strip.clientWidth - 1;
+      setMore((prev) => (prev.start === start && prev.end === end ? prev : { start, end }));
+    };
+    update();
+    strip.addEventListener("scroll", update, { passive: true });
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(update);
+    observer?.observe(strip);
+    return () => {
+      strip.removeEventListener("scroll", update);
+      observer?.disconnect();
+    };
+  }, []);
+
+  // The selected day stays in view: at once on arrival, animated after that.
+  useEffect(() => {
+    const strip = stripRef.current;
+    const day = strip?.children[selectedIndex];
+    if (strip && day) revealDay(strip, day, revealed.current ? scrollBehavior() : "auto");
+    revealed.current = true;
+  }, [anchor, selectedIndex]);
+
   const select = (key: DateKey) => {
     onSelect(key);
-    document.getElementById(`day-${key}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById(`day-${key}`)?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
   };
+  const edgeClass = "pointer-events-none absolute inset-y-0 w-4 transition-opacity duration-(--duration-fast)";
   return (
     <>
-      <div role="group" aria-label={t("dashboardSchedule.weekStripLabel")} className="grid grid-cols-7 gap-1 rounded-xl border border-hairline bg-surface p-1.5 shadow-card">
-        {days.map((key) => {
-          const count = byDay.get(key)?.length ?? 0;
-          const isToday = key === today;
-          const selected = key === anchor;
-          return (
-            <button
-              key={key}
-              type="button"
-              onClick={() => select(key)}
-              aria-pressed={selected}
-              aria-label={`${formatThaiDate(keyToDate(key), "full")} · ${count > 0 ? t("dashboardSchedule.sessionsOnDay").replace("{count}", String(count)) : t("dashboardSchedule.noClassesDay")}`}
-              className={cn(
-                "pressable flex min-h-16 flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-fg hover:bg-surface-muted",
-                selected && "bg-brand-solid text-on-brand hover:bg-brand-solid",
-              )}
-            >
-              <span className={cn("text-xs", selected ? "text-on-brand" : isToday ? "font-semibold text-brand-fg" : "text-fg-muted")}>
-                {WEEKDAY_SHORT[days.indexOf(key)]}
-              </span>
-              <span className={cn("text-base font-semibold tabular", !selected && isToday && "text-brand-fg")}>
-                {Number(key.slice(8))}
-              </span>
-              <span aria-hidden="true" className="flex h-1.5 items-center gap-0.5">
-                {Array.from({ length: Math.min(count, 3) }, (_, i) => (
-                  <span key={i} className={cn("size-1.5 rounded-full", selected ? "bg-on-brand" : "bg-brand-vivid")} />
-                ))}
-              </span>
-            </button>
-          );
-        })}
+      <div className="ds-card relative overflow-hidden max-[360px]:mx-[calc(var(--gutter)*-1)] max-[360px]:rounded-none max-[360px]:border-x-0">
+        <div
+          ref={stripRef}
+          role="group"
+          aria-label={t("dashboardSchedule.weekStripLabel")}
+          // Keyboard focus on a cut-off day brings it into view (a tap is handled on select).
+          onFocus={(event) => {
+            if (event.target.matches(":focus-visible")) revealDay(event.currentTarget, event.target, scrollBehavior());
+          }}
+          className="scrollbar-hide grid snap-x snap-proximity scroll-px-1.5 grid-cols-[repeat(7,minmax(2.75rem,1fr))] gap-x-[clamp(0px,(100%_-_19.25rem)/6,0.25rem)] overflow-x-auto overscroll-x-contain p-1.5 sm:gap-x-1.5 sm:p-2"
+        >
+          {days.map((key) => {
+            const dayEvents = byDay.get(key) ?? [];
+            const count = dayEvents.length;
+            const isToday = key === today;
+            const selected = key === anchor;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => select(key)}
+                aria-pressed={selected}
+                aria-label={`${formatThaiDate(keyToDate(key), "full")} · ${count > 0 ? t("dashboardSchedule.sessionsOnDay").replace("{count}", String(count)) : t("dashboardSchedule.noClassesDay")}`}
+                className={cn(
+                  "pressable flex min-h-[68px] snap-start flex-col items-center justify-center gap-0.5 rounded-(--radius-ctl) py-1.5 text-fg transition-colors duration-(--duration-fast) hover:bg-row-hover focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-focus-ring",
+                  selected && "bg-brand-solid text-on-brand hover:bg-brand-solid",
+                  !selected && isToday && "shadow-[inset_0_0_0_2px_var(--brand-fg)]",
+                )}
+              >
+                <span className={cn("text-xs", selected ? "text-on-brand" : isToday ? "font-semibold text-brand-fg" : "text-fg-muted")}>
+                  {WEEKDAY_SHORT[days.indexOf(key)]}
+                </span>
+                <span className={cn("text-lg leading-tight font-semibold tabular", !selected && isToday && "text-brand-fg")}>
+                  {Number(key.slice(8))}
+                </span>
+                <span aria-hidden="true" className="flex h-1.5 items-center gap-0.5">
+                  {dayEvents.slice(0, 3).map((event) => (
+                    <span
+                      key={event.id}
+                      className={cn(
+                        "size-1.5 rounded-full",
+                        selected ? "bg-on-brand" : cn("bg-current", levelIconClass[levelTone(eventLevel(event.book))]),
+                      )}
+                    />
+                  ))}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <span
+          aria-hidden="true"
+          className={cn(edgeClass, "left-0 shadow-[inset_14px_0_12px_-12px_var(--table-edge-shadow)]", more.start ? "opacity-100" : "opacity-0")}
+        />
+        <span
+          aria-hidden="true"
+          className={cn(edgeClass, "right-0 shadow-[inset_-14px_0_12px_-12px_var(--table-edge-shadow)]", more.end ? "opacity-100" : "opacity-0")}
+        />
       </div>
 
       {total === 0 ? (
         <EmptyState
           icon={CalendarRange}
-          tone="blue"
+          tone="purple"
           title={t("dashboardSchedule.weekEmptyTitle")}
           description={t("dashboardSchedule.weekEmptyDescription")}
         />
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           {days.map((key) => {
             const dayEvents = byDay.get(key) ?? [];
             const heading = dayHeading(key, today);
@@ -303,12 +417,13 @@ function WeekView({
                 <h3
                   id={`day-${key}-h`}
                   className={cn(
-                    "flex items-center gap-2 px-1 text-sm font-semibold",
-                    key === today ? "text-brand-fg" : past ? "text-fg-subtle" : "text-fg-muted",
+                    "flex flex-wrap items-center gap-x-2 px-1 type-card",
+                    key === today ? "text-brand-fg" : past ? "text-fg-muted" : "text-fg",
                   )}
                 >
+                  {key === today ? <span aria-hidden="true" className="size-2 rounded-full bg-brand-solid" /> : null}
                   {heading}
-                  <span className="font-normal text-fg-subtle">
+                  <span className="text-sm font-normal text-fg-muted">
                     ·{" "}
                     {dayEvents.length > 0
                       ? t("dashboardSchedule.sessionsOnDay").replace("{count}", String(dayEvents.length))
@@ -341,18 +456,42 @@ function MonthView({
   onSelect: (key: DateKey) => void;
 }) {
   const cells = monthGrid(anchor);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const focusKeyRef = useRef<DateKey | null>(null);
+
+  // After an arrow key moves the selection (possibly into another month), focus the new day.
+  useEffect(() => {
+    const key = focusKeyRef.current;
+    if (!key) return;
+    focusKeyRef.current = null;
+    gridRef.current?.querySelector<HTMLButtonElement>(`[data-day="${key}"]`)?.focus();
+  }, [anchor]);
+
+  // Grid keyboard model: one Tab stop (the selected day); arrows move by a day or a week, Home/End to the row ends.
+  const onDayKeyDown = (event: KeyboardEvent<HTMLButtonElement>, key: DateKey, column: number) => {
+    const moves: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7, Home: -column, End: 6 - column };
+    const delta = moves[event.key];
+    if (delta === undefined) return;
+    event.preventDefault();
+    if (delta === 0) return;
+    const next = addDays(key, delta);
+    focusKeyRef.current = next;
+    onSelect(next);
+  };
+
   return (
     <div
+      ref={gridRef}
       role="grid"
       aria-label={t("dashboardSchedule.monthGridLabel").replace("{month}", formatThaiMonthYear(keyToDate(anchor)))}
-      className="overflow-hidden rounded-xl border border-hairline bg-surface shadow-card"
+      className="ds-card overflow-hidden"
     >
       <div role="row" className="grid grid-cols-7 border-b border-hairline bg-surface-muted">
         {WEEKDAY_SHORT.map((label, index) => (
           <div
             key={label}
             role="columnheader"
-            className={cn("py-2 text-center text-xs font-medium", index === 0 || index === 6 ? "text-fg-subtle" : "text-fg-muted")}
+            className={cn("py-2.5 text-center text-xs font-semibold", index === 0 || index === 6 ? "text-fg-subtle" : "text-fg-muted")}
           >
             {label}
           </div>
@@ -360,7 +499,7 @@ function MonthView({
       </div>
       {Array.from({ length: 6 }, (_, row) => (
         <div key={row} role="row" className="grid grid-cols-7 border-hairline [&:not(:last-child)]:border-b">
-          {cells.slice(row * 7, row * 7 + 7).map(({ key, inMonth }) => {
+          {cells.slice(row * 7, row * 7 + 7).map(({ key, inMonth }, column) => {
             const dayEvents = byDay.get(key) ?? [];
             const selected = key === anchor;
             const isToday = key === today;
@@ -368,21 +507,24 @@ function MonthView({
               <div key={key} role="gridcell" aria-selected={selected} className="border-hairline [&:not(:last-child)]:border-r">
                 <button
                   type="button"
+                  data-day={key}
+                  tabIndex={selected ? 0 : -1}
                   onClick={() => onSelect(key)}
+                  onKeyDown={(event) => onDayKeyDown(event, key, column)}
                   aria-label={`${formatThaiDate(keyToDate(key), "full")} · ${dayEvents.length > 0 ? t("dashboardSchedule.sessionsOnDay").replace("{count}", String(dayEvents.length)) : t("dashboardSchedule.noClassesDay")}`}
                   className={cn(
-                    "flex h-14 w-full flex-col items-center gap-1 px-1 pt-1.5 text-left hover:bg-surface-muted focus-visible:relative focus-visible:z-10 md:h-28 md:items-stretch md:px-1.5",
-                    selected && "bg-brand-soft hover:bg-brand-soft",
-                    !inMonth && "bg-surface-muted/50",
+                    "flex h-14 w-full flex-col items-center gap-1 px-1 pt-1.5 text-left transition-colors duration-(--duration-fast) hover:bg-row-hover focus-visible:relative focus-visible:z-10 focus-visible:outline-3 focus-visible:-outline-offset-3 focus-visible:outline-solid focus-visible:outline-focus-ring md:h-28 md:items-stretch md:px-1.5",
+                    selected && "bg-brand-soft/60 hover:bg-brand-soft",
+                    !inMonth && "bg-surface-muted",
                   )}
                 >
                   <span
                     className={cn(
-                      "inline-flex size-7 shrink-0 items-center justify-center rounded-full text-sm tabular md:size-6 md:text-[0.8125rem]",
+                      "inline-flex size-7 shrink-0 items-center justify-center rounded-full text-sm tabular md:text-[0.8125rem]",
                       !inMonth && "text-fg-subtle",
                       inMonth && "text-fg",
-                      isToday && "bg-brand-solid font-semibold text-on-brand",
-                      selected && !isToday && "font-semibold text-brand-fg",
+                      isToday && !selected && "font-semibold text-brand-fg shadow-[inset_0_0_0_2px_var(--brand-fg)]",
+                      selected && "bg-brand-solid font-semibold text-on-brand",
                     )}
                   >
                     {Number(key.slice(8))}
@@ -390,8 +532,11 @@ function MonthView({
                   {dayEvents.length > 0 ? (
                     <>
                       <span aria-hidden="true" className="flex gap-0.5 md:hidden">
-                        {Array.from({ length: Math.min(dayEvents.length, 3) }, (_, i) => (
-                          <span key={i} className="size-1.5 rounded-full bg-brand-vivid" />
+                        {dayEvents.slice(0, 3).map((event) => (
+                          <span
+                            key={event.id}
+                            className={cn("size-1.5 rounded-full bg-current", levelIconClass[levelTone(eventLevel(event.book))])}
+                          />
                         ))}
                       </span>
                       <span aria-hidden="true" className="hidden min-w-0 flex-col gap-0.5 md:flex">
@@ -399,8 +544,9 @@ function MonthView({
                           <span
                             key={event.id}
                             className={cn(
-                              "truncate rounded-md px-1.5 py-0.5 text-xs leading-tight",
-                              inMonth ? "bg-brand-soft text-brand-fg" : "bg-fill-muted text-fg-muted",
+                              "truncate rounded-[6px] border-l-[3px] py-0.5 pr-1.5 pl-1 text-xs leading-tight font-medium",
+                              inMonth ? tileToneClass[levelTone(eventLevel(event.book))] : "bg-fill-muted text-fg-muted",
+                              "border-current",
                             )}
                           >
                             {event.start ? `${event.start} ` : ""}

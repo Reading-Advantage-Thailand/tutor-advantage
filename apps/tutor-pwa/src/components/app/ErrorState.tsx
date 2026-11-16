@@ -4,6 +4,7 @@ import { AlertTriangle, RotateCw } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { thaiCopy, thaiLabel } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import { IconTile } from "./Atoms";
 
@@ -25,8 +26,10 @@ export interface ErrorStateProps {
 }
 
 /**
- * Error block with retry. Use for failed fetches (`error && !data`) and in
- * route-segment error.tsx files (`onRetry={reset}`).
+ * Error block with retry (components.md §10): a card with a 56px red tone
+ * tile, the cause and the recovery, and a tonal "ลองอีกครั้ง". Use for failed
+ * fetches (`error && !data`) and in route-segment error.tsx files
+ * (`onRetry={reset}`).
  */
 export function ErrorState({
   title = t("shell.errorTitle"),
@@ -54,18 +57,18 @@ export function ErrorState({
       role="alert"
       className={cn(
         "flex flex-col items-center justify-center text-center",
-        compact ? "px-4 py-8" : "rounded-xl border border-hairline bg-surface px-6 py-12",
+        compact ? "px-4 py-8" : "rounded-(--radius-card) border border-clay-rim bg-surface px-6 py-10 shadow-card",
         page && "min-h-[50vh]",
         className,
       )}
     >
-      <IconTile icon={AlertTriangle} tone="red" size="lg" />
-      <h2 className="mt-4 text-base font-semibold text-fg">{title}</h2>
-      {description ? <p className="mt-1 max-w-md text-sm text-fg-muted">{description}</p> : null}
+      <IconTile icon={AlertTriangle} tone="red" size="xl" />
+      <h2 className="mt-4 type-section text-balance-th text-fg">{thaiLabel(title)}</h2>
+      {description ? <p className="mt-1 max-w-md text-sm leading-[1.6] text-balance-th text-fg-muted">{thaiCopy(description)}</p> : null}
       {onRetry || action ? (
         <div className="mt-5 flex flex-wrap justify-center gap-2">
           {onRetry ? (
-            <Button variant="outline" onClick={handleRetry} loading={retrying}>
+            <Button variant="tonal" onClick={handleRetry} loading={retrying}>
               {retrying ? null : <RotateCw aria-hidden="true" />}
               {retryLabel}
             </Button>

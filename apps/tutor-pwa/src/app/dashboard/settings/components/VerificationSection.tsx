@@ -1,10 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
-import { Check, Pencil, ShieldCheck } from "lucide-react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { CircleCheck, CircleDashed, LockKeyhole, Pencil, ShieldCheck } from "lucide-react";
 import {
   CardSkeleton,
+  Chip,
   IconTile,
   Notice,
   ProgressBar,
@@ -15,6 +15,7 @@ import {
 } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { thaiCopy } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
 import { payoutBlockText } from "../lib/documentExpiry";
 import { stepCompletion, verificationSteps, type SettingsUser, type VerificationField } from "../lib/verification";
@@ -22,10 +23,11 @@ import { DocumentExpiryNotice } from "./DocumentExpiryNotice";
 import { VerificationSummary } from "./VerificationSummary";
 
 // The upload/edit forms only load when they are shown (never for a verified
-// tutor who just views their data).
-const VerificationForms = dynamic(() => import("./VerificationForms").then((m) => m.VerificationForms), {
-  loading: () => <CardSkeleton lines={5} />,
-});
+// tutor who just views their data). React.lazy + Suspense rather than
+// next/dynamic: next/dynamic renders an extra server-only sibling
+// (PreloadChunks), which shifts every useId inside the forms and broke
+// hydration of the consent checkboxes (Base UI ids).
+const VerificationForms = lazy(() => import("./VerificationForms").then((m) => ({ default: m.VerificationForms })));
 
 export const STEP_LABELS: Record<VerificationField, string> = {
   idCard: t("dashboardSettings.stepIdCard"),
@@ -56,7 +58,11 @@ function statusChipLabel(status: string | undefined) {
   return t("dashboardSettings.unverified");
 }
 
-/** Section #verify: payout account status, progress and the document forms. */
+/**
+ * Section #verify (patterns.md T8): the payout-account card (status tile,
+ * status chip, steps progress and one chip per document), the privacy note,
+ * then the document forms (editing) or the submitted data (verified).
+ */
 export function VerificationSection({ user }: { user: SettingsUser }) {
   const status = user.verificationStatus;
   const isVerified = status === "VERIFIED";
@@ -114,17 +120,18 @@ export function VerificationSection({ user }: { user: SettingsUser }) {
         ) : null}
 
         <Surface
-          padding="md"
-          className={cn("transition-shadow", highlighted && "ring-2 ring-brand-500/60 ring-offset-2 ring-offset-app")}
+          padding="none"
+          className={cn(
+            "overflow-hidden transition-shadow duration-(--duration-normal)",
+            highlighted && "ring-2 ring-brand-fg ring-offset-2 ring-offset-app",
+          )}
         >
-          <div className="flex items-start gap-3">
-            <IconTile icon={ShieldCheck} tone={statusTile(status)} />
+          <div className="flex items-start gap-3 p-4 md:p-5">
+            <IconTile icon={ShieldCheck} tone={statusTile(status)} size="lg" />
             <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <p className="text-[0.9375rem] font-semibold text-fg">{t("dashboardSettings.payoutStatusTitle")}</p>
-                <StatusChip status={status || "UNVERIFIED"} label={statusChipLabel(status)} size="sm" />
-              </div>
-              <p className="mt-0.5 text-sm text-fg-muted">{statusText(status)}</p>
+              <p className="type-card text-fg">{t("dashboardSettings.payoutStatusTitle")}</p>
+              <p className="type-body-s text-fg-muted">{thaiCopy(statusText(status))}</p>
+              <StatusChip status={status || "UNVERIFIED"} label={statusChipLabel(status)} className="mt-2" />
             </div>
             {isVerified && !isEditing ? (
               <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="hidden sm:inline-flex">
@@ -134,49 +141,44 @@ export function VerificationSection({ user }: { user: SettingsUser }) {
             ) : null}
           </div>
 
-          <div className="mt-4 flex flex-col gap-2">
-            <div className="flex items-center justify-between text-[0.8125rem]">
-              <span className="text-fg-muted">{t("dashboardSettings.stepsProgress")}</span>
-              <span className="font-semibold text-fg tabular">
+          <div className="border-t border-hairline px-4 py-4 md:px-5">
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="type-label text-fg-muted">{t("dashboardSettings.stepsProgress")}</span>
+              <span className="text-sm font-semibold whitespace-nowrap text-fg tabular">
                 {doneCount} / {VERIFICATION_STEPS.length} {t("dashboardSettings.stepsUnit")}
               </span>
             </div>
             <ProgressBar
               value={(doneCount / VERIFICATION_STEPS.length) * 100}
-              size="sm"
               label={t("dashboardSettings.stepsProgress")}
+              className="mt-2"
             />
-            <ol className="mt-1 grid grid-cols-2 gap-x-3 gap-y-1.5 sm:grid-cols-4">
+            <ol className="mt-3 flex flex-wrap gap-2">
               {VERIFICATION_STEPS.map((step) => (
-                <li
-                  key={step}
-                  className={cn("flex items-center gap-1.5 text-[0.8125rem]", steps[step] ? "text-fg" : "text-fg-muted")}
-                >
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      "inline-flex size-4 shrink-0 items-center justify-center rounded-full",
-                      steps[step] ? "bg-brand-solid text-on-brand" : "border border-hairline-strong",
-                    )}
-                  >
-                    {steps[step] ? <Check className="size-3" /> : null}
-                  </span>
-                  {step === "idCard" && user.identity?.idType === "PASSPORT" ? t("dashboardSettings.stepPassport") : STEP_LABELS[step]}
+                <li key={step} className="max-w-full">
+                  <Chip tone={steps[step] ? "success" : "neutral"} icon={steps[step] ? CircleCheck : CircleDashed}>
+                    {step === "idCard" && user.identity?.idType === "PASSPORT" ? t("dashboardSettings.stepPassport") : STEP_LABELS[step]}
+                  </Chip>
                 </li>
               ))}
             </ol>
+            {isVerified && !isEditing ? (
+              <Button variant="outline" onClick={() => setIsEditing(true)} className="mt-4 w-full sm:hidden">
+                <Pencil aria-hidden="true" />
+                {t("dashboardSettings.editVerification")}
+              </Button>
+            ) : null}
           </div>
-
-          {isVerified && !isEditing ? (
-            <Button variant="outline" onClick={() => setIsEditing(true)} className="mt-4 w-full sm:hidden">
-              <Pencil aria-hidden="true" />
-              {t("dashboardSettings.editVerification")}
-            </Button>
-          ) : null}
         </Surface>
 
+        <Notice tone="info" icon={LockKeyhole} title={t("dashboardSettings.kycPrivacyTitle")}>
+          {t("dashboardSettings.kycPrivacyBody")}
+        </Notice>
+
         {isEditing ? (
-          <VerificationForms user={user} onCancelEdit={isVerified ? () => setIsEditing(false) : undefined} />
+          <Suspense fallback={<CardSkeleton lines={5} />}>
+            <VerificationForms user={user} onCancelEdit={isVerified ? () => setIsEditing(false) : undefined} />
+          </Suspense>
         ) : (
           <VerificationSummary user={user} />
         )}

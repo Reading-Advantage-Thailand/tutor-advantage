@@ -67,7 +67,9 @@ const pendingCheckout: CheckoutDetails = {
 
 describe("paymentFlow helpers", () => {
   it("validates dates of birth and distinguishes ages 17 and 18", () => {
-    const now = new Date("2026-07-01T12:00:00.000Z");
+    // Device-local noon on 1 July: the age check reads the device day, so this
+    // reads the same in every machine zone (UTC+12 and beyond included).
+    const now = new Date(2026, 6, 1, 12);
 
     expect(isUnder18("2008-07-02", now)).toBe(true);
     expect(isUnder18("2008-07-01", now)).toBe(false);
@@ -431,11 +433,12 @@ describe("paymentFlow helpers", () => {
     expect(getPaymentBookLabel({ enrollment: null })).toBeNull();
   });
 
-  it("groups history by local month, keeping the API order", () => {
+  it("groups history by Bangkok month, keeping the API order", () => {
     const items = [
-      { id: "a", createdAt: new Date(2026, 9, 2, 10).toISOString() },
-      { id: "b", createdAt: new Date(2026, 9, 1, 8).toISOString() },
-      { id: "c", createdAt: new Date(2026, 8, 30, 23).toISOString() },
+      { id: "a", createdAt: "2026-10-02T03:00:00Z" },
+      { id: "b", createdAt: "2026-10-01T01:00:00Z" },
+      // 22:00 on 30 Sep in Bangkok.
+      { id: "c", createdAt: "2026-09-30T15:00:00Z" },
       { id: "d", createdAt: "not a date" },
     ];
     const groups = groupByMonth(items);
@@ -443,6 +446,13 @@ describe("paymentFlow helpers", () => {
     expect(groups[0].items.map((item) => item.id)).toEqual(["a", "b"]);
     expect(groups[0].label).toContain("ตุลาคม");
     expect(groups[2].label).toBe("");
+  });
+
+  it("puts a payment made after Bangkok midnight on 1 Oct in October", () => {
+    // 17:30 UTC on 30 Sep is 00:30 on 1 Oct in Bangkok.
+    const groups = groupByMonth([{ id: "a", createdAt: "2026-09-30T17:30:00Z" }]);
+    expect(groups.map((group) => group.key)).toEqual(["2026-10"]);
+    expect(groups[0].label).toBe("ตุลาคม 2569");
   });
 
   it("extracts class IDs from scanned QR text", () => {

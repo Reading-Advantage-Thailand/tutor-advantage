@@ -1,5 +1,6 @@
-import { PageSkeleton } from "@/components/app";
+import { TablePageSkeleton } from "@/app/audit/_components/TablePageSkeleton";
 
+/** Ticket queue: header, status count tabs + search, table. */
 export default function Loading() {
-  return <PageSkeleton variant="table" stats={false} />;
+  return <TablePageSkeleton tabs columns={7} />;
 }

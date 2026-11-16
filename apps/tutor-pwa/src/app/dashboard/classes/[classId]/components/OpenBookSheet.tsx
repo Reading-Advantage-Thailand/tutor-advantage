@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { Sheet, SelectField, TextField } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { formatSatang } from "@/lib/format";
@@ -13,8 +14,9 @@ export function OpenBookSheet({
   books,
   bookId,
   onBookIdChange,
+  priceBaht,
   priceSatang,
-  onPriceChange,
+  onPriceBahtChange,
   creating,
   onSubmit,
 }: {
@@ -23,25 +25,44 @@ export function OpenBookSheet({
   books: BookOption[];
   bookId: string;
   onBookIdChange: (value: string) => void;
-  priceSatang: number;
-  onPriceChange: (value: number) => void;
+  /** The price as the tutor typed it, in baht. */
+  priceBaht: string;
+  /** The parsed price in integer satang (what is sent), or null when the text is not a valid price. */
+  priceSatang: number | null;
+  onPriceBahtChange: (value: string) => void;
   creating: boolean;
   onSubmit: () => void;
 }) {
   const grouped = groupBooksByProgram(books);
+  const priceRef = useRef<HTMLInputElement>(null);
+  // The price error shows only after the field is left or a submit is tried;
+  // editing the price or closing the sheet hides it again until the next one.
+  const [showPriceError, setShowPriceError] = useState(false);
+  const handleOpenChange = (next: boolean) => {
+    if (!next) setShowPriceError(false);
+    onOpenChange(next);
+  };
+  const handleSubmit = () => {
+    if (priceSatang === null) {
+      setShowPriceError(true);
+      priceRef.current?.focus();
+      return;
+    }
+    onSubmit();
+  };
   return (
     <Sheet
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleOpenChange}
       title={t("tutorClass.lessons.openBookTitle")}
       description={t("tutorClass.lessons.openBookDescription")}
       dismissible={!creating}
       footer={
         <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-end">
-          <Button variant="ghost" size="lg" className="md:h-9" onClick={() => onOpenChange(false)} disabled={creating}>
+          <Button variant="outline" size="lg" className="md:h-10 md:px-4" onClick={() => handleOpenChange(false)} disabled={creating}>
             {t("tutorClass.detail.cancel")}
           </Button>
-          <Button size="lg" className="md:h-9" onClick={onSubmit} loading={creating} disabled={!bookId}>
+          <Button size="lg" className="md:h-10 md:px-4" onClick={handleSubmit} loading={creating} disabled={!bookId}>
             {creating ? t("tutorClass.lessons.openingBook") : t("tutorClass.lessons.openBookSubmit")}
           </Button>
         </div>
@@ -53,6 +74,7 @@ export function OpenBookSheet({
           label={t("tutorClass.lessons.bookLabel")}
           value={bookId}
           placeholder={t("tutorClass.newClass.selectBook")}
+          disabled={creating}
           onChange={(event) => onBookIdChange(event.target.value)}
         >
           {grouped.reading.length > 0 && (
@@ -75,14 +97,30 @@ export function OpenBookSheet({
           )}
         </SelectField>
         <TextField
+          ref={priceRef}
           id="book-cycle-price"
-          type="number"
-          inputMode="numeric"
+          type="text"
+          inputMode="decimal"
+          autoComplete="off"
           label={t("tutorClass.lessons.priceLabel")}
-          hint={`${t("tutorClass.lessons.priceHintPrefix")} ${formatSatang(priceSatang)}`}
-          value={priceSatang}
-          onChange={(event) => onPriceChange(Number(event.target.value))}
-          endAddon={t("tutorClass.lessons.satangUnit")}
+          // One message line at all times (the amount, else the allowed range,
+          // else the error), so the sheet does not jump while the tutor types.
+          hint={
+            priceSatang !== null
+              ? `${t("tutorClass.lessons.priceHintPrefix")} ${formatSatang(priceSatang)}`
+              : t("tutorClass.lessons.priceRangeHint")
+          }
+          error={showPriceError && priceSatang === null ? t("tutorClass.lessons.priceInvalid") : undefined}
+          value={priceBaht}
+          // Keeps showing the amount being sent while the request is in flight.
+          readOnly={creating}
+          onChange={(event) => {
+            setShowPriceError(false);
+            onPriceBahtChange(event.target.value);
+          }}
+          onBlur={() => setShowPriceError(true)}
+          // The label already says "(บาท)": the unit is decoration for sighted users.
+          endAddon={<span aria-hidden="true">{t("tutorClass.lessons.priceUnit")}</span>}
         />
       </div>
     </Sheet>

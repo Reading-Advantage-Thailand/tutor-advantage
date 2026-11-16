@@ -10,6 +10,7 @@ import {
   ListSkeleton,
   Sheet,
   useAdminSession,
+  UserAvatar,
 } from "@/components/app";
 import { api, errorMessage } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
@@ -53,11 +54,11 @@ export function RedemptionsSheet({ open, onOpenChange, code }: RedemptionsSheetP
   if (error && !data) {
     body = <ErrorState compact description={errorMessage(error)} onRetry={refetch} />;
   } else if (isLoading || !data) {
-    body = <ListSkeleton rows={3} />;
+    body = <ListSkeleton rows={3} leading />;
   } else if (items.length === 0) {
     body = (
       <EmptyState
-        compact
+        as="h3"
         icon={UsersRound}
         title={t("discountCodes.redemptionsEmpty")}
         description={t("discountCodes.redemptionsEmptyHint")}
@@ -70,6 +71,7 @@ export function RedemptionsSheet({ open, onOpenChange, code }: RedemptionsSheetP
           <ListRow
             key={item.redemptionId}
             href={`/users/${encodeURIComponent(item.studentUserId)}`}
+            leading={<UserAvatar name={item.studentName ?? ""} seed={item.studentUserId} size="sm" decorative />}
             title={item.studentName || t("discountCodes.studentUnnamed")}
             subtitle={[
               item.studentEmail,
@@ -81,7 +83,7 @@ export function RedemptionsSheet({ open, onOpenChange, code }: RedemptionsSheetP
             meta={
               <>
                 {item.enrollmentStatus ? <AdminStatusChip domain="enrollment" status={item.enrollmentStatus} /> : null}
-                <span className="text-[0.8125rem] whitespace-nowrap text-fg-muted">{amountText(item)}</span>
+                <span className="text-[0.8125rem] whitespace-nowrap text-fg-muted tabular">{amountText(item)}</span>
               </>
             }
           />
@@ -94,6 +96,7 @@ export function RedemptionsSheet({ open, onOpenChange, code }: RedemptionsSheetP
     <Sheet
       open={open}
       onOpenChange={onOpenChange}
+      side="right"
       title={code ? t("discountCodes.redemptionsTitle", { code: code.code }) : ""}
       description={
         code
