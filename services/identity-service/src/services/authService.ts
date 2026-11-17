@@ -29,7 +29,13 @@ export async function processOAuthLogin(
   sponsorTutorId?: string | null,
   verifiedPhoneNumber?: string,
   emailVerified?: boolean,
+  signupIntent?: "tutor",
 ): Promise<AuthResult> {
+  // Tutor registration is open through verified Google login. Other login
+  // flows keep their existing role; clients cannot request arbitrary roles.
+  if (signupIntent === "tutor" && (provider !== "google" || !email || emailVerified !== true)) {
+    throw new Error("EMAIL_NOT_VERIFIED");
+  }
   return processLogin(
     provider,
     providerSubject,
@@ -39,12 +45,12 @@ export async function processOAuthLogin(
     sponsorTutorId,
     verifiedPhoneNumber,
     emailVerified,
-    "STUDENT",
+    signupIntent === "tutor" ? "TUTOR" : "STUDENT",
   );
 }
 
 /**
- * Development-only login entry point. Production OAuth never accepts a role;
+ * Development-only login entry point. Production OAuth never accepts an arbitrary role;
  * this separate function keeps the local tutor fixture available without
  * exposing that capability through the public callback.
  */
@@ -107,6 +113,7 @@ async function processLogin(
 
   if (existingIdentity) {
     user = existingIdentity.user;
+    assertTutorRegistrationAllowed(user, provider, requestedRole);
 
     const updateData: Record<string, unknown> = {};
     if (picture && !user.profilePictureUrl) updateData.profilePictureUrl = picture;
@@ -152,6 +159,7 @@ async function processLogin(
         },
       });
     } else {
+      assertTutorRegistrationAllowed(user, provider, requestedRole);
       // User exists by email/phone, but new provider linkage.
       // An unverified Google address proves nothing about who owns the
       // mailbox, so it must not claim an existing (e.g. pre-provisioned) account.
@@ -166,6 +174,10 @@ async function processLogin(
 
       // Optionally update picture, phone number, or displayName if they were placeholder/missing
       const updateData: Record<string, unknown> = {};
+      if (requestedRole === "TUTOR" && user.role === "STUDENT") {
+        updateData.role = "TUTOR";
+        roleUpgraded = true;
+      }
       if (picture && !user.profilePictureUrl) {
         updateData.profilePictureUrl = picture;
       }
@@ -246,6 +258,18 @@ async function processLogin(
       ),
     },
   };
+}
+
+function assertTutorRegistrationAllowed(
+  user: { role: string; isActive: boolean },
+  provider: string,
+  requestedRole: string,
+) {
+  if (provider === "dev" || requestedRole !== "TUTOR") return;
+  if (user.isActive === false) throw new Error("ACCOUNT_SUSPENDED");
+  if (user.role !== "STUDENT" && user.role !== "TUTOR") {
+    throw new Error("ROLE_TRANSITION_NOT_ALLOWED");
+  }
 }
 
 /**

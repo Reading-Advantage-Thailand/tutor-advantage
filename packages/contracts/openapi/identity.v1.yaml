@@ -42,6 +42,10 @@ paths:
                   type: string
                 codeVerifier:
                   type: string
+                signupIntent:
+                  type: string
+                  enum: [tutor]
+                  description: Register as a tutor using verified Google login, or upgrade an active student account to tutor. Omit for student login.
                 redirectUri:
                   type: string
                   format: uri

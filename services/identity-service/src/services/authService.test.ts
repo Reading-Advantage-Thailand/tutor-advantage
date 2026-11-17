@@ -22,6 +22,48 @@ const prisma = vi.hoisted(() => ({
 vi.mock("@tutor-advantage/database", () => ({ prisma }));
 
 describe("processOAuthLogin", () => {
+  const tutorLogin = (provider = "google", verified = true) =>
+    processOAuthLogin(provider, "subject-tutor", "tutor@example.com", "Tutor", "", null, undefined, verified, "tutor");
+
+  it("registers a verified Google tutor and signs a tutor session", async () => {
+    prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.create.mockResolvedValue({ userId: "new-tutor", role: "TUTOR", displayName: "Tutor" });
+    const result = await tutorLogin();
+    expect(prisma.user.create).toHaveBeenCalledWith({ data: expect.objectContaining({ role: "TUTOR" }) });
+    expect(result.user.role).toBe("TUTOR");
+    expect(jwt.decode(result.sessionToken)).toMatchObject({ role: "TUTOR" });
+  });
+
+  it.each([true, false])("upgrades a prior student on tutor signup (linked identity: %s)", async (linked) => {
+    const user = { userId: "prior-student", role: "STUDENT", displayName: "Tutor", email: "tutor@example.com", isActive: true };
+    prisma.oAuthIdentity.findUnique.mockResolvedValue(linked ? { user } : null);
+    prisma.user.findUnique.mockResolvedValue(user);
+    prisma.user.update.mockResolvedValue({ ...user, role: "TUTOR" });
+    const result = await tutorLogin();
+    expect(prisma.user.update).toHaveBeenCalledWith({ where: { userId: user.userId }, data: { role: "TUTOR" } });
+    expect(result.roleUpgraded).toBe(true);
+    expect(jwt.decode(result.sessionToken)).toMatchObject({ role: "TUTOR" });
+  });
+
+  it.each(["ADMIN", "FINANCE_CHECKER", "GUARDIAN"])("does not convert %s accounts to tutors", async (role) => {
+    prisma.oAuthIdentity.findUnique.mockResolvedValue({ user: { role, isActive: true } });
+    await expect(tutorLogin()).rejects.toThrow("ROLE_TRANSITION_NOT_ALLOWED");
+    expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+
+  it("does not upgrade a suspended account", async () => {
+    prisma.oAuthIdentity.findUnique.mockResolvedValue({ user: { role: "STUDENT", isActive: false } });
+    await expect(tutorLogin()).rejects.toThrow("ACCOUNT_SUSPENDED");
+    expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+
+  it.each([["google", false], ["line", true]] as const)("rejects tutor signup via %s with verified=%s", async (provider, verified) => {
+    await expect(tutorLogin(provider, verified)).rejects.toThrow("EMAIL_NOT_VERIFIED");
+    expect(prisma.user.create).not.toHaveBeenCalled();
+    expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+
   beforeEach(() => {
     prisma.oAuthIdentity.findUnique.mockReset();
     prisma.oAuthIdentity.create.mockReset();

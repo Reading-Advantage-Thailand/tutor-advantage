@@ -29,6 +29,7 @@ describe("getLoginError", () => {
   });
 
   it("picks the callback error code from the identity-service rejection", () => {
+    expect(identityCallbackErrorCode({ error: { details: "ACCOUNT_SUSPENDED" } })).toBe("account_suspended");
     expect(
       identityCallbackErrorCode({ error: { code: "UNAUTHORIZED", details: "EMAIL_NOT_VERIFIED" } }),
     ).toBe("email_not_verified");

@@ -11,6 +11,7 @@ export type LoginErrorNotice = { tone: NoticeTone; message: string };
  */
 export function identityCallbackErrorCode(body: unknown): string {
   const details = (body as { error?: { details?: unknown } } | null)?.error?.details;
+  if (details === "ACCOUNT_SUSPENDED") return "account_suspended";
   return details === "EMAIL_NOT_VERIFIED" ? "email_not_verified" : "identity_service_error";
 }
 

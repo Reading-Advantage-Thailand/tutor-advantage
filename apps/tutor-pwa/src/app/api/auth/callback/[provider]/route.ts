@@ -69,6 +69,7 @@ export async function GET(
     const callbackBody: Record<string, string> = {
       provider,
       code,
+      signupIntent: "tutor",
       redirectUri: `${publicBase}/api/auth/callback/${provider}`,
     };
     if (sponsorTutorId) callbackBody.sponsorTutorId = sponsorTutorId;

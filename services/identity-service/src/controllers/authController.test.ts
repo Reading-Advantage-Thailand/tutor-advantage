@@ -26,6 +26,15 @@ function createResponse() {
 }
 
 describe("handleOAuthCallback", () => {
+  it("passes explicit tutor signup intent after Google verification", async () => {
+    verifyGoogleToken.mockResolvedValue({ id: "google-tutor", email: "tutor@example.com", emailVerified: true, name: "Tutor" });
+    processOAuthLogin.mockResolvedValue({ sessionToken: "tutor-token", user: { role: "TUTOR" } });
+    const res = createResponse();
+    await handleOAuthCallback({ body: { provider: "google", code: "code", signupIntent: "tutor" } } as never, res as never);
+    expect(processOAuthLogin).toHaveBeenCalledWith("google", "google-tutor", "tutor@example.com", "Tutor", "", null, undefined, true, "tutor");
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
   beforeEach(() => {
     verifyGoogleToken.mockReset();
     verifyFacebookToken.mockReset();

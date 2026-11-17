@@ -75,6 +75,7 @@ export async function handleOAuthCallback(req: Request, res: Response) {
       typeof sponsorTutorId === "string" ? sponsorTutorId : null,
       profilePhoneNumber,
       emailVerified,
+      ...(req.body.signupIntent === "tutor" ? ["tutor" as const] : []),
     );
 
     return res.status(200).json(authResult);

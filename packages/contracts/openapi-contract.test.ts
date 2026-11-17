@@ -24,6 +24,17 @@ function contractApp(
 }
 
 describe("identity OpenAPI contract", () => {
+  it("accepts tutor signup intent and rejects arbitrary role selection", async () => {
+    const callbackApp = contractApp("identity.v1.yaml", (server) => {
+      server.post("/v1/auth/callback", (_req, res) => res.status(200).json({
+        sessionToken: "token", roleUpgraded: false,
+        user: { id: "tutor-1", name: "Tutor", role: "TUTOR", dateOfBirth: null, requiresGuardian: false },
+      }));
+    });
+    await request(callbackApp).post("/v1/auth/callback").send({ provider: "google", code: "code", signupIntent: "tutor" }).expect(200);
+    await request(callbackApp).post("/v1/auth/callback").send({ provider: "google", code: "code", signupIntent: "ADMIN" }).expect(400);
+  });
+
   const app = contractApp("identity.v1.yaml", (server) => {
     server.patch("/v1/users/me/profile", (_req, res) => {
       res.status(200).json({ user: { dateOfBirth: "2008-01-01" } });
