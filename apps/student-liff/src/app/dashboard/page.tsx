@@ -23,8 +23,7 @@ import { TodayHistory } from "./_components/TodayHistory";
 import { useUnreadChime } from "./_components/useUnreadChime";
 
 /**
- * The content column that overlaps the hero's rounded bottom by 30px and sits
- * above Reedy (his body tucks behind the first card).
+ * The content column overlaps the hero's rounded bottom by 30px, below Reedy.
  */
 const overlapClass = "relative z-[3] -mt-[30px] flex flex-col gap-[22px] px-4 pb-6";
 

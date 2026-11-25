@@ -15,6 +15,8 @@ import { getGreetingKey, type ReedyLine } from "./dashboardModel";
 export const HERO_CLASS = "hero-surface px-4 pt-[calc(var(--safe-top)+18px)]";
 /** Bottom room when the hero ends without Reedy's row (30px overlap + 18px). */
 export const HERO_NO_REEDY_CLASS = "pb-12";
+// Keep 10px clear above the card that overlaps the bottom of the hero by 30px.
+const reedyRowClass = "mt-1.5 flex items-start justify-between gap-2 pb-10";
 
 export interface DashboardHeroProps {
   name: string;
@@ -45,9 +47,9 @@ export function HeroChipsPlaceholder() {
 /** Reedy's row placeholder: a bubble-shaped pill and his spot, so nothing jumps when he arrives. */
 export function HeroReedyPlaceholder() {
   return (
-    <div className="mt-1.5 flex items-start justify-between gap-2" aria-hidden="true">
+    <div className={reedyRowClass} aria-hidden="true">
       <div className="mt-[18px] h-[46px] w-[200px] rounded-[18px_18px_6px_18px] border-[1.5px] border-hero-ring bg-hero-chip" />
-      <div className="-mr-2 size-[124px] shrink-0" />
+      <div className="-mr-2 size-[124px] shrink-0 max-[375px]:size-24" />
     </div>
   );
 }
@@ -87,7 +89,7 @@ function ReedySpeech({ line }: { line: ReedyLine }): ReactNode {
  * Home hero (patterns.md S1): time-of-day greeting, the student's name as the
  * page h1, avatar 52, the level chip (paper) and the streak chip (the view's
  * one sunshine reward, only when weekStreak > 0), then Reedy (happy 124) with
- * a speech bubble built from the data; his body tucks behind the next card.
+ * a speech bubble built from the data.
  * Rendered only on the client (the greeting uses the device clock).
  */
 export function DashboardHero({
@@ -135,12 +137,11 @@ export function DashboardHero({
       {reedy === "loading" ? (
         <HeroReedyPlaceholder />
       ) : reedy ? (
-        <div className="mt-1.5 flex items-start justify-between gap-2">
-          {/* mb = the 30px the next-up card overlaps the hero + a 10px gap, so a long bubble stays visible and never touches the card */}
-          <p className="bubble mt-[18px] mb-[40px] max-w-[232px] text-balance">
+        <div className={reedyRowClass}>
+          <p className="bubble mt-[18px] min-w-0 max-w-[232px] [overflow-wrap:anywhere] text-balance">
             <ReedySpeech line={reedy} />
           </p>
-          <ReedyMini mood="happy" size="hero" float decorative className="-mr-2" />
+          <ReedyMini mood="happy" size="hero" narrowSize="xl" float decorative className="-mr-2" />
         </div>
       ) : null}
     </header>

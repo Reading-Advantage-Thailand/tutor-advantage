@@ -15,6 +15,7 @@ import { kodchasan, notoLooped } from "./fonts";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  colorScheme: "light dark",
   // Browser chrome follows the top of the app: the flat home hero
   // (--hero-bg-base) in each theme.
   themeColor: [
@@ -103,6 +104,8 @@ export default async function RootLayout({
       data-scroll-behavior="smooth"
     >
       <head>
+        {/* Dark Reader's dynamic theme would recolor the app's own palettes and mascot. */}
+        <meta name="darkreader-lock" />
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
         {process.env.NODE_ENV === "development" && (
           <script dangerouslySetInnerHTML={{ __html: REACT_DEVTOOLS_PATCH }} />
