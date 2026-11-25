@@ -9,6 +9,7 @@ import { ReedyMini } from "@/components/mascot/ReedyMini";
 import { PublicCatalogPreview } from "@/components/courses/PublicCatalogPreview";
 import { BusinessContactCard } from "@/components/legal/BusinessContactCard";
 import { buttonVariants } from "@/components/ui/button";
+import { businessContact } from "@/lib/businessContact";
 import { t } from "@/lib/i18n";
 import { keepThaiWords, thaiCopy } from "@/lib/thaiText";
 import { cn } from "@/lib/utils";
@@ -85,9 +86,12 @@ export function LandingMarketing({ isLoggedIn }: LandingMarketingProps) {
     <Screen>
       {/* ── Brand row ── */}
       <header className="pt-[var(--safe-top)]">
-        <div className="mx-auto flex h-16 w-full max-w-2xl items-center gap-2.5 px-4">
+        <div className="mx-auto flex min-h-16 w-full max-w-2xl items-center gap-2.5 px-4 py-3">
           <BrandMark size="smd" />
-          <span className="font-heading text-lg leading-[1.3] font-bold text-fg">{t("entry.brandName")}</span>
+          <div className="min-w-0">
+            <p className="font-heading text-lg leading-[1.3] font-bold text-fg">{t("entry.brandName")}</p>
+            <p className="text-sm leading-[1.6] text-fg-muted">{businessContact.companyName}</p>
+          </div>
         </div>
       </header>
 

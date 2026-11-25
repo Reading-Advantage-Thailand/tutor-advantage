@@ -1,4 +1,5 @@
 export const businessContact = {
+  companyName: "บริษัท รีดิ้งแอดแวนเทจ(ไทยแลนด์) จำกัด",
   contactName: "คุณแจง",
   email: "support@reading-advantage.com",
   emailHref: "mailto:support@reading-advantage.com",

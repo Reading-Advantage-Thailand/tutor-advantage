@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Screen } from "@/components/mobile/Screen";
 import { BrandMark } from "@/components/icons/BrandMark";
+import { businessContact } from "@/lib/businessContact";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ export function BrandSplash({ label = t("entry.splashOpening"), action }: BrandS
         <BrandMark size="xl" />
         <h1 className="mt-6 font-heading text-[26px] leading-[1.3] font-bold">{t("entry.brandName")}</h1>
         <p className="mt-1 text-[15px] leading-[1.6] font-medium text-hero-fg-muted">{t("app.studentPortal")}</p>
+        <p className="mt-1 text-sm leading-[1.6] text-hero-fg-muted">{businessContact.companyName}</p>
 
         {action ? (
           <div className="mt-10 flex w-full max-w-[360px] flex-col items-stretch gap-3">{action}</div>

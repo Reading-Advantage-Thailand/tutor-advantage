@@ -22,6 +22,7 @@ export function BusinessContactCard() {
   return (
     <Surface as="section" padding="md" className="w-full text-left" aria-label="ข้อมูลติดต่อผู้ให้บริการ">
       <h2 className="t-title-s text-fg">ข้อมูลติดต่อผู้ให้บริการ</h2>
+      <p className="mt-1 text-sm leading-[1.6] font-semibold text-fg">{businessContact.companyName}</p>
       <dl className="mt-3 flex flex-col gap-3 text-sm leading-[1.6]">
         <div>
           <dt className={termClass}>
